@@ -151,7 +151,7 @@ const Dashboard = () => {
 
         {/* Content Management */}
         <Tabs defaultValue="all" className="space-y-6">
-          <div className="flex items-center justify-between">
+          <div className="flex items-center justify-between flex-wrap gap-4">
             <TabsList>
               <TabsTrigger value="all">All Content</TabsTrigger>
               <TabsTrigger value="videos">Free Videos</TabsTrigger>
@@ -160,10 +160,20 @@ const Dashboard = () => {
               <TabsTrigger value="batches">Batch Classes</TabsTrigger>
               <TabsTrigger value="seminars">Seminars</TabsTrigger>
             </TabsList>
-            <Button onClick={() => navigate("/content/new")}>
-              <Plus className="w-4 h-4 mr-2" />
-              Add Content
-            </Button>
+            <div className="flex gap-2">
+              <Button variant="outline" onClick={() => navigate("/students")}>
+                <Users className="w-4 h-4 mr-2" />
+                Students
+              </Button>
+              <Button variant="outline" onClick={() => navigate("/enrollments")}>
+                <BookOpen className="w-4 h-4 mr-2" />
+                Enrollments
+              </Button>
+              <Button onClick={() => navigate("/content/new")}>
+                <Plus className="w-4 h-4 mr-2" />
+                Add Content
+              </Button>
+            </div>
           </div>
 
           <TabsContent value="all">
