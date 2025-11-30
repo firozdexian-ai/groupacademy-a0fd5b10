@@ -11,6 +11,7 @@ import Enrollments from "./pages/Enrollments";
 import ContentNew from "./pages/ContentNew";
 import ContentEdit from "./pages/ContentEdit";
 import NotFound from "./pages/NotFound";
+import { ProtectedRoute } from "./components/ProtectedRoute";
 
 const queryClient = new QueryClient();
 
@@ -23,11 +24,11 @@ const App = () => (
         <Routes>
           <Route path="/" element={<Index />} />
           <Route path="/auth" element={<Auth />} />
-          <Route path="/dashboard" element={<Dashboard />} />
-          <Route path="/students" element={<Students />} />
-          <Route path="/enrollments" element={<Enrollments />} />
-          <Route path="/content/new" element={<ContentNew />} />
-          <Route path="/content/:id/edit" element={<ContentEdit />} />
+          <Route path="/dashboard" element={<ProtectedRoute><Dashboard /></ProtectedRoute>} />
+          <Route path="/students" element={<ProtectedRoute requireAdmin><Students /></ProtectedRoute>} />
+          <Route path="/enrollments" element={<ProtectedRoute requireAdmin><Enrollments /></ProtectedRoute>} />
+          <Route path="/content/new" element={<ProtectedRoute requireAdmin><ContentNew /></ProtectedRoute>} />
+          <Route path="/content/:id/edit" element={<ProtectedRoute requireAdmin><ContentEdit /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
           <Route path="*" element={<NotFound />} />
         </Routes>
