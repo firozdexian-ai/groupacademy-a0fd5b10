@@ -272,72 +272,133 @@ const CourseDetail = () => {
               className="absolute inset-0 w-full h-full object-cover"
             />
             <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black/80" />
+            
+            {/* Content overlaid on cover image */}
+            <div className="absolute inset-0 container mx-auto px-6 flex flex-col justify-between">
+              <div className="pt-6">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate("/courses")}
+                  className="text-white hover:bg-white/20"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Courses
+                </Button>
+              </div>
+              
+              <div className="pb-12">
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge variant="secondary" className="bg-black/40 text-white border-0 backdrop-blur-sm">
+                    <Icon className="mr-1 h-3 w-3" />
+                    {config.label}
+                  </Badge>
+                  {course.price === 0 ? (
+                    <Badge className="bg-success text-success-foreground border-0">Free</Badge>
+                  ) : (
+                    <Badge className="bg-black/40 text-white border-0 backdrop-blur-sm">
+                      BDT {course.price}
+                    </Badge>
+                  )}
+                </div>
+                
+                <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-6 max-w-4xl">
+                  {course.title}
+                </h1>
+                
+                <div className="flex flex-wrap gap-6 text-sm text-white/90 mb-8">
+                  {course.instructor_name && (
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      <span>{course.instructor_name}</span>
+                    </div>
+                  )}
+                  {course.event_date && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>{new Date(course.event_date).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {course.duration_hours && (
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span>{course.duration_hours} hours</span>
+                    </div>
+                  )}
+                  {course.event_duration_minutes && (
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span>{course.event_duration_minutes} minutes</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         ) : (
           <div className="relative bg-gradient-primary">
             <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-90" />
+            
+            <div className="relative container mx-auto px-6">
+              <div className="pt-6 pb-4">
+                <Button 
+                  variant="ghost" 
+                  onClick={() => navigate("/courses")}
+                  className="text-primary-foreground hover:bg-primary-foreground/10"
+                >
+                  <ArrowLeft className="w-4 h-4 mr-2" />
+                  Back to Courses
+                </Button>
+              </div>
+              
+              <div className="pb-12">
+                <div className="flex items-center gap-2 mb-4">
+                  <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-0">
+                    <Icon className="mr-1 h-3 w-3" />
+                    {config.label}
+                  </Badge>
+                  {course.price === 0 ? (
+                    <Badge className="bg-success text-success-foreground border-0">Free</Badge>
+                  ) : (
+                    <Badge className="bg-primary-foreground/20 text-primary-foreground border-0">
+                      BDT {course.price}
+                    </Badge>
+                  )}
+                </div>
+                
+                <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6 max-w-4xl">
+                  {course.title}
+                </h1>
+                
+                <div className="flex flex-wrap gap-6 text-sm text-primary-foreground/90 mb-8">
+                  {course.instructor_name && (
+                    <div className="flex items-center gap-2">
+                      <Users className="h-4 w-4" />
+                      <span>{course.instructor_name}</span>
+                    </div>
+                  )}
+                  {course.event_date && (
+                    <div className="flex items-center gap-2">
+                      <Calendar className="h-4 w-4" />
+                      <span>{new Date(course.event_date).toLocaleDateString()}</span>
+                    </div>
+                  )}
+                  {course.duration_hours && (
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span>{course.duration_hours} hours</span>
+                    </div>
+                  )}
+                  {course.event_duration_minutes && (
+                    <div className="flex items-center gap-2">
+                      <Clock className="h-4 w-4" />
+                      <span>{course.event_duration_minutes} minutes</span>
+                    </div>
+                  )}
+                </div>
+              </div>
+            </div>
           </div>
         )}
-        
-        <div className={`relative container mx-auto px-6 ${course.cover_image_url ? 'absolute inset-0' : ''}`}>
-          <div className="pt-6 pb-4">
-            <Button 
-              variant="ghost" 
-              onClick={() => navigate("/courses")}
-              className="text-white hover:bg-white/20"
-            >
-              <ArrowLeft className="w-4 h-4 mr-2" />
-              Back to Courses
-            </Button>
-          </div>
-          
-          <div className="pb-12">
-            <div className="flex items-center gap-2 mb-4">
-              <Badge variant="secondary" className="bg-black/40 text-white border-0 backdrop-blur-sm">
-                <Icon className="mr-1 h-3 w-3" />
-                {config.label}
-              </Badge>
-              {course.price === 0 ? (
-                <Badge className="bg-success text-success-foreground border-0">Free</Badge>
-              ) : (
-                <Badge className="bg-black/40 text-white border-0 backdrop-blur-sm">
-                  BDT {course.price}
-                </Badge>
-              )}
-            </div>
-            
-            <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-6 max-w-4xl">
-              {course.title}
-            </h1>
-            
-            <div className="flex flex-wrap gap-6 text-sm text-white/90 mb-8">
-              {course.instructor_name && (
-                <div className="flex items-center gap-2">
-                  <Users className="h-4 w-4" />
-                  <span>{course.instructor_name}</span>
-                </div>
-              )}
-              {course.event_date && (
-                <div className="flex items-center gap-2">
-                  <Calendar className="h-4 w-4" />
-                  <span>{new Date(course.event_date).toLocaleDateString()}</span>
-                </div>
-              )}
-              {course.duration_hours && (
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>{course.duration_hours} hours</span>
-                </div>
-              )}
-              {course.event_duration_minutes && (
-                <div className="flex items-center gap-2">
-                  <Clock className="h-4 w-4" />
-                  <span>{course.event_duration_minutes} minutes</span>
-                </div>
-              )}
-            </div>
-          </div>
-        </div>
       </div>
 
       {/* Hero Media Section */}
