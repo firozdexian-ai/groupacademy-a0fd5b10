@@ -50,6 +50,15 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
     };
 
     checkAuth();
+    
+    // Listen for auth state changes to handle session expiration
+    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+      if (event === 'SIGNED_OUT' || !session) {
+        navigate("/auth");
+      }
+    });
+
+    return () => subscription.unsubscribe();
   }, [navigate, requireAdmin]);
 
   if (isChecking) {
@@ -63,5 +72,15 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
     );
   }
 
-  return isAuthorized ? <>{children}</> : null;
+  if (!isAuthorized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <div className="text-center">
+          <p className="text-muted-foreground">Redirecting...</p>
+        </div>
+      </div>
+    );
+  }
+
+  return <>{children}</>;
 };
