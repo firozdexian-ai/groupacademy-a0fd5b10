@@ -18,6 +18,9 @@ import Quiz from "./pages/Quiz";
 import QuizManagement from "./pages/QuizManagement";
 import ModuleManagement from "./pages/ModuleManagement";
 import ReportCard from "./pages/ReportCard";
+import Instructors from "./pages/Instructors";
+import InstructorNew from "./pages/InstructorNew";
+import InstructorEdit from "./pages/InstructorEdit";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -43,6 +46,9 @@ const App = () => (
           <Route path="/report-card/:enrollmentId" element={<ProtectedRoute><ReportCard /></ProtectedRoute>} />
           <Route path="/students" element={<ProtectedRoute requireAdmin><Students /></ProtectedRoute>} />
           <Route path="/enrollments" element={<ProtectedRoute requireAdmin><Enrollments /></ProtectedRoute>} />
+          <Route path="/instructors" element={<ProtectedRoute><Instructors /></ProtectedRoute>} />
+          <Route path="/instructors/new" element={<ProtectedRoute requireAdmin><InstructorNew /></ProtectedRoute>} />
+          <Route path="/instructors/:id/edit" element={<ProtectedRoute requireAdmin><InstructorEdit /></ProtectedRoute>} />
           <Route path="/content/new" element={<ProtectedRoute requireAdmin><ContentNew /></ProtectedRoute>} />
           <Route path="/content/:id/edit" element={<ProtectedRoute requireAdmin><ContentEdit /></ProtectedRoute>} />
           {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
