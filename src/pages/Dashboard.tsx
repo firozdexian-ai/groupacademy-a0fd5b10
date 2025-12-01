@@ -171,6 +171,10 @@ const Dashboard = () => {
                 <BookOpen className="w-4 h-4 mr-2" />
                 Enrollments
               </Button>
+              <Button variant="outline" onClick={() => navigate("/instructors")}>
+                <Users className="w-4 h-4 mr-2" />
+                Instructors
+              </Button>
               <Button onClick={() => navigate("/content/new")}>
                 <Plus className="w-4 h-4 mr-2" />
                 Add Content

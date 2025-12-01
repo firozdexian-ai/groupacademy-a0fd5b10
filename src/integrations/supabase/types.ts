@@ -189,6 +189,45 @@ export type Database = {
         }
         Relationships: []
       }
+      content_instructors: {
+        Row: {
+          content_id: string
+          created_at: string | null
+          id: string
+          instructor_id: string
+          role: string | null
+        }
+        Insert: {
+          content_id: string
+          created_at?: string | null
+          id?: string
+          instructor_id: string
+          role?: string | null
+        }
+        Update: {
+          content_id?: string
+          created_at?: string | null
+          id?: string
+          instructor_id?: string
+          role?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "content_instructors_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "content_instructors_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       course_modules: {
         Row: {
           content_id: string
@@ -289,6 +328,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      instructors: {
+        Row: {
+          bank_details: Json | null
+          bio: string | null
+          created_at: string | null
+          email: string
+          expertise: string[] | null
+          full_name: string
+          hourly_rate: number | null
+          id: string
+          phone: string | null
+          profile_image_url: string | null
+          social_links: Json | null
+          status: string | null
+          team_role: string
+          updated_at: string | null
+        }
+        Insert: {
+          bank_details?: Json | null
+          bio?: string | null
+          created_at?: string | null
+          email: string
+          expertise?: string[] | null
+          full_name: string
+          hourly_rate?: number | null
+          id?: string
+          phone?: string | null
+          profile_image_url?: string | null
+          social_links?: Json | null
+          status?: string | null
+          team_role: string
+          updated_at?: string | null
+        }
+        Update: {
+          bank_details?: Json | null
+          bio?: string | null
+          created_at?: string | null
+          email?: string
+          expertise?: string[] | null
+          full_name?: string
+          hourly_rate?: number | null
+          id?: string
+          phone?: string | null
+          profile_image_url?: string | null
+          social_links?: Json | null
+          status?: string | null
+          team_role?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       quiz_attempts: {
         Row: {
