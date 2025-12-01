@@ -27,9 +27,12 @@ export const ProfileCompletionForm = ({ user, onComplete }: ProfileCompletionFor
     }
 
     setIsSubmitting(true);
-    try {
-      // Create student profile with retry logic
-      let profile;
+    
+    // Retry logic with exponential backoff
+    const maxRetries = 3;
+    const delays = [500, 1000, 2000];
+    
+    for (let attempt = 0; attempt < maxRetries; attempt++) {
       try {
         const { data, error } = await supabase
           .from("students")
@@ -46,35 +49,40 @@ export const ProfileCompletionForm = ({ user, onComplete }: ProfileCompletionFor
           .select()
           .single();
 
-        if (error) throw error;
-        profile = data;
-      } catch (insertError: any) {
-        // Check if profile already exists (race condition)
-        if (insertError.code === '23505') {
-          await new Promise(resolve => setTimeout(resolve, 500));
-          const { data: existingProfile } = await supabase
-            .from("students")
-            .select("*")
-            .eq("user_id", user.id)
-            .maybeSingle();
-          
-          if (existingProfile) {
-            profile = existingProfile;
-          } else {
-            throw insertError;
+        if (error) {
+          // Check if profile already exists
+          if (error.code === '23505') {
+            await new Promise(resolve => setTimeout(resolve, 300));
+            const { data: existingProfile } = await supabase
+              .from("students")
+              .select("*")
+              .eq("user_id", user.id)
+              .maybeSingle();
+            
+            if (existingProfile) {
+              toast.success("Profile completed successfully!");
+              onComplete(existingProfile);
+              setIsSubmitting(false);
+              return;
+            }
           }
+          throw error;
+        }
+
+        toast.success("Profile completed successfully!");
+        onComplete(data);
+        setIsSubmitting(false);
+        return;
+      } catch (error: any) {
+        console.error(`Profile creation attempt ${attempt + 1} failed:`, error);
+        
+        if (attempt < maxRetries - 1) {
+          await new Promise(resolve => setTimeout(resolve, delays[attempt]));
         } else {
-          throw insertError;
+          toast.error("Failed to complete profile. Please try again.");
+          setIsSubmitting(false);
         }
       }
-
-      toast.success("Profile completed successfully!");
-      onComplete(profile);
-    } catch (error: any) {
-      console.error("Error creating profile:", error);
-      toast.error("Failed to complete profile. Please try again.");
-    } finally {
-      setIsSubmitting(false);
     }
   };
 

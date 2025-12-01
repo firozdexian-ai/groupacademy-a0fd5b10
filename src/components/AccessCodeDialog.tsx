@@ -72,7 +72,7 @@ export const AccessCodeDialog = ({
         return;
       }
 
-      // Get or create student profile
+      // Get or create student profile with retry logic
       let student;
       const { data: existingStudent } = await supabase
         .from("students")
@@ -83,25 +83,56 @@ export const AccessCodeDialog = ({
       if (existingStudent) {
         student = existingStudent;
       } else {
-        // Auto-create student profile if missing
-        const { data: newStudent, error: studentError } = await supabase
-          .from("students")
-          .insert([{
-            user_id: user.id,
-            full_name: user.email?.split('@')[0] || 'Student',
-            email: user.email || '',
-            phone: '',
-            student_id: '',
-            status: "free_learner",
-          }])
-          .select("id")
-          .single();
+        // Auto-create student profile with retry logic and exponential backoff
+        const maxRetries = 3;
+        const delays = [500, 1000, 2000];
 
-        if (studentError) {
-          toast.error("Failed to create profile. Please complete your profile first.");
-          return;
+        for (let attempt = 0; attempt < maxRetries; attempt++) {
+          try {
+            const { data: newStudent, error: studentError } = await supabase
+              .from("students")
+              .insert([{
+                user_id: user.id,
+                full_name: user.email?.split('@')[0] || 'Student',
+                email: user.email || '',
+                phone: '',
+                student_id: '',
+                status: "free_learner",
+              }])
+              .select("id")
+              .single();
+
+            if (studentError) {
+              if (studentError.code === '23505') {
+                await new Promise(resolve => setTimeout(resolve, 300));
+                const { data: retryStudent } = await supabase
+                  .from("students")
+                  .select("id")
+                  .eq("user_id", user.id)
+                  .maybeSingle();
+                
+                if (retryStudent) {
+                  student = retryStudent;
+                  break;
+                }
+              }
+              throw studentError;
+            }
+
+            student = newStudent;
+            break;
+          } catch (error: any) {
+            console.error(`Profile creation attempt ${attempt + 1} failed:`, error);
+            if (attempt < maxRetries - 1) {
+              await new Promise(resolve => setTimeout(resolve, delays[attempt]));
+            } else {
+              toast.error("Failed to create profile. Please complete your profile first.");
+              return;
+            }
+          }
         }
-        student = newStudent;
+
+        if (!student) return;
       }
 
       // Create enrollment
