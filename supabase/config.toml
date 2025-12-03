@@ -8,3 +8,6 @@ verify_jwt = false
 
 [functions.analyze-mock-interview]
 verify_jwt = false
+
+[functions.ai-instructor-chat]
+verify_jwt = false
