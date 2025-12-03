@@ -18,6 +18,8 @@ import {
   Loader2
 } from "lucide-react";
 import { toast } from "sonner";
+import { ScorecardPDFTemplate } from "@/components/assessment/ScorecardPDFTemplate";
+import { generateScorecardPDF } from "@/lib/assessmentPdfGenerator";
 
 interface Assessment {
   id: string;
@@ -56,6 +58,7 @@ export default function AssessmentResults() {
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
   const [analyzing, setAnalyzing] = useState(false);
+  const [downloading, setDownloading] = useState(false);
   const [assessment, setAssessment] = useState<Assessment | null>(null);
 
   useEffect(() => {
@@ -142,9 +145,19 @@ export default function AssessmentResults() {
     }
   };
 
-  const handleDownloadPDF = () => {
-    // TODO: Implement PDF generation
-    toast.info("PDF download coming soon!");
+  const handleDownloadPDF = async () => {
+    if (!assessment) return;
+    
+    setDownloading(true);
+    try {
+      await generateScorecardPDF(assessment);
+      toast.success("PDF downloaded successfully!");
+    } catch (error) {
+      console.error("Error generating PDF:", error);
+      toast.error("Failed to generate PDF. Please try again.");
+    } finally {
+      setDownloading(false);
+    }
   };
 
   if (loading) {
@@ -241,9 +254,13 @@ export default function AssessmentResults() {
 
           {/* Quick Actions */}
           <div className="flex flex-wrap gap-3 mb-8 justify-center">
-            <Button onClick={handleDownloadPDF} variant="outline">
-              <Download className="h-4 w-4 mr-2" />
-              Download PDF
+            <Button onClick={handleDownloadPDF} variant="outline" disabled={downloading}>
+              {downloading ? (
+                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
+              ) : (
+                <Download className="h-4 w-4 mr-2" />
+              )}
+              {downloading ? "Generating..." : "Download PDF"}
             </Button>
             <Button onClick={handleShare} variant="outline">
               <Share2 className="h-4 w-4 mr-2" />
@@ -387,6 +404,9 @@ export default function AssessmentResults() {
       </main>
 
       <Footer />
+
+      {/* Hidden PDF Template */}
+      {assessment && <ScorecardPDFTemplate assessment={assessment} />}
     </div>
   );
 }
