@@ -34,6 +34,8 @@ import MockInterviewSetup from "./pages/MockInterviewSetup";
 import MockInterviewQuestions from "./pages/MockInterviewQuestions";
 import MockInterviewCapture from "./pages/MockInterviewCapture";
 import MockInterviewResults from "./pages/MockInterviewResults";
+import Professions from "./pages/Professions";
+import ProfessionDetail from "./pages/ProfessionDetail";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
@@ -50,6 +52,8 @@ const App = () => (
           <Route path="/auth" element={<Auth />} />
           <Route path="/reset-password" element={<ResetPassword />} />
           <Route path="/courses" element={<Courses />} />
+          <Route path="/professions" element={<Professions />} />
+          <Route path="/professions/:slug" element={<ProfessionDetail />} />
           <Route path="/career-assessment" element={<CareerAssessment />} />
           <Route path="/assessment-results/:id" element={<AssessmentResults />} />
           <Route path="/portfolio-request" element={<PortfolioRequest />} />

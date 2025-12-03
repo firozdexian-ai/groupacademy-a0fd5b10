@@ -81,6 +81,9 @@ export const Navbar = () => {
             <Button variant="ghost" onClick={() => navigate("/")}>
               Home
             </Button>
+            <Button variant="ghost" onClick={() => navigate("/professions")}>
+              Professions
+            </Button>
             <Button variant="ghost" onClick={() => navigate("/courses")}>
               Courses
             </Button>
@@ -164,6 +167,9 @@ export const Navbar = () => {
           <nav className="md:hidden pt-4 pb-2 flex flex-col gap-2 border-t mt-4">
             <Button variant="ghost" onClick={() => { navigate("/"); setMobileMenuOpen(false); }} className="justify-start">
               Home
+            </Button>
+            <Button variant="ghost" onClick={() => { navigate("/professions"); setMobileMenuOpen(false); }} className="justify-start">
+              Professions
             </Button>
             <Button variant="ghost" onClick={() => { navigate("/courses"); setMobileMenuOpen(false); }} className="justify-start">
               Courses
