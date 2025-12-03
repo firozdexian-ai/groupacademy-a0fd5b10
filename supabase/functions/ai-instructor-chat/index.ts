@@ -1,0 +1,176 @@
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
+
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
+
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
+  }
+
+  try {
+    const { messages, professionLineId, contextType, contextId, sessionId } = await req.json();
+
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
+    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
+    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+
+    if (!LOVABLE_API_KEY) {
+      throw new Error("LOVABLE_API_KEY is not configured");
+    }
+
+    // Initialize Supabase client
+    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+
+    // Fetch AI Instructor details
+    let systemPrompt = "You are a helpful career and learning assistant for GroUp Academy.";
+    let instructorName = "AI Assistant";
+    
+    if (professionLineId) {
+      const { data: instructor } = await supabase
+        .from("ai_instructors")
+        .select(`
+          *,
+          profession_categories!inner(
+            name,
+            description,
+            schools(name, description, executive_capability_goal)
+          )
+        `)
+        .eq("profession_line_id", professionLineId)
+        .single();
+
+      if (instructor) {
+        instructorName = instructor.name;
+        const professionLine = instructor.profession_categories;
+        const school = professionLine?.schools;
+
+        // Build context-aware system prompt
+        systemPrompt = `${instructor.system_prompt}
+
+PROFESSION LINE CONTEXT:
+- Profession: ${professionLine?.name || 'General'}
+- Description: ${professionLine?.description || ''}
+${school ? `- School: ${school.name}
+- School Focus: ${school.description}
+- Executive Capability Goal: ${school.executive_capability_goal}` : ''}
+
+EXPERTISE AREAS: ${instructor.expertise_areas?.join(', ') || 'General career guidance'}
+
+PERSONA: ${instructor.persona}
+
+IMPORTANT GUIDELINES:
+1. Always be encouraging and supportive while being honest about areas for improvement
+2. Relate concepts to real-world Bangladesh market context when relevant
+3. For enrolled students asking about course content, provide detailed explanations
+4. For general users, provide career guidance and recommend relevant courses
+5. Use practical examples from ${professionLine?.name || 'the profession'}
+6. When discussing skills, reference the 6-stage learning journey: Orientation → Learn → Discuss → Practice → Assess → Progress`;
+      }
+    }
+
+    // If context is a specific course or module, add that context
+    if (contextType === 'course' && contextId) {
+      const { data: course } = await supabase
+        .from("content")
+        .select("title, description, learning_objectives")
+        .eq("id", contextId)
+        .single();
+
+      if (course) {
+        systemPrompt += `
+
+CURRENT COURSE CONTEXT:
+- Course: ${course.title}
+- Description: ${course.description || ''}
+- Learning Objectives: ${JSON.stringify(course.learning_objectives || [])}
+
+Focus your answers on this course content when the student asks questions about their learning.`;
+      }
+    }
+
+    if (contextType === 'module' && contextId) {
+      const { data: moduleData } = await supabase
+        .from("course_modules")
+        .select("title, description, learning_objectives, content_id")
+        .eq("id", contextId)
+        .single();
+
+      if (moduleData) {
+        // Fetch course title separately
+        const { data: courseData } = await supabase
+          .from("content")
+          .select("title")
+          .eq("id", moduleData.content_id)
+          .single();
+
+        systemPrompt += `
+
+CURRENT MODULE CONTEXT:
+- Course: ${courseData?.title || 'Unknown'}
+- Module: ${moduleData.title}
+- Description: ${moduleData.description || ''}
+- Learning Objectives: ${moduleData.learning_objectives?.join(', ') || ''}
+
+Focus your answers on this specific module content.`;
+      }
+    }
+
+    // Call Lovable AI Gateway
+    const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${LOVABLE_API_KEY}`,
+        "Content-Type": "application/json",
+      },
+      body: JSON.stringify({
+        model: "google/gemini-2.5-flash",
+        messages: [
+          { role: "system", content: systemPrompt },
+          ...messages,
+        ],
+        stream: true,
+      }),
+    });
+
+    if (!response.ok) {
+      if (response.status === 429) {
+        return new Response(
+          JSON.stringify({ error: "Rate limit exceeded. Please try again in a moment." }),
+          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      if (response.status === 402) {
+        return new Response(
+          JSON.stringify({ error: "AI service quota exceeded. Please contact support." }),
+          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+        );
+      }
+      const errorText = await response.text();
+      console.error("AI Gateway error:", response.status, errorText);
+      return new Response(
+        JSON.stringify({ error: "Failed to get AI response" }),
+        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    // Return streaming response
+    return new Response(response.body, {
+      headers: {
+        ...corsHeaders,
+        "Content-Type": "text/event-stream",
+        "Cache-Control": "no-cache",
+        "Connection": "keep-alive",
+      },
+    });
+  } catch (error) {
+    console.error("AI Instructor chat error:", error);
+    return new Response(
+      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
+      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
+    );
+  }
+});
