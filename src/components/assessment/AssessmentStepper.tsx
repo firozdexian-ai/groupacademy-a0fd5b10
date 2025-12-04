@@ -7,7 +7,7 @@ import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Checkbox } from "@/components/ui/checkbox";
 import { Slider } from "@/components/ui/slider";
 import { Label } from "@/components/ui/label";
-import { ArrowLeft, ArrowRight } from "lucide-react";
+import { ArrowLeft, ArrowRight, Loader2, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 
 interface Question {
@@ -29,6 +29,7 @@ interface AssessmentStepperProps {
 
 export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack }: AssessmentStepperProps) {
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
   const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -38,27 +39,51 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
   }, [categoryId]);
 
   const loadQuestions = async () => {
-    try {
-      // Load general questions (null profession_category_id) and category-specific questions
-      const { data, error } = await supabase
-        .from("assessment_questions")
-        .select("*")
-        .eq("is_active", true)
-        .or(`profession_category_id.is.null,profession_category_id.eq.${categoryId}`)
-        .order("display_order");
+    setLoading(true);
+    setLoadError(null);
+    
+    console.log("[AssessmentStepper] Loading questions for category:", categoryId);
+    
+    // Create timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Request timed out")), 15000);
+    });
 
-      if (error) throw error;
+    try {
+      // Race between fetch and timeout
+      const result = await Promise.race([
+        supabase
+          .from("assessment_questions")
+          .select("*")
+          .eq("is_active", true)
+          .or(`profession_category_id.is.null,profession_category_id.eq.${categoryId}`)
+          .order("display_order"),
+        timeoutPromise
+      ]) as any;
+
+      if (result.error) {
+        console.error("[AssessmentStepper] Query error:", result.error);
+        throw result.error;
+      }
+
+      const data = result.data || [];
+      console.log("[AssessmentStepper] Loaded", data.length, "questions");
 
       // Cast the data to the correct type
-      const typedQuestions = (data || []).map(q => ({
+      const typedQuestions = data.map((q: any) => ({
         ...q,
         question_type: q.question_type as "single_choice" | "multiple_choice" | "scale" | "text"
       }));
 
       setQuestions(typedQuestions);
-    } catch (error) {
-      console.error("Error loading questions:", error);
-      toast.error("Failed to load questions");
+      setLoadError(null);
+    } catch (error: any) {
+      console.error("[AssessmentStepper] Error loading questions:", error);
+      const errorMessage = error.message === "Request timed out"
+        ? "Loading questions took too long. Please check your connection."
+        : "Failed to load questions. Please try again.";
+      setLoadError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setLoading(false);
     }
@@ -108,8 +133,32 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
   if (loading) {
     return (
       <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary mx-auto"></div>
+        <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
         <p className="mt-4 text-muted-foreground">Loading questions...</p>
+      </div>
+    );
+  }
+
+  if (loadError) {
+    return (
+      <div className="container max-w-2xl mx-auto px-4 py-16">
+        <Card className="border-destructive/50">
+          <CardContent className="pt-6 text-center">
+            <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+            <h3 className="text-lg font-semibold mb-2">Failed to Load Questions</h3>
+            <p className="text-muted-foreground mb-4">{loadError}</p>
+            <div className="flex gap-3 justify-center">
+              <Button variant="outline" onClick={onBack}>
+                <ArrowLeft className="h-4 w-4 mr-2" />
+                Go Back
+              </Button>
+              <Button onClick={loadQuestions}>
+                <RefreshCw className="h-4 w-4 mr-2" />
+                Try Again
+              </Button>
+            </div>
+          </CardContent>
+        </Card>
       </div>
     );
   }

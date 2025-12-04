@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect, useState, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Navbar } from "@/components/Navbar";
@@ -60,15 +60,24 @@ export default function AssessmentResults() {
   const { id } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
+  const [loadError, setLoadError] = useState<string | null>(null);
   const [analyzing, setAnalyzing] = useState(false);
+  const [analysisRetryCount, setAnalysisRetryCount] = useState(0);
   const [downloading, setDownloading] = useState(false);
   const [assessment, setAssessment] = useState<Assessment | null>(null);
+  const maxRetries = 3;
+  const hasTriggeredAnalysis = useRef(false);
 
   useEffect(() => {
     if (id) loadAssessment();
   }, [id]);
 
   const loadAssessment = async () => {
+    setLoading(true);
+    setLoadError(null);
+    
+    console.log("[AssessmentResults] Loading assessment:", id);
+    
     try {
       const { data, error } = await supabase
         .from("career_assessments")
@@ -79,41 +88,63 @@ export default function AssessmentResults() {
         .eq("id", id)
         .maybeSingle();
 
-      if (error) throw error;
+      if (error) {
+        console.error("[AssessmentResults] Query error:", error);
+        throw error;
+      }
+      
       if (!data) {
-        toast.error("Assessment not found");
-        navigate("/career-assessment");
+        console.log("[AssessmentResults] Assessment not found");
+        setLoadError("Assessment not found. It may have expired or been deleted.");
+        setLoading(false);
         return;
       }
 
+      console.log("[AssessmentResults] Loaded assessment:", data.id, "AI analysis:", !!data.ai_analysis);
       setAssessment(data);
 
-      // Trigger AI analysis if not already done
-      if (!data.ai_analysis) {
+      // Trigger AI analysis if not already done (only once)
+      if (!data.ai_analysis && !hasTriggeredAnalysis.current) {
+        hasTriggeredAnalysis.current = true;
         triggerAIAnalysis(data.id);
       }
-    } catch (error) {
-      console.error("Error loading assessment:", error);
-      toast.error("Failed to load assessment");
+    } catch (error: any) {
+      console.error("[AssessmentResults] Error loading assessment:", error);
+      setLoadError("Failed to load assessment. Please try again.");
     } finally {
       setLoading(false);
     }
   };
 
-  const triggerAIAnalysis = async (assessmentId: string) => {
+  const triggerAIAnalysis = async (assessmentId: string, isRetry = false) => {
+    if (isRetry) {
+      setAnalysisRetryCount(prev => prev + 1);
+    }
+    
     setAnalyzing(true);
+    console.log("[AssessmentResults] Triggering AI analysis for:", assessmentId, "Retry:", analysisRetryCount);
+    
     try {
       const { data, error } = await supabase.functions.invoke("analyze-career-assessment", {
         body: { assessmentId }
       });
 
       if (error) {
-        console.error("AI analysis error:", error);
+        console.error("[AssessmentResults] AI analysis error:", error);
+        
+        // Auto-retry up to maxRetries
+        if (analysisRetryCount < maxRetries - 1) {
+          console.log("[AssessmentResults] Auto-retrying AI analysis...");
+          setTimeout(() => triggerAIAnalysis(assessmentId, true), 2000);
+          return;
+        }
+        
         toast.error("Could not generate AI insights. You can refresh to try again.");
         return;
       }
 
       if (data?.analysis) {
+        console.log("[AssessmentResults] AI analysis received successfully");
         setAssessment(prev => prev ? {
           ...prev,
           ai_analysis: data.analysis,
@@ -122,9 +153,23 @@ export default function AssessmentResults() {
         toast.success("AI analysis complete!");
       }
     } catch (error) {
-      console.error("Error calling AI analysis:", error);
+      console.error("[AssessmentResults] Error calling AI analysis:", error);
+      
+      // Auto-retry up to maxRetries
+      if (analysisRetryCount < maxRetries - 1) {
+        console.log("[AssessmentResults] Auto-retrying after error...");
+        setTimeout(() => triggerAIAnalysis(assessmentId, true), 2000);
+        return;
+      }
     } finally {
       setAnalyzing(false);
+    }
+  };
+
+  const handleManualRetry = () => {
+    if (id) {
+      setAnalysisRetryCount(0);
+      triggerAIAnalysis(id, false);
     }
   };
 
@@ -171,15 +216,43 @@ export default function AssessmentResults() {
       <div className="min-h-screen bg-background flex flex-col">
         <Navbar />
         <main className="flex-1 flex items-center justify-center">
-          <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+          <div className="text-center">
+            <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto" />
+            <p className="mt-4 text-muted-foreground">Loading your results...</p>
+          </div>
         </main>
         <Footer />
       </div>
     );
   }
 
-  if (!assessment) {
-    return null;
+  if (loadError || !assessment) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center">
+          <Card className="max-w-md mx-4">
+            <CardContent className="pt-6 text-center">
+              <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
+              <h3 className="text-lg font-semibold mb-2">Unable to Load Results</h3>
+              <p className="text-muted-foreground mb-4">
+                {loadError || "Assessment not found."}
+              </p>
+              <div className="flex gap-3 justify-center">
+                <Button variant="outline" onClick={() => navigate("/career-assessment")}>
+                  Start New Assessment
+                </Button>
+                <Button onClick={loadAssessment}>
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Try Again
+                </Button>
+              </div>
+            </CardContent>
+          </Card>
+        </main>
+        <Footer />
+      </div>
+    );
   }
 
   const readinessLevel = assessment.readiness_level || "beginner";
@@ -314,6 +387,11 @@ export default function AssessmentResults() {
                       </li>
                     ))}
                   </ul>
+                ) : analyzing ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm">Analyzing your responses...</span>
+                  </div>
                 ) : (
                   <p className="text-muted-foreground text-sm">
                     AI analysis will be available soon. Check back later for detailed insights.
@@ -340,6 +418,11 @@ export default function AssessmentResults() {
                       </li>
                     ))}
                   </ul>
+                ) : analyzing ? (
+                  <div className="flex items-center gap-2 text-muted-foreground">
+                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <span className="text-sm">Identifying improvement areas...</span>
+                  </div>
                 ) : (
                   <p className="text-muted-foreground text-sm">
                     AI analysis will identify specific improvement areas based on your responses.
@@ -374,13 +457,18 @@ export default function AssessmentResults() {
                     <p className="text-muted-foreground text-sm">
                       AI is analyzing your responses...
                     </p>
+                    {analysisRetryCount > 0 && (
+                      <p className="text-xs text-muted-foreground mt-1">
+                        Retry attempt {analysisRetryCount} of {maxRetries}
+                      </p>
+                    )}
                   </div>
                 ) : (
                   <div className="text-center py-4">
                     <p className="text-muted-foreground text-sm mb-4">
-                      Personalized recommendations are being generated...
+                      Personalized recommendations could not be generated automatically.
                     </p>
-                    <Button variant="outline" size="sm" onClick={() => id && triggerAIAnalysis(id)}>
+                    <Button variant="outline" size="sm" onClick={handleManualRetry}>
                       <RefreshCw className="h-4 w-4 mr-2" />
                       Generate Analysis
                     </Button>
