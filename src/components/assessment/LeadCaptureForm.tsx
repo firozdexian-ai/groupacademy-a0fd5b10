@@ -6,7 +6,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Checkbox } from "@/components/ui/checkbox";
-import { ArrowLeft, Loader2, Lock } from "lucide-react";
+import { ArrowLeft, Loader2, Lock, AlertCircle, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { z } from "zod";
 
@@ -35,6 +35,7 @@ export function LeadCaptureForm({
 }: LeadCaptureFormProps) {
   const navigate = useNavigate();
   const [submitting, setSubmitting] = useState(false);
+  const [submitError, setSubmitError] = useState<string | null>(null);
   const [formData, setFormData] = useState({
     full_name: "",
     email: email,
@@ -82,6 +83,7 @@ export function LeadCaptureForm({
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
+    setSubmitError(null);
 
     // Validate terms
     if (!formData.terms_accepted) {
@@ -104,7 +106,8 @@ export function LeadCaptureForm({
 
     setErrors({});
     setSubmitting(true);
-    onComplete(); // Show processing state
+
+    console.log("[LeadCaptureForm] Submitting assessment...");
 
     try {
       const scores = calculateScore();
@@ -133,17 +136,34 @@ export function LeadCaptureForm({
         .select()
         .single();
 
-      if (error) throw error;
+      if (error) {
+        console.error("[LeadCaptureForm] Database error:", error);
+        throw error;
+      }
 
+      console.log("[LeadCaptureForm] Assessment saved successfully:", assessment.id);
+      
+      // Call onComplete AFTER successful database insert
+      onComplete();
+      
       toast.success("Assessment submitted successfully!");
       
       // Navigate to results page
       navigate(`/assessment-results/${assessment.id}`);
     } catch (error: any) {
-      console.error("Error submitting assessment:", error);
-      toast.error("Failed to submit assessment. Please try again.");
+      console.error("[LeadCaptureForm] Error submitting assessment:", error);
+      const errorMessage = error.code === "23505" 
+        ? "An assessment with this email already exists. Please use a different email."
+        : "Failed to submit assessment. Please try again.";
+      setSubmitError(errorMessage);
+      toast.error(errorMessage);
       setSubmitting(false);
     }
+  };
+
+  const handleRetry = () => {
+    setSubmitError(null);
+    handleSubmit(new Event('submit') as any);
   };
 
   return (
@@ -161,6 +181,26 @@ export function LeadCaptureForm({
           </CardDescription>
         </CardHeader>
         <CardContent>
+          {submitError && (
+            <div className="mb-4 p-4 bg-destructive/10 border border-destructive/30 rounded-lg">
+              <div className="flex items-start gap-3">
+                <AlertCircle className="h-5 w-5 text-destructive mt-0.5" />
+                <div className="flex-1">
+                  <p className="text-sm text-destructive font-medium">{submitError}</p>
+                  <Button 
+                    variant="outline" 
+                    size="sm" 
+                    onClick={handleRetry}
+                    className="mt-2"
+                  >
+                    <RefreshCw className="h-4 w-4 mr-2" />
+                    Try Again
+                  </Button>
+                </div>
+              </div>
+            </div>
+          )}
+
           <form onSubmit={handleSubmit} className="space-y-4">
             <div className="space-y-2">
               <Label htmlFor="full_name">Full Name *</Label>
