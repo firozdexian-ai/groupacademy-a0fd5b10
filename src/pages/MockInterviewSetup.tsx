@@ -46,6 +46,7 @@ export default function MockInterviewSetup() {
   // Email check state
   const [email, setEmail] = useState("");
   const [checkingEmail, setCheckingEmail] = useState(false);
+  const [emailCheckError, setEmailCheckError] = useState<string | null>(null);
   const [existingInterview, setExistingInterview] = useState<any>(null);
   const [daysRemaining, setDaysRemaining] = useState(0);
   
@@ -90,8 +91,15 @@ export default function MockInterviewSetup() {
     }
 
     setCheckingEmail(true);
+    setEmailCheckError(null);
+    
+    // Create timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Request timed out")), 15000);
+    });
+
     try {
-      const { data: existing } = await supabase
+      const queryPromise = supabase
         .from("mock_interviews")
         .select("*")
         .eq("email", email.toLowerCase().trim())
@@ -99,6 +107,17 @@ export default function MockInterviewSetup() {
         .order("created_at", { ascending: false })
         .limit(1)
         .maybeSingle();
+
+      // Race between query and timeout
+      const { data: existing, error } = await Promise.race([
+        queryPromise,
+        timeoutPromise
+      ]) as any;
+
+      if (error) {
+        console.error("Database error checking email:", error);
+        throw new Error("Failed to check email. Please try again.");
+      }
 
       if (existing && new Date(existing.expires_at) > new Date()) {
         setExistingInterview(existing);
@@ -111,9 +130,13 @@ export default function MockInterviewSetup() {
       } else {
         setStep("job-description");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error checking email:", error);
-      setStep("job-description");
+      const errorMessage = error?.message === "Request timed out" 
+        ? "Connection timed out. Please check your internet and try again."
+        : "Something went wrong. Please try again.";
+      setEmailCheckError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setCheckingEmail(false);
     }
@@ -172,9 +195,14 @@ export default function MockInterviewSetup() {
     setIsGenerating(true);
     setStep("generating");
 
+    // Create timeout promise (60 seconds for AI generation)
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Generation timed out")), 60000);
+    });
+
     try {
       // Call edge function to generate questions
-      const { data, error } = await supabase.functions.invoke("generate-interview-questions", {
+      const functionPromise = supabase.functions.invoke("generate-interview-questions", {
         body: {
           jobDescription,
           questionCount: config.questionCount,
@@ -184,7 +212,19 @@ export default function MockInterviewSetup() {
         }
       });
 
-      if (error) throw error;
+      const { data, error } = await Promise.race([
+        functionPromise,
+        timeoutPromise
+      ]) as any;
+
+      if (error) {
+        console.error("Edge function error:", error);
+        throw new Error(error.message || "Failed to generate questions");
+      }
+
+      if (!data || !data.questions) {
+        throw new Error("Invalid response from AI. Please try again.");
+      }
 
       // Create mock interview record
       const { data: interview, error: insertError } = await supabase
@@ -205,13 +245,19 @@ export default function MockInterviewSetup() {
         .select()
         .single();
 
-      if (insertError) throw insertError;
+      if (insertError) {
+        console.error("Database insert error:", insertError);
+        throw new Error("Failed to save interview. Please try again.");
+      }
 
       toast.success("Questions generated! Starting your interview...");
       navigate(`/mock-interview/questions/${interview.id}`);
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating questions:", error);
-      toast.error("Failed to generate questions. Please try again.");
+      const errorMessage = error?.message === "Generation timed out"
+        ? "Question generation took too long. Please try again."
+        : error?.message || "Failed to generate questions. Please try again.";
+      toast.error(errorMessage);
       setStep("configuration");
       setIsGenerating(false);
     }
@@ -239,10 +285,20 @@ export default function MockInterviewSetup() {
                   type="email"
                   placeholder="your@email.com"
                   value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  onKeyDown={(e) => e.key === "Enter" && handleEmailCheck()}
+                  onChange={(e) => {
+                    setEmail(e.target.value);
+                    setEmailCheckError(null);
+                  }}
+                  onKeyDown={(e) => e.key === "Enter" && !checkingEmail && handleEmailCheck()}
                 />
               </div>
+              
+              {emailCheckError && (
+                <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
+                  {emailCheckError}
+                </div>
+              )}
+              
               <Button 
                 className="w-full" 
                 onClick={handleEmailCheck}
@@ -252,6 +308,11 @@ export default function MockInterviewSetup() {
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
                     Checking...
+                  </>
+                ) : emailCheckError ? (
+                  <>
+                    Try Again
+                    <ArrowRight className="ml-2 h-4 w-4" />
                   </>
                 ) : (
                   <>

@@ -10,7 +10,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Clock, Target, TrendingUp, CheckCircle, Lock, KeyRound, CalendarDays, ExternalLink } from "lucide-react";
+import { ArrowRight, Clock, Target, TrendingUp, CheckCircle, Lock, KeyRound, CalendarDays, ExternalLink, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 
 interface ProfessionCategory {
@@ -27,6 +27,7 @@ export default function CareerAssessment() {
   const [step, setStep] = useState<AssessmentStep>("landing");
   const [email, setEmail] = useState("");
   const [checkingEmail, setCheckingEmail] = useState(false);
+  const [emailCheckError, setEmailCheckError] = useState<string | null>(null);
   const [categories, setCategories] = useState<ProfessionCategory[]>([]);
   const [selectedCategory, setSelectedCategory] = useState<ProfessionCategory | null>(null);
   const [answers, setAnswers] = useState<Record<string, any>>({});
@@ -55,8 +56,15 @@ export default function CareerAssessment() {
     }
 
     setCheckingEmail(true);
+    setEmailCheckError(null);
+    
+    // Create timeout promise
+    const timeoutPromise = new Promise((_, reject) => {
+      setTimeout(() => reject(new Error("Request timed out")), 15000);
+    });
+
     try {
-      const { data: existing } = await supabase
+      const queryPromise = supabase
         .from("career_assessments")
         .select("*")
         .eq("email", email.toLowerCase().trim())
@@ -64,9 +72,19 @@ export default function CareerAssessment() {
         .limit(1)
         .maybeSingle();
 
+      // Race between query and timeout
+      const { data: existing, error } = await Promise.race([
+        queryPromise,
+        timeoutPromise
+      ]) as any;
+
+      if (error) {
+        console.error("Database error checking email:", error);
+        throw new Error("Failed to check email. Please try again.");
+      }
+
       if (existing && new Date(existing.expires_at) > new Date()) {
         setExistingAssessment(existing);
-        // Calculate days remaining
         const expiresAt = new Date(existing.expires_at);
         const now = new Date();
         const diffTime = expiresAt.getTime() - now.getTime();
@@ -76,9 +94,13 @@ export default function CareerAssessment() {
       } else {
         setStep("profession");
       }
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error checking email:", error);
-      setStep("profession");
+      const errorMessage = error?.message === "Request timed out" 
+        ? "Connection timed out. Please check your internet and try again."
+        : "Something went wrong. Please try again.";
+      setEmailCheckError(errorMessage);
+      toast.error(errorMessage);
     } finally {
       setCheckingEmail(false);
     }
@@ -168,17 +190,41 @@ export default function CareerAssessment() {
                     type="email"
                     placeholder="your@email.com"
                     value={email}
-                    onChange={(e) => setEmail(e.target.value)}
-                    onKeyDown={(e) => e.key === "Enter" && handleEmailCheck()}
+                    onChange={(e) => {
+                      setEmail(e.target.value);
+                      setEmailCheckError(null);
+                    }}
+                    onKeyDown={(e) => e.key === "Enter" && !checkingEmail && handleEmailCheck()}
                   />
                 </div>
+                
+                {emailCheckError && (
+                  <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
+                    {emailCheckError}
+                  </div>
+                )}
+                
                 <Button 
                   className="w-full" 
                   onClick={handleEmailCheck}
                   disabled={checkingEmail}
                 >
-                  {checkingEmail ? "Checking..." : "Continue"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  {checkingEmail ? (
+                    <>
+                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+                      Checking...
+                    </>
+                  ) : emailCheckError ? (
+                    <>
+                      Try Again
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  ) : (
+                    <>
+                      Continue
+                      <ArrowRight className="ml-2 h-4 w-4" />
+                    </>
+                  )}
                 </Button>
               </CardContent>
             </Card>
