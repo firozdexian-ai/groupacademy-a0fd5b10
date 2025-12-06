@@ -36,8 +36,6 @@ interface FormData {
   socialLinks: {
     linkedin?: string;
     github?: string;
-    twitter?: string;
-    website?: string;
     youtube?: string;
   };
   additionalNotes: string;
@@ -537,18 +535,6 @@ export default function PortfolioRequest() {
                     />
                   </div>
                   <div>
-                    <Label htmlFor="website">Personal Website</Label>
-                    <Input
-                      id="website"
-                      value={formData.socialLinks.website || ''}
-                      onChange={(e) => setFormData({ 
-                        ...formData, 
-                        socialLinks: { ...formData.socialLinks, website: e.target.value }
-                      })}
-                      placeholder="https://yourwebsite.com"
-                    />
-                  </div>
-                  <div>
                     <Label htmlFor="youtube">YouTube Channel</Label>
                     <Input
                       id="youtube"
@@ -619,7 +605,7 @@ export default function PortfolioRequest() {
                         <div className="text-sm space-y-1">
                           {formData.socialLinks.linkedin && <p>LinkedIn: {formData.socialLinks.linkedin}</p>}
                           {formData.socialLinks.github && <p>GitHub: {formData.socialLinks.github}</p>}
-                          {formData.socialLinks.website && <p>Website: {formData.socialLinks.website}</p>}
+                          {formData.socialLinks.youtube && <p>YouTube: {formData.socialLinks.youtube}</p>}
                         </div>
                       </div>
                     )}

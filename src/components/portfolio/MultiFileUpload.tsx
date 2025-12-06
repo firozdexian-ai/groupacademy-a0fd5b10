@@ -35,18 +35,29 @@ export default function MultiFileUpload({
   const uploadFile = async (file: File) => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-    const filePath = `uploads/${fileName}`;
+    const filePath = fileName;
 
-    const { error: uploadError } = await supabase.storage
+    console.log('[MultiFileUpload] Uploading to bucket:', bucket, 'path:', filePath);
+    
+    const { error: uploadError, data } = await supabase.storage
       .from(bucket)
-      .upload(filePath, file);
+      .upload(filePath, file, {
+        cacheControl: '3600',
+        upsert: false
+      });
 
-    if (uploadError) throw uploadError;
+    if (uploadError) {
+      console.error('[MultiFileUpload] Upload error:', uploadError);
+      throw uploadError;
+    }
+
+    console.log('[MultiFileUpload] Upload successful:', data);
 
     const { data: { publicUrl } } = supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
 
+    console.log('[MultiFileUpload] Public URL:', publicUrl);
     return { name: file.name, url: publicUrl };
   };
 
