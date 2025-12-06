@@ -3,18 +3,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, X, FileText, Loader2, RefreshCw, AlertCircle } from "lucide-react";
+import { Upload, X, FileText, Loader2, RefreshCw, AlertCircle, Check } from "lucide-react";
 
 interface FileItem {
   name: string;
   url: string;
-}
-
-interface UploadingFile {
-  file: File;
-  progress: number;
-  status: 'uploading' | 'error' | 'complete';
-  error?: string;
 }
 
 interface MultiFileUploadProps {
@@ -27,7 +20,7 @@ interface MultiFileUploadProps {
   description?: string;
 }
 
-const UPLOAD_TIMEOUT_MS = 30000; // 30 seconds
+const UPLOAD_TIMEOUT_MS = 60000; // 60 seconds - increased for larger files
 
 export default function MultiFileUpload({
   bucket,
@@ -39,43 +32,38 @@ export default function MultiFileUpload({
   description,
 }: MultiFileUploadProps) {
   const { toast } = useToast();
-  const [uploadingFiles, setUploadingFiles] = useState<Map<string, UploadingFile>>(new Map());
+  const [isUploading, setIsUploading] = useState(false);
+  const [uploadProgress, setUploadProgress] = useState(0);
+  const [uploadingFileName, setUploadingFileName] = useState("");
+  const [uploadError, setUploadError] = useState<string | null>(null);
   const [dragActive, setDragActive] = useState(false);
-  const abortControllersRef = useRef<Map<string, AbortController>>(new Map());
+  const fileInputRef = useRef<HTMLInputElement>(null);
 
-  const uploadFile = async (file: File, fileKey: string): Promise<FileItem | null> => {
-    const abortController = new AbortController();
-    abortControllersRef.current.set(fileKey, abortController);
+  const uploadFile = async (file: File): Promise<FileItem | null> => {
+    const fileExt = file.name.split('.').pop();
+    const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
 
-    // Set timeout
+    console.log('[MultiFileUpload] Starting upload:', fileName, 'to bucket:', bucket);
+    setUploadingFileName(file.name);
+    setUploadProgress(0);
+    setUploadError(null);
+
+    // Create abort controller for timeout
+    const controller = new AbortController();
     const timeoutId = setTimeout(() => {
-      abortController.abort();
+      console.log('[MultiFileUpload] Upload timeout - aborting');
+      controller.abort();
     }, UPLOAD_TIMEOUT_MS);
 
-    try {
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
-
-      // Update progress to show upload started
-      setUploadingFiles(prev => {
-        const newMap = new Map(prev);
-        newMap.set(fileKey, { file, progress: 10, status: 'uploading' });
-        return newMap;
+    // Simulate progress while uploading
+    const progressInterval = setInterval(() => {
+      setUploadProgress(prev => {
+        if (prev >= 85) return prev; // Cap at 85% until actual completion
+        return prev + 5;
       });
+    }, 300);
 
-      // Simulate progress updates (Supabase doesn't provide real progress)
-      const progressInterval = setInterval(() => {
-        setUploadingFiles(prev => {
-          const current = prev.get(fileKey);
-          if (current && current.status === 'uploading' && current.progress < 90) {
-            const newMap = new Map(prev);
-            newMap.set(fileKey, { ...current, progress: Math.min(current.progress + 10, 90) });
-            return newMap;
-          }
-          return prev;
-        });
-      }, 500);
-
+    try {
       const { error: uploadError, data } = await supabase.storage
         .from(bucket)
         .upload(fileName, file, {
@@ -85,52 +73,38 @@ export default function MultiFileUpload({
 
       clearInterval(progressInterval);
       clearTimeout(timeoutId);
-      abortControllersRef.current.delete(fileKey);
 
       if (uploadError) {
+        console.error('[MultiFileUpload] Upload error:', uploadError);
         throw uploadError;
       }
 
-      const { data: { publicUrl } } = supabase.storage
+      console.log('[MultiFileUpload] Upload successful:', data);
+      setUploadProgress(100);
+
+      const { data: urlData } = supabase.storage
         .from(bucket)
         .getPublicUrl(fileName);
 
-      // Update to complete
-      setUploadingFiles(prev => {
-        const newMap = new Map(prev);
-        newMap.set(fileKey, { file, progress: 100, status: 'complete' });
-        return newMap;
-      });
-
-      // Remove from uploading after short delay
-      setTimeout(() => {
-        setUploadingFiles(prev => {
-          const newMap = new Map(prev);
-          newMap.delete(fileKey);
-          return newMap;
-        });
-      }, 500);
-
-      return { name: file.name, url: publicUrl };
+      console.log('[MultiFileUpload] Public URL:', urlData.publicUrl);
+      
+      return { name: file.name, url: urlData.publicUrl };
     } catch (error: any) {
+      clearInterval(progressInterval);
       clearTimeout(timeoutId);
-      abortControllersRef.current.delete(fileKey);
 
       const errorMessage = error.name === 'AbortError' 
-        ? 'Upload timed out. Please retry.'
+        ? 'Upload timed out. Please try again.'
         : error.message || 'Upload failed';
 
-      setUploadingFiles(prev => {
-        const newMap = new Map(prev);
-        newMap.set(fileKey, { file, progress: 0, status: 'error', error: errorMessage });
-        return newMap;
-      });
-
+      console.error('[MultiFileUpload] Error:', errorMessage);
+      setUploadError(errorMessage);
+      setUploadProgress(0);
       return null;
     }
   };
 
-  const handleFiles = async (files: FileList | null) => {
+  const handleFileSelect = async (files: FileList | null) => {
     if (!files || files.length === 0) return;
 
     const remainingSlots = maxFiles - value.length;
@@ -139,66 +113,53 @@ export default function MultiFileUpload({
       return;
     }
 
-    const filesToUpload = Array.from(files).slice(0, remainingSlots);
+    const file = files[0]; // Handle one file at a time for better UX
     
-    // Validate file sizes (max 10MB each)
-    for (const file of filesToUpload) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast({ title: "File too large", description: `${file.name} exceeds 10MB limit`, variant: "destructive" });
-        return;
+    // Validate file size (max 10MB)
+    if (file.size > 10 * 1024 * 1024) {
+      toast({ title: "File too large", description: `${file.name} exceeds 10MB limit`, variant: "destructive" });
+      return;
+    }
+
+    setIsUploading(true);
+    setUploadError(null);
+
+    try {
+      const result = await uploadFile(file);
+      
+      if (result) {
+        console.log('[MultiFileUpload] Adding file to list:', result);
+        const newFiles = [...value, result];
+        onChange(newFiles);
+        toast({ title: "Upload complete", description: `${file.name} uploaded successfully` });
+        
+        // Reset state after successful upload
+        setTimeout(() => {
+          setIsUploading(false);
+          setUploadProgress(0);
+          setUploadingFileName("");
+        }, 500);
+      } else {
+        setIsUploading(false);
       }
+    } catch (error: any) {
+      console.error('[MultiFileUpload] Unexpected error:', error);
+      setUploadError(error.message || 'Upload failed');
+      setIsUploading(false);
     }
 
-    const uploadPromises = filesToUpload.map(async (file) => {
-      const fileKey = `${file.name}-${Date.now()}`;
-      return uploadFile(file, fileKey);
-    });
-
-    const results = await Promise.all(uploadPromises);
-    const successfulUploads = results.filter((r): r is FileItem => r !== null);
-    
-    if (successfulUploads.length > 0) {
-      onChange([...value, ...successfulUploads]);
-      toast({ title: "Upload complete", description: `${successfulUploads.length} file(s) uploaded` });
+    // Reset file input
+    if (fileInputRef.current) {
+      fileInputRef.current.value = '';
     }
   };
 
-  const retryUpload = async (fileKey: string) => {
-    const uploadingFile = uploadingFiles.get(fileKey);
-    if (!uploadingFile) return;
-
-    // Reset status and retry
-    setUploadingFiles(prev => {
-      const newMap = new Map(prev);
-      newMap.set(fileKey, { ...uploadingFile, progress: 0, status: 'uploading', error: undefined });
-      return newMap;
-    });
-
-    const result = await uploadFile(uploadingFile.file, fileKey);
-    if (result) {
-      onChange([...value, result]);
-      toast({ title: "Upload complete", description: `${result.name} uploaded successfully` });
-    }
-  };
-
-  const cancelUpload = (fileKey: string) => {
-    const controller = abortControllersRef.current.get(fileKey);
-    if (controller) {
-      controller.abort();
-    }
-    setUploadingFiles(prev => {
-      const newMap = new Map(prev);
-      newMap.delete(fileKey);
-      return newMap;
-    });
-  };
-
-  const removeErroredUpload = (fileKey: string) => {
-    setUploadingFiles(prev => {
-      const newMap = new Map(prev);
-      newMap.delete(fileKey);
-      return newMap;
-    });
+  const handleRetry = () => {
+    setUploadError(null);
+    setUploadProgress(0);
+    setUploadingFileName("");
+    setIsUploading(false);
+    fileInputRef.current?.click();
   };
 
   const handleDrag = useCallback((e: React.DragEvent) => {
@@ -215,8 +176,10 @@ export default function MultiFileUpload({
     e.preventDefault();
     e.stopPropagation();
     setDragActive(false);
-    handleFiles(e.dataTransfer.files);
-  }, [value, maxFiles]);
+    if (!isUploading) {
+      handleFileSelect(e.dataTransfer.files);
+    }
+  }, [isUploading, value, maxFiles]);
 
   const removeFile = (index: number) => {
     const newFiles = [...value];
@@ -224,33 +187,29 @@ export default function MultiFileUpload({
     onChange(newFiles);
   };
 
-  const isUploading = Array.from(uploadingFiles.values()).some(f => f.status === 'uploading');
-
   return (
     <div className="space-y-3">
       <div className="text-sm font-medium">{label}</div>
       {description && <p className="text-xs text-muted-foreground">{description}</p>}
       
       {/* Upload Area */}
-      {value.length < maxFiles && (
+      {value.length < maxFiles && !isUploading && !uploadError && (
         <div
           className={`
             border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
             ${dragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50'}
-            ${isUploading ? 'pointer-events-none opacity-50' : ''}
           `}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
-          onClick={() => !isUploading && document.getElementById(`file-input-${label}`)?.click()}
+          onClick={() => fileInputRef.current?.click()}
         >
           <input
-            id={`file-input-${label}`}
+            ref={fileInputRef}
             type="file"
-            multiple={maxFiles > 1}
             accept={acceptedTypes}
-            onChange={(e) => handleFiles(e.target.files)}
+            onChange={(e) => handleFileSelect(e.target.files)}
             className="hidden"
           />
           
@@ -266,63 +225,40 @@ export default function MultiFileUpload({
         </div>
       )}
 
-      {/* Uploading Files with Progress */}
-      {uploadingFiles.size > 0 && (
-        <div className="space-y-2">
-          {Array.from(uploadingFiles.entries()).map(([key, uploadingFile]) => (
-            <div
-              key={key}
-              className={`p-3 rounded-lg border ${
-                uploadingFile.status === 'error' 
-                  ? 'bg-destructive/10 border-destructive/30' 
-                  : 'bg-muted'
-              }`}
-            >
-              <div className="flex items-center justify-between mb-2">
-                <div className="flex items-center gap-2 min-w-0">
-                  {uploadingFile.status === 'uploading' ? (
-                    <Loader2 className="h-4 w-4 shrink-0 text-primary animate-spin" />
-                  ) : uploadingFile.status === 'error' ? (
-                    <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
-                  ) : (
-                    <FileText className="h-4 w-4 shrink-0 text-primary" />
-                  )}
-                  <span className="text-sm truncate">{uploadingFile.file.name}</span>
-                </div>
-                <div className="flex items-center gap-1">
-                  {uploadingFile.status === 'error' && (
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      className="h-8 w-8 shrink-0"
-                      onClick={() => retryUpload(key)}
-                    >
-                      <RefreshCw className="h-4 w-4" />
-                    </Button>
-                  )}
-                  <Button
-                    variant="ghost"
-                    size="icon"
-                    className="h-8 w-8 shrink-0"
-                    onClick={() => uploadingFile.status === 'uploading' ? cancelUpload(key) : removeErroredUpload(key)}
-                  >
-                    <X className="h-4 w-4" />
-                  </Button>
-                </div>
-              </div>
-              
-              {uploadingFile.status === 'uploading' && (
-                <div className="space-y-1">
-                  <Progress value={uploadingFile.progress} className="h-2" />
-                  <p className="text-xs text-muted-foreground text-right">{uploadingFile.progress}%</p>
-                </div>
+      {/* Upload Progress */}
+      {isUploading && (
+        <div className="p-4 bg-muted rounded-lg space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              {uploadProgress >= 100 ? (
+                <Check className="h-4 w-4 text-green-600" />
+              ) : (
+                <Loader2 className="h-4 w-4 animate-spin text-primary" />
               )}
-              
-              {uploadingFile.status === 'error' && (
-                <p className="text-xs text-destructive">{uploadingFile.error}</p>
-              )}
+              <span className="text-sm font-medium truncate max-w-[200px]">{uploadingFileName}</span>
             </div>
-          ))}
+            <span className="text-sm text-muted-foreground">{uploadProgress}%</span>
+          </div>
+          <Progress value={uploadProgress} className="h-2" />
+          <p className="text-xs text-muted-foreground">
+            {uploadProgress >= 100 ? 'Finalizing...' : 'Uploading...'}
+          </p>
+        </div>
+      )}
+
+      {/* Upload Error */}
+      {uploadError && !isUploading && (
+        <div className="p-4 bg-destructive/10 border border-destructive/30 rounded-lg space-y-3">
+          <div className="flex items-center justify-between">
+            <div className="flex items-center gap-2">
+              <AlertCircle className="h-4 w-4 text-destructive" />
+              <span className="text-sm font-medium text-destructive">Upload failed</span>
+            </div>
+          </div>
+          <p className="text-xs text-destructive">{uploadError}</p>
+          <Button variant="outline" size="sm" onClick={handleRetry}>
+            <RefreshCw className="h-4 w-4 mr-1" /> Try Again
+          </Button>
         </div>
       )}
 
@@ -337,6 +273,7 @@ export default function MultiFileUpload({
               <div className="flex items-center gap-2 min-w-0">
                 <FileText className="h-4 w-4 shrink-0 text-primary" />
                 <span className="text-sm truncate">{file.name}</span>
+                <Check className="h-4 w-4 shrink-0 text-green-600" />
               </div>
               <Button
                 variant="ghost"
