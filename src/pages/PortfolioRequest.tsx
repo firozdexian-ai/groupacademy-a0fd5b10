@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -12,7 +12,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import MultiFileUpload from "@/components/portfolio/MultiFileUpload";
 import ProfileBuilderForm, { ProfileData } from "@/components/portfolio/ProfileBuilderForm";
-import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine, RefreshCw, AlertCircle } from "lucide-react";
+import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine } from "lucide-react";
 
 type Step = 'personal' | 'cv' | 'certificates' | 'social' | 'review';
 
@@ -21,6 +21,39 @@ interface ProfessionCategory {
   name: string;
   slug: string;
 }
+
+// Static fallback categories - synced via admin dashboard
+const DEFAULT_CATEGORIES: ProfessionCategory[] = [
+  { id: 'student-undergrad', name: 'Student (Undergraduate)', slug: 'student-undergrad' },
+  { id: 'student-graduate', name: 'Student (Graduate/Masters)', slug: 'student-graduate' },
+  { id: 'fresh-graduate', name: 'Fresh Graduate', slug: 'fresh-graduate' },
+  { id: 'banking-finance', name: 'Banking & Finance', slug: 'banking-finance' },
+  { id: 'sales-marketing', name: 'Sales & Marketing', slug: 'sales-marketing' },
+  { id: 'technology-it', name: 'Technology & IT', slug: 'technology-it' },
+  { id: 'human-resources', name: 'Human Resources', slug: 'human-resources' },
+  { id: 'operations-supply-chain', name: 'Operations & Supply Chain', slug: 'operations-supply-chain' },
+  { id: 'healthcare-pharma', name: 'Healthcare & Pharma', slug: 'healthcare-pharma' },
+  { id: 'career-changer', name: 'Career Changer', slug: 'career-changer' },
+  { id: 'other', name: 'Other', slug: 'other' },
+];
+
+const CATEGORIES_STORAGE_KEY = 'group_academy_profession_categories';
+
+// Get categories from localStorage or use defaults
+const getStoredCategories = (): ProfessionCategory[] => {
+  try {
+    const stored = localStorage.getItem(CATEGORIES_STORAGE_KEY);
+    if (stored) {
+      const parsed = JSON.parse(stored);
+      if (Array.isArray(parsed) && parsed.length > 0) {
+        return parsed;
+      }
+    }
+  } catch (e) {
+    console.warn('[PortfolioRequest] Failed to parse stored categories');
+  }
+  return DEFAULT_CATEGORIES;
+};
 
 interface FormData {
   fullName: string;
@@ -92,8 +125,9 @@ export default function PortfolioRequest() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [isSuccess, setIsSuccess] = useState(false);
   const [requestId, setRequestId] = useState<string>("");
-  const [professionCategories, setProfessionCategories] = useState<ProfessionCategory[]>([]);
-  const [categoriesStatus, setCategoriesStatus] = useState<'loading' | 'loaded' | 'error'>('loading');
+  
+  // Use stored categories immediately - no loading state needed
+  const [professionCategories] = useState<ProfessionCategory[]>(getStoredCategories);
   
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
@@ -110,45 +144,6 @@ export default function PortfolioRequest() {
     additionalNotes: '',
   });
 
-  useEffect(() => {
-    loadProfessionCategories();
-  }, []);
-
-  const loadProfessionCategories = async () => {
-    setCategoriesStatus('loading');
-    
-    try {
-      // Add timeout
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), 10000);
-      
-      const { data, error } = await supabase
-        .from('profession_categories')
-        .select('id, name, slug')
-        .eq('is_active', true)
-        .order('display_order')
-        .abortSignal(controller.signal);
-      
-      clearTimeout(timeoutId);
-      
-      if (error) {
-        console.error('[PortfolioRequest] Error loading categories:', error);
-        setCategoriesStatus('error');
-        return;
-      }
-      
-      if (data && data.length > 0) {
-        setProfessionCategories(data);
-        setCategoriesStatus('loaded');
-      } else {
-        setCategoriesStatus('error');
-      }
-    } catch (err: any) {
-      console.error('[PortfolioRequest] Failed to load categories:', err);
-      setCategoriesStatus('error');
-    }
-  };
-
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
   const selectedCategory = professionCategories.find(c => c.id === formData.professionCategoryId);
   const isOtherCategory = selectedCategory?.slug === 'other';
@@ -159,7 +154,7 @@ export default function PortfolioRequest() {
         const hasName = formData.fullName.trim().length >= 2;
         const hasEmail = formData.email.includes('@');
         const hasPhone = formData.phone.replace(/\D/g, '').length >= 10;
-        const hasCategory = !!formData.professionCategoryId || categoriesStatus === 'error';
+        const hasCategory = !!formData.professionCategoryId;
         const hasCustomProfession = !isOtherCategory || formData.customProfession.trim().length > 0;
         return hasName && hasEmail && hasPhone && hasCategory && hasCustomProfession;
       case 'cv':
@@ -416,34 +411,7 @@ export default function PortfolioRequest() {
                   </div>
                   <div>
                     <Label htmlFor="profession">Profession / Status *</Label>
-                    {categoriesStatus === 'loading' ? (
-                      <div className="flex items-center gap-2 p-3 border rounded-md bg-muted/50">
-                        <Loader2 className="h-4 w-4 animate-spin" />
-                        <span className="text-sm text-muted-foreground">Loading categories...</span>
-                      </div>
-                    ) : categoriesStatus === 'error' ? (
-                      <div className="space-y-2">
-                        <div className="flex items-center gap-2 p-3 border border-destructive/50 rounded-md bg-destructive/5">
-                          <AlertCircle className="h-4 w-4 text-destructive" />
-                          <span className="text-sm text-muted-foreground">Failed to load categories</span>
-                          <Button 
-                            variant="ghost" 
-                            size="sm" 
-                            onClick={loadProfessionCategories}
-                            className="ml-auto"
-                          >
-                            <RefreshCw className="h-4 w-4 mr-1" />
-                            Retry
-                          </Button>
-                        </div>
-                        <Input
-                          value={formData.customProfession}
-                          onChange={(e) => setFormData({ ...formData, customProfession: e.target.value })}
-                          placeholder="Enter your profession or field of study"
-                        />
-                      </div>
-                    ) : (
-                      <Select
+                    <Select
                         value={formData.professionCategoryId}
                         onValueChange={(value) => setFormData({ ...formData, professionCategoryId: value, customProfession: '' })}
                       >
@@ -489,7 +457,6 @@ export default function PortfolioRequest() {
                           )}
                         </SelectContent>
                       </Select>
-                    )}
                   </div>
                   {isOtherCategory && (
                     <div>
