@@ -11,7 +11,7 @@ import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, Di
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { Search, ExternalLink, Loader2, Eye, FileText, MessageCircle, Download, User, GraduationCap, Briefcase, Wrench, FolderOpen, Award } from "lucide-react";
+import { Search, ExternalLink, Loader2, Eye, FileText, MessageCircle, Download, User, GraduationCap, Briefcase, Wrench, FolderOpen, Award, Upload, Image, CreditCard, Truck } from "lucide-react";
 import ProfileSummaryPDFTemplate from "@/components/portfolio/ProfileSummaryPDFTemplate";
 import { generateProfileSummaryPDF } from "@/lib/profilePdfGenerator";
 
@@ -42,6 +42,11 @@ interface PortfolioRequest {
   profile_data: ProfileData | null;
   created_at: string;
   profession_category?: { name: string } | null;
+  // New delivery fields
+  payment_status?: string | null;
+  payment_reference_url?: string | null;
+  delivery_screenshot_url?: string | null;
+  delivered_at?: string | null;
 }
 
 const statusColors: Record<string, string> = {
@@ -58,6 +63,12 @@ const statusLabels: Record<string, string> = {
   in_progress: 'In Progress',
   completed: 'Completed',
   cancelled: 'Cancelled',
+};
+
+const paymentStatusColors: Record<string, string> = {
+  pending: 'bg-yellow-500/10 text-yellow-600',
+  paid: 'bg-green-500/10 text-green-600',
+  free: 'bg-blue-500/10 text-blue-600',
 };
 
 const proficiencyColors: Record<string, string> = {
@@ -78,6 +89,8 @@ export default function PortfolioRequestsManager() {
   const [isUpdating, setIsUpdating] = useState(false);
   const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
   const [showPdfTemplate, setShowPdfTemplate] = useState(false);
+  const [uploadingPaymentRef, setUploadingPaymentRef] = useState(false);
+  const [uploadingDeliveryScreenshot, setUploadingDeliveryScreenshot] = useState(false);
   
   // Edit form state
   const [editStatus, setEditStatus] = useState("");
@@ -85,6 +98,9 @@ export default function PortfolioRequestsManager() {
   const [editPortfolioUrl, setEditPortfolioUrl] = useState("");
   const [editCmsEmail, setEditCmsEmail] = useState("");
   const [editCmsPassword, setEditCmsPassword] = useState("");
+  const [editPaymentStatus, setEditPaymentStatus] = useState("pending");
+  const [editPaymentRefUrl, setEditPaymentRefUrl] = useState("");
+  const [editDeliveryScreenshotUrl, setEditDeliveryScreenshotUrl] = useState("");
 
   useEffect(() => {
     loadRequests();
@@ -117,7 +133,58 @@ export default function PortfolioRequestsManager() {
     setEditPortfolioUrl(request.portfolio_url || "");
     setEditCmsEmail(request.portfolio_credentials?.email || "");
     setEditCmsPassword(request.portfolio_credentials?.password || "");
+    setEditPaymentStatus(request.payment_status || "pending");
+    setEditPaymentRefUrl(request.payment_reference_url || "");
+    setEditDeliveryScreenshotUrl(request.delivery_screenshot_url || "");
     setIsDetailOpen(true);
+  };
+
+  const uploadFile = async (file: File, folder: string): Promise<string | null> => {
+    try {
+      const fileExt = file.name.split('.').pop();
+      const fileName = `${folder}/${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
+      
+      const { error } = await supabase.storage
+        .from('portfolio-uploads')
+        .upload(fileName, file, { cacheControl: '3600', upsert: false });
+
+      if (error) throw error;
+
+      const { data: { publicUrl } } = supabase.storage
+        .from('portfolio-uploads')
+        .getPublicUrl(fileName);
+
+      return publicUrl;
+    } catch (error: any) {
+      toast({ title: "Upload failed", description: error.message, variant: "destructive" });
+      return null;
+    }
+  };
+
+  const handlePaymentRefUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingPaymentRef(true);
+    const url = await uploadFile(file, 'payment-references');
+    if (url) {
+      setEditPaymentRefUrl(url);
+      toast({ title: "Uploaded", description: "Payment reference uploaded" });
+    }
+    setUploadingPaymentRef(false);
+  };
+
+  const handleDeliveryScreenshotUpload = async (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+
+    setUploadingDeliveryScreenshot(true);
+    const url = await uploadFile(file, 'delivery-screenshots');
+    if (url) {
+      setEditDeliveryScreenshotUrl(url);
+      toast({ title: "Uploaded", description: "Delivery screenshot uploaded" });
+    }
+    setUploadingDeliveryScreenshot(false);
   };
 
   const handleUpdate = async () => {
@@ -128,6 +195,9 @@ export default function PortfolioRequestsManager() {
       const updates: any = {
         status: editStatus,
         admin_notes: editAdminNotes || null,
+        payment_status: editPaymentStatus,
+        payment_reference_url: editPaymentRefUrl || null,
+        delivery_screenshot_url: editDeliveryScreenshotUrl || null,
       };
 
       if (editStatus === 'completed') {
@@ -135,6 +205,7 @@ export default function PortfolioRequestsManager() {
         updates.portfolio_credentials = (editCmsEmail || editCmsPassword) 
           ? { email: editCmsEmail, password: editCmsPassword }
           : null;
+        updates.delivered_at = new Date().toISOString();
       }
 
       const { error } = await supabase
@@ -161,7 +232,6 @@ export default function PortfolioRequestsManager() {
     setShowPdfTemplate(true);
     
     try {
-      // Small delay to ensure template is rendered
       await new Promise(resolve => setTimeout(resolve, 100));
       await generateProfileSummaryPDF(selectedRequest.full_name);
       toast({ title: "Success", description: "Profile summary downloaded" });
@@ -263,6 +333,7 @@ export default function PortfolioRequestsManager() {
               <TableHead>Name</TableHead>
               <TableHead>Profession</TableHead>
               <TableHead>Type</TableHead>
+              <TableHead>Payment</TableHead>
               <TableHead>Status</TableHead>
               <TableHead>Date</TableHead>
               <TableHead>Actions</TableHead>
@@ -271,7 +342,7 @@ export default function PortfolioRequestsManager() {
           <TableBody>
             {filteredRequests.length === 0 ? (
               <TableRow>
-                <TableCell colSpan={6} className="text-center py-8 text-muted-foreground">
+                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
                   No portfolio requests found
                 </TableCell>
               </TableRow>
@@ -300,6 +371,11 @@ export default function PortfolioRequestsManager() {
                         </Badge>
                       )}
                     </div>
+                  </TableCell>
+                  <TableCell>
+                    <Badge className={paymentStatusColors[request.payment_status || 'pending']}>
+                      {(request.payment_status || 'pending').charAt(0).toUpperCase() + (request.payment_status || 'pending').slice(1)}
+                    </Badge>
                   </TableCell>
                   <TableCell>
                     <Badge className={statusColors[request.status]}>
@@ -356,12 +432,13 @@ export default function PortfolioRequestsManager() {
 
           {selectedRequest && (
             <Tabs defaultValue="overview" className="w-full">
-              <TabsList className="grid w-full grid-cols-4">
+              <TabsList className="grid w-full grid-cols-5">
                 <TabsTrigger value="overview">Overview</TabsTrigger>
                 <TabsTrigger value="profile" disabled={!hasProfileData(selectedRequest)}>
-                  Profile Data
+                  Profile
                 </TabsTrigger>
                 <TabsTrigger value="documents">Documents</TabsTrigger>
+                <TabsTrigger value="delivery">Delivery</TabsTrigger>
                 <TabsTrigger value="admin">Admin</TabsTrigger>
               </TabsList>
 
@@ -589,6 +666,109 @@ export default function PortfolioRequestsManager() {
                     <p className="text-sm bg-muted p-3 rounded-lg whitespace-pre-wrap">{selectedRequest.achievements}</p>
                   </div>
                 )}
+              </TabsContent>
+
+              {/* Delivery Tab - NEW */}
+              <TabsContent value="delivery" className="space-y-4">
+                {/* Payment Status */}
+                <div className="space-y-2">
+                  <div className="flex items-center gap-2">
+                    <CreditCard className="h-5 w-5 text-primary" />
+                    <Label className="text-lg font-semibold">Payment</Label>
+                  </div>
+                  <Select value={editPaymentStatus} onValueChange={setEditPaymentStatus}>
+                    <SelectTrigger>
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="pending">Pending</SelectItem>
+                      <SelectItem value="paid">Paid (BDT 100)</SelectItem>
+                      <SelectItem value="free">Free Service</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {/* Payment Reference Upload */}
+                <div className="space-y-2">
+                  <Label>Payment Reference / Free Service Note</Label>
+                  <div className="flex items-center gap-2">
+                    <Input 
+                      value={editPaymentRefUrl} 
+                      onChange={(e) => setEditPaymentRefUrl(e.target.value)}
+                      placeholder="URL or upload screenshot..."
+                      className="flex-1"
+                    />
+                    <label className="cursor-pointer">
+                      <input 
+                        type="file" 
+                        accept="image/*" 
+                        className="hidden" 
+                        onChange={handlePaymentRefUpload}
+                        disabled={uploadingPaymentRef}
+                      />
+                      <Button variant="outline" size="icon" asChild disabled={uploadingPaymentRef}>
+                        <span>
+                          {uploadingPaymentRef ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                        </span>
+                      </Button>
+                    </label>
+                  </div>
+                  {editPaymentRefUrl && (
+                    <div className="mt-2">
+                      <Button variant="link" size="sm" className="h-auto p-0" onClick={() => window.open(editPaymentRefUrl, '_blank')}>
+                        <Image className="h-4 w-4 mr-1" /> View Payment Reference
+                      </Button>
+                    </div>
+                  )}
+                </div>
+
+                <div className="border-t pt-4 space-y-4">
+                  {/* Delivery Screenshot Upload */}
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2">
+                      <Truck className="h-5 w-5 text-primary" />
+                      <Label className="text-lg font-semibold">Delivery Proof</Label>
+                    </div>
+                    <div className="flex items-center gap-2">
+                      <Input 
+                        value={editDeliveryScreenshotUrl} 
+                        onChange={(e) => setEditDeliveryScreenshotUrl(e.target.value)}
+                        placeholder="URL or upload screenshot..."
+                        className="flex-1"
+                      />
+                      <label className="cursor-pointer">
+                        <input 
+                          type="file" 
+                          accept="image/*" 
+                          className="hidden" 
+                          onChange={handleDeliveryScreenshotUpload}
+                          disabled={uploadingDeliveryScreenshot}
+                        />
+                        <Button variant="outline" size="icon" asChild disabled={uploadingDeliveryScreenshot}>
+                          <span>
+                            {uploadingDeliveryScreenshot ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4" />}
+                          </span>
+                        </Button>
+                      </label>
+                    </div>
+                    {editDeliveryScreenshotUrl && (
+                      <div className="mt-2">
+                        <Button variant="link" size="sm" className="h-auto p-0" onClick={() => window.open(editDeliveryScreenshotUrl, '_blank')}>
+                          <Image className="h-4 w-4 mr-1" /> View Delivery Screenshot
+                        </Button>
+                      </div>
+                    )}
+                  </div>
+
+                  {/* Delivered At */}
+                  {selectedRequest.delivered_at && (
+                    <div className="bg-green-500/10 p-3 rounded-lg">
+                      <p className="text-sm text-green-600 font-medium">
+                        ✓ Delivered on {format(new Date(selectedRequest.delivered_at), 'MMM d, yyyy h:mm a')}
+                      </p>
+                    </div>
+                  )}
+                </div>
               </TabsContent>
 
               {/* Admin Tab */}
