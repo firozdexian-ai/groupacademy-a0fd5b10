@@ -12,7 +12,10 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import MultiFileUpload from "@/components/portfolio/MultiFileUpload";
 import ProfileBuilderForm, { ProfileData } from "@/components/portfolio/ProfileBuilderForm";
-import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine, RefreshCw } from "lucide-react";
+import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine, RefreshCw, Gift, Sparkles } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+
+const FREE_PORTFOLIO_LIMIT = 1000;
 
 // Fallback static categories in case database loading fails
 const FALLBACK_CATEGORIES: ProfessionCategory[] = [
@@ -84,6 +87,11 @@ export default function PortfolioRequest() {
   const [professionCategories, setProfessionCategories] = useState<ProfessionCategory[]>([]);
   const [isLoadingCategories, setIsLoadingCategories] = useState(true);
   const [categoryLoadError, setCategoryLoadError] = useState(false);
+  const [portfolioCount, setPortfolioCount] = useState<number | null>(null);
+  const [isLoadingCount, setIsLoadingCount] = useState(true);
+  
+  const remainingFree = portfolioCount !== null ? Math.max(0, FREE_PORTFOLIO_LIMIT - portfolioCount) : null;
+  const isFreePromotion = remainingFree !== null && remainingFree > 0;
   
   const [formData, setFormData] = useState<FormData>({
     fullName: '',
@@ -102,7 +110,27 @@ export default function PortfolioRequest() {
 
   useEffect(() => {
     loadProfessionCategories();
+    loadPortfolioCount();
   }, []);
+
+  const loadPortfolioCount = async () => {
+    setIsLoadingCount(true);
+    try {
+      const { count, error } = await supabase
+        .from('portfolio_requests')
+        .select('*', { count: 'exact', head: true });
+      
+      if (error) {
+        console.error('[PortfolioRequest] Error loading portfolio count:', error);
+      } else {
+        setPortfolioCount(count || 0);
+      }
+    } catch (err) {
+      console.error('[PortfolioRequest] Failed to load portfolio count:', err);
+    } finally {
+      setIsLoadingCount(false);
+    }
+  };
 
   const loadProfessionCategories = async () => {
     setIsLoadingCategories(true);
@@ -315,12 +343,65 @@ export default function PortfolioRequest() {
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-8">
+          <div className="text-center mb-6">
             <h1 className="text-3xl font-bold mb-2">Digital Portfolio Service</h1>
             <p className="text-muted-foreground">
-              Get a professional portfolio website created by our team for just BDT 100
+              Get a professional portfolio website created by our team
             </p>
           </div>
+
+          {/* Free Promotion Banner */}
+          {!isLoadingCount && (
+            <div className={`mb-6 p-4 rounded-lg border-2 ${
+              isFreePromotion 
+                ? 'bg-primary/5 border-primary/20' 
+                : 'bg-muted border-border'
+            }`}>
+              {isFreePromotion ? (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-primary/10">
+                      <Gift className="h-6 w-6 text-primary" />
+                    </div>
+                    <div>
+                      <div className="flex items-center gap-2">
+                        <span className="font-semibold text-primary">First 1000 Free!</span>
+                        <Badge variant="secondary" className="bg-primary/10 text-primary">
+                          <Sparkles className="h-3 w-3 mr-1" />
+                          Limited Offer
+                        </Badge>
+                      </div>
+                      <p className="text-sm text-muted-foreground">
+                        Get your portfolio created absolutely free
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-center sm:text-right">
+                    <div className="text-2xl font-bold text-primary">{remainingFree}</div>
+                    <p className="text-xs text-muted-foreground">spots remaining</p>
+                  </div>
+                </div>
+              ) : (
+                <div className="flex flex-col sm:flex-row items-center justify-between gap-3">
+                  <div className="flex items-center gap-3">
+                    <div className="p-2 rounded-full bg-muted">
+                      <FileText className="h-6 w-6 text-muted-foreground" />
+                    </div>
+                    <div>
+                      <span className="font-semibold">Professional Portfolio Service</span>
+                      <p className="text-sm text-muted-foreground">
+                        Get your portfolio created by our expert team
+                      </p>
+                    </div>
+                  </div>
+                  <div className="text-center sm:text-right">
+                    <div className="text-2xl font-bold">BDT 100</div>
+                    <p className="text-xs text-muted-foreground">one-time fee</p>
+                  </div>
+                </div>
+              )}
+            </div>
+          )}
 
           {/* Progress Steps */}
           <div className="flex justify-between mb-8">
