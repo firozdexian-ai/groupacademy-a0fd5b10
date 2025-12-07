@@ -12,7 +12,7 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import MultiFileUpload from "@/components/portfolio/MultiFileUpload";
 import ProfileBuilderForm, { ProfileData } from "@/components/portfolio/ProfileBuilderForm";
-import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine, RefreshCw, Gift, Sparkles } from "lucide-react";
+import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine, RefreshCw, Gift, Sparkles, Link, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 const FREE_PORTFOLIO_LIMIT = 1000;
@@ -40,14 +40,17 @@ interface ProfessionCategory {
   slug: string;
 }
 
+type CvInputMode = 'upload' | 'url' | 'profile';
+
 interface FormData {
   fullName: string;
   email: string;
   phone: string;
   professionCategoryId: string;
   customProfession: string;
-  hasCv: boolean;
+  cvInputMode: CvInputMode;
   cvUrl: string;
+  cvExternalUrl: string;
   profileData: ProfileData;
   certificates: { name: string; url: string }[];
   achievements: string;
@@ -99,8 +102,9 @@ export default function PortfolioRequest() {
     phone: '',
     professionCategoryId: '',
     customProfession: '',
-    hasCv: true,
+    cvInputMode: 'upload',
     cvUrl: '',
+    cvExternalUrl: '',
     profileData: emptyProfileData,
     certificates: [],
     achievements: '',
@@ -178,6 +182,9 @@ export default function PortfolioRequest() {
   const currentStepIndex = steps.findIndex(s => s.id === currentStep);
   const selectedCategory = professionCategories.find(c => c.id === formData.professionCategoryId);
   const isOtherCategory = selectedCategory?.slug === 'other';
+  
+  // Get the effective CV URL (either from upload or external)
+  const effectiveCvUrl = formData.cvInputMode === 'url' ? formData.cvExternalUrl : formData.cvUrl;
 
   const canProceed = (): boolean => {
     switch (currentStep) {
@@ -186,8 +193,10 @@ export default function PortfolioRequest() {
         const hasValidCategory = formData.professionCategoryId && (!isOtherCategory || formData.customProfession);
         return hasBasicInfo && !!hasValidCategory;
       case 'cv':
-        // Either has CV uploaded OR has filled profile data with at least education
-        return formData.hasCv ? !!formData.cvUrl : formData.profileData.education.length > 0;
+        // Either has CV (uploaded or URL) OR has filled profile data with at least education
+        if (formData.cvInputMode === 'upload') return !!formData.cvUrl;
+        if (formData.cvInputMode === 'url') return !!formData.cvExternalUrl && formData.cvExternalUrl.startsWith('http');
+        return formData.profileData.education.length > 0;
       case 'certificates':
         return true;
       case 'social':
@@ -225,8 +234,8 @@ export default function PortfolioRequest() {
           phone: formData.phone,
           profession_category_id: formData.professionCategoryId || null,
           custom_profession: isOtherCategory ? formData.customProfession : null,
-          cv_url: formData.hasCv ? formData.cvUrl : null,
-          profile_data: (!formData.hasCv ? formData.profileData : {}) as unknown as any,
+          cv_url: effectiveCvUrl || null,
+          profile_data: (formData.cvInputMode === 'profile' ? formData.profileData : {}) as unknown as any,
           certificates: formData.certificates as unknown as any,
           achievements: formData.achievements,
           social_links: formData.socialLinks as unknown as any,
@@ -250,7 +259,7 @@ export default function PortfolioRequest() {
             phone: formData.phone,
             profession_category_id: formData.professionCategoryId || null,
             custom_profession: isOtherCategory ? formData.customProfession : null,
-            cv_url: formData.hasCv ? formData.cvUrl : null,
+            cv_url: effectiveCvUrl || null,
             education: formData.profileData.education as unknown as any,
             experience: formData.profileData.experience as unknown as any,
             skills: formData.profileData.skills as unknown as any,
@@ -578,39 +587,114 @@ export default function PortfolioRequest() {
               {/* CV Upload Step */}
               {currentStep === 'cv' && (
                 <div className="space-y-4">
-                  {/* Toggle between CV upload and Profile Builder */}
-                  <div className="flex gap-2 p-1 bg-muted rounded-lg">
+                  {/* Toggle between CV upload, URL, and Profile Builder */}
+                  <div className="grid grid-cols-3 gap-2 p-1 bg-muted rounded-lg">
                     <Button
                       type="button"
-                      variant={formData.hasCv ? "default" : "ghost"}
+                      variant={formData.cvInputMode === 'upload' ? "default" : "ghost"}
                       className="flex-1"
-                      onClick={() => setFormData({ ...formData, hasCv: true })}
+                      onClick={() => setFormData({ ...formData, cvInputMode: 'upload' })}
                     >
                       <FileUp className="h-4 w-4 mr-2" />
-                      I have a CV
+                      <span className="hidden sm:inline">Upload CV</span>
+                      <span className="sm:hidden">Upload</span>
                     </Button>
                     <Button
                       type="button"
-                      variant={!formData.hasCv ? "default" : "ghost"}
+                      variant={formData.cvInputMode === 'url' ? "default" : "ghost"}
                       className="flex-1"
-                      onClick={() => setFormData({ ...formData, hasCv: false })}
+                      onClick={() => setFormData({ ...formData, cvInputMode: 'url' })}
+                    >
+                      <Link className="h-4 w-4 mr-2" />
+                      <span className="hidden sm:inline">Paste Link</span>
+                      <span className="sm:hidden">Link</span>
+                    </Button>
+                    <Button
+                      type="button"
+                      variant={formData.cvInputMode === 'profile' ? "default" : "ghost"}
+                      className="flex-1"
+                      onClick={() => setFormData({ ...formData, cvInputMode: 'profile' })}
                     >
                       <PenLine className="h-4 w-4 mr-2" />
-                      Fill in my info
+                      <span className="hidden sm:inline">Fill Info</span>
+                      <span className="sm:hidden">Fill</span>
                     </Button>
                   </div>
 
-                  {formData.hasCv ? (
-                    <MultiFileUpload
-                      bucket="portfolio-uploads"
-                      maxFiles={1}
-                      acceptedTypes=".pdf,.doc,.docx"
-                      value={formData.cvUrl ? [{ name: 'CV', url: formData.cvUrl }] : []}
-                      onChange={(files) => setFormData({ ...formData, cvUrl: files[0]?.url || '' })}
-                      label="Upload your CV/Resume"
-                      description="PDF or Word document (max 10MB)"
-                    />
-                  ) : (
+                  {formData.cvInputMode === 'upload' && (
+                    <div className="space-y-4">
+                      <MultiFileUpload
+                        bucket="portfolio-uploads"
+                        maxFiles={1}
+                        acceptedTypes=".pdf,.doc,.docx"
+                        value={formData.cvUrl ? [{ name: 'CV', url: formData.cvUrl }] : []}
+                        onChange={(files) => setFormData({ ...formData, cvUrl: files[0]?.url || '' })}
+                        label="Upload your CV/Resume"
+                        description="PDF or Word document (max 5MB). Upload may take 1-2 minutes on slow connections."
+                      />
+                      
+                      {/* Alternative option hint */}
+                      <div className="text-center py-2">
+                        <p className="text-xs text-muted-foreground">
+                          Upload taking too long? Try{' '}
+                          <button 
+                            type="button"
+                            className="text-primary underline"
+                            onClick={() => setFormData({ ...formData, cvInputMode: 'url' })}
+                          >
+                            pasting a link
+                          </button>
+                          {' '}to your CV instead.
+                        </p>
+                      </div>
+                    </div>
+                  )}
+
+                  {formData.cvInputMode === 'url' && (
+                    <div className="space-y-4">
+                      <div className="bg-primary/5 border border-primary/20 p-4 rounded-lg text-sm">
+                        <p className="font-medium mb-1 flex items-center gap-2">
+                          <ExternalLink className="h-4 w-4" />
+                          Already have your CV online?
+                        </p>
+                        <p className="text-muted-foreground">
+                          Paste a link to your CV from Google Drive, Dropbox, OneDrive, or any public URL.
+                          Make sure the link is publicly accessible (anyone with link can view).
+                        </p>
+                      </div>
+                      
+                      <div>
+                        <Label htmlFor="cvExternalUrl">CV Link *</Label>
+                        <Input
+                          id="cvExternalUrl"
+                          type="url"
+                          value={formData.cvExternalUrl}
+                          onChange={(e) => setFormData({ ...formData, cvExternalUrl: e.target.value })}
+                          placeholder="https://drive.google.com/file/d/... or https://dropbox.com/..."
+                        />
+                        <p className="text-xs text-muted-foreground mt-1">
+                          Supported: Google Drive, Dropbox, OneDrive, or any direct link to your CV
+                        </p>
+                      </div>
+                      
+                      {formData.cvExternalUrl && formData.cvExternalUrl.startsWith('http') && (
+                        <div className="flex items-center gap-2 p-3 bg-muted rounded-lg">
+                          <FileText className="h-4 w-4 text-primary" />
+                          <span className="text-sm flex-1 truncate">{formData.cvExternalUrl}</span>
+                          <a 
+                            href={formData.cvExternalUrl} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-primary hover:underline text-sm"
+                          >
+                            Preview
+                          </a>
+                        </div>
+                      )}
+                    </div>
+                  )}
+
+                  {formData.cvInputMode === 'profile' && (
                     <div className="space-y-4">
                       <div className="bg-muted/50 p-4 rounded-lg text-sm">
                         <p className="font-medium mb-1">Don't have a CV? No problem!</p>
@@ -741,9 +825,13 @@ export default function PortfolioRequest() {
                         <FileText className="h-4 w-4" /> Documents & Profile
                       </h4>
                       <div className="text-sm space-y-1">
-                        {formData.hasCv ? (
+                        {formData.cvInputMode === 'upload' && (
                           <p><span className="text-muted-foreground">CV:</span> {formData.cvUrl ? 'Uploaded ✓' : 'Not uploaded'}</p>
-                        ) : (
+                        )}
+                        {formData.cvInputMode === 'url' && (
+                          <p><span className="text-muted-foreground">CV Link:</span> {formData.cvExternalUrl ? 'Provided ✓' : 'Not provided'}</p>
+                        )}
+                        {formData.cvInputMode === 'profile' && (
                           <>
                             <p><span className="text-muted-foreground">Profile Info:</span> Filled manually ✓</p>
                             <p><span className="text-muted-foreground">Education:</span> {formData.profileData.education.length} entries</p>

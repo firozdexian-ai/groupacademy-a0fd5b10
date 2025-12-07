@@ -1,8 +1,8 @@
-import { useState, useCallback } from "react";
+import { useState, useCallback, useRef } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, X, FileText, Loader2 } from "lucide-react";
+import { Upload, X, FileText, Loader2, RefreshCw, XCircle } from "lucide-react";
 
 interface FileItem {
   name: string;
@@ -19,6 +19,8 @@ interface MultiFileUploadProps {
   description?: string;
 }
 
+type UploadStatus = 'idle' | 'uploading' | 'success' | 'error';
+
 export default function MultiFileUpload({
   bucket,
   maxFiles = 5,
@@ -29,29 +31,47 @@ export default function MultiFileUpload({
   description,
 }: MultiFileUploadProps) {
   const { toast } = useToast();
-  const [uploading, setUploading] = useState(false);
+  const [uploadStatus, setUploadStatus] = useState<UploadStatus>('idle');
   const [uploadProgress, setUploadProgress] = useState(0);
+  const [statusMessage, setStatusMessage] = useState('');
   const [dragActive, setDragActive] = useState(false);
+  const [lastFailedFiles, setLastFailedFiles] = useState<File[]>([]);
+  const abortControllerRef = useRef<AbortController | null>(null);
 
-  const uploadFile = async (file: File) => {
+  const uploadFile = async (file: File, signal: AbortSignal): Promise<FileItem> => {
     const fileExt = file.name.split('.').pop();
     const fileName = `${Date.now()}-${Math.random().toString(36).substring(7)}.${fileExt}`;
     const filePath = fileName;
+
+    // Check if aborted
+    if (signal.aborted) {
+      throw new Error('Upload cancelled');
+    }
+
+    console.log(`[MultiFileUpload] Starting upload: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)}MB)`);
 
     const { error: uploadError } = await supabase.storage
       .from(bucket)
       .upload(filePath, file);
 
-    if (uploadError) throw uploadError;
+    if (signal.aborted) {
+      throw new Error('Upload cancelled');
+    }
+
+    if (uploadError) {
+      console.error('[MultiFileUpload] Supabase upload error:', uploadError);
+      throw uploadError;
+    }
 
     const { data: { publicUrl } } = supabase.storage
       .from(bucket)
       .getPublicUrl(filePath);
 
+    console.log(`[MultiFileUpload] Upload complete: ${file.name} -> ${publicUrl}`);
     return { name: file.name, url: publicUrl };
   };
 
-  const handleFiles = async (files: FileList | null) => {
+  const handleFiles = async (files: FileList | null, isRetry = false) => {
     if (!files || files.length === 0) return;
 
     const remainingSlots = maxFiles - value.length;
@@ -62,47 +82,98 @@ export default function MultiFileUpload({
 
     const filesToUpload = Array.from(files).slice(0, remainingSlots);
     
-    // Validate file sizes (max 10MB each)
+    // Validate file sizes (max 5MB for CVs - reduced for faster uploads)
     for (const file of filesToUpload) {
-      if (file.size > 10 * 1024 * 1024) {
-        toast({ title: "File too large", description: `${file.name} exceeds 10MB limit`, variant: "destructive" });
+      if (file.size > 5 * 1024 * 1024) {
+        toast({ title: "File too large", description: `${file.name} exceeds 5MB limit. Please compress your file.`, variant: "destructive" });
         return;
       }
     }
 
-    setUploading(true);
+    // Create abort controller for cancellation
+    abortControllerRef.current = new AbortController();
+    const signal = abortControllerRef.current.signal;
+
+    setUploadStatus('uploading');
     setUploadProgress(0);
+    setStatusMessage('Connecting to server...');
+    setLastFailedFiles([]);
     
     try {
       const uploadedFiles: FileItem[] = [];
       const total = filesToUpload.length;
       
       for (let i = 0; i < total; i++) {
-        // Create timeout wrapper (30 seconds per file)
+        if (signal.aborted) {
+          throw new Error('Upload cancelled');
+        }
+
+        const file = filesToUpload[i];
+        const estimatedTime = Math.ceil(file.size / (50 * 1024)); // ~50KB/s estimate
+        setStatusMessage(`Uploading ${file.name}... (est. ${estimatedTime}s)`);
+        
+        // 120-second timeout per file
         const uploadWithTimeout = Promise.race([
-          uploadFile(filesToUpload[i]),
-          new Promise<never>((_, reject) => 
-            setTimeout(() => reject(new Error('Upload timed out. Please try again.')), 30000)
-          )
+          uploadFile(file, signal),
+          new Promise<never>((_, reject) => {
+            const timeoutId = setTimeout(() => {
+              reject(new Error(`Upload timed out for ${file.name}. The file may be too large or your connection is slow.`));
+            }, 120000);
+            
+            // Clear timeout if aborted
+            signal.addEventListener('abort', () => clearTimeout(timeoutId));
+          })
         ]);
         
         const result = await uploadWithTimeout;
         uploadedFiles.push(result);
         setUploadProgress(Math.round(((i + 1) / total) * 100));
+        setStatusMessage(`Uploaded ${i + 1} of ${total} files`);
       }
       
       onChange([...value, ...uploadedFiles]);
+      setUploadStatus('success');
+      setStatusMessage('Upload complete!');
       toast({ title: "Files uploaded", description: `${uploadedFiles.length} file(s) uploaded successfully` });
+      
+      // Reset after success
+      setTimeout(() => {
+        setUploadStatus('idle');
+        setStatusMessage('');
+      }, 2000);
     } catch (error: any) {
       console.error('[MultiFileUpload] Upload error:', error);
-      toast({ 
-        title: "Upload failed", 
-        description: error.message || "Please try again", 
-        variant: "destructive" 
-      });
+      
+      if (error.message === 'Upload cancelled') {
+        setUploadStatus('idle');
+        setStatusMessage('');
+        toast({ title: "Upload cancelled", description: "You cancelled the upload", variant: "default" });
+      } else {
+        setUploadStatus('error');
+        setStatusMessage(error.message || 'Upload failed');
+        setLastFailedFiles(filesToUpload);
+        toast({ 
+          title: "Upload failed", 
+          description: error.message || "Please try again or use the URL option", 
+          variant: "destructive" 
+        });
+      }
     } finally {
-      setUploading(false);
-      setUploadProgress(0);
+      abortControllerRef.current = null;
+    }
+  };
+
+  const handleCancel = () => {
+    if (abortControllerRef.current) {
+      abortControllerRef.current.abort();
+    }
+  };
+
+  const handleRetry = () => {
+    if (lastFailedFiles.length > 0) {
+      const dataTransfer = new DataTransfer();
+      lastFailedFiles.forEach(file => dataTransfer.items.add(file));
+      handleFiles(dataTransfer.files, true);
     }
   };
 
@@ -129,6 +200,8 @@ export default function MultiFileUpload({
     onChange(newFiles);
   };
 
+  const isUploading = uploadStatus === 'uploading';
+
   return (
     <div className="space-y-3">
       <div className="text-sm font-medium">{label}</div>
@@ -138,15 +211,16 @@ export default function MultiFileUpload({
       {value.length < maxFiles && (
         <div
           className={`
-            border-2 border-dashed rounded-lg p-6 text-center cursor-pointer transition-colors
+            border-2 border-dashed rounded-lg p-6 text-center transition-colors
             ${dragActive ? 'border-primary bg-primary/5' : 'border-muted-foreground/25 hover:border-primary/50'}
-            ${uploading ? 'pointer-events-none opacity-50' : ''}
+            ${isUploading ? 'pointer-events-none' : 'cursor-pointer'}
+            ${uploadStatus === 'error' ? 'border-destructive bg-destructive/5' : ''}
           `}
           onDragEnter={handleDrag}
           onDragLeave={handleDrag}
           onDragOver={handleDrag}
           onDrop={handleDrop}
-          onClick={() => document.getElementById(`file-input-${label}`)?.click()}
+          onClick={() => !isUploading && document.getElementById(`file-input-${label}`)?.click()}
         >
           <input
             id={`file-input-${label}`}
@@ -157,15 +231,48 @@ export default function MultiFileUpload({
             className="hidden"
           />
           
-          {uploading ? (
-            <div className="flex flex-col items-center gap-2">
+          {isUploading ? (
+            <div className="flex flex-col items-center gap-3">
               <Loader2 className="h-8 w-8 animate-spin text-primary" />
-              <p className="text-sm text-muted-foreground">Uploading... {uploadProgress}%</p>
+              <p className="text-sm font-medium text-foreground">{statusMessage}</p>
               <div className="w-full max-w-xs h-2 bg-muted rounded-full overflow-hidden">
                 <div 
                   className="h-full bg-primary transition-all duration-300" 
                   style={{ width: `${uploadProgress}%` }}
                 />
+              </div>
+              <p className="text-xs text-muted-foreground">{uploadProgress}% complete</p>
+              <Button 
+                variant="outline" 
+                size="sm" 
+                onClick={(e) => { e.stopPropagation(); handleCancel(); }}
+                className="mt-2"
+              >
+                <XCircle className="h-4 w-4 mr-2" />
+                Cancel Upload
+              </Button>
+            </div>
+          ) : uploadStatus === 'error' ? (
+            <div className="flex flex-col items-center gap-3">
+              <XCircle className="h-8 w-8 text-destructive" />
+              <p className="text-sm font-medium text-destructive">Upload Failed</p>
+              <p className="text-xs text-muted-foreground">{statusMessage}</p>
+              <div className="flex gap-2 mt-2">
+                <Button 
+                  variant="outline" 
+                  size="sm" 
+                  onClick={(e) => { e.stopPropagation(); handleRetry(); }}
+                >
+                  <RefreshCw className="h-4 w-4 mr-2" />
+                  Retry
+                </Button>
+                <Button 
+                  variant="ghost" 
+                  size="sm" 
+                  onClick={(e) => { e.stopPropagation(); setUploadStatus('idle'); setStatusMessage(''); }}
+                >
+                  Dismiss
+                </Button>
               </div>
             </div>
           ) : (
@@ -175,7 +282,7 @@ export default function MultiFileUpload({
                 Drag & drop files here or click to browse
               </p>
               <p className="text-xs text-muted-foreground">
-                {maxFiles - value.length} slot(s) remaining
+                Max 5MB per file • {maxFiles - value.length} slot(s) remaining
               </p>
             </div>
           )}
