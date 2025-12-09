@@ -16,6 +16,9 @@ import ProfileBuilderForm, { ProfileData } from "@/components/portfolio/ProfileB
 import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine, RefreshCw, Gift, Sparkles, Link, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
+// Brand icon
+import iconPortfolio from "@/assets/icons/icon-portfolio.png";
+
 const FREE_PORTFOLIO_LIMIT = 1000;
 
 // Fallback static categories in case database loading fails
@@ -354,7 +357,10 @@ export default function PortfolioRequest() {
         <div className="max-w-3xl mx-auto">
           {/* Header */}
           <div className="text-center mb-6">
-            <h1 className="text-3xl font-bold mb-2">Digital Portfolio Service</h1>
+            <div className="icon-container-lg mx-auto mb-4">
+              <img src={iconPortfolio} alt="Digital Portfolio" className="w-11 h-11 object-contain" />
+            </div>
+            <h1 className="text-3xl font-heading font-bold mb-2">Digital Portfolio Service</h1>
             <p className="text-muted-foreground">
               Get a professional portfolio website created by our team
             </p>
