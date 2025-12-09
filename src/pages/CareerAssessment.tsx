@@ -10,8 +10,11 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Clock, Target, TrendingUp, CheckCircle, Lock, KeyRound, CalendarDays, ExternalLink, Loader2 } from "lucide-react";
+import { ArrowRight, Clock, Target, TrendingUp, CheckCircle, Lock, KeyRound, CalendarDays, ExternalLink, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
+
+// Brand icon
+import iconScorecard from "@/assets/icons/icon-scorecard.png";
 
 interface ProfessionCategory {
   id: string;
@@ -430,22 +433,29 @@ function LandingSection({ onStart }: { onStart: () => void }) {
   return (
     <>
       {/* Hero Section */}
-      <section className="container mx-auto px-6 py-16 md:py-24">
-        <div className="max-w-3xl mx-auto text-center">
-          <Badge className="mb-4" variant="secondary">
-            FREE Assessment • 5 Minutes
-          </Badge>
-          <h1 className="text-4xl md:text-5xl font-bold mb-6">
-            How Job-Ready Are You?
-          </h1>
-          <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-            Take our AI-powered Career Readiness Scorecard and discover your strengths, 
-            areas for improvement, and personalized recommendations to accelerate your career.
-          </p>
-          <Button size="lg" onClick={onStart} className="text-lg px-8 py-6">
-            Start Free Assessment
-            <ArrowRight className="ml-2 h-5 w-5" />
-          </Button>
+      <section className="relative py-16 md:py-24 bg-gradient-to-b from-primary/5 via-secondary/5 to-background overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)]" />
+        <div className="container mx-auto px-6 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="icon-container-lg mx-auto mb-6">
+              <img src={iconScorecard} alt="Career Scorecard" className="w-11 h-11 object-contain" />
+            </div>
+            <Badge className="mb-4 gap-2 border-primary/30 text-primary" variant="outline">
+              <Sparkles className="w-3 h-3" />
+              FREE Assessment • 5 Minutes
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-heading font-bold mb-6">
+              How Job-Ready Are You?
+            </h1>
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+              Take our AI-powered Career Readiness Scorecard and discover your strengths, 
+              areas for improvement, and personalized recommendations to accelerate your career.
+            </p>
+            <Button size="lg" onClick={onStart} className="text-lg px-8 py-6">
+              Start Free Assessment
+              <ArrowRight className="ml-2 h-5 w-5" />
+            </Button>
+          </div>
         </div>
       </section>
 
