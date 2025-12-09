@@ -2,8 +2,10 @@ import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { GraduationCap, Menu, X, Moon, Sun, ChevronDown } from "lucide-react";
+import { Menu, X, Moon, Sun, ChevronDown } from "lucide-react";
 import { useTheme } from "next-themes";
+import logoLight from "@/assets/logo-horizontal-light.png";
+import logoDark from "@/assets/logo-horizontal-dark.png";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -68,12 +70,13 @@ export const Navbar = () => {
           {/* Logo */}
           <button
             onClick={() => navigate("/")}
-            className="flex items-center gap-3 hover:opacity-80 transition-opacity"
+            className="flex items-center hover:opacity-80 transition-opacity"
           >
-            <div className="w-10 h-10 bg-gradient-primary rounded-xl flex items-center justify-center">
-              <GraduationCap className="w-6 h-6 text-white" />
-            </div>
-            <span className="text-xl font-bold hidden sm:block">GroUp Academy</span>
+            <img 
+              src={theme === "dark" ? logoLight : logoDark} 
+              alt="GroUp Academy" 
+              className="h-10 w-auto"
+            />
           </button>
 
           {/* Desktop Navigation */}
