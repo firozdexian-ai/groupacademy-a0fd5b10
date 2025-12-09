@@ -114,17 +114,20 @@ const CareerServices = () => {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="py-16 md:py-24 bg-gradient-to-b from-primary/5 via-secondary/5 to-background relative overflow-hidden">
+        <section className="relative py-16 md:py-24 bg-gradient-to-b from-primary/5 via-secondary/5 to-background overflow-hidden">
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)]" />
           <div className="absolute inset-0 bg-[radial-gradient(circle_at_70%_80%,hsl(var(--secondary)/0.1),transparent_50%)]" />
           
           <div className="container mx-auto px-6 relative">
             <div className="text-center max-w-3xl mx-auto">
-              <Badge variant="outline" className="mb-4 gap-2 border-primary/30 text-primary">
+              <div className="icon-container-lg mx-auto mb-6">
+                <Sparkles className="w-8 h-8 text-white" />
+              </div>
+              <Badge className="mb-4 gap-2 border-primary/30 text-primary" variant="outline">
                 <Sparkles className="w-3 h-3" />
                 AI-Powered Career Acceleration
               </Badge>
-              <h1 className="text-4xl md:text-5xl font-heading font-bold mb-6 bg-gradient-to-r from-primary via-secondary to-success bg-clip-text text-transparent">
+              <h1 className="text-4xl md:text-5xl font-heading font-bold mb-6">
                 Your Complete Career Journey
               </h1>
               <p className="text-lg text-muted-foreground mb-8">
