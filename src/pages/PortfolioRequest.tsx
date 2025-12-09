@@ -13,7 +13,7 @@ import { Footer } from "@/components/Footer";
 import MultiFileUpload from "@/components/portfolio/MultiFileUpload";
 import { SimpleFileUpload } from "@/components/portfolio/SimpleFileUpload";
 import ProfileBuilderForm, { ProfileData } from "@/components/portfolio/ProfileBuilderForm";
-import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine, RefreshCw, Gift, Sparkles, Link, ExternalLink } from "lucide-react";
+import { Briefcase, User, FileText, Award, Globe, CheckCircle, ArrowLeft, ArrowRight, Loader2, FileUp, PenLine, RefreshCw, Gift, Sparkles, Link as LinkIcon, ExternalLink } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 
 // Brand icon
@@ -356,13 +356,17 @@ export default function PortfolioRequest() {
       <main className="flex-1 container mx-auto px-4 py-8">
         <div className="max-w-3xl mx-auto">
           {/* Header */}
-          <div className="text-center mb-6">
-            <div className="icon-container-lg mx-auto mb-4">
+          <div className="text-center mb-8">
+            <div className="icon-container-lg mx-auto mb-6">
               <img src={iconPortfolio} alt="Digital Portfolio" className="w-11 h-11 object-contain" />
             </div>
-            <h1 className="text-3xl font-heading font-bold mb-2">Digital Portfolio Service</h1>
-            <p className="text-muted-foreground">
-              Get a professional portfolio website created by our team
+            <Badge className="mb-4 gap-2 border-primary/30 text-primary" variant="outline">
+              <Sparkles className="w-3 h-3" />
+              Professional Portfolio Creation
+            </Badge>
+            <h1 className="text-3xl md:text-4xl font-heading font-bold mb-4">Digital Portfolio Service</h1>
+            <p className="text-lg text-muted-foreground max-w-xl mx-auto">
+              Get a professional portfolio website created by our career experts
             </p>
           </div>
 

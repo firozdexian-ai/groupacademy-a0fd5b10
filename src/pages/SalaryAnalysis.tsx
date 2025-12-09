@@ -47,31 +47,32 @@ const SalaryAnalysis = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative py-20 px-4 bg-gradient-to-b from-primary/5 via-secondary/5 to-background overflow-hidden">
+      <section className="relative py-16 md:py-24 bg-gradient-to-b from-primary/5 via-secondary/5 to-background overflow-hidden">
         <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)]" />
-        <div className="container mx-auto max-w-6xl relative">
-          <div className="text-center space-y-6">
-            <div className="icon-container-lg mx-auto">
+        <div className="container mx-auto px-6 relative">
+          <div className="max-w-3xl mx-auto text-center">
+            <div className="icon-container-lg mx-auto mb-6">
               <img src={iconSalary} alt="Salary Analysis" className="w-11 h-11 object-contain" />
             </div>
-            <Badge variant="outline" className="gap-2 border-primary/30 text-primary">
+            <Badge className="mb-4 gap-2 border-primary/30 text-primary" variant="outline">
               <Sparkles className="w-3 h-3" />
-              First Analysis Free • Then BDT 100
+              First Analysis Free • Retakes BDT 100
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold mb-6">
               AI Salary Analysis
             </h1>
-            <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
+            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Know your worth. Upload your CV and job description to get personalized salary insights, 
               skills gap analysis, and negotiation tips for the Bangladesh market.
             </p>
-            <div className="flex flex-col sm:flex-row gap-4 justify-center pt-4">
-              <Button asChild size="lg" className="text-lg px-8">
-                <Link to="/salary-analysis/setup">
-                  Start Analysis <ArrowRight className="ml-2 h-5 w-5" />
-                </Link>
-              </Button>
-            </div>
+            <Button asChild size="lg" className="text-lg px-8 py-6">
+              <Link to="/salary-analysis/setup">
+                Start Free Analysis <ArrowRight className="ml-2 h-5 w-5" />
+              </Link>
+            </Button>
+            <p className="text-sm text-muted-foreground mt-4">
+              First analysis FREE • Retakes BDT 100
+            </p>
           </div>
         </div>
       </section>
