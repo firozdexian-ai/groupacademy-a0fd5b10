@@ -15,6 +15,9 @@ import {
 } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+// Brand icon
+import iconMockInterview from "@/assets/icons/icon-mock-interview.png";
+
 export default function MockInterview() {
   const navigate = useNavigate();
 
@@ -24,29 +27,36 @@ export default function MockInterview() {
       
       <main className="flex-1">
         {/* Hero Section */}
-        <section className="container mx-auto px-6 py-16 md:py-24">
-          <div className="max-w-3xl mx-auto text-center">
-            <Badge className="mb-4" variant="secondary">
-              AI-Powered • Text-Based Interview Practice
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold mb-6">
-              Practice Mock Interviews with AI
-            </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Paste your job description, answer AI-generated interview questions, 
-              and get detailed feedback with your selection percentage score.
-            </p>
-            <Button 
-              size="lg" 
-              onClick={() => navigate("/mock-interview/setup")} 
-              className="text-lg px-8 py-6"
-            >
-              Start Free Mock Interview
-              <ArrowRight className="ml-2 h-5 w-5" />
-            </Button>
-            <p className="text-sm text-muted-foreground mt-4">
-              First interview FREE • Retakes BDT 100
-            </p>
+        <section className="relative py-16 md:py-24 bg-gradient-to-b from-primary/5 via-secondary/5 to-background overflow-hidden">
+          <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)]" />
+          <div className="container mx-auto px-6 relative">
+            <div className="max-w-3xl mx-auto text-center">
+              <div className="icon-container-lg mx-auto mb-6">
+                <img src={iconMockInterview} alt="Mock Interview" className="w-11 h-11 object-contain" />
+              </div>
+              <Badge className="mb-4 gap-2 border-primary/30 text-primary" variant="outline">
+                <Sparkles className="w-3 h-3" />
+                AI-Powered Interview Practice
+              </Badge>
+              <h1 className="text-4xl md:text-5xl font-heading font-bold mb-6">
+                Practice Mock Interviews with AI
+              </h1>
+              <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
+                Paste your job description, answer AI-generated interview questions, 
+                and get detailed feedback with your selection percentage score.
+              </p>
+              <Button 
+                size="lg" 
+                onClick={() => navigate("/mock-interview/setup")} 
+                className="text-lg px-8 py-6"
+              >
+                Start Free Mock Interview
+                <ArrowRight className="ml-2 h-5 w-5" />
+              </Button>
+              <p className="text-sm text-muted-foreground mt-4">
+                First interview FREE • Retakes BDT 100
+              </p>
+            </div>
           </div>
         </section>
 

@@ -4,7 +4,10 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { TrendingUp, Target, Lightbulb, FileText, ArrowRight, CheckCircle } from "lucide-react";
+import { TrendingUp, Target, Lightbulb, FileText, ArrowRight, CheckCircle, Sparkles } from "lucide-react";
+
+// Brand icon
+import iconSalary from "@/assets/icons/icon-salary.png";
 
 const SalaryAnalysis = () => {
   const features = [
@@ -44,13 +47,18 @@ const SalaryAnalysis = () => {
       <Navbar />
       
       {/* Hero Section */}
-      <section className="relative py-20 px-4 bg-gradient-to-br from-primary/10 via-background to-accent/10">
-        <div className="container mx-auto max-w-6xl">
+      <section className="relative py-20 px-4 bg-gradient-to-b from-primary/5 via-secondary/5 to-background overflow-hidden">
+        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)]" />
+        <div className="container mx-auto max-w-6xl relative">
           <div className="text-center space-y-6">
-            <Badge variant="secondary" className="text-sm px-4 py-1">
+            <div className="icon-container-lg mx-auto">
+              <img src={iconSalary} alt="Salary Analysis" className="w-11 h-11 object-contain" />
+            </div>
+            <Badge variant="outline" className="gap-2 border-primary/30 text-primary">
+              <Sparkles className="w-3 h-3" />
               First Analysis Free • Then BDT 100
             </Badge>
-            <h1 className="text-4xl md:text-5xl font-bold text-foreground">
+            <h1 className="text-4xl md:text-5xl font-heading font-bold text-foreground">
               AI Salary Analysis
             </h1>
             <p className="text-xl text-muted-foreground max-w-2xl mx-auto">
