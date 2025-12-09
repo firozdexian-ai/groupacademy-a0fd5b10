@@ -9,6 +9,8 @@ import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
+import { SalaryAnalysisPDFTemplate } from "@/components/salary-analysis/SalaryAnalysisPDFTemplate";
+import { generateSalaryAnalysisPDF } from "@/lib/salaryPdfGenerator";
 import { 
   TrendingUp, Target, Lightbulb, CheckCircle, AlertTriangle, 
   ArrowRight, Download, Share2, Briefcase, FileText, Loader2
@@ -20,6 +22,7 @@ const SalaryAnalysisResults = () => {
   
   const [analysis, setAnalysis] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [isGeneratingPDF, setIsGeneratingPDF] = useState(false);
 
   useEffect(() => {
     const fetchAnalysis = async () => {
@@ -68,6 +71,24 @@ const SalaryAnalysisResults = () => {
         return <Badge variant="destructive">Low Demand</Badge>;
       default:
         return <Badge variant="secondary">Medium Demand</Badge>;
+    }
+  };
+
+  const handleDownloadPDF = async () => {
+    setIsGeneratingPDF(true);
+    try {
+      const filename = `salary-analysis-${analysis.full_name.replace(/\s+/g, "-").toLowerCase()}.pdf`;
+      const success = await generateSalaryAnalysisPDF("salary-analysis-pdf-content", filename);
+      if (success) {
+        toast({ title: "PDF downloaded successfully!" });
+      } else {
+        toast({ title: "Failed to generate PDF", variant: "destructive" });
+      }
+    } catch (error) {
+      console.error("PDF generation error:", error);
+      toast({ title: "Failed to generate PDF", variant: "destructive" });
+    } finally {
+      setIsGeneratingPDF(false);
     }
   };
 
@@ -350,14 +371,27 @@ const SalaryAnalysisResults = () => {
 
         {/* Share/Download */}
         <div className="flex justify-center gap-4">
-          <Button variant="outline" disabled>
-            <Download className="mr-2 h-4 w-4" />
-            Download PDF (Coming Soon)
+          <Button 
+            variant="outline" 
+            onClick={handleDownloadPDF}
+            disabled={isGeneratingPDF}
+          >
+            {isGeneratingPDF ? (
+              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
+            ) : (
+              <Download className="mr-2 h-4 w-4" />
+            )}
+            {isGeneratingPDF ? "Generating..." : "Download PDF"}
           </Button>
           <Button variant="outline" disabled>
             <Share2 className="mr-2 h-4 w-4" />
             Share (Coming Soon)
           </Button>
+        </div>
+
+        {/* Hidden PDF Template */}
+        <div style={{ display: "none" }}>
+          <SalaryAnalysisPDFTemplate analysis={analysis} />
         </div>
       </div>
 
