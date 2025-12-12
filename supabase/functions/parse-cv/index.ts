@@ -7,13 +7,58 @@ const corsHeaders = {
   'Access-Control-Allow-Headers': 'authorization, x-client-info, apikey, content-type',
 };
 
+// Profession categories for matching
+const PROFESSION_CATEGORIES = [
+  { id: 'a1c5d82c-1a1a-4b0e-89e8-19c264a3a915', name: 'Banking & Finance', keywords: ['bank', 'finance', 'accounting', 'audit', 'investment', 'treasury', 'credit'] },
+  { id: 'cd947727-350e-4fd3-813b-0034d4cf208e', name: 'Sales & Distribution', keywords: ['sales', 'distribution', 'retail', 'channel', 'fmcg', 'trade'] },
+  { id: '5ee052f8-2aaf-45b5-8f90-731c23097fef', name: 'Sales & Marketing', keywords: ['marketing', 'brand', 'digital marketing', 'advertising', 'pr', 'communications'] },
+  { id: '1e71843c-d202-4d96-834e-04fa6c784f16', name: 'Technology & IT', keywords: ['software', 'developer', 'engineer', 'it', 'programmer', 'data', 'cloud', 'tech'] },
+  { id: 'e5489921-ce14-448b-a017-b762a3b72a8d', name: 'Human Resources', keywords: ['hr', 'human resource', 'recruitment', 'talent', 'training', 'l&d'] },
+  { id: 'a8c5f269-03bd-4589-954e-51eb1e1fbf32', name: 'Operations & Supply Chain', keywords: ['operations', 'supply chain', 'logistics', 'procurement', 'warehouse', 'inventory'] },
+  { id: '2c541af4-1cc0-4704-81aa-78df992aad6b', name: 'Healthcare & Pharma', keywords: ['health', 'pharma', 'medical', 'hospital', 'doctor', 'nurse', 'clinical'] },
+  { id: '30dbc71e-26de-4131-bd97-073e593f9d93', name: 'Student (Undergraduate)', keywords: [] },
+  { id: '30e1aff7-a7fa-4bb1-ac5e-d226e4754930', name: 'Student (Graduate/Masters)', keywords: [] },
+  { id: '1d65c422-6eef-412c-b843-8ae3d9ac37d5', name: 'Fresh Graduate', keywords: [] },
+  { id: 'ba50f709-610e-4770-9d2c-918a39073175', name: 'Career Changer', keywords: [] },
+  { id: 'b4038064-ec0f-4814-a966-ca4c9984bca2', name: 'Other', keywords: [] },
+];
+
+function matchProfessionCategory(parsedData: any): string | null {
+  const textToSearch = JSON.stringify(parsedData).toLowerCase();
+  
+  // Check profile type for student categories
+  if (parsedData.profile_type === 'student') {
+    if (parsedData.education?.some((e: any) => e.degree?.toLowerCase().includes('master') || e.degree?.toLowerCase().includes('mba'))) {
+      return '30e1aff7-a7fa-4bb1-ac5e-d226e4754930'; // Graduate/Masters
+    }
+    return '30dbc71e-26de-4131-bd97-073e593f9d93'; // Undergraduate
+  }
+  
+  // Check for fresh graduate
+  if (parsedData.current_status === 'job_seeking' && (!parsedData.experience || parsedData.experience.length === 0)) {
+    return '1d65c422-6eef-412c-b843-8ae3d9ac37d5'; // Fresh Graduate
+  }
+  
+  // Match by keywords
+  for (const category of PROFESSION_CATEGORIES) {
+    if (category.keywords.length === 0) continue;
+    const matchCount = category.keywords.filter(kw => textToSearch.includes(kw)).length;
+    if (matchCount >= 2) {
+      return category.id;
+    }
+  }
+  
+  // Default to Other if no match
+  return 'b4038064-ec0f-4814-a966-ca4c9984bca2';
+}
+
 serve(async (req) => {
   if (req.method === 'OPTIONS') {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
-    const { cvText, cvUrl, jobId } = await req.json();
+    const { cvText, cvUrl, jobId, serviceType } = await req.json();
     
     if (!cvText && !cvUrl) {
       return new Response(
@@ -176,8 +221,26 @@ Return the structured JSON data.`;
       experienceCount: parsedData.experience?.length || 0
     });
 
-    // Upsert to professionals table
-    const professionalData = {
+    // Match profession category
+    const professionCategoryId = matchProfessionCategory(parsedData);
+    console.log('Matched profession category:', professionCategoryId);
+
+    // Check if professional exists by email
+    const { data: existingProfessional } = await supabase
+      .from('professionals')
+      .select('id, services_used')
+      .eq('email', parsedData.email)
+      .maybeSingle();
+
+    // Build services_used entry
+    const serviceEntry = {
+      service: serviceType || 'cv_parse',
+      date: new Date().toISOString(),
+      count: 1
+    };
+
+    // Prepare professional data
+    const professionalData: any = {
       full_name: parsedData.full_name,
       email: parsedData.email,
       phone: parsedData.phone,
@@ -190,18 +253,25 @@ Return the structured JSON data.`;
       projects: parsedData.projects || [],
       achievements: parsedData.achievements || [],
       cv_url: cvUrl || null,
+      profession_category_id: professionCategoryId,
       updated_at: new Date().toISOString()
     };
 
-    // Check if professional exists by email
-    const { data: existingProfessional } = await supabase
-      .from('professionals')
-      .select('id')
-      .eq('email', parsedData.email)
-      .maybeSingle();
-
     let professional;
     if (existingProfessional) {
+      // Update services_used array
+      const existingServices = (existingProfessional.services_used as any[]) || [];
+      const existingServiceIndex = existingServices.findIndex((s: any) => s.service === serviceEntry.service);
+      
+      if (existingServiceIndex >= 0) {
+        existingServices[existingServiceIndex].count = (existingServices[existingServiceIndex].count || 0) + 1;
+        existingServices[existingServiceIndex].date = serviceEntry.date;
+      } else {
+        existingServices.push(serviceEntry);
+      }
+      
+      professionalData.services_used = existingServices;
+
       // Update existing professional
       const { data, error } = await supabase
         .from('professionals')
@@ -220,7 +290,9 @@ Return the structured JSON data.`;
       professional = data;
       console.log('Updated existing professional:', professional.id);
     } else {
-      // Insert new professional
+      // Insert new professional with initial service
+      professionalData.services_used = [serviceEntry];
+      
       const { data, error } = await supabase
         .from('professionals')
         .insert(professionalData)
@@ -242,7 +314,8 @@ Return the structured JSON data.`;
       JSON.stringify({
         success: true,
         professional: professional,
-        parsed: parsedData
+        parsed: parsedData,
+        professionCategoryId
       }),
       { headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
     );
