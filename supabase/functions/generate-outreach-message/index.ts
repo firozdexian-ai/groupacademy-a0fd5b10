@@ -8,38 +8,38 @@ const corsHeaders = {
 
 const PRODUCT_TEMPLATES = {
   'digital-portfolio': {
-    name: 'Digital Portfolio Creation',
-    pitch: 'First 1000 FREE professional portfolio websites',
-    value: 'BDT 100 value - absolutely FREE',
-    cta: 'Reply "PORTFOLIO" to claim your free professional portfolio',
+    name: 'GroUp Academy Digital Portfolio',
+    pitch: 'First 1000 FREE professional portfolio websites from GroUp Academy',
+    value: 'Worth BDT 1,000 - absolutely FREE for a limited time!',
+    cta: 'Reply "PORTFOLIO" to claim your free professional portfolio from GroUp Academy',
     link: '/portfolio-request',
   },
   'ai-efficiency': {
-    name: 'AI Efficiency Accelerator',
-    pitch: '6-session live, interactive batch for practical AI adoption',
-    value: 'Up to 20% efficiency gains through automation',
-    cta: 'Reply "AI" to get the details',
+    name: 'GroUp Academy AI Efficiency Accelerator',
+    pitch: '6-session live, interactive batch for practical AI adoption by GroUp Academy',
+    value: 'Boost your productivity by up to 20% through AI automation',
+    cta: 'Reply "AI" to get the course details from GroUp Academy',
     link: '/courses',
   },
   'career-scorecard': {
-    name: 'Career Readiness Scorecard',
-    pitch: 'FREE AI-powered career assessment',
+    name: 'GroUp Academy Career Readiness Scorecard',
+    pitch: 'FREE AI-powered career assessment by GroUp Academy',
     value: 'Identify your career gaps and get personalized recommendations',
-    cta: 'Reply "SCORE" to take your free assessment',
+    cta: 'Reply "SCORE" to take your free assessment with GroUp Academy',
     link: '/career-assessment',
   },
   'mock-interview': {
-    name: 'AI Mock Interview',
-    pitch: 'Practice interviews with AI-powered feedback',
-    value: 'Get your selection percentage and improvement tips',
-    cta: 'Reply "INTERVIEW" to start your free practice',
+    name: 'GroUp Academy AI Mock Interview',
+    pitch: 'Practice interviews with AI-powered feedback from GroUp Academy',
+    value: 'Get your selection percentage and actionable improvement tips',
+    cta: 'Reply "INTERVIEW" to start your free practice with GroUp Academy',
     link: '/mock-interview',
   },
   'salary-analysis': {
-    name: 'AI Salary Analysis',
-    pitch: 'Know your market value before negotiations',
-    value: 'Get salary benchmarks and negotiation strategies',
-    cta: 'Reply "SALARY" to analyze your worth',
+    name: 'GroUp Academy AI Salary Analysis',
+    pitch: 'Know your market value before negotiations - powered by GroUp Academy',
+    value: 'Get salary benchmarks and negotiation strategies for Bangladesh market',
+    cta: 'Reply "SALARY" to analyze your worth with GroUp Academy',
     link: '/salary-analysis',
   },
 };
@@ -100,7 +100,7 @@ Language Selection: Analyze the CV content to determine the best language:
 - Default to warm, professional English with Bangla touches for Bangladesh professionals`;
     }
     
-    const systemPrompt = `You are an expert at crafting personalized WhatsApp outreach messages for career services.
+    const systemPrompt = `You are a Talent Success Executive at GroUp Academy, Bangladesh's leading AI-powered career acceleration platform. You craft personalized WhatsApp outreach messages for our career services.
 
 You will receive:
 1. A parsed CV with the candidate's background
@@ -111,17 +111,19 @@ ${languageInstruction}
 
 Create a warm, personalized WhatsApp message that:
 - Opens with a friendly greeting using their first name
-- References specific details from their CV (education, experience, skills) to show you've read their profile
+- Briefly mentions you're reaching out from GroUp Academy
+- References 1-2 specific details from their CV (education, company, skills) to show genuine interest
 - Connects their background to the value proposition of the product
-- Highlights pain points they might face in their career stage
-- Presents the product as a solution
-- Ends with a clear call-to-action
+- Highlights a specific pain point relevant to their career stage
+- Presents the GroUp Academy service as the solution
+- Ends with a clear, simple call-to-action
 
 Keep the message:
-- Under 500 characters for WhatsApp readability
-- Conversational and warm
-- Focused on benefits, not features
-- Natural, not salesy
+- Under 400 characters for easy WhatsApp reading
+- Conversational, warm, and professional
+- Focused on their benefit, not features
+- Natural and genuine, not salesy
+- Include "GroUp Academy" once in the message
 
 Return ONLY the message text, no quotes or formatting.`;
 
