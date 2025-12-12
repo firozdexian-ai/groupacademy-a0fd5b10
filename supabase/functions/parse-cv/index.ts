@@ -83,6 +83,7 @@ serve(async (req) => {
 
     // CRITICAL FIX: Actually fetch CV content from URL if provided
     let actualCvText = cvText || '';
+    let pdfBase64: string | null = null;
     
     if (cvUrl && !cvText) {
       console.log('Fetching CV content from URL:', cvUrl);
@@ -99,26 +100,23 @@ serve(async (req) => {
         const contentType = cvResponse.headers.get('content-type') || '';
         
         if (contentType.includes('application/pdf')) {
-          // For PDFs, we'll use the AI's vision capability by passing the URL directly
-          // and instructing it to analyze the document
-          console.log('PDF detected - will use AI vision to analyze');
-          actualCvText = `[PDF Document at URL: ${cvUrl}]
-          
-Please analyze this PDF CV document and extract all professional information. The document is a CV/Resume that should contain:
-- Personal information (name, contact details)
-- Education history
-- Work experience
-- Skills
-- Any certifications, projects, or achievements
-
-Extract all available information from this document.`;
+          // For PDFs, convert to base64 and send as vision input
+          console.log('PDF detected - converting to base64 for vision analysis');
+          const buffer = await cvResponse.arrayBuffer();
+          const uint8Array = new Uint8Array(buffer);
+          let binary = '';
+          for (let i = 0; i < uint8Array.length; i++) {
+            binary += String.fromCharCode(uint8Array[i]);
+          }
+          pdfBase64 = btoa(binary);
+          console.log('PDF converted to base64, size:', pdfBase64.length);
+          actualCvText = 'PDF document attached as image for analysis.';
         } else if (contentType.includes('text/') || contentType.includes('application/json')) {
           // Text-based files can be read directly
           actualCvText = await cvResponse.text();
           console.log('Text CV content fetched, length:', actualCvText.length);
         } else {
-          // For other document types (doc, docx), we try to get text
-          // If binary, instruct AI to use the URL
+          // For other document types (doc, docx), try to extract text
           const buffer = await cvResponse.arrayBuffer();
           const textDecoder = new TextDecoder('utf-8');
           const attemptedText = textDecoder.decode(buffer);
@@ -127,20 +125,20 @@ Extract all available information from this document.`;
           const readableChars = attemptedText.replace(/[^\x20-\x7E\n\r\t]/g, '').length;
           const totalChars = attemptedText.length;
           
-          if (totalChars > 0 && readableChars / totalChars > 0.7) {
-            actualCvText = attemptedText;
+          if (totalChars > 0 && readableChars / totalChars > 0.5) {
+            // Extract readable parts
+            actualCvText = attemptedText.replace(/[^\x20-\x7E\n\r\t]/g, ' ').replace(/\s+/g, ' ').trim();
             console.log('Document text extracted, length:', actualCvText.length);
           } else {
-            // Binary document - use URL with AI
-            console.log('Binary document detected - will use AI to analyze URL');
-            actualCvText = `[Document at URL: ${cvUrl}]
-            
-This is a CV/Resume document. Please analyze and extract all professional information including:
-- Personal information (name, email, phone, LinkedIn)
-- Education history with institutions, degrees, and dates
-- Work experience with companies, titles, and descriptions
-- Technical and soft skills
-- Certifications, projects, and achievements`;
+            // Try as image/vision for other binary formats
+            console.log('Binary document detected - treating as image for vision');
+            const uint8Array = new Uint8Array(buffer);
+            let binary = '';
+            for (let i = 0; i < uint8Array.length; i++) {
+              binary += String.fromCharCode(uint8Array[i]);
+            }
+            pdfBase64 = btoa(binary);
+            actualCvText = 'Document attached as image for analysis.';
           }
         }
       } catch (fetchError) {
@@ -203,13 +201,40 @@ Important:
 - For experience, include internships if mentioned
 - Return ONLY valid JSON, no markdown or extra text`;
 
-    const userPrompt = `Parse the following CV and extract all relevant information:
+    // Build the user message - either text or multimodal with PDF
+    let userMessage: any;
+    
+    if (pdfBase64) {
+      // Multimodal message with PDF as image
+      console.log('Sending PDF as vision input to AI');
+      userMessage = {
+        role: 'user',
+        content: [
+          {
+            type: 'text',
+            text: 'Parse the following CV/Resume document and extract all relevant information. Return the structured JSON data.'
+          },
+          {
+            type: 'image_url',
+            image_url: {
+              url: `data:application/pdf;base64,${pdfBase64}`
+            }
+          }
+        ]
+      };
+    } else {
+      // Text-only message
+      userMessage = {
+        role: 'user',
+        content: `Parse the following CV and extract all relevant information:
 
 ${actualCvText}
 
-Return the structured JSON data.`;
+Return the structured JSON data.`
+      };
+    }
 
-    console.log('Calling Lovable AI to parse CV with content length:', actualCvText.length);
+    console.log('Calling Lovable AI to parse CV, using vision:', !!pdfBase64, 'text length:', actualCvText.length);
     
     const aiResponse = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
@@ -221,9 +246,8 @@ Return the structured JSON data.`;
         model: 'google/gemini-2.5-flash',
         messages: [
           { role: 'system', content: systemPrompt },
-          { role: 'user', content: userPrompt }
+          userMessage
         ],
-        temperature: 0.1,
       }),
     });
 
