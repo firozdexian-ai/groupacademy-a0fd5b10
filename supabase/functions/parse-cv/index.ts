@@ -98,8 +98,16 @@ serve(async (req) => {
         }
         
         const contentType = cvResponse.headers.get('content-type') || '';
+        const urlLower = cvUrl.toLowerCase();
         
-        if (contentType.includes('application/pdf')) {
+        // Detect file type from URL extension as fallback
+        const isPdf = contentType.includes('application/pdf') || urlLower.endsWith('.pdf');
+        const isDocx = contentType.includes('application/vnd.openxmlformats') || 
+                       contentType.includes('application/msword') ||
+                       urlLower.endsWith('.docx') || urlLower.endsWith('.doc');
+        const isText = contentType.includes('text/') || contentType.includes('application/json');
+        
+        if (isPdf) {
           // For PDFs, convert to base64 and send as vision input
           console.log('PDF detected - converting to base64 for vision analysis');
           const buffer = await cvResponse.arrayBuffer();
@@ -111,12 +119,36 @@ serve(async (req) => {
           pdfBase64 = btoa(binary);
           console.log('PDF converted to base64, size:', pdfBase64.length);
           actualCvText = 'PDF document attached as image for analysis.';
-        } else if (contentType.includes('text/') || contentType.includes('application/json')) {
+        } else if (isDocx) {
+          // For DOCX files, try to extract text content
+          console.log('DOCX detected - attempting text extraction');
+          const buffer = await cvResponse.arrayBuffer();
+          const textDecoder = new TextDecoder('utf-8');
+          const rawText = textDecoder.decode(buffer);
+          
+          // DOCX files contain XML - extract readable text between tags
+          // Remove XML tags and extract text content
+          const textContent = rawText
+            .replace(/<[^>]*>/g, ' ')  // Remove all XML/HTML tags
+            .replace(/&[a-z]+;/gi, ' ') // Remove HTML entities
+            .replace(/[^\x20-\x7E\u00A0-\u00FF\u0980-\u09FF\n\r\t]/g, ' ') // Keep ASCII, Latin-1, Bengali
+            .replace(/\s+/g, ' ')
+            .trim();
+          
+          if (textContent.length > 100) {
+            actualCvText = textContent;
+            console.log('DOCX text extracted, length:', actualCvText.length);
+          } else {
+            // Fallback: send as-is and let AI try to parse
+            console.log('DOCX text extraction minimal, sending raw content');
+            actualCvText = `This is a DOCX document. Please extract information from the following content:\n\n${rawText.substring(0, 50000)}`;
+          }
+        } else if (isText) {
           // Text-based files can be read directly
           actualCvText = await cvResponse.text();
           console.log('Text CV content fetched, length:', actualCvText.length);
         } else {
-          // For other document types (doc, docx), try to extract text
+          // For other document types, try text extraction
           const buffer = await cvResponse.arrayBuffer();
           const textDecoder = new TextDecoder('utf-8');
           const attemptedText = textDecoder.decode(buffer);
@@ -125,20 +157,16 @@ serve(async (req) => {
           const readableChars = attemptedText.replace(/[^\x20-\x7E\n\r\t]/g, '').length;
           const totalChars = attemptedText.length;
           
-          if (totalChars > 0 && readableChars / totalChars > 0.5) {
+          if (totalChars > 0 && readableChars / totalChars > 0.3) {
             // Extract readable parts
-            actualCvText = attemptedText.replace(/[^\x20-\x7E\n\r\t]/g, ' ').replace(/\s+/g, ' ').trim();
+            actualCvText = attemptedText.replace(/[^\x20-\x7E\u00A0-\u00FF\u0980-\u09FF\n\r\t]/g, ' ').replace(/\s+/g, ' ').trim();
             console.log('Document text extracted, length:', actualCvText.length);
           } else {
-            // Try as image/vision for other binary formats
-            console.log('Binary document detected - treating as image for vision');
-            const uint8Array = new Uint8Array(buffer);
-            let binary = '';
-            for (let i = 0; i < uint8Array.length; i++) {
-              binary += String.fromCharCode(uint8Array[i]);
-            }
-            pdfBase64 = btoa(binary);
-            actualCvText = 'Document attached as image for analysis.';
+            console.log('Binary document with low text ratio - cannot parse as vision');
+            return new Response(
+              JSON.stringify({ error: 'This document format is not supported. Please upload a PDF or paste the CV text directly.' }),
+              { status: 400, headers: { ...corsHeaders, 'Content-Type': 'application/json' } }
+            );
           }
         }
       } catch (fetchError) {
