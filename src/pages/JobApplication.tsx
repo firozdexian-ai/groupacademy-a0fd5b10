@@ -304,7 +304,7 @@ const JobApplication = () => {
       const isPaidApplication = usage?.isPaid && !codeValid;
       
       // Create application
-      const { error: appError } = await supabase
+      const { data: newApplication, error: appError } = await supabase
         .from("job_applications")
         .insert({
           job_id: job.id,
@@ -314,7 +314,9 @@ const JobApplication = () => {
           is_paid: isPaidApplication,
           application_status: "submitted",
           delivery_status: "pending",
-        });
+        })
+        .select("id")
+        .single();
 
       if (appError) throw appError;
 
@@ -368,6 +370,21 @@ const JobApplication = () => {
               paid_applications_count: 1,
             });
         }
+      }
+
+      // Send email notification to employer (fire and forget)
+      if (newApplication?.id) {
+        supabase.functions.invoke('send-job-application', {
+          body: { applicationId: newApplication.id }
+        }).then(response => {
+          if (response.error) {
+            console.error("Email notification error:", response.error);
+          } else {
+            console.log("Email notification sent successfully");
+          }
+        }).catch(err => {
+          console.error("Failed to send email notification:", err);
+        });
       }
 
       toast.success("Application submitted successfully!");
