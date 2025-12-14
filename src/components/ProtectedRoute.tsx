@@ -2,16 +2,25 @@ import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
+
+type AppRole = Database["public"]["Enums"]["app_role"];
 
 interface ProtectedRouteProps {
   children: React.ReactNode;
   requireAdmin?: boolean;
+  requireAnyAdminRole?: boolean; // Allows admin OR talent_exec
 }
 
-export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRouteProps) => {
+export const ProtectedRoute = ({ 
+  children, 
+  requireAdmin = false,
+  requireAnyAdminRole = false 
+}: ProtectedRouteProps) => {
   const navigate = useNavigate();
   const [isChecking, setIsChecking] = useState(true);
   const [isAuthorized, setIsAuthorized] = useState(false);
+  const [userRole, setUserRole] = useState<AppRole | null>(null);
 
   useEffect(() => {
     const checkAuth = async () => {
@@ -24,6 +33,7 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
           return;
         }
 
+        // Check for admin role specifically
         if (requireAdmin) {
           const { data: roleData } = await supabase
             .from("user_roles")
@@ -37,6 +47,26 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
             navigate("/my-learning");
             return;
           }
+          setUserRole("admin");
+        }
+
+        // Check for any admin-level role (admin OR talent_exec)
+        if (requireAnyAdminRole) {
+          const { data: roleData } = await supabase
+            .from("user_roles")
+            .select("role")
+            .eq("user_id", session.user.id)
+            .in("role", ["admin", "talent_exec"]);
+
+          if (!roleData || roleData.length === 0) {
+            toast.error("Dashboard access required");
+            navigate("/my-learning");
+            return;
+          }
+          
+          // Set the highest role (admin takes precedence)
+          const hasAdmin = roleData.some(r => r.role === "admin");
+          setUserRole(hasAdmin ? "admin" : "talent_exec");
         }
 
         setIsAuthorized(true);
@@ -59,7 +89,7 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
     });
 
     return () => subscription.unsubscribe();
-  }, [navigate, requireAdmin]);
+  }, [navigate, requireAdmin, requireAnyAdminRole]);
 
   if (isChecking) {
     return (
@@ -83,4 +113,41 @@ export const ProtectedRoute = ({ children, requireAdmin = false }: ProtectedRout
   }
 
   return <>{children}</>;
+};
+
+// Export hook for getting user role
+export const useUserRole = () => {
+  const [role, setRole] = useState<AppRole | null>(null);
+  const [isLoading, setIsLoading] = useState(true);
+
+  useEffect(() => {
+    const fetchRole = async () => {
+      try {
+        const { data: { session } } = await supabase.auth.getSession();
+        if (!session) {
+          setIsLoading(false);
+          return;
+        }
+
+        const { data: roleData } = await supabase
+          .from("user_roles")
+          .select("role")
+          .eq("user_id", session.user.id)
+          .in("role", ["admin", "talent_exec"]);
+
+        if (roleData && roleData.length > 0) {
+          const hasAdmin = roleData.some(r => r.role === "admin");
+          setRole(hasAdmin ? "admin" : "talent_exec");
+        }
+      } catch (error) {
+        console.error("Error fetching role:", error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+
+    fetchRole();
+  }, []);
+
+  return { role, isLoading };
 };

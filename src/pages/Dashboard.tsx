@@ -18,17 +18,48 @@ import { JobApplicationsManager } from "@/components/dashboard/JobApplicationsMa
 import { CVOutreachGenerator } from "@/components/dashboard/CVOutreachGenerator";
 import { TalentPoolManager } from "@/components/dashboard/TalentPoolManager";
 import { CompaniesManager } from "@/components/dashboard/CompaniesManager";
+import { TeamManager } from "@/components/dashboard/TeamManager";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
+import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
+
+type AppRole = Database["public"]["Enums"]["app_role"];
+
+// Define which tabs are accessible by which roles
+const tabAccessMap: Record<string, AppRole[]> = {
+  overview: ["admin"],
+  all: ["admin"],
+  videos: ["admin"],
+  courses: ["admin"],
+  webinars: ["admin"],
+  batches: ["admin"],
+  seminars: ["admin"],
+  codes: ["admin"],
+  banners: ["admin"],
+  leads: ["admin"],
+  interviews: ["admin"],
+  salary: ["admin"],
+  professions: ["admin"],
+  jobs: ["admin"],
+  applications: ["admin"],
+  companies: ["admin"],
+  team: ["admin"],
+  // Talent exec accessible tabs
+  outreach: ["admin", "talent_exec"],
+  talent: ["admin", "talent_exec"],
+  portfolios: ["admin", "talent_exec"],
+};
 
 const Dashboard = () => {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
   const [user, setUser] = useState<User | null>(null);
+  const [userRole, setUserRole] = useState<AppRole | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   
-  // Read tab from URL or default to "overview"
-  const activeTab = searchParams.get("tab") || "overview";
+  // Read tab from URL or default based on role
+  const activeTab = searchParams.get("tab") || (userRole === "talent_exec" ? "outreach" : "overview");
   
   const setActiveTab = (tab: string) => {
     setSearchParams({ tab });
@@ -38,14 +69,53 @@ const Dashboard = () => {
     checkAuth();
   }, []);
 
-  const checkAuth = async () => {
-    const { data: { user } } = await supabase.auth.getUser();
-    if (!user) {
-      navigate("/auth");
-      return;
+  // Validate tab access when role changes
+  useEffect(() => {
+    if (!userRole || isLoading) return;
+    
+    const currentTab = searchParams.get("tab");
+    if (currentTab) {
+      const allowedRoles = tabAccessMap[currentTab];
+      if (allowedRoles && !allowedRoles.includes(userRole)) {
+        // Redirect to allowed tab
+        const defaultTab = userRole === "talent_exec" ? "outreach" : "overview";
+        setSearchParams({ tab: defaultTab });
+        toast.error("You don't have access to that section");
+      }
     }
-    setUser(user);
-    setIsLoading(false);
+  }, [userRole, isLoading, searchParams]);
+
+  const checkAuth = async () => {
+    try {
+      const { data: { user } } = await supabase.auth.getUser();
+      if (!user) {
+        navigate("/auth");
+        return;
+      }
+      setUser(user);
+
+      // Fetch user role
+      const { data: roleData } = await supabase
+        .from("user_roles")
+        .select("role")
+        .eq("user_id", user.id)
+        .in("role", ["admin", "talent_exec"]);
+
+      if (!roleData || roleData.length === 0) {
+        toast.error("Dashboard access required");
+        navigate("/my-learning");
+        return;
+      }
+
+      // Set the highest role (admin takes precedence)
+      const hasAdmin = roleData.some(r => r.role === "admin");
+      setUserRole(hasAdmin ? "admin" : "talent_exec");
+      
+      setIsLoading(false);
+    } catch (error) {
+      console.error("Auth check error:", error);
+      navigate("/auth");
+    }
   };
 
   if (isLoading) {
@@ -60,6 +130,16 @@ const Dashboard = () => {
   }
 
   const renderContent = () => {
+    // Check access before rendering
+    const allowedRoles = tabAccessMap[activeTab];
+    if (allowedRoles && userRole && !allowedRoles.includes(userRole)) {
+      return (
+        <div className="text-center py-12">
+          <p className="text-muted-foreground">You don't have access to this section.</p>
+        </div>
+      );
+    }
+
     switch (activeTab) {
       case "overview":
         return <DashboardOverview />;
@@ -99,8 +179,10 @@ const Dashboard = () => {
         return <TalentPoolManager />;
       case "companies":
         return <CompaniesManager />;
+      case "team":
+        return <TeamManager />;
       default:
-        return <DashboardOverview />;
+        return userRole === "talent_exec" ? <CVOutreachGenerator /> : <DashboardOverview />;
     }
   };
 
@@ -125,6 +207,7 @@ const Dashboard = () => {
       outreach: "CV Outreach Generator",
       talent: "Talent Pool",
       companies: "Companies",
+      team: "Team Members",
     };
     return titles[activeTab] || "Dashboard";
   };
@@ -132,7 +215,7 @@ const Dashboard = () => {
   return (
     <SidebarProvider>
       <div className="min-h-screen flex w-full bg-background">
-        <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} />
+        <AdminSidebar activeTab={activeTab} onTabChange={setActiveTab} userRole={userRole} />
         <SidebarInset className="flex-1">
           {/* Header */}
           <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-10">

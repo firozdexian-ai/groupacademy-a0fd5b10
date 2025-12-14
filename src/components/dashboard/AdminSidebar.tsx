@@ -1,4 +1,4 @@
-import { useLocation, useNavigate } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   LayoutDashboard,
   BookOpen,
@@ -13,12 +13,13 @@ import {
   Building2,
   FileCheck,
   Send,
-  Database,
+  Database as DatabaseIcon,
   Key,
   Image,
   GraduationCap,
   ChevronDown,
   LogOut,
+  UserCog,
 } from "lucide-react";
 import {
   Sidebar,
@@ -38,10 +39,12 @@ import {
   CollapsibleContent,
   CollapsibleTrigger,
 } from "@/components/ui/collapsible";
-import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
+import type { Database } from "@/integrations/supabase/types";
+
+type AppRole = Database["public"]["Enums"]["app_role"];
 
 interface NavItem {
   title: string;
@@ -53,12 +56,14 @@ interface NavGroup {
   title: string;
   icon: React.ElementType;
   items: NavItem[];
+  roles: AppRole[]; // Which roles can see this group
 }
 
 const navGroups: NavGroup[] = [
   {
     title: "Content Management",
     icon: BookOpen,
+    roles: ["admin"],
     items: [
       { title: "All Content", icon: BookOpen, value: "all" },
       { title: "Free Videos", icon: Video, value: "videos" },
@@ -71,6 +76,7 @@ const navGroups: NavGroup[] = [
   {
     title: "Career Services Leads",
     icon: ClipboardList,
+    roles: ["admin"],
     items: [
       { title: "Assessment Leads", icon: ClipboardList, value: "leads" },
       { title: "Mock Interviews", icon: MessageSquare, value: "interviews" },
@@ -81,6 +87,7 @@ const navGroups: NavGroup[] = [
   {
     title: "Jobs Board",
     icon: Building2,
+    roles: ["admin"],
     items: [
       { title: "Manage Jobs", icon: Building2, value: "jobs" },
       { title: "Applications", icon: FileCheck, value: "applications" },
@@ -89,19 +96,23 @@ const navGroups: NavGroup[] = [
   },
   {
     title: "Talent & Outreach",
-    icon: Database,
+    icon: DatabaseIcon,
+    roles: ["admin", "talent_exec"],
     items: [
       { title: "CV Outreach", icon: Send, value: "outreach" },
-      { title: "Talent Pool", icon: Database, value: "talent" },
+      { title: "Talent Pool", icon: DatabaseIcon, value: "talent" },
+      { title: "Portfolio Requests", icon: Briefcase, value: "portfolios" },
     ],
   },
   {
     title: "Platform Settings",
     icon: GraduationCap,
+    roles: ["admin"],
     items: [
       { title: "Access Codes", icon: Key, value: "codes" },
       { title: "Banners", icon: Image, value: "banners" },
       { title: "Professions", icon: GraduationCap, value: "professions" },
+      { title: "Team Members", icon: UserCog, value: "team" },
     ],
   },
 ];
@@ -109,9 +120,10 @@ const navGroups: NavGroup[] = [
 interface AdminSidebarProps {
   activeTab: string;
   onTabChange: (value: string) => void;
+  userRole?: AppRole | null;
 }
 
-export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
+export function AdminSidebar({ activeTab, onTabChange, userRole = "admin" }: AdminSidebarProps) {
   const navigate = useNavigate();
   const { state } = useSidebar();
   const isCollapsed = state === "collapsed";
@@ -122,10 +134,15 @@ export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
     navigate("/auth");
   };
 
+  // Filter nav groups based on user role
+  const filteredNavGroups = navGroups.filter(group => 
+    userRole && group.roles.includes(userRole)
+  );
+
   // Determine which group should be open based on active tab
   const getOpenGroups = () => {
     const openGroups: string[] = [];
-    navGroups.forEach((group) => {
+    filteredNavGroups.forEach((group) => {
       if (group.items.some((item) => item.value === activeTab)) {
         openGroups.push(group.title);
       }
@@ -134,6 +151,14 @@ export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
   };
 
   const openGroups = getOpenGroups();
+
+  // Get default tab for the user's role
+  const getDefaultTab = () => {
+    if (userRole === "talent_exec") {
+      return "outreach";
+    }
+    return "overview";
+  };
 
   return (
     <Sidebar collapsible="icon" className="border-r">
@@ -145,31 +170,35 @@ export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
           {!isCollapsed && (
             <div className="overflow-hidden">
               <h1 className="text-sm font-bold truncate">GroUp Academy</h1>
-              <p className="text-xs text-muted-foreground truncate">Operations Portal</p>
+              <p className="text-xs text-muted-foreground truncate">
+                {userRole === "talent_exec" ? "Talent Portal" : "Operations Portal"}
+              </p>
             </div>
           )}
         </div>
       </SidebarHeader>
 
       <SidebarContent className="px-2">
-        {/* Overview */}
-        <SidebarGroup>
-          <SidebarMenu>
-            <SidebarMenuItem>
-              <SidebarMenuButton
-                onClick={() => onTabChange("overview")}
-                isActive={activeTab === "overview"}
-                tooltip="Overview"
-              >
-                <LayoutDashboard className="w-4 h-4" />
-                <span>Overview</span>
-              </SidebarMenuButton>
-            </SidebarMenuItem>
-          </SidebarMenu>
-        </SidebarGroup>
+        {/* Overview - Only for admin */}
+        {userRole === "admin" && (
+          <SidebarGroup>
+            <SidebarMenu>
+              <SidebarMenuItem>
+                <SidebarMenuButton
+                  onClick={() => onTabChange("overview")}
+                  isActive={activeTab === "overview"}
+                  tooltip="Overview"
+                >
+                  <LayoutDashboard className="w-4 h-4" />
+                  <span>Overview</span>
+                </SidebarMenuButton>
+              </SidebarMenuItem>
+            </SidebarMenu>
+          </SidebarGroup>
+        )}
 
         {/* Nav Groups */}
-        {navGroups.map((group) => (
+        {filteredNavGroups.map((group) => (
           <Collapsible
             key={group.title}
             defaultOpen={openGroups.includes(group.title)}
@@ -209,38 +238,40 @@ export function AdminSidebar({ activeTab, onTabChange }: AdminSidebarProps) {
           </Collapsible>
         ))}
 
-        {/* Quick Links */}
-        <SidebarGroup className="mt-4">
-          <SidebarGroupLabel>Quick Links</SidebarGroupLabel>
-          <SidebarGroupContent>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => navigate("/students")} tooltip="Students">
-                  <Users className="w-4 h-4" />
-                  <span>Students</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => navigate("/enrollments")} tooltip="Enrollments">
-                  <BookOpen className="w-4 h-4" />
-                  <span>Enrollments</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => navigate("/instructors")} tooltip="Instructors">
-                  <Users className="w-4 h-4" />
-                  <span>Instructors</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-              <SidebarMenuItem>
-                <SidebarMenuButton onClick={() => navigate("/sessions")} tooltip="Sessions">
-                  <Calendar className="w-4 h-4" />
-                  <span>Sessions</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroupContent>
-        </SidebarGroup>
+        {/* Quick Links - Only for admin */}
+        {userRole === "admin" && (
+          <SidebarGroup className="mt-4">
+            <SidebarGroupLabel>Quick Links</SidebarGroupLabel>
+            <SidebarGroupContent>
+              <SidebarMenu>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => navigate("/students")} tooltip="Students">
+                    <Users className="w-4 h-4" />
+                    <span>Students</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => navigate("/enrollments")} tooltip="Enrollments">
+                    <BookOpen className="w-4 h-4" />
+                    <span>Enrollments</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => navigate("/instructors")} tooltip="Instructors">
+                    <Users className="w-4 h-4" />
+                    <span>Instructors</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+                <SidebarMenuItem>
+                  <SidebarMenuButton onClick={() => navigate("/sessions")} tooltip="Sessions">
+                    <Calendar className="w-4 h-4" />
+                    <span>Sessions</span>
+                  </SidebarMenuButton>
+                </SidebarMenuItem>
+              </SidebarMenu>
+            </SidebarGroupContent>
+          </SidebarGroup>
+        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t p-2">
