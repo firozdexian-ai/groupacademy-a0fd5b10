@@ -1879,6 +1879,7 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      has_any_admin_role: { Args: { _user_id: string }; Returns: boolean }
       has_role: {
         Args: {
           _role: Database["public"]["Enums"]["app_role"]
@@ -1889,7 +1890,7 @@ export type Database = {
     }
     Enums: {
       academy_type: "executive" | "technical"
-      app_role: "admin" | "student"
+      app_role: "admin" | "student" | "talent_exec"
       application_status:
         | "submitted"
         | "sent_to_employer"
@@ -2068,7 +2069,7 @@ export const Constants = {
   public: {
     Enums: {
       academy_type: ["executive", "technical"],
-      app_role: ["admin", "student"],
+      app_role: ["admin", "student", "talent_exec"],
       application_status: [
         "submitted",
         "sent_to_employer",
