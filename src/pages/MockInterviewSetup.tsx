@@ -76,24 +76,29 @@ export default function MockInterviewSetup() {
   }, []);
 
   const loadCategories = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
     try {
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Categories loading timed out")), 10000);
-      });
-
       const queryPromise = supabase
         .from("profession_categories")
         .select("id, name, slug")
         .eq("is_active", true)
         .order("display_order");
 
-      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
-      
+      const abortPromise = new Promise<never>((_, reject) => {
+        controller.signal.addEventListener('abort', () => 
+          reject(new Error("Categories loading timed out"))
+        );
+      });
+
+      const { data, error } = await Promise.race([queryPromise, abortPromise]);
+      clearTimeout(timeoutId);
       if (error) throw error;
       if (data) setCategories(data);
-    } catch (error) {
+    } catch (error: any) {
+      clearTimeout(timeoutId);
       console.error("Error loading categories:", error);
-      // Categories are non-critical, silently fail
     }
   };
 
@@ -106,10 +111,8 @@ export default function MockInterviewSetup() {
     setCheckingEmail(true);
     setEmailCheckError(null);
     
-    // Create timeout promise
-    const timeoutPromise = new Promise((_, reject) => {
-      setTimeout(() => reject(new Error("Request timed out")), 15000);
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
 
     try {
       const queryPromise = supabase
@@ -121,11 +124,14 @@ export default function MockInterviewSetup() {
         .limit(1)
         .maybeSingle();
 
-      // Race between query and timeout
-      const { data: existing, error } = await Promise.race([
-        queryPromise,
-        timeoutPromise
-      ]) as any;
+      const abortPromise = new Promise<never>((_, reject) => {
+        controller.signal.addEventListener('abort', () => 
+          reject(new Error("Request timed out"))
+        );
+      });
+
+      const { data: existing, error } = await Promise.race([queryPromise, abortPromise]);
+      clearTimeout(timeoutId);
 
       if (error) {
         console.error("Database error checking email:", error);
@@ -144,8 +150,9 @@ export default function MockInterviewSetup() {
         setStep("job-description");
       }
     } catch (error: any) {
+      clearTimeout(timeoutId);
       console.error("Error checking email:", error);
-      const errorMessage = error?.message === "Request timed out" 
+      const errorMessage = error?.name === "AbortError" || error?.message?.includes("timed out")
         ? "Connection timed out. Please check your internet and try again."
         : "Something went wrong. Please try again.";
       setEmailCheckError(errorMessage);

@@ -160,27 +160,24 @@ export default function PortfolioRequest() {
 
   const loadPortfolioCount = async () => {
     setIsLoadingCount(true);
-    
-    // 15-second timeout for count loading
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Count loading timed out')), 15000);
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
     
     try {
-      const fetchPromise = supabase
+      const { count, error } = await supabase
         .from('portfolio_requests')
-        .select('*', { count: 'exact', head: true });
+        .select('*', { count: 'exact', head: true })
+        .abortSignal(controller.signal);
       
-      const { count, error } = await Promise.race([fetchPromise, timeoutPromise]);
-      
+      clearTimeout(timeoutId);
       if (error) {
         console.error('[PortfolioRequest] Error loading portfolio count:', error);
       } else {
         setPortfolioCount(count || 0);
       }
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error('[PortfolioRequest] Failed to load portfolio count:', err);
-      // Don't block the form, just use a default
       setPortfolioCount(0);
     } finally {
       setIsLoadingCount(false);
@@ -190,21 +187,18 @@ export default function PortfolioRequest() {
   const loadProfessionCategories = async () => {
     setIsLoadingCategories(true);
     setCategoryLoadError(false);
-    
-    // Create a timeout promise (10 seconds)
-    const timeoutPromise = new Promise<never>((_, reject) => {
-      setTimeout(() => reject(new Error('Request timed out')), 10000);
-    });
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
     
     try {
-      const fetchPromise = supabase
+      const { data, error } = await supabase
         .from('profession_categories')
         .select('id, name, slug')
         .eq('is_active', true)
-        .order('display_order');
+        .order('display_order')
+        .abortSignal(controller.signal);
       
-      const { data, error } = await Promise.race([fetchPromise, timeoutPromise]);
-      
+      clearTimeout(timeoutId);
       if (error) {
         console.error('[PortfolioRequest] Error loading profession categories:', error);
         throw error;
@@ -213,11 +207,11 @@ export default function PortfolioRequest() {
       if (data && data.length > 0) {
         setProfessionCategories(data);
       } else {
-        // No data returned, use fallback
         console.log('[PortfolioRequest] No categories from DB, using fallback');
         setProfessionCategories(FALLBACK_CATEGORIES);
       }
-    } catch (err) {
+    } catch (err: any) {
+      clearTimeout(timeoutId);
       console.error('[PortfolioRequest] Failed to load categories, using fallback:', err);
       setCategoryLoadError(true);
       setProfessionCategories(FALLBACK_CATEGORIES);

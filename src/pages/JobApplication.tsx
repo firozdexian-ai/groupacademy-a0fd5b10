@@ -83,12 +83,10 @@ const JobApplication = () => {
   }, [id]);
 
   const loadJob = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    
     try {
-      // Add 15-second timeout for job loading
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Loading timed out")), 15000);
-      });
-
       const queryPromise = supabase
         .from("jobs")
         .select("id, title, company_name, company_logo_url, application_email, application_type, application_url")
@@ -96,8 +94,14 @@ const JobApplication = () => {
         .eq("is_active", true)
         .single();
 
-      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
+      const abortPromise = new Promise<never>((_, reject) => {
+        controller.signal.addEventListener('abort', () => 
+          reject(new Error("Loading timed out"))
+        );
+      });
 
+      const { data, error } = await Promise.race([queryPromise, abortPromise]);
+      clearTimeout(timeoutId);
       if (error) throw error;
       setJob(data);
       
@@ -110,11 +114,10 @@ const JobApplication = () => {
         }, 1000);
       }
     } catch (error: any) {
+      clearTimeout(timeoutId);
       console.error("Error loading job:", error);
-      const message = error?.message?.includes("timed out") 
-        ? "Loading took too long. Please try again."
-        : "Job not found";
-      toast.error(message);
+      const isTimeout = error?.name === "AbortError" || error?.message?.includes("timed out");
+      toast.error(isTimeout ? "Loading took too long. Please try again." : "Job not found");
       navigate("/jobs");
     } finally {
       setLoading(false);
@@ -122,24 +125,27 @@ const JobApplication = () => {
   };
 
   const checkExistingProfile = async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 10000);
+    
     try {
-      // Add 10-second timeout for profile check
-      const timeoutPromise = new Promise((_, reject) => {
-        setTimeout(() => reject(new Error("Profile check timed out")), 10000);
-      });
-
-      const userPromise = supabase.auth.getUser();
-      const { data: { user } } = await Promise.race([userPromise, timeoutPromise]) as any;
+      const { data: { user } } = await supabase.auth.getUser();
       
       if (user) {
-        // FIXED: Check by email ONLY to ensure we get the correct professional profile
-        const profilePromise = supabase
+        const queryPromise = supabase
           .from("professionals")
           .select("*")
           .eq("email", user.email)
           .single();
 
-        const { data: profile } = await Promise.race([profilePromise, timeoutPromise]) as any;
+        const abortPromise = new Promise<never>((_, reject) => {
+          controller.signal.addEventListener('abort', () => 
+            reject(new Error("Profile check timed out"))
+          );
+        });
+
+        const { data: profile } = await Promise.race([queryPromise, abortPromise]);
+        clearTimeout(timeoutId);
 
         if (profile) {
           setExistingProfile(profile);
@@ -154,8 +160,11 @@ const JobApplication = () => {
           });
           await checkUsage(profile.id);
         }
+      } else {
+        clearTimeout(timeoutId);
       }
     } catch (error) {
+      clearTimeout(timeoutId);
       console.error("Error checking profile:", error);
       // Non-critical, silently fail
     }
