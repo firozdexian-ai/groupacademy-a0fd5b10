@@ -78,22 +78,29 @@ const Jobs = () => {
   const [currentPage, setCurrentPage] = useState(parseInt(searchParams.get("page") || "1"));
 
   const loadCategories = useCallback(async () => {
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), DATA_TIMEOUT);
+    
     try {
-      const fetchCategories = async () => {
-        const { data, error } = await supabase
-          .from("profession_categories")
-          .select("id, name")
-          .eq("is_active", true)
-          .order("name");
-        if (error) throw error;
-        return data || [];
-      };
-      
-      const data = await withTimeout(fetchCategories(), DATA_TIMEOUT);
-      setCategories(data);
+      const queryPromise = supabase
+        .from("profession_categories")
+        .select("id, name")
+        .eq("is_active", true)
+        .order("name");
+
+      const abortPromise = new Promise<never>((_, reject) => {
+        controller.signal.addEventListener('abort', () => 
+          reject(new Error("Categories loading timed out"))
+        );
+      });
+
+      const { data, error } = await Promise.race([queryPromise, abortPromise]);
+      clearTimeout(timeoutId);
+      if (error) throw error;
+      setCategories(data || []);
     } catch (err) {
+      clearTimeout(timeoutId);
       console.error("Error loading categories:", err);
-      // Non-critical, don't show error
     }
   }, []);
 
@@ -101,48 +108,57 @@ const Jobs = () => {
     setLoading(true);
     setError(null);
     
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), DATA_TIMEOUT);
+    
     try {
-      const fetchJobs = async () => {
-        let query = supabase
-          .from("jobs")
-          .select("*", { count: "exact" })
-          .eq("is_active", true)
-          .order("is_featured", { ascending: false })
-          .order("created_at", { ascending: false });
+      let query = supabase
+        .from("jobs")
+        .select("*", { count: "exact" })
+        .eq("is_active", true)
+        .order("is_featured", { ascending: false })
+        .order("created_at", { ascending: false });
 
-        // Apply filters
-        if (categoryFilter !== "all") {
-          query = query.eq("profession_category_id", categoryFilter);
-        }
-        if (jobTypeFilter !== "all") {
-          query = query.eq("job_type", jobTypeFilter as "full_time" | "part_time" | "contract" | "internship" | "freelance" | "remote");
-        }
-        if (experienceFilter !== "all") {
-          query = query.eq("experience_level", experienceFilter as "entry" | "mid" | "senior" | "executive");
-        }
-        if (locationFilter) {
-          query = query.ilike("location", `%${locationFilter}%`);
-        }
-        if (searchQuery) {
-          query = query.or(`title.ilike.%${searchQuery}%,company_name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
-        }
+      // Apply filters
+      if (categoryFilter !== "all") {
+        query = query.eq("profession_category_id", categoryFilter);
+      }
+      if (jobTypeFilter !== "all") {
+        query = query.eq("job_type", jobTypeFilter as "full_time" | "part_time" | "contract" | "internship" | "freelance" | "remote");
+      }
+      if (experienceFilter !== "all") {
+        query = query.eq("experience_level", experienceFilter as "entry" | "mid" | "senior" | "executive");
+      }
+      if (locationFilter) {
+        query = query.ilike("location", `%${locationFilter}%`);
+      }
+      if (searchQuery) {
+        query = query.or(`title.ilike.%${searchQuery}%,company_name.ilike.%${searchQuery}%,description.ilike.%${searchQuery}%`);
+      }
 
-        // Pagination
-        const from = (currentPage - 1) * JOBS_PER_PAGE;
-        const to = from + JOBS_PER_PAGE - 1;
-        query = query.range(from, to);
+      // Pagination
+      const from = (currentPage - 1) * JOBS_PER_PAGE;
+      const to = from + JOBS_PER_PAGE - 1;
+      query = query.range(from, to);
 
-        const { data, error, count } = await query;
-        if (error) throw error;
-        
-        return { data: data || [], count: count || 0 };
-      };
+      const abortPromise = new Promise<never>((_, reject) => {
+        controller.signal.addEventListener('abort', () => 
+          reject(new Error("Loading took too long"))
+        );
+      });
+
+      const { data, error, count } = await Promise.race([query, abortPromise]);
+      clearTimeout(timeoutId);
       
-      const result = await withTimeout(fetchJobs(), DATA_TIMEOUT);
-      setJobs(result.data);
-      setTotalCount(result.count);
-    } catch (err) {
-      const error = err instanceof Error ? err : new Error('Failed to load jobs');
+      if (error) throw error;
+      setJobs(data || []);
+      setTotalCount(count || 0);
+    } catch (err: any) {
+      clearTimeout(timeoutId);
+      const isAbort = err?.message?.includes("timed out") || err?.message?.includes("too long");
+      const error = isAbort 
+        ? new Error("Loading took too long. Please try again.")
+        : (err instanceof Error ? err : new Error('Failed to load jobs'));
       setError(error);
       console.error("Error loading jobs:", err);
     } finally {

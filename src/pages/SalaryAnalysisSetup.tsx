@@ -44,22 +44,22 @@ const SalaryAnalysisSetup = () => {
 
   useEffect(() => {
     const fetchCategories = async () => {
+      const controller = new AbortController();
+      const timeoutId = setTimeout(() => controller.abort(), 10000);
+      
       try {
-        const timeoutPromise = new Promise((_, reject) => {
-          setTimeout(() => reject(new Error("Categories loading timed out")), 10000);
-        });
-
-        const queryPromise = supabase
+        const { data, error } = await supabase
           .from("profession_categories")
           .select("id, name")
           .eq("is_active", true)
-          .order("display_order");
+          .order("display_order")
+          .abortSignal(controller.signal);
 
-        const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
-        
+        clearTimeout(timeoutId);
         if (error) throw error;
         if (data) setProfessionCategories(data);
-      } catch (error) {
+      } catch (error: any) {
+        clearTimeout(timeoutId);
         console.error("Error loading categories:", error);
         // Categories are non-critical, silently fail
       }
@@ -74,20 +74,20 @@ const SalaryAnalysisSetup = () => {
     }
 
     setIsCheckingEmail(true);
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 15000);
+    
     try {
-      const timeoutPromise = new Promise((_, reject) => 
-        setTimeout(() => reject(new Error("Timeout")), 15000)
-      );
-
-      const queryPromise = supabase
+      const { data, error } = await supabase
         .from("salary_analyses")
         .select("created_at")
         .eq("email", email.trim().toLowerCase())
         .eq("status", "completed")
         .order("created_at", { ascending: false })
-        .limit(1);
+        .limit(1)
+        .abortSignal(controller.signal);
 
-      const { data, error } = await Promise.race([queryPromise, timeoutPromise]) as any;
+      clearTimeout(timeoutId);
 
       if (error) throw error;
 
@@ -109,10 +109,12 @@ const SalaryAnalysisSetup = () => {
           setShowAccessCodeInput(true);
         }
       }
-    } catch (error) {
+    } catch (error: any) {
+      clearTimeout(timeoutId);
       console.error("Error checking email:", error);
+      const isTimeout = error?.name === "AbortError" || error?.message?.includes("timed out");
       toast({ 
-        title: "Error checking eligibility", 
+        title: isTimeout ? "Connection timed out" : "Error checking eligibility", 
         description: "Please try again",
         variant: "destructive" 
       });
