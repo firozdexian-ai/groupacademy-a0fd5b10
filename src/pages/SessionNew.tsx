@@ -1,7 +1,9 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryWithTimeout } from "@/hooks/useQueryWithTimeout";
+import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -52,7 +54,7 @@ export default function SessionNew() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: courses } = useQuery({
+  const { data: courses } = useQueryWithTimeout({
     queryKey: ["courses"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -62,9 +64,10 @@ export default function SessionNew() {
       if (error) throw error;
       return data;
     },
+    timeout: TIMEOUTS.DEFAULT,
   });
 
-  const { data: instructors } = useQuery({
+  const { data: instructors } = useQueryWithTimeout({
     queryKey: ["instructors"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -75,6 +78,7 @@ export default function SessionNew() {
       if (error) throw error;
       return data;
     },
+    timeout: TIMEOUTS.DEFAULT,
   });
 
   const form = useForm<FormValues>({

@@ -1,7 +1,8 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryWithTimeout, withTimeout } from "@/hooks/useQueryWithTimeout";
+import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -22,8 +23,6 @@ import {
 } from "@/components/ui/alert-dialog";
 import { CardGridSkeleton } from "@/components/ui/page-loading-skeleton";
 import { ErrorState } from "@/components/ui/error-state";
-import { withTimeout } from "@/hooks/useQueryWithTimeout";
-import { TIMEOUTS } from "@/lib/timeoutConfig";
 
 interface Instructor {
   id: string;
@@ -47,7 +46,7 @@ const Instructors = () => {
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [selectedInstructor, setSelectedInstructor] = useState<Instructor | null>(null);
 
-  const { data: instructors = [], isLoading, error, refetch } = useQuery({
+  const { data: instructors = [], isLoading, error, refetch } = useQueryWithTimeout({
     queryKey: ["instructors"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -58,8 +57,7 @@ const Instructors = () => {
       if (error) throw error;
       return data as Instructor[];
     },
-    retry: 2,
-    retryDelay: 1000,
+    timeout: TIMEOUTS.DEFAULT,
   });
 
   useEffect(() => {

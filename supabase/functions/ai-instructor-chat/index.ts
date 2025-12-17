@@ -119,6 +119,10 @@ Focus your answers on this specific module content.`;
       }
     }
 
+    // Add timeout controller for AI call (90 seconds for streaming)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+
     // Call Lovable AI Gateway
     const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -134,7 +138,10 @@ Focus your answers on this specific module content.`;
         ],
         stream: true,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       if (response.status === 429) {

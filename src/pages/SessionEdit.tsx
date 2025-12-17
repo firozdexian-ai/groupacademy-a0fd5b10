@@ -1,7 +1,9 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useQueryWithTimeout } from "@/hooks/useQueryWithTimeout";
+import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import * as z from "zod";
@@ -41,6 +43,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
+import { Skeleton } from "@/components/ui/skeleton";
 
 const formSchema = z.object({
   content_id: z.string().min(1, "Please select a course"),
@@ -64,7 +67,7 @@ export default function SessionEdit() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  const { data: session, isLoading } = useQuery({
+  const { data: session, isLoading, error: sessionError, refetch } = useQueryWithTimeout({
     queryKey: ["session", id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -75,9 +78,10 @@ export default function SessionEdit() {
       if (error) throw error;
       return data;
     },
+    timeout: TIMEOUTS.DEFAULT,
   });
 
-  const { data: courses } = useQuery({
+  const { data: courses } = useQueryWithTimeout({
     queryKey: ["courses"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -87,9 +91,10 @@ export default function SessionEdit() {
       if (error) throw error;
       return data;
     },
+    timeout: TIMEOUTS.DEFAULT,
   });
 
-  const { data: instructors } = useQuery({
+  const { data: instructors } = useQueryWithTimeout({
     queryKey: ["instructors"],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -100,6 +105,7 @@ export default function SessionEdit() {
       if (error) throw error;
       return data;
     },
+    timeout: TIMEOUTS.DEFAULT,
   });
 
   const form = useForm<FormValues>({
@@ -193,9 +199,28 @@ export default function SessionEdit() {
 
   if (isLoading) {
     return (
-      <div className="container mx-auto py-8">
-        <div className="flex justify-center items-center min-h-[400px]">
-          <div className="text-muted-foreground">Loading session...</div>
+      <div className="container mx-auto py-8 max-w-3xl">
+        <Skeleton className="h-9 w-36 mb-6" />
+        <div className="space-y-4">
+          <Skeleton className="h-10 w-64" />
+          <Skeleton className="h-4 w-48" />
+          <Skeleton className="h-32 w-full" />
+          <Skeleton className="h-32 w-full" />
+        </div>
+      </div>
+    );
+  }
+
+  if (sessionError) {
+    const isTimeout = (sessionError as any)?.message?.includes("timed out");
+    return (
+      <div className="container mx-auto py-8 max-w-3xl text-center">
+        <p className="text-destructive mb-4">
+          {isTimeout ? "Loading took too long. Please try again." : "Failed to load session."}
+        </p>
+        <div className="flex gap-2 justify-center">
+          <Button onClick={() => refetch()}>Try Again</Button>
+          <Button variant="outline" onClick={() => navigate("/sessions")}>Back to Sessions</Button>
         </div>
       </div>
     );

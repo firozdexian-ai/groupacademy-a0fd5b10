@@ -1,5 +1,7 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { withTimeout } from "@/hooks/useQueryWithTimeout";
+import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -38,7 +40,11 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await withTimeout(
+        supabase.auth.getUser(),
+        TIMEOUTS.AUTH,
+        "Authentication check timed out"
+      );
       if (!user) {
         toast.error("You must be logged in to generate codes");
         return;
@@ -46,22 +52,27 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
 
       const code = generateCode();
       
-      const { error } = await supabase
-        .from("assessment_access_codes")
-        .insert({
-          code,
-          email: leadEmail.toLowerCase().trim(),
-          created_by: user.id,
-          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(), // 30 days
-        });
+      const { error } = await withTimeout(
+        Promise.resolve(supabase
+          .from("assessment_access_codes")
+          .insert({
+            code,
+            email: leadEmail.toLowerCase().trim(),
+            created_by: user.id,
+            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+          })),
+        TIMEOUTS.DEFAULT,
+        "Code generation timed out"
+      );
 
       if (error) throw error;
 
       setGeneratedCode(code);
       toast.success("Access code generated successfully!");
-    } catch (error) {
+    } catch (error: any) {
       console.error("Error generating code:", error);
-      toast.error("Failed to generate access code");
+      const isTimeout = error.message?.includes("timed out");
+      toast.error(isTimeout ? "Operation timed out. Please try again." : "Failed to generate access code");
     } finally {
       setGenerating(false);
     }

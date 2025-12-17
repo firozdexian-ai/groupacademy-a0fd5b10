@@ -9,6 +9,8 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { supabase } from "@/integrations/supabase/client";
+import { withTimeout } from "@/hooks/useQueryWithTimeout";
+import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { toast } from "sonner";
 import { Key, Copy, Check, Loader2 } from "lucide-react";
 
@@ -35,7 +37,11 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
   const handleGenerate = async () => {
     setIsGenerating(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const { data: { user } } = await withTimeout(
+        supabase.auth.getUser(),
+        TIMEOUTS.AUTH,
+        "Authentication check timed out"
+      );
       if (!user) {
         toast.error("You must be logged in to generate codes");
         return;
@@ -45,14 +51,18 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
       const expiresAt = new Date();
       expiresAt.setDate(expiresAt.getDate() + 30);
 
-      const { error } = await supabase
-        .from("salary_analysis_access_codes")
-        .insert({
-          code,
-          email: leadEmail,
-          created_by: user.id,
-          expires_at: expiresAt.toISOString(),
-        });
+      const { error } = await withTimeout(
+        Promise.resolve(supabase
+          .from("salary_analysis_access_codes")
+          .insert({
+            code,
+            email: leadEmail,
+            created_by: user.id,
+            expires_at: expiresAt.toISOString(),
+          })),
+        TIMEOUTS.DEFAULT,
+        "Code generation timed out"
+      );
 
       if (error) throw error;
 
@@ -60,7 +70,8 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
       toast.success("Access code generated successfully");
     } catch (error: any) {
       console.error("Error generating code:", error);
-      toast.error("Failed to generate code");
+      const isTimeout = error.message?.includes("timed out");
+      toast.error(isTimeout ? "Operation timed out. Please try again." : "Failed to generate code");
     } finally {
       setIsGenerating(false);
     }

@@ -89,6 +89,10 @@ Respond ONLY with valid JSON in this exact format:
 
     console.log('Generating interview questions with Lovable AI...');
 
+    // Add timeout controller for AI call (90 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+
     const response = await fetch('https://ai.gateway.lovable.dev/v1/chat/completions', {
       method: 'POST',
       headers: {
@@ -105,7 +109,10 @@ Respond ONLY with valid JSON in this exact format:
           { role: 'user', content: prompt }
         ],
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!response.ok) {
       const errorText = await response.text();
