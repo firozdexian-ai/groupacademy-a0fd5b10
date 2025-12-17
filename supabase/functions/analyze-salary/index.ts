@@ -108,6 +108,10 @@ Focus on the Bangladesh job market context. Be realistic and practical with sala
 
     console.log("Calling Lovable AI for salary analysis...");
 
+    // Add timeout controller for AI call (90 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -122,7 +126,10 @@ Focus on the Bangladesh job market context. Be realistic and practical with sala
         ],
         temperature: 0.7,
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();

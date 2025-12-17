@@ -121,6 +121,10 @@ Be specific, actionable, and encouraging. Focus on practical advice for the Bang
       );
     }
 
+    // Add timeout controller for AI call (90 seconds)
+    const controller = new AbortController();
+    const timeoutId = setTimeout(() => controller.abort(), 90000);
+
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -137,7 +141,10 @@ Be specific, actionable, and encouraging. Focus on practical advice for the Bang
           { role: "user", content: prompt }
         ],
       }),
+      signal: controller.signal,
     });
+
+    clearTimeout(timeoutId);
 
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
