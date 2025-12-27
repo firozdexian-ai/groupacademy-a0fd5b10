@@ -1,13 +1,11 @@
-import { useEffect, useRef } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
 import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
-import { toast } from "sonner";
-import { warmupDatabase } from "@/lib/databaseWarmup";
-import { reloadWithCacheBust, resetSessionAndReload } from "@/lib/appRecovery";
+import { BootGate } from "@/components/BootGate";
+import { TalentProvider } from "@/contexts/TalentContext";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -70,244 +68,193 @@ const queryClient = new QueryClient({
   },
 });
 
-// Show recovery action toast after this duration
-const SHOW_RECOVERY_ACTIONS_MS = 10_000;
-
 export default function App() {
-  const toastIdRef = useRef<string | number | undefined>(undefined);
-
-  useEffect(() => {
-    console.log("[App] Starting warmup...");
-    const startTime = Date.now();
-
-    // Show "Connecting..." toast after 5 seconds
-    const slowTimer = setTimeout(() => {
-      toastIdRef.current = toast.loading("Connecting to server…");
-    }, 5000);
-
-    // Show recovery actions if warmup takes too long
-    const recoveryTimer = setTimeout(() => {
-      // Dismiss the loading toast
-      if (toastIdRef.current !== undefined) {
-        toast.dismiss(toastIdRef.current);
-      }
-      
-      // Show actionable recovery toast
-      toast.error("Connection is taking too long", {
-        duration: 30000,
-        action: {
-          label: "Reload",
-          onClick: () => reloadWithCacheBust("user_requested"),
-        },
-        cancel: {
-          label: "Reset & Reload",
-          onClick: () => resetSessionAndReload(),
-        },
-      });
-    }, SHOW_RECOVERY_ACTIONS_MS);
-
-    warmupDatabase().finally(() => {
-      const elapsed = Date.now() - startTime;
-      console.log(`[App] Warmup completed in ${elapsed}ms`);
-      
-      clearTimeout(slowTimer);
-      clearTimeout(recoveryTimer);
-      
-      if (toastIdRef.current !== undefined) {
-        toast.dismiss(toastIdRef.current);
-        toastIdRef.current = undefined;
-      }
-    });
-
-    return () => {
-      clearTimeout(slowTimer);
-      clearTimeout(recoveryTimer);
-    };
-  }, []);
-
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        <TooltipProvider>
-          <Toaster />
-          <Sonner />
-          <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-            <Routes>
-              <Route path="/" element={<Index />} />
-              <Route path="/auth" element={<Auth />} />
-              <Route path="/reset-password" element={<ResetPassword />} />
-              <Route path="/courses" element={<Courses />} />
-              <Route path="/professions" element={<Professions />} />
-              <Route path="/professions/:slug" element={<ProfessionDetail />} />
-              <Route path="/career-services" element={<CareerServices />} />
-              <Route path="/career-assessment" element={<CareerAssessment />} />
-              <Route path="/assessment-results/:id" element={<AssessmentResults />} />
-              <Route path="/portfolio-request" element={<PortfolioRequest />} />
-              <Route path="/portfolio-status" element={<PortfolioStatus />} />
-              <Route path="/mock-interview" element={<MockInterview />} />
-              <Route path="/mock-interview/setup" element={<MockInterviewSetup />} />
-              <Route path="/mock-interview/questions/:id" element={<MockInterviewQuestions />} />
-              <Route path="/mock-interview/capture/:id" element={<MockInterviewCapture />} />
-              <Route path="/mock-interview/results/:id" element={<MockInterviewResults />} />
-              <Route path="/jobs" element={<Jobs />} />
-              <Route path="/jobs/:id" element={<JobDetail />} />
-              <Route path="/jobs/:id/apply" element={<JobApplication />} />
-              <Route path="/salary-analysis" element={<SalaryAnalysis />} />
-              <Route path="/salary-analysis/setup" element={<SalaryAnalysisSetup />} />
-              <Route path="/salary-analysis/processing/:id" element={<SalaryAnalysisProcessing />} />
-              <Route path="/salary-analysis/results/:id" element={<SalaryAnalysisResults />} />
-              <Route path="/courses/:slug" element={<CourseDetail />} />
-              <Route
-                path="/dashboard"
-                element={
-                  <ProtectedRoute requireAnyAdminRole>
-                    <Dashboard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/my-learning"
-                element={
-                  <ProtectedRoute>
-                    <MyLearning />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/learn/:slug"
-                element={
-                  <ProtectedRoute>
-                    <ImmersiveCoursePlayer />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/quiz/:slug"
-                element={
-                  <ProtectedRoute>
-                    <Quiz />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/quiz-manage/:contentId"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <QuizManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/content/:contentId/modules"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <ModuleManagement />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/content/:contentId/modules/:moduleId/resources"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <ModuleResourcesManager />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/report-card/:enrollmentId"
-                element={
-                  <ProtectedRoute>
-                    <ReportCard />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/students"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <Students />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/enrollments"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <Enrollments />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/instructors"
-                element={
-                  <ProtectedRoute>
-                    <Instructors />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/instructors/new"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <InstructorNew />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/instructors/:id/edit"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <InstructorEdit />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/sessions"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <Sessions />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/sessions/new"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <SessionNew />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/sessions/:id/edit"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <SessionEdit />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/content/new"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <ContentNew />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path="/content/:id/edit"
-                element={
-                  <ProtectedRoute requireAdmin>
-                    <ContentEdit />
-                  </ProtectedRoute>
-                }
-              />
-              {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
-              <Route path="*" element={<NotFound />} />
-            </Routes>
-          </BrowserRouter>
-        </TooltipProvider>
+        <BootGate>
+          <TalentProvider>
+            <TooltipProvider>
+              <Toaster />
+              <Sonner />
+              <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
+                <Routes>
+                  <Route path="/" element={<Index />} />
+                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/reset-password" element={<ResetPassword />} />
+                  <Route path="/courses" element={<Courses />} />
+                  <Route path="/professions" element={<Professions />} />
+                  <Route path="/professions/:slug" element={<ProfessionDetail />} />
+                  <Route path="/career-services" element={<CareerServices />} />
+                  <Route path="/career-assessment" element={<CareerAssessment />} />
+                  <Route path="/assessment-results/:id" element={<AssessmentResults />} />
+                  <Route path="/portfolio-request" element={<PortfolioRequest />} />
+                  <Route path="/portfolio-status" element={<PortfolioStatus />} />
+                  <Route path="/mock-interview" element={<MockInterview />} />
+                  <Route path="/mock-interview/setup" element={<MockInterviewSetup />} />
+                  <Route path="/mock-interview/questions/:id" element={<MockInterviewQuestions />} />
+                  <Route path="/mock-interview/capture/:id" element={<MockInterviewCapture />} />
+                  <Route path="/mock-interview/results/:id" element={<MockInterviewResults />} />
+                  <Route path="/jobs" element={<Jobs />} />
+                  <Route path="/jobs/:id" element={<JobDetail />} />
+                  <Route path="/jobs/:id/apply" element={<JobApplication />} />
+                  <Route path="/salary-analysis" element={<SalaryAnalysis />} />
+                  <Route path="/salary-analysis/setup" element={<SalaryAnalysisSetup />} />
+                  <Route path="/salary-analysis/processing/:id" element={<SalaryAnalysisProcessing />} />
+                  <Route path="/salary-analysis/results/:id" element={<SalaryAnalysisResults />} />
+                  <Route path="/courses/:slug" element={<CourseDetail />} />
+                  <Route
+                    path="/dashboard"
+                    element={
+                      <ProtectedRoute requireAnyAdminRole>
+                        <Dashboard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/my-learning"
+                    element={
+                      <ProtectedRoute>
+                        <MyLearning />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/learn/:slug"
+                    element={
+                      <ProtectedRoute>
+                        <ImmersiveCoursePlayer />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/quiz/:slug"
+                    element={
+                      <ProtectedRoute>
+                        <Quiz />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/quiz-manage/:contentId"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <QuizManagement />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/content/:contentId/modules"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <ModuleManagement />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/content/:contentId/modules/:moduleId/resources"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <ModuleResourcesManager />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/report-card/:enrollmentId"
+                    element={
+                      <ProtectedRoute>
+                        <ReportCard />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/students"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <Students />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/enrollments"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <Enrollments />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/instructors"
+                    element={
+                      <ProtectedRoute>
+                        <Instructors />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/instructors/new"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <InstructorNew />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/instructors/:id/edit"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <InstructorEdit />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/sessions"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <Sessions />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/sessions/new"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <SessionNew />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/sessions/:id/edit"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <SessionEdit />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/content/new"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <ContentNew />
+                      </ProtectedRoute>
+                    }
+                  />
+                  <Route
+                    path="/content/:id/edit"
+                    element={
+                      <ProtectedRoute requireAdmin>
+                        <ContentEdit />
+                      </ProtectedRoute>
+                    }
+                  />
+                  {/* ADD ALL CUSTOM ROUTES ABOVE THE CATCH-ALL "*" ROUTE */}
+                  <Route path="*" element={<NotFound />} />
+                </Routes>
+              </BrowserRouter>
+            </TooltipProvider>
+          </TalentProvider>
+        </BootGate>
       </QueryClientProvider>
     </ErrorBoundary>
   );
 }
-
