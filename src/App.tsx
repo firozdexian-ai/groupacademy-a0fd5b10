@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useRef } from "react";
 import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route } from "react-router-dom";
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { toast } from "sonner";
 import { warmupDatabase } from "@/lib/databaseWarmup";
+import { reloadWithCacheBust, resetSessionAndReload } from "@/lib/appRecovery";
 import Index from "./pages/Index";
 import Auth from "./pages/Auth";
 import ResetPassword from "./pages/ResetPassword";
@@ -52,20 +53,76 @@ import SalaryAnalysisResults from "./pages/SalaryAnalysisResults";
 import NotFound from "./pages/NotFound";
 import { ProtectedRoute } from "./components/ProtectedRoute";
 
-const queryClient = new QueryClient();
+// Configure QueryClient with global defaults
+const queryClient = new QueryClient({
+  defaultOptions: {
+    queries: {
+      staleTime: 5 * 60 * 1000, // 5 minutes
+      retry: (failureCount, error) => {
+        if (error instanceof Error && error.message.includes("timed out")) {
+          return false;
+        }
+        return failureCount < 2;
+      },
+      retryDelay: 1000,
+      refetchOnWindowFocus: false,
+    },
+  },
+});
+
+// Show recovery action toast after this duration
+const SHOW_RECOVERY_ACTIONS_MS = 10_000;
 
 export default function App() {
-  useEffect(() => {
-    let toastId: string | number | undefined;
+  const toastIdRef = useRef<string | number | undefined>(undefined);
 
+  useEffect(() => {
+    console.log("[App] Starting warmup...");
+    const startTime = Date.now();
+
+    // Show "Connecting..." toast after 5 seconds
     const slowTimer = setTimeout(() => {
-      toastId = toast.loading("Connecting to server…");
+      toastIdRef.current = toast.loading("Connecting to server…");
     }, 5000);
 
+    // Show recovery actions if warmup takes too long
+    const recoveryTimer = setTimeout(() => {
+      // Dismiss the loading toast
+      if (toastIdRef.current !== undefined) {
+        toast.dismiss(toastIdRef.current);
+      }
+      
+      // Show actionable recovery toast
+      toast.error("Connection is taking too long", {
+        duration: 30000,
+        action: {
+          label: "Reload",
+          onClick: () => reloadWithCacheBust("user_requested"),
+        },
+        cancel: {
+          label: "Reset & Reload",
+          onClick: () => resetSessionAndReload(),
+        },
+      });
+    }, SHOW_RECOVERY_ACTIONS_MS);
+
     warmupDatabase().finally(() => {
+      const elapsed = Date.now() - startTime;
+      console.log(`[App] Warmup completed in ${elapsed}ms`);
+      
       clearTimeout(slowTimer);
-      if (toastId !== undefined) toast.dismiss(toastId);
+      clearTimeout(recoveryTimer);
+      
+      if (toastIdRef.current !== undefined) {
+        toast.dismiss(toastIdRef.current);
+        toastIdRef.current = undefined;
+      }
     });
+
+    return () => {
+      clearTimeout(slowTimer);
+      clearTimeout(recoveryTimer);
+    };
   }, []);
 
   return (
