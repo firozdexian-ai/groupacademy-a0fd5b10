@@ -33,19 +33,17 @@ const LEARNING_SECTIONS = [
     title: 'Competitions',
     description: 'Showcase your skills and win prizes',
     icon: Trophy,
-    href: '#',
+    href: '/app/learning/competitions',
     color: 'text-warning',
-    bgColor: 'bg-warning/10',
-    badge: 'Coming Soon'
+    bgColor: 'bg-warning/10'
   },
   {
     title: 'Free Content & Blogs',
     description: 'Articles, tutorials, and career tips',
     icon: FileText,
-    href: '#',
+    href: '/app/learning/blog',
     color: 'text-muted-foreground',
-    bgColor: 'bg-muted',
-    badge: 'Coming Soon'
+    bgColor: 'bg-muted'
   }
 ];
 

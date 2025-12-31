@@ -1,0 +1,337 @@
+import { useState } from 'react';
+import { useParams, useNavigate } from 'react-router-dom';
+import { useQuery, useMutation, useQueryClient } from '@tanstack/react-query';
+import { supabase } from '@/integrations/supabase/client';
+import { useTalent } from '@/contexts/TalentContext';
+import { Trophy, Calendar, Users, ArrowLeft, Clock, Gift, CheckCircle, Upload, ExternalLink } from 'lucide-react';
+import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
+import { Button } from '@/components/ui/button';
+import { Badge } from '@/components/ui/badge';
+import { Skeleton } from '@/components/ui/skeleton';
+import { Separator } from '@/components/ui/separator';
+import { Textarea } from '@/components/ui/textarea';
+import { Input } from '@/components/ui/input';
+import { Label } from '@/components/ui/label';
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from '@/components/ui/dialog';
+import { format, differenceInDays } from 'date-fns';
+import { toast } from 'sonner';
+
+const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+  upcoming: { label: 'Upcoming', color: 'bg-blue-500' },
+  active: { label: 'Active', color: 'bg-green-500' },
+  judging: { label: 'Under Judging', color: 'bg-yellow-500' },
+  completed: { label: 'Completed', color: 'bg-gray-500' },
+  cancelled: { label: 'Cancelled', color: 'bg-red-500' },
+};
+
+export default function CompetitionDetail() {
+  const { slug } = useParams();
+  const navigate = useNavigate();
+  const { talent } = useTalent();
+  const queryClient = useQueryClient();
+  const [submissionUrl, setSubmissionUrl] = useState('');
+  const [submissionDescription, setSubmissionDescription] = useState('');
+  const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
+
+  const { data: competition, isLoading } = useQuery({
+    queryKey: ['competition', slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from('competitions')
+        .select('*')
+        .eq('slug', slug)
+        .single();
+      if (error) throw error;
+      return data;
+    },
+    enabled: !!slug,
+  });
+
+  const { data: mySubmission } = useQuery({
+    queryKey: ['my-competition-submission', competition?.id, talent?.id],
+    queryFn: async () => {
+      if (!competition?.id || !talent?.id) return null;
+      const { data, error } = await supabase
+        .from('competition_submissions')
+        .select('*')
+        .eq('competition_id', competition.id)
+        .eq('talent_id', talent.id)
+        .single();
+      if (error && error.code !== 'PGRST116') throw error;
+      return data;
+    },
+    enabled: !!competition?.id && !!talent?.id,
+  });
+
+  const submitMutation = useMutation({
+    mutationFn: async () => {
+      if (!competition || !talent) throw new Error('Not authenticated');
+      
+      const { error } = await supabase
+        .from('competition_submissions')
+        .upsert({
+          competition_id: competition.id,
+          talent_id: talent.id,
+          submission_url: submissionUrl,
+          description: submissionDescription,
+          status: 'submitted',
+        });
+      
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success('Submission received!');
+      setIsSubmitDialogOpen(false);
+      queryClient.invalidateQueries({ queryKey: ['my-competition-submission'] });
+    },
+    onError: (error: Error) => {
+      toast.error(error.message || 'Failed to submit');
+    },
+  });
+
+  if (isLoading) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-6">
+        <Skeleton className="h-8 w-48 mb-4" />
+        <Skeleton className="h-64 w-full" />
+      </div>
+    );
+  }
+
+  if (!competition) {
+    return (
+      <div className="max-w-4xl mx-auto px-4 py-12 text-center">
+        <Trophy className="h-12 w-12 mx-auto text-muted-foreground mb-4" />
+        <h2 className="text-xl font-semibold mb-2">Competition Not Found</h2>
+        <Button onClick={() => navigate('/app/learning/competitions')}>
+          <ArrowLeft className="h-4 w-4 mr-2" />
+          Back to Competitions
+        </Button>
+      </div>
+    );
+  }
+
+  const statusConfig = STATUS_CONFIG[competition.status] || STATUS_CONFIG.upcoming;
+  const prizes = Array.isArray(competition.prizes) ? competition.prizes : [];
+  const canSubmit = competition.status === 'active' && talent && !mySubmission;
+  const daysLeft = competition.submission_deadline 
+    ? differenceInDays(new Date(competition.submission_deadline), new Date())
+    : null;
+
+  return (
+    <div className="max-w-4xl mx-auto px-4 py-6">
+      {/* Header */}
+      <div className="flex items-center gap-3 mb-6">
+        <Button variant="ghost" size="icon" onClick={() => navigate('/app/learning/competitions')}>
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div className="flex-1">
+          <div className="flex items-center gap-2 mb-1">
+            {competition.is_featured && (
+              <Badge className="bg-primary/10 text-primary">Featured</Badge>
+            )}
+            <Badge className={`${statusConfig.color} text-white`}>{statusConfig.label}</Badge>
+          </div>
+          <h1 className="text-2xl font-bold">{competition.title}</h1>
+        </div>
+        <Trophy className="h-8 w-8 text-warning" />
+      </div>
+
+      {/* Featured Image */}
+      {competition.featured_image && (
+        <div className="h-64 overflow-hidden rounded-xl mb-6">
+          <img 
+            src={competition.featured_image} 
+            alt={competition.title}
+            className="w-full h-full object-cover"
+          />
+        </div>
+      )}
+
+      {/* Main Content */}
+      <div className="grid gap-6 md:grid-cols-3">
+        <div className="md:col-span-2 space-y-6">
+          {/* Description */}
+          <Card>
+            <CardHeader>
+              <CardTitle>About This Competition</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-muted-foreground whitespace-pre-wrap">
+                {competition.description || 'No description available.'}
+              </p>
+            </CardContent>
+          </Card>
+
+          {/* Rules */}
+          {competition.rules && (
+            <Card>
+              <CardHeader>
+                <CardTitle>Rules & Guidelines</CardTitle>
+              </CardHeader>
+              <CardContent>
+                <p className="text-muted-foreground whitespace-pre-wrap">{competition.rules}</p>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* My Submission */}
+          {mySubmission && (
+            <Card className="border-primary/50">
+              <CardHeader>
+                <div className="flex items-center justify-between">
+                  <CardTitle className="flex items-center gap-2">
+                    <CheckCircle className="h-5 w-5 text-primary" />
+                    Your Submission
+                  </CardTitle>
+                  <Badge>{mySubmission.status}</Badge>
+                </div>
+              </CardHeader>
+              <CardContent>
+                {mySubmission.submission_url && (
+                  <a 
+                    href={mySubmission.submission_url}
+                    target="_blank"
+                    rel="noopener noreferrer"
+                    className="text-primary hover:underline flex items-center gap-1 mb-2"
+                  >
+                    View Submission <ExternalLink className="h-4 w-4" />
+                  </a>
+                )}
+                {mySubmission.description && (
+                  <p className="text-sm text-muted-foreground">{mySubmission.description}</p>
+                )}
+                {mySubmission.feedback && (
+                  <div className="mt-4 p-3 bg-muted rounded-lg">
+                    <p className="text-sm font-medium mb-1">Feedback</p>
+                    <p className="text-sm text-muted-foreground">{mySubmission.feedback}</p>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+          )}
+        </div>
+
+        {/* Sidebar */}
+        <div className="space-y-6">
+          {/* Key Info */}
+          <Card>
+            <CardContent className="pt-6 space-y-4">
+              {competition.start_date && (
+                <div className="flex items-center gap-3">
+                  <Calendar className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Duration</p>
+                    <p className="font-medium">
+                      {format(new Date(competition.start_date), 'MMM d')}
+                      {competition.end_date && ` - ${format(new Date(competition.end_date), 'MMM d, yyyy')}`}
+                    </p>
+                  </div>
+                </div>
+              )}
+              {competition.submission_deadline && (
+                <div className="flex items-center gap-3">
+                  <Clock className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Submission Deadline</p>
+                    <p className="font-medium">
+                      {format(new Date(competition.submission_deadline), 'MMM d, yyyy h:mm a')}
+                    </p>
+                    {daysLeft !== null && daysLeft >= 0 && (
+                      <p className="text-sm text-warning font-medium">
+                        {daysLeft === 0 ? 'Ends today!' : `${daysLeft} days left`}
+                      </p>
+                    )}
+                  </div>
+                </div>
+              )}
+              {competition.max_participants && (
+                <div className="flex items-center gap-3">
+                  <Users className="h-5 w-5 text-muted-foreground" />
+                  <div>
+                    <p className="text-sm text-muted-foreground">Max Participants</p>
+                    <p className="font-medium">{competition.max_participants}</p>
+                  </div>
+                </div>
+              )}
+            </CardContent>
+          </Card>
+
+          {/* Prizes */}
+          {prizes.length > 0 && (
+            <Card>
+              <CardHeader>
+                <CardTitle className="flex items-center gap-2">
+                  <Gift className="h-5 w-5 text-primary" />
+                  Prizes
+                </CardTitle>
+              </CardHeader>
+              <CardContent>
+                <ul className="space-y-2">
+                  {prizes.map((prize: any, index: number) => (
+                    <li key={index} className="flex items-center gap-2">
+                      <Badge variant="outline">{index + 1}</Badge>
+                      <span>{typeof prize === 'string' ? prize : prize.name || prize.description}</span>
+                    </li>
+                  ))}
+                </ul>
+              </CardContent>
+            </Card>
+          )}
+
+          {/* Submit Button */}
+          {canSubmit && (
+            <Dialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
+              <DialogTrigger asChild>
+                <Button className="w-full" size="lg">
+                  <Upload className="h-4 w-4 mr-2" />
+                  Submit Entry
+                </Button>
+              </DialogTrigger>
+              <DialogContent>
+                <DialogHeader>
+                  <DialogTitle>Submit Your Entry</DialogTitle>
+                </DialogHeader>
+                <div className="space-y-4 pt-4">
+                  <div>
+                    <Label>Submission URL</Label>
+                    <Input
+                      placeholder="https://..."
+                      value={submissionUrl}
+                      onChange={(e) => setSubmissionUrl(e.target.value)}
+                    />
+                    <p className="text-xs text-muted-foreground mt-1">
+                      Link to your project, portfolio, or submission file
+                    </p>
+                  </div>
+                  <div>
+                    <Label>Description (Optional)</Label>
+                    <Textarea
+                      placeholder="Brief description of your submission..."
+                      value={submissionDescription}
+                      onChange={(e) => setSubmissionDescription(e.target.value)}
+                      rows={3}
+                    />
+                  </div>
+                  <Button 
+                    className="w-full"
+                    onClick={() => submitMutation.mutate()}
+                    disabled={!submissionUrl || submitMutation.isPending}
+                  >
+                    {submitMutation.isPending ? 'Submitting...' : 'Submit Entry'}
+                  </Button>
+                </div>
+              </DialogContent>
+            </Dialog>
+          )}
+
+          {!talent && competition.status === 'active' && (
+            <Button className="w-full" onClick={() => navigate('/auth')}>
+              Sign in to Participate
+            </Button>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+}
