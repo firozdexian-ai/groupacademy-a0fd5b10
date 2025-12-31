@@ -442,6 +442,74 @@ export type Database = {
           },
         ]
       }
+      blog_posts: {
+        Row: {
+          author_id: string | null
+          author_name: string | null
+          category: string | null
+          content: string | null
+          created_at: string | null
+          excerpt: string | null
+          featured_image: string | null
+          id: string
+          is_featured: boolean | null
+          published_at: string | null
+          reading_time_mins: number | null
+          slug: string
+          status: string | null
+          tags: string[] | null
+          title: string
+          updated_at: string | null
+          views: number | null
+        }
+        Insert: {
+          author_id?: string | null
+          author_name?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          is_featured?: boolean | null
+          published_at?: string | null
+          reading_time_mins?: number | null
+          slug: string
+          status?: string | null
+          tags?: string[] | null
+          title: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Update: {
+          author_id?: string | null
+          author_name?: string | null
+          category?: string | null
+          content?: string | null
+          created_at?: string | null
+          excerpt?: string | null
+          featured_image?: string | null
+          id?: string
+          is_featured?: boolean | null
+          published_at?: string | null
+          reading_time_mins?: number | null
+          slug?: string
+          status?: string | null
+          tags?: string[] | null
+          title?: string
+          updated_at?: string | null
+          views?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "blog_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       career_assessments: {
         Row: {
           ai_analysis: Json | null
@@ -559,6 +627,123 @@ export type Database = {
           secondary_emails?: Json | null
           updated_at?: string | null
           website?: string | null
+        }
+        Relationships: []
+      }
+      competition_submissions: {
+        Row: {
+          competition_id: string
+          created_at: string | null
+          description: string | null
+          feedback: string | null
+          id: string
+          score: number | null
+          status: string | null
+          submission_data: Json | null
+          submission_url: string | null
+          submitted_at: string | null
+          talent_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          competition_id: string
+          created_at?: string | null
+          description?: string | null
+          feedback?: string | null
+          id?: string
+          score?: number | null
+          status?: string | null
+          submission_data?: Json | null
+          submission_url?: string | null
+          submitted_at?: string | null
+          talent_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          competition_id?: string
+          created_at?: string | null
+          description?: string | null
+          feedback?: string | null
+          id?: string
+          score?: number | null
+          status?: string | null
+          submission_data?: Json | null
+          submission_url?: string | null
+          submitted_at?: string | null
+          talent_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "competition_submissions_competition_id_fkey"
+            columns: ["competition_id"]
+            isOneToOne: false
+            referencedRelation: "competitions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "competition_submissions_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      competitions: {
+        Row: {
+          category: string | null
+          created_at: string | null
+          description: string | null
+          end_date: string | null
+          featured_image: string | null
+          id: string
+          is_featured: boolean | null
+          max_participants: number | null
+          prizes: Json | null
+          rules: string | null
+          slug: string
+          start_date: string | null
+          status: string | null
+          submission_deadline: string | null
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          featured_image?: string | null
+          id?: string
+          is_featured?: boolean | null
+          max_participants?: number | null
+          prizes?: Json | null
+          rules?: string | null
+          slug: string
+          start_date?: string | null
+          status?: string | null
+          submission_deadline?: string | null
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          category?: string | null
+          created_at?: string | null
+          description?: string | null
+          end_date?: string | null
+          featured_image?: string | null
+          id?: string
+          is_featured?: boolean | null
+          max_participants?: number | null
+          prizes?: Json | null
+          rules?: string | null
+          slug?: string
+          start_date?: string | null
+          status?: string | null
+          submission_deadline?: string | null
+          title?: string
+          updated_at?: string | null
         }
         Relationships: []
       }
@@ -976,6 +1161,57 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      ielts_resources: {
+        Row: {
+          content_data: Json | null
+          content_type: string
+          content_url: string | null
+          created_at: string | null
+          description: string | null
+          difficulty_level: string | null
+          display_order: number | null
+          duration_mins: number | null
+          id: string
+          is_active: boolean | null
+          is_free: boolean | null
+          section: string
+          title: string
+          updated_at: string | null
+        }
+        Insert: {
+          content_data?: Json | null
+          content_type: string
+          content_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          display_order?: number | null
+          duration_mins?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_free?: boolean | null
+          section: string
+          title: string
+          updated_at?: string | null
+        }
+        Update: {
+          content_data?: Json | null
+          content_type?: string
+          content_url?: string | null
+          created_at?: string | null
+          description?: string | null
+          difficulty_level?: string | null
+          display_order?: number | null
+          duration_mins?: number | null
+          id?: string
+          is_active?: boolean | null
+          is_free?: boolean | null
+          section?: string
+          title?: string
+          updated_at?: string | null
+        }
+        Relationships: []
       }
       instructors: {
         Row: {
@@ -2236,6 +2472,69 @@ export type Database = {
           student_id?: string
           updated_at?: string | null
           user_id?: string | null
+        }
+        Relationships: []
+      }
+      study_abroad_programs: {
+        Row: {
+          application_deadline: string | null
+          country_code: string
+          country_name: string
+          created_at: string | null
+          degree_type: string | null
+          duration: string | null
+          featured: boolean | null
+          field_of_study: string | null
+          id: string
+          intake_months: string[] | null
+          is_active: boolean | null
+          program_name: string
+          requirements: Json | null
+          scholarship_available: boolean | null
+          tuition_range: string | null
+          university_name: string
+          updated_at: string | null
+          url: string | null
+        }
+        Insert: {
+          application_deadline?: string | null
+          country_code: string
+          country_name: string
+          created_at?: string | null
+          degree_type?: string | null
+          duration?: string | null
+          featured?: boolean | null
+          field_of_study?: string | null
+          id?: string
+          intake_months?: string[] | null
+          is_active?: boolean | null
+          program_name: string
+          requirements?: Json | null
+          scholarship_available?: boolean | null
+          tuition_range?: string | null
+          university_name: string
+          updated_at?: string | null
+          url?: string | null
+        }
+        Update: {
+          application_deadline?: string | null
+          country_code?: string
+          country_name?: string
+          created_at?: string | null
+          degree_type?: string | null
+          duration?: string | null
+          featured?: boolean | null
+          field_of_study?: string | null
+          id?: string
+          intake_months?: string[] | null
+          is_active?: boolean | null
+          program_name?: string
+          requirements?: Json | null
+          scholarship_available?: boolean | null
+          tuition_range?: string | null
+          university_name?: string
+          updated_at?: string | null
+          url?: string | null
         }
         Relationships: []
       }

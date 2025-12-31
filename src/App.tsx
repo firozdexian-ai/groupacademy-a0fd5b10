@@ -80,6 +80,13 @@ import ProfileEdit from "./pages/app/ProfileEdit";
 import AppJobs from "./pages/app/AppJobs";
 import AppJobApplication from "./pages/app/AppJobApplication";
 import Notifications from "./pages/app/Notifications";
+import StudyAbroad from "./pages/app/StudyAbroad";
+import StudyAbroadDetail from "./pages/app/StudyAbroadDetail";
+import IELTSPrep from "./pages/app/IELTSPrep";
+import Competitions from "./pages/app/Competitions";
+import CompetitionDetail from "./pages/app/CompetitionDetail";
+import Blog from "./pages/app/Blog";
+import BlogPost from "./pages/app/BlogPost";
 
 // Configure QueryClient with global defaults
 const queryClient = new QueryClient({
@@ -307,6 +314,13 @@ export default function App() {
                     <Route path="jobs/:id/apply" element={<AppJobApplication />} />
                     <Route path="applications" element={<MyApplications />} />
                     <Route path="abroad" element={<CareerAbroad />} />
+                    <Route path="abroad/study" element={<StudyAbroad />} />
+                    <Route path="abroad/study/:id" element={<StudyAbroadDetail />} />
+                    <Route path="abroad/ielts" element={<IELTSPrep />} />
+                    <Route path="learning/competitions" element={<Competitions />} />
+                    <Route path="learning/competitions/:slug" element={<CompetitionDetail />} />
+                    <Route path="learning/blog" element={<Blog />} />
+                    <Route path="learning/blog/:slug" element={<BlogPost />} />
                     <Route path="agents" element={<AIAgents />} />
                     <Route path="agents/:agentKey" element={<AgentChat />} />
                     <Route path="profile" element={<Profile />} />

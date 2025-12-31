@@ -27,7 +27,7 @@ const ABROAD_SECTIONS = [
     icon: GraduationCap,
     color: 'text-primary',
     bgColor: 'bg-primary/10',
-    badge: 'Coming Soon'
+    href: '/app/abroad/study'
   },
   {
     title: 'IELTS Preparation',
@@ -35,7 +35,7 @@ const ABROAD_SECTIONS = [
     icon: BookOpen,
     color: 'text-accent',
     bgColor: 'bg-accent/10',
-    badge: 'Coming Soon'
+    href: '/app/abroad/ielts'
   },
   {
     title: 'Jobs Abroad',
@@ -62,16 +62,19 @@ export default function CareerAbroad() {
         {ABROAD_SECTIONS.map((section) => (
           <Card 
             key={section.title}
-            className="opacity-75"
+            className={`cursor-pointer hover:shadow-md transition-all ${section.badge ? 'opacity-75' : ''}`}
+            onClick={() => section.href && navigate(section.href)}
           >
             <CardHeader className="pb-3">
               <div className="flex items-start justify-between">
                 <div className={`p-3 rounded-xl ${section.bgColor}`}>
                   <section.icon className={`h-6 w-6 ${section.color}`} />
                 </div>
-                <Badge variant="secondary" className="text-xs">
-                  {section.badge}
-                </Badge>
+                {section.badge && (
+                  <Badge variant="secondary" className="text-xs">
+                    {section.badge}
+                  </Badge>
+                )}
               </div>
             </CardHeader>
             <CardContent>
