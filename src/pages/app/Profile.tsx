@@ -20,6 +20,7 @@ import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Skeleton } from '@/components/ui/skeleton';
 import { CreditPurchaseSheet } from '@/components/credits/CreditPurchaseSheet';
 import { ApplicationHistoryCard } from '@/components/profile/ApplicationHistoryCard';
+import { ServiceHistoryCard } from '@/components/profile/ServiceHistoryCard';
 
 export default function Profile() {
   const navigate = useNavigate();
@@ -263,6 +264,9 @@ export default function Profile() {
             )}
           </CardContent>
         </Card>
+
+        {/* Service History */}
+        <ServiceHistoryCard />
 
         {/* My Applications */}
         <ApplicationHistoryCard />
