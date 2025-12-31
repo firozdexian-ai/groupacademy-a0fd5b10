@@ -1,7 +1,8 @@
-import { RefreshCw, Bell, User } from 'lucide-react';
+import { RefreshCw } from 'lucide-react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
+import { NotificationDropdown } from '@/components/notifications/NotificationDropdown';
 
 interface FeedHeaderProps {
   talentName?: string;
@@ -45,16 +46,7 @@ export function FeedHeader({ talentName, talentPhoto, onRefresh, isRefreshing }:
 
       {/* Right: Actions */}
       <div className="flex items-center gap-2">
-        <Button
-          variant="ghost"
-          size="icon"
-          className="h-10 w-10 relative"
-          onClick={() => {/* Future: notifications */}}
-        >
-          <Bell className="h-5 w-5" />
-          {/* Notification badge placeholder */}
-          <span className="absolute top-1.5 right-1.5 w-2 h-2 bg-destructive rounded-full" />
-        </Button>
+        <NotificationDropdown />
         <Button
           variant="outline"
           size="icon"
