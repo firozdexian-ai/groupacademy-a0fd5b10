@@ -378,13 +378,9 @@ function CareerAssessmentContent() {
                   </p>
                 </div>
 
-                <Button 
-                  variant="ghost" 
-                  className="w-full"
-                  onClick={() => setStep("email-check")}
-                >
-                  Use Different Email
-                </Button>
+                <p className="text-xs text-center text-muted-foreground">
+                  Wait for cooldown to end or use an access code to try again.
+                </p>
               </CardContent>
             </Card>
           </div>

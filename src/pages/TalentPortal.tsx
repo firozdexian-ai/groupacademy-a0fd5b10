@@ -12,6 +12,7 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ProfileEditDialog } from "@/components/profile/ProfileEditDialog";
 import { ProfileCompletionPrompt } from "@/components/profile/ProfileCompletionPrompt";
+import { CVUploadSection } from "@/components/profile/CVUploadSection";
 import { 
   User, 
   FileText, 
@@ -546,56 +547,8 @@ export default function TalentPortal() {
 
             {/* CV & Profile Tab */}
             <TabsContent value="cv" className="space-y-4">
-              {/* CV Section */}
-              <Card>
-                <CardHeader>
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <CardTitle className="text-lg flex items-center gap-2">
-                        <FileText className="h-5 w-5" />
-                        CV / Resume
-                      </CardTitle>
-                      <CardDescription>
-                        {hasCV 
-                          ? `Last updated: ${talent.cvParsedAt ? format(new Date(talent.cvParsedAt), 'MMM d, yyyy') : 'Unknown'}`
-                          : 'Upload your CV to auto-fill job applications'
-                        }
-                      </CardDescription>
-                    </div>
-                    {hasCV && (
-                      <Button variant="outline" size="sm" asChild>
-                        <a href={talent.cvUrl!} target="_blank" rel="noopener noreferrer">
-                          <ExternalLink className="h-4 w-4 mr-1" />
-                          View CV
-                        </a>
-                      </Button>
-                    )}
-                  </div>
-                </CardHeader>
-                <CardContent>
-                  {!hasCV ? (
-                    <div className="border-2 border-dashed rounded-lg p-8 text-center">
-                      <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-                      <p className="text-muted-foreground mb-3">
-                        Upload your CV to streamline job applications
-                      </p>
-                      <Button variant="outline" onClick={() => navigate("/jobs")}>
-                        Apply for a Job to Upload CV
-                      </Button>
-                    </div>
-                  ) : (
-                    <div className="flex items-center gap-3 p-3 bg-muted/50 rounded-lg">
-                      <CheckCircle2 className="h-5 w-5 text-green-500" />
-                      <div className="flex-1">
-                        <p className="font-medium">CV on file</p>
-                        <p className="text-sm text-muted-foreground">
-                          Your CV is saved and will be used for future job applications
-                        </p>
-                      </div>
-                    </div>
-                  )}
-                </CardContent>
-              </Card>
+              {/* CV Upload Section */}
+              <CVUploadSection />
 
               {/* Experience */}
               <Card>

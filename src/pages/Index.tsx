@@ -48,8 +48,8 @@ const Index = () => {
       title: "Digital Portfolio",
       description: "Professional portfolio crafted by career experts",
       path: "/portfolio-request",
-      badge: "BDT 100",
-      badgeColor: "bg-muted text-muted-foreground",
+      badge: "FREE*",
+      badgeColor: "bg-success text-white",
     },
     {
       icon: iconAiAssistant,
@@ -187,6 +187,9 @@ const Index = () => {
             </Card>
           ))}
         </div>
+        <p className="text-center text-xs text-muted-foreground mt-4">
+          *FREE for first 1,000 users, then BDT 2,000
+        </p>
       </section>
 
       {/* Features Section */}
