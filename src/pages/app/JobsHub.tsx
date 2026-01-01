@@ -9,9 +9,13 @@ import {
   Sparkles,
   ChevronRight,
   FileText,
-  ArrowRight
+  ArrowRight,
+  CheckCircle2,
+  Send,
+  Eye
 } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
+import { useTalent } from '@/hooks/useTalent';
 import { Card, CardContent } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -26,6 +30,19 @@ interface Job {
   location: string | null;
   job_type: string;
   created_at: string;
+}
+
+interface JobApplication {
+  id: string;
+  created_at: string;
+  application_status: string | null;
+  delivery_status: string | null;
+  jobs: {
+    id: string;
+    title: string;
+    company_name: string;
+    company_logo_url: string | null;
+  };
 }
 
 const JOB_COLLECTIONS = [
@@ -44,15 +61,35 @@ const JOB_TYPE_COLORS: Record<string, string> = {
   remote: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
 };
 
+const APPLICATION_STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Send }> = {
+  pending: { label: 'Pending', color: 'bg-amber-500/10 text-amber-600', icon: Clock },
+  sent: { label: 'Sent', color: 'bg-blue-500/10 text-blue-600', icon: Send },
+  delivered: { label: 'Delivered', color: 'bg-green-500/10 text-green-600', icon: CheckCircle2 },
+  viewed: { label: 'Viewed', color: 'bg-purple-500/10 text-purple-600', icon: Eye },
+  rejected: { label: 'Not Selected', color: 'bg-red-500/10 text-red-600', icon: FileText },
+  accepted: { label: 'Shortlisted', color: 'bg-emerald-500/10 text-emerald-600', icon: CheckCircle2 },
+};
+
 export default function JobsHub() {
   const navigate = useNavigate();
+  const { talent } = useTalent();
   const [searchQuery, setSearchQuery] = useState('');
   const [topPicks, setTopPicks] = useState<Job[]>([]);
+  const [applications, setApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
+  const [applicationsLoading, setApplicationsLoading] = useState(true);
 
   useEffect(() => {
     fetchTopPicks();
   }, []);
+
+  useEffect(() => {
+    if (talent?.id) {
+      fetchApplications();
+    } else {
+      setApplicationsLoading(false);
+    }
+  }, [talent?.id]);
 
   async function fetchTopPicks() {
     setLoading(true);
@@ -74,31 +111,67 @@ export default function JobsHub() {
     }
   }
 
+  async function fetchApplications() {
+    setApplicationsLoading(true);
+    try {
+      const { data, error } = await supabase
+        .from('job_applications')
+        .select(`
+          id,
+          created_at,
+          application_status,
+          delivery_status,
+          jobs:job_id (
+            id,
+            title,
+            company_name,
+            company_logo_url
+          )
+        `)
+        .eq('talent_id', talent!.id)
+        .order('created_at', { ascending: false })
+        .limit(3);
+
+      if (error) throw error;
+      setApplications((data as any) || []);
+    } catch (error) {
+      console.error('Error fetching applications:', error);
+    } finally {
+      setApplicationsLoading(false);
+    }
+  }
+
   function handleSearch(e: React.FormEvent) {
     e.preventDefault();
-    navigate(`/app/jobs?search=${encodeURIComponent(searchQuery)}`);
+    navigate(`/app/jobs/all?search=${encodeURIComponent(searchQuery)}`);
+  }
+
+  function getApplicationStatus(app: JobApplication) {
+    const status = app.application_status || app.delivery_status || 'pending';
+    return APPLICATION_STATUS_CONFIG[status] || APPLICATION_STATUS_CONFIG.pending;
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
-      {/* Hero Section */}
-      <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-3xl p-6">
-        <h1 className="text-xl font-bold mb-1">Find Your Dream Job</h1>
-        <p className="text-muted-foreground mb-5">Discover opportunities that match your skills</p>
+    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+      {/* Hero Section - Compact */}
+      <div className="bg-gradient-to-br from-primary/10 via-primary/5 to-transparent rounded-2xl p-4">
+        <h1 className="text-lg font-bold mb-0.5">Find Your Dream Job</h1>
+        <p className="text-sm text-muted-foreground mb-3">Discover opportunities that match your skills</p>
 
-        {/* Search Bar */}
+        {/* Search Bar - Compact */}
         <form onSubmit={handleSearch}>
           <div className="relative">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search jobs, companies, skills..."
+              placeholder="Search jobs, companies..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-11 pr-24 h-12 text-base rounded-2xl border-2 focus:border-primary bg-background"
+              className="pl-9 pr-20 h-11 text-sm rounded-xl border-2 focus:border-primary bg-background"
             />
             <Button 
               type="submit" 
-              className="absolute right-2 top-1/2 -translate-y-1/2 rounded-xl h-10"
+              size="sm"
+              className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg h-8"
             >
               Search
             </Button>
@@ -108,7 +181,7 @@ export default function JobsHub() {
 
       {/* Job Categories - 2x2 Grid */}
       <section>
-        <h2 className="text-lg font-bold mb-4">Browse by Type</h2>
+        <h2 className="text-lg font-bold mb-3">Browse by Type</h2>
         <div className="grid grid-cols-2 gap-3">
           {JOB_COLLECTIONS.map((collection, index) => (
             <Card 
@@ -131,7 +204,7 @@ export default function JobsHub() {
 
       {/* Top Picks */}
       <section>
-        <div className="flex items-center justify-between mb-4">
+        <div className="flex items-center justify-between mb-3">
           <div className="flex items-center gap-2">
             <Sparkles className="h-5 w-5 text-yellow-500" />
             <h2 className="text-lg font-bold">Top Picks for You</h2>
@@ -147,7 +220,7 @@ export default function JobsHub() {
         </div>
 
         {loading ? (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {[1, 2, 3].map(i => (
               <Card key={i} className="overflow-hidden">
                 <CardContent className="p-4">
@@ -172,7 +245,7 @@ export default function JobsHub() {
             </CardContent>
           </Card>
         ) : (
-          <div className="space-y-4">
+          <div className="space-y-3">
             {topPicks.map((job, index) => (
               <Card 
                 key={job.id}
@@ -230,27 +303,97 @@ export default function JobsHub() {
         )}
       </section>
 
-      {/* Quick Actions */}
+      {/* My Applications - Inline Section */}
       <section>
-        <h2 className="text-lg font-bold mb-4">Quick Actions</h2>
-        <div className="flex flex-col gap-2">
-          <Button 
-            variant="outline" 
-            className="w-full justify-start h-11 px-4 gap-3 press-scale"
-            onClick={() => navigate('/app/jobs/all')}
-          >
-            <Search className="h-4 w-4" />
-            Browse All Jobs
-          </Button>
-          <Button 
-            variant="outline" 
-            className="w-full justify-start h-11 px-4 gap-3 press-scale"
-            onClick={() => navigate('/app/applications')}
-          >
-            <FileText className="h-4 w-4" />
-            My Applications
-          </Button>
+        <div className="flex items-center justify-between mb-3">
+          <div className="flex items-center gap-2">
+            <FileText className="h-5 w-5 text-primary" />
+            <h2 className="text-lg font-bold">My Applications</h2>
+            {applications.length > 0 && (
+              <Badge variant="secondary" className="text-xs">{applications.length}</Badge>
+            )}
+          </div>
+          {applications.length > 0 && (
+            <Button 
+              variant="ghost" 
+              size="sm" 
+              className="text-primary font-medium"
+              onClick={() => navigate('/app/applications')}
+            >
+              View all <ChevronRight className="h-4 w-4 ml-1" />
+            </Button>
+          )}
         </div>
+
+        {applicationsLoading ? (
+          <div className="grid grid-cols-1 gap-3">
+            {[1, 2].map(i => (
+              <Card key={i}>
+                <CardContent className="p-3">
+                  <div className="flex items-center gap-3">
+                    <Skeleton className="h-10 w-10 rounded-lg shrink-0" />
+                    <div className="flex-1 space-y-1.5">
+                      <Skeleton className="h-4 w-3/4" />
+                      <Skeleton className="h-3 w-1/2" />
+                    </div>
+                    <Skeleton className="h-6 w-16 rounded-full" />
+                  </div>
+                </CardContent>
+              </Card>
+            ))}
+          </div>
+        ) : applications.length === 0 ? (
+          <Card className="border-dashed">
+            <CardContent className="p-5 text-center">
+              <FileText className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2" />
+              <p className="text-sm text-muted-foreground mb-3">No applications yet</p>
+              <Button 
+                size="sm"
+                onClick={() => navigate('/app/jobs/all')}
+              >
+                Browse Jobs
+              </Button>
+            </CardContent>
+          </Card>
+        ) : (
+          <div className="grid grid-cols-1 gap-3">
+            {applications.map((app) => {
+              const status = getApplicationStatus(app);
+              const StatusIcon = status.icon;
+              return (
+                <Card 
+                  key={app.id}
+                  className="cursor-pointer press-scale hover:shadow-md transition-all"
+                  onClick={() => navigate(`/app/jobs/${app.jobs.id}`)}
+                >
+                  <CardContent className="p-3">
+                    <div className="flex items-center gap-3">
+                      {app.jobs.company_logo_url ? (
+                        <img 
+                          src={app.jobs.company_logo_url} 
+                          alt={app.jobs.company_name}
+                          className="w-10 h-10 rounded-lg object-cover bg-muted shrink-0"
+                        />
+                      ) : (
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <Building2 className="w-4 h-4 text-primary" />
+                        </div>
+                      )}
+                      <div className="flex-1 min-w-0">
+                        <h3 className="font-semibold text-sm line-clamp-1">{app.jobs.title}</h3>
+                        <p className="text-xs text-muted-foreground">{app.jobs.company_name}</p>
+                      </div>
+                      <Badge className={`text-xs shrink-0 ${status.color}`}>
+                        <StatusIcon className="h-3 w-3 mr-1" />
+                        {status.label}
+                      </Badge>
+                    </div>
+                  </CardContent>
+                </Card>
+              );
+            })}
+          </div>
+        )}
       </section>
     </div>
   );

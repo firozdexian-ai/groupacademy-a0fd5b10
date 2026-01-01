@@ -118,8 +118,9 @@ serve(async (req) => {
     const [jobsResult, coursesResult, companiesResult] = await Promise.all([
       supabase
         .from("jobs")
-        .select("id, title, description, company_name, company_id, company_logo_url, source_image_url, location, job_type, experience_level, requirements, created_at")
+        .select("id, title, description, company_name, company_id, company_logo_url, source_image_url, location, job_type, experience_level, requirements, created_at, deadline")
         .eq("is_active", true)
+        .or("deadline.is.null,deadline.gte." + new Date().toISOString())
         .order("created_at", { ascending: false })
         .limit(20),
       supabase
