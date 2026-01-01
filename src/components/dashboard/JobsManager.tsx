@@ -15,8 +15,15 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { 
   Plus, Search, Edit, Trash2, Sparkles, MapPin, Building2, 
-  Calendar, ExternalLink, Loader2, Copy, Eye, EyeOff, Star, Wand2, Image, Share2, Brain
+  Calendar, ExternalLink, Loader2, Copy, Eye, EyeOff, Star, Wand2, Image, Share2, Brain,
+  Link, Linkedin, Facebook, MessageCircle
 } from "lucide-react";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { format } from "date-fns";
 
@@ -548,10 +555,69 @@ export function JobsManager() {
     setIsDialogOpen(true);
   };
 
-  const handleShareJob = (job: Job) => {
+  const handleCopyJobLink = (job: Job) => {
     const jobUrl = `${window.location.origin}/jobs/${job.id}`;
     navigator.clipboard.writeText(jobUrl);
-    toast.success("Job link copied to clipboard!");
+    toast.success("Job link copied!");
+  };
+
+  const handleShareLinkedIn = (job: Job) => {
+    const jobUrl = `${window.location.origin}/jobs/${job.id}`;
+    const jobType = JOB_TYPES.find(t => t.value === job.job_type)?.label || job.job_type;
+    
+    const caption = `We're hiring! 🚀
+
+Position: ${job.title}
+Company: ${job.company_name}
+Location: ${job.location || 'Remote/Flexible'}
+Type: ${jobType}
+${job.vacancies && job.vacancies > 1 ? `Vacancies: ${job.vacancies}` : ''}
+
+Apply now: ${jobUrl}
+
+#hiring #jobs #careers`;
+
+    navigator.clipboard.writeText(caption);
+    
+    window.open(
+      `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(jobUrl)}`,
+      '_blank',
+      'width=600,height=600'
+    );
+    
+    toast.success("Caption copied! Paste it in the LinkedIn post.");
+  };
+
+  const handleShareFacebook = (job: Job) => {
+    const jobUrl = `${window.location.origin}/jobs/${job.id}`;
+    
+    const banglaCaption = `নতুন চাকরির সুযোগ! 🎯
+
+পদ: ${job.title}
+প্রতিষ্ঠান: ${job.company_name}
+লোকেশন: ${job.location || 'রিমোট/ফ্লেক্সিবল'}
+${job.vacancies && job.vacancies > 1 ? `পদসংখ্যা: ${job.vacancies}` : ''}
+
+আবেদন করুন 👇
+${jobUrl}
+
+#চাকরি #নিয়োগ #ক্যারিয়ার`;
+
+    navigator.clipboard.writeText(banglaCaption);
+    
+    window.open(
+      `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(jobUrl)}`,
+      '_blank',
+      'width=600,height=600'
+    );
+    
+    toast.success("বাংলা ক্যাপশন কপি হয়েছে! পেস্ট করুন।");
+  };
+
+  const handleShareWhatsApp = (job: Job) => {
+    const jobUrl = `${window.location.origin}/jobs/${job.id}`;
+    const message = `*${job.title}* at ${job.company_name}${job.vacancies && job.vacancies > 1 ? ` (${job.vacancies} positions)` : ''}\n\nApply here: ${jobUrl}`;
+    window.open(`https://wa.me/?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   const activeCount = jobs.filter((j) => j.is_active).length;
@@ -683,14 +749,31 @@ export function JobsManager() {
                         >
                           <Edit className="w-4 h-4" />
                         </Button>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          onClick={() => handleShareJob(job)}
-                          title="Copy Share Link"
-                        >
-                          <Share2 className="w-4 h-4" />
-                        </Button>
+                        <DropdownMenu>
+                          <DropdownMenuTrigger asChild>
+                            <Button variant="ghost" size="icon" title="Share">
+                              <Share2 className="w-4 h-4" />
+                            </Button>
+                          </DropdownMenuTrigger>
+                          <DropdownMenuContent align="end">
+                            <DropdownMenuItem onClick={() => handleCopyJobLink(job)}>
+                              <Link className="w-4 h-4 mr-2" />
+                              Copy Link
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShareLinkedIn(job)}>
+                              <Linkedin className="w-4 h-4 mr-2" />
+                              LinkedIn (English)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShareFacebook(job)}>
+                              <Facebook className="w-4 h-4 mr-2" />
+                              Facebook (বাংলা)
+                            </DropdownMenuItem>
+                            <DropdownMenuItem onClick={() => handleShareWhatsApp(job)}>
+                              <MessageCircle className="w-4 h-4 mr-2" />
+                              WhatsApp
+                            </DropdownMenuItem>
+                          </DropdownMenuContent>
+                        </DropdownMenu>
                         <Button
                           variant="ghost"
                           size="icon"
