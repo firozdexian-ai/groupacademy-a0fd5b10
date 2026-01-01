@@ -23,8 +23,10 @@ interface UseCreditsReturn {
   balance: number;
   isLoading: boolean;
   canAfford: (service: ServiceType) => boolean;
+  canAffordAmount: (amount: number) => boolean;
   getServiceCost: (service: ServiceType) => number;
   deductCredits: (service: ServiceType, referenceId?: string, description?: string) => Promise<boolean>;
+  deductCustomAmount: (amount: number, serviceType: string, referenceId?: string, description?: string) => Promise<boolean>;
   addCredits: (amount: number, type: 'welcome_bonus' | 'purchase' | 'refund', description?: string) => Promise<boolean>;
   refreshBalance: () => Promise<void>;
   transactionHistory: CreditTransaction[];
@@ -92,6 +94,10 @@ export function useCredits(): UseCreditsReturn {
     return creditData.balance >= cost;
   }, [creditData.balance]);
 
+  const canAffordAmount = useCallback((amount: number): boolean => {
+    return creditData.balance >= amount;
+  }, [creditData.balance]);
+
   const getServiceCostForUser = useCallback((service: ServiceType): number => {
     return getServiceCost(service);
   }, []);
@@ -136,6 +142,62 @@ export function useCredits(): UseCreditsReturn {
           service_type: service,
           reference_id: referenceId,
           description: description || `Used ${CREDIT_CONFIG.SERVICES[service].name}`,
+        });
+
+      if (transactionError) throw transactionError;
+
+      setCreditData(prev => ({ ...prev, balance: newBalance }));
+      return true;
+    } catch (error) {
+      console.error('Error deducting credits:', error);
+      toast({
+        title: 'Error',
+        description: 'Failed to process credit transaction',
+        variant: 'destructive',
+      });
+      return false;
+    }
+  }, [talent?.id, creditData.balance, toast]);
+
+  const deductCustomAmount = useCallback(async (
+    amount: number,
+    serviceType: string,
+    referenceId?: string,
+    description?: string
+  ): Promise<boolean> => {
+    if (!talent?.id) return false;
+
+    if (creditData.balance < amount) {
+      toast({
+        title: 'Insufficient Credits',
+        description: `You need ${amount} credits. Current balance: ${creditData.balance}`,
+        variant: 'destructive',
+      });
+      return false;
+    }
+
+    try {
+      const newBalance = creditData.balance - amount;
+
+      // Update balance
+      const { error: updateError } = await supabase
+        .from('talent_credits')
+        .update({ balance: newBalance })
+        .eq('talent_id', talent.id);
+
+      if (updateError) throw updateError;
+
+      // Record transaction
+      const { error: transactionError } = await supabase
+        .from('credit_transactions')
+        .insert({
+          talent_id: talent.id,
+          amount: -amount,
+          balance_after: newBalance,
+          transaction_type: 'service_usage',
+          service_type: serviceType,
+          reference_id: referenceId,
+          description: description || `Service: ${serviceType}`,
         });
 
       if (transactionError) throw transactionError;
@@ -229,8 +291,10 @@ export function useCredits(): UseCreditsReturn {
     balance: creditData.balance,
     isLoading: creditData.isLoading,
     canAfford,
+    canAffordAmount,
     getServiceCost: getServiceCostForUser,
     deductCredits,
+    deductCustomAmount,
     addCredits,
     refreshBalance: fetchBalance,
     transactionHistory,

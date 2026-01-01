@@ -2,14 +2,18 @@ import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
+import { useCredits } from "@/hooks/useCredits";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { CreditGateModal } from "@/components/credits/CreditGateModal";
+import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
+import { getCourseCredits } from "@/lib/creditPricing";
 import { 
   ArrowLeft, BookOpen, Calendar, Users, MapPin, Clock, 
-  Play, RefreshCw, AlertCircle, Youtube
+  Play, RefreshCw, AlertCircle, Coins
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -42,11 +46,14 @@ export default function AppCourseDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { talent } = useTalent();
+  const { balance, deductCustomAmount, refreshBalance } = useCredits();
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingError, setLoadingError] = useState<string | null>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [isEnrolling, setIsEnrolling] = useState(false);
+  const [showCreditGate, setShowCreditGate] = useState(false);
+  const [showPurchaseSheet, setShowPurchaseSheet] = useState(false);
 
   useEffect(() => {
     if (slug) fetchCourse();
@@ -89,15 +96,44 @@ export default function AppCourseDetail() {
     }
   };
 
-  const handleEnroll = async () => {
+  const handleEnrollClick = () => {
     if (!talent) {
       toast.error("Please complete your profile first");
       navigate("/app/profile");
       return;
     }
 
+    // Free courses bypass credit gate
+    if (course && course.price === 0) {
+      handleEnroll();
+    } else {
+      setShowCreditGate(true);
+    }
+  };
+
+  const handleEnroll = async () => {
+    if (!talent || !course) return;
+
     setIsEnrolling(true);
+    setShowCreditGate(false);
+
     try {
+      const creditCost = getCourseCredits(course.price);
+
+      // Deduct credits for paid courses
+      if (course.price > 0) {
+        const success = await deductCustomAmount(
+          creditCost,
+          'COURSE_ENROLLMENT',
+          course.id,
+          `Enrolled in: ${course.title}`
+        );
+        if (!success) {
+          toast.error("Failed to process credits");
+          return;
+        }
+      }
+
       // First check if student profile exists
       const { data: student } = await supabase
         .from("students")
@@ -126,9 +162,9 @@ export default function AppCourseDetail() {
           .from("enrollments")
           .insert({
             student_id: newStudent.id,
-            content_id: course!.id,
+            content_id: course.id,
             talent_id: talent.id,
-            status: course!.price > 0 ? "pending_payment" : "active",
+            status: "active", // Always active since payment is via credits
           });
 
         if (enrollError) throw enrollError;
@@ -137,9 +173,9 @@ export default function AppCourseDetail() {
           .from("enrollments")
           .insert({
             student_id: student.id,
-            content_id: course!.id,
+            content_id: course.id,
             talent_id: talent.id,
-            status: course!.price > 0 ? "pending_payment" : "active",
+            status: "active", // Always active since payment is via credits
           });
 
         if (enrollError) {
@@ -152,8 +188,9 @@ export default function AppCourseDetail() {
         }
       }
 
-      toast.success(course!.price > 0 ? "Enrolled! Complete payment to access." : "Successfully enrolled!");
+      toast.success("Successfully enrolled!");
       setIsEnrolled(true);
+      refreshBalance(); // Refresh balance
     } catch (error: any) {
       console.error("Enrollment error:", error);
       toast.error("Failed to enroll. Please try again.");
@@ -167,6 +204,8 @@ export default function AppCourseDetail() {
     const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
     return videoIdMatch ? `https://www.youtube.com/embed/${videoIdMatch[1]}` : null;
   };
+
+  const creditCost = course ? getCourseCredits(course.price) : 0;
 
   if (isLoading) {
     return (
@@ -250,7 +289,10 @@ export default function AppCourseDetail() {
           {course.price === 0 ? (
             <Badge className="bg-green-500">Free</Badge>
           ) : (
-            <Badge variant="outline">BDT {course.price}</Badge>
+            <Badge variant="outline" className="flex items-center gap-1">
+              <Coins className="h-3 w-3" />
+              {creditCost} credits
+            </Badge>
           )}
         </div>
         <h1 className="text-xl font-bold mb-2">{course.title}</h1>
@@ -295,10 +337,19 @@ export default function AppCourseDetail() {
         <Button 
           size="lg" 
           className="w-full mb-6"
-          onClick={handleEnroll}
+          onClick={handleEnrollClick}
           disabled={isEnrolling}
         >
-          {isEnrolling ? "Enrolling..." : course.price === 0 ? "Enroll Free" : `Enroll - BDT ${course.price}`}
+          {isEnrolling ? (
+            "Enrolling..."
+          ) : course.price === 0 ? (
+            "Enroll Free"
+          ) : (
+            <span className="flex items-center gap-2">
+              <Coins className="h-4 w-4" />
+              Enroll - {creditCost} Credits
+            </span>
+          )}
         </Button>
       )}
 
@@ -311,6 +362,28 @@ export default function AppCourseDetail() {
           <p className="text-muted-foreground whitespace-pre-wrap">{course.description}</p>
         </CardContent>
       </Card>
+
+      {/* Credit Gate Modal */}
+      <CreditGateModal
+        isOpen={showCreditGate}
+        onClose={() => setShowCreditGate(false)}
+        serviceName={course.title}
+        cost={creditCost}
+        currentBalance={balance}
+        onConfirm={handleEnroll}
+        onBuyCredits={() => {
+          setShowCreditGate(false);
+          setShowPurchaseSheet(true);
+        }}
+        isLoading={isEnrolling}
+      />
+
+      {/* Credit Purchase Sheet */}
+      <CreditPurchaseSheet
+        isOpen={showPurchaseSheet}
+        onClose={() => setShowPurchaseSheet(false)}
+        currentBalance={balance}
+      />
     </div>
   );
 }

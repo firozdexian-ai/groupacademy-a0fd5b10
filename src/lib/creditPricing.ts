@@ -80,3 +80,10 @@ export function creditsToTaka(credits: number): number {
 export function takaToCredits(taka: number): number {
   return Math.floor(taka / CREDIT_CONFIG.CREDIT_TO_TAKA);
 }
+
+/**
+ * Get the credit cost for a course based on its BDT price
+ */
+export function getCourseCredits(priceTaka: number): number {
+  return Math.ceil(priceTaka / CREDIT_CONFIG.CREDIT_TO_TAKA);
+}
