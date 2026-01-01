@@ -6,8 +6,9 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Video, BookOpen, Calendar, Users, MapPin, ArrowRight, ArrowLeft } from "lucide-react";
+import { Video, BookOpen, Calendar, Users, MapPin, ArrowRight, ArrowLeft, Coins } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
+import { getCourseCredits } from "@/lib/creditPricing";
 
 type ContentType = "free_video" | "recorded_course" | "live_webinar" | "batch_class" | "offline_seminar";
 
@@ -132,7 +133,10 @@ export default function AppCourses() {
                     {course.price === 0 ? (
                       <Badge variant="default" className="bg-green-500 text-xs">Free</Badge>
                     ) : (
-                      <Badge variant="outline" className="text-xs">BDT {course.price}</Badge>
+                      <Badge variant="outline" className="text-xs flex items-center gap-1">
+                        <Coins className="h-3 w-3" />
+                        {getCourseCredits(course.price)} credits
+                      </Badge>
                     )}
                   </div>
                   <CardTitle className="text-base line-clamp-1">{course.title}</CardTitle>
