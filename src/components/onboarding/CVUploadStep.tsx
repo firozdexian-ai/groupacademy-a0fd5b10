@@ -1,5 +1,5 @@
 import { useState, useCallback } from 'react';
-import { FileText, Upload, Loader2, CheckCircle2, Sparkles, User, Briefcase, GraduationCap } from 'lucide-react';
+import { FileText, Upload, Loader2, CheckCircle2, Sparkles, User, Briefcase, GraduationCap, AlertCircle, Eye } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { useTalent } from '@/hooks/useTalent';
@@ -30,7 +30,7 @@ const PARSING_STAGES = [
 ];
 
 export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
-  const { talent, updateTalent } = useTalent();
+  const { talent, updateTalent, refreshTalent } = useTalent();
   const [isDragging, setIsDragging] = useState(false);
   const [isUploading, setIsUploading] = useState(false);
   const [isParsing, setIsParsing] = useState(false);
@@ -38,6 +38,8 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
   const [parseMessage, setParseMessage] = useState('');
   const [uploadedFile, setUploadedFile] = useState<string | null>(talent?.cvUrl || null);
   const [parsedData, setParsedData] = useState<ParsedCVData | null>(null);
+  const [parseComplete, setParseComplete] = useState(false);
+  const [parseError, setParseError] = useState<string | null>(null);
 
   const handleDragOver = useCallback((e: React.DragEvent) => {
     e.preventDefault();
@@ -76,7 +78,12 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
   };
 
   async function handleUpload(file: File) {
-    if (!talent?.id) return;
+    if (!talent?.id) {
+      console.log('[CVUpload] No talent ID found');
+      return;
+    }
+
+    console.log('[CVUpload] Starting upload for talent:', talent.id);
 
     // Validate file type
     const validTypes = ['application/pdf', 'application/msword', 'application/vnd.openxmlformats-officedocument.wordprocessingml.document'];
@@ -94,21 +101,30 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
     setIsUploading(true);
     setIsParsing(false);
     setParsedData(null);
+    setParseComplete(false);
+    setParseError(null);
 
     try {
       // Step 1: Upload file
       const fileExt = file.name.split('.').pop();
       const filePath = `${talent.id}/cv.${fileExt}`;
 
+      console.log('[CVUpload] Uploading to path:', filePath);
+
       const { error: uploadError } = await supabase.storage
         .from('portfolio-uploads')
         .upload(filePath, file, { upsert: true });
 
-      if (uploadError) throw uploadError;
+      if (uploadError) {
+        console.error('[CVUpload] Upload error:', uploadError);
+        throw uploadError;
+      }
 
       const { data: { publicUrl } } = supabase.storage
         .from('portfolio-uploads')
         .getPublicUrl(filePath);
+
+      console.log('[CVUpload] File uploaded to:', publicUrl);
 
       setUploadedFile(publicUrl);
       setIsUploading(false);
@@ -118,24 +134,32 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       const progressInterval = simulateProgress();
 
       // Step 2: Call parse-cv edge function
-      console.log('Calling parse-cv with URL:', publicUrl);
+      console.log('[CVUpload] Calling parse-cv edge function');
       const { data: parseResult, error: parseError } = await supabase.functions.invoke('parse-cv', {
         body: { cvUrl: publicUrl }
       });
 
       clearInterval(progressInterval);
 
+      console.log('[CVUpload] Parse result:', parseResult);
+
       if (parseError) {
-        console.error('Parse CV error:', parseError);
+        console.error('[CVUpload] Parse CV error:', parseError);
         // Still save the CV URL even if parsing fails
-        await updateTalent({ cvUrl: publicUrl });
-        toast.warning('CV uploaded but parsing failed. You can fill in details manually.');
+        const updateResult = await updateTalent({ cvUrl: publicUrl });
+        console.log('[CVUpload] UpdateTalent (fallback) result:', updateResult);
+        
+        setParseError('We uploaded your CV but couldn\'t extract the information automatically. You can fill in your details manually on the next screen.');
+        toast.warning('CV uploaded but parsing had issues. You can fill in details manually.');
         setIsParsing(false);
+        setParseComplete(true);
         return;
       }
 
       if (parseResult?.success && parseResult.parsed) {
         const parsed = parseResult.parsed as ParsedCVData;
+        console.log('[CVUpload] Parsed data:', parsed);
+        
         setParsedData(parsed);
         setParseProgress(100);
         setParseMessage('Profile ready!');
@@ -170,34 +194,68 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
           }));
         }
 
-        await updateTalent(updateData);
-        toast.success('CV parsed successfully! Your profile has been updated.');
+        console.log('[CVUpload] Updating talent with:', updateData);
+        const updateResult = await updateTalent(updateData);
+        console.log('[CVUpload] UpdateTalent result:', updateResult);
+        
+        // Refresh talent data to ensure UI shows updated info
+        await refreshTalent();
+        
+        toast.success('CV parsed! Your profile has been updated.');
+        setParseComplete(true);
       } else {
-        await updateTalent({ cvUrl: publicUrl });
+        console.log('[CVUpload] Parse result empty or unsuccessful, saving CV URL only');
+        const updateResult = await updateTalent({ cvUrl: publicUrl });
+        console.log('[CVUpload] UpdateTalent (no parse) result:', updateResult);
         toast.success('CV uploaded successfully!');
+        setParseComplete(true);
       }
 
       setIsParsing(false);
     } catch (error) {
-      console.error('Upload error:', error);
-      toast.error('Failed to upload CV');
+      console.error('[CVUpload] Error:', error);
+      toast.error('Failed to upload CV. Please try again.');
+      setParseError('Failed to upload CV. Please try again or skip for now.');
       setIsUploading(false);
       setIsParsing(false);
     }
   }
 
   const renderParsedSummary = () => {
+    if (!parsedData && !parseComplete) return null;
+
+    // If we have an error but CV was uploaded
+    if (parseError) {
+      return (
+        <div className="w-full mt-4 p-4 bg-warning/10 border border-warning/20 rounded-xl">
+          <div className="flex items-center gap-2 mb-2">
+            <AlertCircle className="h-5 w-5 text-warning" />
+            <span className="font-semibold text-foreground">CV Uploaded</span>
+          </div>
+          <p className="text-sm text-muted-foreground">{parseError}</p>
+        </div>
+      );
+    }
+
     if (!parsedData) return null;
 
     const stats = [];
     if (parsedData.skills && parsedData.skills.length > 0) {
-      stats.push({ icon: Sparkles, label: `${parsedData.skills.length} skills` });
+      stats.push({ icon: Sparkles, label: `${parsedData.skills.length} skills`, items: parsedData.skills.slice(0, 5) });
     }
     if (parsedData.experience && parsedData.experience.length > 0) {
-      stats.push({ icon: Briefcase, label: `${parsedData.experience.length} experience` });
+      stats.push({ 
+        icon: Briefcase, 
+        label: `${parsedData.experience.length} experience${parsedData.experience.length > 1 ? 's' : ''}`,
+        items: parsedData.experience.slice(0, 2).map(e => e.company || e.title).filter(Boolean)
+      });
     }
     if (parsedData.education && parsedData.education.length > 0) {
-      stats.push({ icon: GraduationCap, label: `${parsedData.education.length} education` });
+      stats.push({ 
+        icon: GraduationCap, 
+        label: `${parsedData.education.length} education`,
+        items: parsedData.education.slice(0, 2).map(e => e.institution || e.degree).filter(Boolean)
+      });
     }
 
     if (stats.length === 0) return null;
@@ -206,25 +264,44 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       <div className="w-full mt-4 p-4 bg-success/10 border border-success/20 rounded-xl">
         <div className="flex items-center gap-2 mb-3">
           <CheckCircle2 className="h-5 w-5 text-success" />
-          <span className="font-semibold text-foreground">We found:</span>
+          <span className="font-semibold text-foreground">Your profile will be updated with:</span>
         </div>
-        <div className="flex flex-wrap gap-3">
+        
+        {/* Name */}
+        {parsedData.full_name && (
+          <div className="flex items-center gap-2 mb-3 p-2 bg-background/50 rounded-lg">
+            <User className="h-4 w-4 text-primary" />
+            <span className="font-medium text-foreground">{parsedData.full_name}</span>
+          </div>
+        )}
+        
+        {/* Stats with details */}
+        <div className="space-y-3">
           {stats.map((stat, i) => (
-            <div key={i} className="flex items-center gap-1.5 text-sm text-muted-foreground">
-              <stat.icon className="h-4 w-4" />
-              <span>{stat.label}</span>
+            <div key={i} className="space-y-1">
+              <div className="flex items-center gap-1.5 text-sm font-medium text-foreground">
+                <stat.icon className="h-4 w-4 text-primary" />
+                <span>{stat.label}</span>
+              </div>
+              {stat.items && stat.items.length > 0 && (
+                <div className="pl-5 text-xs text-muted-foreground">
+                  {stat.items.join(', ')}
+                  {stat.items.length < (stat.label.includes('skill') ? parsedData.skills?.length || 0 : 0) && '...'}
+                </div>
+              )}
             </div>
           ))}
         </div>
-        {parsedData.full_name && (
-          <div className="flex items-center gap-1.5 mt-3 text-sm text-muted-foreground">
-            <User className="h-4 w-4" />
-            <span>{parsedData.full_name}</span>
-          </div>
-        )}
+
+        <p className="text-xs text-muted-foreground mt-3 pt-3 border-t border-success/20">
+          You can review and edit these details in your profile after continuing.
+        </p>
       </div>
     );
   };
+
+  const canContinue = !isUploading && !isParsing;
+  const showSuccessState = uploadedFile && parseComplete;
 
   return (
     <div className="flex flex-col items-center px-4 py-6 max-w-md mx-auto">
@@ -243,8 +320,8 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         className={cn(
           "relative w-full border-2 border-dashed rounded-xl p-8 text-center transition-all cursor-pointer",
           isDragging && "border-primary bg-primary/5",
-          (uploadedFile || parsedData) && "border-success bg-success/5",
-          !isDragging && !uploadedFile && !parsedData && "border-border hover:border-primary/50"
+          showSuccessState && "border-success bg-success/5",
+          !isDragging && !showSuccessState && "border-border hover:border-primary/50"
         )}
       >
         {isUploading ? (
@@ -266,12 +343,15 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
               </div>
             </div>
             <p className="text-sm text-muted-foreground">{parseMessage}</p>
+            <p className="text-xs text-muted-foreground">Please wait while we analyze your CV...</p>
           </div>
-        ) : uploadedFile || parsedData ? (
+        ) : showSuccessState ? (
           <div className="flex flex-col items-center gap-3">
             <CheckCircle2 className="h-12 w-12 text-success" />
-            <p className="text-foreground font-medium">CV Uploaded & Parsed!</p>
-            <p className="text-sm text-muted-foreground">Click to replace</p>
+            <p className="text-foreground font-medium">
+              {parsedData ? 'CV Analyzed Successfully!' : 'CV Uploaded!'}
+            </p>
+            <p className="text-sm text-muted-foreground">Click to replace with a different CV</p>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-3">
@@ -304,7 +384,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       {renderParsedSummary()}
 
       {/* Benefits */}
-      {!parsedData && !isParsing && (
+      {!parsedData && !isParsing && !parseComplete && (
         <div className="w-full bg-muted/50 rounded-lg p-4 mt-6">
           <div className="flex items-start gap-3">
             <FileText className="h-5 w-5 text-primary flex-shrink-0 mt-0.5" />
@@ -326,15 +406,24 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
           size="lg" 
           onClick={onContinue}
           className="w-full"
-          disabled={isUploading || isParsing}
+          disabled={!canContinue}
         >
-          {parsedData ? 'Continue with Profile' : 'Continue'}
+          {parsedData ? (
+            <>
+              <Eye className="h-4 w-4 mr-2" />
+              Review Profile & Continue
+            </>
+          ) : parseComplete ? (
+            'Continue to Profile'
+          ) : (
+            'Continue'
+          )}
         </Button>
         <Button 
           variant="ghost" 
           onClick={onSkip}
           className="text-muted-foreground"
-          disabled={isUploading || isParsing}
+          disabled={!canContinue}
         >
           Skip for now
         </Button>
