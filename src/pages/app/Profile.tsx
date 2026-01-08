@@ -235,13 +235,30 @@ export default function Profile() {
         </Card>
       )}
 
-      {/* CV Uploaded Indicator */}
+      {/* CV Uploaded Indicator - with "just updated" state */}
       {talent.cvUrl && (
-        <Card className="mb-5 rounded-2xl shadow-sm border-success/20 bg-success/5">
+        <Card className={cn(
+          "mb-5 rounded-2xl shadow-sm",
+          talent.cvParsedAt && new Date(talent.cvParsedAt).getTime() > Date.now() - 5 * 60 * 1000
+            ? "border-primary/30 bg-primary/5"
+            : "border-success/20 bg-success/5"
+        )}>
           <CardContent className="py-3">
             <div className="flex items-center gap-3">
-              <CheckCircle2 className="h-5 w-5 text-success" />
-              <span className="text-sm font-medium text-foreground">CV uploaded</span>
+              {talent.cvParsedAt && new Date(talent.cvParsedAt).getTime() > Date.now() - 5 * 60 * 1000 ? (
+                <>
+                  <Sparkles className="h-5 w-5 text-primary" />
+                  <div className="flex-1">
+                    <span className="text-sm font-medium text-foreground">Profile just updated from your CV!</span>
+                    <p className="text-xs text-muted-foreground">Review your details below</p>
+                  </div>
+                </>
+              ) : (
+                <>
+                  <CheckCircle2 className="h-5 w-5 text-success" />
+                  <span className="text-sm font-medium text-foreground">CV uploaded</span>
+                </>
+              )}
               <Button 
                 variant="ghost" 
                 size="sm" 

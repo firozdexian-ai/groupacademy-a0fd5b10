@@ -311,10 +311,17 @@ const [parsingCV, setParsingCV] = useState(false);
                   disabled={uploadingCV || parsingCV}
                   className="cursor-pointer"
                 />
-                {(uploadingCV || parsingCV) && (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <Loader2 className="h-4 w-4 animate-spin" />
-                    {parsingCV ? 'Analyzing CV...' : 'Uploading...'}
+              {(uploadingCV || parsingCV) && (
+                  <div className="space-y-2">
+                    <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                      <Loader2 className="h-4 w-4 animate-spin" />
+                      {parsingCV ? 'Analyzing your CV with AI...' : 'Uploading...'}
+                    </div>
+                    {parsingCV && (
+                      <p className="text-xs text-muted-foreground">
+                        This may take a moment. We're extracting your skills, experience, and education.
+                      </p>
+                    )}
                   </div>
                 )}
               </div>
