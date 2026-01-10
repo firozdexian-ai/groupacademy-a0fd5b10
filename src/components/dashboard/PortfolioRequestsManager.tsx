@@ -13,9 +13,10 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { useToast } from "@/hooks/use-toast";
 import { format } from "date-fns";
-import { Search, ExternalLink, Loader2, Eye, FileText, MessageCircle, Gift, Sparkles, User } from "lucide-react";
+import { Search, Download, Loader2, Eye, FileText, MessageCircle, Gift, Sparkles, User, ExternalLink } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { TalentDetailDialog } from "./TalentDetailDialog";
+import { downloadFile } from "@/lib/downloadFile";
 
 const FREE_PORTFOLIO_LIMIT = 1000;
 
@@ -341,9 +342,10 @@ export default function PortfolioRequestsManager() {
                           variant="ghost" 
                           size="icon" 
                           className="h-8 w-8"
-                          onClick={() => window.open(request.cv_url!, '_blank')}
+                          onClick={() => downloadFile(request.cv_url!, `${request.full_name}-CV.pdf`)}
+                          title="Download CV"
                         >
-                          <FileText className="h-4 w-4" />
+                          <Download className="h-4 w-4" />
                         </Button>
                       )}
                     </div>

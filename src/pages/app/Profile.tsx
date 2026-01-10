@@ -15,8 +15,10 @@ import {
   BookOpen,
   History,
   Upload,
-  CheckCircle2
+  CheckCircle2,
+  Download
 } from 'lucide-react';
+import { downloadFile } from '@/lib/downloadFile';
 import { useTalent } from '@/hooks/useTalent';
 import { useCredits } from '@/hooks/useCredits';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
@@ -263,9 +265,10 @@ export default function Profile() {
                 variant="ghost" 
                 size="sm" 
                 className="ml-auto text-xs"
-                onClick={() => window.open(talent.cvUrl!, '_blank')}
+                onClick={() => downloadFile(talent.cvUrl!, `${talent.fullName || 'CV'}.pdf`)}
               >
-                View
+                <Download className="h-3 w-3 mr-1" />
+                Download
               </Button>
             </div>
           </CardContent>

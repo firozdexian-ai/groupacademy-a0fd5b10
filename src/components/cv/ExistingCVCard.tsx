@@ -1,8 +1,9 @@
 import { TalentProfile } from "@/contexts/TalentContext";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { FileText, CheckCircle2, ExternalLink, Upload, Loader2 } from "lucide-react";
+import { FileText, CheckCircle2, Download, Upload, Loader2 } from "lucide-react";
 import { format } from "date-fns";
+import { downloadFile } from "@/lib/downloadFile";
 
 interface ExistingCVCardProps {
   talent: TalentProfile | null;
@@ -74,12 +75,10 @@ export function ExistingCVCard({
                 <Button
                   size="sm"
                   variant="ghost"
-                  asChild
+                  onClick={() => downloadFile(talent.cvUrl!, `${talent.fullName || 'CV'}.pdf`)}
                 >
-                  <a href={talent.cvUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4 mr-1" />
-                    View
-                  </a>
+                  <Download className="h-4 w-4 mr-1" />
+                  Download
                 </Button>
               </div>
             )}

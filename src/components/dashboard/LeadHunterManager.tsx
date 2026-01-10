@@ -11,10 +11,11 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Search, Target, Loader2, Star, Download, Eye, Sparkles, CheckCircle, ChevronRight, ArrowLeft } from "lucide-react";
+import { Search, Target, Loader2, Star, Download, FileText, Sparkles, CheckCircle, ChevronRight, ArrowLeft } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Checkbox } from "@/components/ui/checkbox";
+import { downloadFile } from "@/lib/downloadFile";
 
 interface LeadHuntSession {
   id: string;
@@ -374,10 +375,13 @@ export function LeadHunterManager() {
                       <TableCell className="text-right">
                         <div className="flex justify-end gap-1">
                           {match.talent.cv_url && (
-                            <Button variant="ghost" size="sm" asChild>
-                              <a href={match.talent.cv_url} target="_blank" rel="noopener noreferrer">
-                                <Eye className="w-4 h-4" />
-                              </a>
+                            <Button 
+                              variant="ghost" 
+                              size="sm"
+                              onClick={() => downloadFile(match.talent.cv_url!, `${match.talent.full_name}-CV.pdf`)}
+                              title="Download CV"
+                            >
+                              <Download className="w-4 h-4" />
                             </Button>
                           )}
                         </div>
