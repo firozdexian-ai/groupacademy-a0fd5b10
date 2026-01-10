@@ -12,9 +12,10 @@ import {
   Loader2, 
   AlertCircle,
   RefreshCw,
-  ExternalLink
+  Download
 } from "lucide-react";
 import { toast } from "sonner";
+import { downloadFile } from "@/lib/downloadFile";
 
 interface ParsedCVData {
   fullName?: string;
@@ -271,10 +272,11 @@ export function CVUploadSection() {
                 Upload New CV
               </Button>
               {talent?.cvUrl && (
-                <Button variant="outline" asChild>
-                  <a href={talent.cvUrl} target="_blank" rel="noopener noreferrer">
-                    <ExternalLink className="h-4 w-4" />
-                  </a>
+                <Button 
+                  variant="outline"
+                  onClick={() => downloadFile(talent.cvUrl!, `${talent.fullName || 'CV'}.pdf`)}
+                >
+                  <Download className="h-4 w-4" />
                 </Button>
               )}
             </div>
