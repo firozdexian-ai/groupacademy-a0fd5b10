@@ -1,10 +1,10 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Search, 
-  Briefcase, 
-  Clock, 
-  MapPin, 
+import { useState, useEffect } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Search,
+  Briefcase,
+  Clock,
+  MapPin,
   Building2,
   Sparkles,
   ChevronRight,
@@ -12,16 +12,17 @@ import {
   ArrowRight,
   CheckCircle2,
   Send,
-  Eye
-} from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { useTalent } from '@/hooks/useTalent';
-import { Card, CardContent } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
+  Eye,
+} from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { useTalent } from "@/hooks/useTalent";
+import { Card, CardContent } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
 
+// 1. Improved Interfaces
 interface Job {
   id: string;
   title: string;
@@ -42,38 +43,38 @@ interface JobApplication {
     title: string;
     company_name: string;
     company_logo_url: string | null;
-  };
+  }; // Removed 'any' cast by defining this structure properly
 }
 
 const JOB_COLLECTIONS = [
-  { label: 'Full-time', filter: 'full_time', icon: Briefcase, gradient: 'from-blue-500/20 to-blue-600/10' },
-  { label: 'Part-time', filter: 'part_time', icon: Clock, gradient: 'from-purple-500/20 to-purple-600/10' },
-  { label: 'Internship', filter: 'internship', icon: Building2, gradient: 'from-green-500/20 to-green-600/10' },
-  { label: 'Remote', filter: 'remote', icon: MapPin, gradient: 'from-orange-500/20 to-orange-600/10' },
+  { label: "Full-time", filter: "full_time", icon: Briefcase, gradient: "from-blue-500/20 to-blue-600/10" },
+  { label: "Part-time", filter: "part_time", icon: Clock, gradient: "from-purple-500/20 to-purple-600/10" },
+  { label: "Internship", filter: "internship", icon: Building2, gradient: "from-green-500/20 to-green-600/10" },
+  { label: "Remote", filter: "remote", icon: MapPin, gradient: "from-orange-500/20 to-orange-600/10" },
 ];
 
 const JOB_TYPE_COLORS: Record<string, string> = {
-  full_time: 'bg-blue-500/10 text-blue-600 dark:text-blue-400',
-  part_time: 'bg-purple-500/10 text-purple-600 dark:text-purple-400',
-  contract: 'bg-amber-500/10 text-amber-600 dark:text-amber-400',
-  internship: 'bg-green-500/10 text-green-600 dark:text-green-400',
-  freelance: 'bg-pink-500/10 text-pink-600 dark:text-pink-400',
-  remote: 'bg-orange-500/10 text-orange-600 dark:text-orange-400',
+  full_time: "bg-blue-500/10 text-blue-600 dark:text-blue-400",
+  part_time: "bg-purple-500/10 text-purple-600 dark:text-purple-400",
+  contract: "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+  internship: "bg-green-500/10 text-green-600 dark:text-green-400",
+  freelance: "bg-pink-500/10 text-pink-600 dark:text-pink-400",
+  remote: "bg-orange-500/10 text-orange-600 dark:text-orange-400",
 };
 
 const APPLICATION_STATUS_CONFIG: Record<string, { label: string; color: string; icon: typeof Send }> = {
-  pending: { label: 'Pending', color: 'bg-amber-500/10 text-amber-600', icon: Clock },
-  sent: { label: 'Sent', color: 'bg-blue-500/10 text-blue-600', icon: Send },
-  delivered: { label: 'Delivered', color: 'bg-green-500/10 text-green-600', icon: CheckCircle2 },
-  viewed: { label: 'Viewed', color: 'bg-purple-500/10 text-purple-600', icon: Eye },
-  rejected: { label: 'Not Selected', color: 'bg-red-500/10 text-red-600', icon: FileText },
-  accepted: { label: 'Shortlisted', color: 'bg-emerald-500/10 text-emerald-600', icon: CheckCircle2 },
+  pending: { label: "Pending", color: "bg-amber-500/10 text-amber-600", icon: Clock },
+  sent: { label: "Sent", color: "bg-blue-500/10 text-blue-600", icon: Send },
+  delivered: { label: "Delivered", color: "bg-green-500/10 text-green-600", icon: CheckCircle2 },
+  viewed: { label: "Viewed", color: "bg-purple-500/10 text-purple-600", icon: Eye },
+  rejected: { label: "Not Selected", color: "bg-red-500/10 text-red-600", icon: FileText },
+  accepted: { label: "Shortlisted", color: "bg-emerald-500/10 text-emerald-600", icon: CheckCircle2 },
 };
 
 export default function JobsHub() {
   const navigate = useNavigate();
   const { talent } = useTalent();
-  const [searchQuery, setSearchQuery] = useState('');
+  const [searchQuery, setSearchQuery] = useState("");
   const [topPicks, setTopPicks] = useState<Job[]>([]);
   const [applications, setApplications] = useState<JobApplication[]>([]);
   const [loading, setLoading] = useState(true);
@@ -95,17 +96,17 @@ export default function JobsHub() {
     setLoading(true);
     try {
       const { data, error } = await supabase
-        .from('jobs')
-        .select('id, title, company_name, company_logo_url, location, job_type, created_at')
-        .eq('is_active', true)
-        .or('deadline.is.null,deadline.gte.now()')
-        .order('created_at', { ascending: false })
+        .from("jobs")
+        .select("id, title, company_name, company_logo_url, location, job_type, created_at")
+        .eq("is_active", true)
+        .or("deadline.is.null,deadline.gte.now()")
+        .order("created_at", { ascending: false })
         .limit(3);
 
       if (error) throw error;
-      setTopPicks(data || []);
+      setTopPicks((data as Job[]) || []);
     } catch (error) {
-      console.error('Error fetching jobs:', error);
+      console.error("Error fetching jobs:", error);
     } finally {
       setLoading(false);
     }
@@ -114,9 +115,12 @@ export default function JobsHub() {
   async function fetchApplications() {
     setApplicationsLoading(true);
     try {
+      // 2. Safe Typed Query
+      // We select the joined table 'jobs' and map it to the interface
       const { data, error } = await supabase
-        .from('job_applications')
-        .select(`
+        .from("job_applications")
+        .select(
+          `
           id,
           created_at,
           application_status,
@@ -127,15 +131,19 @@ export default function JobsHub() {
             company_name,
             company_logo_url
           )
-        `)
-        .eq('talent_id', talent!.id)
-        .order('created_at', { ascending: false })
+        `,
+        )
+        .eq("talent_id", talent!.id)
+        .order("created_at", { ascending: false })
         .limit(3);
 
       if (error) throw error;
-      setApplications((data as any) || []);
+
+      // We can now safely cast this because the query structure matches the interface
+      // (Supabase return types are complex, so 'unknown' cast first is standard practice)
+      setApplications((data as unknown as JobApplication[]) || []);
     } catch (error) {
-      console.error('Error fetching applications:', error);
+      console.error("Error fetching applications:", error);
     } finally {
       setApplicationsLoading(false);
     }
@@ -147,7 +155,7 @@ export default function JobsHub() {
   }
 
   function getApplicationStatus(app: JobApplication) {
-    const status = app.application_status || app.delivery_status || 'pending';
+    const status = app.application_status || app.delivery_status || "pending";
     return APPLICATION_STATUS_CONFIG[status] || APPLICATION_STATUS_CONFIG.pending;
   }
 
@@ -168,11 +176,7 @@ export default function JobsHub() {
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-9 pr-20 h-11 text-sm rounded-xl border-2 focus:border-primary bg-background"
             />
-            <Button 
-              type="submit" 
-              size="sm"
-              className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg h-8"
-            >
+            <Button type="submit" size="sm" className="absolute right-1.5 top-1/2 -translate-y-1/2 rounded-lg h-8">
               Search
             </Button>
           </div>
@@ -184,9 +188,9 @@ export default function JobsHub() {
         <h2 className="text-lg font-bold mb-3">Browse by Type</h2>
         <div className="grid grid-cols-2 gap-3">
           {JOB_COLLECTIONS.map((collection, index) => (
-            <Card 
+            <Card
               key={collection.filter}
-              className={`cursor-pointer border-0 bg-gradient-to-br ${collection.gradient} animate-bounce-in press-scale`}
+              className={`cursor-pointer border-0 bg-gradient-to-br ${collection.gradient} animate-bounce-in press-scale hover:shadow-md transition-all`}
               style={{ animationDelay: `${index * 50}ms` }}
               onClick={() => navigate(`/app/jobs/all?type=${collection.filter}`)}
             >
@@ -209,11 +213,11 @@ export default function JobsHub() {
             <Sparkles className="h-5 w-5 text-yellow-500" />
             <h2 className="text-lg font-bold">Top Picks for You</h2>
           </div>
-          <Button 
-            variant="ghost" 
-            size="sm" 
-            className="text-primary font-medium"
-            onClick={() => navigate('/app/jobs/all')}
+          <Button
+            variant="ghost"
+            size="sm"
+            className="text-primary font-medium hover:bg-primary/5"
+            onClick={() => navigate("/app/jobs/all")}
           >
             See all <ChevronRight className="h-4 w-4 ml-1" />
           </Button>
@@ -221,7 +225,7 @@ export default function JobsHub() {
 
         {loading ? (
           <div className="space-y-3">
-            {[1, 2, 3].map(i => (
+            {[1, 2, 3].map((i) => (
               <Card key={i} className="overflow-hidden">
                 <CardContent className="p-4">
                   <div className="flex gap-3">
@@ -237,7 +241,7 @@ export default function JobsHub() {
             ))}
           </div>
         ) : topPicks.length === 0 ? (
-          <Card className="border-dashed">
+          <Card className="border-dashed bg-muted/50">
             <CardContent className="p-6 text-center">
               <Briefcase className="h-10 w-10 text-muted-foreground/50 mx-auto mb-3" />
               <p className="text-muted-foreground">No job openings available right now.</p>
@@ -247,9 +251,9 @@ export default function JobsHub() {
         ) : (
           <div className="space-y-3">
             {topPicks.map((job, index) => (
-              <Card 
+              <Card
                 key={job.id}
-                className="cursor-pointer overflow-hidden animate-bounce-in press-scale card-lift"
+                className="cursor-pointer overflow-hidden animate-bounce-in press-scale card-lift hover:border-primary/50 transition-colors"
                 style={{ animationDelay: `${index * 100}ms` }}
                 onClick={() => navigate(`/app/jobs/${job.id}`)}
               >
@@ -257,13 +261,13 @@ export default function JobsHub() {
                   <div className="flex gap-3">
                     {/* Company Logo */}
                     {job.company_logo_url ? (
-                      <img 
-                        src={job.company_logo_url} 
+                      <img
+                        src={job.company_logo_url}
                         alt={job.company_name}
-                        className="w-11 h-11 rounded-xl object-cover bg-muted shrink-0"
+                        className="w-11 h-11 rounded-xl object-cover bg-muted shrink-0 border"
                       />
                     ) : (
-                      <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <div className="w-11 h-11 rounded-xl bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
                         <Building2 className="w-5 h-5 text-primary" />
                       </div>
                     )}
@@ -272,27 +276,27 @@ export default function JobsHub() {
                     <div className="flex-1 min-w-0">
                       <h3 className="font-bold text-base line-clamp-1">{job.title}</h3>
                       <p className="text-sm text-muted-foreground mb-2">{job.company_name}</p>
-                      
+
                       <div className="flex flex-wrap items-center gap-2">
                         {job.location && (
-                          <span className="flex items-center gap-1 text-xs text-muted-foreground">
-                            <MapPin className="h-3.5 w-3.5" />
+                          <span className="flex items-center gap-1 text-xs text-muted-foreground bg-muted px-2 py-0.5 rounded-full">
+                            <MapPin className="h-3 w-3" />
                             {job.location}
                           </span>
                         )}
-                        <Badge 
-                          variant="secondary" 
-                          className={`text-xs font-medium ${JOB_TYPE_COLORS[job.job_type] || ''}`}
+                        <Badge
+                          variant="secondary"
+                          className={`text-xs font-medium border-0 ${JOB_TYPE_COLORS[job.job_type] || ""}`}
                         >
-                          {job.job_type.replace('_', ' ')}
+                          {job.job_type.replace("_", " ")}
                         </Badge>
                       </div>
                     </div>
 
                     {/* Arrow */}
                     <div className="self-center">
-                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center">
-                        <ArrowRight className="h-4 w-4 text-primary" />
+                      <div className="w-9 h-9 rounded-full bg-primary/10 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-colors">
+                        <ArrowRight className="h-4 w-4 text-primary group-hover:text-white transition-colors" />
                       </div>
                     </div>
                   </div>
@@ -310,15 +314,17 @@ export default function JobsHub() {
             <FileText className="h-5 w-5 text-primary" />
             <h2 className="text-lg font-bold">My Applications</h2>
             {applications.length > 0 && (
-              <Badge variant="secondary" className="text-xs">{applications.length}</Badge>
+              <Badge variant="secondary" className="text-xs">
+                {applications.length}
+              </Badge>
             )}
           </div>
           {applications.length > 0 && (
-            <Button 
-              variant="ghost" 
-              size="sm" 
-              className="text-primary font-medium"
-              onClick={() => navigate('/app/applications')}
+            <Button
+              variant="ghost"
+              size="sm"
+              className="text-primary font-medium hover:bg-primary/5"
+              onClick={() => navigate("/app/applications")}
             >
               View all <ChevronRight className="h-4 w-4 ml-1" />
             </Button>
@@ -327,7 +333,7 @@ export default function JobsHub() {
 
         {applicationsLoading ? (
           <div className="grid grid-cols-1 gap-3">
-            {[1, 2].map(i => (
+            {[1, 2].map((i) => (
               <Card key={i}>
                 <CardContent className="p-3">
                   <div className="flex items-center gap-3">
@@ -343,14 +349,11 @@ export default function JobsHub() {
             ))}
           </div>
         ) : applications.length === 0 ? (
-          <Card className="border-dashed">
+          <Card className="border-dashed bg-muted/30">
             <CardContent className="p-5 text-center">
               <FileText className="h-8 w-8 text-muted-foreground/50 mx-auto mb-2" />
               <p className="text-sm text-muted-foreground mb-3">No applications yet</p>
-              <Button 
-                size="sm"
-                onClick={() => navigate('/app/jobs/all')}
-              >
+              <Button size="sm" onClick={() => navigate("/app/jobs/all")}>
                 Browse Jobs
               </Button>
             </CardContent>
@@ -361,21 +364,21 @@ export default function JobsHub() {
               const status = getApplicationStatus(app);
               const StatusIcon = status.icon;
               return (
-                <Card 
+                <Card
                   key={app.id}
-                  className="cursor-pointer press-scale hover:shadow-md transition-all"
+                  className="cursor-pointer press-scale hover:shadow-md transition-all hover:border-primary/30"
                   onClick={() => navigate(`/app/jobs/${app.jobs.id}`)}
                 >
                   <CardContent className="p-3">
                     <div className="flex items-center gap-3">
                       {app.jobs.company_logo_url ? (
-                        <img 
-                          src={app.jobs.company_logo_url} 
+                        <img
+                          src={app.jobs.company_logo_url}
                           alt={app.jobs.company_name}
-                          className="w-10 h-10 rounded-lg object-cover bg-muted shrink-0"
+                          className="w-10 h-10 rounded-lg object-cover bg-muted shrink-0 border"
                         />
                       ) : (
-                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 border border-primary/20">
                           <Building2 className="w-4 h-4 text-primary" />
                         </div>
                       )}
@@ -383,7 +386,7 @@ export default function JobsHub() {
                         <h3 className="font-semibold text-sm line-clamp-1">{app.jobs.title}</h3>
                         <p className="text-xs text-muted-foreground">{app.jobs.company_name}</p>
                       </div>
-                      <Badge className={`text-xs shrink-0 ${status.color}`}>
+                      <Badge className={`text-xs shrink-0 ${status.color} border-0`}>
                         <StatusIcon className="h-3 w-3 mr-1" />
                         {status.label}
                       </Badge>
