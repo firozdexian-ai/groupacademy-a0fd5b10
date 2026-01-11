@@ -1,127 +1,164 @@
-import { useState, useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { supabase } from '@/integrations/supabase/client';
-import { User, Session } from '@supabase/supabase-js';
-import { toast } from 'sonner';
+import { useState, useEffect, useRef } from "react";
+import { useNavigate } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { User, Session, AuthError } from "@supabase/supabase-js";
+import { toast } from "sonner";
 
-export const useAuth = () => {
+// 1. Define the return type for better safety in other files
+export interface AuthState {
+  user: User | null;
+  session: Session | null;
+  isLoading: boolean;
+  signIn: (email: string, password: string) => Promise<void>;
+  signUp: (fullName: string, email: string, password: string, phone?: string) => Promise<boolean>;
+  signOut: () => Promise<void>;
+  resetPassword: (email: string) => Promise<void>;
+  updatePassword: (newPassword: string) => Promise<void>;
+}
+
+export const useAuth = (): AuthState => {
   const [user, setUser] = useState<User | null>(null);
   const [session, setSession] = useState<Session | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const navigate = useNavigate();
 
+  // 2. Add a ref to track if component is mounted
+  // This prevents "Can't perform a React state update on an unmounted component" errors
+  const mounted = useRef(true);
+
   useEffect(() => {
+    mounted.current = true;
+
     // Set up auth state listener
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      (event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((_event, session) => {
+      if (mounted.current) {
         setSession(session);
         setUser(session?.user ?? null);
+        setIsLoading(false); // Ensure loading stops when state changes
       }
-    );
+    });
 
     // Check for existing session with timeout
     const checkSession = async () => {
-      const timeoutMs = 10000; // 10 seconds
-      const controller = new AbortController();
-      const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-
       try {
-        const sessionPromise = supabase.auth.getSession();
-        const { data: { session } } = await Promise.race([
-          sessionPromise,
-          new Promise<never>((_, reject) => {
-            controller.signal.addEventListener('abort', () => {
-              reject(new Error('Session check timed out'));
-            });
-          })
-        ]);
-        
-        setSession(session);
-        setUser(session?.user ?? null);
+        const { data, error } = await supabase.auth.getSession();
+
+        if (error) throw error;
+
+        if (mounted.current) {
+          if (data.session) {
+            setSession(data.session);
+            setUser(data.session.user);
+          }
+        }
       } catch (error) {
-        console.error('Session check failed:', error);
-        // On timeout/error, assume no session
-        setSession(null);
-        setUser(null);
+        console.error("Session check failed:", error);
+        if (mounted.current) {
+          setSession(null);
+          setUser(null);
+        }
       } finally {
-        clearTimeout(timeoutId);
-        setIsLoading(false);
+        if (mounted.current) {
+          setIsLoading(false);
+        }
       }
     };
 
     checkSession();
 
-    return () => subscription.unsubscribe();
+    return () => {
+      mounted.current = false;
+      subscription.unsubscribe();
+    };
   }, []);
 
   const signIn = async (email: string, password: string) => {
-    const { error } = await supabase.auth.signInWithPassword({
-      email: email.trim(),
-      password,
-    });
+    try {
+      const { error } = await supabase.auth.signInWithPassword({
+        email: email.trim(),
+        password,
+      });
 
-    if (error) {
-      if (error.message.includes('Invalid login credentials')) {
-        throw new Error('Email or password is incorrect. Please check your credentials.');
+      if (error) {
+        if (error.message.includes("Invalid login credentials")) {
+          throw new Error("Email or password is incorrect.");
+        }
+        throw error;
       }
-      throw error;
-    }
 
-    toast.success('Welcome back!');
+      toast.success("Welcome back!");
+    } catch (err: any) {
+      toast.error(err.message || "Failed to sign in");
+      throw err;
+    }
   };
 
   const signUp = async (fullName: string, email: string, password: string, phone?: string) => {
-    const { data: authData, error: signUpError } = await supabase.auth.signUp({
-      email: email.trim(),
-      password,
-      options: {
-        data: {
-          full_name: fullName,
-          phone: phone || '',
+    try {
+      const { data: authData, error: signUpError } = await supabase.auth.signUp({
+        email: email.trim(),
+        password,
+        options: {
+          data: {
+            full_name: fullName,
+            phone: phone || "",
+          },
+          // Ensure this points to where you actually want them to go
+          emailRedirectTo: `${window.location.origin}/app/feed`,
         },
-        emailRedirectTo: `${window.location.origin}/app/feed`,
-      },
-    });
+      });
 
-    if (signUpError) {
-      if (signUpError.message.includes('already registered') || signUpError.code === '23505') {
-        throw new Error('This email is already registered.');
+      if (signUpError) {
+        if (signUpError.message.includes("already registered") || signUpError.code === "23505") {
+          throw new Error("This email is already registered.");
+        }
+        throw signUpError;
       }
-      throw signUpError;
-    }
 
-    if (!authData.user) throw new Error('Signup failed');
+      if (!authData.user) throw new Error("Signup failed");
 
-    // Wait for session to establish and trigger to create talent record
-    // Increased from 800ms to 1500ms for better reliability
-    await new Promise(resolve => setTimeout(resolve, 1500));
-    
-    // Verify session exists with retry
-    let session = null;
-    for (let i = 0; i < 3; i++) {
-      const { data } = await supabase.auth.getSession();
-      if (data.session) {
-        session = data.session;
-        break;
+      // Wait for session to establish and trigger to create talent record
+      // We keep your logic here, but with a toast to inform the user
+      toast.loading("Setting up your profile...", { duration: 1500 });
+      await new Promise((resolve) => setTimeout(resolve, 1500));
+
+      // Verify session exists with retry
+      let activeSession = null;
+      for (let i = 0; i < 3; i++) {
+        const { data } = await supabase.auth.getSession();
+        if (data.session) {
+          activeSession = data.session;
+          break;
+        }
+        await new Promise((resolve) => setTimeout(resolve, 500));
       }
-      await new Promise(resolve => setTimeout(resolve, 500));
-    }
-    
-    if (!session) {
-      toast.warning('Account created! Please sign in to continue.');
-      return false;
-    }
 
-    // The database trigger handle_new_user_talent creates the talent profile automatically
-    toast.success('Account created successfully!');
-    return true;
+      if (!activeSession) {
+        toast.dismiss(); // Remove loading toast
+        toast.warning("Account created! Please sign in to continue.");
+        return false;
+      }
+
+      toast.dismiss();
+      toast.success("Account created successfully!");
+      return true;
+    } catch (err: any) {
+      toast.dismiss();
+      toast.error(err.message || "Signup failed");
+      throw err;
+    }
   };
 
   const signOut = async () => {
     const { error } = await supabase.auth.signOut();
-    if (error) throw error;
-    toast.success('Signed out successfully');
-    navigate('/');
+    if (error) {
+      toast.error(error.message);
+      return;
+    }
+    toast.success("Signed out successfully");
+    navigate("/", { replace: true });
   };
 
   const resetPassword = async (email: string) => {
@@ -130,7 +167,7 @@ export const useAuth = () => {
     });
 
     if (error) throw error;
-    toast.success('Password reset link sent to your email');
+    toast.success("Password reset link sent to your email");
   };
 
   const updatePassword = async (newPassword: string) => {
@@ -139,7 +176,7 @@ export const useAuth = () => {
     });
 
     if (error) throw error;
-    toast.success('Password updated successfully');
+    toast.success("Password updated successfully");
   };
 
   return {
@@ -154,16 +191,14 @@ export const useAuth = () => {
   };
 };
 
-// Legacy function - kept for backward compatibility but no longer used
-// The database trigger handle_new_user_talent now handles profile creation
-// @deprecated Use the database trigger instead
+// Legacy function - kept for backward compatibility
 export const createStudentProfile = async (
   _userId: string,
   _fullName: string,
   _email: string,
   _phone?: string,
-  _status: 'free_learner' | 'lead' | 'enrolled' | 'graduated' = 'free_learner'
+  _status: "free_learner" | "lead" | "enrolled" | "graduated" = "free_learner",
 ): Promise<boolean> => {
-  console.warn('[useAuth] createStudentProfile is deprecated. Talent profiles are now created via database trigger.');
+  console.warn("[useAuth] createStudentProfile is deprecated.");
   return true;
 };
