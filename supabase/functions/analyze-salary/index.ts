@@ -7,36 +7,65 @@ const corsHeaders = {
 };
 
 serve(async (req) => {
+  // Handle CORS preflight
   if (req.method === "OPTIONS") {
     return new Response(null, { headers: corsHeaders });
   }
 
   try {
+    // 1. SECURITY: Verify the User
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing authorization header" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+    // Client to verify user identity
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseAuth.auth.getUser();
+
+    if (authError || !user) {
+      console.error("Auth error:", authError);
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { analysisId } = await req.json();
 
     if (!analysisId) {
-      return new Response(
-        JSON.stringify({ error: "Analysis ID is required" }),
-        { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Analysis ID is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
-    const SUPABASE_URL = Deno.env.get("SUPABASE_URL");
-    const SUPABASE_SERVICE_ROLE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
-
     if (!LOVABLE_API_KEY) {
-      console.error("LOVABLE_API_KEY is not configured");
-      return new Response(
-        JSON.stringify({ error: "AI service not configured" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "AI service not configured" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
-    const supabase = createClient(SUPABASE_URL!, SUPABASE_SERVICE_ROLE_KEY!);
+    // Initialize Admin Client for data fetching/updating
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
     // Fetch analysis data
-    const { data: analysis, error: fetchError } = await supabase
+    const { data: analysis, error: fetchError } = await supabaseAdmin
       .from("salary_analyses")
       .select("*, profession_categories(name, description)")
       .eq("id", analysisId)
@@ -44,13 +73,24 @@ serve(async (req) => {
 
     if (fetchError || !analysis) {
       console.error("Error fetching analysis:", fetchError);
-      return new Response(
-        JSON.stringify({ error: "Analysis not found" }),
-        { status: 404, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ error: "Analysis not found" }), {
+        status: 404,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // 2. SECURITY: Ownership Check
+    // Ensure the analysis belongs to the requesting user
+    if (analysis.user_id !== user.id) {
+      console.error(`Unauthorized access: User ${user.id} tried to access analysis ${analysisId}`);
+      return new Response(JSON.stringify({ error: "Unauthorized access to this analysis" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const cvContent = analysis.cv_text || "No CV provided - analyze based on job description only";
+    // @ts-ignore - Supabase join type
     const professionName = analysis.profession_categories?.name || "General";
 
     const prompt = `You are an expert HR consultant and salary negotiation specialist for the Bangladesh job market.
@@ -121,8 +161,12 @@ Focus on the Bangladesh job market context. Be realistic and practical with sala
       body: JSON.stringify({
         model: "google/gemini-2.5-flash",
         messages: [
-          { role: "system", content: "You are an expert HR consultant specializing in the Bangladesh job market. Always respond with valid JSON." },
-          { role: "user", content: prompt }
+          {
+            role: "system",
+            content:
+              "You are an expert HR consultant specializing in the Bangladesh job market. Always respond with valid JSON.",
+          },
+          { role: "user", content: prompt },
         ],
         temperature: 0.7,
       }),
@@ -134,82 +178,55 @@ Focus on the Bangladesh job market context. Be realistic and practical with sala
     if (!aiResponse.ok) {
       const errorText = await aiResponse.text();
       console.error("AI API error:", aiResponse.status, errorText);
-      
-      if (aiResponse.status === 429) {
-        return new Response(
-          JSON.stringify({ error: "Rate limit exceeded. Please try again in a few minutes." }),
-          { status: 429, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
+
+      if (aiResponse.status === 429 || aiResponse.status === 402) {
+        return new Response(JSON.stringify({ error: "AI service busy or quota exceeded." }), {
+          status: aiResponse.status,
+          headers: { ...corsHeaders, "Content-Type": "application/json" },
+        });
       }
-      if (aiResponse.status === 402) {
-        return new Response(
-          JSON.stringify({ error: "AI service quota exceeded. Please contact support." }),
-          { status: 402, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-        );
-      }
-      
-      return new Response(
-        JSON.stringify({ error: "AI analysis failed" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+
+      return new Response(JSON.stringify({ error: "AI analysis failed" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     const aiData = await aiResponse.json();
     const aiContent = aiData.choices?.[0]?.message?.content;
 
     if (!aiContent) {
-      console.error("No content in AI response");
-      return new Response(
-        JSON.stringify({ error: "No analysis generated" }),
-        { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      throw new Error("No content in AI response");
     }
 
     // Parse the AI response
     let parsedAnalysis;
     try {
-      const jsonMatch = aiContent.match(/\{[\s\S]*\}/);
+      // Clean JSON
+      let cleanContent = aiContent.trim();
+      cleanContent = cleanContent
+        .replace(/^```json\s*/i, "")
+        .replace(/^```\s*/i, "")
+        .replace(/\s*```$/i, "");
+
+      // Try to find JSON object if mixed with text
+      const jsonMatch = cleanContent.match(/\{[\s\S]*\}/);
       if (jsonMatch) {
         parsedAnalysis = JSON.parse(jsonMatch[0]);
       } else {
-        throw new Error("No JSON found in response");
+        parsedAnalysis = JSON.parse(cleanContent);
       }
     } catch (parseError) {
       console.error("Error parsing AI response:", parseError);
-      // Provide fallback analysis
-      parsedAnalysis = {
-        summary: "Analysis completed. Please review the insights below.",
-        market_salary_range: {
-          currency: "BDT",
-          min_monthly: 30000,
-          max_monthly: 80000,
-          median_monthly: 50000,
-          experience_level: "mid",
-          market_context: "Based on general market trends in Bangladesh"
-        },
-        skills_analysis: {
-          matching_skills: [],
-          missing_skills: [],
-          skills_gap_score: 50,
-          recommendations: ["Review the job requirements carefully"]
-        },
-        negotiation_tips: [
-          { tip: "Research market rates thoroughly", rationale: "Knowledge is power in negotiations" }
-        ],
-        market_insights: {
-          demand_level: "medium",
-          growth_trajectory: "stable",
-          key_employers: [],
-          industry_trends: []
-        },
-        action_plan: ["Complete your profile for better analysis"],
-        overall_readiness_score: 50,
-        salary_positioning: "at_market"
-      };
+      // Fallback
+      return new Response(JSON.stringify({ error: "Failed to parse AI analysis format" }), {
+        status: 500,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Update the analysis record
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from("salary_analyses")
       .update({
         ai_analysis: parsedAnalysis,
@@ -223,19 +240,19 @@ Focus on the Bangladesh job market context. Be realistic and practical with sala
 
     if (updateError) {
       console.error("Error updating analysis:", updateError);
+      throw new Error("Failed to save analysis results");
     }
 
     console.log("Salary analysis completed successfully");
 
-    return new Response(
-      JSON.stringify({ success: true, analysis: parsedAnalysis }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ success: true, analysis: parsedAnalysis }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error) {
     console.error("Error in analyze-salary function:", error);
-    return new Response(
-      JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error instanceof Error ? error.message : "Unknown error" }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
