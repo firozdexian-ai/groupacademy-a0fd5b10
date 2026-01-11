@@ -14,11 +14,7 @@ interface SendApplicationRequest {
 
 async function sendEmail(to: string, cc: string, replyTo: string, subject: string, html: string) {
   console.log("Sending email via Resend API...");
-  console.log("To:", to);
-  console.log("CC:", cc);
-  console.log("Reply-To:", replyTo);
-  console.log("Subject:", subject);
-  
+
   if (!RESEND_API_KEY) {
     throw new Error("RESEND_API_KEY is not configured");
   }
@@ -26,7 +22,7 @@ async function sendEmail(to: string, cc: string, replyTo: string, subject: strin
   const response = await fetch("https://api.resend.com/emails", {
     method: "POST",
     headers: {
-      "Authorization": `Bearer ${RESEND_API_KEY}`,
+      Authorization: `Bearer ${RESEND_API_KEY}`,
       "Content-Type": "application/json",
     },
     body: JSON.stringify({
@@ -41,7 +37,6 @@ async function sendEmail(to: string, cc: string, replyTo: string, subject: strin
 
   const responseText = await response.text();
   console.log("Resend API response status:", response.status);
-  console.log("Resend API response:", responseText);
 
   if (!response.ok) {
     throw new Error(`Resend API error (${response.status}): ${responseText}`);
@@ -56,26 +51,55 @@ serve(async (req: Request): Promise<Response> => {
   }
 
   try {
+    // 1. SECURITY: Verify the User
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) {
+      return new Response(JSON.stringify({ error: "Missing authorization header" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+
+    // Client to verify user identity
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseAuth.auth.getUser();
+
+    if (authError || !user) {
+      console.error("Auth error:", authError);
+      return new Response(JSON.stringify({ error: "Unauthorized" }), {
+        status: 401,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const { applicationId }: SendApplicationRequest = await req.json();
-    console.log("=== Send Job Application Function Started ===");
-    console.log("Processing application ID:", applicationId);
 
     if (!applicationId) {
       throw new Error("applicationId is required");
     }
 
-    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-    const supabase = createClient(supabaseUrl, supabaseKey);
+    const supabaseAdmin = createClient(supabaseUrl, supabaseKey);
 
     // Fetch application with job and talent details
-    const { data: application, error: fetchError } = await supabase
+    const { data: application, error: fetchError } = await supabaseAdmin
       .from("job_applications")
-      .select(`
+      .select(
+        `
         *,
         jobs (*),
-        talents (*)
-      `)
+        talents (*, user_id)
+      `,
+      )
       .eq("id", applicationId)
       .single();
 
@@ -84,21 +108,40 @@ serve(async (req: Request): Promise<Response> => {
       throw new Error("Application not found");
     }
 
+    // 2. SECURITY: Ownership Check
+    // Ensure the application belongs to the requesting user
+    // We check if the talent profile associated with this application is owned by the user
+    if (application.talents?.user_id !== user.id) {
+      console.error(
+        `Unauthorized: User ${user.id} tried to send application ${applicationId} belonging to ${application.talents?.user_id}`,
+      );
+      return new Response(JSON.stringify({ error: "Unauthorized access to this application" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // 3. SECURITY: Idempotency Check (Prevent Spam)
+    if (application.delivery_status === "sent") {
+      console.log(`Application ${applicationId} already sent. Skipping.`);
+      return new Response(JSON.stringify({ success: true, message: "Application already sent" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
     const job = application.jobs;
     const talent = application.talents;
 
-    if (!talent) {
-      console.error("No talent found for application");
-      throw new Error("Applicant information not found");
+    if (!job || !talent) {
+      throw new Error("Invalid application data: missing job or talent info");
     }
 
     // Check if job accepts email applications
     if (job.application_type !== "email" || !job.application_email) {
       console.log("Job does not accept email applications, skipping");
-      return new Response(
-        JSON.stringify({ success: true, message: "Job uses link-based applications" }),
-        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-      );
+      return new Response(JSON.stringify({ success: true, message: "Job uses link-based applications" }), {
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
     }
 
     // Build email content
@@ -149,43 +192,63 @@ serve(async (req: Request): Promise<Response> => {
               <span class="label">Email:</span>
               <span class="value">${talent.email}</span>
             </div>
-            ${talent.phone ? `
+            ${
+              talent.phone
+                ? `
             <div class="info-row">
               <span class="label">Phone:</span>
               <span class="value">${talent.phone}</span>
             </div>
-            ` : ''}
-            ${talent.linkedin_url ? `
+            `
+                : ""
+            }
+            ${
+              talent.linkedin_url
+                ? `
             <div class="info-row">
               <span class="label">LinkedIn:</span>
               <span class="value"><a href="${talent.linkedin_url}">${talent.linkedin_url}</a></span>
             </div>
-            ` : ''}
+            `
+                : ""
+            }
           </div>
 
-          ${application.cover_letter ? `
+          ${
+            application.cover_letter
+              ? `
           <div class="section">
             <h2>Cover Letter</h2>
             <div class="cover-letter">
-              ${application.cover_letter.replace(/\n/g, '<br>')}
+              ${application.cover_letter.replace(/\n/g, "<br>")}
             </div>
           </div>
-          ` : ''}
+          `
+              : ""
+          }
 
-          ${application.cv_url ? `
+          ${
+            application.cv_url
+              ? `
           <div class="section">
             <h2>Resume/CV</h2>
             <p>The applicant's CV is available at:</p>
             <a href="${application.cv_url}" class="cta">View CV</a>
           </div>
-          ` : ''}
+          `
+              : ""
+          }
 
-          ${talent.skills && Array.isArray(talent.skills) && talent.skills.length > 0 ? `
+          ${
+            talent.skills && Array.isArray(talent.skills) && talent.skills.length > 0
+              ? `
           <div class="section">
             <h2>Skills</h2>
-            <p>${talent.skills.join(', ')}</p>
+            <p>${talent.skills.join(", ")}</p>
           </div>
-          ` : ''}
+          `
+              : ""
+          }
         </div>
         <div class="footer">
           <p>This application was submitted via GroUp Academy Jobs Board</p>
@@ -196,22 +259,24 @@ serve(async (req: Request): Promise<Response> => {
     `;
 
     console.log("Sending email to:", job.application_email, "with CC:", talent.email);
+
     const emailResponse = await sendEmail(
       job.application_email,
       talent.email,
       talent.email,
       `New Application: ${talent.full_name} for ${job.title}`,
-      emailHtml
+      emailHtml,
     );
 
-    console.log("Email sent successfully:", emailResponse);
+    console.log("Email sent successfully");
 
     // Update application delivery status
-    const { error: updateError } = await supabase
+    const { error: updateError } = await supabaseAdmin
       .from("job_applications")
       .update({
         delivery_status: "sent",
-        application_status: "sent_to_employer"
+        application_status: "sent_to_employer",
+        updated_at: new Date().toISOString(),
       })
       .eq("id", applicationId);
 
@@ -219,34 +284,34 @@ serve(async (req: Request): Promise<Response> => {
       console.error("Error updating delivery status:", updateError);
     }
 
-    return new Response(
-      JSON.stringify({ success: true, emailResponse }),
-      { headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ success: true }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   } catch (error: any) {
     console.error("Error sending application:", error);
 
     // Try to update delivery status to failed
     try {
       const { applicationId } = await req.clone().json();
-      const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
-      const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
-      const supabase = createClient(supabaseUrl, supabaseKey);
+      if (applicationId) {
+        const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+        const supabaseAdmin = createClient(Deno.env.get("SUPABASE_URL")!, supabaseKey);
 
-      await supabase
-        .from("job_applications")
-        .update({
-          delivery_status: "failed",
-          delivery_error: error.message
-        })
-        .eq("id", applicationId);
+        await supabaseAdmin
+          .from("job_applications")
+          .update({
+            delivery_status: "failed",
+            delivery_error: error.message,
+          })
+          .eq("id", applicationId);
+      }
     } catch (updateErr) {
       console.error("Failed to update delivery status:", updateErr);
     }
 
-    return new Response(
-      JSON.stringify({ error: error.message }),
-      { status: 500, headers: { ...corsHeaders, "Content-Type": "application/json" } }
-    );
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
   }
 });
