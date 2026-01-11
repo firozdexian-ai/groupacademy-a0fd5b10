@@ -1,8 +1,8 @@
-import { useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import { 
-  Mail, 
-  Phone, 
+import { useState } from "react";
+import { useNavigate } from "react-router-dom";
+import {
+  Mail,
+  Phone,
   Briefcase,
   GraduationCap,
   FileText,
@@ -16,89 +16,95 @@ import {
   History,
   Upload,
   CheckCircle2,
-  Download
-} from 'lucide-react';
-import { downloadFile } from '@/lib/downloadFile';
-import { useTalent } from '@/hooks/useTalent';
-import { useCredits } from '@/hooks/useCredits';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Button } from '@/components/ui/button';
-import { Badge } from '@/components/ui/badge';
-import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
-import { Skeleton } from '@/components/ui/skeleton';
-import { CreditPurchaseSheet } from '@/components/credits/CreditPurchaseSheet';
-import { ApplicationHistoryCard } from '@/components/profile/ApplicationHistoryCard';
-import { ServiceHistoryCard } from '@/components/profile/ServiceHistoryCard';
-import {
-  Dialog,
-  DialogContent,
-  DialogDescription,
-  DialogHeader,
-  DialogTitle,
-} from '@/components/ui/dialog';
-import { toast } from 'sonner';
-import { supabase } from '@/integrations/supabase/client';
-import { cn } from '@/lib/utils';
+  Download,
+} from "lucide-react";
+import { downloadFile } from "@/lib/downloadFile";
+import { useTalent } from "@/hooks/useTalent";
+import { useCredits } from "@/hooks/useCredits";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { Skeleton } from "@/components/ui/skeleton";
+import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
+import { ApplicationHistoryCard } from "@/components/profile/ApplicationHistoryCard";
+import { ServiceHistoryCard } from "@/components/profile/ServiceHistoryCard";
+import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
+import { cn } from "@/lib/utils";
 
 export default function Profile() {
   const navigate = useNavigate();
-  const { talent, signOut, updateTalent, refreshTalent } = useTalent();
+  const { talent, signOut, updateTalent, refreshTalent, isLoading: isTalentLoading } = useTalent();
   const { balance, isLoading: creditsLoading } = useCredits();
   const [showCreditSheet, setShowCreditSheet] = useState(false);
   const [showEnhanceDialog, setShowEnhanceDialog] = useState(false);
   const [isEnhancing, setIsEnhancing] = useState(false);
-  
+
+  // 1. Better Loading State (Prevents blank screen flash)
+  if (isTalentLoading) {
+    return (
+      <div className="flex items-center justify-center min-h-[50vh]">
+        <Loader2 className="w-8 h-8 animate-spin text-primary" />
+      </div>
+    );
+  }
+
   if (!talent) {
-    return null;
+    return null; // Should be handled by ProtectedRoute, but safe to keep
   }
 
   const initials = talent.fullName
-    ?.split(' ')
-    .map(n => n[0])
-    .join('')
-    .toUpperCase() || '?';
+    ? talent.fullName
+        .split(" ")
+        .map((n) => n[0])
+        .join("")
+        .toUpperCase()
+        .slice(0, 2)
+    : "U";
 
   const handleSignOut = async () => {
     await signOut();
-    navigate('/');
+    navigate("/");
   };
 
   const handleEditProfile = () => {
-    navigate('/app/profile/edit');
+    navigate("/app/profile/edit");
   };
 
   const handleEnhanceWithAI = async () => {
     if (!talent.experience || talent.experience.length === 0) {
-      toast.error('Please add some work experience first');
+      toast.error("Please add some work experience first");
       setShowEnhanceDialog(false);
-      navigate('/app/profile/edit');
+      navigate("/app/profile/edit");
       return;
     }
 
     setIsEnhancing(true);
     try {
-      const { data, error } = await supabase.functions.invoke('enhance-cover-letter', {
+      const { data, error } = await supabase.functions.invoke("enhance-cover-letter", {
         body: {
-          type: 'experience',
+          type: "experience",
           experience: talent.experience,
-          profession: talent.customProfession || 'professional'
-        }
+          profession: talent.customProfession || "professional",
+        },
       });
 
       if (error) throw error;
 
       if (data?.enhancedExperience) {
         await updateTalent({
-          experience: data.enhancedExperience
+          experience: data.enhancedExperience,
         });
         await refreshTalent();
-        toast.success('Experience descriptions enhanced!');
+        toast.success("Experience descriptions enhanced!");
       } else {
-        toast.info('No enhancements made');
+        toast.info("No enhancements made");
       }
     } catch (error) {
-      console.error('Error enhancing experience:', error);
-      toast.error('Failed to enhance experience. Please try again.');
+      console.error("Error enhancing experience:", error);
+      toast.error("Failed to enhance experience. Please try again.");
     } finally {
       setIsEnhancing(false);
       setShowEnhanceDialog(false);
@@ -118,21 +124,19 @@ export default function Profile() {
                 {initials}
               </AvatarFallback>
             </Avatar>
-            <Button 
-              variant="secondary" 
-              size="icon" 
+            <Button
+              variant="secondary"
+              size="icon"
               className="rounded-xl shadow-md press-scale"
               onClick={handleEditProfile}
             >
               <Edit2 className="h-4 w-4" />
             </Button>
           </div>
-          
+
           <h1 className="text-xl font-bold text-primary-foreground mb-0.5">{talent.fullName}</h1>
-          <p className="text-primary-foreground/80 text-sm">
-            {talent.customProfession || 'Career Explorer'}
-          </p>
-          
+          <p className="text-primary-foreground/80 text-sm">{talent.customProfession || "Career Explorer"}</p>
+
           <div className="flex items-center gap-4 mt-3 text-xs text-primary-foreground/70">
             <span className="flex items-center gap-1">
               <Mail className="h-3.5 w-3.5" />
@@ -159,7 +163,7 @@ export default function Profile() {
                     <p className="text-[10px] text-muted-foreground">Credits Available</p>
                   </div>
                 </div>
-                <Button 
+                <Button
                   size="sm"
                   className="rounded-lg font-semibold press-scale h-8 text-xs"
                   onClick={() => setShowCreditSheet(true)}
@@ -172,7 +176,7 @@ export default function Profile() {
         </div>
       </div>
 
-      <CreditPurchaseSheet 
+      <CreditPurchaseSheet
         isOpen={showCreditSheet}
         onClose={() => setShowCreditSheet(false)}
         currentBalance={balance}
@@ -180,9 +184,9 @@ export default function Profile() {
 
       {/* Quick Actions - Horizontal Scroll */}
       <div className="flex gap-2 mb-5 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
-        <Card 
+        <Card
           className="cursor-pointer shadow-sm border-0 flex-shrink-0 w-[110px] press-scale rounded-xl"
-          onClick={() => navigate('/app/learning/my-courses')}
+          onClick={() => navigate("/app/learning/my-courses")}
         >
           <CardContent className="p-3 flex flex-col items-center text-center gap-1.5">
             <div className="p-2 bg-primary/10 rounded-lg">
@@ -191,8 +195,8 @@ export default function Profile() {
             <p className="font-semibold text-xs">My Learning</p>
           </CardContent>
         </Card>
-        
-        <Card 
+
+        <Card
           className="cursor-pointer shadow-sm border-0 flex-shrink-0 w-[110px] press-scale rounded-xl"
           onClick={handleEditProfile}
         >
@@ -204,9 +208,9 @@ export default function Profile() {
           </CardContent>
         </Card>
 
-        <Card 
+        <Card
           className="cursor-pointer shadow-sm border-0 flex-shrink-0 w-[110px] press-scale rounded-xl"
-          onClick={() => navigate('/app/applications')}
+          onClick={() => navigate("/app/applications")}
         >
           <CardContent className="p-3 flex flex-col items-center text-center gap-1.5">
             <div className="p-2 bg-secondary/10 rounded-lg">
@@ -239,12 +243,14 @@ export default function Profile() {
 
       {/* CV Uploaded Indicator - with "just updated" state */}
       {talent.cvUrl && (
-        <Card className={cn(
-          "mb-5 rounded-2xl shadow-sm",
-          talent.cvParsedAt && new Date(talent.cvParsedAt).getTime() > Date.now() - 5 * 60 * 1000
-            ? "border-primary/30 bg-primary/5"
-            : "border-success/20 bg-success/5"
-        )}>
+        <Card
+          className={cn(
+            "mb-5 rounded-2xl shadow-sm",
+            talent.cvParsedAt && new Date(talent.cvParsedAt).getTime() > Date.now() - 5 * 60 * 1000
+              ? "border-primary/30 bg-primary/5"
+              : "border-success/20 bg-success/5",
+          )}
+        >
           <CardContent className="py-3">
             <div className="flex items-center gap-3">
               {talent.cvParsedAt && new Date(talent.cvParsedAt).getTime() > Date.now() - 5 * 60 * 1000 ? (
@@ -261,11 +267,11 @@ export default function Profile() {
                   <span className="text-sm font-medium text-foreground">CV uploaded</span>
                 </>
               )}
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 className="ml-auto text-xs"
-                onClick={() => downloadFile(talent.cvUrl!, `${talent.fullName || 'CV'}.pdf`)}
+                onClick={() => downloadFile(talent.cvUrl!, `${talent.fullName || "CV"}.pdf`)}
               >
                 <Download className="h-3 w-3 mr-1" />
                 Download
@@ -291,21 +297,19 @@ export default function Profile() {
             {talent.currentStatus ? (
               <p className="text-sm text-muted-foreground">{talent.currentStatus}</p>
             ) : (
-              <p className="text-sm text-muted-foreground italic">
-                Add a summary about yourself...
-              </p>
+              <p className="text-sm text-muted-foreground italic">Add a summary about yourself...</p>
             )}
           </CardContent>
         </Card>
 
-        {/* Experience */}
+        {/* Experience - Type safe rendering */}
         <Card className="rounded-2xl shadow-sm border-border/50">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
               <CardTitle className="text-base font-semibold">Experience</CardTitle>
-              <Button 
-                variant="ghost" 
-                size="sm" 
+              <Button
+                variant="ghost"
+                size="sm"
                 onClick={() => setShowEnhanceDialog(true)}
                 disabled={!talent.experience || talent.experience.length === 0}
                 className="press-scale text-primary"
@@ -316,9 +320,9 @@ export default function Profile() {
             </div>
           </CardHeader>
           <CardContent>
-            {Array.isArray(talent.experience) && talent.experience.length > 0 ? (
+            {talent.experience && talent.experience.length > 0 ? (
               <div className="space-y-3">
-                {(talent.experience as any[]).slice(0, 3).map((exp, i) => (
+                {talent.experience.slice(0, 3).map((exp, i) => (
                   <div key={i} className="flex gap-3">
                     <div className="p-2.5 bg-muted rounded-xl h-fit">
                       <Briefcase className="h-4 w-4 text-muted-foreground" />
@@ -327,23 +331,19 @@ export default function Profile() {
                       <p className="font-semibold text-sm">{exp.title || exp.position}</p>
                       <p className="text-xs text-muted-foreground">{exp.company}</p>
                       {exp.description && (
-                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">
-                          {exp.description}
-                        </p>
+                        <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{exp.description}</p>
                       )}
                     </div>
                   </div>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground italic">
-                Add your work experience...
-              </p>
+              <p className="text-sm text-muted-foreground italic">Add your work experience...</p>
             )}
           </CardContent>
         </Card>
 
-        {/* Education */}
+        {/* Education - Type safe rendering */}
         <Card className="rounded-2xl shadow-sm border-border/50">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
@@ -354,9 +354,9 @@ export default function Profile() {
             </div>
           </CardHeader>
           <CardContent>
-            {Array.isArray(talent.education) && talent.education.length > 0 ? (
+            {talent.education && talent.education.length > 0 ? (
               <div className="space-y-3">
-                {(talent.education as any[]).slice(0, 3).map((edu, i) => (
+                {talent.education.slice(0, 3).map((edu, i) => (
                   <div key={i} className="flex gap-3">
                     <div className="p-2.5 bg-muted rounded-xl h-fit">
                       <GraduationCap className="h-4 w-4 text-muted-foreground" />
@@ -369,14 +369,12 @@ export default function Profile() {
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground italic">
-                Add your education...
-              </p>
+              <p className="text-sm text-muted-foreground italic">Add your education...</p>
             )}
           </CardContent>
         </Card>
 
-        {/* Skills */}
+        {/* Skills - Type safe rendering */}
         <Card className="rounded-2xl shadow-sm border-border/50">
           <CardHeader className="pb-2">
             <div className="flex items-center justify-between">
@@ -387,18 +385,16 @@ export default function Profile() {
             </div>
           </CardHeader>
           <CardContent>
-            {Array.isArray(talent.skills) && talent.skills.length > 0 ? (
+            {talent.skills && talent.skills.length > 0 ? (
               <div className="flex flex-wrap gap-2">
                 {talent.skills.map((skill, i) => (
                   <Badge key={i} variant="secondary" className="rounded-lg">
-                    {typeof skill === 'string' ? skill : skill.name}
+                    {typeof skill === "string" ? skill : skill.name}
                   </Badge>
                 ))}
               </div>
             ) : (
-              <p className="text-sm text-muted-foreground italic">
-                Add your skills...
-              </p>
+              <p className="text-sm text-muted-foreground italic">Add your skills...</p>
             )}
           </CardContent>
         </Card>
@@ -412,8 +408,8 @@ export default function Profile() {
 
       {/* Sign Out */}
       <div className="mt-8">
-        <Button 
-          variant="outline" 
+        <Button
+          variant="outline"
           className="w-full rounded-xl text-destructive hover:bg-destructive/10 border-destructive/30 press-scale"
           onClick={handleSignOut}
         >
@@ -431,8 +427,8 @@ export default function Profile() {
               Enhance Experience with AI
             </DialogTitle>
             <DialogDescription>
-              AI will improve your work experience descriptions to be more impactful and professional. 
-              This helps your profile stand out to employers.
+              AI will improve your work experience descriptions to be more impactful and professional. This helps your
+              profile stand out to employers.
             </DialogDescription>
           </DialogHeader>
           <div className="flex gap-3 mt-4">
@@ -444,11 +440,7 @@ export default function Profile() {
             >
               Cancel
             </Button>
-            <Button
-              className="flex-1 rounded-xl"
-              onClick={handleEnhanceWithAI}
-              disabled={isEnhancing}
-            >
+            <Button className="flex-1 rounded-xl" onClick={handleEnhanceWithAI} disabled={isEnhancing}>
               {isEnhancing ? (
                 <>
                   <Loader2 className="h-4 w-4 mr-2 animate-spin" />
