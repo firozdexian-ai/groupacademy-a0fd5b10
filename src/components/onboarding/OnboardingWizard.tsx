@@ -1,23 +1,21 @@
-import { useState, useEffect } from 'react';
-import { X } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Progress } from '@/components/ui/progress';
-import { WelcomeBonus } from './WelcomeBonus';
-import { CVUploadStep } from './CVUploadStep';
-import { ServicesTour } from './ServicesTour';
-import { useOnboarding } from '@/hooks/useOnboarding';
-import { toast } from 'sonner';
+import { useState, useEffect } from "react";
+import { X } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Progress } from "@/components/ui/progress";
+import { WelcomeBonus } from "./WelcomeBonus";
+import { CVUploadStep } from "./CVUploadStep";
+import { ServicesTour } from "./ServicesTour";
+import { useOnboarding } from "@/hooks/useOnboarding";
+import { toast } from "sonner";
 
 interface OnboardingWizardProps {
   onComplete: () => void;
 }
 
-// 4 steps: Welcome → CV Upload → Profile → Explore
-// Simplified 3 steps: Welcome → Profile → Explore (CV upload integrated into Profile)
 const STEPS = [
-  { id: 'welcome', label: 'Welcome' },
-  { id: 'profile', label: 'Profile' },
-  { id: 'explore', label: 'Explore' },
+  { id: "welcome", label: "Welcome" },
+  { id: "profile", label: "Profile" },
+  { id: "explore", label: "Explore" },
 ];
 
 export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
@@ -25,30 +23,42 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
   const [currentStep, setCurrentStep] = useState(0);
   const [hasInitialized, setHasInitialized] = useState(false);
 
-  // Sync currentStep with the saved onboarding step from database on mount
+  // FIXED: Prevent regression loops. Only update from savedStep if it's FURTHER ahead
+  // or if we haven't initialized at all.
   useEffect(() => {
-    if (!hasInitialized && savedStep !== undefined) {
-      // Make sure saved step is within valid range
-      const validStep = Math.min(Math.max(0, savedStep), STEPS.length - 1);
-      setCurrentStep(validStep);
-      setHasInitialized(true);
+    if (savedStep !== undefined) {
+      if (!hasInitialized) {
+        // First load: trust the DB
+        const validStep = Math.min(Math.max(0, savedStep), STEPS.length - 1);
+        setCurrentStep(validStep);
+        setHasInitialized(true);
+      } else {
+        // Subsequent updates: ONLY move forward, never backward automatically
+        // This prevents the loop where local state is 2, DB says 1, and it jumps back
+        const validStep = Math.min(Math.max(0, savedStep), STEPS.length - 1);
+        if (validStep > currentStep) {
+          setCurrentStep(validStep);
+        }
+      }
     }
-  }, [savedStep, hasInitialized]);
+  }, [savedStep, hasInitialized, currentStep]);
 
   const progress = ((currentStep + 1) / STEPS.length) * 100;
 
   const handleNext = async () => {
     if (currentStep < STEPS.length - 1) {
       const nextStep = currentStep + 1;
-      await updateStep(nextStep);
+      // Optimistically update UI first to prevent UI lag
       setCurrentStep(nextStep);
+      // Then sync to DB
+      await updateStep(nextStep);
     }
   };
 
   const handleSkipAll = async () => {
     const success = await skipOnboarding();
     if (success) {
-      toast.success('Welcome to GroUp Academy!');
+      toast.success("Welcome to GroUp Academy!");
       onComplete();
     }
   };
@@ -57,7 +67,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
     const success = await completeOnboarding();
     if (success) {
       toast.success("You're all set! Let's explore.", {
-        description: 'Your 250 welcome credits are ready to use',
+        description: "Your 250 welcome credits are ready to use",
       });
       onComplete();
     }
@@ -65,12 +75,11 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
 
   const renderStep = () => {
     switch (STEPS[currentStep].id) {
-      case 'welcome':
+      case "welcome":
         return <WelcomeBonus onContinue={handleNext} />;
-      case 'profile':
-        // Show CV upload first, then profile setup on continue
+      case "profile":
         return <CVUploadStep onContinue={handleNext} onSkip={handleNext} />;
-      case 'explore':
+      case "explore":
         return <ServicesTour onComplete={handleComplete} />;
       default:
         return null;
@@ -84,12 +93,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
         <div className="flex-1">
           <Progress value={progress} className="h-2" />
         </div>
-        <Button
-          variant="ghost"
-          size="sm"
-          onClick={handleSkipAll}
-          className="ml-4 text-muted-foreground"
-        >
+        <Button variant="ghost" size="sm" onClick={handleSkipAll} className="ml-4 text-muted-foreground">
           <X className="h-4 w-4 mr-1" />
           Skip
         </Button>
@@ -102,10 +106,10 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
             key={step.id}
             className={`text-xs font-medium transition-colors ${
               index === currentStep
-                ? 'text-primary'
+                ? "text-primary"
                 : index < currentStep
-                ? 'text-muted-foreground'
-                : 'text-muted-foreground/50'
+                  ? "text-muted-foreground"
+                  : "text-muted-foreground/50"
             }`}
           >
             {index > 0 && <span className="mx-2 text-border">•</span>}
@@ -115,9 +119,7 @@ export function OnboardingWizard({ onComplete }: OnboardingWizardProps) {
       </div>
 
       {/* Content */}
-      <div className="flex-1 overflow-y-auto">
-        {renderStep()}
-      </div>
+      <div className="flex-1 overflow-y-auto">{renderStep()}</div>
     </div>
   );
 }
