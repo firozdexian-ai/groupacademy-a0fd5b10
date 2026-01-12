@@ -283,7 +283,9 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
   };
 
   const canContinue = !isUploading && !isParsing;
-  const showSuccessState = uploadedFile && parseComplete;
+
+  // 👇 FIXED: Simplified logic. If we have parsed data OR we are done parsing + have a file, it's a success.
+  const showSuccessState = !!(parsedData || (uploadedFile && parseComplete));
 
   return (
     <div className="flex flex-col items-center px-4 py-6 max-w-md mx-auto">
@@ -300,6 +302,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         className={cn(
           "relative w-full border-2 border-dashed rounded-xl p-8 text-center transition-all",
           isDragging && "border-primary bg-primary/5 scale-[1.02]",
+          // 👇 FORCE GREEN BORDER ON SUCCESS
           showSuccessState && "border-success bg-success/5",
           !isDragging && !showSuccessState && "border-border hover:border-primary/50",
           (isUploading || isParsing) && "pointer-events-none opacity-90",
@@ -332,12 +335,28 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
             </div>
           </div>
         ) : showSuccessState ? (
-          <div className="flex flex-col items-center gap-3 py-2 animate-in fade-in zoom-in">
-            <CheckCircle2 className="h-16 w-16 text-success" />
-            <div>
-              <p className="text-foreground font-bold text-lg">{parsedData ? "Success!" : "Uploaded!"}</p>
-              <p className="text-xs text-muted-foreground mt-1">Tap below to replace</p>
+          /* 👇 IMPROVED SUCCESS UI: Shows clearly that upload is done */
+          <div className="flex flex-col items-center gap-3 py-4 animate-in fade-in zoom-in">
+            <div className="w-16 h-16 rounded-full bg-green-100 flex items-center justify-center">
+              <CheckCircle2 className="h-8 w-8 text-green-600" />
             </div>
+            <div>
+              <p className="text-foreground font-bold text-lg">{parsedData ? "CV Analyzed!" : "Upload Complete!"}</p>
+              <p className="text-xs text-muted-foreground mt-1">Your profile is ready. Click Continue.</p>
+            </div>
+            <Button
+              variant="ghost"
+              size="sm"
+              className="h-6 text-xs text-muted-foreground hover:text-destructive"
+              onClick={(e) => {
+                e.stopPropagation();
+                setParsedData(null);
+                setUploadedFile(null);
+                setParseComplete(false);
+              }}
+            >
+              Upload different file
+            </Button>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-3">
