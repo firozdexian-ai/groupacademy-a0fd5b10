@@ -2,7 +2,7 @@ import { Toaster } from "@/components/ui/toaster";
 import { Toaster as Sonner } from "@/components/ui/sonner";
 import { TooltipProvider } from "@/components/ui/tooltip";
 import { QueryClient, QueryClientProvider } from "@tanstack/react-query";
-import { BrowserRouter, Routes, Route, Navigate } from "react-router-dom";
+import { BrowserRouter, Routes, Route, Navigate, useParams } from "react-router-dom"; // Added useParams
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { BootGate } from "@/components/BootGate";
 import { TalentProvider } from "@/contexts/TalentContext";
@@ -111,14 +111,19 @@ const queryClient = new QueryClient({
   },
 });
 
+// Helper component to handle dynamic redirect with ID
+const JobApplyRedirect = () => {
+  const { id } = useParams();
+  // Redirects to the specific application page, preserving the ID
+  return <Navigate to={`/auth?returnTo=/app/jobs/${id}/apply`} replace />;
+};
+
 export default function App() {
   return (
     <ErrorBoundary>
       <QueryClientProvider client={queryClient}>
-        {/* 1. BrowserRouter MUST wrap everything that uses navigation hooks */}
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <BootGate>
-            {/* 2. TalentProvider is now INSIDE the Router */}
             <TalentProvider>
               <TooltipProvider>
                 <Toaster />
@@ -132,7 +137,9 @@ export default function App() {
 
                   {/* Public Job View */}
                   <Route path="/jobs/:id" element={<PublicJobDetail />} />
-                  <Route path="/jobs/:id/apply" element={<Navigate to="/auth?returnTo=/app/jobs" replace />} />
+
+                  {/* 👇 FIXED: Uses helper component to keep the Job ID */}
+                  <Route path="/jobs/:id/apply" element={<JobApplyRedirect />} />
 
                   {/* Public Content */}
                   <Route path="/blog" element={<Blog />} />
