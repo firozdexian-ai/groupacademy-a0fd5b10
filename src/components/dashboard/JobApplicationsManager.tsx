@@ -25,9 +25,12 @@ import {
   Trophy,
   CheckCircle,
   TrendingUp,
+  Mic,
+  List,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
 import type { Database } from "@/integrations/supabase/types";
 
@@ -104,6 +107,8 @@ const AssessmentDetailDialog = ({
 
   const score = assessment.ai_score || 0;
   const analysis = assessment.ai_analysis || {};
+  const mcq = analysis.mcq || {};
+  const voice = analysis.voice || {};
 
   const getScoreColor = (score: number) => {
     if (score >= 80) return "text-green-600";
@@ -113,7 +118,7 @@ const AssessmentDetailDialog = ({
 
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
         <DialogHeader>
           <DialogTitle className="flex items-center gap-2">
             <Brain className="h-5 w-5 text-primary" />
@@ -124,79 +129,163 @@ const AssessmentDetailDialog = ({
           </p>
         </DialogHeader>
 
-        <div className="space-y-6 py-4">
-          {/* Overall Score */}
-          <div className="flex items-center justify-between p-4 bg-muted/30 rounded-lg border">
+        <div className="py-2">
+          {/* Overall Score Banner */}
+          <div className="flex items-center justify-between p-4 mb-4 bg-muted/30 rounded-lg border">
             <div>
               <p className="text-sm font-medium text-muted-foreground">Overall Match Score</p>
               <div className="flex items-baseline gap-2">
                 <span className={`text-4xl font-bold ${getScoreColor(score)}`}>{score}</span>
                 <span className="text-muted-foreground">/100</span>
               </div>
+              <p className="text-xs text-muted-foreground mt-1">
+                Based on MCQ ({mcq.score || 0}%) and Voice ({voice.score || 0}%)
+              </p>
             </div>
             <div className="h-16 w-16 rounded-full bg-background flex items-center justify-center border-4 border-primary/10">
               <Trophy className={`h-8 w-8 ${getScoreColor(score)}`} />
             </div>
           </div>
 
-          {/* Breakdown */}
-          {analysis.score_breakdown && (
-            <div className="space-y-3">
-              <h4 className="font-semibold flex items-center gap-2 text-sm">Score Breakdown</h4>
-              <div className="space-y-3">
-                {Object.entries(analysis.score_breakdown).map(([key, value]: [string, any]) => (
-                  <div key={key}>
-                    <div className="flex justify-between text-xs mb-1 capitalize text-muted-foreground">
-                      <span>{key.replace("_", " ")}</span>
-                      <span className="font-medium text-foreground">{value}%</span>
+          <Tabs defaultValue="summary" className="w-full">
+            <TabsList className="grid w-full grid-cols-3">
+              <TabsTrigger value="summary">Summary & Insights</TabsTrigger>
+              <TabsTrigger value="breakdown">Score Breakdown</TabsTrigger>
+              <TabsTrigger value="details">Detailed Responses</TabsTrigger>
+            </TabsList>
+
+            <TabsContent value="summary" className="space-y-4 mt-4">
+              {/* AI Summary */}
+              <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
+                <h4 className="font-semibold text-sm mb-2">Executive Summary</h4>
+                <p className="text-sm text-muted-foreground leading-relaxed italic">
+                  "{analysis.overall_assessment || "No summary available."}"
+                </p>
+              </div>
+
+              {/* Strengths & Weaknesses Grid */}
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <h4 className="font-semibold flex items-center gap-2 text-sm text-green-600">
+                    <CheckCircle className="h-4 w-4" /> Key Strengths
+                  </h4>
+                  <ul className="space-y-1 bg-green-50 dark:bg-green-950/20 p-3 rounded-lg min-h-[100px]">
+                    {analysis.strengths && analysis.strengths.length > 0 ? (
+                      analysis.strengths.map((s: string, i: number) => (
+                        <li key={i} className="text-xs flex items-start gap-2 text-green-900 dark:text-green-100">
+                          <span>•</span> {s}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-xs text-muted-foreground">No specific strengths identified.</li>
+                    )}
+                  </ul>
+                </div>
+
+                <div className="space-y-2">
+                  <h4 className="font-semibold flex items-center gap-2 text-sm text-amber-600">
+                    <TrendingUp className="h-4 w-4" /> Areas for Growth
+                  </h4>
+                  <ul className="space-y-1 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg min-h-[100px]">
+                    {analysis.areas_for_improvement && analysis.areas_for_improvement.length > 0 ? (
+                      analysis.areas_for_improvement.map((s: string, i: number) => (
+                        <li key={i} className="text-xs flex items-start gap-2 text-amber-900 dark:text-amber-100">
+                          <span>•</span> {s}
+                        </li>
+                      ))
+                    ) : (
+                      <li className="text-xs text-muted-foreground">No specific improvements identified.</li>
+                    )}
+                  </ul>
+                </div>
+              </div>
+            </TabsContent>
+
+            <TabsContent value="breakdown" className="space-y-4 mt-4">
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                    <Brain className="h-4 w-4" /> Soft Skills Analysis
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {analysis.score_breakdown ? (
+                    <div className="space-y-4">
+                      {Object.entries(analysis.score_breakdown).map(([key, value]: [string, any]) => (
+                        <div key={key}>
+                          <div className="flex justify-between text-xs mb-1 capitalize text-muted-foreground">
+                            <span>{key.replace("_", " ")}</span>
+                            <span className="font-medium text-foreground">{value}%</span>
+                          </div>
+                          <Progress value={value} className="h-2" />
+                        </div>
+                      ))}
                     </div>
-                    <Progress value={value} className="h-2" />
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No breakdown available.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+
+            <TabsContent value="details" className="space-y-4 mt-4">
+              {/* MCQ Details */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                    <List className="h-4 w-4" /> Multiple Choice Results
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  <div className="flex gap-4 text-sm">
+                    <div className="flex flex-col">
+                      <span className="text-muted-foreground text-xs">Total Questions</span>
+                      <span className="font-medium">{mcq.total || 0}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-muted-foreground text-xs">Correct Answers</span>
+                      <span className="font-medium text-green-600">{mcq.correct || 0}</span>
+                    </div>
+                    <div className="flex flex-col">
+                      <span className="text-muted-foreground text-xs">Score</span>
+                      <span className="font-medium">{mcq.score || 0}%</span>
+                    </div>
                   </div>
-                ))}
-              </div>
-            </div>
-          )}
+                </CardContent>
+              </Card>
 
-          {/* Strengths & Weaknesses Grid */}
-          <div className="grid md:grid-cols-2 gap-4">
-            {analysis.strengths && (
-              <div className="space-y-2">
-                <h4 className="font-semibold flex items-center gap-2 text-sm text-green-600">
-                  <CheckCircle className="h-4 w-4" /> Key Strengths
-                </h4>
-                <ul className="space-y-1 bg-green-50 dark:bg-green-950/20 p-3 rounded-lg">
-                  {analysis.strengths.map((s: string, i: number) => (
-                    <li key={i} className="text-xs flex items-start gap-2 text-green-900 dark:text-green-100">
-                      <span>•</span> {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-
-            {analysis.areas_for_improvement && (
-              <div className="space-y-2">
-                <h4 className="font-semibold flex items-center gap-2 text-sm text-amber-600">
-                  <TrendingUp className="h-4 w-4" /> Areas for Growth
-                </h4>
-                <ul className="space-y-1 bg-amber-50 dark:bg-amber-950/20 p-3 rounded-lg">
-                  {analysis.areas_for_improvement.map((s: string, i: number) => (
-                    <li key={i} className="text-xs flex items-start gap-2 text-amber-900 dark:text-amber-100">
-                      <span>•</span> {s}
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </div>
-
-          {/* AI Summary */}
-          {analysis.overall_assessment && (
-            <div className="p-4 bg-primary/5 rounded-lg border border-primary/10">
-              <h4 className="font-semibold text-sm mb-2">AI Summary</h4>
-              <p className="text-sm text-muted-foreground leading-relaxed italic">"{analysis.overall_assessment}"</p>
-            </div>
-          )}
+              {/* Voice Details */}
+              <Card>
+                <CardHeader className="pb-2">
+                  <CardTitle className="text-sm font-medium flex items-center gap-2">
+                    <Mic className="h-4 w-4" /> Voice Response Analysis
+                  </CardTitle>
+                </CardHeader>
+                <CardContent>
+                  {voice.analysis && voice.analysis.length > 0 ? (
+                    <div className="space-y-4">
+                      {voice.analysis.map((item: any, i: number) => (
+                        <div key={i} className="p-3 bg-muted/20 rounded-lg border text-sm">
+                          <div className="flex justify-between mb-2">
+                            <span className="font-medium">Question {i + 1}</span>
+                            <Badge variant={item.score >= 70 ? "default" : "secondary"}>Score: {item.score}/100</Badge>
+                          </div>
+                          <p className="text-muted-foreground text-xs mb-2">{item.feedback}</p>
+                          {item.strengths && (
+                            <div className="text-xs text-green-700">
+                              <strong>Strength:</strong> {item.strengths[0]}
+                            </div>
+                          )}
+                        </div>
+                      ))}
+                    </div>
+                  ) : (
+                    <p className="text-sm text-muted-foreground">No voice responses recorded or analyzed.</p>
+                  )}
+                </CardContent>
+              </Card>
+            </TabsContent>
+          </Tabs>
         </div>
       </DialogContent>
     </Dialog>
@@ -508,7 +597,7 @@ This application was submitted via GroUp Academy Jobs Board.
   return (
     <Card>
       <CardHeader>
-        {/* Header content */}
+        {/* ... (Header content stays mostly the same) ... */}
         <div className="flex flex-col gap-4 md:flex-row md:items-center md:justify-between">
           <div>
             <CardTitle>Job Applications ({filteredApplications.length})</CardTitle>
@@ -525,7 +614,7 @@ This application was submitted via GroUp Academy Jobs Board.
           </Button>
         </div>
 
-        {/* Filters */}
+        {/* ... (Search and filters stay the same) ... */}
         <div className="flex flex-col gap-4 mt-4 md:flex-row">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -680,6 +769,7 @@ This application was submitted via GroUp Academy Jobs Board.
                     </TableCell>
                     <TableCell>
                       <div className="flex items-center gap-1">
+                        {/* ... (Action buttons logic remains same) ... */}
                         {app.cv_url && (
                           <Button
                             variant="ghost"
