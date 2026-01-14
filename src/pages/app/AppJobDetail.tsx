@@ -1,13 +1,27 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  ArrowLeft, Building2, MapPin, Clock, DollarSign, Calendar, 
-  ExternalLink, Briefcase, Star, Share2, RefreshCw, AlertCircle
+import {
+  ArrowLeft,
+  Building2,
+  MapPin,
+  Clock,
+  DollarSign,
+  Calendar,
+  ExternalLink,
+  Briefcase,
+  Star,
+  Share2,
+  RefreshCw,
+  AlertCircle,
+  CheckCircle,
+  Brain,
+  ArrowRight,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -32,6 +46,16 @@ interface Job {
   is_featured: boolean;
   created_at: string;
   source_image_url: string | null;
+  ai_assessment_enabled: boolean;
+}
+
+interface ExistingApplication {
+  id: string;
+  created_at: string;
+  application_status: string;
+  assessment_id?: string;
+  assessment_status?: string;
+  assessment_score?: number | null;
 }
 
 const JOB_TYPES: Record<string, string> = {
@@ -53,28 +77,59 @@ const EXPERIENCE_LEVELS: Record<string, string> = {
 export default function AppJobDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const { talent } = useTalent(); // Get current user
+
   const [job, setJob] = useState<Job | null>(null);
+  const [existingApp, setExistingApp] = useState<ExistingApplication | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
 
   useEffect(() => {
-    if (id) loadJob();
-  }, [id]);
+    if (id) loadJobAndApplication();
+  }, [id, talent?.id]);
 
-  const loadJob = async () => {
+  const loadJobAndApplication = async () => {
     setLoading(true);
     setLoadError(null);
-    
+
     try {
-      const { data, error } = await supabase
+      // 1. Load Job Details
+      const { data: jobData, error: jobError } = await supabase
         .from("jobs")
         .select("*")
         .eq("id", id)
         .eq("is_active", true)
         .single();
 
-      if (error) throw error;
-      setJob(data);
+      if (jobError) throw jobError;
+      setJob(jobData);
+
+      // 2. Check for Existing Application (if user is logged in)
+      if (talent?.id) {
+        const { data: appData, error: appError } = await supabase
+          .from("job_applications")
+          .select(
+            `
+            id, created_at, application_status,
+            job_assessments(id, status, ai_score)
+          `,
+          )
+          .eq("job_id", id)
+          .eq("talent_id", talent.id)
+          .maybeSingle();
+
+        if (!appError && appData) {
+          const assessment = appData.job_assessments?.[0];
+          setExistingApp({
+            id: appData.id,
+            created_at: appData.created_at || new Date().toISOString(),
+            application_status: appData.application_status || "submitted",
+            assessment_id: assessment?.id,
+            assessment_status: assessment?.status,
+            assessment_score: assessment?.ai_score,
+          });
+        }
+      }
     } catch (error: any) {
       console.error("Error loading job:", error);
       setLoadError("Failed to load job details.");
@@ -107,7 +162,7 @@ export default function AppJobDetail() {
         toast.success("Link copied!");
       }
     } catch (error) {
-      if (error instanceof Error && error.name !== 'AbortError') {
+      if (error instanceof Error && error.name !== "AbortError") {
         try {
           await navigator.clipboard.writeText(shareUrl);
           toast.success("Link copied!");
@@ -124,6 +179,98 @@ export default function AppJobDetail() {
     } else {
       navigate(`/app/jobs/${id}/apply`);
     }
+  };
+
+  // Render Logic for the Main Action Button
+  const renderActionButton = () => {
+    // 1. Deadline Passed
+    if (isDeadlinePassed) {
+      return (
+        <Button size="lg" className="w-full mb-6" disabled>
+          Application Closed
+        </Button>
+      );
+    }
+
+    // 2. Existing Application Logic
+    if (existingApp) {
+      // Case A: Assessment Pending (User applied but didn't finish assessment)
+      if (job?.ai_assessment_enabled && existingApp.assessment_status === "pending" && existingApp.assessment_id) {
+        return (
+          <div className="mb-6 space-y-3">
+            <div className="p-3 bg-amber-50 dark:bg-amber-950/30 border border-amber-200 dark:border-amber-800 rounded-lg flex items-start gap-3">
+              <AlertCircle className="w-5 h-5 text-amber-600 mt-0.5 shrink-0" />
+              <div>
+                <p className="font-medium text-amber-800 dark:text-amber-200">Assessment Incomplete</p>
+                <p className="text-sm text-amber-700 dark:text-amber-300">
+                  You have applied, but your AI assessment is pending. Complete it to be considered.
+                </p>
+              </div>
+            </div>
+            <Button
+              size="lg"
+              className="w-full bg-amber-600 hover:bg-amber-700 text-white"
+              onClick={() => navigate(`/app/job-assessment/${existingApp.assessment_id}`)}
+            >
+              <Brain className="w-4 h-4 mr-2" />
+              Complete Assessment Now
+            </Button>
+          </div>
+        );
+      }
+
+      // Case B: Assessment Completed
+      if (job?.ai_assessment_enabled && existingApp.assessment_status === "completed") {
+        return (
+          <div className="mb-6 space-y-3">
+            <div className="p-3 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg flex items-center gap-3">
+              <CheckCircle className="w-5 h-5 text-green-600" />
+              <div>
+                <p className="font-medium text-green-800 dark:text-green-200">Application Complete</p>
+                <p className="text-sm text-green-700 dark:text-green-300">
+                  You applied on {format(new Date(existingApp.created_at), "MMM d, yyyy")}.
+                  {existingApp.assessment_score && ` AI Score: ${existingApp.assessment_score}%`}
+                </p>
+              </div>
+            </div>
+            <Button
+              size="lg"
+              variant="outline"
+              className="w-full"
+              onClick={() => navigate(`/app/job-assessment/${existingApp.assessment_id}/results`)}
+            >
+              View Assessment Results <ArrowRight className="w-4 h-4 ml-2" />
+            </Button>
+          </div>
+        );
+      }
+
+      // Case C: Standard Application (No Assessment or External Link)
+      return (
+        <div className="mb-6">
+          <Button size="lg" className="w-full bg-green-600 hover:bg-green-700 text-white" disabled>
+            <CheckCircle className="w-4 h-4 mr-2" />
+            Applied on {format(new Date(existingApp.created_at), "MMM d, yyyy")}
+          </Button>
+          <p className="text-center text-xs text-muted-foreground mt-2">
+            Status: <span className="capitalize">{existingApp.application_status.replace("_", " ")}</span>
+          </p>
+        </div>
+      );
+    }
+
+    // 3. New Application
+    return (
+      <Button size="lg" className="w-full mb-6" onClick={handleApply}>
+        {job?.application_type === "link" ? (
+          <>
+            Apply Now <ExternalLink className="w-4 h-4 ml-2" />
+          </>
+        ) : (
+          "Apply Now"
+        )}
+      </Button>
+    );
   };
 
   if (loading) {
@@ -146,7 +293,7 @@ export default function AppJobDetail() {
             <h2 className="text-lg font-semibold mb-2">Failed to Load Job</h2>
             <p className="text-muted-foreground mb-4">{loadError || "Job not found"}</p>
             <div className="flex gap-2 justify-center">
-              <Button onClick={loadJob}>
+              <Button onClick={loadJobAndApplication}>
                 <RefreshCw className="h-4 w-4 mr-2" />
                 Try Again
               </Button>
@@ -166,19 +313,14 @@ export default function AppJobDetail() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       {/* Header */}
-      <Button 
-        variant="ghost" 
-        size="sm" 
-        onClick={() => navigate("/app/jobs")}
-        className="mb-4 -ml-2"
-      >
+      <Button variant="ghost" size="sm" onClick={() => navigate("/app/jobs")} className="mb-4 -ml-2">
         <ArrowLeft className="w-4 h-4 mr-2" /> Back
       </Button>
 
       <div className="flex gap-4 items-start mb-6">
         {job.company_logo_url ? (
-          <img 
-            src={job.company_logo_url} 
+          <img
+            src={job.company_logo_url}
             alt={job.company_name}
             className="w-14 h-14 rounded-xl object-cover bg-muted"
           />
@@ -195,8 +337,14 @@ export default function AppJobDetail() {
                 <Star className="w-3 h-3 fill-current" /> Featured
               </Badge>
             )}
-            {isDeadlinePassed && (
-              <Badge variant="destructive">Deadline Passed</Badge>
+            {isDeadlinePassed && <Badge variant="destructive">Deadline Passed</Badge>}
+            {job.ai_assessment_enabled && (
+              <Badge
+                variant="secondary"
+                className="gap-1 bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20"
+              >
+                <Brain className="w-3 h-3" /> AI Assessment
+              </Badge>
             )}
           </div>
           <h1 className="text-xl font-bold">{job.title}</h1>
@@ -214,9 +362,7 @@ export default function AppJobDetail() {
           <Clock className="w-3 h-3" />
           {JOB_TYPES[job.job_type] || job.job_type}
         </Badge>
-        <Badge variant="secondary">
-          {EXPERIENCE_LEVELS[job.experience_level] || job.experience_level}
-        </Badge>
+        <Badge variant="secondary">{EXPERIENCE_LEVELS[job.experience_level] || job.experience_level}</Badge>
         {job.location && (
           <Badge variant="outline" className="gap-1">
             <MapPin className="w-3 h-3" />
@@ -231,30 +377,15 @@ export default function AppJobDetail() {
         )}
       </div>
 
-      {/* Apply Button */}
-      <Button 
-        size="lg" 
-        className="w-full mb-6"
-        onClick={handleApply}
-        disabled={isDeadlinePassed}
-      >
-        {job.application_type === "link" ? (
-          <>Apply Now <ExternalLink className="w-4 h-4 ml-2" /></>
-        ) : (
-          "Apply Now"
-        )}
-      </Button>
+      {/* DYNAMIC ACTION BUTTON */}
+      {renderActionButton()}
 
       {/* Source Image */}
       {job.source_image_url && (
         <Card className="mb-6">
           <CardContent className="p-4">
             <h2 className="text-sm font-semibold mb-3">Original Job Post</h2>
-            <img 
-              src={job.source_image_url} 
-              alt="Original job post" 
-              className="w-full rounded-lg border"
-            />
+            <img src={job.source_image_url} alt="Original job post" className="w-full rounded-lg border" />
           </CardContent>
         </Card>
       )}
