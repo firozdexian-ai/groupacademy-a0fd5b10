@@ -1,443 +1,221 @@
-import { useState, useEffect } from "react";
-import { useNavigate } from "react-router-dom";
-import {
-  Briefcase,
-  ChevronRight,
-  Calendar,
-  Building2,
-  Send,
-  CheckCircle2,
-  XCircle,
-  Clock,
-  ClipboardList,
-  Loader2,
-  PlayCircle,
-  Brain,
-  Trophy,
-} from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
-import { useTalent } from "@/hooks/useTalent";
-import { Card, CardContent } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { format } from "date-fns";
-import { toast } from "sonner";
+import "https://deno.land/x/xhr@0.1.0/mod.ts";
+import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
+import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
-interface Application {
-  id: string;
-  job_id: string;
-  job_title: string;
-  company_name: string;
-  created_at: string;
-  application_status: string;
-  delivery_status: string;
-  ai_assessment_enabled: boolean;
-  assessment_id: string | null;
-  assessment_status: string | null;
-  assessment_score: number | null; // Added score field
-}
+const corsHeaders = {
+  "Access-Control-Allow-Origin": "*",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
+};
 
-export default function MyApplications() {
-  const navigate = useNavigate();
-  const { talent } = useTalent();
-  const [applications, setApplications] = useState<Application[]>([]);
-  const [loading, setLoading] = useState(true);
-  const [generatingAssessment, setGeneratingAssessment] = useState<string | null>(null);
-
-  useEffect(() => {
-    if (talent?.id) {
-      fetchApplications();
-    }
-  }, [talent?.id]);
-
-  async function fetchApplications() {
-    if (!talent?.id) return;
-
-    setLoading(true);
-    try {
-      // First fetch applications with job info
-      const { data: appData, error: appError } = await supabase
-        .from("job_applications")
-        .select(
-          `
-          id,
-          job_id,
-          created_at,
-          application_status,
-          delivery_status,
-          jobs (
-            title,
-            company_name,
-            ai_assessment_enabled
-          )
-        `,
-        )
-        .eq("talent_id", talent.id)
-        .order("created_at", { ascending: false });
-
-      if (appError) throw appError;
-
-      // Then fetch assessments for this talent
-      const { data: assessmentData, error: assessmentError } = await supabase
-        .from("job_assessments")
-        .select("id, job_id, status, ai_score") // Added ai_score
-        .eq("talent_id", talent.id);
-
-      if (assessmentError) throw assessmentError;
-
-      // Create a map of job_id to assessment
-      const assessmentMap = new Map(
-        assessmentData?.map((a) => [a.job_id, { id: a.id, status: a.status, score: a.ai_score }]) || [],
-      );
-
-      const formatted =
-        appData?.map((app) => {
-          const assessment = assessmentMap.get(app.job_id);
-          return {
-            id: app.id,
-            job_id: app.job_id,
-            job_title: (app.jobs as any)?.title || "Unknown Job",
-            company_name: (app.jobs as any)?.company_name || "Unknown Company",
-            created_at: app.created_at,
-            application_status: app.application_status || "submitted",
-            delivery_status: app.delivery_status || "pending",
-            ai_assessment_enabled: (app.jobs as any)?.ai_assessment_enabled || false,
-            assessment_id: assessment?.id || null,
-            assessment_status: assessment?.status || null,
-            assessment_score: assessment?.score || null, // Map score
-          };
-        }) || [];
-
-      setApplications(formatted);
-    } catch (error) {
-      console.error("Error fetching applications:", error);
-    } finally {
-      setLoading(false);
-    }
+serve(async (req) => {
+  if (req.method === "OPTIONS") {
+    return new Response(null, { headers: corsHeaders });
   }
 
-  const handleGenerateAssessment = async (app: Application, e: React.MouseEvent) => {
-    e.stopPropagation();
-    if (!talent?.id) return;
+  try {
+    const { assessmentId, answers, voiceResponses } = await req.json();
 
-    setGeneratingAssessment(app.id);
-    try {
-      const { data, error } = await supabase.functions.invoke("generate-job-assessment", {
-        body: {
-          jobId: app.job_id,
-          talentId: talent.id,
-          jobApplicationId: app.id,
-        },
+    if (!assessmentId) {
+      return new Response(JSON.stringify({ error: "Assessment ID is required" }), {
+        status: 400,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
+    }
 
-      if (error) throw error;
+    const authHeader = req.headers.get("Authorization");
+    if (!authHeader) throw new Error("Missing authorization header");
 
-      if (data?.assessmentId) {
-        toast.success("Assessment generated! Redirecting...");
-        navigate(`/app/job-assessment/${data.assessmentId}`);
+    const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
+    const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
+    const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
+      global: { headers: { Authorization: authHeader } },
+    });
+
+    const {
+      data: { user },
+      error: authError,
+    } = await supabaseAuth.auth.getUser();
+    if (authError || !user) throw new Error("Unauthorized");
+
+    const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
+    const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
+
+    const { data: assessment, error: assessmentError } = await supabaseAdmin
+      .from("job_assessments")
+      .select(
+        `
+        *,
+        jobs (title, company_name, description, requirements),
+        talents (user_id, full_name)
+      `,
+      )
+      .eq("id", assessmentId)
+      .single();
+
+    if (assessmentError || !assessment) throw new Error("Assessment not found");
+
+    // @ts-ignore
+    if (assessment.talents?.user_id !== user.id) {
+      return new Response(JSON.stringify({ error: "Unauthorized access to this assessment" }), {
+        status: 403,
+        headers: { ...corsHeaders, "Content-Type": "application/json" },
+      });
+    }
+
+    // --- FALLBACK LOGIC FOR LEGACY DATA ---
+    let mcqData = answers?.mcq || {};
+    let voiceData = voiceResponses || {};
+
+    if ((!mcqData || Object.keys(mcqData).length === 0) && assessment.answers) {
+      console.log("Using fallback answers from Database");
+      const dbAnswers = assessment.answers;
+      if (dbAnswers.mcq) {
+        mcqData = dbAnswers.mcq;
+        voiceData = dbAnswers.voice || {};
       } else {
-        throw new Error("No assessment ID returned");
+        mcqData = dbAnswers;
       }
-    } catch (error) {
-      console.error("Error generating assessment:", error);
-      toast.error("Failed to generate assessment. Please try again.");
-    } finally {
-      setGeneratingAssessment(null);
     }
-  };
 
-  const handleTakeAssessment = (assessmentId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/app/job-assessment/${assessmentId}`);
-  };
+    // --- SCORING LOGIC WITH LOOSE EQUALITY ---
+    // @ts-ignore
+    const questions = assessment.questions || {};
+    const mcqQuestions = questions.mcq_questions || [];
+    const voiceQuestions = questions.voice_questions || [];
 
-  const handleViewResults = (assessmentId: string, e: React.MouseEvent) => {
-    e.stopPropagation();
-    navigate(`/app/job-assessment/${assessmentId}/results`);
-  };
+    let mcqCorrect = 0;
+    const mcqResults: any[] = [];
 
-  const getStatusIcon = (status: string) => {
-    switch (status) {
-      case "submitted":
-        return Send;
-      case "reviewed":
-        return CheckCircle2;
-      case "rejected":
-        return XCircle;
-      case "shortlisted":
-        return CheckCircle2;
-      default:
-        return Clock;
-    }
-  };
+    for (let i = 0; i < mcqQuestions.length; i++) {
+      const mcq = mcqQuestions[i];
+      let userAnswer = mcqData[mcq.id];
 
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "submitted":
-        return "text-muted-foreground";
-      case "reviewed":
-        return "text-primary";
-      case "rejected":
-        return "text-destructive";
-      case "shortlisted":
-        return "text-accent";
-      default:
-        return "text-muted-foreground";
-    }
-  };
-
-  const getDeliveryBadge = (status: string) => {
-    switch (status) {
-      case "sent":
-        return (
-          <Badge variant="secondary" className="text-xs">
-            Delivered
-          </Badge>
-        );
-      case "failed":
-        return (
-          <Badge variant="destructive" className="text-xs">
-            Failed
-          </Badge>
-        );
-      case "pending":
-        return (
-          <Badge variant="outline" className="text-xs">
-            Pending
-          </Badge>
-        );
-      default:
-        return (
-          <Badge variant="outline" className="text-xs">
-            {status}
-          </Badge>
-        );
-    }
-  };
-
-  const getAssessmentButton = (app: Application) => {
-    if (!app.ai_assessment_enabled) return null;
-
-    const isGenerating = generatingAssessment === app.id;
-
-    if (app.assessment_id) {
-      // Assessment exists
-      if (app.assessment_status === "completed") {
-        return (
-          <div className="flex items-center gap-2">
-            {app.assessment_score !== null && (
-              <Badge
-                variant="outline"
-                className={`text-xs gap-1 ${
-                  app.assessment_score >= 70
-                    ? "text-green-600 border-green-200 bg-green-50"
-                    : app.assessment_score >= 50
-                      ? "text-amber-600 border-amber-200 bg-amber-50"
-                      : "text-red-600 border-red-200 bg-red-50"
-                }`}
-              >
-                <Trophy className="h-3 w-3" />
-                {app.assessment_score}%
-              </Badge>
-            )}
-            <Button
-              size="sm"
-              variant="outline"
-              className="h-7 text-xs"
-              onClick={(e) => handleViewResults(app.assessment_id!, e)}
-            >
-              <Brain className="h-3 w-3 mr-1" />
-              View Results
-            </Button>
-          </div>
-        );
+      // Fallback for index-based keys (Legacy)
+      if (userAnswer === undefined) {
+        userAnswer = mcqData[String(i)] || mcqData[i];
       }
-      return (
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-7 text-xs"
-          onClick={(e) => handleTakeAssessment(app.assessment_id!, e)}
-        >
-          <PlayCircle className="h-3 w-3 mr-1" />
-          Take Assessment
-        </Button>
-      );
+
+      // FIX: Loose comparison to handle "1" vs 1
+      const isCorrect = String(userAnswer) === String(mcq.correct_index);
+
+      if (isCorrect) mcqCorrect++;
+
+      mcqResults.push({
+        questionId: mcq.id,
+        question: mcq.question,
+        userAnswer,
+        correctAnswer: mcq.correct_index,
+        isCorrect,
+        explanation: mcq.explanation,
+      });
     }
 
-    // No assessment yet - show generate button
-    return (
-      <Button
-        size="sm"
-        variant="outline"
-        className="h-7 text-xs"
-        onClick={(e) => handleGenerateAssessment(app, e)}
-        disabled={isGenerating}
-      >
-        {isGenerating ? (
-          <>
-            <Loader2 className="h-3 w-3 mr-1 animate-spin" />
-            Generating...
-          </>
-        ) : (
-          <>
-            <ClipboardList className="h-3 w-3 mr-1" />
-            Generate Assessment
-          </>
-        )}
-      </Button>
-    );
-  };
+    const mcqScore = mcqQuestions.length > 0 ? Math.round((mcqCorrect / mcqQuestions.length) * 100) : 0;
 
-  const filterByStatus = (status: string) => {
-    if (status === "all") return applications;
-    return applications.filter((a) => a.application_status === status);
-  };
+    // --- AI ANALYSIS ---
+    let voiceScore = 0;
+    const voiceAnalysis: any[] = [];
+    const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
 
-  const ApplicationCard = ({ application }: { application: Application }) => {
-    const StatusIcon = getStatusIcon(application.application_status);
-    const statusColor = getStatusColor(application.application_status);
+    if (voiceQuestions.length > 0 && LOVABLE_API_KEY) {
+      console.log("Starting AI Analysis...");
 
-    return (
-      <Card
-        className="cursor-pointer hover:shadow-md transition-shadow"
-        onClick={() => navigate(`/app/jobs/${application.job_id}`)}
-      >
-        <CardContent className="p-4">
-          <div className="flex items-start justify-between gap-2">
-            <div className="flex items-center gap-3 min-w-0">
-              <div className="p-2 rounded-lg bg-primary/10 shrink-0">
-                <Briefcase className="h-5 w-5 text-primary" />
-              </div>
-              <div className="min-w-0">
-                <h3 className="font-medium text-sm truncate">{application.job_title}</h3>
-                <div className="flex items-center gap-2 mt-1">
-                  <Building2 className="h-3 w-3 text-muted-foreground shrink-0" />
-                  <span className="text-xs text-muted-foreground truncate">{application.company_name}</span>
-                </div>
-                <div className="flex items-center gap-2 mt-1">
-                  <Calendar className="h-3 w-3 text-muted-foreground shrink-0" />
-                  <span className="text-xs text-muted-foreground">
-                    {format(new Date(application.created_at), "MMM d, yyyy")}
-                  </span>
-                </div>
-              </div>
-            </div>
-            <div className="flex flex-col items-end gap-2 shrink-0">
-              <div className="flex items-center gap-2">
-                <div className="flex flex-col items-end gap-1">
-                  <div className={`flex items-center gap-1 ${statusColor}`}>
-                    <StatusIcon className="h-4 w-4" />
-                    <span className="text-xs capitalize">{application.application_status}</span>
-                  </div>
-                  {getDeliveryBadge(application.delivery_status)}
-                </div>
-                <ChevronRight className="h-4 w-4 text-muted-foreground" />
-              </div>
-              {getAssessmentButton(application)}
-            </div>
-          </div>
-        </CardContent>
-      </Card>
-    );
-  };
+      const voiceContext = voiceQuestions
+        .map((vq: any) => {
+          const response = voiceData[vq.id];
+          return `Q: ${vq.question}\nExpected: ${vq.expected_points?.join(", ")}\nAnswer: ${typeof response === "object" ? "Audio File" : response || "None"}`;
+        })
+        .join("\n---\n");
 
-  return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      <div className="mb-4">
-        <h1 className="text-xl font-bold">My Applications</h1>
-        <p className="text-sm text-muted-foreground">Track your job applications</p>
-      </div>
+      // @ts-ignore
+      const jobTitle = assessment.jobs?.title || "Role";
+      const requirements = JSON.stringify(assessment.jobs?.requirements || []);
 
-      <Tabs defaultValue="all">
-        <div className="overflow-x-auto -mx-4 px-4 mb-4">
-          <TabsList className="w-max">
-            <TabsTrigger value="all" className="text-xs h-8">
-              All ({applications.length})
-            </TabsTrigger>
-            <TabsTrigger value="submitted" className="text-xs h-8">
-              Submitted
-            </TabsTrigger>
-            <TabsTrigger value="reviewed" className="text-xs h-8">
-              Reviewed
-            </TabsTrigger>
-            <TabsTrigger value="shortlisted" className="text-xs h-8">
-              Shortlisted
-            </TabsTrigger>
-          </TabsList>
-        </div>
+      const analysisPrompt = `
+      Role: ${jobTitle}
+      Requirements: ${requirements}
+      Candidate Responses: ${voiceContext}
+      
+      Evaluate responses. Return JSON ONLY:
+      {
+        "overallVoiceScore": number (0-100),
+        "responses": [
+          { "questionId": "string", "score": number, "feedback": "string", "strengths": ["string"], "improvements": ["string"] }
+        ],
+        "voiceSummary": "string"
+      }`;
 
-        {["all", "submitted", "reviewed", "shortlisted"].map((tab) => (
-          <TabsContent key={tab} value={tab}>
-            {loading ? (
-              <div className="space-y-3">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-24 w-full" />
-                ))}
-              </div>
-            ) : filterByStatus(tab).length === 0 ? (
-              <Card className="border-dashed">
-                <CardContent className="py-12 text-center">
-                  <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-                    <Briefcase className="h-8 w-8 text-muted-foreground" />
-                  </div>
-                  <h3 className="font-bold text-base mb-1">
-                    {tab === "all" ? "No applications yet" : `No ${tab} applications`}
-                  </h3>
-                  <p className="text-sm text-muted-foreground mb-4 max-w-xs mx-auto">
-                    {tab === "all"
-                      ? "Start your job search by applying to positions that match your skills."
-                      : `Applications will appear here once they're ${tab}.`}
-                  </p>
+      try {
+        const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: {
+            Authorization: `Bearer ${LOVABLE_API_KEY}`,
+            "Content-Type": "application/json",
+          },
+          body: JSON.stringify({
+            model: "google/gemini-2.5-flash",
+            messages: [
+              { role: "system", content: "You are an HR expert. Output valid JSON only." },
+              { role: "user", content: analysisPrompt },
+            ],
+          }),
+        });
 
-                  {tab === "all" && (
-                    <>
-                      <div className="bg-muted/50 rounded-lg p-3 mb-4 text-left max-w-xs mx-auto">
-                        <p className="text-xs font-medium text-muted-foreground mb-2">Quick tips:</p>
-                        <ul className="text-xs text-muted-foreground space-y-1">
-                          <li className="flex items-start gap-2">
-                            <span className="text-primary">•</span>
-                            Upload your CV to apply faster
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-primary">•</span>
-                            Complete your profile for better matches
-                          </li>
-                          <li className="flex items-start gap-2">
-                            <span className="text-primary">•</span>
-                            Check your Feed for AI recommendations
-                          </li>
-                        </ul>
-                      </div>
+        if (aiResponse.ok) {
+          const aiData = await aiResponse.json();
+          let content = aiData.choices?.[0]?.message?.content || "{}";
+          content = content
+            .replace(/```json/g, "")
+            .replace(/```/g, "")
+            .trim();
+          const parsed = JSON.parse(content);
+          voiceScore = parsed.overallVoiceScore || 70;
+          voiceAnalysis.push(...(parsed.responses || []));
+        } else {
+          console.error("AI Error:", await aiResponse.text());
+          voiceScore = 50;
+        }
+      } catch (err) {
+        console.error("AI Failed:", err);
+        voiceScore = 50;
+      }
+    } else if (voiceQuestions.length > 0) {
+      console.warn("Skipping AI: No Key");
+    }
 
-                      <div className="flex flex-wrap justify-center gap-2">
-                        <Button
-                          variant="outline"
-                          className="rounded-full h-10 px-5 press-scale"
-                          onClick={() => navigate("/app/jobs/browse")}
-                        >
-                          Browse Jobs
-                        </Button>
-                        <Button className="rounded-full h-10 px-5 press-scale" onClick={() => navigate("/app/feed")}>
-                          View Recommendations
-                        </Button>
-                      </div>
-                    </>
-                  )}
-                </CardContent>
-              </Card>
-            ) : (
-              <div className="space-y-3">
-                {filterByStatus(tab).map((app) => (
-                  <ApplicationCard key={app.id} application={app} />
-                ))}
-              </div>
-            )}
-          </TabsContent>
-        ))}
-      </Tabs>
-    </div>
-  );
-}
+    const mcqWeight = voiceQuestions.length > 0 ? 0.5 : 1.0;
+    const voiceWeight = voiceQuestions.length > 0 ? 0.5 : 0;
+    const overallScore = Math.round(mcqScore * mcqWeight + voiceScore * voiceWeight);
+
+    const finalAnalysis = {
+      overallScore,
+      mcq: { score: mcqScore, correct: mcqCorrect, total: mcqQuestions.length, results: mcqResults },
+      voice: voiceQuestions.length > 0 ? { score: voiceScore, analysis: voiceAnalysis } : null,
+      recommendation: overallScore >= 70 ? "Strong Hire" : overallScore >= 50 ? "Consider" : "Pass",
+      completedAt: new Date().toISOString(),
+    };
+
+    const { error: updateError } = await supabaseAdmin
+      .from("job_assessments")
+      .update({
+        ai_score: overallScore,
+        ai_analysis: finalAnalysis,
+        status: "completed",
+        completed_at: new Date().toISOString(),
+        answers: { mcq: mcqData, voice: voiceData },
+      })
+      .eq("id", assessmentId);
+
+    if (updateError) throw updateError;
+
+    return new Response(JSON.stringify({ success: true, score: overallScore }), {
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  } catch (error: any) {
+    console.error("Function Error:", error);
+    return new Response(JSON.stringify({ error: error.message }), {
+      status: 500,
+      headers: { ...corsHeaders, "Content-Type": "application/json" },
+    });
+  }
+});
