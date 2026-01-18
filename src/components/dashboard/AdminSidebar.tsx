@@ -15,17 +15,16 @@ import {
   Send,
   Database as DatabaseIcon,
   Key,
-  Image,
+  Image as ImageIcon,
   GraduationCap,
-  ChevronDown,
   LogOut,
   UserCog,
   Bot,
   Coins,
   Bell,
-  Globe,
   Trophy,
   FileText,
+  ChevronDown,
 } from "lucide-react";
 import {
   Sidebar,
@@ -40,14 +39,11 @@ import {
   SidebarFooter,
   useSidebar,
 } from "@/components/ui/sidebar";
-import {
-  Collapsible,
-  CollapsibleContent,
-  CollapsibleTrigger,
-} from "@/components/ui/collapsible";
+import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
+import { useState } from "react";
 
 type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -61,7 +57,7 @@ interface NavGroup {
   title: string;
   icon: React.ElementType;
   items: NavItem[];
-  roles: AppRole[]; // Which roles can see this group
+  roles: AppRole[];
 }
 
 const navGroups: NavGroup[] = [
@@ -110,11 +106,11 @@ const navGroups: NavGroup[] = [
   },
   {
     title: "Platform Settings",
-    icon: GraduationCap,
+    icon: UserCog,
     roles: ["admin"],
     items: [
       { title: "Access Codes", icon: Key, value: "codes" },
-      { title: "Banners", icon: Image, value: "banners" },
+      { title: "Banners", icon: ImageIcon, value: "banners" },
       { title: "Professions", icon: GraduationCap, value: "professions" },
       { title: "AI Agents", icon: Bot, value: "ai-agents" },
       { title: "Agent Sessions", icon: MessageSquare, value: "agent-sessions" },
@@ -142,132 +138,100 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin" }: Adm
     navigate("/auth");
   };
 
-  // Filter nav groups based on user role
-  const filteredNavGroups = navGroups.filter(group => 
-    userRole && group.roles.includes(userRole)
-  );
+  const filteredNavGroups = navGroups.filter((group) => userRole && group.roles.includes(userRole));
 
-  // Determine which group should be open based on active tab
-  const getOpenGroups = () => {
-    const openGroups: string[] = [];
-    filteredNavGroups.forEach((group) => {
-      if (group.items.some((item) => item.value === activeTab)) {
-        openGroups.push(group.title);
-      }
-    });
-    return openGroups;
-  };
-
-  const openGroups = getOpenGroups();
+  // Auto-expand group containing active tab
+  const activeGroup =
+    filteredNavGroups.find((g) => g.items.some((i) => i.value === activeTab))?.title || filteredNavGroups[0]?.title;
+  const [openGroup, setOpenGroup] = useState<string | null>(activeGroup);
 
   return (
-    <Sidebar collapsible="icon" className="border-r">
-      <SidebarHeader className="border-b px-4 py-3">
-        <div className="flex items-center gap-3">
-          <div className="w-8 h-8 bg-gradient-primary rounded-lg flex items-center justify-center flex-shrink-0">
-            <BookOpen className="w-4 h-4 text-white" />
+    <Sidebar collapsible="icon" className="border-r bg-background">
+      <SidebarHeader className="border-b px-4 py-3 h-[60px] flex items-center">
+        <div className="flex items-center gap-3 w-full">
+          <div className="w-8 h-8 bg-primary rounded-lg flex items-center justify-center flex-shrink-0 text-primary-foreground shadow-sm">
+            <BookOpen className="w-4 h-4" />
           </div>
           {!isCollapsed && (
-            <div className="overflow-hidden">
-              <h1 className="text-sm font-bold truncate">GroUp Academy</h1>
-              <p className="text-xs text-muted-foreground truncate">
-                {userRole === "talent_exec" ? "Talent Portal" : "Operations Portal"}
-              </p>
+            <div className="flex flex-col overflow-hidden transition-all duration-300">
+              <span className="font-bold text-sm tracking-tight truncate">GroUp Academy</span>
+              <span className="text-[10px] text-muted-foreground uppercase font-medium truncate">
+                {userRole === "talent_exec" ? "Talent Portal" : "Admin Console"}
+              </span>
             </div>
           )}
         </div>
       </SidebarHeader>
 
-      <SidebarContent className="px-2">
+      <SidebarContent className="p-2 gap-2">
         {/* Overview - Only for admin */}
         {userRole === "admin" && (
-          <SidebarGroup>
-            <SidebarMenu>
-              <SidebarMenuItem>
-                <SidebarMenuButton
-                  onClick={() => onTabChange("overview")}
-                  isActive={activeTab === "overview"}
-                  tooltip="Overview"
-                >
-                  <LayoutDashboard className="w-4 h-4" />
-                  <span>Overview</span>
-                </SidebarMenuButton>
-              </SidebarMenuItem>
-            </SidebarMenu>
-          </SidebarGroup>
+          <SidebarMenu>
+            <SidebarMenuItem>
+              <SidebarMenuButton
+                onClick={() => onTabChange("overview")}
+                isActive={activeTab === "overview"}
+                tooltip="Dashboard Overview"
+                className="hover:bg-accent/50"
+              >
+                <LayoutDashboard className="w-4 h-4" />
+                <span className="font-medium">Overview</span>
+              </SidebarMenuButton>
+            </SidebarMenuItem>
+          </SidebarMenu>
         )}
 
         {/* Nav Groups */}
         {filteredNavGroups.map((group) => (
           <Collapsible
             key={group.title}
-            defaultOpen={openGroups.includes(group.title)}
+            open={openGroup === group.title}
+            onOpenChange={(isOpen) => isOpen && setOpenGroup(group.title)}
             className="group/collapsible"
           >
-            <SidebarGroup>
+            <SidebarGroup className="p-0">
               <CollapsibleTrigger asChild>
-                <SidebarGroupLabel className="cursor-pointer hover:bg-accent/50 rounded-md transition-colors flex items-center justify-between pr-2">
-                  <div className="flex items-center gap-2">
-                    <group.icon className="w-4 h-4" />
-                    {!isCollapsed && <span>{group.title}</span>}
-                  </div>
-                  {!isCollapsed && (
-                    <ChevronDown className="w-4 h-4 transition-transform group-data-[state=open]/collapsible:rotate-180" />
-                  )}
-                </SidebarGroupLabel>
+                <SidebarMenuButton
+                  tooltip={group.title}
+                  className="font-medium text-muted-foreground hover:text-foreground hover:bg-accent/50"
+                >
+                  <group.icon className="w-4 h-4" />
+                  <span>{group.title}</span>
+                  <ChevronDown className="ml-auto w-4 h-4 transition-transform duration-200 group-data-[state=open]/collapsible:rotate-180" />
+                </SidebarMenuButton>
               </CollapsibleTrigger>
+
               <CollapsibleContent>
-                <SidebarGroupContent>
-                  <SidebarMenu>
-                    {group.items.map((item) => (
-                      <SidebarMenuItem key={item.value}>
-                        <SidebarMenuButton
-                          onClick={() => onTabChange(item.value)}
-                          isActive={activeTab === item.value}
-                          tooltip={item.title}
-                        >
-                          <item.icon className="w-4 h-4" />
-                          <span>{item.title}</span>
-                        </SidebarMenuButton>
-                      </SidebarMenuItem>
-                    ))}
-                  </SidebarMenu>
-                </SidebarGroupContent>
+                <SidebarMenu className="pl-2 mt-1 space-y-0.5 border-l ml-4 border-border/50">
+                  {group.items.map((item) => (
+                    <SidebarMenuItem key={item.value}>
+                      <SidebarMenuButton
+                        onClick={() => onTabChange(item.value)}
+                        isActive={activeTab === item.value}
+                        className={`h-9 text-sm ${activeTab === item.value ? "bg-primary/10 text-primary font-medium" : "text-muted-foreground"}`}
+                      >
+                        <item.icon className="w-4 h-4" />
+                        <span>{item.title}</span>
+                      </SidebarMenuButton>
+                    </SidebarMenuItem>
+                  ))}
+                </SidebarMenu>
               </CollapsibleContent>
             </SidebarGroup>
           </Collapsible>
         ))}
-
-        {/* LMS Quick Links - Only for admin (kept for course management) */}
-        {userRole === "admin" && (
-          <SidebarGroup className="mt-4">
-            <SidebarGroupLabel>Course Management</SidebarGroupLabel>
-            <SidebarGroupContent>
-              <SidebarMenu>
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => navigate("/instructors")} tooltip="Instructors">
-                    <Users className="w-4 h-4" />
-                    <span>Instructors</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-                <SidebarMenuItem>
-                  <SidebarMenuButton onClick={() => navigate("/sessions")} tooltip="Sessions">
-                    <Calendar className="w-4 h-4" />
-                    <span>Sessions</span>
-                  </SidebarMenuButton>
-                </SidebarMenuItem>
-              </SidebarMenu>
-            </SidebarGroupContent>
-          </SidebarGroup>
-        )}
       </SidebarContent>
 
       <SidebarFooter className="border-t p-2">
         <SidebarMenu>
           <SidebarMenuItem>
-            <SidebarMenuButton onClick={handleLogout} tooltip="Logout">
+            <SidebarMenuButton
+              onClick={handleLogout}
+              tooltip="Sign out"
+              className="text-destructive hover:bg-destructive/10 hover:text-destructive"
+            >
               <LogOut className="w-4 h-4" />
-              <span>Logout</span>
+              <span>Sign out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
