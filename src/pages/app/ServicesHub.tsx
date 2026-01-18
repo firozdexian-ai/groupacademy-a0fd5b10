@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { ClipboardCheck, Mic, DollarSign, Palette, Coins, Sparkles } from "lucide-react";
-import { Card, CardContent } from "@/components/ui/card";
+import { ClipboardCheck, Mic, DollarSign, Palette, Coins, Sparkles, History } from "lucide-react";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { CreditGateModal } from "@/components/credits/CreditGateModal";
 import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
@@ -25,7 +25,7 @@ const CAREER_SERVICES: ServiceCardData[] = [
   {
     id: "CAREER_ASSESSMENT",
     title: "Career Scorecard",
-    description: "Evaluate your readiness",
+    description: "Evaluate your readiness & skills gap",
     icon: ClipboardCheck,
     href: "/app/services/assessment",
     iconColor: "text-primary",
@@ -34,7 +34,7 @@ const CAREER_SERVICES: ServiceCardData[] = [
   {
     id: "MOCK_INTERVIEW",
     title: "Mock Interview",
-    description: "Practice with AI",
+    description: "Practice with AI-driven scenarios",
     icon: Mic,
     href: "/app/services/mock-interview",
     iconColor: "text-accent-foreground",
@@ -43,7 +43,7 @@ const CAREER_SERVICES: ServiceCardData[] = [
   {
     id: "SALARY_ANALYSIS",
     title: "Salary Analysis",
-    description: "Know your worth",
+    description: "Know your market worth accurately",
     icon: DollarSign,
     href: "/app/services/salary-analysis",
     iconColor: "text-warning",
@@ -52,7 +52,7 @@ const CAREER_SERVICES: ServiceCardData[] = [
   {
     id: "PORTFOLIO",
     title: "Portfolio",
-    description: "Showcase your work",
+    description: "Build & showcase your best work",
     icon: Palette,
     href: "/app/services/portfolio",
     iconColor: "text-secondary",
@@ -91,93 +91,103 @@ export default function ServicesHub() {
   };
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6 space-y-6">
+    <div className="max-w-4xl mx-auto px-4 py-6 space-y-8">
       {/* Header with Credits */}
       <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
         <div>
-          <h1 className="text-xl font-bold flex items-center gap-2">
-            <Sparkles className="h-5 w-5 text-primary" />
+          <h1 className="text-2xl font-bold flex items-center gap-2 mb-1">
+            <Sparkles className="h-6 w-6 text-primary" />
             Career Services
           </h1>
-          <p className="text-sm text-muted-foreground">AI-powered tools to accelerate your career</p>
+          <p className="text-muted-foreground">AI-powered tools to accelerate your career growth</p>
         </div>
 
         {/* Compact Credits Card */}
-        <Card className="overflow-hidden border-0 shadow-md md:w-auto w-full">
-          <div className="bg-gradient-primary p-3 px-4">
-            <div className="flex items-center justify-between gap-6">
-              <div className="flex items-center gap-3">
-                <div className="p-2 bg-primary-foreground/20 rounded-xl backdrop-blur-sm">
-                  <Coins className="h-5 w-5 text-primary-foreground" />
-                </div>
-                <div>
-                  <p className="text-xl font-bold text-primary-foreground leading-none">{balance}</p>
-                  <p className="text-[10px] text-primary-foreground/80 font-medium uppercase tracking-wide">
-                    Available Credits
-                  </p>
-                </div>
+        <Card className="overflow-hidden border-0 shadow-lg md:w-auto w-full bg-gradient-to-br from-primary to-primary/90 text-primary-foreground">
+          <div className="p-4 flex items-center justify-between gap-6">
+            <div className="flex items-center gap-3">
+              <div className="p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
+                <Coins className="h-6 w-6 text-white" />
               </div>
-              <Button
-                variant="secondary"
-                size="sm"
-                className="rounded-xl text-xs h-8 font-semibold press-scale shadow-sm"
-                onClick={() => setShowPurchaseSheet(true)}
-              >
-                Buy More
-              </Button>
+              <div>
+                <p className="text-2xl font-bold leading-none mb-1">{balance}</p>
+                <p className="text-[10px] uppercase tracking-wider font-medium opacity-90">Credits Available</p>
+              </div>
             </div>
+            <Button
+              variant="secondary"
+              size="sm"
+              className="rounded-full px-4 h-9 font-semibold shadow-sm hover:bg-white text-primary"
+              onClick={() => setShowPurchaseSheet(true)}
+            >
+              Get More
+            </Button>
           </div>
         </Card>
       </div>
 
       {/* Services Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-        {CAREER_SERVICES.map((service, index) => {
-          const cost = getServiceCost(service.id);
-          const affordable = canAfford(service.id);
+      <div>
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">Available Tools</h2>
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+          {CAREER_SERVICES.map((service, index) => {
+            const cost = getServiceCost(service.id);
+            const affordable = canAfford(service.id);
 
-          return (
-            <Card
-              key={service.id}
-              className="cursor-pointer border-0 shadow-sm hover:shadow-md transition-all overflow-hidden press-scale rounded-2xl group"
-              style={{ animationDelay: `${index * 50}ms` }}
-              onClick={() => handleServiceClick(service)}
-            >
-              <CardContent className="p-4 flex flex-col h-full">
-                {/* Icon */}
-                <div
-                  className={cn(
-                    "w-12 h-12 rounded-2xl flex items-center justify-center mb-3 transition-transform group-hover:scale-110 duration-300",
-                    service.iconBg,
-                  )}
-                >
-                  <service.icon className={cn("h-6 w-6", service.iconColor)} />
-                </div>
-
-                {/* Title & Desc */}
-                <div className="flex-1 mb-3">
-                  <h3 className="font-semibold text-sm text-foreground mb-1">{service.title}</h3>
-                  <p className="text-xs text-muted-foreground line-clamp-2">{service.description}</p>
-                </div>
-
-                {/* Footer: Cost & Usage */}
-                <div className="flex items-center justify-between mt-auto pt-3 border-t border-border/50">
-                  <div className="flex items-center gap-1.5">
-                    <Coins className={cn("h-3.5 w-3.5", affordable ? "text-warning" : "text-muted-foreground")} />
-                    <span className={cn("text-xs font-bold", affordable ? "text-foreground" : "text-destructive")}>
-                      {cost}
-                    </span>
+            return (
+              <Card
+                key={service.id}
+                className={cn(
+                  "cursor-pointer border hover:border-primary/50 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group",
+                  !affordable && "opacity-90",
+                )}
+                style={{ animationDelay: `${index * 100}ms` }}
+                onClick={() => handleServiceClick(service)}
+              >
+                <CardContent className="p-5 flex flex-col h-full">
+                  {/* Icon */}
+                  <div
+                    className={cn(
+                      "w-12 h-12 rounded-2xl flex items-center justify-center mb-4 transition-transform group-hover:scale-110 duration-300 shadow-inner",
+                      service.iconBg,
+                    )}
+                  >
+                    <service.icon className={cn("h-6 w-6", service.iconColor)} />
                   </div>
-                  <ServiceUsageBadge serviceType={service.id} />
-                </div>
-              </CardContent>
-            </Card>
-          );
-        })}
+
+                  {/* Title & Desc */}
+                  <div className="flex-1 mb-4">
+                    <h3 className="font-bold text-base text-foreground mb-1 group-hover:text-primary transition-colors">
+                      {service.title}
+                    </h3>
+                    <p className="text-xs text-muted-foreground leading-relaxed">{service.description}</p>
+                  </div>
+
+                  {/* Footer: Cost & Usage */}
+                  <div className="flex items-center justify-between mt-auto pt-4 border-t border-border/40">
+                    <div className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-md">
+                      <Coins className={cn("h-3.5 w-3.5", affordable ? "text-amber-500" : "text-muted-foreground")} />
+                      <span className={cn("text-xs font-bold", affordable ? "text-foreground" : "text-destructive")}>
+                        {cost}
+                      </span>
+                    </div>
+                    <ServiceUsageBadge serviceType={service.id} />
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
       {/* Service History */}
-      <ServiceHistoryCard />
+      <div>
+        <h2 className="text-lg font-semibold mb-4 flex items-center gap-2">
+          <History className="h-5 w-5 text-muted-foreground" />
+          Recent Activity
+        </h2>
+        <ServiceHistoryCard />
+      </div>
 
       {/* Credit Gate Modal */}
       {selectedService && (
