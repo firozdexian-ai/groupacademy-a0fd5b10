@@ -22,6 +22,7 @@ import {
   CheckCircle,
   Brain,
   ArrowRight,
+  Bookmark,
 } from "lucide-react";
 import { format } from "date-fns";
 import { toast } from "sonner";
@@ -77,12 +78,13 @@ const EXPERIENCE_LEVELS: Record<string, string> = {
 export default function AppJobDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { talent } = useTalent(); // Get current user
+  const { talent } = useTalent();
 
   const [job, setJob] = useState<Job | null>(null);
   const [existingApp, setExistingApp] = useState<ExistingApplication | null>(null);
   const [loading, setLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
     if (id) loadJobAndApplication();
@@ -104,7 +106,7 @@ export default function AppJobDetail() {
       if (jobError) throw jobError;
       setJob(jobData);
 
-      // 2. Check for Existing Application (if user is logged in)
+      // 2. Check for Existing Application & Saved Status (if user logged in)
       if (talent?.id) {
         const { data: appData, error: appError } = await supabase
           .from("job_applications")
@@ -129,12 +131,41 @@ export default function AppJobDetail() {
             assessment_score: assessment?.ai_score,
           });
         }
+
+        // Check if saved (Stub - assumes saved_jobs table exists or will exist)
+        const { count } = await supabase
+          .from("saved_jobs")
+          .select("*", { count: "exact", head: true })
+          .eq("job_id", id)
+          .eq("talent_id", talent.id);
+
+        setIsSaved(!!count);
       }
     } catch (error: any) {
       console.error("Error loading job:", error);
       setLoadError("Failed to load job details.");
     } finally {
       setLoading(false);
+    }
+  };
+
+  const handleSaveToggle = async () => {
+    if (!talent) return;
+
+    // Optimistic Update
+    setIsSaved(!isSaved);
+
+    try {
+      if (isSaved) {
+        await supabase.from("saved_jobs").delete().eq("job_id", id).eq("talent_id", talent.id);
+        toast.success("Job removed from saved items");
+      } else {
+        await supabase.from("saved_jobs").insert({ job_id: id, talent_id: talent.id });
+        toast.success("Job saved for later");
+      }
+    } catch (error) {
+      setIsSaved(!isSaved); // Revert
+      toast.error("Failed to update saved status");
     }
   };
 
@@ -159,16 +190,15 @@ export default function AppJobDetail() {
         await navigator.share(shareData);
       } else {
         await navigator.clipboard.writeText(shareUrl);
-        toast.success("Link copied!");
+        toast.success("Link copied to clipboard!");
       }
     } catch (error) {
-      if (error instanceof Error && error.name !== "AbortError") {
-        try {
-          await navigator.clipboard.writeText(shareUrl);
-          toast.success("Link copied!");
-        } catch {
-          toast.error("Unable to share. Please copy the URL manually.");
-        }
+      // Fallback
+      try {
+        await navigator.clipboard.writeText(shareUrl);
+        toast.success("Link copied to clipboard!");
+      } catch {
+        toast.error("Could not copy link.");
       }
     }
   };
@@ -181,9 +211,7 @@ export default function AppJobDetail() {
     }
   };
 
-  // Render Logic for the Main Action Button
   const renderActionButton = () => {
-    // 1. Deadline Passed
     if (isDeadlinePassed) {
       return (
         <Button size="lg" className="w-full mb-6" disabled>
@@ -192,9 +220,7 @@ export default function AppJobDetail() {
       );
     }
 
-    // 2. Existing Application Logic
     if (existingApp) {
-      // Case A: Assessment Pending (User applied but didn't finish assessment)
       if (job?.ai_assessment_enabled && existingApp.assessment_status === "pending" && existingApp.assessment_id) {
         return (
           <div className="mb-6 space-y-3">
@@ -203,7 +229,7 @@ export default function AppJobDetail() {
               <div>
                 <p className="font-medium text-amber-800 dark:text-amber-200">Assessment Incomplete</p>
                 <p className="text-sm text-amber-700 dark:text-amber-300">
-                  You have applied, but your AI assessment is pending. Complete it to be considered.
+                  You have applied, but your AI assessment is pending.
                 </p>
               </div>
             </div>
@@ -213,13 +239,12 @@ export default function AppJobDetail() {
               onClick={() => navigate(`/app/job-assessment/${existingApp.assessment_id}`)}
             >
               <Brain className="w-4 h-4 mr-2" />
-              Complete Assessment Now
+              Complete Assessment
             </Button>
           </div>
         );
       }
 
-      // Case B: Assessment Completed
       if (job?.ai_assessment_enabled && existingApp.assessment_status === "completed") {
         return (
           <div className="mb-6 space-y-3">
@@ -228,8 +253,7 @@ export default function AppJobDetail() {
               <div>
                 <p className="font-medium text-green-800 dark:text-green-200">Application Complete</p>
                 <p className="text-sm text-green-700 dark:text-green-300">
-                  You applied on {format(new Date(existingApp.created_at), "MMM d, yyyy")}.
-                  {existingApp.assessment_score && ` AI Score: ${existingApp.assessment_score}%`}
+                  Applied on {format(new Date(existingApp.created_at), "MMM d, yyyy")}
                 </p>
               </div>
             </div>
@@ -239,32 +263,31 @@ export default function AppJobDetail() {
               className="w-full"
               onClick={() => navigate(`/app/job-assessment/${existingApp.assessment_id}/results`)}
             >
-              View Assessment Results <ArrowRight className="w-4 h-4 ml-2" />
+              View Results <ArrowRight className="w-4 h-4 ml-2" />
             </Button>
           </div>
         );
       }
 
-      // Case C: Standard Application (No Assessment or External Link)
       return (
         <div className="mb-6">
           <Button size="lg" className="w-full bg-green-600 hover:bg-green-700 text-white" disabled>
             <CheckCircle className="w-4 h-4 mr-2" />
             Applied on {format(new Date(existingApp.created_at), "MMM d, yyyy")}
           </Button>
-          <p className="text-center text-xs text-muted-foreground mt-2">
-            Status: <span className="capitalize">{existingApp.application_status.replace("_", " ")}</span>
-          </p>
         </div>
       );
     }
 
-    // 3. New Application
     return (
-      <Button size="lg" className="w-full mb-6" onClick={handleApply}>
+      <Button
+        size="lg"
+        className="w-full mb-6 text-base h-12 shadow-lg hover:shadow-xl transition-all"
+        onClick={handleApply}
+      >
         {job?.application_type === "link" ? (
           <>
-            Apply Now <ExternalLink className="w-4 h-4 ml-2" />
+            Apply Externally <ExternalLink className="w-4 h-4 ml-2" />
           </>
         ) : (
           "Apply Now"
@@ -275,10 +298,16 @@ export default function AppJobDetail() {
 
   if (loading) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-6">
-        <Skeleton className="h-8 w-24 mb-4" />
-        <Skeleton className="h-10 w-3/4 mb-2" />
-        <Skeleton className="h-5 w-1/2 mb-4" />
+      <div className="max-w-3xl mx-auto px-4 py-6 space-y-6">
+        <Skeleton className="h-8 w-24" />
+        <div className="flex gap-4">
+          <Skeleton className="h-16 w-16 rounded-xl" />
+          <div className="space-y-2 flex-1">
+            <Skeleton className="h-6 w-3/4" />
+            <Skeleton className="h-4 w-1/2" />
+          </div>
+        </div>
+        <Skeleton className="h-10 w-full" />
         <Skeleton className="h-40 w-full" />
       </div>
     );
@@ -286,21 +315,15 @@ export default function AppJobDetail() {
 
   if (loadError || !job) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-6">
+      <div className="max-w-3xl mx-auto px-4 py-6">
         <Card>
           <CardContent className="pt-6 text-center">
             <AlertCircle className="h-10 w-10 text-destructive mx-auto mb-4" />
-            <h2 className="text-lg font-semibold mb-2">Failed to Load Job</h2>
-            <p className="text-muted-foreground mb-4">{loadError || "Job not found"}</p>
-            <div className="flex gap-2 justify-center">
-              <Button onClick={loadJobAndApplication}>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Try Again
-              </Button>
-              <Button variant="outline" onClick={() => navigate("/app/jobs")}>
-                Back to Jobs
-              </Button>
-            </div>
+            <h2 className="text-lg font-semibold mb-2">Job Unavailable</h2>
+            <p className="text-muted-foreground mb-4">{loadError || "This job post may have been removed."}</p>
+            <Button variant="outline" onClick={() => navigate("/app/jobs")}>
+              Browse Other Jobs
+            </Button>
           </CardContent>
         </Card>
       </div>
@@ -311,138 +334,161 @@ export default function AppJobDetail() {
   const isDeadlinePassed = job.deadline && new Date(job.deadline) < new Date();
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
-      {/* Header */}
-      <Button variant="ghost" size="sm" onClick={() => navigate("/app/jobs")} className="mb-4 -ml-2">
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back
+    <div className="max-w-3xl mx-auto px-4 py-6">
+      {/* Navigation */}
+      <Button
+        variant="ghost"
+        size="sm"
+        onClick={() => navigate("/app/jobs")}
+        className="mb-4 -ml-2 text-muted-foreground hover:text-foreground"
+      >
+        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Jobs
       </Button>
 
+      {/* Header Section */}
       <div className="flex gap-4 items-start mb-6">
-        {job.company_logo_url ? (
-          <img
-            src={job.company_logo_url}
-            alt={job.company_name}
-            className="w-14 h-14 rounded-xl object-cover bg-muted"
-          />
-        ) : (
-          <div className="w-14 h-14 rounded-xl bg-primary/10 flex items-center justify-center">
-            <Building2 className="w-6 h-6 text-primary" />
-          </div>
-        )}
+        <div className="shrink-0">
+          {job.company_logo_url ? (
+            <img
+              src={job.company_logo_url}
+              alt={job.company_name}
+              className="w-16 h-16 rounded-xl object-cover border bg-white"
+            />
+          ) : (
+            <div className="w-16 h-16 rounded-xl bg-primary/10 flex items-center justify-center border">
+              <Building2 className="w-8 h-8 text-primary" />
+            </div>
+          )}
+        </div>
 
         <div className="flex-1 min-w-0">
           <div className="flex items-center gap-2 flex-wrap mb-1">
             {job.is_featured && (
-              <Badge className="gap-1 bg-yellow-500/20 text-yellow-700 dark:text-yellow-400 border-yellow-500/30">
+              <Badge className="gap-1 bg-yellow-500/10 text-yellow-700 dark:text-yellow-400 border-yellow-500/20 px-2 py-0.5 h-5 text-[10px]">
                 <Star className="w-3 h-3 fill-current" /> Featured
               </Badge>
             )}
-            {isDeadlinePassed && <Badge variant="destructive">Deadline Passed</Badge>}
+            {isDeadlinePassed && (
+              <Badge variant="destructive" className="h-5 text-[10px]">
+                Closed
+              </Badge>
+            )}
             {job.ai_assessment_enabled && (
               <Badge
                 variant="secondary"
-                className="gap-1 bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20"
+                className="gap-1 bg-purple-500/10 text-purple-700 dark:text-purple-400 border-purple-500/20 h-5 text-[10px]"
               >
                 <Brain className="w-3 h-3" /> AI Assessment
               </Badge>
             )}
           </div>
-          <h1 className="text-xl font-bold">{job.title}</h1>
-          <p className="text-muted-foreground">{job.company_name}</p>
+          <h1 className="text-xl md:text-2xl font-bold leading-tight mb-1">{job.title}</h1>
+          <p className="text-muted-foreground font-medium">{job.company_name}</p>
         </div>
 
-        <Button variant="outline" size="icon" onClick={handleShare}>
-          <Share2 className="w-4 h-4" />
-        </Button>
+        <div className="flex gap-2">
+          <Button variant="outline" size="icon" onClick={handleSaveToggle} className="rounded-full">
+            <Bookmark className={`w-4 h-4 ${isSaved ? "fill-primary text-primary" : ""}`} />
+          </Button>
+          <Button variant="outline" size="icon" onClick={handleShare} className="rounded-full">
+            <Share2 className="w-4 h-4" />
+          </Button>
+        </div>
       </div>
 
-      {/* Badges */}
-      <div className="flex flex-wrap gap-2 mb-6">
-        <Badge variant="outline" className="gap-1">
-          <Clock className="w-3 h-3" />
+      {/* Info Badges */}
+      <div className="flex flex-wrap gap-2 mb-8">
+        <Badge variant="secondary" className="gap-1.5 py-1.5 px-3">
+          <Clock className="w-3.5 h-3.5 opacity-70" />
           {JOB_TYPES[job.job_type] || job.job_type}
         </Badge>
-        <Badge variant="secondary">{EXPERIENCE_LEVELS[job.experience_level] || job.experience_level}</Badge>
+        <Badge variant="secondary" className="gap-1.5 py-1.5 px-3">
+          <Briefcase className="w-3.5 h-3.5 opacity-70" />
+          {EXPERIENCE_LEVELS[job.experience_level] || job.experience_level}
+        </Badge>
         {job.location && (
-          <Badge variant="outline" className="gap-1">
-            <MapPin className="w-3 h-3" />
+          <Badge variant="secondary" className="gap-1.5 py-1.5 px-3">
+            <MapPin className="w-3.5 h-3.5 opacity-70" />
             {job.location}
           </Badge>
         )}
         {formatSalary(job.salary_range_min, job.salary_range_max) && (
-          <Badge variant="outline" className="gap-1">
-            <DollarSign className="w-3 h-3" />
+          <Badge variant="outline" className="gap-1.5 py-1.5 px-3 border-primary/20 bg-primary/5 text-primary">
+            <DollarSign className="w-3.5 h-3.5" />
             {formatSalary(job.salary_range_min, job.salary_range_max)}
           </Badge>
         )}
       </div>
 
-      {/* DYNAMIC ACTION BUTTON */}
+      {/* Action Area */}
       {renderActionButton()}
 
-      {/* Source Image */}
-      {job.source_image_url && (
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <h2 className="text-sm font-semibold mb-3">Original Job Post</h2>
-            <img src={job.source_image_url} alt="Original job post" className="w-full rounded-lg border" />
+      {/* Main Content Grid */}
+      <div className="space-y-6">
+        {/* Description */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-base font-semibold mb-4">About the Role</h3>
+            <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground whitespace-pre-wrap">
+              {displayDescription}
+            </div>
           </CardContent>
         </Card>
-      )}
 
-      {/* Description */}
-      <Card className="mb-6">
-        <CardContent className="p-4">
-          <h2 className="text-sm font-semibold mb-3">Job Description</h2>
-          <div className="prose prose-sm dark:prose-invert max-w-none whitespace-pre-wrap text-sm">
-            {displayDescription}
-          </div>
-        </CardContent>
-      </Card>
+        {/* Requirements */}
+        {Array.isArray(job.requirements) && job.requirements.length > 0 && (
+          <Card>
+            <CardContent className="p-6">
+              <h3 className="text-base font-semibold mb-4">Requirements</h3>
+              <ul className="space-y-3">
+                {job.requirements.map((req: string, i: number) => (
+                  <li key={i} className="flex items-start gap-3 text-sm text-muted-foreground">
+                    <div className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
+                    <span>{req}</span>
+                  </li>
+                ))}
+              </ul>
+            </CardContent>
+          </Card>
+        )}
 
-      {/* Requirements */}
-      {Array.isArray(job.requirements) && job.requirements.length > 0 && (
-        <Card className="mb-6">
-          <CardContent className="p-4">
-            <h2 className="text-sm font-semibold mb-3">Requirements</h2>
-            <ul className="space-y-2">
-              {job.requirements.map((req: string, i: number) => (
-                <li key={i} className="flex items-start gap-2 text-sm">
-                  <span className="w-1.5 h-1.5 rounded-full bg-primary mt-2 shrink-0" />
-                  <span>{req}</span>
-                </li>
-              ))}
-            </ul>
-          </CardContent>
-        </Card>
-      )}
-
-      {/* Details */}
-      <Card>
-        <CardContent className="p-4">
-          <h3 className="text-sm font-semibold mb-3">Job Details</h3>
-          <div className="grid grid-cols-2 gap-4 text-sm">
-            <div className="flex items-center gap-2">
-              <Clock className="w-4 h-4 text-muted-foreground" />
-              <span>{JOB_TYPES[job.job_type] || job.job_type}</span>
-            </div>
-            <div className="flex items-center gap-2">
-              <Briefcase className="w-4 h-4 text-muted-foreground" />
-              <span>{EXPERIENCE_LEVELS[job.experience_level] || job.experience_level}</span>
-            </div>
-            {job.deadline && (
-              <div className="flex items-center gap-2">
-                <Calendar className="w-4 h-4 text-muted-foreground" />
-                <span>Deadline: {format(new Date(job.deadline), "MMM d, yyyy")}</span>
+        {/* Additional Details */}
+        <Card>
+          <CardContent className="p-6">
+            <h3 className="text-base font-semibold mb-4">Job Overview</h3>
+            <div className="grid grid-cols-2 gap-y-4 gap-x-8 text-sm">
+              <div>
+                <p className="text-muted-foreground mb-1">Date Posted</p>
+                <p className="font-medium">{format(new Date(job.created_at), "MMM d, yyyy")}</p>
               </div>
-            )}
-            <div className="flex items-center gap-2">
-              <Calendar className="w-4 h-4 text-muted-foreground" />
-              <span>Posted: {format(new Date(job.created_at), "MMM d, yyyy")}</span>
+              {job.deadline && (
+                <div>
+                  <p className="text-muted-foreground mb-1">Deadline</p>
+                  <p className="font-medium text-destructive">{format(new Date(job.deadline), "MMM d, yyyy")}</p>
+                </div>
+              )}
+              <div>
+                <p className="text-muted-foreground mb-1">Job Type</p>
+                <p className="font-medium">{JOB_TYPES[job.job_type]}</p>
+              </div>
+              <div>
+                <p className="text-muted-foreground mb-1">Experience</p>
+                <p className="font-medium">{EXPERIENCE_LEVELS[job.experience_level]}</p>
+              </div>
             </div>
-          </div>
-        </CardContent>
-      </Card>
+          </CardContent>
+        </Card>
+
+        {/* Original Source Image */}
+        {job.source_image_url && (
+          <Card className="overflow-hidden">
+            <div className="p-4 border-b bg-muted/30">
+              <h3 className="text-sm font-medium">Original Job Post</h3>
+            </div>
+            <img src={job.source_image_url} alt="Original job post" className="w-full h-auto" />
+          </Card>
+        )}
+      </div>
     </div>
   );
 }
