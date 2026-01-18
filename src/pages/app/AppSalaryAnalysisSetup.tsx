@@ -10,10 +10,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileText, Loader2, CheckCircle, FileCheck, ArrowLeft } from "lucide-react";
+import { Upload, FileText, Loader2, CheckCircle, FileCheck, ArrowLeft, Coins } from "lucide-react";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { useTalent } from "@/hooks/useTalent";
-import { useCredits } from "@/hooks/useCredits"; // <--- ADDED
+import { useCredits } from "@/hooks/useCredits";
 import { ExistingCVCard } from "@/components/cv/ExistingCVCard";
 import { ProfileCompletionPrompt } from "@/components/profile/ProfileCompletionPrompt";
 import { CreditGateModal } from "@/components/credits/CreditGateModal";
@@ -25,7 +25,7 @@ export default function AppSalaryAnalysisSetup() {
   const navigate = useNavigate();
   const { toast } = useToast();
   const { talent, user, addServiceUsed, updateTalent, refreshTalent } = useTalent();
-  const { canAfford, deductCredits, balance } = useCredits(); // <--- ADDED
+  const { canAfford, deductCredits, balance } = useCredits();
 
   const [email, setEmail] = useState("");
   const [fullName, setFullName] = useState("");
@@ -55,6 +55,7 @@ export default function AppSalaryAnalysisSetup() {
       if (talent.professionCategoryId) {
         setSelectedProfession((prev) => prev || talent.professionCategoryId || "");
       }
+      // Auto-select existing CV mode if available
       if (hasExistingCv && cvInputMode === "text") {
         setCvInputMode("existing");
         if (talent.cvUrl) setCvUrl(talent.cvUrl);
@@ -105,15 +106,14 @@ export default function AppSalaryAnalysisSetup() {
 
     try {
       const fileName = `salary-cv/${Date.now()}-${file.name}`;
-
       const { data, error } = await supabase.storage.from("portfolio-uploads").upload(fileName, file);
 
       if (error) throw error;
 
       const { data: publicUrl } = supabase.storage.from("portfolio-uploads").getPublicUrl(fileName);
-
       setCvUrl(publicUrl.publicUrl);
 
+      // Optionally update talent profile with new CV
       if (talent?.id) {
         await updateTalent({ cvUrl: publicUrl.publicUrl });
         await refreshTalent();
@@ -141,7 +141,7 @@ export default function AppSalaryAnalysisSetup() {
       return;
     }
 
-    // Payment Logic
+    // Payment Logic Check
     if (!canAfford("SALARY_ANALYSIS")) {
       setShowCreditGate(true);
       return;
@@ -163,6 +163,7 @@ export default function AppSalaryAnalysisSetup() {
 
       const tempAnalysisId = crypto.randomUUID();
 
+      // 2. Insert Record
       const { error } = await supabase.from("salary_analyses").insert({
         id: tempAnalysisId,
         user_id: user?.id || null,
@@ -212,7 +213,9 @@ export default function AppSalaryAnalysisSetup() {
           AI Salary Analysis
         </Badge>
         <h1 className="text-2xl font-bold">Get Your Salary Insights</h1>
-        <p className="text-muted-foreground mt-2">Provide your CV and target job details for personalized insights</p>
+        <p className="text-muted-foreground mt-2">
+          Provide your CV and target job details for a personalized market value report.
+        </p>
       </div>
 
       <Card>
@@ -221,7 +224,7 @@ export default function AppSalaryAnalysisSetup() {
             <CheckCircle className="h-5 w-5 text-green-500" />
             Complete the Form
           </CardTitle>
-          <CardDescription>Fill in the details below to get your analysis</CardDescription>
+          <CardDescription>Fill in the details below to generate your analysis</CardDescription>
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Personal Info */}
@@ -356,11 +359,11 @@ export default function AppSalaryAnalysisSetup() {
               </TabsContent>
 
               <TabsContent value="file" className="mt-4">
-                <div className="border-2 border-dashed rounded-lg p-6 text-center">
+                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors">
                   {cvFile ? (
                     <div className="flex items-center justify-center gap-2">
-                      <FileText className="h-5 w-5 text-muted-foreground" />
-                      <span>{cvFile.name}</span>
+                      <FileText className="h-5 w-5 text-primary" />
+                      <span className="font-medium">{cvFile.name}</span>
                     </div>
                   ) : (
                     <label className="cursor-pointer block">
@@ -371,23 +374,24 @@ export default function AppSalaryAnalysisSetup() {
                         className="hidden"
                       />
                       <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-sm text-muted-foreground">Click to upload PDF or DOC</p>
+                      <p className="text-sm font-medium">Click to upload PDF or DOC</p>
+                      <p className="text-xs text-muted-foreground mt-1">Max 10MB</p>
                     </label>
                   )}
-                  {isUploading && <Loader2 className="h-5 w-5 animate-spin mx-auto mt-2" />}
+                  {isUploading && <Loader2 className="h-5 w-5 animate-spin mx-auto mt-2 text-primary" />}
                 </div>
               </TabsContent>
             </Tabs>
           </div>
 
-          <Button className="w-full" onClick={handleSubmit} disabled={isSubmitting}>
+          <Button className="w-full" size="lg" onClick={handleSubmit} disabled={isSubmitting}>
             {isSubmitting ? (
               <>
                 <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Starting Analysis...
+                Processing...
               </>
             ) : (
-              `Pay ${SALARY_ANALYSIS_COST} Credits & Start`
+              <>Start Analysis ({SALARY_ANALYSIS_COST} Credits)</>
             )}
           </Button>
         </CardContent>
@@ -397,10 +401,7 @@ export default function AppSalaryAnalysisSetup() {
       <CreditGateModal
         isOpen={showCreditGate}
         onClose={() => setShowCreditGate(false)}
-        onConfirm={() => {
-          setShowCreditGate(false);
-          // Just close, user needs to click submit again to trigger fresh check
-        }}
+        onConfirm={() => setShowCreditGate(false)} // User clicks submit again after verifying
         onBuyCredits={() => {
           setShowCreditGate(false);
           setShowCreditSheet(true);
