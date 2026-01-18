@@ -18,12 +18,12 @@ import { AssessStage } from "@/components/player/stages/AssessStage";
 import { ProgressStage } from "@/components/player/stages/ProgressStage";
 import { useModuleResourcesByStage } from "@/hooks/useModuleResources";
 import { useStageProgress } from "@/hooks/useStageProgress";
+import { toast } from "sonner";
 
 interface ModuleProgressState {
   completedStages: number[];
   isComplete: boolean;
 }
-import { toast } from "sonner";
 
 export default function ImmersiveCoursePlayer() {
   const { slug } = useParams<{ slug: string }>();
@@ -32,8 +32,13 @@ export default function ImmersiveCoursePlayer() {
   const [currentModuleId, setCurrentModuleId] = useState<string | undefined>();
   const [moduleProgress, setModuleProgress] = useState<Record<string, ModuleProgressState>>({});
 
-  // Fetch course content with timeout protection
-  const { data: content, isLoading: contentLoading, error: contentError, refetch: refetchContent } = useQueryWithTimeout({
+  // 1. Fetch Content
+  const {
+    data: content,
+    isLoading: contentLoading,
+    error: contentError,
+    refetch: refetchContent,
+  } = useQueryWithTimeout({
     queryKey: ["course-content", slug],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -48,8 +53,13 @@ export default function ImmersiveCoursePlayer() {
     timeout: TIMEOUTS.DEFAULT,
   });
 
-  // Fetch course modules with timeout protection
-  const { data: modules = [], isLoading: modulesLoading, error: modulesError, refetch: refetchModules } = useQueryWithTimeout({
+  // 2. Fetch Modules
+  const {
+    data: modules = [],
+    isLoading: modulesLoading,
+    error: modulesError,
+    refetch: refetchModules,
+  } = useQueryWithTimeout({
     queryKey: ["course-modules", content?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -64,15 +74,15 @@ export default function ImmersiveCoursePlayer() {
     timeout: TIMEOUTS.DEFAULT,
   });
 
-  // Fetch student profile with timeout protection
-  const { data: student, error: studentError, refetch: refetchStudent } = useQueryWithTimeout({
+  // 3. Fetch Student Profile
+  const {
+    data: student,
+    error: studentError,
+    refetch: refetchStudent,
+  } = useQueryWithTimeout({
     queryKey: ["student-profile", user?.id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("students")
-        .select("*")
-        .eq("user_id", user!.id)
-        .maybeSingle();
+      const { data, error } = await supabase.from("students").select("*").eq("user_id", user!.id).maybeSingle();
       if (error) throw error;
       return data;
     },
@@ -80,8 +90,13 @@ export default function ImmersiveCoursePlayer() {
     timeout: TIMEOUTS.DEFAULT,
   });
 
-  // Fetch enrollment with timeout protection
-  const { data: enrollment, isLoading: enrollmentLoading, error: enrollmentError, refetch: refetchEnrollment } = useQueryWithTimeout({
+  // 4. Fetch Enrollment & AI Instructor
+  const {
+    data: enrollment,
+    isLoading: enrollmentLoading,
+    error: enrollmentError,
+    refetch: refetchEnrollment,
+  } = useQueryWithTimeout({
     queryKey: ["enrollment", student?.id, content?.id],
     queryFn: async () => {
       const { data, error } = await supabase
@@ -98,7 +113,6 @@ export default function ImmersiveCoursePlayer() {
     timeout: TIMEOUTS.DEFAULT,
   });
 
-  // Fetch AI instructor for profession line with timeout protection
   const { data: aiInstructor } = useQueryWithTimeout({
     queryKey: ["ai-instructor", content?.profession_line_id],
     queryFn: async () => {
@@ -115,51 +129,48 @@ export default function ImmersiveCoursePlayer() {
     timeout: TIMEOUTS.DEFAULT,
   });
 
-  // Set initial module
+  // Initialize Module
   useEffect(() => {
     if (modules.length > 0 && !currentModuleId) {
       setCurrentModuleId(modules[0].id);
     }
   }, [modules, currentModuleId]);
 
-  // Fetch resources for current module
+  // Fetch Resources
   const { data: stageResources = [] } = useModuleResourcesByStage(currentModuleId);
 
-  // Stage progress management
-  const {
-    completedStages,
-    setCompletedStages,
-    currentStage,
-    setCurrentStage,
-    markStageComplete,
-    goToStage,
-  } = useStageProgress({
-    studentId: student?.id,
-  });
+  // Use persistent stage progress hook
+  const { completedStages, setCompletedStages, currentStage, setCurrentStage, markStageComplete, goToStage } =
+    useStageProgress({
+      studentId: student?.id,
+      // Add enrollmentId if your hook supports saving to a specific enrollment record
+      // enrollmentId: enrollment?.id
+    });
 
-  const currentModule = modules.find(m => m.id === currentModuleId);
-  const currentModuleIndex = modules.findIndex(m => m.id === currentModuleId);
+  const currentModule = modules.find((m) => m.id === currentModuleId);
+  const currentModuleIndex = modules.findIndex((m) => m.id === currentModuleId);
   const hasNextModule = currentModuleIndex < modules.length - 1;
 
-  const handleStageComplete = (stageNumber: number) => {
-    markStageComplete(stageNumber);
-    
-    // Update module progress
+  const handleStageComplete = async (stageNumber: number) => {
+    // 1. Update Persistent State
+    await markStageComplete(stageNumber);
+
+    // 2. Update Local Module Progress
     if (currentModuleId) {
-      setModuleProgress(prev => ({
+      setModuleProgress((prev) => ({
         ...prev,
         [currentModuleId]: {
           completedStages: [...(prev[currentModuleId]?.completedStages || []), stageNumber],
           isComplete: stageNumber === 5 || stageNumber === 6,
-        }
+        },
       }));
     }
 
-    // Auto-advance
+    // 3. Auto-advance if not last stage
     if (stageNumber < 6) {
       setCurrentStage(stageNumber + 1);
     }
-    
+
     toast.success(`Stage ${stageNumber} completed!`);
   };
 
@@ -168,13 +179,18 @@ export default function ImmersiveCoursePlayer() {
       const nextModule = modules[currentModuleIndex + 1];
       setCurrentModuleId(nextModule.id);
       setCurrentStage(1);
-      setCompletedStages([]);
+      setCompletedStages([]); // Reset stage progress for new module
+    } else {
+      // Course Completion Logic could go here
+      toast.success("Course Completed!");
+      navigate("/app/learning/my-courses");
     }
   };
 
   const handleModuleSelect = (moduleId: string) => {
     setCurrentModuleId(moduleId);
     setCurrentStage(1);
+    // Ideally fetch stored progress for this module if available
     setCompletedStages(moduleProgress[moduleId]?.completedStages || []);
   };
 
@@ -184,15 +200,18 @@ export default function ImmersiveCoursePlayer() {
     }
   };
 
-  // Calculate overall progress
+  // Progress Calculation
   const totalStages = modules.length * 6;
-  const completedTotal = Object.values(moduleProgress).reduce(
-    (sum, mp) => sum + mp.completedStages.length, 0
-  ) + completedStages.length;
-  const overallProgress = totalStages > 0 ? (completedTotal / totalStages) * 100 : 0;
+  const completedTotal =
+    Object.values(moduleProgress).reduce((sum, mp) => sum + mp.completedStages.length, 0) + completedStages.length;
 
-  // Error handling
+  // Safe progress calculation
+  const overallProgress = totalStages > 0 ? Math.min((completedTotal / totalStages) * 100, 100) : 0;
+
+  // Loading & Error States
+  const isLoading = contentLoading || modulesLoading || enrollmentLoading;
   const hasError = contentError || modulesError || studentError;
+
   const handleRetry = () => {
     if (contentError) refetchContent();
     if (modulesError) refetchModules();
@@ -200,37 +219,31 @@ export default function ImmersiveCoursePlayer() {
     if (enrollmentError) refetchEnrollment();
   };
 
-  if (contentLoading || modulesLoading || enrollmentLoading) {
+  if (isLoading) {
     return (
       <div className="min-h-screen flex items-center justify-center flex-col gap-4">
         <Loader2 className="h-8 w-8 animate-spin text-primary" />
-        <p className="text-muted-foreground">Loading course content...</p>
+        <p className="text-muted-foreground">Loading your learning experience...</p>
       </div>
     );
   }
 
   if (hasError) {
-    const isTimeout = (contentError as any)?.message?.includes("timed out") || 
-                      (modulesError as any)?.message?.includes("timed out") ||
-                      (studentError as any)?.message?.includes("timed out");
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
             <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-            <h2 className="text-lg font-semibold mb-2">Failed to Load Course</h2>
+            <h2 className="text-lg font-semibold mb-2">Connection Error</h2>
             <p className="text-muted-foreground mb-4">
-              {isTimeout 
-                ? "Loading took too long. Please check your connection and try again."
-                : "There was a problem loading the course content. Please try again."}
+              We couldn't load the course content. Please check your internet connection.
             </p>
             <div className="flex gap-2 justify-center">
-              <Button onClick={handleRetry} variant="default">
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Try Again
+              <Button onClick={handleRetry}>
+                <RefreshCw className="h-4 w-4 mr-2" /> Try Again
               </Button>
               <Button variant="outline" asChild>
-                <Link to="/my-learning">Back to My Learning</Link>
+                <Link to="/app/learning/my-courses">Go Back</Link>
               </Button>
             </div>
           </CardContent>
@@ -239,18 +252,16 @@ export default function ImmersiveCoursePlayer() {
     );
   }
 
-  if (!content) {
+  if (!content || !enrollment) {
     return (
       <div className="min-h-screen flex items-center justify-center p-4">
         <Card className="max-w-md w-full">
           <CardContent className="pt-6 text-center">
             <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-lg font-semibold mb-2">Course Not Found</h2>
-            <p className="text-muted-foreground mb-4">
-              This course doesn't exist or may have been removed.
-            </p>
+            <h2 className="text-lg font-semibold mb-2">Access Denied</h2>
+            <p className="text-muted-foreground mb-4">You must be enrolled in this course to view it.</p>
             <Button asChild>
-              <Link to="/courses">Browse Courses</Link>
+              <Link to="/app/learning/courses">Browse Courses</Link>
             </Button>
           </CardContent>
         </Card>
@@ -258,74 +269,31 @@ export default function ImmersiveCoursePlayer() {
     );
   }
 
-  if (!user) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-6 text-center">
-            <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-lg font-semibold mb-2">Sign In Required</h2>
-            <p className="text-muted-foreground mb-4">
-              Please sign in to access this course.
-            </p>
-            <Button asChild>
-              <Link to="/auth">Sign In</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  if (!enrollment) {
-    return (
-      <div className="min-h-screen flex items-center justify-center p-4">
-        <Card className="max-w-md w-full">
-          <CardContent className="pt-6 text-center">
-            <AlertCircle className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
-            <h2 className="text-lg font-semibold mb-2">Not Enrolled</h2>
-            <p className="text-muted-foreground mb-4">
-              You are not enrolled in this course. Please enroll to access the content.
-            </p>
-            <Button asChild>
-              <Link to={`/courses/${slug}`}>View Course Details</Link>
-            </Button>
-          </CardContent>
-        </Card>
-      </div>
-    );
-  }
-
-  const currentResources = stageResources.find(s => s.stage === currentStage)?.resources || [];
-  
-  // Check if course has any resources at all
-  const hasAnyResources = stageResources.some(s => s.resources.length > 0);
-  
-  // Fallback to video_url from course_modules if no resources
+  const currentResources = stageResources.find((s) => s.stage === currentStage)?.resources || [];
+  const hasAnyResources = stageResources.some((s) => s.resources.length > 0);
   const fallbackVideoUrl = currentModule?.video_url;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-background flex flex-col">
       {/* Header */}
-      <header className="sticky top-0 z-50 bg-background border-b px-4 py-3">
-        <div className="flex items-center justify-between max-w-7xl mx-auto">
-          <div className="flex items-center gap-4">
-            <Button variant="ghost" size="sm" asChild>
-              <Link to="/my-learning">
-                <ArrowLeft className="h-4 w-4 mr-1" />
-                Back
+      <header className="sticky top-0 z-50 bg-background/95 backdrop-blur supports-[backdrop-filter]:bg-background/60 border-b px-4 py-3">
+        <div className="flex items-center justify-between max-w-7xl mx-auto w-full">
+          <div className="flex items-center gap-4 min-w-0">
+            <Button variant="ghost" size="sm" asChild className="shrink-0">
+              <Link to="/app/learning/my-courses">
+                <ArrowLeft className="h-4 w-4 mr-1" /> Back
               </Link>
             </Button>
-            <div>
-              <h1 className="font-semibold truncate max-w-md">{content.title}</h1>
-              <p className="text-xs text-muted-foreground">
-                Module {currentModuleIndex + 1} of {modules.length}
+            <div className="min-w-0">
+              <h1 className="font-semibold text-sm sm:text-base truncate">{content.title}</h1>
+              <p className="text-xs text-muted-foreground truncate">
+                Module {currentModuleIndex + 1}: {currentModule?.title}
               </p>
             </div>
           </div>
-          
-          <div className="flex items-center gap-4">
-            <div className="hidden sm:block w-48">
+
+          <div className="flex items-center gap-4 shrink-0">
+            <div className="hidden sm:block w-32 md:w-48">
               <div className="flex justify-between text-xs text-muted-foreground mb-1">
                 <span>Progress</span>
                 <span>{Math.round(overallProgress)}%</span>
@@ -336,119 +304,113 @@ export default function ImmersiveCoursePlayer() {
         </div>
       </header>
 
-      {/* Main Content */}
-      <div className="flex h-[calc(100vh-65px)]">
-        {/* Module Sidebar */}
-        <aside className="hidden lg:block w-80 border-r p-4 overflow-hidden">
-          <ImmersiveModuleList
-            modules={modules}
-            currentModuleId={currentModuleId}
-            moduleProgress={moduleProgress}
-            onModuleSelect={handleModuleSelect}
-          />
+      {/* Main Layout */}
+      <div className="flex flex-1 overflow-hidden">
+        {/* Sidebar (Desktop) */}
+        <aside className="hidden lg:block w-80 border-r bg-muted/10 overflow-y-auto">
+          <div className="p-4">
+            <h3 className="font-semibold mb-4 px-2">Course Modules</h3>
+            <ImmersiveModuleList
+              modules={modules}
+              currentModuleId={currentModuleId}
+              moduleProgress={moduleProgress}
+              onModuleSelect={handleModuleSelect}
+            />
+          </div>
         </aside>
 
-        {/* Stage Content */}
-        <main className="flex-1 overflow-y-auto">
-          <div className="max-w-4xl mx-auto p-6">
-            {/* Stage Navigation */}
+        {/* Content Area */}
+        <main className="flex-1 overflow-y-auto bg-background">
+          <div className="max-w-4xl mx-auto p-4 sm:p-6 lg:p-8">
+            {/* Mobile Module Nav Trigger could go here */}
+
             <StageNavigation
               currentStage={currentStage}
               completedStages={completedStages}
               onStageSelect={goToStage}
-              className="mb-6"
+              className="mb-8"
             />
 
-            {/* Current Module Title */}
-            {currentModule && (
-              <div className="mb-6">
-                <h2 className="text-lg font-semibold">{currentModule.title}</h2>
-                {currentModule.description && (
-                  <p className="text-sm text-muted-foreground mt-1">
-                    {currentModule.description}
-                  </p>
-                )}
-              </div>
-            )}
-
-            {/* Coming Soon Banner for courses without resources */}
-            {!hasAnyResources && !fallbackVideoUrl && (
-              <Card className="mb-6 border-dashed border-2 border-primary/30 bg-primary/5">
-                <CardContent className="p-6 text-center">
-                  <div className="w-12 h-12 rounded-full bg-primary/10 flex items-center justify-center mx-auto mb-4">
-                    <AlertCircle className="h-6 w-6 text-primary" />
-                  </div>
-                  <h3 className="font-semibold text-lg mb-2">Content Being Prepared</h3>
-                  <p className="text-muted-foreground text-sm">
-                    Our team is creating immersive learning content for this module. 
-                    Check back soon for videos, slides, flashcards, and more!
-                  </p>
-                </CardContent>
-              </Card>
-            )}
-
             {/* Stage Content */}
-            {currentStage === 1 && (
-              <OrientationStage
-                resources={currentResources}
-                onComplete={() => handleStageComplete(1)}
-                isCompleted={completedStages.includes(1)}
-                fallbackVideoUrl={fallbackVideoUrl}
-              />
-            )}
+            <div className="min-h-[400px]">
+              {/* Content Placeholder */}
+              {!hasAnyResources && !fallbackVideoUrl && (
+                <Card className="mb-6 border-dashed border-2 bg-muted/50">
+                  <CardContent className="p-12 text-center">
+                    <div className="w-16 h-16 rounded-full bg-muted flex items-center justify-center mx-auto mb-4">
+                      <RefreshCw className="h-8 w-8 text-muted-foreground animate-spin-slow" />
+                    </div>
+                    <h3 className="font-semibold text-lg mb-2">Preparing Content</h3>
+                    <p className="text-muted-foreground text-sm max-w-sm mx-auto">
+                      We are generating the immersive materials for this stage. Please check back shortly.
+                    </p>
+                  </CardContent>
+                </Card>
+              )}
 
-            {currentStage === 2 && (
-              <LearnStage
-                resources={currentResources}
-                onComplete={() => handleStageComplete(2)}
-                isCompleted={completedStages.includes(2)}
-              />
-            )}
+              {/* Dynamic Stages */}
+              {currentStage === 1 && (
+                <OrientationStage
+                  resources={currentResources}
+                  onComplete={() => handleStageComplete(1)}
+                  isCompleted={completedStages.includes(1)}
+                  fallbackVideoUrl={fallbackVideoUrl}
+                />
+              )}
 
-            {currentStage === 3 && (
-              <DiscussStage
-                resources={currentResources}
-                onComplete={() => handleStageComplete(3)}
-                isCompleted={completedStages.includes(3)}
-                professionLineId={content.profession_line_id || ""}
-                moduleId={currentModuleId || ""}
-                instructorName={aiInstructor?.name}
-              />
-            )}
+              {currentStage === 2 && (
+                <LearnStage
+                  resources={currentResources}
+                  onComplete={() => handleStageComplete(2)}
+                  isCompleted={completedStages.includes(2)}
+                />
+              )}
 
-            {currentStage === 4 && (
-              <PracticeStage
-                resources={currentResources}
-                onComplete={() => handleStageComplete(4)}
-                isCompleted={completedStages.includes(4)}
-                professionLineId={content.profession_line_id || ""}
-              />
-            )}
+              {currentStage === 3 && (
+                <DiscussStage
+                  resources={currentResources}
+                  onComplete={() => handleStageComplete(3)}
+                  isCompleted={completedStages.includes(3)}
+                  professionLineId={content.profession_line_id || ""}
+                  moduleId={currentModuleId || ""}
+                  instructorName={aiInstructor?.name}
+                />
+              )}
 
-            {currentStage === 5 && (
-              <AssessStage
-                contentId={content.id}
-                moduleId={currentModuleId || ""}
-                studentId={student?.id}
-                enrollmentId={enrollment?.id}
-                passThreshold={content.pass_threshold || 70}
-                onComplete={handleQuizComplete}
-                isCompleted={completedStages.includes(5)}
-              />
-            )}
+              {currentStage === 4 && (
+                <PracticeStage
+                  resources={currentResources}
+                  onComplete={() => handleStageComplete(4)}
+                  isCompleted={completedStages.includes(4)}
+                  professionLineId={content.profession_line_id || ""}
+                />
+              )}
 
-            {currentStage === 6 && (
-              <ProgressStage
-                moduleName={currentModule?.title || ""}
-                moduleIndex={currentModuleIndex}
-                totalModules={modules.length}
-                completedStages={completedStages}
-                onNextModule={handleNextModule}
-                onComplete={() => handleStageComplete(6)}
-                isCompleted={completedStages.includes(6)}
-                hasNextModule={hasNextModule}
-              />
-            )}
+              {currentStage === 5 && (
+                <AssessStage
+                  contentId={content.id}
+                  moduleId={currentModuleId || ""}
+                  studentId={student?.id}
+                  enrollmentId={enrollment.id}
+                  passThreshold={content.pass_threshold || 70}
+                  onComplete={handleQuizComplete}
+                  isCompleted={completedStages.includes(5)}
+                />
+              )}
+
+              {currentStage === 6 && (
+                <ProgressStage
+                  moduleName={currentModule?.title || ""}
+                  moduleIndex={currentModuleIndex}
+                  totalModules={modules.length}
+                  completedStages={completedStages}
+                  onNextModule={handleNextModule}
+                  onComplete={() => handleStageComplete(6)}
+                  isCompleted={completedStages.includes(6)}
+                  hasNextModule={hasNextModule}
+                />
+              )}
+            </div>
           </div>
         </main>
       </div>
