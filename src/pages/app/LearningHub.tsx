@@ -1,7 +1,18 @@
 import { useNavigate } from "react-router-dom";
-import { GraduationCap, BookOpen, Calendar, Trophy, FileText, Video, ChevronRight, Sparkles } from "lucide-react";
+import {
+  GraduationCap,
+  BookOpen,
+  Calendar,
+  Trophy,
+  FileText,
+  Video,
+  ChevronRight,
+  Sparkles,
+  PlayCircle,
+} from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTalent } from "@/hooks/useTalent";
 import { useQuery } from "@tanstack/react-query";
@@ -52,7 +63,6 @@ const LEARNING_SECTIONS = [
   },
 ];
 
-// Defined exactly as the query returns it
 interface EnrollmentContent {
   id: string;
   title: string;
@@ -64,8 +74,70 @@ interface EnrollmentContent {
 interface Enrollment {
   id: string;
   status: string;
-  content: EnrollmentContent | null; // Can be null if content was deleted
+  progress: number;
+  content: EnrollmentContent | null;
 }
+
+// Extracted Card Component
+const LearningCard = ({ enrollment }: { enrollment: Enrollment }) => {
+  const navigate = useNavigate();
+  const { content, status, progress } = enrollment;
+
+  if (!content) return null;
+
+  return (
+    <Card
+      className="cursor-pointer hover:shadow-lg transition-all group overflow-hidden border-border/50 h-full flex flex-col"
+      onClick={() => navigate(`/app/learning/courses/${content.slug}`)}
+    >
+      <div className="aspect-video bg-muted relative overflow-hidden shrink-0">
+        {content.thumbnail_url ? (
+          <img
+            src={content.thumbnail_url}
+            alt={content.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-primary/5">
+            <BookOpen className="h-10 w-10 text-primary/20" />
+          </div>
+        )}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 hover:bg-white/30 transition-colors">
+            <PlayCircle className="w-4 h-4" />
+            Resume
+          </div>
+        </div>
+      </div>
+
+      <CardContent className="p-4 flex flex-col flex-1">
+        <div className="flex-1">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <Badge variant="outline" className="capitalize text-[10px] h-5 px-1.5">
+              {content.content_type.replace("_", " ")}
+            </Badge>
+            {status === "pending_payment" && (
+              <Badge variant="destructive" className="text-[10px] h-5 px-1.5">
+                Unpaid
+              </Badge>
+            )}
+          </div>
+          <h3 className="font-semibold text-sm line-clamp-2 mb-3 group-hover:text-primary transition-colors">
+            {content.title}
+          </h3>
+        </div>
+
+        <div className="space-y-2 mt-auto">
+          <div className="flex items-center justify-between text-xs text-muted-foreground">
+            <span>Progress</span>
+            <span className="font-medium text-foreground">{progress}%</span>
+          </div>
+          <Progress value={progress} className="h-1.5" />
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
 
 export default function LearningHub() {
   const navigate = useNavigate();
@@ -80,6 +152,7 @@ export default function LearningHub() {
           `
           id,
           status,
+          progress,
           content:content_id (
             id,
             title,
@@ -91,12 +164,10 @@ export default function LearningHub() {
         )
         .eq("talent_id", talent!.id)
         .in("status", ["active", "pending_payment"])
-        .order("created_at", { ascending: false })
+        .order("last_accessed_at", { ascending: false }) // Sort by most recently accessed
         .limit(6);
 
       if (error) throw error;
-
-      // Safe casting
       return data as unknown as Enrollment[];
     },
     enabled: !!talent?.id,
@@ -165,7 +236,7 @@ export default function LearningHub() {
         {isLoading ? (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
             {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-48 rounded-xl" />
+              <Skeleton key={i} className="h-56 rounded-xl" />
             ))}
           </div>
         ) : enrollments.length === 0 ? (
@@ -188,49 +259,9 @@ export default function LearningHub() {
           </Card>
         ) : (
           <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
-            {enrollments.map((enrollment) => {
-              if (!enrollment.content) return null;
-
-              return (
-                <Card
-                  key={enrollment.id}
-                  className="cursor-pointer hover:shadow-lg transition-all group overflow-hidden border-border/50"
-                  onClick={() => navigate(`/app/learning/courses/${enrollment.content!.slug}`)}
-                >
-                  <div className="aspect-video bg-muted relative overflow-hidden">
-                    {enrollment.content.thumbnail_url ? (
-                      <img
-                        src={enrollment.content.thumbnail_url}
-                        alt={enrollment.content.title}
-                        className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
-                      />
-                    ) : (
-                      <div className="w-full h-full flex items-center justify-center bg-primary/5">
-                        <BookOpen className="h-10 w-10 text-primary/20" />
-                      </div>
-                    )}
-                    <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
-                      <div className="bg-white/20 backdrop-blur-sm text-white px-3 py-1.5 rounded-full text-xs font-medium flex items-center gap-1">
-                        Resume <ChevronRight className="w-3 h-3" />
-                      </div>
-                    </div>
-                  </div>
-                  <CardContent className="p-4">
-                    <p className="font-semibold text-sm line-clamp-2 mb-2 group-hover:text-primary transition-colors">
-                      {enrollment.content.title}
-                    </p>
-                    <div className="flex items-center justify-between text-xs text-muted-foreground">
-                      <span className="capitalize bg-muted px-2 py-0.5 rounded-md">
-                        {enrollment.content.content_type}
-                      </span>
-                      {enrollment.status === "pending_payment" && (
-                        <span className="text-amber-600 font-medium">Payment Pending</span>
-                      )}
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
+            {enrollments.map((enrollment) => (
+              <LearningCard key={enrollment.id} enrollment={enrollment} />
+            ))}
           </div>
         )}
       </section>
