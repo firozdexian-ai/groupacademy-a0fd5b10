@@ -1,173 +1,205 @@
-import { useNavigate } from 'react-router-dom';
-import { useQuery } from '@tanstack/react-query';
-import { supabase } from '@/integrations/supabase/client';
-import { useTalent } from '@/hooks/useTalent';
-import { Button } from '@/components/ui/button';
-import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
-import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
-import { Badge } from '@/components/ui/badge';
-import { Skeleton } from '@/components/ui/skeleton';
-import { ArrowLeft, BookOpen, Calendar, CheckCircle, Clock, MessageCircle } from 'lucide-react';
+import { useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
+import { useTalent } from "@/hooks/useTalent";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Badge } from "@/components/ui/badge";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Progress } from "@/components/ui/progress";
+import { ArrowLeft, BookOpen, CheckCircle, Clock, PlayCircle, MessageCircle } from "lucide-react";
+
+interface EnrollmentContent {
+  id: string;
+  title: string;
+  slug: string;
+  content_type: string;
+  thumbnail_url: string | null; // Changed from cover_image_url to match Hub
+  cover_image_url: string | null; // Kept for compatibility if needed
+  instructor_name: string | null;
+  event_date: string | null;
+  whatsapp_group_link: string | null;
+}
 
 interface Enrollment {
   id: string;
   status: string;
   enrolled_at: string;
   completed_at: string | null;
-  content: {
-    id: string;
-    title: string;
-    slug: string;
-    content_type: string;
-    cover_image_url: string | null;
-    instructor_name: string | null;
-    event_date: string | null;
-    whatsapp_group_link: string | null;
-  };
+  progress: number; // Added progress field
+  content: EnrollmentContent;
 }
 
-export default function AppMyLearning() {
+// Reusable Learning Card Component (Consistent with LearningHub)
+const LearningCard = ({ enrollment }: { enrollment: Enrollment }) => {
   const navigate = useNavigate();
-  const { talent } = useTalent();
+  const { content, status, progress } = enrollment;
 
-  const { data: enrollments = [], isLoading, error, refetch } = useQuery({
-    queryKey: ['talent-enrollments', talent?.id],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from('enrollments')
-        .select(`
-          id,
-          status,
-          enrolled_at,
-          completed_at,
-          content:content_id (
-            id,
-            title,
-            slug,
-            content_type,
-            cover_image_url,
-            instructor_name,
-            event_date,
-            whatsapp_group_link
-          )
-        `)
-        .eq('talent_id', talent!.id)
-        .order('enrolled_at', { ascending: false });
+  // Handle image source priority
+  const imageSrc = content.thumbnail_url || content.cover_image_url;
 
-      if (error) throw error;
-      return data as Enrollment[];
-    },
-    enabled: !!talent?.id,
-  });
+  return (
+    <Card
+      className="cursor-pointer hover:shadow-lg transition-all group overflow-hidden border-border/50 h-full flex flex-col"
+      onClick={() => navigate(`/app/learning/courses/${content.slug}`)}
+    >
+      <div className="aspect-video bg-muted relative overflow-hidden shrink-0">
+        {imageSrc ? (
+          <img
+            src={imageSrc}
+            alt={content.title}
+            className="w-full h-full object-cover group-hover:scale-105 transition-transform duration-500"
+            loading="lazy"
+          />
+        ) : (
+          <div className="w-full h-full flex items-center justify-center bg-primary/5">
+            <BookOpen className="h-10 w-10 text-primary/20" />
+          </div>
+        )}
 
-  const activeEnrollments = enrollments.filter((e) => e.status === 'active');
-  const completedEnrollments = enrollments.filter((e) => e.status === 'completed');
-  const pendingEnrollments = enrollments.filter((e) => e.status === 'pending_payment');
+        {/* Play Overlay */}
+        <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity flex items-center justify-center">
+          <div className="bg-white/20 backdrop-blur-sm text-white px-4 py-2 rounded-full text-sm font-medium flex items-center gap-2 hover:bg-white/30 transition-colors">
+            <PlayCircle className="w-4 h-4" />
+            Resume
+          </div>
+        </div>
+      </div>
 
-  const getContentTypeLabel = (type: string) => {
-    const labels: Record<string, string> = {
-      free_video: 'Free Video',
-      recorded_course: 'Recorded Course',
-      live_webinar: 'Live Webinar',
-      batch_class: 'Batch Class',
-      offline_seminar: 'Offline Seminar',
-    };
-    return labels[type] || type;
-  };
-
-  const renderEnrollmentCard = (enrollment: Enrollment) => (
-    <Card key={enrollment.id} className="hover:shadow-lg transition-shadow">
-      <CardContent className="p-0">
-        <div className="flex flex-col sm:flex-row gap-4">
-          <div className="sm:w-48 h-32 sm:h-auto bg-gradient-to-br from-primary/20 to-secondary/20 flex items-center justify-center overflow-hidden shrink-0">
-            {enrollment.content.cover_image_url ? (
-              <img
-                src={enrollment.content.cover_image_url}
-                alt={enrollment.content.title}
-                className="w-full h-full object-cover"
-                loading="lazy"
-              />
-            ) : (
-              <BookOpen className="w-12 h-12 text-primary/40" />
-            )}
+      <CardContent className="p-4 flex flex-col flex-1">
+        <div className="flex-1">
+          <div className="flex items-start justify-between gap-2 mb-2">
+            <Badge variant="outline" className="capitalize text-[10px] h-5 px-1.5">
+              {content.content_type.replace(/_/g, " ")}
+            </Badge>
+            <Badge variant={status === "active" ? "default" : "secondary"} className="text-[10px] h-5 px-1.5">
+              {status === "pending_payment" ? "Payment Pending" : status}
+            </Badge>
           </div>
 
-          <div className="flex-1 p-4">
-            <div className="flex flex-col sm:flex-row items-start justify-between gap-2 mb-2">
-              <div>
-                <h3 className="font-semibold text-base sm:text-lg mb-1">{enrollment.content.title}</h3>
-                <p className="text-xs sm:text-sm text-muted-foreground">
-                  {getContentTypeLabel(enrollment.content.content_type)}
-                </p>
+          <h3 className="font-semibold text-sm line-clamp-2 mb-1 group-hover:text-primary transition-colors">
+            {content.title}
+          </h3>
+
+          {content.instructor_name && (
+            <p className="text-xs text-muted-foreground mb-3 line-clamp-1">By {content.instructor_name}</p>
+          )}
+        </div>
+
+        {/* Footer Actions / Progress */}
+        <div className="space-y-3 mt-auto pt-2">
+          {status === "active" && (
+            <div className="space-y-1.5">
+              <div className="flex items-center justify-between text-xs text-muted-foreground">
+                <span>Progress</span>
+                <span className="font-medium text-foreground">{progress || 0}%</span>
               </div>
-              <Badge variant={enrollment.status === 'active' ? 'default' : 'secondary'} className="shrink-0">
-                {enrollment.status}
-              </Badge>
+              <Progress value={progress || 0} className="h-1.5" />
             </div>
+          )}
 
-            {enrollment.content.instructor_name && (
-              <p className="text-xs sm:text-sm text-muted-foreground mb-2">
-                Instructor: {enrollment.content.instructor_name}
-              </p>
-            )}
-
-            {enrollment.content.event_date && (
-              <div className="flex items-center gap-2 text-xs sm:text-sm text-muted-foreground mb-3">
-                <Calendar className="w-4 h-4" />
-                {new Date(enrollment.content.event_date).toLocaleDateString()}
-              </div>
-            )}
-
-            <div className="flex flex-wrap gap-2">
+          <div className="flex gap-2">
+            {content.whatsapp_group_link && (
               <Button
-                onClick={() => navigate(`/app/learn/${enrollment.content.slug}`)}
+                variant="outline"
                 size="sm"
+                className="w-full h-8 text-xs bg-green-50 border-green-200 text-green-700 hover:bg-green-100 hover:text-green-800 dark:bg-green-950/20 dark:border-green-900 dark:text-green-400"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  window.open(content.whatsapp_group_link!, "_blank");
+                }}
               >
-                Continue Learning
+                <MessageCircle className="w-3 h-3 mr-1.5" />
+                Group
               </Button>
-              {enrollment.status === 'completed' && (
-                <Button
-                  onClick={() => navigate(`/report-card/${enrollment.id}`)}
-                  variant="outline"
-                  size="sm"
-                >
-                  Download Report Card
-                </Button>
-              )}
-              {enrollment.content.whatsapp_group_link && (
-                <Button
-                  variant="outline"
-                  size="sm"
-                  className="bg-green-50 border-green-200 text-green-700 hover:bg-green-100 dark:bg-green-950 dark:border-green-800 dark:text-green-400"
-                  onClick={() => window.open(enrollment.content.whatsapp_group_link!, '_blank')}
-                >
-                  <MessageCircle className="w-4 h-4 mr-1" />
-                  Join Group
-                </Button>
-              )}
-            </div>
+            )}
+
+            {status === "completed" && (
+              <Button
+                variant="outline"
+                size="sm"
+                className="w-full h-8 text-xs"
+                onClick={(e) => {
+                  e.stopPropagation();
+                  navigate(`/report-card/${enrollment.id}`);
+                }}
+              >
+                Certificate
+              </Button>
+            )}
           </div>
         </div>
       </CardContent>
     </Card>
   );
+};
+
+export default function AppMyLearning() {
+  const navigate = useNavigate();
+  const { talent } = useTalent();
+
+  const {
+    data: enrollments = [],
+    isLoading,
+    error,
+    refetch,
+  } = useQuery({
+    queryKey: ["talent-enrollments", talent?.id],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("enrollments")
+        .select(
+          `
+          id,
+          status,
+          enrolled_at,
+          completed_at,
+          progress,
+          content:content_id (
+            id,
+            title,
+            slug,
+            content_type,
+            thumbnail_url,
+            cover_image_url,
+            instructor_name,
+            event_date,
+            whatsapp_group_link
+          )
+        `,
+        )
+        .eq("talent_id", talent!.id)
+        .order("last_accessed_at", { ascending: false }); // Sort by recently accessed
+
+      if (error) throw error;
+      return data as unknown as Enrollment[];
+    },
+    enabled: !!talent?.id,
+  });
+
+  const activeEnrollments = enrollments.filter((e) => e.status === "active");
+  const completedEnrollments = enrollments.filter((e) => e.status === "completed");
+  const pendingEnrollments = enrollments.filter((e) => e.status === "pending_payment");
 
   if (isLoading) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-6">
         <div className="flex items-center gap-3 mb-6">
-          <Skeleton className="h-8 w-8" />
-          <Skeleton className="h-8 w-40" />
+          <Skeleton className="h-8 w-8 rounded-full" />
+          <div className="space-y-2">
+            <Skeleton className="h-6 w-40" />
+            <Skeleton className="h-4 w-60" />
+          </div>
         </div>
-        <div className="grid grid-cols-3 gap-4 mb-6">
+        <div className="grid grid-cols-3 gap-4 mb-8">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-24" />
+            <Skeleton key={i} className="h-24 rounded-xl" />
           ))}
         </div>
-        <Skeleton className="h-10 w-full mb-4" />
-        <div className="space-y-4">
-          {[1, 2].map((i) => (
-            <Skeleton key={i} className="h-40" />
+        <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-6">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-72 rounded-xl" />
           ))}
         </div>
       </div>
@@ -177,9 +209,8 @@ export default function AppMyLearning() {
   if (error) {
     return (
       <div className="max-w-4xl mx-auto px-4 py-6">
-        <Button variant="ghost" onClick={() => navigate('/app/learning')} className="mb-4">
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back
+        <Button variant="ghost" onClick={() => navigate("/app/learning")} className="mb-4">
+          <ArrowLeft className="h-4 w-4 mr-2" /> Back
         </Button>
         <Card>
           <CardContent className="py-12 text-center">
@@ -194,37 +225,37 @@ export default function AppMyLearning() {
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
       <div className="flex items-center gap-3 mb-6">
-        <Button variant="ghost" size="icon" onClick={() => navigate('/app/learning')}>
+        <Button variant="ghost" size="icon" onClick={() => navigate("/app/learning")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
           <h1 className="text-2xl font-bold">My Learning</h1>
-          <p className="text-muted-foreground text-sm">Track your enrolled courses</p>
+          <p className="text-muted-foreground text-sm">Track your progress and achievements</p>
         </div>
       </div>
 
       {/* Quick Stats */}
-      <div className="grid grid-cols-3 gap-4 mb-6">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Active</CardTitle>
-            <Clock className="h-4 w-4 text-muted-foreground" />
+      <div className="grid grid-cols-3 gap-4 mb-8">
+        <Card className="bg-primary/5 border-primary/10">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-primary">Active</CardTitle>
+            <Clock className="h-4 w-4 text-primary/60" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">{activeEnrollments.length}</div>
+            <div className="text-2xl font-bold text-primary">{activeEnrollments.length}</div>
+          </CardContent>
+        </Card>
+        <Card className="bg-green-50 dark:bg-green-950/20 border-green-100 dark:border-green-900">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
+            <CardTitle className="text-sm font-medium text-green-700 dark:text-green-400">Completed</CardTitle>
+            <CheckCircle className="h-4 w-4 text-green-600/60 dark:text-green-400/60" />
+          </CardHeader>
+          <CardContent>
+            <div className="text-2xl font-bold text-green-700 dark:text-green-400">{completedEnrollments.length}</div>
           </CardContent>
         </Card>
         <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
-            <CardTitle className="text-sm font-medium">Completed</CardTitle>
-            <CheckCircle className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{completedEnrollments.length}</div>
-          </CardContent>
-        </Card>
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between pb-2">
+          <CardHeader className="flex flex-row items-center justify-between pb-2 space-y-0">
             <CardTitle className="text-sm font-medium">Total</CardTitle>
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
@@ -235,53 +266,48 @@ export default function AppMyLearning() {
       </div>
 
       {/* Enrollments Tabs */}
-      <Tabs defaultValue="active" className="space-y-4">
-        <TabsList className="w-full">
-          <TabsTrigger value="active" className="flex-1">
-            Active ({activeEnrollments.length})
-          </TabsTrigger>
-          <TabsTrigger value="completed" className="flex-1">
-            Completed ({completedEnrollments.length})
-          </TabsTrigger>
-          {pendingEnrollments.length > 0 && (
-            <TabsTrigger value="pending" className="flex-1">
-              Pending ({pendingEnrollments.length})
-            </TabsTrigger>
-          )}
+      <Tabs defaultValue="active" className="space-y-6">
+        <TabsList className="w-full grid grid-cols-2 lg:w-[400px]">
+          <TabsTrigger value="active">Active ({activeEnrollments.length})</TabsTrigger>
+          <TabsTrigger value="completed">Completed ({completedEnrollments.length})</TabsTrigger>
         </TabsList>
 
-        <TabsContent value="active" className="space-y-4">
+        <TabsContent value="active" className="mt-0">
           {activeEnrollments.length === 0 ? (
-            <Card>
+            <Card className="border-dashed">
               <CardContent className="py-12 text-center">
-                <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground mb-4">No active courses yet</p>
-                <Button onClick={() => navigate('/app/learning/courses')}>Browse Courses</Button>
+                <BookOpen className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <h3 className="font-semibold mb-1">No active courses</h3>
+                <p className="text-muted-foreground text-sm mb-4">Start a new course to see it here</p>
+                <Button onClick={() => navigate("/app/learning/courses")}>Browse Catalog</Button>
               </CardContent>
             </Card>
           ) : (
-            activeEnrollments.map(renderEnrollmentCard)
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {activeEnrollments.map((enrollment) => (
+                <LearningCard key={enrollment.id} enrollment={enrollment} />
+              ))}
+            </div>
           )}
         </TabsContent>
 
-        <TabsContent value="completed" className="space-y-4">
+        <TabsContent value="completed" className="mt-0">
           {completedEnrollments.length === 0 ? (
-            <Card>
+            <Card className="border-dashed">
               <CardContent className="py-12 text-center">
-                <CheckCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4" />
-                <p className="text-muted-foreground">No completed courses yet</p>
+                <CheckCircle className="w-12 h-12 text-muted-foreground mx-auto mb-4 opacity-50" />
+                <h3 className="font-semibold mb-1">No completed courses</h3>
+                <p className="text-muted-foreground text-sm">Finish a course to earn your certificate</p>
               </CardContent>
             </Card>
           ) : (
-            completedEnrollments.map(renderEnrollmentCard)
+            <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-3 gap-6">
+              {completedEnrollments.map((enrollment) => (
+                <LearningCard key={enrollment.id} enrollment={enrollment} />
+              ))}
+            </div>
           )}
         </TabsContent>
-
-        {pendingEnrollments.length > 0 && (
-          <TabsContent value="pending" className="space-y-4">
-            {pendingEnrollments.map(renderEnrollmentCard)}
-          </TabsContent>
-        )}
       </Tabs>
     </div>
   );
