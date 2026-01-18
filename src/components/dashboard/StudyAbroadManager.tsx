@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -6,15 +6,35 @@ import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
-import { Plus, Search, Edit, Trash2, GraduationCap, MapPin, Calendar, ExternalLink } from "lucide-react";
+import {
+  Plus,
+  Search,
+  Edit,
+  Trash2,
+  GraduationCap,
+  ExternalLink,
+  ChevronLeft,
+  ChevronRight,
+  Check,
+} from "lucide-react";
 import { toast } from "sonner";
+import { COUNTRIES } from "@/lib/constants/countries"; // Shared Constant
+
+// --- Internal Hook for Debounce ---
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debouncedValue;
+}
 
 interface StudyAbroadProgram {
   id: string;
@@ -26,7 +46,7 @@ interface StudyAbroadProgram {
   field_of_study: string | null;
   duration: string | null;
   tuition_range: string | null;
-  requirements: any;
+  requirements: string[]; // Fixed type
   intake_months: string[] | null;
   application_deadline: string | null;
   scholarship_available: boolean;
@@ -36,16 +56,21 @@ interface StudyAbroadProgram {
   created_at: string;
 }
 
-const COUNTRIES = [
-  { code: "UK", name: "United Kingdom", flag: "🇬🇧" },
-  { code: "US", name: "United States", flag: "🇺🇸" },
-  { code: "CA", name: "Canada", flag: "🇨🇦" },
-  { code: "AU", name: "Australia", flag: "🇦🇺" },
-  { code: "DE", name: "Germany", flag: "🇩🇪" },
-  { code: "SG", name: "Singapore", flag: "🇸🇬" },
+const DEGREE_TYPES = ["Bachelor", "Master", "PhD", "Diploma", "Certificate"];
+const INTAKE_MONTHS = [
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
-
-const DEGREE_TYPES = ["Bachelor's", "Master's", "PhD", "Diploma", "Certificate"];
 
 const emptyProgram = {
   country_code: "",
@@ -65,39 +90,60 @@ const emptyProgram = {
   url: "",
 };
 
+const ITEMS_PER_PAGE = 10;
+
 export function StudyAbroadManager() {
+  // Data State
   const [programs, setPrograms] = useState<StudyAbroadProgram[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+
+  // Pagination & Search
+  const [page, setPage] = useState(1);
+  const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
+  const debouncedSearch = useDebounce(searchQuery, 500);
   const [countryFilter, setCountryFilter] = useState<string>("all");
+
+  // UI State
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingProgram, setEditingProgram] = useState<StudyAbroadProgram | null>(null);
   const [formData, setFormData] = useState(emptyProgram);
   const [saving, setSaving] = useState(false);
   const [requirementInput, setRequirementInput] = useState("");
 
-  useEffect(() => {
-    loadPrograms();
-  }, []);
-
-  const loadPrograms = async () => {
+  // Fetch Data (Paginated)
+  const loadPrograms = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: queryError } = await withTimeout(
-        Promise.resolve(
-          supabase
-            .from("study_abroad_programs")
-            .select("*")
-            .order("created_at", { ascending: false })
-        ).then(q => q),
-        TIMEOUTS.DEFAULT,
-        "Loading programs timed out"
-      );
+      let query = supabase
+        .from("study_abroad_programs")
+        .select("*", { count: "exact" })
+        .order("created_at", { ascending: false });
 
-      if (queryError) throw queryError;
-      setPrograms(data || []);
+      // Search Logic
+      if (debouncedSearch) {
+        query = query.or(
+          `university_name.ilike.%${debouncedSearch}%,program_name.ilike.%${debouncedSearch}%,country_name.ilike.%${debouncedSearch}%`,
+        );
+      }
+
+      // Filter Logic
+      if (countryFilter !== "all") {
+        query = query.eq("country_code", countryFilter);
+      }
+
+      // Pagination
+      const from = (page - 1) * ITEMS_PER_PAGE;
+      const to = from + ITEMS_PER_PAGE - 1;
+      query = query.range(from, to);
+
+      const result = await withTimeout(Promise.resolve(query), TIMEOUTS.DEFAULT, "Loading programs timed out");
+
+      if (result.error) throw result.error;
+      setPrograms((result.data as unknown as StudyAbroadProgram[]) || []);
+      setTotalCount(result.count || 0);
     } catch (err: any) {
       console.error("Error loading programs:", err);
       setError(err.message || "Failed to load programs");
@@ -105,16 +151,16 @@ export function StudyAbroadManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, [page, debouncedSearch, countryFilter]);
 
-  const filteredPrograms = programs.filter((program) => {
-    const matchesSearch =
-      program.university_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      program.program_name.toLowerCase().includes(searchQuery.toLowerCase()) ||
-      program.country_name.toLowerCase().includes(searchQuery.toLowerCase());
-    const matchesCountry = countryFilter === "all" || program.country_code === countryFilter;
-    return matchesSearch && matchesCountry;
-  });
+  useEffect(() => {
+    loadPrograms();
+  }, [loadPrograms]);
+
+  // Reset page on filter change
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, countryFilter]);
 
   const handleOpenDialog = (program?: StudyAbroadProgram) => {
     if (program) {
@@ -144,29 +190,39 @@ export function StudyAbroadManager() {
   };
 
   const handleCountryChange = (code: string) => {
-    const country = COUNTRIES.find(c => c.code === code);
-    setFormData(prev => ({
+    const country = COUNTRIES.find((c) => c.code === code);
+    setFormData((prev) => ({
       ...prev,
       country_code: code,
-      country_name: country?.name || ""
+      country_name: country?.name || "",
     }));
   };
 
   const handleAddRequirement = () => {
     if (requirementInput.trim()) {
-      setFormData(prev => ({
+      setFormData((prev) => ({
         ...prev,
-        requirements: [...prev.requirements, requirementInput.trim()]
+        requirements: [...prev.requirements, requirementInput.trim()],
       }));
       setRequirementInput("");
     }
   };
 
   const handleRemoveRequirement = (index: number) => {
-    setFormData(prev => ({
+    setFormData((prev) => ({
       ...prev,
-      requirements: prev.requirements.filter((_, i) => i !== index)
+      requirements: prev.requirements.filter((_, i) => i !== index),
     }));
+  };
+
+  const toggleIntakeMonth = (month: string) => {
+    setFormData((prev) => {
+      const exists = prev.intake_months.includes(month);
+      return {
+        ...prev,
+        intake_months: exists ? prev.intake_months.filter((m) => m !== month) : [...prev.intake_months, month],
+      };
+    });
   };
 
   const handleSave = async () => {
@@ -196,24 +252,13 @@ export function StudyAbroadManager() {
       };
 
       if (editingProgram) {
-        const { error } = await withTimeout(
-          Promise.resolve(supabase
-            .from("study_abroad_programs")
-            .update(programData)
-            .eq("id", editingProgram.id)),
-          TIMEOUTS.DEFAULT,
-          "Update timed out"
-        );
+        const { error } = await supabase.from("study_abroad_programs").update(programData).eq("id", editingProgram.id);
         if (error) throw error;
-        toast.success("Program updated successfully");
+        toast.success("Program updated");
       } else {
-        const { error } = await withTimeout(
-          Promise.resolve(supabase.from("study_abroad_programs").insert(programData)),
-          TIMEOUTS.DEFAULT,
-          "Insert timed out"
-        );
+        const { error } = await supabase.from("study_abroad_programs").insert(programData);
         if (error) throw error;
-        toast.success("Program created successfully");
+        toast.success("Program created");
       }
 
       setIsDialogOpen(false);
@@ -227,56 +272,36 @@ export function StudyAbroadManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this program?")) return;
-
+    if (!confirm("Delete program?")) return;
     try {
-      const { error } = await withTimeout(
-        Promise.resolve(supabase.from("study_abroad_programs").delete().eq("id", id)),
-        TIMEOUTS.DEFAULT,
-        "Delete timed out"
-      );
+      const { error } = await supabase.from("study_abroad_programs").delete().eq("id", id);
       if (error) throw error;
-      toast.success("Program deleted successfully");
+      toast.success("Program deleted");
       loadPrograms();
-    } catch (error: any) {
-      console.error("Error deleting program:", error);
+    } catch (error) {
       toast.error("Failed to delete program");
     }
   };
 
   const handleToggleActive = async (program: StudyAbroadProgram) => {
     try {
-      const { error } = await withTimeout(
-        Promise.resolve(supabase
-          .from("study_abroad_programs")
-          .update({ is_active: !program.is_active })
-          .eq("id", program.id)),
-        TIMEOUTS.DEFAULT,
-        "Update timed out"
-      );
+      const { error } = await supabase
+        .from("study_abroad_programs")
+        .update({ is_active: !program.is_active })
+        .eq("id", program.id);
       if (error) throw error;
       toast.success(program.is_active ? "Program deactivated" : "Program activated");
-      loadPrograms();
-    } catch (error: any) {
-      console.error("Error toggling program:", error);
-      toast.error("Failed to update program");
+      loadPrograms(); // Ideally optimistic update, but reload is safer for now
+    } catch (error) {
+      toast.error("Failed to update status");
     }
   };
 
   const getCountryFlag = (code: string) => {
-    return COUNTRIES.find(c => c.code === code)?.flag || "🌍";
+    return COUNTRIES.find((c) => c.code === code)?.flag || "🌍";
   };
 
-  const activeCount = programs.filter(p => p.is_active).length;
-  const featuredCount = programs.filter(p => p.featured).length;
-
-  if (loading) {
-    return <DashboardTableSkeleton rows={5} columns={6} />;
-  }
-
-  if (error) {
-    return <DashboardErrorState title="Failed to load programs" message={error} onRetry={loadPrograms} />;
-  }
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
     <Card>
@@ -287,13 +312,10 @@ export function StudyAbroadManager() {
               <GraduationCap className="h-5 w-5" />
               Study Abroad Programs
             </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              {programs.length} programs • {activeCount} active • {featuredCount} featured
-            </p>
+            <p className="text-sm text-muted-foreground mt-1">Total {totalCount} programs found</p>
           </div>
           <Button onClick={() => handleOpenDialog()}>
-            <Plus className="h-4 w-4 mr-2" />
-            Add Program
+            <Plus className="h-4 w-4 mr-2" /> Add Program
           </Button>
         </div>
       </CardHeader>
@@ -315,7 +337,7 @@ export function StudyAbroadManager() {
             </SelectTrigger>
             <SelectContent>
               <SelectItem value="all">All Countries</SelectItem>
-              {COUNTRIES.map(country => (
+              {COUNTRIES.map((country) => (
                 <SelectItem key={country.code} value={country.code}>
                   {country.flag} {country.name}
                 </SelectItem>
@@ -325,94 +347,133 @@ export function StudyAbroadManager() {
         </div>
 
         {/* Table */}
-        <div className="rounded-md border overflow-x-auto">
-          <Table>
-            <TableHeader>
-              <TableRow>
-                <TableHead>Program</TableHead>
-                <TableHead>University</TableHead>
-                <TableHead>Country</TableHead>
-                <TableHead>Degree</TableHead>
-                <TableHead>Tuition</TableHead>
-                <TableHead>Status</TableHead>
-                <TableHead className="text-right">Actions</TableHead>
-              </TableRow>
-            </TableHeader>
-            <TableBody>
-              {filteredPrograms.length === 0 ? (
-                <TableRow>
-                  <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                    No programs found
-                  </TableCell>
-                </TableRow>
-              ) : (
-                filteredPrograms.map((program) => (
-                  <TableRow key={program.id}>
-                    <TableCell>
-                      <div>
-                        <p className="font-medium">{program.program_name}</p>
-                        {program.field_of_study && (
-                          <p className="text-sm text-muted-foreground">{program.field_of_study}</p>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell>{program.university_name}</TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
-                        <span>{getCountryFlag(program.country_code)}</span>
-                        <span>{program.country_name}</span>
-                      </div>
-                    </TableCell>
-                    <TableCell>{program.degree_type || "-"}</TableCell>
-                    <TableCell>{program.tuition_range || "-"}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1">
-                        <Badge variant={program.is_active ? "default" : "secondary"}>
-                          {program.is_active ? "Active" : "Inactive"}
-                        </Badge>
-                        {program.featured && (
-                          <Badge variant="outline" className="text-xs">Featured</Badge>
-                        )}
-                        {program.scholarship_available && (
-                          <Badge variant="outline" className="text-xs text-green-600">Scholarship</Badge>
-                        )}
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <div className="flex items-center justify-end gap-2">
-                        {program.url && (
-                          <Button variant="ghost" size="icon" asChild>
-                            <a href={program.url} target="_blank" rel="noopener noreferrer">
-                              <ExternalLink className="h-4 w-4" />
-                            </a>
-                          </Button>
-                        )}
-                        <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(program)}>
-                          <Edit className="h-4 w-4" />
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleToggleActive(program)}>
-                          {program.is_active ? "🔴" : "🟢"}
-                        </Button>
-                        <Button variant="ghost" size="icon" onClick={() => handleDelete(program.id)}>
-                          <Trash2 className="h-4 w-4 text-destructive" />
-                        </Button>
-                      </div>
-                    </TableCell>
+        {loading ? (
+          <DashboardTableSkeleton rows={5} columns={6} />
+        ) : error ? (
+          <DashboardErrorState title="Error" message={error} onRetry={loadPrograms} />
+        ) : (
+          <>
+            <div className="rounded-md border overflow-x-auto">
+              <Table>
+                <TableHeader>
+                  <TableRow>
+                    <TableHead>Program</TableHead>
+                    <TableHead>University</TableHead>
+                    <TableHead>Country</TableHead>
+                    <TableHead>Degree</TableHead>
+                    <TableHead>Tuition</TableHead>
+                    <TableHead>Status</TableHead>
+                    <TableHead className="text-right">Actions</TableHead>
                   </TableRow>
-                ))
-              )}
-            </TableBody>
-          </Table>
-        </div>
+                </TableHeader>
+                <TableBody>
+                  {programs.length === 0 ? (
+                    <TableRow>
+                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
+                        No programs found
+                      </TableCell>
+                    </TableRow>
+                  ) : (
+                    programs.map((program) => (
+                      <TableRow key={program.id}>
+                        <TableCell>
+                          <div>
+                            <p className="font-medium line-clamp-1">{program.program_name}</p>
+                            {program.field_of_study && (
+                              <p className="text-xs text-muted-foreground">{program.field_of_study}</p>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell>{program.university_name}</TableCell>
+                        <TableCell>
+                          <div className="flex items-center gap-2">
+                            <span className="text-lg">{getCountryFlag(program.country_code)}</span>
+                            <span>{program.country_name}</span>
+                          </div>
+                        </TableCell>
+                        <TableCell>{program.degree_type || "-"}</TableCell>
+                        <TableCell>{program.tuition_range || "-"}</TableCell>
+                        <TableCell>
+                          <div className="flex flex-col gap-1 items-start">
+                            <Badge variant={program.is_active ? "default" : "secondary"} className="text-xs">
+                              {program.is_active ? "Active" : "Inactive"}
+                            </Badge>
+                            {program.featured && (
+                              <Badge variant="outline" className="text-[10px]">
+                                Featured
+                              </Badge>
+                            )}
+                            {program.scholarship_available && (
+                              <Badge variant="outline" className="text-[10px] text-green-600 border-green-200">
+                                Scholarship
+                              </Badge>
+                            )}
+                          </div>
+                        </TableCell>
+                        <TableCell className="text-right">
+                          <div className="flex items-center justify-end gap-2">
+                            {program.url && (
+                              <Button variant="ghost" size="icon" asChild title="Visit URL">
+                                <a href={program.url} target="_blank" rel="noopener noreferrer">
+                                  <ExternalLink className="h-4 w-4" />
+                                </a>
+                              </Button>
+                            )}
+                            <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(program)}>
+                              <Edit className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => handleToggleActive(program)}
+                              title={program.is_active ? "Deactivate" : "Activate"}
+                            >
+                              {program.is_active ? "🛑" : "✅"}
+                            </Button>
+                            <Button variant="ghost" size="icon" onClick={() => handleDelete(program.id)}>
+                              <Trash2 className="h-4 w-4 text-destructive" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    ))
+                  )}
+                </TableBody>
+              </Table>
+            </div>
+
+            {/* Pagination Controls */}
+            {totalPages > 1 && (
+              <div className="flex items-center justify-end space-x-2 py-4">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  <ChevronLeft className="h-4 w-4 mr-2" /> Previous
+                </Button>
+                <span className="text-sm text-muted-foreground">
+                  Page {page} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                  disabled={page === totalPages}
+                >
+                  Next <ChevronRight className="h-4 w-4 ml-2" />
+                </Button>
+              </div>
+            )}
+          </>
+        )}
       </CardContent>
 
-      {/* Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
         <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>
-              {editingProgram ? "Edit Program" : "Add New Program"}
-            </DialogTitle>
+            <DialogTitle>{editingProgram ? "Edit Program" : "Add New Program"}</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
@@ -423,7 +484,7 @@ export function StudyAbroadManager() {
                     <SelectValue placeholder="Select country" />
                   </SelectTrigger>
                   <SelectContent>
-                    {COUNTRIES.map(country => (
+                    {COUNTRIES.map((country) => (
                       <SelectItem key={country.code} value={country.code}>
                         {country.flag} {country.name}
                       </SelectItem>
@@ -433,13 +494,18 @@ export function StudyAbroadManager() {
               </div>
               <div className="space-y-2">
                 <Label>Degree Type</Label>
-                <Select value={formData.degree_type} onValueChange={(v) => setFormData(prev => ({ ...prev, degree_type: v }))}>
+                <Select
+                  value={formData.degree_type}
+                  onValueChange={(v) => setFormData((prev) => ({ ...prev, degree_type: v }))}
+                >
                   <SelectTrigger>
                     <SelectValue placeholder="Select degree" />
                   </SelectTrigger>
                   <SelectContent>
-                    {DEGREE_TYPES.map(type => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    {DEGREE_TYPES.map((type) => (
+                      <SelectItem key={type} value={type}>
+                        {type}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -450,8 +516,7 @@ export function StudyAbroadManager() {
               <Label>University Name *</Label>
               <Input
                 value={formData.university_name}
-                onChange={(e) => setFormData(prev => ({ ...prev, university_name: e.target.value }))}
-                placeholder="e.g., University of Oxford"
+                onChange={(e) => setFormData((prev) => ({ ...prev, university_name: e.target.value }))}
               />
             </div>
 
@@ -459,8 +524,7 @@ export function StudyAbroadManager() {
               <Label>Program Name *</Label>
               <Input
                 value={formData.program_name}
-                onChange={(e) => setFormData(prev => ({ ...prev, program_name: e.target.value }))}
-                placeholder="e.g., MSc Computer Science"
+                onChange={(e) => setFormData((prev) => ({ ...prev, program_name: e.target.value }))}
               />
             </div>
 
@@ -469,15 +533,14 @@ export function StudyAbroadManager() {
                 <Label>Field of Study</Label>
                 <Input
                   value={formData.field_of_study}
-                  onChange={(e) => setFormData(prev => ({ ...prev, field_of_study: e.target.value }))}
-                  placeholder="e.g., Computer Science"
+                  onChange={(e) => setFormData((prev) => ({ ...prev, field_of_study: e.target.value }))}
                 />
               </div>
               <div className="space-y-2">
                 <Label>Duration</Label>
                 <Input
                   value={formData.duration}
-                  onChange={(e) => setFormData(prev => ({ ...prev, duration: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, duration: e.target.value }))}
                   placeholder="e.g., 2 years"
                 />
               </div>
@@ -488,27 +551,34 @@ export function StudyAbroadManager() {
                 <Label>Tuition Range</Label>
                 <Input
                   value={formData.tuition_range}
-                  onChange={(e) => setFormData(prev => ({ ...prev, tuition_range: e.target.value }))}
-                  placeholder="e.g., $30,000 - $50,000/year"
+                  onChange={(e) => setFormData((prev) => ({ ...prev, tuition_range: e.target.value }))}
+                  placeholder="$30k - $50k"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Application Deadline</Label>
+                <Label>Deadline</Label>
                 <Input
                   type="date"
                   value={formData.application_deadline}
-                  onChange={(e) => setFormData(prev => ({ ...prev, application_deadline: e.target.value }))}
+                  onChange={(e) => setFormData((prev) => ({ ...prev, application_deadline: e.target.value }))}
                 />
               </div>
             </div>
 
             <div className="space-y-2">
-              <Label>Program URL</Label>
-              <Input
-                value={formData.url}
-                onChange={(e) => setFormData(prev => ({ ...prev, url: e.target.value }))}
-                placeholder="https://..."
-              />
+              <Label>Intake Months</Label>
+              <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/20">
+                {INTAKE_MONTHS.map((month) => (
+                  <Badge
+                    key={month}
+                    variant={formData.intake_months.includes(month) ? "default" : "outline"}
+                    className="cursor-pointer hover:bg-primary/80"
+                    onClick={() => toggleIntakeMonth(month)}
+                  >
+                    {month} {formData.intake_months.includes(month) && <Check className="w-3 h-3 ml-1" />}
+                  </Badge>
+                ))}
+              </div>
             </div>
 
             <div className="space-y-2">
@@ -517,50 +587,66 @@ export function StudyAbroadManager() {
                 <Input
                   value={requirementInput}
                   onChange={(e) => setRequirementInput(e.target.value)}
-                  placeholder="Add a requirement"
-                  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), handleAddRequirement())}
+                  placeholder="Add requirement"
+                  onKeyDown={(e) => e.key === "Enter" && handleAddRequirement()}
                 />
-                <Button type="button" variant="outline" onClick={handleAddRequirement}>Add</Button>
+                <Button type="button" variant="outline" onClick={handleAddRequirement}>
+                  Add
+                </Button>
               </div>
-              {formData.requirements.length > 0 && (
-                <div className="flex flex-wrap gap-2 mt-2">
-                  {formData.requirements.map((req, i) => (
-                    <Badge key={i} variant="secondary" className="cursor-pointer" onClick={() => handleRemoveRequirement(i)}>
-                      {req} ✕
-                    </Badge>
-                  ))}
-                </div>
-              )}
+              <div className="flex flex-wrap gap-2 mt-2">
+                {formData.requirements.map((req, i) => (
+                  <Badge
+                    key={i}
+                    variant="secondary"
+                    className="cursor-pointer"
+                    onClick={() => handleRemoveRequirement(i)}
+                  >
+                    {req} ✕
+                  </Badge>
+                ))}
+              </div>
             </div>
 
-            <div className="flex flex-wrap gap-6">
+            <div className="space-y-2">
+              <Label>Program URL</Label>
+              <Input
+                value={formData.url}
+                onChange={(e) => setFormData((prev) => ({ ...prev, url: e.target.value }))}
+                placeholder="https://..."
+              />
+            </div>
+
+            <div className="flex flex-wrap gap-6 pt-2">
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={formData.scholarship_available}
-                  onCheckedChange={(v) => setFormData(prev => ({ ...prev, scholarship_available: v }))}
+                  onCheckedChange={(v) => setFormData((prev) => ({ ...prev, scholarship_available: v }))}
                 />
-                <Label>Scholarship Available</Label>
+                <Label>Scholarship</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={formData.featured}
-                  onCheckedChange={(v) => setFormData(prev => ({ ...prev, featured: v }))}
+                  onCheckedChange={(v) => setFormData((prev) => ({ ...prev, featured: v }))}
                 />
                 <Label>Featured</Label>
               </div>
               <div className="flex items-center space-x-2">
                 <Switch
                   checked={formData.is_active}
-                  onCheckedChange={(v) => setFormData(prev => ({ ...prev, is_active: v }))}
+                  onCheckedChange={(v) => setFormData((prev) => ({ ...prev, is_active: v }))}
                 />
                 <Label>Active</Label>
               </div>
             </div>
 
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>Cancel</Button>
+            <div className="flex justify-end gap-2 pt-4 border-t mt-4">
+              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
+                Cancel
+              </Button>
               <Button onClick={handleSave} disabled={saving}>
-                {saving ? "Saving..." : editingProgram ? "Update Program" : "Create Program"}
+                {saving ? "Saving..." : editingProgram ? "Update" : "Create"}
               </Button>
             </div>
           </div>
