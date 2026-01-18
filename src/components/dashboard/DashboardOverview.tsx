@@ -61,9 +61,9 @@ export function DashboardOverview() {
   const [isLoading, setIsLoading] = useState(true);
 
   // Helper to fetch count safely
-  const fetchCount = async (table: string, query?: any) => {
+  const fetchCount = async (table: string, query?: (q: any) => any) => {
     try {
-      let q = supabase.from(table).select("*", { count: "exact", head: true });
+      let q = (supabase.from as any)(table).select("*", { count: "exact", head: true });
       if (query) q = query(q);
       const { count, error } = await withTimeout(Promise.resolve(q), TIMEOUTS.DEFAULT, `Count ${table} timed out`);
       if (error) throw error;
