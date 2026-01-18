@@ -1,19 +1,29 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { CreditGateModal } from "@/components/credits/CreditGateModal";
 import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
 import { getCourseCredits } from "@/lib/creditPricing";
-import { 
-  ArrowLeft, BookOpen, Calendar, Users, MapPin, Clock, 
-  Play, RefreshCw, AlertCircle, Coins
+import {
+  ArrowLeft,
+  BookOpen,
+  Calendar,
+  Users,
+  MapPin,
+  Clock,
+  Play,
+  RefreshCw,
+  AlertCircle,
+  Coins,
+  CheckCircle,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 
@@ -34,12 +44,12 @@ interface Course {
   modules_count: number | null;
 }
 
-const contentTypeConfig = {
-  free_video: { icon: Play, label: "Free Video" },
-  recorded_course: { icon: BookOpen, label: "Recorded Course" },
-  live_webinar: { icon: Calendar, label: "Live Webinar" },
-  batch_class: { icon: Users, label: "Batch Class" },
-  offline_seminar: { icon: MapPin, label: "Offline Seminar" },
+const CONTENT_TYPE_CONFIG: Record<ContentType, { icon: any; label: string; color: string }> = {
+  free_video: { icon: Play, label: "Free Video", color: "bg-green-100 text-green-800" },
+  recorded_course: { icon: BookOpen, label: "Recorded Course", color: "bg-blue-100 text-blue-800" },
+  live_webinar: { icon: Calendar, label: "Live Webinar", color: "bg-purple-100 text-purple-800" },
+  batch_class: { icon: Users, label: "Batch Class", color: "bg-orange-100 text-orange-800" },
+  offline_seminar: { icon: MapPin, label: "Offline Seminar", color: "bg-red-100 text-red-800" },
 };
 
 export default function AppCourseDetail() {
@@ -47,6 +57,7 @@ export default function AppCourseDetail() {
   const navigate = useNavigate();
   const { talent } = useTalent();
   const { balance, deductCustomAmount, refreshBalance } = useCredits();
+
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadingError, setLoadingError] = useState<string | null>(null);
@@ -55,9 +66,12 @@ export default function AppCourseDetail() {
   const [showCreditGate, setShowCreditGate] = useState(false);
   const [showPurchaseSheet, setShowPurchaseSheet] = useState(false);
 
+  // Ref to prevent double-submission race conditions
+  const isProcessing = useRef(false);
+
   useEffect(() => {
     if (slug) fetchCourse();
-  }, [slug]);
+  }, [slug, talent?.id]); // Re-fetch if talent loads later
 
   const fetchCourse = async () => {
     setLoadingError(null);
@@ -77,8 +91,8 @@ export default function AppCourseDetail() {
 
       setCourse(data);
 
-      // Check enrollment if user has talent profile
-      if (talent) {
+      // Check enrollment
+      if (talent?.id) {
         const { data: enrollment } = await supabase
           .from("enrollments")
           .select("id")
@@ -90,7 +104,7 @@ export default function AppCourseDetail() {
       }
     } catch (error: any) {
       console.error("Error fetching course:", error);
-      setLoadingError("Failed to load course.");
+      setLoadingError("Failed to load course details.");
     } finally {
       setIsLoading(false);
     }
@@ -98,12 +112,11 @@ export default function AppCourseDetail() {
 
   const handleEnrollClick = () => {
     if (!talent) {
-      toast.error("Please complete your profile first");
-      navigate("/app/profile");
+      toast.error("Please log in to enroll");
+      navigate("/auth");
       return;
     }
 
-    // Free courses bypass credit gate
     if (course && course.price === 0) {
       handleEnroll();
     } else {
@@ -112,97 +125,97 @@ export default function AppCourseDetail() {
   };
 
   const handleEnroll = async () => {
-    if (!talent || !course) return;
+    if (!talent || !course || isProcessing.current) return;
 
+    isProcessing.current = true;
     setIsEnrolling(true);
     setShowCreditGate(false);
 
     try {
-      const creditCost = getCourseCredits(course.price);
-
-      // Deduct credits for paid courses
+      // 1. Process Payment (Credits)
       if (course.price > 0) {
+        const creditCost = getCourseCredits(course.price);
         const success = await deductCustomAmount(
           creditCost,
-          'COURSE_ENROLLMENT',
+          "COURSE_ENROLLMENT",
           course.id,
-          `Enrolled in: ${course.title}`
+          `Enrolled in: ${course.title}`,
         );
+
         if (!success) {
-          toast.error("Failed to process credits");
-          return;
+          isProcessing.current = false;
+          setIsEnrolling(false);
+          return; // Stop if payment failed
         }
       }
 
-      // First check if student profile exists
-      const { data: student } = await supabase
+      // 2. Ensure Student Profile Exists
+      let studentId = talent.userId; // Default mapping strategy
+
+      // Check if explicit student record exists
+      const { data: existingStudent } = await supabase
         .from("students")
         .select("id")
         .eq("user_id", talent.userId)
         .maybeSingle();
 
-      if (!student) {
-        // Create student profile
+      if (!existingStudent) {
         const { data: newStudent, error: createError } = await supabase
           .from("students")
-          .insert([{
-            student_id: talent.userId,
-            user_id: talent.userId,
-            full_name: talent.fullName,
-            email: talent.email,
-            phone: talent.phone,
-            status: "free_learner"
-          }])
+          .insert([
+            {
+              student_id: talent.userId, // Legacy mapping
+              user_id: talent.userId,
+              full_name: talent.fullName,
+              email: talent.email,
+              phone: talent.phone,
+              status: "free_learner",
+            },
+          ])
           .select()
           .single();
 
         if (createError) throw createError;
-
-        const { error: enrollError } = await supabase
-          .from("enrollments")
-          .insert({
-            student_id: newStudent.id,
-            content_id: course.id,
-            talent_id: talent.id,
-            status: "active", // Always active since payment is via credits
-          });
-
-        if (enrollError) throw enrollError;
+        studentId = newStudent.id;
       } else {
-        const { error: enrollError } = await supabase
-          .from("enrollments")
-          .insert({
-            student_id: student.id,
-            content_id: course.id,
-            talent_id: talent.id,
-            status: "active", // Always active since payment is via credits
-          });
-
-        if (enrollError) {
-          if (enrollError.code === '23505') {
-            toast.info("You're already enrolled in this course");
-            setIsEnrolled(true);
-            return;
-          }
-          throw enrollError;
-        }
+        studentId = existingStudent.id;
       }
 
-      toast.success("Successfully enrolled!");
-      setIsEnrolled(true);
-      refreshBalance(); // Refresh balance
+      // 3. Create Enrollment Record
+      const { error: enrollError } = await supabase.from("enrollments").insert({
+        student_id: studentId,
+        content_id: course.id,
+        talent_id: talent.id,
+        status: "active",
+        enrolled_at: new Date().toISOString(),
+      });
+
+      if (enrollError) {
+        if (enrollError.code === "23505") {
+          // Unique violation
+          toast.info("You are already enrolled!");
+          setIsEnrolled(true);
+        } else {
+          throw enrollError;
+        }
+      } else {
+        toast.success("Successfully enrolled!");
+        setIsEnrolled(true);
+        refreshBalance();
+      }
     } catch (error: any) {
       console.error("Enrollment error:", error);
-      toast.error("Failed to enroll. Please try again.");
+      toast.error("Failed to process enrollment.");
     } finally {
       setIsEnrolling(false);
+      isProcessing.current = false;
     }
   };
 
   const getYouTubeEmbedUrl = (url: string | null) => {
     if (!url) return null;
-    const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-    return videoIdMatch ? `https://www.youtube.com/embed/${videoIdMatch[1]}` : null;
+    const match = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
+    return match ? `https://www.youtube.com/embed/${match[1]}` : null;
   };
 
   const creditCost = course ? getCourseCredits(course.price) : 0;
@@ -225,16 +238,13 @@ export default function AppCourseDetail() {
         <Card>
           <CardContent className="pt-6 text-center">
             <AlertCircle className="h-10 w-10 text-destructive mx-auto mb-4" />
-            <h2 className="text-lg font-semibold mb-2">Failed to Load Course</h2>
-            <p className="text-muted-foreground mb-4">{loadingError}</p>
+            <h2 className="text-lg font-semibold mb-2">Course Unavailable</h2>
+            <p className="text-muted-foreground mb-4">{loadingError || "Content not found"}</p>
             <div className="flex gap-2 justify-center">
-              <Button onClick={fetchCourse}>
-                <RefreshCw className="h-4 w-4 mr-2" />
-                Try Again
+              <Button onClick={fetchCourse} variant="outline">
+                <RefreshCw className="h-4 w-4 mr-2" /> Try Again
               </Button>
-              <Button variant="outline" onClick={() => navigate("/app/learning/courses")}>
-                Browse Courses
-              </Button>
+              <Button onClick={() => navigate("/app/learning/courses")}>Browse Courses</Button>
             </div>
           </CardContent>
         </Card>
@@ -242,25 +252,24 @@ export default function AppCourseDetail() {
     );
   }
 
-  const config = contentTypeConfig[course.content_type];
-  const Icon = config.icon;
+  const config = CONTENT_TYPE_CONFIG[course.content_type] || CONTENT_TYPE_CONFIG.recorded_course;
   const embedUrl = getYouTubeEmbedUrl(course.youtube_url);
 
   return (
     <div className="max-w-4xl mx-auto px-4 py-6">
-      <Button 
-        variant="ghost" 
-        size="sm" 
+      <Button
+        variant="ghost"
+        size="sm"
         onClick={() => navigate("/app/learning/courses")}
-        className="mb-4 -ml-2"
+        className="mb-4 -ml-2 hover:bg-muted"
       >
-        <ArrowLeft className="w-4 h-4 mr-2" /> Back
+        <ArrowLeft className="w-4 h-4 mr-2" /> Back to Courses
       </Button>
 
-      {/* Cover or Video */}
-      {embedUrl ? (
-        <div className="mb-6 rounded-lg overflow-hidden">
-          <AspectRatio ratio={16 / 9}>
+      {/* Media Player / Cover */}
+      <div className="mb-6 rounded-xl overflow-hidden bg-black shadow-lg">
+        <AspectRatio ratio={16 / 9}>
+          {embedUrl ? (
             <iframe
               src={embedUrl}
               title={course.title}
@@ -268,102 +277,128 @@ export default function AppCourseDetail() {
               allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
               allowFullScreen
             />
-          </AspectRatio>
-        </div>
-      ) : course.cover_image_url ? (
-        <div className="mb-6 rounded-lg overflow-hidden">
-          <AspectRatio ratio={16 / 9}>
-            <img 
-              src={course.cover_image_url} 
+          ) : (
+            <img
+              src={course.cover_image_url || "/placeholder-course.jpg"}
               alt={course.title}
               className="w-full h-full object-cover"
             />
-          </AspectRatio>
-        </div>
-      ) : null}
+          )}
+        </AspectRatio>
+      </div>
 
-      {/* Header */}
-      <div className="mb-6">
-        <div className="flex flex-wrap gap-2 mb-2">
-          <Badge variant="secondary">{config.label}</Badge>
+      {/* Header Info */}
+      <div className="mb-8">
+        <div className="flex flex-wrap items-center gap-2 mb-3">
+          <Badge variant="secondary" className={config.color}>
+            <config.icon className="h-3 w-3 mr-1" />
+            {config.label}
+          </Badge>
           {course.price === 0 ? (
-            <Badge className="bg-green-500">Free</Badge>
+            <Badge className="bg-green-600 hover:bg-green-700">Free</Badge>
           ) : (
-            <Badge variant="outline" className="flex items-center gap-1">
-              <Coins className="h-3 w-3" />
-              {creditCost} credits
+            <Badge variant="outline" className="border-amber-500 text-amber-700 bg-amber-50">
+              <Coins className="h-3 w-3 mr-1" />
+              {creditCost} Credits
             </Badge>
           )}
         </div>
-        <h1 className="text-xl font-bold mb-2">{course.title}</h1>
+
+        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">{course.title}</h1>
+
         {course.instructor_name && (
-          <p className="text-muted-foreground">by {course.instructor_name}</p>
+          <p className="text-muted-foreground flex items-center gap-2">
+            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
+              {course.instructor_name.charAt(0)}
+            </span>
+            Instructor: <span className="font-medium text-foreground">{course.instructor_name}</span>
+          </p>
         )}
       </div>
 
-      {/* Quick Stats */}
-      <div className="flex flex-wrap gap-4 mb-6 text-sm text-muted-foreground">
+      {/* Stats Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
         {course.duration_hours && (
-          <span className="flex items-center gap-1">
-            <Clock className="h-4 w-4" />
-            {course.duration_hours} hours
-          </span>
+          <div className="p-3 bg-muted/50 rounded-lg flex items-center gap-3">
+            <div className="p-2 bg-background rounded-full shadow-sm text-primary">
+              <Clock className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Duration</p>
+              <p className="font-semibold text-sm">{course.duration_hours}h</p>
+            </div>
+          </div>
         )}
         {course.modules_count && (
-          <span className="flex items-center gap-1">
-            <BookOpen className="h-4 w-4" />
-            {course.modules_count} modules
-          </span>
+          <div className="p-3 bg-muted/50 rounded-lg flex items-center gap-3">
+            <div className="p-2 bg-background rounded-full shadow-sm text-secondary">
+              <BookOpen className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Modules</p>
+              <p className="font-semibold text-sm">{course.modules_count}</p>
+            </div>
+          </div>
         )}
         {course.event_date && (
-          <span className="flex items-center gap-1">
-            <Calendar className="h-4 w-4" />
-            {new Date(course.event_date).toLocaleDateString()}
-          </span>
+          <div className="p-3 bg-muted/50 rounded-lg flex items-center gap-3">
+            <div className="p-2 bg-background rounded-full shadow-sm text-accent">
+              <Calendar className="h-4 w-4" />
+            </div>
+            <div>
+              <p className="text-xs text-muted-foreground">Start Date</p>
+              <p className="font-semibold text-sm">{new Date(course.event_date).toLocaleDateString()}</p>
+            </div>
+          </div>
         )}
       </div>
 
-      {/* CTA */}
-      {isEnrolled ? (
-        <Button 
-          size="lg" 
-          className="w-full mb-6"
-          onClick={() => navigate(`/app/learn/${course.slug}`)}
-        >
-          <Play className="h-4 w-4 mr-2" />
-          Continue Learning
-        </Button>
-      ) : (
-        <Button 
-          size="lg" 
-          className="w-full mb-6"
-          onClick={handleEnrollClick}
-          disabled={isEnrolling}
-        >
-          {isEnrolling ? (
-            "Enrolling..."
-          ) : course.price === 0 ? (
-            "Enroll Free"
-          ) : (
-            <span className="flex items-center gap-2">
-              <Coins className="h-4 w-4" />
-              Enroll - {creditCost} Credits
-            </span>
-          )}
-        </Button>
-      )}
+      {/* Primary Action */}
+      <div className="mb-8">
+        {isEnrolled ? (
+          <Button
+            size="lg"
+            className="w-full md:w-auto md:min-w-[200px] h-12 text-base shadow-lg hover:shadow-xl transition-all"
+            onClick={() => navigate(`/app/learning/courses/${course.slug}/play`)}
+          >
+            <Play className="h-5 w-5 mr-2 fill-current" />
+            Start Learning
+          </Button>
+        ) : (
+          <Button
+            size="lg"
+            className="w-full md:w-auto md:min-w-[200px] h-12 text-base shadow-lg hover:shadow-xl transition-all"
+            onClick={handleEnrollClick}
+            disabled={isEnrolling}
+          >
+            {isEnrolling ? (
+              <>
+                <Loader2 className="h-5 w-5 mr-2 animate-spin" />
+                Processing...
+              </>
+            ) : (
+              <>
+                Enroll Now
+                {course.price > 0 && <span className="ml-1 opacity-90 text-sm">({creditCost} credits)</span>}
+              </>
+            )}
+          </Button>
+        )}
+      </div>
 
-      {/* Description */}
+      {/* Description Content */}
       <Card>
-        <CardHeader>
-          <CardTitle className="text-base">About This Course</CardTitle>
+        <CardHeader className="pb-3 border-b">
+          <CardTitle className="text-lg">Course Overview</CardTitle>
         </CardHeader>
-        <CardContent>
-          <p className="text-muted-foreground whitespace-pre-wrap">{course.description}</p>
+        <CardContent className="pt-4">
+          <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground whitespace-pre-wrap leading-relaxed">
+            {course.description}
+          </div>
         </CardContent>
       </Card>
 
-      {/* Credit Gate Modal */}
+      {/* Modals */}
       <CreditGateModal
         isOpen={showCreditGate}
         onClose={() => setShowCreditGate(false)}
@@ -378,7 +413,6 @@ export default function AppCourseDetail() {
         isLoading={isEnrolling}
       />
 
-      {/* Credit Purchase Sheet */}
       <CreditPurchaseSheet
         isOpen={showPurchaseSheet}
         onClose={() => setShowPurchaseSheet(false)}
