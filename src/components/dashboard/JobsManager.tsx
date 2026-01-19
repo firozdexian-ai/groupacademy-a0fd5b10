@@ -1,8 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
-import { withTimeout } from "@/hooks/useQueryWithTimeout";
-import { TIMEOUTS } from "@/lib/timeoutConfig";
-import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,23 +17,15 @@ import {
   Trash2,
   Sparkles,
   MapPin,
-  Building2,
-  Calendar,
   Loader2,
   Copy,
-  Eye,
-  EyeOff,
-  Star,
-  Wand2,
-  Image,
   Share2,
-  Brain,
-  Link as LinkIcon,
   Linkedin,
   Facebook,
   MessageCircle,
   ChevronLeft,
   ChevronRight,
+  Wand2,
 } from "lucide-react";
 import {
   DropdownMenu,
@@ -46,6 +35,9 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { toast } from "sonner";
 import { format, endOfMonth } from "date-fns";
+import { withTimeout } from "@/hooks/useQueryWithTimeout";
+import { TIMEOUTS } from "@/lib/timeoutConfig";
+import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
 
 // --- Internal Hook for Debounce ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -118,14 +110,6 @@ const EXPERIENCE_LEVELS: { value: ExperienceLevel; label: string }[] = [
   { value: "executive", label: "Executive" },
 ];
 
-const SOURCE_PLATFORMS: { value: SourcePlatform; label: string }[] = [
-  { value: "facebook", label: "Facebook" },
-  { value: "linkedin", label: "LinkedIn" },
-  { value: "bdjobs", label: "BdJobs" },
-  { value: "website", label: "Company Website" },
-  { value: "other", label: "Other" },
-];
-
 const getDefaultDeadline = () => {
   const lastDay = endOfMonth(new Date());
   return format(lastDay, "yyyy-MM-dd");
@@ -160,8 +144,7 @@ const emptyJob = {
 
 const ITEMS_PER_PAGE = 10;
 
-// --- Sub-Component: Job Form (Inline to keep single file) ---
-// Extracted to reduce main component complexity
+// --- Sub-Component: Job Form ---
 const JobForm = ({
   initialData,
   categories,
@@ -250,7 +233,7 @@ const JobForm = ({
 
   const uploadToStorage = async (file: File, path: string) => {
     const fileName = `${path}/${Date.now()}-${file.name.replace(/[^a-zA-Z0-9.-]/g, "")}`;
-    const { error: uploadError } = await supabase.storage.from("public-uploads").upload(fileName, file); // Ensure bucket exists
+    const { error: uploadError } = await supabase.storage.from("public-uploads").upload(fileName, file);
     if (uploadError) throw uploadError;
     const {
       data: { publicUrl },
@@ -527,7 +510,6 @@ const JobForm = ({
 
 // --- Main Component ---
 export function JobsManager() {
-  // Data State
   const [jobs, setJobs] = useState<Job[]>([]);
   const [categories, setCategories] = useState<ProfessionCategory[]>([]);
   const [loading, setLoading] = useState(true);
@@ -540,31 +522,26 @@ export function JobsManager() {
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // UI State
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingJob, setEditingJob] = useState<Job | null>(null);
   const [saving, setSaving] = useState(false);
 
-  // Fetch Data (Paginated)
   const loadJobs = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
       let query = supabase.from("jobs").select("*", { count: "exact" }).order("created_at", { ascending: false });
 
-      // Search Logic
       if (debouncedSearch) {
         query = query.or(
           `title.ilike.%${debouncedSearch}%,company_name.ilike.%${debouncedSearch}%,location.ilike.%${debouncedSearch}%`,
         );
       }
 
-      // Filter Logic
       if (statusFilter === "active") query = query.eq("is_active", true);
       if (statusFilter === "inactive") query = query.eq("is_active", false);
       if (statusFilter === "featured") query = query.eq("is_featured", true);
 
-      // Pagination
       const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
       query = query.range(from, to);
@@ -597,7 +574,6 @@ export function JobsManager() {
   const handleSaveJob = async (formData: any) => {
     setSaving(true);
     try {
-      // Company Logic (Create or Update)
       let companyId: string | null = null;
       const companyName = formData.company_name.trim();
 
@@ -622,10 +598,9 @@ export function JobsManager() {
       const jobData = {
         ...formData,
         company_id: companyId,
-        requirements: formData.requirements, // Ensure array type
+        requirements: formData.requirements,
       };
 
-      // Remove ID from insert data to prevent duplicate key error
       delete jobData.id;
 
       if (editingJob) {
@@ -649,6 +624,49 @@ export function JobsManager() {
     await supabase.from("jobs").delete().eq("id", id);
     toast.success("Job deleted");
     loadJobs();
+  };
+
+  const handleShare = async (platform: "linkedin" | "facebook" | "whatsapp", job: Job) => {
+    const jobUrl = `${window.location.origin}/app/jobs/${job.id}`;
+
+    // Construct a rich caption
+    const caption =
+      `🚀 Hiring Alert: ${job.title}\n\n` +
+      `🏢 Company: ${job.company_name}\n` +
+      `📍 Location: ${job.location || "Remote"}\n` +
+      `📝 Type: ${job.job_type.replace("_", " ")}\n\n` +
+      `Apply here: ${jobUrl}\n\n` +
+      `#hiring #jobsearch #${job.company_name.replace(/\s+/g, "")} #career`;
+
+    // 1. Copy to clipboard
+    try {
+      await navigator.clipboard.writeText(caption);
+      toast.success("Caption copied! Paste it in your post.");
+    } catch (err) {
+      console.error("Clipboard failed", err);
+      toast.error("Failed to copy caption to clipboard");
+    }
+
+    // 2. Open Share URL
+    let url = "";
+    switch (platform) {
+      case "linkedin":
+        // LinkedIn doesn't accept pre-filled text in share URL easily, relying on copy-paste
+        url = `https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(jobUrl)}`;
+        break;
+      case "facebook":
+        // Facebook also strictly limits pre-filling
+        url = `https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(jobUrl)}`;
+        break;
+      case "whatsapp":
+        // WhatsApp supports pre-filling text
+        url = `https://wa.me/?text=${encodeURIComponent(caption)}`;
+        break;
+    }
+
+    if (url) {
+      window.open(url, "_blank");
+    }
   };
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
@@ -756,30 +774,22 @@ export function JobsManager() {
                               </Button>
                             </DropdownMenuTrigger>
                             <DropdownMenuContent align="end">
-                              <DropdownMenuItem onClick={() => {
-                                const jobUrl = `${window.location.origin}/app/jobs/${job.id}`;
-                                window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(jobUrl)}`, '_blank');
-                              }}>
+                              <DropdownMenuItem onClick={() => handleShare("linkedin", job)}>
                                 <Linkedin className="w-4 h-4 mr-2" /> Share to LinkedIn
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => {
-                                const jobUrl = `${window.location.origin}/app/jobs/${job.id}`;
-                                window.open(`https://www.facebook.com/sharer/sharer.php?u=${encodeURIComponent(jobUrl)}`, '_blank');
-                              }}>
+                              <DropdownMenuItem onClick={() => handleShare("facebook", job)}>
                                 <Facebook className="w-4 h-4 mr-2" /> Share to Facebook
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => {
-                                const jobUrl = `${window.location.origin}/app/jobs/${job.id}`;
-                                const message = `🔔 Hiring Alert! ${job.title} at ${job.company_name}${job.location ? ` in ${job.location}` : ''}. Apply now!`;
-                                window.open(`https://wa.me/?text=${encodeURIComponent(message + ' ' + jobUrl)}`, '_blank');
-                              }}>
+                              <DropdownMenuItem onClick={() => handleShare("whatsapp", job)}>
                                 <MessageCircle className="w-4 h-4 mr-2" /> Share to WhatsApp
                               </DropdownMenuItem>
-                              <DropdownMenuItem onClick={() => {
-                                const jobUrl = `${window.location.origin}/app/jobs/${job.id}`;
-                                navigator.clipboard.writeText(jobUrl);
-                                toast.success('Job link copied to clipboard!');
-                              }}>
+                              <DropdownMenuItem
+                                onClick={() => {
+                                  const jobUrl = `${window.location.origin}/app/jobs/${job.id}`;
+                                  navigator.clipboard.writeText(jobUrl);
+                                  toast.success("Job link copied to clipboard!");
+                                }}
+                              >
                                 <Copy className="w-4 h-4 mr-2" /> Copy Link
                               </DropdownMenuItem>
                             </DropdownMenuContent>
