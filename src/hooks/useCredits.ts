@@ -37,6 +37,13 @@ interface UseCreditsReturn {
   transactionHistory: CreditTransaction[];
 }
 
+// --- Helper: Validate UUID ---
+const isValidUUID = (id: string | null | undefined) => {
+  if (!id) return false;
+  const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
+  return uuidRegex.test(id);
+};
+
 export function useCredits(): UseCreditsReturn {
   const { talent } = useTalent();
   const { toast } = useToast();
@@ -115,7 +122,6 @@ export function useCredits(): UseCreditsReturn {
   }, []);
 
   // --- Helper: Direct DB Fallback for Deductions ---
-  // This runs if the secure RPC function is missing
   const performDirectDeduction = async (
     amount: number,
     serviceType: string,
@@ -148,6 +154,9 @@ export function useCredits(): UseCreditsReturn {
     if (updateError) return { success: false, error: updateError.message };
 
     // 3. Log Transaction
+    // Sanitize reference ID: If it's not a valid UUID, force it to null
+    const safeReferenceId = isValidUUID(referenceId) ? referenceId : null;
+
     await supabase.from("credit_transactions").insert({
       talent_id: talent.id,
       amount: -amount, // Negative for deduction
@@ -155,7 +164,7 @@ export function useCredits(): UseCreditsReturn {
       transaction_type: "usage",
       service_type: serviceType,
       description: description,
-      reference_id: referenceId || null,
+      reference_id: safeReferenceId, // Use sanitized ID
     });
 
     return { success: true, new_balance: newBalance };
@@ -177,12 +186,15 @@ export function useCredits(): UseCreditsReturn {
         return false;
       }
 
+      // Sanitize reference ID early
+      const safeReferenceId = isValidUUID(referenceId) ? referenceId : null;
+
       try {
         // Attempt 1: Try Secure RPC
         const { data, error } = await (supabase.rpc as any)("deduct_credits", {
           p_amount: cost,
           p_service_type: service,
-          p_reference_id: referenceId || null,
+          p_reference_id: safeReferenceId, // Pass sanitized ID
           p_description: description || `Used ${CREDIT_CONFIG.SERVICES[service]?.name || service}`,
         });
 
@@ -202,7 +214,7 @@ export function useCredits(): UseCreditsReturn {
           const fallbackResult = await performDirectDeduction(
             cost,
             service,
-            referenceId,
+            referenceId, // Helper will sanitize this again internally
             description || `Used ${CREDIT_CONFIG.SERVICES[service]?.name || service}`,
           );
 
@@ -223,9 +235,15 @@ export function useCredits(): UseCreditsReturn {
         return true;
       } catch (error: any) {
         console.error("Error deducting credits:", error);
+
+        // Show specific error if it's the UUID mismatch, otherwise generic
+        const errorMsg = error.message?.includes("uuid")
+          ? "System Error: Invalid Reference ID format"
+          : "Could not process credit deduction.";
+
         toast({
           title: "Transaction Failed",
-          description: error.message || "Could not process credit deduction.",
+          description: errorMsg,
           variant: "destructive",
         });
         return false;
@@ -247,12 +265,15 @@ export function useCredits(): UseCreditsReturn {
         return false;
       }
 
+      // Sanitize reference ID early
+      const safeReferenceId = isValidUUID(referenceId) ? referenceId : null;
+
       try {
         // Attempt 1: RPC
         const { data, error } = await (supabase.rpc as any)("deduct_credits", {
           p_amount: amount,
           p_service_type: serviceType,
-          p_reference_id: referenceId || null,
+          p_reference_id: safeReferenceId, // Pass sanitized ID
           p_description: description || `Service: ${serviceType}`,
         });
 
@@ -279,7 +300,7 @@ export function useCredits(): UseCreditsReturn {
         return true;
       } catch (error: any) {
         console.error("Error deducting credits:", error);
-        toast({ title: "Error", description: error.message, variant: "destructive" });
+        toast({ title: "Error", description: "Transaction failed", variant: "destructive" });
         return false;
       }
     },
