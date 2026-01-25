@@ -2996,6 +2996,51 @@ export type Database = {
           },
         ]
       }
+      service_analytics: {
+        Row: {
+          clicked_at: string | null
+          id: string
+          service_slug: string
+          source: string
+        }
+        Insert: {
+          clicked_at?: string | null
+          id?: string
+          service_slug: string
+          source: string
+        }
+        Update: {
+          clicked_at?: string | null
+          id?: string
+          service_slug?: string
+          source?: string
+        }
+        Relationships: []
+      }
+      service_share_logs: {
+        Row: {
+          channel: string
+          id: string
+          service_slug: string
+          shared_at: string | null
+          shared_by: string | null
+        }
+        Insert: {
+          channel: string
+          id?: string
+          service_slug: string
+          shared_at?: string | null
+          shared_by?: string | null
+        }
+        Update: {
+          channel?: string
+          id?: string
+          service_slug?: string
+          shared_at?: string | null
+          shared_by?: string | null
+        }
+        Relationships: []
+      }
       student_progress: {
         Row: {
           completed_at: string | null
@@ -3430,6 +3475,10 @@ export type Database = {
       }
       track_job_click: {
         Args: { p_job_id: string; p_source: string }
+        Returns: undefined
+      }
+      track_service_click: {
+        Args: { p_slug: string; p_source: string }
         Returns: undefined
       }
     }
