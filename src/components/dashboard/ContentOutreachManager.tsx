@@ -32,6 +32,7 @@ import { getOutreachWhatsAppLink, getFirstName } from "@/lib/outreachTemplates";
 interface Content {
   id: string;
   title: string;
+  slug: string;
   content_type: string;
   current_enrollment: number;
   is_published: boolean;
@@ -79,7 +80,7 @@ export function ContentOutreachManager() {
   const loadContents = useCallback(async () => {
     const { data, error } = await supabase
       .from("content")
-      .select("id, title, content_type, current_enrollment, is_published, description")
+      .select("id, title, slug, content_type, current_enrollment, is_published, description")
       .eq("is_published", true)
       .in("content_type", ["recorded_course", "batch_class", "live_webinar"])
       .order("title");
@@ -206,8 +207,8 @@ export function ContentOutreachManager() {
 
   const getShareLink = (source: string) => {
     if (!selectedContent) return "";
-    // Use public route for external sharing so anonymous visitors get tracked
-    return `${window.location.origin}/courses/${selectedContent.id}?source=${source}`;
+    // Use slug for public route - CourseDetail.tsx routes by slug
+    return `${window.location.origin}/courses/${selectedContent.slug}?source=${source}`;
   };
 
   const copyLink = async (source: string) => {

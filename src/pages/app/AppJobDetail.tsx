@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
@@ -78,6 +78,7 @@ const EXPERIENCE_LEVELS: Record<string, string> = {
 export default function AppJobDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const { talent } = useTalent();
 
   const [job, setJob] = useState<Job | null>(null);
@@ -87,8 +88,27 @@ export default function AppJobDetail() {
   const [isSaved, setIsSaved] = useState(false);
 
   useEffect(() => {
-    if (id) loadJobAndApplication();
+    if (id) {
+      trackSource();
+      loadJobAndApplication();
+    }
   }, [id, talent?.id]);
+
+  const trackSource = async () => {
+    const source = searchParams.get("source");
+    if (source && id) {
+      try {
+        await supabase.rpc("track_job_click", {
+          p_job_id: id,
+          p_source: source,
+        });
+        // Clean URL after tracking
+        window.history.replaceState({}, "", window.location.pathname);
+      } catch (err) {
+        console.error("Failed to track job click", err);
+      }
+    }
+  };
 
   const loadJobAndApplication = async () => {
     setLoading(true);

@@ -186,7 +186,8 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
   };
 
   if (!job) return null;
-  const jobUrl = `${window.location.origin}/app/jobs/${job.id}`;
+  // Use public route for external sharing to enable anonymous tracking
+  const jobUrl = `${window.location.origin}/jobs/${job.id}`;
   const getShareLink = (source: string) => `${jobUrl}?source=${source}`;
 
   const copyLink = async (source: string) => {
