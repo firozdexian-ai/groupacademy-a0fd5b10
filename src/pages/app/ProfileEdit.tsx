@@ -13,6 +13,7 @@ import { SkillsEditor } from "@/components/profile/SkillsEditor";
 import { ExperienceEditor, ExperienceEntry } from "@/components/profile/ExperienceEditor";
 import { EducationEditor, EducationEntry } from "@/components/profile/EducationEditor";
 import { supabase } from "@/integrations/supabase/client";
+import { PhoneInput } from "@/components/ui/phone-input"; // Added Import
 
 export default function ProfileEdit() {
   const navigate = useNavigate();
@@ -358,11 +359,11 @@ export default function ProfileEdit() {
               </div>
               <div className="space-y-2">
                 <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
+                <PhoneInput
                   value={formData.phone}
-                  onChange={(e) => handleChange("phone", e.target.value)}
-                  placeholder="+880 1XXX XXXXXX"
+                  onChange={(value) => handleChange("phone", value)}
+                  placeholder="Enter phone number"
+                  defaultCountry="BD"
                 />
               </div>
             </div>
