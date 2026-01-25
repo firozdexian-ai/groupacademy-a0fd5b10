@@ -1,5 +1,21 @@
 import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
-import { Home, GraduationCap, Briefcase, Globe, Bot, Sparkles, User, LogOut, Menu, X, Bell } from "lucide-react";
+import {
+  Home,
+  GraduationCap,
+  Briefcase,
+  Globe,
+  Bot,
+  Sparkles,
+  User,
+  LogOut,
+  Menu,
+  X,
+  Bell,
+  Bookmark,
+  FileText,
+  Settings,
+  ChevronRight,
+} from "lucide-react";
 import { useState } from "react";
 import { useTalent } from "@/hooks/useTalent";
 import { usePWADetect } from "@/hooks/usePWADetect";
@@ -13,13 +29,23 @@ import logoIcon from "@/assets/logo-icon.png";
 import { useTheme } from "next-themes";
 import { CreditBalance } from "@/components/credits/CreditBalance";
 import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
+import { Separator } from "@/components/ui/separator";
 
-const NAV_ITEMS = [
+// Desktop Sidebar Items (Full List)
+const DESKTOP_NAV_ITEMS = [
   { path: "/app/feed", label: "Feed", icon: Home },
+  { path: "/app/jobs", label: "Jobs", icon: Briefcase },
   { path: "/app/learning", label: "Learn", icon: GraduationCap },
   { path: "/app/services", label: "Services", icon: Sparkles },
-  { path: "/app/jobs", label: "Jobs", icon: Briefcase },
   { path: "/app/abroad", label: "Abroad", icon: Globe },
+  { path: "/app/agents", label: "AI Agents", icon: Bot },
+];
+
+// Mobile Bottom Nav (Priority List - Max 5)
+const MOBILE_NAV_ITEMS = [
+  { path: "/app/feed", label: "Feed", icon: Home },
+  { path: "/app/jobs", label: "Jobs", icon: Briefcase },
+  { path: "/app/learning", label: "Learn", icon: GraduationCap },
   { path: "/app/agents", label: "AI", icon: Bot },
 ];
 
@@ -34,6 +60,11 @@ export function TalentAppShell() {
   const handleSignOut = async () => {
     await signOut();
     navigate("/");
+  };
+
+  const handleMobileNavClick = (path: string) => {
+    navigate(path);
+    setMobileMenuOpen(false);
   };
 
   // 1. Loading State (PWA Branded)
@@ -81,7 +112,7 @@ export function TalentAppShell() {
         {/* Sidebar Navigation */}
         <ScrollArea className="flex-1 px-4 py-6">
           <nav className="space-y-2">
-            {NAV_ITEMS.map((item) => (
+            {DESKTOP_NAV_ITEMS.map((item) => (
               <NavLink
                 key={item.path}
                 to={item.path}
@@ -141,77 +172,172 @@ export function TalentAppShell() {
 
           <div className="flex items-center gap-2">
             <NotificationDropdown />
-
-            <Button
-              variant="ghost"
-              size="icon"
-              className="rounded-xl"
-              onClick={() => setMobileMenuOpen(!mobileMenuOpen)}
-            >
-              {mobileMenuOpen ? <X className="h-5 w-5" /> : <Menu className="h-5 w-5" />}
-            </Button>
+            {/* Using Credit Balance here might crowd it, better in the menu */}
           </div>
         </header>
 
-        {/* Mobile Menu Overlay */}
+        {/* Mobile Menu Overlay (Replaces standard menu) */}
         {mobileMenuOpen && (
-          <div className="md:hidden fixed inset-x-0 top-14 bg-background/95 backdrop-blur-md border-b z-40 animate-in slide-in-from-top-5">
-            <div className="p-4 space-y-4">
-              <div className="flex items-center gap-3 pb-4 border-b">
-                <Avatar className="h-10 w-10 border">
-                  <AvatarImage src={talent?.profilePhotoUrl || undefined} />
-                  <AvatarFallback>{talent?.fullName?.charAt(0)}</AvatarFallback>
-                </Avatar>
-                <div>
-                  <p className="font-medium">{talent.fullName}</p>
-                  <CreditBalance variant="compact" />
-                </div>
-              </div>
-              <Button variant="ghost" className="w-full justify-start text-destructive" onClick={handleSignOut}>
-                <LogOut className="h-4 w-4 mr-2" />
-                Sign Out
+          <div className="md:hidden fixed inset-0 z-[60] bg-background flex flex-col animate-in slide-in-from-bottom-5 duration-300">
+            {/* Menu Header */}
+            <div className="flex items-center justify-between p-4 border-b">
+              <span className="font-bold text-lg">Menu</span>
+              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
+                <X className="h-6 w-6" />
               </Button>
             </div>
+
+            <ScrollArea className="flex-1">
+              <div className="p-4 space-y-6">
+                {/* Profile Card */}
+                <div
+                  className="flex items-center gap-4 p-4 rounded-xl bg-muted/30 border"
+                  onClick={() => handleMobileNavClick("/app/profile")}
+                >
+                  <Avatar className="h-12 w-12 border">
+                    <AvatarImage src={talent?.profilePhotoUrl || undefined} />
+                    <AvatarFallback>{talent?.fullName?.charAt(0)}</AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1">
+                    <p className="font-semibold text-lg">{talent.fullName}</p>
+                    <p className="text-sm text-muted-foreground">View Profile</p>
+                  </div>
+                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
+                </div>
+
+                {/* Credits */}
+                <CreditBalance variant="full" />
+
+                {/* Quick Links Group */}
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground px-2 mb-2 uppercase tracking-wider">
+                    Features
+                  </p>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 h-12 text-base"
+                    onClick={() => handleMobileNavClick("/app/services")}
+                  >
+                    <Sparkles className="h-5 w-5 text-purple-500" /> Services Hub
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 h-12 text-base"
+                    onClick={() => handleMobileNavClick("/app/abroad")}
+                  >
+                    <Globe className="h-5 w-5 text-blue-500" /> Study Abroad
+                  </Button>
+                </div>
+
+                <Separator />
+
+                {/* Personal Links Group */}
+                <div className="space-y-1">
+                  <p className="text-xs font-medium text-muted-foreground px-2 mb-2 uppercase tracking-wider">
+                    Personal
+                  </p>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 h-12 text-base"
+                    onClick={() => handleMobileNavClick("/app/saved")}
+                  >
+                    <Bookmark className="h-5 w-5" /> Saved Items
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 h-12 text-base"
+                    onClick={() => handleMobileNavClick("/app/applications")}
+                  >
+                    <FileText className="h-5 w-5" /> My Applications
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    className="w-full justify-start gap-3 h-12 text-base"
+                    onClick={() => handleMobileNavClick("/app/services/my-results")}
+                  >
+                    <Briefcase className="h-5 w-5" /> My Results
+                  </Button>
+                </div>
+
+                <Separator />
+
+                <Button
+                  variant="ghost"
+                  className="w-full justify-start gap-3 h-12 text-base text-destructive hover:text-destructive hover:bg-destructive/10"
+                  onClick={handleSignOut}
+                >
+                  <LogOut className="h-5 w-5" /> Sign Out
+                </Button>
+              </div>
+            </ScrollArea>
           </div>
         )}
 
         {/* Content Outlet */}
-        <main className="flex-1 overflow-y-auto pb-24 md:pb-6">
-          {/* On Desktop, add a top bar for Notifications if desired, or keep it clean */}
+        <main className="flex-1 overflow-y-auto pb-[80px] md:pb-6">
           <div className="hidden md:flex justify-end p-4">
             <div className="flex items-center gap-4">
               <NotificationDropdown />
             </div>
           </div>
-
           <Outlet />
         </main>
       </div>
 
-      {/* ================= MOBILE BOTTOM NAV ================= */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md nav-float safe-bottom border-t">
-        <div className="flex items-center justify-around h-[72px] px-2">
-          {NAV_ITEMS.map((item) => {
+      {/* ================= MOBILE BOTTOM NAV (Clean 5 Items) ================= */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md nav-float safe-bottom border-t shadow-[0_-5px_20px_-10px_rgba(0,0,0,0.1)]">
+        <div className="flex items-center justify-around h-[68px] px-1">
+          {MOBILE_NAV_ITEMS.map((item) => {
             const isActive = location.pathname.startsWith(item.path);
             return (
               <NavLink
                 key={item.path}
                 to={item.path}
                 className={cn(
-                  "flex flex-col items-center justify-center gap-1 min-w-[56px] py-2 px-3 rounded-2xl transition-all press-scale",
+                  "flex flex-col items-center justify-center gap-1 w-full h-full transition-all active:scale-95",
                   isActive ? "text-primary" : "text-muted-foreground",
                 )}
+                onClick={() => setMobileMenuOpen(false)}
               >
-                {/* Active pill indicator */}
-                <div className={cn("p-2 rounded-xl transition-all", isActive && "bg-primary/15")}>
-                  <item.icon className={cn("h-5 w-5 transition-all", isActive && "scale-110")} />
+                <div
+                  className={cn(
+                    "p-1.5 rounded-xl transition-all duration-300",
+                    isActive && "bg-primary/10 translate-y-[-2px]",
+                  )}
+                >
+                  <item.icon
+                    className={cn("h-5 w-5 transition-all", isActive && "fill-current")}
+                    strokeWidth={isActive ? 2.5 : 2}
+                  />
                 </div>
-                <span className={cn("text-[10px] font-semibold transition-all", isActive && "text-primary")}>
+                <span className={cn("text-[10px] font-medium transition-all", isActive && "font-bold")}>
                   {item.label}
                 </span>
               </NavLink>
             );
           })}
+
+          {/* Menu Button (Replaces Hamburger) */}
+          <button
+            onClick={() => setMobileMenuOpen(true)}
+            className={cn(
+              "flex flex-col items-center justify-center gap-1 w-full h-full transition-all active:scale-95",
+              mobileMenuOpen ? "text-primary" : "text-muted-foreground",
+            )}
+          >
+            <div
+              className={cn(
+                "p-1.5 rounded-xl transition-all duration-300",
+                mobileMenuOpen && "bg-primary/10 translate-y-[-2px]",
+              )}
+            >
+              <Menu
+                className={cn("h-5 w-5 transition-all", mobileMenuOpen && "scale-110")}
+                strokeWidth={mobileMenuOpen ? 2.5 : 2}
+              />
+            </div>
+            <span className={cn("text-[10px] font-medium transition-all", mobileMenuOpen && "font-bold")}>Menu</span>
+          </button>
         </div>
       </nav>
     </div>
