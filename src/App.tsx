@@ -172,7 +172,7 @@ export default function App() {
                   {/* Public Job View */}
                   <Route path="/jobs/:id" element={<PublicJobDetail />} />
 
-                  {/* 👇 FIXED: Dynamic Redirect Logic */}
+                  {/* Dynamic Redirect Logic */}
                   <Route path="/jobs/:id/apply" element={<JobApplyRedirect />} />
 
                   {/* Public Content */}
@@ -214,7 +214,6 @@ export default function App() {
                       </ProtectedRoute>
                     }
                   />
-                  {/* ... (Keep all Admin Routes as they were) ... */}
                   <Route
                     path="/students"
                     element={
@@ -329,7 +328,6 @@ export default function App() {
                     path="/app/*"
                     element={
                       <ProtectedRoute>
-                        {/* 👇 WRAP SHELL IN ONBOARDING GUARD */}
                         <OnboardingGuard>
                           <TalentAppShell />
                         </OnboardingGuard>
@@ -361,12 +359,14 @@ export default function App() {
                     <Route path="learning/courses/:slug" element={<AppCourseDetail />} />
                     <Route path="learning/my-courses" element={<AppMyLearning />} />
                     <Route path="learning/events" element={<AppEvents />} />
+                    {/* 👇 Added Fallback for Webinars to Events */}
+                    <Route path="learning/webinars" element={<AppEvents />} />
                     <Route path="learning/competitions" element={<Competitions />} />
                     <Route path="learning/competitions/:slug" element={<CompetitionDetail />} />
                     <Route path="learning/blog" element={<Blog />} />
                     <Route path="learning/blog/:slug" element={<BlogPost />} />
 
-                    {/* 👇 ADD THESE TWO LINES TO FIX THE BLANK SCREEN 👇 */}
+                    {/* Internal Blog Routes */}
                     <Route path="blog" element={<Blog />} />
                     <Route path="blog/:slug" element={<BlogPost />} />
 
