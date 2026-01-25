@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { createStudentProfile } from "@/hooks/useAuth";
 import { registrationSchema } from "@/lib/validations";
@@ -54,6 +54,7 @@ const contentTypeConfig = {
 const CourseDetail = () => {
   const { slug } = useParams();
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
   const [course, setCourse] = useState<Course | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [isEnrolling, setIsEnrolling] = useState(false);
@@ -93,6 +94,23 @@ const CourseDetail = () => {
     checkAuth();
     fetchCourse();
   }, [slug]);
+
+  // Track content click from shared links
+  const trackContentClick = async (contentId: string) => {
+    const source = searchParams.get("source");
+    if (source && contentId) {
+      try {
+        await supabase.rpc("track_content_click", {
+          p_content_id: contentId,
+          p_source: source,
+        });
+        // Clean URL after tracking
+        window.history.replaceState({}, "", window.location.pathname);
+      } catch (err) {
+        console.error("Failed to track content click", err);
+      }
+    }
+  };
 
   useEffect(() => {
     // Listen to auth state changes
@@ -176,6 +194,9 @@ const CourseDetail = () => {
       }
 
       setCourse(data);
+      
+      // Track click from shared link
+      trackContentClick(data.id);
 
       // Check if user is already enrolled
       const { data: { session } } = await supabase.auth.getSession();
