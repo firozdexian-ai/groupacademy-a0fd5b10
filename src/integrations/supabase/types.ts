@@ -1483,6 +1483,35 @@ export type Database = {
         }
         Relationships: []
       }
+      job_analytics: {
+        Row: {
+          clicked_at: string | null
+          id: string
+          job_id: string | null
+          source: string
+        }
+        Insert: {
+          clicked_at?: string | null
+          id?: string
+          job_id?: string | null
+          source: string
+        }
+        Update: {
+          clicked_at?: string | null
+          id?: string
+          job_id?: string | null
+          source?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_analytics_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       job_application_access_codes: {
         Row: {
           code: string
@@ -1707,6 +1736,38 @@ export type Database = {
             columns: ["talent_id"]
             isOneToOne: false
             referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      job_share_logs: {
+        Row: {
+          channel: string
+          id: string
+          job_id: string | null
+          shared_at: string | null
+          shared_by: string | null
+        }
+        Insert: {
+          channel: string
+          id?: string
+          job_id?: string | null
+          shared_at?: string | null
+          shared_by?: string | null
+        }
+        Update: {
+          channel?: string
+          id?: string
+          job_id?: string | null
+          shared_at?: string | null
+          shared_by?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "job_share_logs_job_id_fkey"
+            columns: ["job_id"]
+            isOneToOne: false
+            referencedRelation: "jobs"
             referencedColumns: ["id"]
           },
         ]
@@ -3301,6 +3362,10 @@ export type Database = {
           _user_id: string
         }
         Returns: boolean
+      }
+      track_job_click: {
+        Args: { p_job_id: string; p_source: string }
+        Returns: undefined
       }
     }
     Enums: {
