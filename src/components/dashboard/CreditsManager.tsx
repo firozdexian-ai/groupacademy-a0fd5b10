@@ -10,10 +10,17 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
-import { Coins, Search, Plus, Minus, Download, RefreshCw, ChevronLeft, ChevronRight } from "lucide-react";
-import { format } from "date-fns";
+import { Coins, Search, Plus, Minus, Download, RefreshCw, ChevronLeft, ChevronRight, TrendingDown, Calendar, Briefcase } from "lucide-react";
+import { format, startOfMonth, endOfMonth } from "date-fns";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
+
+// Revenue analytics state
+interface ConsumptionStats {
+  totalConsumed: number;
+  monthlyConsumed: number;
+  serviceBreakdown: { service: string; consumed: number; count: number }[];
+}
 
 // --- Internal Hook for Debounce ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -79,6 +86,67 @@ export function CreditsManager() {
 
   // Stats
   const [totalCirculation, setTotalCirculation] = useState(0);
+  const [consumptionStats, setConsumptionStats] = useState<ConsumptionStats>({
+    totalConsumed: 0,
+    monthlyConsumed: 0,
+    serviceBreakdown: [],
+  });
+
+  // Fetch consumption analytics
+  const loadConsumptionStats = useCallback(async () => {
+    try {
+      // Total consumed (all-time) - negative amounts indicate consumption
+      const { data: totalData } = await supabase
+        .from("credit_transactions")
+        .select("amount, service_type")
+        .lt("amount", 0);
+
+      if (totalData) {
+        const totalConsumed = totalData.reduce((sum, t) => sum + Math.abs(t.amount), 0);
+        
+        // Group by service type
+        const serviceMap: Record<string, { consumed: number; count: number }> = {};
+        totalData.forEach((t) => {
+          const service = t.service_type || "other";
+          if (!serviceMap[service]) {
+            serviceMap[service] = { consumed: 0, count: 0 };
+          }
+          serviceMap[service].consumed += Math.abs(t.amount);
+          serviceMap[service].count += 1;
+        });
+
+        const serviceBreakdown = Object.entries(serviceMap)
+          .map(([service, data]) => ({ service, ...data }))
+          .sort((a, b) => b.consumed - a.consumed);
+
+        // Monthly consumed (current month)
+        const now = new Date();
+        const monthStart = startOfMonth(now).toISOString();
+        const monthEnd = endOfMonth(now).toISOString();
+
+        const { data: monthlyData } = await supabase
+          .from("credit_transactions")
+          .select("amount")
+          .lt("amount", 0)
+          .gte("created_at", monthStart)
+          .lte("created_at", monthEnd);
+
+        const monthlyConsumed = monthlyData?.reduce((sum, t) => sum + Math.abs(t.amount), 0) || 0;
+
+        setConsumptionStats({
+          totalConsumed,
+          monthlyConsumed,
+          serviceBreakdown,
+        });
+      }
+    } catch (error) {
+      console.error("Error loading consumption stats:", error);
+    }
+  }, []);
+
+  useEffect(() => {
+    loadConsumptionStats();
+  }, [loadConsumptionStats]);
 
   // Fetch Data (Paginated)
   const loadData = useCallback(async () => {
@@ -244,30 +312,85 @@ export function CreditsManager() {
 
       {/* Summary Stats (Visible only on Balances tab) */}
       {selectedTab === "balances" && (
-        <div className="grid gap-4 md:grid-cols-3">
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-primary/10">
-                <Coins className="h-5 w-5 text-primary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Total in Circulation</p>
-                <p className="text-2xl font-bold">{totalCirculation.toLocaleString()}</p>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="p-4 flex items-center gap-3">
-              <div className="p-2 rounded-lg bg-secondary/10">
-                <Coins className="h-5 w-5 text-secondary" />
-              </div>
-              <div>
-                <p className="text-sm text-muted-foreground">Talents with Credits</p>
-                <p className="text-2xl font-bold">{totalCount}</p>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
+        <>
+          {/* Existing Stats */}
+          <div className="grid gap-4 md:grid-cols-3">
+            <Card>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-primary/10">
+                  <Coins className="h-5 w-5 text-primary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Total in Circulation</p>
+                  <p className="text-2xl font-bold">{totalCirculation.toLocaleString()}</p>
+                </div>
+              </CardContent>
+            </Card>
+            <Card>
+              <CardContent className="p-4 flex items-center gap-3">
+                <div className="p-2 rounded-lg bg-secondary/10">
+                  <Coins className="h-5 w-5 text-secondary" />
+                </div>
+                <div>
+                  <p className="text-sm text-muted-foreground">Talents with Credits</p>
+                  <p className="text-2xl font-bold">{totalCount}</p>
+                </div>
+              </CardContent>
+            </Card>
+          </div>
+
+          {/* Revenue Analytics Section */}
+          <div className="mt-6">
+            <h3 className="text-lg font-semibold mb-4 flex items-center gap-2">
+              <TrendingDown className="h-5 w-5 text-destructive" />
+              Credit Consumption (Revenue)
+            </h3>
+            <div className="grid gap-4 md:grid-cols-4">
+              <Card className="border-destructive/20">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <TrendingDown className="h-4 w-4 text-destructive" />
+                    <p className="text-sm text-muted-foreground">Total Consumed</p>
+                  </div>
+                  <p className="text-2xl font-bold text-destructive">{consumptionStats.totalConsumed.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">≈ ৳{(consumptionStats.totalConsumed * 2).toLocaleString()} revenue</p>
+                </CardContent>
+              </Card>
+              <Card>
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-2">
+                    <Calendar className="h-4 w-4 text-primary" />
+                    <p className="text-sm text-muted-foreground">This Month</p>
+                  </div>
+                  <p className="text-2xl font-bold">{consumptionStats.monthlyConsumed.toLocaleString()}</p>
+                  <p className="text-xs text-muted-foreground">≈ ৳{(consumptionStats.monthlyConsumed * 2).toLocaleString()}</p>
+                </CardContent>
+              </Card>
+              <Card className="md:col-span-2">
+                <CardContent className="p-4">
+                  <div className="flex items-center gap-2 mb-3">
+                    <Briefcase className="h-4 w-4 text-primary" />
+                    <p className="text-sm font-medium">Service Breakdown</p>
+                  </div>
+                  <div className="space-y-2 max-h-32 overflow-y-auto">
+                    {consumptionStats.serviceBreakdown.slice(0, 5).map((item) => (
+                      <div key={item.service} className="flex items-center justify-between text-sm">
+                        <span className="text-muted-foreground capitalize">{item.service.replace(/_/g, ' ')}</span>
+                        <div className="flex items-center gap-2">
+                          <Badge variant="secondary" className="text-xs">{item.count} uses</Badge>
+                          <span className="font-mono font-medium">{item.consumed}</span>
+                        </div>
+                      </div>
+                    ))}
+                    {consumptionStats.serviceBreakdown.length === 0 && (
+                      <p className="text-sm text-muted-foreground">No consumption data yet</p>
+                    )}
+                  </div>
+                </CardContent>
+              </Card>
+            </div>
+          </div>
+        </>
       )}
 
       {/* Controls */}

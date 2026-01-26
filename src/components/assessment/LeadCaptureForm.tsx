@@ -265,7 +265,7 @@ export function LeadCaptureForm({
               <Input
                 id="phone"
                 type="tel"
-                placeholder="+880 1XXX XXXXXX"
+                placeholder="Your phone number"
                 value={formData.phone}
                 onChange={(e) => setFormData({ ...formData, phone: e.target.value })}
                 disabled={submitting}

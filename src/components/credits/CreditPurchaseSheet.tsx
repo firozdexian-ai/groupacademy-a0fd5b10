@@ -11,6 +11,7 @@ import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
 import { CREDIT_CONFIG, creditsToTaka } from '@/lib/creditPricing';
 import { cn } from '@/lib/utils';
+import { SUPPORT_CONFIG, getCreditPurchaseMessage } from '@/lib/constants/support';
 
 interface CreditPurchaseSheetProps {
   isOpen: boolean;
@@ -24,10 +25,8 @@ export function CreditPurchaseSheet({
   currentBalance,
 }: CreditPurchaseSheetProps) {
   const handlePurchase = (credits: number, price: number) => {
-    const message = encodeURIComponent(
-      `Hi, I want to purchase ${credits} credits for BDT ${price}. My current balance is ${currentBalance} credits.`
-    );
-    window.open(`https://wa.me/8801708459008?text=${message}`, '_blank');
+    const message = getCreditPurchaseMessage(credits, price, currentBalance);
+    window.open(`${SUPPORT_CONFIG.WHATSAPP_LINK}?text=${encodeURIComponent(message)}`, '_blank');
   };
 
   return (

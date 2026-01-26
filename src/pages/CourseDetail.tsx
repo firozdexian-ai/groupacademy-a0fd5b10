@@ -234,7 +234,7 @@ const CourseDetail = () => {
     const message = encodeURIComponent(
       `Hi! I want to enroll in "${course?.title}" (BDT ${course?.price}). Please send me the access code after payment confirmation.`
     );
-    const whatsappUrl = `https://wa.me/8801708459008?text=${message}`;
+    const whatsappUrl = `https://wa.me/8801889825025?text=${message}`;
     window.open(whatsappUrl, "_blank");
   };
 
