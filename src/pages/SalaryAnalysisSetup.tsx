@@ -438,7 +438,6 @@ const SalaryAnalysisSetupContent = () => {
                       setPhone(value);
                     }}
                   />
-                  <p className="text-xs text-muted-foreground mt-1">Bangladesh number without +880</p>
                 </div>
               </div>
 

@@ -523,11 +523,11 @@ function MockInterviewSetupContent() {
                   onClick={() => setStep("access-code")}
                 >
                   <KeyRound className="mr-2 h-4 w-4" />
-                  Use Access Code (BDT 100)
+                  Use Access Code (50 Credits)
                 </Button>
                 
                 <p className="text-xs text-center text-muted-foreground">
-                  Contact us on WhatsApp at +8801708459008 to purchase an access code
+                  Contact us on WhatsApp to purchase an access code
                 </p>
               </div>
 
@@ -589,9 +589,9 @@ function MockInterviewSetupContent() {
                 <Button 
                   variant="link" 
                   className="text-primary"
-                  onClick={() => window.open(`https://wa.me/8801708459008?text=Hi, I want to purchase a mock interview access code for ${email}`, "_blank")}
+                  onClick={() => window.open(`https://wa.me/8801889825025?text=Hi, I want to purchase a mock interview access code for ${email}`, "_blank")}
                 >
-                  Purchase on WhatsApp (BDT 100)
+                  Purchase on WhatsApp (50 Credits)
                 </Button>
               </div>
 

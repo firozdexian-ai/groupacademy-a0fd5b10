@@ -20,8 +20,10 @@ import {
   Sparkles,
   Brain,
   ArrowRight,
+  MessageCircle,
 } from "lucide-react";
 import { toast } from "sonner";
+import { SUPPORT_CONFIG, getExpediteMessage } from "@/lib/constants/support";
 import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
 
 interface Job {
@@ -299,6 +301,25 @@ export default function AppJobApplication() {
 
               <Button variant="outline" size="lg" className="w-full sm:w-auto" onClick={() => navigate("/app/jobs")}>
                 Browse More Jobs
+              </Button>
+            </div>
+
+            {/* Expedite via WhatsApp - Pull Strategy */}
+            <div className="mt-6 pt-6 border-t">
+              <p className="text-sm text-muted-foreground text-center mb-3">
+                Want faster processing? Ping our career counselor
+              </p>
+              <Button
+                variant="secondary"
+                size="lg"
+                className="w-full sm:w-auto"
+                onClick={() => {
+                  const message = getExpediteMessage(job.title, job.company_name);
+                  window.open(`${SUPPORT_CONFIG.WHATSAPP_LINK}?text=${encodeURIComponent(message)}`, '_blank');
+                }}
+              >
+                <MessageCircle className="w-4 h-4 mr-2" />
+                Expedite via WhatsApp
               </Button>
             </div>
           </CardContent>

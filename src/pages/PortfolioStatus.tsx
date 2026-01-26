@@ -265,12 +265,12 @@ export default function PortfolioStatus() {
                             Questions? Contact us on WhatsApp:
                           </p>
                           <a 
-                            href="https://wa.me/8801708459008"
+                            href="https://wa.me/8801889825025"
                             target="_blank"
                             rel="noopener noreferrer"
                             className="text-primary hover:underline font-medium"
                           >
-                            +880 1708-459008
+                            +880 1889-825025
                           </a>
                         </div>
                       )}
