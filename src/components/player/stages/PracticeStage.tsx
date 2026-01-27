@@ -56,16 +56,27 @@ export function PracticeStage({
     if (!card || typeof card !== 'object') return null;
     const c = card as Record<string, unknown>;
     
-    const front = String(c.front || c.question || c.term || c.q || '');
-    const back = String(c.back || c.answer || c.definition || c.a || '');
+    // Check multiple case variations to handle AI-generated JSON with capitalized keys
+    const front = String(
+      c.front || c.Front || 
+      c.question || c.Question || 
+      c.term || c.Term || 
+      c.q || c.Q || ''
+    );
+    const back = String(
+      c.back || c.Back || 
+      c.answer || c.Answer || 
+      c.definition || c.Definition || 
+      c.a || c.A || ''
+    );
     
     if (!front && !back) return null;
     
     return {
-      id: String(c.id || `card-${index}`),
+      id: String(c.id || c.Id || c.ID || `card-${index}`),
       front,
       back,
-      hint: c.hint ? String(c.hint) : undefined,
+      hint: c.hint || c.Hint ? String(c.hint || c.Hint) : undefined,
     };
   };
 

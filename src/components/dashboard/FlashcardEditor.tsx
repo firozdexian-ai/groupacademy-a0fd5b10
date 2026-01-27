@@ -107,10 +107,11 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
         throw new Error("JSON must be an array of flashcards");
       }
 
+      // Handle multiple case variations for AI-generated JSON
       const newCards: Flashcard[] = parsed.map((item: any) => ({
         id: crypto.randomUUID(),
-        front: item.front || item.question || "",
-        back: item.back || item.answer || "",
+        front: item.front || item.Front || item.question || item.Question || item.term || item.Term || "",
+        back: item.back || item.Back || item.answer || item.Answer || item.definition || item.Definition || "",
       }));
 
       if (newCards.length === 0) {
