@@ -8,6 +8,7 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
+import { ProcessingCard } from "@/components/ui/processing-card";
 import { 
   ArrowRight, 
   ArrowLeft, 
@@ -21,6 +22,14 @@ import { toast } from "sonner";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { ErrorState } from "@/components/ui/error-state";
+
+const INTERVIEW_ANALYSIS_STAGES = [
+  { progress: 10, message: "Reviewing your responses..." },
+  { progress: 30, message: "Analyzing answer quality..." },
+  { progress: 50, message: "Evaluating communication skills..." },
+  { progress: 70, message: "Generating personalized feedback..." },
+  { progress: 90, message: "Preparing your results..." },
+];
 import {
   AlertDialog,
   AlertDialogAction,
@@ -53,6 +62,7 @@ interface Interview {
   questions: Question[];
   answers: Answer[] | null;
   status: string;
+  talent_id: string | null;
 }
 
 export default function MockInterviewQuestions() {
@@ -69,6 +79,8 @@ export default function MockInterviewQuestions() {
   const [showSkipDialog, setShowSkipDialog] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [loadError, setLoadError] = useState<string | null>(null);
+  const [isAnalyzing, setIsAnalyzing] = useState(false);
+  const [analysisError, setAnalysisError] = useState<string | null>(null);
 
   useEffect(() => {
     if (id) loadInterview();
@@ -117,7 +129,8 @@ export default function MockInterviewQuestions() {
         company_name: data.company_name,
         questions,
         answers: existingAnswers,
-        status: data.status || "in_progress"
+        status: data.status || "in_progress",
+        talent_id: data.talent_id
       });
       setAnswers(existingAnswers);
       
@@ -178,8 +191,27 @@ export default function MockInterviewQuestions() {
       setQuestionStartTime(Date.now());
       setElapsedTime(0);
     } else {
-      // All questions answered, navigate to lead capture
-      navigate(`/mock-interview/capture/${id}`);
+      // All questions answered
+      if (interview.talent_id) {
+        // App user: has profile data, skip capture → analyze directly
+        setIsAnalyzing(true);
+        setAnalysisError(null);
+        try {
+          const { error } = await supabase.functions.invoke("analyze-mock-interview", {
+            body: { interviewId: id }
+          });
+          if (error) throw error;
+          toast.success("Analysis complete!");
+          navigate(`/mock-interview/results/${id}`);
+        } catch (err: any) {
+          console.error("Analysis error:", err);
+          setAnalysisError(err.message || "Analysis failed. Please try again.");
+          setIsAnalyzing(false);
+        }
+      } else {
+        // Public user: needs lead capture
+        navigate(`/mock-interview/capture/${id}`);
+      }
     }
   };
 
@@ -213,6 +245,28 @@ export default function MockInterviewQuestions() {
             <Loader2 className="h-12 w-12 animate-spin text-primary mx-auto mb-4" />
             <p className="text-muted-foreground">Loading interview...</p>
           </div>
+        </main>
+        <Footer />
+      </div>
+    );
+  }
+
+  // Show processing state during AI analysis
+  if (isAnalyzing) {
+    return (
+      <div className="min-h-screen bg-background flex flex-col">
+        <Navbar />
+        <main className="flex-1 flex items-center justify-center p-4">
+          <ProcessingCard
+            title="Analyzing Your Interview"
+            stages={INTERVIEW_ANALYSIS_STAGES}
+            duration={45000}
+            error={analysisError}
+            onRetry={() => {
+              setIsAnalyzing(false);
+              handleNext(false);
+            }}
+          />
         </main>
         <Footer />
       </div>
