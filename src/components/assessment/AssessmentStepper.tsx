@@ -163,6 +163,28 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
     );
   }
 
+  // Helper function to normalize options (handles legacy flat string arrays)
+  const normalizeOptions = (options: any[]): Array<{value: string; label: string; score?: number}> => {
+    if (!options || !Array.isArray(options)) return [];
+    
+    return options.map((opt, idx) => {
+      // If already in correct format
+      if (typeof opt === 'object' && opt !== null && opt.value && opt.label) {
+        return opt;
+      }
+      // Handle flat string arrays (legacy format)
+      if (typeof opt === 'string') {
+        return {
+          value: opt.toLowerCase().replace(/\s+/g, '_').replace(/[^a-z0-9_]/g, ''),
+          label: opt,
+          score: idx + 1
+        };
+      }
+      // Fallback for any other format
+      return { value: String(idx), label: String(opt), score: idx + 1 };
+    });
+  };
+
   if (questions.length === 0) {
     return (
       <div className="container max-w-2xl mx-auto px-4 py-16 text-center">
@@ -200,46 +222,19 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
         </CardHeader>
         <CardContent className="space-y-6">
           {/* Single Choice */}
-          {currentQuestion.question_type === "single_choice" && (
-            <RadioGroup
-              value={answers[currentQuestion.id] || ""}
-              onValueChange={(value) => handleSingleChoice(currentQuestion.id, value)}
-            >
-              {options.map((option: any, idx: number) => (
-                <div
-                  key={idx}
-                  className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-accent/5 cursor-pointer transition-colors"
-                >
-                  <RadioGroupItem value={option.value} id={`${currentQuestion.id}-${idx}`} />
-                  <Label
-                    htmlFor={`${currentQuestion.id}-${idx}`}
-                    className="flex-1 cursor-pointer"
-                  >
-                    {option.label}
-                  </Label>
-                </div>
-              ))}
-            </RadioGroup>
-          )}
-
-          {/* Multiple Choice */}
-          {currentQuestion.question_type === "multiple_choice" && (
-            <div className="space-y-3">
-              {options.map((option: any, idx: number) => {
-                const isChecked = (answers[currentQuestion.id] || []).includes(option.value);
-                return (
+          {currentQuestion.question_type === "single_choice" && (() => {
+            const normalizedOpts = normalizeOptions(options);
+            return (
+              <RadioGroup
+                value={answers[currentQuestion.id] || ""}
+                onValueChange={(value) => handleSingleChoice(currentQuestion.id, value)}
+              >
+                {normalizedOpts.map((option, idx) => (
                   <div
                     key={idx}
                     className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-accent/5 cursor-pointer transition-colors"
-                    onClick={() => handleMultipleChoice(currentQuestion.id, option.value, !isChecked)}
                   >
-                    <Checkbox
-                      id={`${currentQuestion.id}-${idx}`}
-                      checked={isChecked}
-                      onCheckedChange={(checked) =>
-                        handleMultipleChoice(currentQuestion.id, option.value, checked as boolean)
-                      }
-                    />
+                    <RadioGroupItem value={option.value} id={`${currentQuestion.id}-${idx}`} />
                     <Label
                       htmlFor={`${currentQuestion.id}-${idx}`}
                       className="flex-1 cursor-pointer"
@@ -247,11 +242,44 @@ export function AssessmentStepper({ categoryId, categoryName, onComplete, onBack
                       {option.label}
                     </Label>
                   </div>
-                );
-              })}
-              <p className="text-sm text-muted-foreground">Select all that apply</p>
-            </div>
-          )}
+                ))}
+              </RadioGroup>
+            );
+          })()}
+
+          {/* Multiple Choice */}
+          {currentQuestion.question_type === "multiple_choice" && (() => {
+            const normalizedOpts = normalizeOptions(options);
+            return (
+              <div className="space-y-3">
+                {normalizedOpts.map((option, idx) => {
+                  const isChecked = (answers[currentQuestion.id] || []).includes(option.value);
+                  return (
+                    <div
+                      key={idx}
+                      className="flex items-center space-x-3 p-4 rounded-lg border hover:bg-accent/5 cursor-pointer transition-colors"
+                      onClick={() => handleMultipleChoice(currentQuestion.id, option.value, !isChecked)}
+                    >
+                      <Checkbox
+                        id={`${currentQuestion.id}-${idx}`}
+                        checked={isChecked}
+                        onCheckedChange={(checked) =>
+                          handleMultipleChoice(currentQuestion.id, option.value, checked as boolean)
+                        }
+                      />
+                      <Label
+                        htmlFor={`${currentQuestion.id}-${idx}`}
+                        className="flex-1 cursor-pointer"
+                      >
+                        {option.label}
+                      </Label>
+                    </div>
+                  );
+                })}
+                <p className="text-sm text-muted-foreground">Select all that apply</p>
+              </div>
+            );
+          })()}
 
           {/* Scale */}
           {currentQuestion.question_type === "scale" && (
