@@ -1,272 +1,354 @@
 
 
-# Sign In & Sign Up Flow Improvements Plan
+# LinkedIn-Inspired Feed Transformation Plan
+
+## Executive Summary
+
+Transform the current job-heavy feed into an engaging, content-rich social experience. The goal is to make users **want** to scroll through the feed, discover insights, and interact with content - just like LinkedIn.
+
+---
 
 ## Current State Analysis
 
-### Sign In (Login)
-- **Currently**: Email + Password only
-- **User's Question**: Should we support phone number + password as an alternative?
+| Content Type | Count in DB | Current Feed Behavior |
+|--------------|-------------|----------------------|
+| Jobs | 129 | Dominates the feed (majority of items) |
+| Courses | 6 | Mixed in with jobs |
+| Blogs | 6 | Recently added, shown but minimal |
+| Videos | 1 | Rare appearance |
 
-### Sign Up
-- **Currently**: Collects Full Name, Email, Phone (with country code), and Password
-- **Duplicate Prevention**: 
-  - Email: **Protected** - Unique index exists on `lower(email)`
-  - Phone: **NOT Protected** - No unique constraint, found 3 duplicate phone numbers already
-
-### Existing Duplicate Phones Found:
-| Phone | Accounts |
-|-------|----------|
-| +8801708459008 | 2 different emails |
-| +8801779579170 | 2 different emails |
-| 01867136282 | 2 different emails |
+**Key Issues Identified:**
+1. Feed is 90%+ job listings - feels like a job board, not a social feed
+2. Cards look identical - no variety in visual presentation
+3. No social features (reactions, comments, sharing)
+4. No engaging content types (polls, quick tips, industry news)
+5. Users can only "Skip" or "View" - no meaningful engagement
 
 ---
 
-## Proposed Improvements
+## Proposed Transformation
 
-### 1. Allow Login with Phone OR Email
+### Phase 1: Remove Jobs from Feed
 
-**Current Flow**:
+**Change the Feed Purpose:**
+- Feed = Discovery, Learning, Engagement
+- Jobs Hub = Job search (already exists at `/app/jobs`)
+
+**Technical Changes:**
+1. Remove `type: 'job'` from `useFeedRecommendations.ts` fetch
+2. Remove "Jobs" filter option from `FeedFilters.tsx`
+3. Update feed type definitions to exclude 'job'
+
+### Phase 2: Create New "Post" Content Type
+
+Instead of just blogs, courses, and videos, introduce a flexible **Post** system (like LinkedIn posts).
+
+**New Database Table: `feed_posts`**
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | uuid | Primary key |
+| author_name | text | Admin/author name |
+| author_avatar | text | Avatar URL |
+| author_title | text | e.g., "Career Coach at GRO10X" |
+| content_type | enum | 'text', 'poll', 'tip', 'news', 'announcement' |
+| text_content | text | Main post text (markdown supported) |
+| media_url | text | Image/video URL |
+| poll_options | jsonb | For polls: [{id, text, votes}] |
+| poll_ends_at | timestamp | When poll closes |
+| link_url | text | External link |
+| link_preview | jsonb | {title, description, image} |
+| tags | text[] | Topic tags |
+| is_pinned | boolean | Show at top |
+| is_active | boolean | Published status |
+| created_at | timestamp | Posted at |
+
+**New Database Table: `post_reactions`**
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | uuid | Primary key |
+| post_id | uuid | FK to feed_posts |
+| talent_id | uuid | FK to talents |
+| reaction_type | text | 'like', 'insightful', 'celebrate', 'support' |
+| created_at | timestamp | Reacted at |
+
+**New Database Table: `poll_votes`**
+
+| Column | Type | Description |
+|--------|------|-------------|
+| id | uuid | Primary key |
+| post_id | uuid | FK to feed_posts (poll post) |
+| talent_id | uuid | FK to talents |
+| option_id | text | Which option they voted for |
+| voted_at | timestamp | When voted |
+
+### Phase 3: New LinkedIn-Style Post Card Component
+
+**Design Inspiration (LinkedIn Post Structure):**
 ```
-Email → Password → Sign In
+┌─────────────────────────────────────────┐
+│ [Avatar] Author Name          • 2h      │
+│          Author Title                   │
+├─────────────────────────────────────────┤
+│                                         │
+│ Post content text goes here...          │
+│ Can be multiple paragraphs.             │
+│                                         │
+│ #CareerTips #FreshGraduates             │
+│                                         │
+├─────────────────────────────────────────┤
+│ [Optional Media: Image or Poll]         │
+│                                         │
+│ For Polls:                              │
+│  ○ Option 1 ─────────── 45%            │
+│  ● Option 2 ─────────────────── 55%    │
+│  500 votes • 2 days left                │
+│                                         │
+├─────────────────────────────────────────┤
+│ 👍 142  💡 28                           │
+├─────────────────────────────────────────┤
+│ [👍 Like] [💡 Insightful] [🔗 Share]    │
+└─────────────────────────────────────────┘
 ```
 
-**Proposed Flow**:
+**New Components to Create:**
+
+1. `src/components/feed/PostCard.tsx` - Main LinkedIn-style post card
+2. `src/components/feed/ReactionBar.tsx` - Like, Insightful, Celebrate buttons
+3. `src/components/feed/PollWidget.tsx` - Interactive poll voting
+4. `src/components/feed/ShareSheet.tsx` - Share options (WhatsApp, LinkedIn, Copy Link)
+5. `src/components/feed/PostAuthor.tsx` - Avatar + name + title row
+
+### Phase 4: Update Feed Filters
+
+**New Filter Categories:**
 ```
-Email or Phone → Password → Sign In
+[All] [Articles] [Videos] [Polls] [Tips] [Courses]
 ```
 
-**How it works**:
-1. User enters either email OR phone number in a single input field
-2. System auto-detects if input is email (contains @) or phone (numeric/starts with +)
-3. If phone number entered, lookup talent by phone to find associated email
-4. Authenticate using the found email + password
+Remove "Jobs" filter entirely - direct users to Jobs Hub.
 
-**Technical Implementation**:
-- Add phone lookup helper function in `useAuth.ts`
-- Modify login form to accept "Email or Phone" input
-- Query talents table to resolve phone → email before auth
+### Phase 5: Admin Post Manager
+
+Create `src/components/dashboard/FeedPostsManager.tsx` for admins to:
+- Create text posts, polls, tips, announcements
+- Upload images
+- Schedule posts
+- View engagement stats (reactions, shares, poll votes)
+- Pin important posts
+
+### Phase 6: Enhanced Course/Blog Cards
+
+Update existing `FeedCardRedesigned.tsx` to support:
+- Author section at top (like LinkedIn)
+- Description as "post content"
+- Media below content
+- Reaction bar at bottom
+- Share functionality
 
 ---
 
-### 2. Prevent Duplicate Phone Numbers on Signup
-
-**Current State**: Phone numbers can be duplicated (3 cases already exist)
-
-**Proposed Solution**:
-
-**Option A: Database Constraint (Recommended)**
-- Add unique index on normalized phone column
-- Normalize phone format: store as `country_code + digits_only`
-- Clean existing duplicates first (merge or flag)
-
-**Option B: Application-Level Check**
-- Before signup, query if phone exists
-- Show friendly error: "This phone number is already registered"
-
-**Recommended**: Implement both - app-level for good UX, database for safety
-
----
-
-## Implementation Plan
-
-### Phase 1: Prevent Duplicate Phones on Signup
-
-**Step 1.1: Normalize Phone Storage**
-- Create function to normalize phone: `+880` + `1712345678` → `+8801712345678`
-- Update signup flow to store normalized phone
-
-**Step 1.2: Add Pre-Signup Phone Check**
-- In `Auth.tsx`, before calling `signUp()`:
-  ```
-  Check if normalized phone exists in talents table
-  If exists → Show "Phone already registered. Did you mean to sign in?"
-  ```
-
-**Step 1.3: Add Database Constraint (After Data Cleanup)**
-- Create unique index on normalized phone
-- Handle the 3 existing duplicates (merge accounts or contact users)
-
-### Phase 2: Phone-Based Login
-
-**Step 2.1: Update Login Form**
-- Change label from "Email" to "Email or Phone"
-- Accept both formats in the input field
-
-**Step 2.2: Add Phone Resolution Logic**
-- Detect if input is phone (no @ symbol, starts with + or digits)
-- If phone: Query `talents` table to find matching `phone` → get `email`
-- Use resolved email for `signInWithPassword()`
-
-**Step 2.3: Handle Edge Cases**
-- Phone not found → "No account found with this phone number"
-- Multiple accounts with same phone (legacy) → "Please use your email to login"
-
----
-
-## Detailed Technical Changes
-
-### File: `src/pages/Auth.tsx`
-
-**Login Form Changes**:
-```typescript
-// Before
-const [loginData, setLoginData] = useState({ email: "", password: "" });
-
-// After  
-const [loginData, setLoginData] = useState({ identifier: "", password: "" });
-// identifier can be email or phone
-```
-
-**Input Field Change**:
-```typescript
-// Before
-<Label htmlFor="login-email">Email</Label>
-<Input type="email" placeholder="you@example.com" ... />
-
-// After
-<Label htmlFor="login-identifier">Email or Phone</Label>
-<Input type="text" placeholder="Email or phone number" ... />
-```
-
-**Signup Duplicate Check**:
-```typescript
-// Add before signUp() call
-const fullPhone = `${signupData.countryCode}${signupData.phone}`;
-const { data: existingTalent } = await supabase
-  .from('talents')
-  .select('id')
-  .or(`phone.eq.${fullPhone},phone.eq.${signupData.phone}`)
-  .limit(1);
-
-if (existingTalent?.length) {
-  toast.error("This phone number is already registered. Please sign in instead.");
-  setActiveTab("login");
-  return;
-}
-```
-
-### File: `src/hooks/useAuth.ts`
-
-**Add Phone Resolution Helper**:
-```typescript
-const resolveEmailFromPhone = async (phone: string): Promise<string | null> => {
-  // Normalize phone - try with and without country code
-  const { data } = await supabase
-    .from('talents')
-    .select('email, phone')
-    .or(`phone.ilike.%${phone}`)
-    .not('email', 'is', null)
-    .limit(1);
-  
-  return data?.[0]?.email || null;
-};
-```
-
-**Update signIn Function**:
-```typescript
-const signIn = async (identifier: string, password: string) => {
-  let email = identifier.trim();
-  
-  // Check if identifier is phone (no @ symbol)
-  if (!identifier.includes('@')) {
-    const resolvedEmail = await resolveEmailFromPhone(identifier);
-    if (!resolvedEmail) {
-      throw new Error("No account found with this phone number.");
-    }
-    email = resolvedEmail;
-  }
-  
-  // Continue with email-based auth
-  const { error } = await supabase.auth.signInWithPassword({
-    email,
-    password,
-  });
-  // ... rest of function
-};
-```
-
-### File: `src/lib/validations.ts`
-
-**Add New Schema**:
-```typescript
-export const loginSchema = z.object({
-  identifier: z.string().trim().min(1, "Email or phone is required"),
-  password: z.string().min(8, "Password must be at least 8 characters"),
-});
-```
+## Technical Implementation Details
 
 ### Database Migration
 
-**Phone Normalization Function**:
 ```sql
-CREATE OR REPLACE FUNCTION normalize_phone(
-  p_country_code text,
-  p_phone text
-) RETURNS text AS $$
-BEGIN
-  -- Remove all non-digit characters except leading +
-  RETURN CASE 
-    WHEN p_phone IS NULL OR p_phone = '' THEN NULL
-    WHEN p_phone LIKE '+%' THEN regexp_replace(p_phone, '[^0-9+]', '', 'g')
-    ELSE p_country_code || regexp_replace(p_phone, '[^0-9]', '', 'g')
-  END;
-END;
-$$ LANGUAGE plpgsql IMMUTABLE;
+-- Create post types enum
+CREATE TYPE post_content_type AS ENUM (
+  'text', 'poll', 'tip', 'news', 'announcement', 'media'
+);
+
+-- Create reaction types enum
+CREATE TYPE reaction_type AS ENUM (
+  'like', 'insightful', 'celebrate', 'support'
+);
+
+-- Feed posts table
+CREATE TABLE public.feed_posts (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  author_name text NOT NULL,
+  author_avatar text,
+  author_title text,
+  content_type post_content_type NOT NULL DEFAULT 'text',
+  text_content text NOT NULL,
+  media_url text,
+  poll_options jsonb,
+  poll_ends_at timestamptz,
+  link_url text,
+  link_preview jsonb,
+  tags text[] DEFAULT '{}',
+  is_pinned boolean DEFAULT false,
+  is_active boolean DEFAULT true,
+  created_at timestamptz DEFAULT now(),
+  updated_at timestamptz DEFAULT now()
+);
+
+-- Post reactions table
+CREATE TABLE public.post_reactions (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  post_id uuid REFERENCES feed_posts(id) ON DELETE CASCADE,
+  talent_id uuid REFERENCES talents(id) ON DELETE CASCADE,
+  reaction_type reaction_type NOT NULL,
+  created_at timestamptz DEFAULT now(),
+  UNIQUE(post_id, talent_id)
+);
+
+-- Poll votes table
+CREATE TABLE public.poll_votes (
+  id uuid PRIMARY KEY DEFAULT gen_random_uuid(),
+  post_id uuid REFERENCES feed_posts(id) ON DELETE CASCADE,
+  talent_id uuid REFERENCES talents(id) ON DELETE CASCADE,
+  option_id text NOT NULL,
+  voted_at timestamptz DEFAULT now(),
+  UNIQUE(post_id, talent_id)
+);
+
+-- RLS Policies
+ALTER TABLE feed_posts ENABLE ROW LEVEL SECURITY;
+ALTER TABLE post_reactions ENABLE ROW LEVEL SECURITY;
+ALTER TABLE poll_votes ENABLE ROW LEVEL SECURITY;
+
+-- Anyone can view active posts
+CREATE POLICY "Anyone can view active posts"
+  ON feed_posts FOR SELECT
+  USING (is_active = true);
+
+-- Admins can manage posts
+CREATE POLICY "Admins can manage posts"
+  ON feed_posts FOR ALL
+  USING (has_role(auth.uid(), 'admin'))
+  WITH CHECK (has_role(auth.uid(), 'admin'));
+
+-- Users can react to posts
+CREATE POLICY "Users can manage own reactions"
+  ON post_reactions FOR ALL
+  USING (talent_id IN (SELECT id FROM talents WHERE user_id = auth.uid()));
+
+-- Users can vote on polls
+CREATE POLICY "Users can vote on polls"
+  ON poll_votes FOR INSERT
+  WITH CHECK (talent_id IN (SELECT id FROM talents WHERE user_id = auth.uid()));
+
+CREATE POLICY "Users can view own votes"
+  ON poll_votes FOR SELECT
+  USING (talent_id IN (SELECT id FROM talents WHERE user_id = auth.uid()));
 ```
 
-**Future: Unique Constraint (After Data Cleanup)**:
-```sql
--- Only add after resolving the 3 existing duplicates
-CREATE UNIQUE INDEX IF NOT EXISTS talents_phone_unique 
-ON talents (normalize_phone(country_code, phone)) 
-WHERE phone IS NOT NULL AND phone != '';
+### New Hook: `usePostReactions.ts`
+
+```typescript
+// Manage reactions for a post
+export function usePostReactions(postId: string) {
+  const { talent } = useTalent();
+  
+  return {
+    reactions: [...], // Aggregated reactions count
+    userReaction: 'like' | null, // Current user's reaction
+    toggleReaction: async (type: ReactionType) => {...},
+    isLoading: boolean
+  };
+}
+```
+
+### New Hook: `usePollVoting.ts`
+
+```typescript
+// Manage poll voting
+export function usePollVoting(postId: string) {
+  const { talent } = useTalent();
+  
+  return {
+    hasVoted: boolean,
+    userVote: string | null,
+    results: { optionId: string, votes: number, percentage: number }[],
+    castVote: async (optionId: string) => {...},
+    totalVotes: number,
+    isLoading: boolean
+  };
+}
+```
+
+### Updated Feed Page Structure
+
+```tsx
+// Feed.tsx - Updated structure
+<div className="space-y-4">
+  {/* Pinned Posts First */}
+  {pinnedPosts.map(post => <PostCard key={post.id} post={post} />)}
+  
+  {/* Mix of content types */}
+  {items.map(item => {
+    if (item.type === 'post') {
+      return <PostCard key={item.id} post={item} />;
+    }
+    if (item.type === 'blog') {
+      return <BlogPostCard key={item.id} post={item} />;
+    }
+    if (item.type === 'course' || item.type === 'video') {
+      return <CourseCard key={item.id} course={item} />;
+    }
+  })}
+</div>
 ```
 
 ---
 
-## Migration Strategy for Existing Duplicates
+## File Changes Summary
 
-Before adding unique constraint, need to handle 3 duplicate phone cases:
+### New Files to Create:
 
-| Phone | User 1 | User 2 | Resolution |
-|-------|--------|--------|------------|
-| +8801708459008 | firozuddinahmed89@gmail.com | gro10xnow@gmail.com | Admin user - keep both |
-| +8801779579170 | ryanhossain9797@gmail.com | ryanhossain9797@protonmail.com | Same person - contact to merge |
-| 01867136282 | Syeeda.ikta@gmail.com | syeeda.akter@dexian.com | Same person - contact to merge |
+| File | Purpose |
+|------|---------|
+| `src/components/feed/PostCard.tsx` | LinkedIn-style post card with reactions |
+| `src/components/feed/ReactionBar.tsx` | Like, Insightful, Celebrate buttons |
+| `src/components/feed/PollWidget.tsx` | Interactive poll display & voting |
+| `src/components/feed/ShareSheet.tsx` | Share dialog (WhatsApp, LinkedIn, Copy) |
+| `src/components/feed/PostAuthor.tsx` | Author avatar + name + title header |
+| `src/components/dashboard/FeedPostsManager.tsx` | Admin post creation/management |
+| `src/hooks/usePostReactions.ts` | Manage reactions for posts |
+| `src/hooks/usePollVoting.ts` | Manage poll voting |
 
-**Recommended**: Keep application-level check first, add database constraint after manual data cleanup.
+### Files to Modify:
 
----
-
-## User Experience Flow
-
-### New Login Flow:
-1. User opens login tab
-2. Sees "Email or Phone" input field
-3. Types phone number (e.g., `+8801712345678` or `01712345678`)
-4. Types password
-5. System resolves phone → email behind the scenes
-6. Authenticates and logs in
-7. If phone not found: "No account found with this phone number"
-
-### New Signup Flow:
-1. User fills Full Name, Email, Phone, Password
-2. Clicks "Create Account"
-3. **NEW**: System checks if phone already exists
-4. If duplicate phone: "This phone is already registered. Please sign in instead."
-5. If unique: Proceeds with account creation
+| File | Changes |
+|------|---------|
+| `src/pages/app/Feed.tsx` | Remove jobs, add posts, update layout |
+| `src/hooks/useFeedRecommendations.ts` | Exclude jobs, add feed_posts query |
+| `src/components/feed/FeedFilters.tsx` | Remove Jobs filter, add Polls/Tips |
+| `src/components/feed/FeedCardRedesigned.tsx` | Add author section, reaction bar |
 
 ---
 
-## Summary of Changes
+## User Experience Improvements
 
-| Change | Risk | Priority |
-|--------|------|----------|
-| Phone duplicate check on signup | Low | High |
-| Login with email OR phone | Medium | Medium |
-| Phone normalization function | Low | High |
-| Database unique constraint | Medium | Low (after cleanup) |
-| Update validation schemas | Low | High |
+### Before (Current):
+- Opens feed, sees wall of job cards
+- Only actions: "View Job" or "Skip"
+- No reason to scroll unless job hunting
+- Static, transactional experience
+
+### After (LinkedIn-Inspired):
+- Opens feed, sees mix of content:
+  - Industry insight post from Career Coach
+  - Poll: "What skill should we cover next?"
+  - Quick tip: "5 words to avoid in your CV"
+  - New course announcement
+  - Blog article on salary negotiation
+- Can react (like, insightful) to show appreciation
+- Can vote on polls to participate
+- Can share interesting posts to WhatsApp
+- **Reason to return daily** - new content, engagement, community feel
+
+---
+
+## Migration Path
+
+1. **Phase 1**: Database migration (new tables)
+2. **Phase 2**: Create PostCard and related components
+3. **Phase 3**: Create FeedPostsManager for admin
+4. **Phase 4**: Update Feed.tsx to show posts + hide jobs
+5. **Phase 5**: Seed initial posts (convert some blogs to posts)
+6. **Phase 6**: Add reaction/poll functionality
+7. **Phase 7**: Remove jobs from feed hook completely
 
