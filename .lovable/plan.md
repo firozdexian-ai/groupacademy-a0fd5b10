@@ -1,211 +1,183 @@
 
 
-# Comprehensive Fix Plan: Sign-In/Sign-Up & Feed Improvements
+# Complete Feed Simplification Plan
 
-## Issues Identified & Fixes
+## Summary of Changes
 
----
-
-## Part A: Authentication Fixes (Sign-In / Sign-Up)
-
-### Issue 1: Phone Lookup Query is Too Loose (Security Risk)
-**File:** `src/hooks/useAuth.ts` (lines 82-88)
-
-**Current Problem:**
-```typescript
-.or(`phone.ilike.%${cleanPhone},phone.eq.${cleanPhone}`)
-```
-This uses `ILIKE %phone` which matches partial phone numbers (e.g., entering `1234` would match `+8801234567890`). This is a security vulnerability.
-
-**Fix:** Tighten the phone lookup to use exact matching with multiple formats:
-```typescript
-// Try exact match with different formats
-const { data, error } = await supabase
-  .from('talents')
-  .select('email, phone, country_code')
-  .or(`phone.eq.${cleanPhone},phone.eq.+${cleanPhone.replace(/^\+/, '')}`)
-  .not('email', 'is', null)
-  .limit(5);
-```
-
-Also add secondary check: if the phone entered includes a country code, strip it and try matching the local portion too.
+Remove the AI recommendation system from the feed entirely. Replace it with a simple, fast, **free** content-first experience. This also fixes the "jobs still showing" issue.
 
 ---
 
-### Issue 2: Missing Database Trigger for Phone Normalization
-**Current Problem:** The `normalize_phone` function exists but there's no trigger on the `talents` table to automatically normalize phone numbers on insert/update.
+## Why Remove AI from Feed?
 
-**Fix:** Create a database migration to add a trigger that normalizes phones on insert/update:
+| Current (AI-Powered) | Proposed (Simple) |
+|---------------------|-------------------|
+| Jobs need skill matching (complex) | Posts/tips are for everyone (simple) |
+| 20 credits per refresh | FREE |
+| 2-5 second AI call | Instant load |
+| "85% match" score | Just show great content |
+| Edge function + caching | Direct DB query |
+
+**Bottom line**: AI scoring was valuable for job matching. For social content (posts, tips, polls), it's unnecessary complexity.
+
+---
+
+## Technical Changes
+
+### 1. Rewrite `useFeedRecommendations.ts` (Simplified)
+
+Remove:
+- All AI edge function calls
+- Credit charging for refresh
+- AI recommendations caching logic
+- `canAfford` and `deductCredits` calls
+
+Keep:
+- Basic feed fetching from `feed_posts`, `content`, `blog_posts`
+- Filtering by type (post, course, video, blog, poll)
+- Sorting by pinned, recency
+- Dismissed items tracking
+
+New sorting logic:
+```typescript
+// Priority order:
+// 1. Pinned posts (always first)
+// 2. New content from last 24 hours
+// 3. Posts matching user's skills/tags
+// 4. Everything else by recency
+```
+
+### 2. Delete or Deprecate Edge Function
+
+The `generate-feed-recommendations` edge function becomes unused. Options:
+- **Option A**: Keep it for future use (e.g., job matching in Jobs Hub)
+- **Option B**: Delete it to reduce code
+
+Recommendation: Keep it - may be useful for Jobs Hub AI features later.
+
+### 3. Update Feed UI
+
+**Remove from Feed.tsx**:
+- "Load More (20 credits)" button at bottom
+- Credit-related imports (`useCredits`, `Coins` icon)
+- AI refresh logic
+
+**Update**:
+- Change refresh to simple data reload (free)
+- Update "insights" section to use static tips instead of AI-generated ones
+
+### 4. Clear Cached Recommendations
+
+Run SQL to clear the cache so no old jobs appear:
 ```sql
-CREATE OR REPLACE FUNCTION normalize_talent_phone()
-RETURNS trigger AS $$
-BEGIN
-  NEW.phone := normalize_phone(NEW.country_code, NEW.phone);
-  RETURN NEW;
-END;
-$$ LANGUAGE plpgsql;
-
-CREATE TRIGGER tr_normalize_talent_phone
-BEFORE INSERT OR UPDATE OF phone, country_code ON talents
-FOR EACH ROW EXECUTE FUNCTION normalize_talent_phone();
+DELETE FROM ai_recommendations;
 ```
 
----
+### 5. Update FeedFilters and UI
 
-### Issue 3: No Form-Level Validation Using Zod Schemas
-**File:** `src/pages/Auth.tsx`
-
-**Current Problem:** The `loginSchema` in `validations.ts` is defined but not used in the login form. Form validation is done manually.
-
-**Fix:** Keep manual validation for simplicity (Zod integration would require react-hook-form refactoring), but add clear user-friendly error messages for edge cases.
+Since jobs are removed, ensure all filter options work correctly:
+- All, Posts, Courses, Videos, Articles, Polls
 
 ---
 
-## Part B: Feed Transformation Fixes
+## Files to Modify
 
-### Issue 4: FeedPostsManager Not Accessible from Admin Dashboard (Critical)
-**Files:** `src/components/dashboard/AdminSidebar.tsx`, `src/pages/Dashboard.tsx`
-
-**Current Problem:** The `FeedPostsManager` component was created but:
-1. Not added to the admin sidebar navigation
-2. Not added to the Dashboard switch/case for rendering
-3. Not added to `tabAccessMap` for role-based access
-
-**Fix:** Add "Feed Posts" to the Content Management group in AdminSidebar and wire it up in Dashboard.tsx.
-
-**AdminSidebar.tsx changes:**
-- Add to Content Management group: `{ title: "Feed Posts", icon: MessageSquare, value: "feed-posts" }`
-
-**Dashboard.tsx changes:**
-- Add import: `import { FeedPostsManager } from "@/components/dashboard/FeedPostsManager";`
-- Add to `tabAccessMap`: `"feed-posts": ["admin"]`
-- Add to `renderContent` switch: `case "feed-posts": return <FeedPostsManager />;`
-- Add to `getPageTitle`: `"feed-posts": "Feed Posts"`
+| File | Changes |
+|------|---------|
+| `src/hooks/useFeedRecommendations.ts` | Complete rewrite - remove AI, add simple fetch |
+| `src/pages/app/Feed.tsx` | Remove credit UI, update refresh logic |
+| Database | Clear `ai_recommendations` table |
+| `supabase/functions/generate-feed-recommendations/index.ts` | Optional: Keep or remove |
 
 ---
 
-### Issue 5: Empty Feed (No Seed Data)
-**Current Problem:** The `feed_posts` table is empty, so users see an empty feed.
+## New `useFeedRecommendations.ts` Logic
 
-**Fix:** After the admin nav fix is deployed, use the FeedPostsManager to create initial content. Alternatively, I can seed 3-5 sample posts via SQL insert.
-
-**Sample seed data:**
-```sql
-INSERT INTO feed_posts (author_name, author_title, content_type, text_content, tags, is_active, is_pinned)
-VALUES 
-  ('GRO10X Team', 'Career Experts', 'tip', 'Resume tip: Always quantify your achievements. Instead of "Managed a team", write "Led a team of 8 engineers, delivering 3 projects ahead of schedule."', '{"CareerTips", "Resume", "FreshGraduates"}', true, true),
-  ('GRO10X Team', 'Career Experts', 'announcement', 'Welcome to our new social feed! Share your career journey, get insights, and connect with opportunities.', '{"Announcement", "Welcome"}', true, false),
-  ('GRO10X Team', 'Career Experts', 'poll', 'What skill would you like to learn next?', '{"Poll", "Learning"}', true, false);
-
--- Add poll options for the poll post (need to update with actual UUID after insert)
-```
-
----
-
-### Issue 6: Missing UPDATE Policy for post_reactions
-**Current Problem:** The RLS policies for `post_reactions` allow INSERT and DELETE but not UPDATE. Users changing their reaction type (e.g., from "like" to "insightful") would fail.
-
-**Current RLS:**
-- `Users can manage own reactions` (INSERT)
-- `Users can delete own reactions` (DELETE)
-- Missing: UPDATE policy
-
-**Fix:** The current implementation in `usePostReactions.ts` already handles this by deleting the old reaction and inserting a new one (lines 93-98). This pattern works correctly. No database change needed.
-
----
-
-### Issue 7: poll_votes RLS Exposes Individual Votes
-**Current Problem:** `poll_votes` has `Anyone can view poll votes` with `qual: true`, meaning anyone can see who voted for what option.
-
-**Analysis:** This is actually acceptable for this use case since:
-1. The hook only fetches aggregated counts client-side
-2. Knowing who voted for what isn't sensitive information in a career platform context
-3. Changing this to aggregate-only would require a database function
-
-**Recommendation:** Leave as-is for now. If privacy becomes a concern, create an RPC function that returns only aggregated counts.
-
----
-
-## Summary of Required Changes
-
-| Priority | Issue | File(s) | Change Type |
-|----------|-------|---------|-------------|
-| **Critical** | FeedPostsManager not in admin nav | AdminSidebar.tsx, Dashboard.tsx | Code edit |
-| **High** | Phone lookup too loose | useAuth.ts | Code edit |
-| **High** | Add phone normalization trigger | Database migration | SQL migration |
-| **High** | Seed feed posts | Database | SQL insert |
-| **Medium** | loginSchema not enforced | Auth.tsx | Optional enhancement |
-
----
-
-## Implementation Steps
-
-### Step 1: Fix Admin Dashboard Navigation
-1. Edit `AdminSidebar.tsx` to add Feed Posts menu item
-2. Edit `Dashboard.tsx` to add import, tabAccessMap entry, and switch case
-
-### Step 2: Improve Phone Login Security
-1. Update `resolveEmailFromPhone` in `useAuth.ts` with stricter matching
-
-### Step 3: Add Phone Normalization Trigger (Database)
-1. Create migration for trigger on talents table
-
-### Step 4: Seed Initial Feed Content
-1. Insert 3-5 starter posts so feed isn't empty
-
----
-
-## Technical Details
-
-### AdminSidebar.tsx Edit (Content Management group, around line 96):
 ```typescript
-// Add after "Blog Posts" item:
-{ title: "Feed Posts", icon: MessageSquare, value: "feed-posts" },
+// Simplified hook structure:
+export function useFeedRecommendations() {
+  // 1. Fetch posts, courses, blogs in parallel
+  // 2. No AI call
+  // 3. No credit deduction
+  // 4. Simple sorting: pinned → recent → rest
+  // 5. Filter by type
+  
+  const fetchFeed = async () => {
+    const [postsResult, coursesResult, blogsResult] = await Promise.all([
+      supabase.from("feed_posts").select("*").eq("is_active", true),
+      supabase.from("content").select("*").eq("is_published", true),
+      supabase.from("blog_posts").select("*").eq("status", "published"),
+    ]);
+    
+    // Merge and sort
+    // No AI scoring needed
+  };
+  
+  return {
+    items,
+    isLoading,
+    filters,
+    setFilters,
+    refresh, // Now FREE
+    markInterested,
+    markNotInterested,
+  };
+}
 ```
 
-### Dashboard.tsx Edits:
+---
+
+## What Happens to "Career Insights"?
+
+Currently, AI generates 3 personalized career tips. Options:
+
+**Option A**: Remove insights section entirely
+**Option B**: Use static curated tips (no AI)
+**Option C**: Keep insights but generate once on profile creation (not on every feed load)
+
+Recommendation: **Option B** - Keep the insights card but use curated tips:
 ```typescript
-// Add import (around line 32):
-import { FeedPostsManager } from "@/components/dashboard/FeedPostsManager";
-
-// Add to tabAccessMap (around line 87):
-"feed-posts": ["admin"],
-
-// Add to renderContent switch (around line 271):
-case "feed-posts":
-  return <FeedPostsManager />;
-
-// Add to getPageTitle (around line 315):
-"feed-posts": "Feed Posts",
+const staticInsights = [
+  "Keep your profile updated to increase visibility to employers",
+  "Practice common interview questions using our Mock Interview service",
+  "Check the Jobs Hub daily for new opportunities",
+];
 ```
 
-### useAuth.ts Edit (lines 79-100):
-Replace the `resolveEmailFromPhone` function with improved matching logic that:
-1. Removes all non-digit characters
-2. Tries exact match with and without country code
-3. Handles edge cases like leading zeros
+This maintains the UI without the AI cost.
 
-### Database Migration:
-```sql
--- Add phone normalization trigger
-CREATE OR REPLACE FUNCTION normalize_talent_phone()
-RETURNS trigger
-LANGUAGE plpgsql
-SECURITY DEFINER
-SET search_path = 'public'
-AS $$
-BEGIN
-  IF NEW.phone IS NOT NULL AND NEW.phone != '' THEN
-    NEW.phone := normalize_phone(NEW.country_code, NEW.phone);
-  END IF;
-  RETURN NEW;
-END;
-$$;
+---
 
-CREATE TRIGGER tr_normalize_talent_phone
-BEFORE INSERT OR UPDATE ON talents
-FOR EACH ROW
-WHEN (NEW.phone IS DISTINCT FROM OLD.phone OR NEW.country_code IS DISTINCT FROM OLD.country_code OR OLD.phone IS NULL)
-EXECUTE FUNCTION normalize_talent_phone();
-```
+## Credit System Impact
+
+| Service | Before | After |
+|---------|--------|-------|
+| Feed Refresh | 20 credits | FREE |
+| Career Assessment | 50 credits | 50 credits (unchanged) |
+| Mock Interview | 50 credits | 50 credits (unchanged) |
+| Salary Analysis | 50 credits | 50 credits (unchanged) |
+
+Users save 20 credits per feed refresh, encouraging more engagement.
+
+---
+
+## Expected Outcome
+
+After these changes:
+1. **Feed loads instantly** - No AI call needed
+2. **Jobs completely removed** - Only posts, courses, videos, blogs
+3. **Free to use** - No credits for browsing
+4. **Simpler codebase** - Less edge function complexity
+5. **Better UX** - Users can refresh as often as they want
+
+---
+
+## Optional: Keep AI for Jobs Hub
+
+The edge function could be repurposed for the Jobs Hub (`/app/jobs`) to provide AI-scored job matches. This would:
+- Make jobs exclusive to Jobs Hub
+- Provide AI value where it matters (job matching)
+- Charge credits only when users actively seek job recommendations
+
+This is a future enhancement, not part of this immediate fix.
 
