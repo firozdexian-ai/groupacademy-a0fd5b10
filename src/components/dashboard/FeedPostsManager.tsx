@@ -4,6 +4,7 @@ import { supabase } from '@/integrations/supabase/client';
 import { Button } from '@/components/ui/button';
 import { Card, CardContent, CardHeader, CardTitle } from '@/components/ui/card';
 import { Input } from '@/components/ui/input';
+import { ImageUpload } from '@/components/ImageUpload';
 import { Label } from '@/components/ui/label';
 import { Textarea } from '@/components/ui/textarea';
 import { Switch } from '@/components/ui/switch';
@@ -362,13 +363,13 @@ export function FeedPostsManager() {
                 </div>
               )}
 
-              {/* Media URL */}
+              {/* Media Image */}
               <div>
-                <Label>Media Image URL</Label>
-                <Input
-                  value={formData.media_url}
-                  onChange={(e) => setFormData(prev => ({ ...prev, media_url: e.target.value }))}
-                  placeholder="https://... (image URL)"
+                <ImageUpload
+                  value={formData.media_url || undefined}
+                  onUpload={(url) => setFormData(prev => ({ ...prev, media_url: url }))}
+                  onRemove={() => setFormData(prev => ({ ...prev, media_url: '' }))}
+                  bucket="feed-images"
                 />
               </div>
 
