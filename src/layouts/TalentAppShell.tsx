@@ -1,383 +1,299 @@
-import { Outlet, NavLink, useNavigate, useLocation } from "react-router-dom";
+import { useState, useEffect } from "react";
+import { Outlet, useNavigate, useLocation } from "react-router-dom";
+import { useTalent } from "@/hooks/useTalent";
+import { supabase } from "@/integrations/supabase/client";
 import {
   Home,
-  GraduationCap,
   Briefcase,
+  GraduationCap,
+  Sparkles,
   Globe,
   Bot,
-  Sparkles,
   User,
-  LogOut,
-  Menu,
-  X,
   Bell,
-  Bookmark,
-  FileText,
-  Settings,
-  ChevronRight,
+  Menu,
+  MessageSquare,
+  Search,
+  LogOut,
+  X,
 } from "lucide-react";
-import { useState, useEffect } from "react";
-import { useTalent } from "@/hooks/useTalent";
-import { usePWADetect } from "@/hooks/usePWADetect";
 import { Button } from "@/components/ui/button";
-import { ScrollArea } from "@/components/ui/scroll-area";
+import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { cn } from "@/lib/utils";
-import logoLight from "@/assets/logo-horizontal-light.png";
-import logoDark from "@/assets/logo-horizontal-dark.png";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
+import { Badge } from "@/components/ui/badge";
+import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
+import { useCredits } from "@/hooks/useCredits";
 import logoIcon from "@/assets/logo-icon.png";
-import { useTheme } from "next-themes";
-import { CreditBalance } from "@/components/credits/CreditBalance";
-import { NotificationDropdown } from "@/components/notifications/NotificationDropdown";
-import { Separator } from "@/components/ui/separator";
-import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
-
-// Desktop Sidebar Items (Full List)
-const DESKTOP_NAV_ITEMS = [
-  { path: "/app/feed", label: "Feed", icon: Home },
-  { path: "/app/jobs", label: "Jobs", icon: Briefcase },
-  { path: "/app/learning", label: "Learn", icon: GraduationCap },
-  { path: "/app/services", label: "Services", icon: Sparkles },
-  { path: "/app/abroad", label: "Abroad", icon: Globe },
-  { path: "/app/agents", label: "AI Agents", icon: Bot },
-];
-
-// Mobile Bottom Nav (Priority List - Max 5)
-const MOBILE_NAV_ITEMS = [
-  { path: "/app/feed", label: "Feed", icon: Home },
-  { path: "/app/jobs", label: "Jobs", icon: Briefcase },
-  { path: "/app/learning", label: "Learn", icon: GraduationCap },
-  { path: "/app/agents", label: "AI", icon: Bot },
-];
 
 export function TalentAppShell() {
-  const { talent, signOut, isLoading, refreshTalent } = useTalent();
-  const { isPWA } = usePWADetect();
   const navigate = useNavigate();
   const location = useLocation();
-  const { theme } = useTheme();
-  const [mobileMenuOpen, setMobileMenuOpen] = useState(false);
-  const [showOnboarding, setShowOnboarding] = useState(false);
+  const { talent } = useTalent();
+  const { balance } = useCredits();
+  const [unreadCount, setUnreadCount] = useState(0);
+  const [searchQuery, setSearchQuery] = useState("");
 
+  // LinkedIn-style Navigation Items
+  const navItems = [
+    { label: "Home", icon: Home, path: "/app/feed" },
+    { label: "Jobs", icon: Briefcase, path: "/app/jobs" },
+    { label: "Learning", icon: GraduationCap, path: "/app/learning" },
+    { label: "Services", icon: Sparkles, path: "/app/services" },
+    { label: "Abroad", icon: Globe, path: "/app/abroad" },
+    { label: "AI Agents", icon: Bot, path: "/app/agents" },
+  ];
+
+  // Fetch unread notifications
   useEffect(() => {
-    // Global Onboarding Check
-    // If talent exists but hasn't completed onboarding, FORCE the wizard.
-    if (talent && !talent.onboardingCompletedAt) {
-      setShowOnboarding(true);
-    } else {
-      setShowOnboarding(false);
-    }
-  }, [talent]);
+    if (!talent?.id) return;
+    const fetchNotifications = async () => {
+      const { count } = await supabase
+        .from("notifications")
+        .select("*", { count: "exact", head: true })
+        .eq("user_id", talent.id)
+        .eq("is_read", false);
+      setUnreadCount(count || 0);
+    };
+    fetchNotifications();
+  }, [talent?.id]);
 
   const handleSignOut = async () => {
-    await signOut();
-    navigate("/");
+    await supabase.auth.signOut();
+    navigate("/auth");
   };
 
-  const handleMobileNavClick = (path: string) => {
-    navigate(path);
-    setMobileMenuOpen(false);
-  };
-
-  const handleOnboardingComplete = async () => {
-    // When wizard finishes, refresh talent data to update 'onboardingCompletedAt'
-    // This will cause the useEffect to run again and hide the wizard.
-    await refreshTalent();
-    setShowOnboarding(false);
-    // User remains on the current URL (e.g. /app/jobs/123), preserving the "hook"
-  };
-
-  // 1. Loading State (PWA Branded)
-  if (isLoading) {
-    if (isPWA) {
-      return (
-        <div className="min-h-screen bg-background flex flex-col items-center justify-center">
-          <img src={logoIcon} alt="GroUp Academy" className="w-16 h-16 mb-4 animate-pulse" />
-          <div className="flex items-center gap-2">
-            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "0ms" }} />
-            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "150ms" }} />
-            <div className="w-2 h-2 bg-primary rounded-full animate-bounce" style={{ animationDelay: "300ms" }} />
-          </div>
-        </div>
-      );
+  const handleSearch = (e: React.FormEvent) => {
+    e.preventDefault();
+    if (searchQuery.trim()) {
+      navigate(`/app/jobs/all?search=${encodeURIComponent(searchQuery)}`);
     }
+  };
 
-    return (
-      <div className="min-h-screen flex items-center justify-center bg-background">
-        <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-primary" />
-      </div>
-    );
-  }
-
-  // 2. Auth Guard
-  if (!talent) {
-    const returnUrl = encodeURIComponent(location.pathname + location.search);
-    navigate(`/auth?returnTo=${returnUrl}`, { replace: true });
-    return null;
-  }
-
-  // 3. Onboarding Guard (The Fix)
-  // If onboarding is required, render Wizard INSTAEAD of the App Shell.
-  // This effectively traps the user until they complete it.
-  if (showOnboarding) {
-    return (
-      <div className="min-h-screen bg-background">
-        <OnboardingWizard onComplete={handleOnboardingComplete} />
-      </div>
-    );
-  }
-
-  const logoSrc = theme === "dark" ? logoDark : logoLight;
+  const isActive = (path: string) => {
+    if (path === "/app/feed" && location.pathname === "/app/feed") return true;
+    if (path !== "/app/feed" && location.pathname.startsWith(path)) return true;
+    return false;
+  };
 
   return (
-    <div className="min-h-screen bg-background flex flex-col md:flex-row">
-      {/* ================= DESKTOP SIDEBAR ================= */}
-      <aside className="hidden md:flex w-64 flex-col border-r h-screen sticky top-0 bg-card/50 backdrop-blur-sm z-40">
-        {/* Sidebar Header */}
-        <div className="p-6 h-16 flex items-center border-b">
-          <NavLink to="/app/feed">
-            <img src={logoSrc} alt="GroUp Academy" className="h-8" />
-          </NavLink>
-        </div>
+    <div className="min-h-screen bg-[#F3F2EF] font-sans text-slate-900">
+      {/* --- TOP NAVBAR (Desktop & Mobile Header) --- */}
+      <header className="sticky top-0 z-50 bg-white border-b border-gray-200 h-14 px-4 shadow-sm">
+        <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
+          {/* Left: Logo & Search */}
+          <div className="flex items-center gap-4 flex-1">
+            <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/app/feed")}>
+              <img src={logoIcon} alt="Logo" className="w-8 h-8 rounded" />
+            </div>
 
-        {/* Sidebar Navigation */}
-        <ScrollArea className="flex-1 px-4 py-6">
-          <nav className="space-y-2">
-            {DESKTOP_NAV_ITEMS.map((item) => (
-              <NavLink
+            {/* Desktop Search */}
+            <form onSubmit={handleSearch} className="hidden md:block relative w-full max-w-xs">
+              <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-gray-500" />
+              <Input
+                placeholder="Search"
+                className="h-9 pl-9 bg-[#EEF3F8] border-none focus-visible:ring-1 focus-visible:ring-primary/20 transition-all w-64 focus:w-80 placeholder:text-gray-500"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </form>
+
+            {/* Mobile Search Icon Only */}
+            <Button variant="ghost" size="icon" className="md:hidden text-gray-600">
+              <Search className="h-5 w-5" />
+            </Button>
+          </div>
+
+          {/* Center: Navigation (Desktop Only) */}
+          <nav className="hidden md:flex items-center gap-1 lg:gap-6 h-full">
+            {navItems.map((item) => (
+              <button
                 key={item.path}
-                to={item.path}
-                className={({ isActive }) =>
-                  cn(
-                    "flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm font-medium transition-all duration-200 group",
-                    isActive
-                      ? "bg-primary/10 text-primary"
-                      : "text-muted-foreground hover:bg-muted hover:text-foreground",
-                  )
-                }
+                onClick={() => navigate(item.path)}
+                className={`flex flex-col items-center justify-center w-16 lg:w-20 h-full border-b-2 transition-all duration-200 group
+                  ${
+                    isActive(item.path)
+                      ? "border-black text-black"
+                      : "border-transparent text-gray-500 hover:text-black"
+                  }`}
               >
-                <item.icon className="h-5 w-5" />
-                <span>{item.label}</span>
-              </NavLink>
+                <div className="relative">
+                  <item.icon className={`h-6 w-6 mb-0.5 ${isActive(item.path) ? "fill-current" : ""}`} />
+                </div>
+                <span className="text-[10px] lg:text-xs font-medium">{item.label}</span>
+              </button>
             ))}
           </nav>
-        </ScrollArea>
 
-        {/* Sidebar Footer (Profile & Logout) */}
-        <div className="p-4 border-t space-y-4 bg-background/50">
-          <div className="flex items-center gap-3 px-2">
-            <Avatar className="h-9 w-9 border">
-              <AvatarImage src={talent?.profilePhotoUrl || undefined} />
-              <AvatarFallback className="text-xs bg-primary/10 text-primary">
-                {talent?.fullName?.charAt(0).toUpperCase()}
-              </AvatarFallback>
-            </Avatar>
-            <div className="flex-1 min-w-0">
-              <p className="text-sm font-medium truncate">{talent.fullName}</p>
-              <p className="text-xs text-muted-foreground truncate">{talent.email}</p>
-            </div>
-          </div>
-
-          <div className="px-2">
-            <CreditBalance variant="compact" />
-          </div>
-
-          <Button
-            variant="outline"
-            className="w-full justify-start text-muted-foreground hover:text-destructive hover:bg-destructive/10 hover:border-destructive/20"
-            onClick={handleSignOut}
-          >
-            <LogOut className="h-4 w-4 mr-2" />
-            Sign Out
-          </Button>
-        </div>
-      </aside>
-
-      {/* ================= MAIN CONTENT AREA ================= */}
-      <div className="flex-1 flex flex-col min-h-0">
-        {/* Mobile Header */}
-        <header className="md:hidden sticky top-0 z-50 bg-card/95 backdrop-blur-md border-b border-border/50 shadow-sm h-14 px-4 flex items-center justify-between">
-          <NavLink to="/app/feed">
-            <img src={logoIcon} alt="GroUp" className="h-8 w-8" />
-          </NavLink>
-
-          <div className="flex items-center gap-2">
-            <NotificationDropdown />
-            <Avatar 
-              className="h-9 w-9 cursor-pointer ring-2 ring-border hover:ring-primary/50 transition-all"
-              onClick={() => navigate('/app/profile')}
+          {/* Right: Actions & Profile */}
+          <div className="flex items-center gap-2 md:gap-4 flex-none">
+            {/* Notifications */}
+            <button
+              className="relative flex flex-col items-center justify-center text-gray-500 hover:text-black transition-colors"
+              onClick={() => navigate("/app/notifications")}
             >
-              <AvatarImage src={talent?.profilePhotoUrl || undefined} />
-              <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">
-                {talent?.fullName?.charAt(0)?.toUpperCase() || 'U'}
-              </AvatarFallback>
-            </Avatar>
-          </div>
-        </header>
-
-        {/* Mobile Menu Overlay (Replaces standard menu) */}
-        {mobileMenuOpen && (
-          <div className="md:hidden fixed inset-0 z-[60] bg-background flex flex-col animate-in slide-in-from-bottom-5 duration-300">
-            {/* Menu Header */}
-            <div className="flex items-center justify-between p-4 border-b">
-              <span className="font-bold text-lg">Menu</span>
-              <Button variant="ghost" size="icon" onClick={() => setMobileMenuOpen(false)}>
-                <X className="h-6 w-6" />
-              </Button>
-            </div>
-
-            <ScrollArea className="flex-1">
-              <div className="p-4 space-y-6">
-                {/* Profile Card */}
-                <div
-                  className="flex items-center gap-4 p-4 rounded-xl bg-muted/30 border"
-                  onClick={() => handleMobileNavClick("/app/profile")}
-                >
-                  <Avatar className="h-12 w-12 border">
-                    <AvatarImage src={talent?.profilePhotoUrl || undefined} />
-                    <AvatarFallback>{talent?.fullName?.charAt(0)}</AvatarFallback>
-                  </Avatar>
-                  <div className="flex-1">
-                    <p className="font-semibold text-lg">{talent.fullName}</p>
-                    <p className="text-sm text-muted-foreground">View Profile</p>
-                  </div>
-                  <ChevronRight className="h-5 w-5 text-muted-foreground" />
-                </div>
-
-                {/* Credits */}
-                <CreditBalance variant="full" />
-
-                {/* Quick Links Group */}
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground px-2 mb-2 uppercase tracking-wider">
-                    Features
-                  </p>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-3 h-12 text-base"
-                    onClick={() => handleMobileNavClick("/app/services")}
-                  >
-                    <Sparkles className="h-5 w-5 text-purple-500" /> Services Hub
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-3 h-12 text-base"
-                    onClick={() => handleMobileNavClick("/app/abroad")}
-                  >
-                    <Globe className="h-5 w-5 text-blue-500" /> Study Abroad
-                  </Button>
-                </div>
-
-                <Separator />
-
-                {/* Personal Links Group */}
-                <div className="space-y-1">
-                  <p className="text-xs font-medium text-muted-foreground px-2 mb-2 uppercase tracking-wider">
-                    Personal
-                  </p>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-3 h-12 text-base"
-                    onClick={() => handleMobileNavClick("/app/saved")}
-                  >
-                    <Bookmark className="h-5 w-5" /> Saved Items
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-3 h-12 text-base"
-                    onClick={() => handleMobileNavClick("/app/applications")}
-                  >
-                    <FileText className="h-5 w-5" /> My Applications
-                  </Button>
-                  <Button
-                    variant="ghost"
-                    className="w-full justify-start gap-3 h-12 text-base"
-                    onClick={() => handleMobileNavClick("/app/services/my-results")}
-                  >
-                    <Briefcase className="h-5 w-5" /> My Results
-                  </Button>
-                </div>
-
-                <Separator />
-
-                <Button
-                  variant="ghost"
-                  className="w-full justify-start gap-3 h-12 text-base text-destructive hover:text-destructive hover:bg-destructive/10"
-                  onClick={handleSignOut}
-                >
-                  <LogOut className="h-5 w-5" /> Sign Out
-                </Button>
-              </div>
-            </ScrollArea>
-          </div>
-        )}
-
-        {/* Content Outlet */}
-        <main className="flex-1 overflow-y-auto pb-[80px] md:pb-6">
-          <div className="hidden md:flex justify-end p-4">
-            <div className="flex items-center gap-4">
-              <NotificationDropdown />
-            </div>
-          </div>
-          <Outlet />
-        </main>
-      </div>
-
-      {/* ================= MOBILE BOTTOM NAV (Clean 5 Items) ================= */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 z-50 bg-card/95 backdrop-blur-md nav-float safe-bottom border-t shadow-[0_-5px_20px_-10px_rgba(0,0,0,0.1)]">
-        <div className="flex items-center justify-around h-[68px] px-1">
-          {MOBILE_NAV_ITEMS.map((item) => {
-            const isActive = location.pathname.startsWith(item.path);
-            return (
-              <NavLink
-                key={item.path}
-                to={item.path}
-                className={cn(
-                  "flex flex-col items-center justify-center gap-1 w-full h-full transition-all active:scale-95",
-                  isActive ? "text-primary" : "text-muted-foreground",
+              <div className="relative">
+                <Bell className="h-6 w-6" />
+                {unreadCount > 0 && (
+                  <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-white">
+                    {unreadCount > 9 ? "9+" : unreadCount}
+                  </span>
                 )}
-                onClick={() => setMobileMenuOpen(false)}
-              >
-                <div
-                  className={cn(
-                    "p-1.5 rounded-xl transition-all duration-300",
-                    isActive && "bg-primary/10 translate-y-[-2px]",
-                  )}
-                >
-                  <item.icon
-                    className={cn("h-5 w-5 transition-all", isActive && "fill-current")}
-                    strokeWidth={isActive ? 2.5 : 2}
-                  />
-                </div>
-                <span className={cn("text-[10px] font-medium transition-all", isActive && "font-bold")}>
-                  {item.label}
-                </span>
-              </NavLink>
-            );
-          })}
+              </div>
+              <span className="hidden md:block text-[10px] lg:text-xs font-medium mt-0.5">Notifications</span>
+            </button>
 
-          {/* Menu Button (Replaces Hamburger) */}
-          <button
-            onClick={() => setMobileMenuOpen(true)}
-            className={cn(
-              "flex flex-col items-center justify-center gap-1 w-full h-full transition-all active:scale-95",
-              mobileMenuOpen ? "text-primary" : "text-muted-foreground",
-            )}
-          >
-            <div
-              className={cn(
-                "p-1.5 rounded-xl transition-all duration-300",
-                mobileMenuOpen && "bg-primary/10 translate-y-[-2px]",
-              )}
-            >
-              <Menu
-                className={cn("h-5 w-5 transition-all", mobileMenuOpen && "scale-110")}
-                strokeWidth={mobileMenuOpen ? 2.5 : 2}
-              />
+            <div className="h-8 w-px bg-gray-200 hidden md:block mx-1" />
+
+            {/* Profile Dropdown */}
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <button className="flex flex-col items-center justify-center outline-none group">
+                  <Avatar className="h-6 w-6 md:h-6 md:w-6 border cursor-pointer group-hover:opacity-80 transition-opacity">
+                    <AvatarImage src={talent?.profileImageUrl || ""} />
+                    <AvatarFallback className="text-[10px]">ME</AvatarFallback>
+                  </Avatar>
+                  <span className="hidden md:block text-[10px] lg:text-xs font-medium text-gray-500 mt-0.5 flex items-center gap-0.5">
+                    Me <span className="text-[8px]">▼</span>
+                  </span>
+                </button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end" className="w-64 p-2">
+                <div className="flex items-center gap-3 p-2 mb-2 bg-muted/30 rounded-md">
+                  <Avatar className="h-12 w-12 border">
+                    <AvatarImage src={talent?.profileImageUrl || ""} />
+                    <AvatarFallback>
+                      <User className="h-6 w-6" />
+                    </AvatarFallback>
+                  </Avatar>
+                  <div className="flex-1 overflow-hidden">
+                    <p className="font-semibold text-sm truncate">{talent?.fullName || "User"}</p>
+                    <p className="text-xs text-muted-foreground truncate">{talent?.headline || "Student"}</p>
+                  </div>
+                </div>
+                <DropdownMenuItem
+                  onClick={() => navigate("/app/profile")}
+                  className="cursor-pointer text-primary font-medium border border-primary justify-center rounded-full mb-2 hover:bg-primary/5"
+                >
+                  View Profile
+                </DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">Account</DropdownMenuLabel>
+                <DropdownMenuItem onClick={() => navigate("/app/profile/edit")} className="cursor-pointer">
+                  Settings & Privacy
+                </DropdownMenuItem>
+                <DropdownMenuItem className="cursor-pointer">Help Center</DropdownMenuItem>
+                <DropdownMenuSeparator />
+                <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-muted-foreground">
+                  <LogOut className="h-4 w-4 mr-2" /> Sign Out
+                </DropdownMenuItem>
+              </DropdownMenuContent>
+            </DropdownMenu>
+
+            {/* Credits (Keep existing functionality) */}
+            <div className="hidden md:flex flex-col items-end ml-2">
+              <Badge
+                variant="secondary"
+                className="gap-1 bg-amber-100 text-amber-800 hover:bg-amber-200 cursor-pointer border-amber-200"
+              >
+                <Coins className="h-3 w-3 fill-amber-500 text-amber-600" />
+                <span className="font-bold">{balance}</span>
+              </Badge>
             </div>
-            <span className={cn("text-[10px] font-medium transition-all", mobileMenuOpen && "font-bold")}>Menu</span>
-          </button>
+
+            {/* Mobile Menu Trigger (Hamburger) */}
+            <Sheet>
+              <SheetTrigger asChild>
+                <Button variant="ghost" size="icon" className="md:hidden ml-1">
+                  <Menu className="h-6 w-6 text-gray-600" />
+                </Button>
+              </SheetTrigger>
+              <SheetContent side="left" className="w-[300px] sm:w-[400px] p-0">
+                <div className="flex flex-col h-full bg-[#F3F2EF]">
+                  <div className="p-4 bg-white border-b">
+                    <div className="flex items-center gap-3 mb-4">
+                      <Avatar className="h-12 w-12 border">
+                        <AvatarImage src={talent?.profileImageUrl || ""} />
+                        <AvatarFallback>ME</AvatarFallback>
+                      </Avatar>
+                      <div>
+                        <p className="font-bold text-lg">{talent?.fullName}</p>
+                        <p className="text-sm text-muted-foreground line-clamp-1">{talent?.headline}</p>
+                      </div>
+                    </div>
+                    <Button
+                      onClick={() => navigate("/app/profile")}
+                      variant="outline"
+                      className="w-full rounded-full border-primary text-primary hover:bg-primary/5"
+                    >
+                      View Profile
+                    </Button>
+                  </div>
+                  <div className="flex-1 overflow-y-auto py-2">
+                    <div className="px-4 py-2">
+                      <h3 className="font-semibold text-sm mb-2 px-2">Credits Balance</h3>
+                      <div className="flex items-center gap-2 p-3 bg-white rounded-lg border shadow-sm">
+                        <Coins className="h-5 w-5 text-amber-500" />
+                        <span className="font-bold text-lg">{balance}</span>
+                        <span className="text-xs text-muted-foreground ml-auto">Valid until next month</span>
+                      </div>
+                    </div>
+                    <div className="h-px bg-gray-200 my-2 mx-4" />
+                    <nav className="space-y-1 px-2">
+                      {navItems.map((item) => (
+                        <button
+                          key={item.path}
+                          onClick={() => navigate(item.path)}
+                          className={`w-full flex items-center gap-4 px-4 py-3 text-sm font-medium rounded-md transition-colors
+                            ${isActive(item.path) ? "bg-white text-black shadow-sm" : "text-gray-600 hover:bg-white/50"}`}
+                        >
+                          <item.icon className="h-5 w-5" />
+                          {item.label}
+                        </button>
+                      ))}
+                    </nav>
+                  </div>
+                  <div className="p-4 border-t bg-white">
+                    <Button
+                      variant="ghost"
+                      className="w-full justify-start text-muted-foreground"
+                      onClick={handleSignOut}
+                    >
+                      <LogOut className="h-4 w-4 mr-2" /> Sign Out
+                    </Button>
+                  </div>
+                </div>
+              </SheetContent>
+            </Sheet>
+          </div>
         </div>
+      </header>
+
+      {/* --- MAIN CONTENT AREA --- */}
+      <main className="max-w-7xl mx-auto py-6 px-0 md:px-4 pb-20 md:pb-6">
+        <Outlet />
+      </main>
+
+      {/* --- MOBILE BOTTOM TAB BAR --- */}
+      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white border-t border-gray-200 h-16 px-2 flex items-center justify-around z-50 pb-safe shadow-[0_-1px_3px_rgba(0,0,0,0.05)]">
+        {navItems.slice(0, 5).map((item) => (
+          <button
+            key={item.path}
+            onClick={() => navigate(item.path)}
+            className={`flex flex-col items-center justify-center w-full h-full transition-colors
+              ${isActive(item.path) ? "text-black" : "text-gray-500 hover:text-gray-700"}`}
+          >
+            <item.icon className={`h-6 w-6 mb-1 ${isActive(item.path) ? "fill-current" : ""}`} />
+            <span className="text-[10px] font-medium">{item.label}</span>
+          </button>
+        ))}
       </nav>
     </div>
   );
