@@ -1,191 +1,104 @@
 
+# Fix CV Parsing Authentication Error
 
-# Profile Edit & Save Functionality Deep Dive - Fix Plan
+## Problem Identified
 
-## Issues Identified
+The CV parsing is failing with `AuthSessionMissingError: Auth session missing!` because the `parse-cv` edge function uses the **incorrect authentication pattern** for stateless Deno edge functions.
 
-### Issue 1: Save Button Hidden by Mobile Bottom Navigation (CRITICAL)
-**Location**: `src/pages/app/ProfileEdit.tsx` (lines 454-474)
+### Root Cause
 
-The save button bar is positioned with `fixed bottom-0`, but the mobile bottom navigation in `TalentAppShell.tsx` has a height of `68px` plus safe-area padding. This means:
-- Save button is rendered at `bottom-0`
-- Bottom nav is `68px + safe-area` tall
-- **Result**: Save button is completely covered by bottom navigation on mobile
-
-**Current Code**:
-```tsx
-<div className="fixed bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-md border-t z-50 md:relative md:p-0 md:bg-transparent md:border-0">
+**Current Code** (line 294-297 in `parse-cv/index.ts`):
+```typescript
+const {
+  data: { user },
+  error: authError,
+} = await supabaseClient.auth.getUser();  // ❌ Missing token parameter
 ```
 
-**Problem**: `bottom-0` places it behind the 68px bottom nav.
-
-### Issue 2: CV Upload in Profile Edit Not Saving to Database
-**Location**: `src/pages/app/ProfileEdit.tsx` (lines 97-203)
-
-When uploading CV in ProfileEdit, the flow is:
-1. Upload file to storage - works
-2. Call `parse-cv` edge function - works
-3. Update local state (`setFormData`, `setSkills`, etc.) - works
-4. **BUT the data is never persisted to the database until user clicks Save**
-
-The problem is the user doesn't see a Save button (Issue 1), so they never save. If they refresh before clicking Save, all parsed data is lost because it was only in React state.
-
-### Issue 3: CV Upload During Onboarding Has Different Behavior
-**Location**: `src/components/onboarding/CVUploadStep.tsx` (lines 166-202)
-
-In the onboarding wizard, CV upload correctly saves to database immediately:
-```tsx
-await updateTalent(updateData);
-await refreshTalent();
+**Required Pattern** (as used in `parse-job-post/index.ts`):
+```typescript
+const token = authHeader.replace('Bearer ', '');
+const {
+  data: { user },
+  error: authError,
+} = await supabaseAuth.auth.getUser(token);  // ✅ Explicit token passed
 ```
 
-But users who skip CV during onboarding and upload later via ProfileEdit face Issue 1 & 2.
-
-### Issue 4: No Auto-Save or Dirty State Warning
-When users make changes but don't save (because they can't see the button), there's no warning when navigating away. All changes are lost silently.
-
-### Issue 5: Inconsistent Save Patterns Across Components
-| Component | Save Behavior |
-|-----------|---------------|
-| `ProfileEdit.tsx` | Manual save via hidden button |
-| `CVUploadStep.tsx` | Auto-save after CV parse |
-| `ProfileEditDialog.tsx` | Manual save in dialog |
-| `ProfileQuickSetup.tsx` | Manual save before continue |
+In Supabase Edge Functions (Deno environment), there is no persistent session storage. The `getUser()` method without a token tries to use a session that doesn't exist, causing the error. You must explicitly extract the JWT token from the Authorization header and pass it to `getUser(token)`.
 
 ---
 
-## Solution Plan
+## Solution
 
-### Fix 1: Raise Save Bar Above Bottom Navigation
+### Fix the `parse-cv` Edge Function
 
-**File**: `src/pages/app/ProfileEdit.tsx`
+Update the authentication section to:
+1. Extract the JWT token from the Authorization header
+2. Pass the token explicitly to `getUser(token)`
 
-Change the sticky save bar positioning to account for mobile bottom navigation:
+### Code Change
 
-```tsx
-// Before (line 455)
-<div className="fixed bottom-0 left-0 right-0 p-4 ...">
+**File**: `supabase/functions/parse-cv/index.ts`
 
-// After - Add bottom padding for mobile nav
-<div className="fixed bottom-[68px] md:bottom-0 left-0 right-0 p-4 safe-bottom ...">
-```
-
-Also update the main container's bottom padding:
-```tsx
-// Line 251: Add extra padding to prevent content being hidden
-<div className="max-w-2xl mx-auto px-4 py-6 pb-40">
-```
-
-### Fix 2: Auto-Save CV Data Immediately After Parse
-
-**File**: `src/pages/app/ProfileEdit.tsx`
-
-After CV parsing succeeds, immediately save to database (not just local state):
-
-```tsx
-// After line 186 (toast.success)
-// Immediately persist CV data to database
-const immediateUpdate = {
-  cvUrl: publicUrl,
-  cvParsedAt: new Date().toISOString(),
-  ...(parsed.full_name && { fullName: parsed.full_name }),
-  ...(parsed.phone && { phone: parsed.phone }),
-  ...(parsed.skills?.length && { skills: parsed.skills }),
-  ...(parsed.experience?.length && { experience: parsed.experience }),
-  ...(parsed.education?.length && { education: parsed.education }),
-};
-
-await updateTalent(immediateUpdate);
-await refreshTalent();
-
-toast.success("Profile Updated!", { 
-  description: "Your CV data has been saved. Continue editing or go back." 
+**Before** (lines 290-305):
+```typescript
+const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  global: { headers: { Authorization: authHeader } },
 });
+
+const {
+  data: { user },
+  error: authError,
+} = await supabaseClient.auth.getUser();
 ```
 
-### Fix 3: Add Unsaved Changes Warning
+**After**:
+```typescript
+const supabaseClient = createClient(supabaseUrl, supabaseAnonKey, {
+  global: { headers: { Authorization: authHeader } },
+});
 
-**File**: `src/pages/app/ProfileEdit.tsx`
-
-Track form dirty state and warn before navigation:
-
-```tsx
-const [isDirty, setIsDirty] = useState(false);
-
-// Mark dirty on any form change
-const handleChange = (field: string, value: string) => {
-  setFormData((prev) => ({ ...prev, [field]: value }));
-  setIsDirty(true);
-};
-
-// Warn on navigation
-useEffect(() => {
-  const handleBeforeUnload = (e: BeforeUnloadEvent) => {
-    if (isDirty) {
-      e.preventDefault();
-      e.returnValue = '';
-    }
-  };
-  
-  window.addEventListener('beforeunload', handleBeforeUnload);
-  return () => window.removeEventListener('beforeunload', handleBeforeUnload);
-}, [isDirty]);
-```
-
-### Fix 4: Add Visual Save Indicator
-
-Add a floating "Unsaved changes" indicator when form is dirty:
-
-```tsx
-{isDirty && (
-  <div className="fixed top-16 md:top-4 right-4 z-50">
-    <Badge variant="destructive" className="animate-pulse">
-      Unsaved changes
-    </Badge>
-  </div>
-)}
+// Extract token from header and pass to getUser() for stateless edge function auth
+const token = authHeader.replace('Bearer ', '');
+const {
+  data: { user },
+  error: authError,
+} = await supabaseClient.auth.getUser(token);
 ```
 
 ---
 
 ## Files to Modify
 
-| File | Changes |
-|------|---------|
-| `src/pages/app/ProfileEdit.tsx` | Fix save bar position, auto-save CV data, add dirty state warning |
-| `src/index.css` | (Optional) Add utility class for nav-aware bottom positioning |
+| File | Change |
+|------|--------|
+| `supabase/functions/parse-cv/index.ts` | Add token extraction and pass to `getUser(token)` |
 
 ---
 
-## Technical Details
+## Why This Fix Works
 
-### Save Bar Positioning Fix
+Edge functions are stateless - they have no session storage like a browser. When the client calls the edge function, it sends the JWT token in the `Authorization: Bearer xxx` header. The edge function must:
 
-The bottom navigation has:
-- Base height: `68px` (line 328 in TalentAppShell)
-- Safe area padding: `env(safe-area-inset-bottom)` via `.safe-bottom` class
+1. Read that token from the header
+2. Pass it explicitly to `getUser(token)` for verification
 
-The fix uses `bottom-[68px]` on mobile which places the save bar directly above the nav. On desktop (`md:bottom-0`), it returns to normal positioning since there's no bottom nav.
-
-### CV Auto-Save Strategy
-
-Instead of storing parsed CV data only in React state, we:
-1. Parse CV via edge function
-2. Update local state for immediate UI feedback
-3. **Also persist to database immediately** via `updateTalent()`
-4. This ensures data survives page refreshes
-
-### Page Padding Adjustment
-
-With save bar at `bottom-[68px]` plus its own height (~76px), content needs `pb-40` (160px) minimum to prevent last form fields from being hidden.
+Without passing the token explicitly, `getUser()` looks for a non-existent session and throws `AuthSessionMissingError`.
 
 ---
 
 ## Expected Outcome
 
-After these fixes:
-1. Save button visible above bottom navigation on all devices
-2. CV data auto-saved immediately after parsing
-3. Users warned before losing unsaved changes
-4. Consistent save behavior across all profile editing flows
+After this fix:
+- CV uploads will parse successfully for logged-in users
+- The "Analyzing CV..." stage will complete instead of failing
+- Parsed data (name, skills, experience) will populate the profile form
+- The immediate auto-save implemented earlier will persist the data
 
+---
+
+## Additional Notes
+
+- The `parse-job-post` function already uses the correct pattern (line 224-228)
+- This is a common issue in Supabase Edge Functions and is documented in the platform memory
+- No database changes are required - this is purely an edge function fix
