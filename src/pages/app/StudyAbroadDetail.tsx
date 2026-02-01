@@ -19,17 +19,13 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Separator } from "@/components/ui/separator";
 import { format } from "date-fns";
-import { COUNTRIES } from "@/lib/constants/countries"; // <--- Shared Constant
+import { COUNTRIES } from "@/lib/constants/countries";
 
 export default function StudyAbroadDetail() {
   const { id } = useParams();
   const navigate = useNavigate();
 
-  // Validate UUID to prevent DB crashes
-  const isValidUUID = (str?: string) => {
-    const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-    return str && uuidRegex.test(str);
-  };
+  // FIX: Removed strict UUID regex which might be causing false negatives
 
   const {
     data: program,
@@ -38,14 +34,27 @@ export default function StudyAbroadDetail() {
   } = useQuery({
     queryKey: ["study-abroad-program", id],
     queryFn: async () => {
-      if (!isValidUUID(id)) throw new Error("Invalid Program ID");
+      console.log("🔍 Fetching program details for ID:", id); // Debug log
 
-      const { data, error } = await supabase.from("study_abroad_programs").select("*").eq("id", id).single();
-      if (error) throw error;
+      if (!id) throw new Error("No Program ID provided");
+
+      // FIX: Used 'maybeSingle()' instead of 'single()' to prevent 406 errors on 0 rows
+      const { data, error } = await supabase.from("study_abroad_programs").select("*").eq("id", id).maybeSingle();
+
+      if (error) {
+        console.error("❌ Supabase Error:", error);
+        throw error;
+      }
+
+      if (!data) {
+        console.warn("⚠️ Program not found in database.");
+        return null;
+      }
+
       return data;
     },
     enabled: !!id,
-    retry: 1,
+    retry: false, // FIX: Don't retry indefinitely if it fails
   });
 
   const getCountryFlag = (code: string) => {
@@ -79,12 +88,18 @@ export default function StudyAbroadDetail() {
         <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
           <AlertTriangle className="h-8 w-8 text-muted-foreground" />
         </div>
-        <h2 className="text-xl font-semibold mb-2">Program Not Found</h2>
-        <p className="text-muted-foreground mb-6">This program may have been removed or the link is invalid.</p>
-        <Button onClick={() => navigate("/app/abroad/study")}>
-          <ArrowLeft className="h-4 w-4 mr-2" />
-          Back to Programs
-        </Button>
+        <h2 className="text-xl font-semibold mb-2">Unable to Load Details</h2>
+        <p className="text-muted-foreground mb-6 max-w-md mx-auto">
+          {error ? (error as Error).message : "Program not found. It may have been removed."}
+        </p>
+        <div className="flex gap-2 justify-center">
+          <Button onClick={() => navigate("/app/abroad/study")} variant="outline">
+            <ArrowLeft className="h-4 w-4 mr-2" />
+            Back to List
+          </Button>
+          {/* Added Retry Button */}
+          <Button onClick={() => window.location.reload()}>Try Again</Button>
+        </div>
       </div>
     );
   }
