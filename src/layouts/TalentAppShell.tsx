@@ -16,7 +16,7 @@ import {
   Search,
   LogOut,
   X,
-  Coins,
+  Coins, // Verified import
 } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -63,13 +63,17 @@ export function TalentAppShell() {
   useEffect(() => {
     if (!talent?.id) return;
     const fetchNotifications = async () => {
-      // FIX: Select "id" instead of "*" to prevent TS "excessively deep" error
-      const { count } = await supabase
-        .from("notifications")
-        .select("id", { count: "exact", head: true })
-        .eq("user_id", talent.id)
-        .eq("is_read", false);
-      setUnreadCount(count || 0);
+      try {
+        // FIX: Cast table to 'any' to bypass TS2589 "excessively deep" error on complex schemas
+        const { count } = await supabase
+          .from("notifications" as any)
+          .select("*", { count: "exact", head: true })
+          .eq("user_id", talent.id)
+          .eq("is_read", false);
+        setUnreadCount(count || 0);
+      } catch (err) {
+        console.error("Error fetching notifications", err);
+      }
     };
     fetchNotifications();
   }, [talent?.id]);
@@ -206,7 +210,7 @@ export function TalentAppShell() {
               </DropdownMenuContent>
             </DropdownMenu>
 
-            {/* Credits (Keep existing functionality) */}
+            {/* Credits */}
             <div className="hidden md:flex flex-col items-end ml-2">
               <Badge
                 variant="secondary"
