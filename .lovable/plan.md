@@ -1,349 +1,405 @@
 
-# Comprehensive Bug Fix & Feature Enhancement Plan
 
-## Summary of Issues
+# AI Agent Network - Comprehensive Transformation Plan
 
-Based on my deep investigation, here are the three reported problems and their root causes:
+## Vision Summary
+
+Transform the current AI Agents feature from a simple utility into a **human-like AI messaging network** where users interact with specialized AI personas. This creates a foundation for:
+
+1. **Platform Agents** - Your career-focused AI experts (existing)
+2. **Company Agents** - B2B branded agents ("Financial Advisor from City Bank")
+3. **Specialized Agents** - Image generation, mental wellness, creative writing
+4. **Variable Pricing** - Different credit costs per agent based on capabilities
 
 ---
 
-## Issue 1: Job Searching Screen Glitches (& Similar Issue on Study Abroad)
+## Current State Analysis
 
-### Symptoms
-- The screenshot shows "All Jobs" page stuck in a loading state with skeleton cards visible
-- Similar behavior reported for Study Abroad browsing
+### What Exists
+- 7 platform agents defined in `src/lib/constants/agents.ts`
+- Database table `ai_agents` with system prompts (already DB-driven!)
+- `agent_chat_sessions` table for conversation history
+- Edge function `ai-agent-chat` with streaming responses
+- Fixed 10 credits per 30-min session pricing
+- Grid-style agent selection UI
 
-### Root Cause Analysis
+### Current Limitations
+- Static grid layout doesn't feel like a "network"
+- No agent avatars or personality visualization
+- Single flat credit rate for all agents
+- No way for companies to create/sponsor agents
+- No agent specializations (image gen, etc.)
 
-**Primary Issue: Missing Error State Handling**
+---
 
-In `AppJobs.tsx`, when `fetchJobs()` fails:
-- The query fails silently - there's no `try/catch` around the fetch
-- Loading state is set to `false` but no error is displayed
-- Users see skeleton cards that never resolve or just an empty state
+## Phase 1: UI Transformation - "Messaging App" Experience
+
+### Goal
+Redesign the AI Agents page to feel like a messaging app (WhatsApp/Messenger style) rather than a service grid.
+
+### Changes to `src/pages/app/AIAgents.tsx`
+
+**New Layout Structure:**
+```
+┌─────────────────────────────────────────────────────────┐
+│  🔍 Search agents...                    [Filter ▼]      │
+├─────────────────────────────────────────────────────────┤
+│  ┌──────────────────────────────────────────────────┐   │
+│  │ 💬 ACTIVE CONVERSATIONS                          │   │
+│  ├──────────────────────────────────────────────────┤   │
+│  │ [Avatar] CV Coach              2m ago • Active 🟢│   │
+│  │          "Try adding quantifiable metrics..."    │   │
+│  ├──────────────────────────────────────────────────┤   │
+│  │ [Avatar] Career Consultant     1h ago            │   │
+│  │          "Your background in banking..."         │   │
+│  └──────────────────────────────────────────────────┘   │
+│                                                         │
+│  ┌──────────────────────────────────────────────────┐   │
+│  │ 🤖 ALL AGENTS                                    │   │
+│  ├──────────────────────────────────────────────────┤   │
+│  │ [Avatar] Career Consultant          10 credits   │   │
+│  │          Plan your professional journey           │   │
+│  │          🏷️ Career Planning  Job Search          │   │
+│  ├──────────────────────────────────────────────────┤   │
+│  │ [Avatar] Interview Coach           10 credits    │   │
+│  │          Ace your interviews                      │   │
+│  │          🏷️ Mock Practice  STAR Method           │   │
+│  └──────────────────────────────────────────────────┘   │
+└─────────────────────────────────────────────────────────┘
+```
+
+### New Components to Create
+
+1. **`AgentAvatar.tsx`** - Humanized agent representation
+   - Circular avatar with gradient/icon
+   - Online status indicator
+   - Company badge (for B2B agents)
+
+2. **`AgentListItem.tsx`** - Conversation-style row
+   - Avatar + Name + Last message preview
+   - Time ago + Credit cost badge
+   - Active session indicator
+
+3. **`AgentFilters.tsx`** - Category filtering
+   - "All" / "Career" / "Skills" / "Education" / "Company"
+   - Search functionality
+
+### Changes to `AgentChatDialog.tsx`
+- Add "typing" animation with agent personality
+- Agent-specific welcome messages
+- Suggested follow-up actions based on agent type
+
+---
+
+## Phase 2: Database Extensions for Rich Agent Profiles
+
+### New Columns for `ai_agents` Table
+
+```sql
+ALTER TABLE ai_agents ADD COLUMN IF NOT EXISTS
+  avatar_url TEXT,                      -- Custom avatar image
+  credit_cost INTEGER DEFAULT 10,       -- Variable pricing
+  session_duration_minutes INT DEFAULT 30,
+  agent_type TEXT DEFAULT 'platform',   -- 'platform' | 'company' | 'specialized'
+  company_id UUID REFERENCES companies(id), -- For B2B agents
+  capabilities TEXT[] DEFAULT '{}',     -- ['text', 'image_generation', 'document_analysis']
+  personality_traits JSONB,             -- {"tone": "warm", "formality": "professional"}
+  sample_conversations JSONB,           -- Example Q&A for onboarding
+  total_conversations INTEGER DEFAULT 0,
+  average_rating DECIMAL(3,2),          -- Future: user ratings
+  is_featured BOOLEAN DEFAULT false,
+  category TEXT DEFAULT 'career';       -- For filtering
+```
+
+### New Table: `company_agents` (B2B Agent Sponsorship)
+
+```sql
+CREATE TABLE company_agents (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  company_id UUID REFERENCES companies(id) ON DELETE CASCADE,
+  agent_id UUID REFERENCES ai_agents(id) ON DELETE CASCADE,
+  sponsorship_type TEXT, -- 'owned' | 'sponsored'
+  monthly_budget INTEGER, -- Credit budget allocated
+  credits_used INTEGER DEFAULT 0,
+  is_active BOOLEAN DEFAULT true,
+  created_at TIMESTAMPTZ DEFAULT now(),
+  UNIQUE(company_id, agent_id)
+);
+```
+
+---
+
+## Phase 3: Variable Credit Pricing
+
+### Update `src/lib/creditPricing.ts`
 
 ```typescript
-// Current code (line 72-83)
-const fetchJobs = async () => {
-  setLoading(true);
-  const { data } = await supabase  // No error handling!
-    .from("jobs")
-    .select(...)
-  setJobs((data as JobWithSalary[]) || []);
-  setLoading(false);  // Runs even if query failed
-};
-```
-
-**Secondary Issue: Query Timeout**
-
-Neither `AppJobs.tsx` nor `StudyAbroad.tsx` implement query timeouts. If the network is slow or the database is under load, users see infinite loading.
-
-**Third Issue: Race Conditions**
-
-The search debounce and URL sync in `AppJobs.tsx` can cause race conditions where:
-1. User types a search term
-2. Debounce timer triggers
-3. URL params update
-4. Component re-renders but fetch hasn't completed
-5. UI appears stuck
-
-### Solution
-
-1. **Add Error State Handling** to both `AppJobs.tsx` and `StudyAbroad.tsx`
-2. **Add Query Timeouts** using the existing `withTimeout` utility
-3. **Add Error UI** with retry button
-4. **Use React Query** consistently (StudyAbroad already uses it, but AppJobs doesn't)
-
----
-
-## Issue 2: Cannot Delete Repeated Companies
-
-### Symptoms
-- Admin tried to delete duplicate companies but couldn't
-
-### Root Cause Analysis
-
-After reviewing `CompaniesManager.tsx`, the **delete functionality IS implemented** (lines 275-297):
-
-```typescript
-const handleDelete = async (id: string) => {
-  if (!confirm("Delete this company? Jobs linked to it won't be deleted.")) return;
-  
-  const { error } = await withTimeout(
-    Promise.resolve(supabase.from("companies").delete().eq("id", id)),
-    TIMEOUTS.DEFAULT,
-    "Delete timed out",
-  );
-  if (error) throw error;
-  toast.success("Company deleted");
-  ...
-};
-```
-
-**Potential Issues:**
-
-1. **Foreign Key Constraints**: The `jobs` table has a `company_id` foreign key. If jobs are linked to a company, the delete might silently fail due to RLS or FK constraints.
-
-2. **Poor Error Feedback**: The `catch` block (line 293-296) shows a generic error toast without specific guidance:
-   ```typescript
-   toast.error(error.message || "Failed to delete company");
-   ```
-
-3. **UI Button May Be Hard to Find**: The delete button (Trash icon) is small and at the end of the row - users might miss it or accidentally click something else.
-
-4. **No Bulk Delete**: When there are many duplicates, users must delete one by one which is tedious.
-
-### Solution
-
-1. **Add Bulk Selection & Delete** functionality for managing duplicates
-2. **Add Company Merge Feature** to combine duplicates (transfer jobs to one company, delete others)
-3. **Improve Error Messages** with specific guidance when FK constraints block deletion
-4. **Check RLS Policies** to ensure delete is allowed for admin users
-
----
-
-## Issue 3: Missing "AI Assessment On" Button for Jobs
-
-### Symptoms
-- Admin colleague could not find the AI assessment toggle when editing a job
-
-### Root Cause Analysis
-
-After examining the `JobForm` component in `JobsManager.tsx`, I found:
-
-**The AI Assessment Toggle is MISSING from the form UI**
-
-Looking at the form structure (lines 514-842):
-- There are toggles for "Active" and "Featured" (lines 808-832)
-- But there is NO toggle for `ai_assessment_enabled` even though:
-  - The field exists in the `emptyJob` default (line 172)
-  - The field is in `VALID_JOB_FIELDS` (line 86)
-  - The Job interface includes it (line 119)
-
-The toggle was likely removed or never added when the form was refactored.
-
-### Solution
-
-1. **Add AI Assessment Toggle** to the JobForm with configuration options
-2. **Add Assessment Config Settings** (number of questions, voice enabled)
-3. **Place it prominently** near the Active/Featured toggles so it's visible
-
----
-
-## Implementation Plan
-
-### Part 1: Fix Job Search & Study Abroad Loading Issues
-
-**Files to modify:**
-- `src/pages/app/AppJobs.tsx`
-
-**Changes:**
-1. Add `error` state variable
-2. Wrap `fetchJobs()` in try/catch
-3. Use `withTimeout` utility for query timeout protection
-4. Add error state UI with retry button
-5. Add loading skeleton with max display time
-
-```tsx
-// Add error state
-const [error, setError] = useState<string | null>(null);
-
-// Update fetchJobs with proper error handling
-const fetchJobs = async () => {
-  setLoading(true);
-  setError(null);
-  try {
-    const { data, error: fetchError } = await withTimeout(
-      Promise.resolve(supabase.from("jobs").select(...)),
-      TIMEOUTS.DEFAULT,
-      "Request timed out"
-    );
-    if (fetchError) throw fetchError;
-    setJobs((data as JobWithSalary[]) || []);
-  } catch (err: any) {
-    console.error("Error loading jobs:", err);
-    setError(err.message || "Failed to load jobs");
-  } finally {
-    setLoading(false);
-  }
-};
-```
-
----
-
-### Part 2: Fix Company Delete & Add Bulk Operations
-
-**Files to modify:**
-- `src/components/dashboard/CompaniesManager.tsx`
-
-**Changes:**
-
-1. **Improve Delete Error Handling:**
-```tsx
-const handleDelete = async (id: string) => {
-  const companyToDelete = companies.find(c => c.id === id);
-  if (!confirm(`Delete "${companyToDelete?.name}"? Any jobs linked to this company will be unlinked.`)) return;
-
-  try {
-    // First, unlink any jobs from this company
-    await supabase.from("jobs").update({ company_id: null }).eq("company_id", id);
-    
-    // Then delete the company
-    const { error } = await supabase.from("companies").delete().eq("id", id);
-    if (error) throw error;
-    toast.success("Company deleted successfully");
-    loadCompanies();
-  } catch (error: any) {
-    if (error.message?.includes("foreign key")) {
-      toast.error("Cannot delete: This company has linked records. Please unlink them first.");
-    } else {
-      toast.error(error.message || "Failed to delete company");
+// Replace static AI_AGENT_CHAT cost with dynamic lookup
+export const CREDIT_CONFIG = {
+  // ...existing config...
+  SERVICES: {
+    AI_AGENT_CHAT: {
+      name: 'AI Agent Session',
+      cost: 10, // Default fallback
+      description: 'Chat with AI career experts',
+      isDynamic: true, // Flag for dynamic pricing
+    },
+    // New specialized agent types
+    AI_AGENT_IMAGE: {
+      name: 'AI Image Agent',
+      cost: 25,
+      description: 'Generate images with AI'
+    },
+    AI_AGENT_PREMIUM: {
+      name: 'Premium AI Agent',
+      cost: 50,
+      description: 'Advanced AI consultation'
     }
   }
 };
 ```
 
-2. **Add Bulk Select & Delete:**
-   - Add checkbox column to table
-   - Add "Select All" checkbox in header
-   - Add "Delete Selected" button when items are selected
-   - Track selected IDs in state
+### Dynamic Credit Lookup in `useAgentChat.ts`
 
-3. **Add Company Merge Feature:**
-   - Button to "Merge Companies" 
-   - Dialog to select target company and source companies to merge
-   - Transfer all jobs from source companies to target
-   - Delete source companies after merge
-
----
-
-### Part 3: Add AI Assessment Toggle to Job Form
-
-**Files to modify:**
-- `src/components/dashboard/JobsManager.tsx`
-
-**Changes:**
-
-Add the AI Assessment section after the Status Toggles (around line 832):
-
-```tsx
-{/* AI Assessment Section */}
-<div className="space-y-4 p-4 border rounded-lg bg-purple-50/50">
-  <div className="flex items-center gap-3">
-    <Switch 
-      checked={formData.ai_assessment_enabled ?? false}
-      onCheckedChange={(checked) => setFormData({ 
-        ...formData, 
-        ai_assessment_enabled: checked 
-      })}
-    />
-    <div className="flex-1">
-      <Label className="flex items-center gap-2">
-        <Brain className="w-4 h-4 text-purple-600" /> Enable AI Assessment
-      </Label>
-      <p className="text-xs text-muted-foreground">
-        Applicants will take an AI-generated skills assessment
-      </p>
-    </div>
-  </div>
-
-  {formData.ai_assessment_enabled && (
-    <div className="grid grid-cols-2 gap-4 pt-2 border-t mt-2">
-      <div className="space-y-2">
-        <Label>Number of Questions</Label>
-        <Select 
-          value={String(formData.assessment_config?.questions || 5)}
-          onValueChange={(v) => setFormData({ 
-            ...formData, 
-            assessment_config: { 
-              ...formData.assessment_config, 
-              questions: parseInt(v) 
-            }
-          })}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="3">3 Questions</SelectItem>
-            <SelectItem value="5">5 Questions</SelectItem>
-            <SelectItem value="10">10 Questions</SelectItem>
-          </SelectContent>
-        </Select>
-      </div>
-      <div className="flex items-center gap-3 p-3 border rounded-lg bg-background">
-        <Switch 
-          checked={formData.assessment_config?.voice ?? false}
-          onCheckedChange={(checked) => setFormData({ 
-            ...formData, 
-            assessment_config: { 
-              ...formData.assessment_config, 
-              voice: checked 
-            }
-          })}
-        />
-        <div>
-          <Label>Voice Mode</Label>
-          <p className="text-xs text-muted-foreground">Allow voice answers</p>
-        </div>
-      </div>
-    </div>
-  )}
-</div>
+```typescript
+// Fetch agent's actual credit cost from database
+const getAgentCost = async (agentKey: string): Promise<number> => {
+  const { data } = await supabase
+    .from('ai_agents')
+    .select('credit_cost')
+    .eq('agent_key', agentKey)
+    .single();
+  
+  return data?.credit_cost ?? CREDIT_CONFIG.SERVICES.AI_AGENT_CHAT.cost;
+};
 ```
 
-Also need to import `Brain` icon from lucide-react.
+---
+
+## Phase 4: Specialized Agent Capabilities
+
+### Image Generation Agent
+
+Create a new agent type that can generate images using the Lovable AI Gateway with `gemini-2.5-flash-image` model.
+
+**New edge function: `ai-agent-image/index.ts`**
+
+```typescript
+// Handle image generation requests
+if (agentCapabilities.includes('image_generation')) {
+  const response = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+    method: "POST",
+    headers: { Authorization: `Bearer ${LOVABLE_API_KEY}` },
+    body: JSON.stringify({
+      model: "google/gemini-2.5-flash-image",
+      messages: [...messages]
+    })
+  });
+  // Return image URL or base64
+}
+```
+
+### Mental Wellness Agent
+
+New agent with specialized prompts for mental wellness support:
+- Mindfulness exercises
+- Stress management
+- Work-life balance guidance
+- Non-clinical support (with clear disclaimers)
+
+### Document Analysis Agent
+
+Agent that can analyze uploaded documents:
+- CV review with visual feedback
+- Certificate verification
+- Portfolio analysis
 
 ---
 
-## Files to Modify Summary
+## Phase 5: B2B Company Agent System
 
-| File | Changes |
-|------|---------|
-| `src/pages/app/AppJobs.tsx` | Add error state, timeout protection, error UI, retry button |
-| `src/components/dashboard/CompaniesManager.tsx` | Improve delete error handling, add bulk selection/delete, add merge feature |
-| `src/components/dashboard/JobsManager.tsx` | Add AI Assessment toggle section with configuration options |
+### Admin Dashboard Enhancement
+
+Add new section to `AIAgentsManager.tsx`:
+
+```
+┌─────────────────────────────────────────────────────────┐
+│  🏢 COMPANY AGENTS                                       │
+├─────────────────────────────────────────────────────────┤
+│  + Create Company Agent                                  │
+├─────────────────────────────────────────────────────────┤
+│  [City Bank Logo] Financial Advisor                      │
+│  🏷️ City Bank • Active • 156 conversations              │
+│  💰 Budget: 5000/10000 credits used                      │
+│  [Edit] [Deactivate]                                     │
+├─────────────────────────────────────────────────────────┤
+│  [TechCorp Logo] Tech Recruiter                          │
+│  🏷️ TechCorp • Active • 89 conversations                │
+│  [Edit] [Deactivate]                                     │
+└─────────────────────────────────────────────────────────┘
+```
+
+### Company Agent Creation Flow
+
+1. Select existing company from `companies` table
+2. Define agent name & description
+3. Write system prompt (with template)
+4. Set credit cost (company pays per conversation)
+5. Upload avatar (optional)
+6. Define expertise areas
+
+### User Experience
+
+- Company agents appear with verified badge
+- Users see "Powered by City Bank" branding
+- Free for users (company pays credits)
+- Company gets conversation analytics
+
+---
+
+## Phase 6: Agent Categories & Discovery
+
+### Categories
+
+| Category | Agents |
+|----------|--------|
+| 🎯 Career | Career Consultant, CV Coach, Interview Coach |
+| 💰 Finance | Salary Negotiator, Company: City Bank Advisor |
+| 📚 Education | IELTS Tutor, Study Abroad Advisor, Skill Advisor |
+| 🎨 Creative | Image Generator, Portfolio Designer |
+| 🧘 Wellness | Mental Wellness Coach, Work-Life Balance |
+| 🏢 Company | All B2B sponsored agents |
+
+### New UI Component: Category Tabs
+
+```tsx
+<Tabs defaultValue="all">
+  <TabsList>
+    <TabsTrigger value="all">All</TabsTrigger>
+    <TabsTrigger value="career">🎯 Career</TabsTrigger>
+    <TabsTrigger value="education">📚 Education</TabsTrigger>
+    <TabsTrigger value="company">🏢 Companies</TabsTrigger>
+  </TabsList>
+</Tabs>
+```
+
+---
+
+## Implementation Roadmap
+
+### Sprint 1 (Week 1-2): UI Transformation
+- [ ] Create `AgentAvatar.tsx` component
+- [ ] Create `AgentListItem.tsx` for messaging-style rows
+- [ ] Redesign `AIAgents.tsx` with active conversations at top
+- [ ] Add search and filter functionality
+- [ ] Improve `AgentChatDialog.tsx` welcome experience
+
+### Sprint 2 (Week 3): Database & Pricing
+- [ ] Run migration to add new `ai_agents` columns
+- [ ] Create `company_agents` table
+- [ ] Update `creditPricing.ts` for dynamic pricing
+- [ ] Modify `useAgentChat.ts` to fetch agent cost
+- [ ] Update edge function to read from DB
+
+### Sprint 3 (Week 4): Specialized Agents
+- [ ] Add Mental Wellness Agent to database
+- [ ] Create Image Generation edge function
+- [ ] Test image generation with Gemini model
+- [ ] Add new agents to categories
+
+### Sprint 4 (Week 5): B2B System
+- [ ] Add Company Agent section to `AIAgentsManager.tsx`
+- [ ] Create company agent creation dialog
+- [ ] Implement credit budget tracking
+- [ ] Add company branding to user-facing UI
+
+### Sprint 5 (Week 6): Polish & Launch
+- [ ] Add agent ratings system
+- [ ] Implement conversation analytics
+- [ ] Performance optimization
+- [ ] User testing and feedback
+
+---
+
+## Files to Modify/Create
+
+| File | Action | Description |
+|------|--------|-------------|
+| `src/pages/app/AIAgents.tsx` | Modify | Complete UI redesign |
+| `src/components/ai-agents/AgentAvatar.tsx` | Create | Humanized avatar component |
+| `src/components/ai-agents/AgentListItem.tsx` | Create | Messaging-style row |
+| `src/components/ai-agents/AgentFilters.tsx` | Create | Category & search |
+| `src/components/ai-agents/AgentChatDialog.tsx` | Modify | Enhanced welcome, typing |
+| `src/lib/constants/agents.ts` | Modify | Add new agent types |
+| `src/lib/creditPricing.ts` | Modify | Dynamic pricing support |
+| `src/hooks/useAgentChat.ts` | Modify | Fetch agent cost from DB |
+| `supabase/functions/ai-agent-chat/index.ts` | Modify | Read prompts from DB |
+| `supabase/functions/ai-agent-image/index.ts` | Create | Image generation |
+| `src/components/dashboard/AIAgentsManager.tsx` | Modify | Add company agent management |
+| Database migration | Create | Add new columns & tables |
 
 ---
 
 ## Technical Considerations
 
-### Database Constraints Check
+### Edge Function Enhancement
 
-Before implementing, verify the `companies` table FK constraints in the schema:
-- If `jobs.company_id` has `ON DELETE SET NULL` - deletion will work
-- If it has `ON DELETE RESTRICT` - must unlink jobs first
-- If no FK exists - safe to delete
+The current edge function has hardcoded prompts. Update to fetch from database:
 
-### RLS Policy Check
+```typescript
+// Fetch agent config from DB instead of AGENT_PROMPTS constant
+const { data: agent } = await supabaseClient
+  .from('ai_agents')
+  .select('system_prompt, capabilities, credit_cost')
+  .eq('agent_key', agentKey)
+  .eq('is_active', true)
+  .single();
 
-Verify admin users can delete from `companies` table - may need policy adjustment.
+if (!agent) {
+  return new Response(JSON.stringify({ error: 'Agent not found' }), { status: 404 });
+}
+```
 
-### UI/UX Improvements
+### RLS Policies for Company Agents
 
-1. **Error State Design**: Use the existing `DashboardErrorState` component pattern
-2. **Loading Timeout**: Show "Taking longer than expected..." after 10 seconds
-3. **Delete Confirmation**: More descriptive confirmation dialogs
-4. **AI Assessment Visibility**: Use purple/accent color to make the section stand out
+```sql
+-- Users can see active agents
+CREATE POLICY "Anyone can view active agents"
+ON ai_agents FOR SELECT
+USING (is_active = true);
+
+-- Only admins can modify agents
+CREATE POLICY "Admins can manage agents"
+ON ai_agents FOR ALL
+USING (public.has_any_admin_role(auth.uid()));
+
+-- Company agents: companies see their own
+CREATE POLICY "Companies see their agents"
+ON company_agents FOR SELECT
+USING (
+  company_id IN (
+    SELECT company_id FROM company_users WHERE user_id = auth.uid()
+  )
+);
+```
 
 ---
 
 ## Expected Outcomes
 
-After implementing these fixes:
-
-1. **Job Search**: Shows clear error messages when queries fail, with retry option
-2. **Study Abroad**: Same improvements for robust error handling
-3. **Company Management**: Admins can easily delete duplicates, see clear error messages, and bulk-manage companies
-4. **AI Assessment**: Visible toggle in job form with configuration options clearly accessible
+1. **User Experience**: Feels like chatting with knowledgeable professionals
+2. **Engagement**: Conversation-style UI encourages return visits
+3. **Revenue**: Variable pricing allows premium agent monetization
+4. **B2B**: Companies can deploy branded AI representatives
+5. **Scalability**: Database-driven agents enable rapid expansion
 
 ---
 
-## Testing Checklist
+## Future Enhancements (Post-Launch)
 
-- [ ] Test job search with slow network (throttle to 3G)
-- [ ] Test job search with offline mode to verify error handling
-- [ ] Test company delete when company has linked jobs
-- [ ] Test bulk company selection and delete
-- [ ] Test AI assessment toggle saves correctly
-- [ ] Verify assessment config persists across edit sessions
+1. **Voice Agents** - Real-time voice conversations using OpenAI Realtime API
+2. **Agent Marketplace** - Third-party agent creators
+3. **Agent-to-Agent** - Agents that can consult each other
+4. **Proactive Agents** - Notifications like "Your CV Coach has tips for you"
+5. **Multi-Agent Sessions** - Panel discussions with multiple AI experts
+
