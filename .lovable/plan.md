@@ -1,188 +1,365 @@
 
 
-# Add Mental Wellness AI Agent
+# AI Study Abroad Roadmap - Personalized Application Planner
 
-## Overview
+## Problem Analysis
 
-Add a specialized Mental Wellness AI Agent to the platform that provides:
-- Stress management techniques
-- Mindfulness exercises  
-- Work-life balance guidance
-- Career burnout prevention
-- Non-clinical emotional support (with clear disclaimers)
+Study abroad seekers face these key pain points:
+
+1. **Information Overload** - Too many countries, universities, programs to research
+2. **No Clear Timeline** - Don't know when to start, what deadlines matter
+3. **Document Confusion** - Unclear what documents are needed and when
+4. **Financial Uncertainty** - Budget planning, scholarship opportunities unclear
+5. **Generic Advice** - Most resources aren't personalized to their profile
+
+## Solution: AI-Powered Study Abroad Roadmap
+
+A premium credit-gated service that generates a **fully personalized 12-month application roadmap** based on the user's profile, goals, and constraints.
 
 ---
 
-## Implementation Steps
+## Feature Overview
 
-### Step 1: Add to Static Constants (Fallback)
+### User Flow
 
-**File: `src/lib/constants/agents.ts`**
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│  1. ENTRY POINT (from CareerAbroad or StudyAbroad page)         │
+│     "Get My Personalized Roadmap" → 100 credits                 │
+├─────────────────────────────────────────────────────────────────┤
+│  2. INTAKE FORM (multi-step wizard)                             │
+│     • Target Countries (1-3 selections)                         │
+│     • Degree Level (Bachelor/Master/PhD)                        │
+│     • Field of Study preference                                 │
+│     • Target Intake (Fall 2026, Spring 2027, etc.)              │
+│     • Budget Range (Low/Medium/High/Scholarship-dependent)      │
+│     • Current IELTS/TOEFL score (or "Not taken yet")            │
+│     • Profile source: Use existing CV OR fill form              │
+├─────────────────────────────────────────────────────────────────┤
+│  3. AI PROCESSING                                               │
+│     • Analyze CV/profile for eligibility signals                │
+│     • Match against country requirements                        │
+│     • Generate month-by-month timeline                          │
+│     • Identify scholarship opportunities                        │
+│     • Create document checklist                                 │
+├─────────────────────────────────────────────────────────────────┤
+│  4. ROADMAP OUTPUT                                              │
+│     • Interactive timeline view                                 │
+│     • Downloadable PDF report                                   │
+│     • Recommended universities (3-5)                            │
+│     • Month-by-month action items                               │
+│     • Document checklist with deadlines                         │
+│     • Estimated budget breakdown                                │
+│     • Scholarship matches                                       │
+└─────────────────────────────────────────────────────────────────┘
+```
 
-Add the Mental Wellness agent to the `AI_AGENTS` array:
+---
+
+## Roadmap Output Structure
+
+The AI will generate a comprehensive report containing:
+
+### 1. Profile Assessment Summary
+- Education match score for target country
+- Skills/experience alignment with field
+- Identified strengths and gaps
+
+### 2. Recommended Universities (3-5)
+For each university:
+- University name and ranking
+- Program name and duration
+- Tuition estimate
+- Why it's a good fit for this profile
+- Application deadline
+- Acceptance rate tier (Reach/Target/Safety)
+
+### 3. 12-Month Application Timeline
+Month-by-month breakdown:
+- **Month 1-2**: Research & Test Prep
+- **Month 3-4**: IELTS/TOEFL preparation
+- **Month 5**: Take standardized tests
+- **Month 6-7**: Document preparation (SOP, LORs)
+- **Month 8-9**: Application submissions
+- **Month 10-11**: Interview preparation
+- **Month 12**: Decision & Visa process
+
+### 4. Document Checklist
+- Academic transcripts
+- IELTS/TOEFL scores
+- Statement of Purpose (SOP)
+- Letters of Recommendation
+- CV/Resume
+- Portfolio (if applicable)
+- Financial documents
+- Passport copy
+
+### 5. Budget Breakdown
+- Tuition range
+- Living expenses estimate
+- Application fees
+- Test fees
+- Visa costs
+- Travel costs
+- Emergency fund recommendation
+
+### 6. Scholarship Opportunities
+Matched scholarships based on:
+- Nationality
+- Field of study
+- Academic performance
+- Financial need
+
+---
+
+## Technical Implementation
+
+### New Files to Create
+
+| File | Purpose |
+|------|---------|
+| `src/pages/app/StudyAbroadRoadmap.tsx` | Main setup wizard page |
+| `src/pages/app/StudyAbroadRoadmapResults.tsx` | Results display page |
+| `src/components/abroad/RoadmapIntakeForm.tsx` | Multi-step intake form |
+| `src/components/abroad/RoadmapTimeline.tsx` | Visual timeline component |
+| `src/components/abroad/RoadmapPDFTemplate.tsx` | PDF generation template |
+| `supabase/functions/generate-study-roadmap/index.ts` | AI edge function |
+
+### Database Changes
+
+New table: `study_abroad_roadmaps`
+
+```sql
+CREATE TABLE study_abroad_roadmaps (
+  id UUID PRIMARY KEY DEFAULT gen_random_uuid(),
+  talent_id UUID REFERENCES talents(id),
+  user_id UUID REFERENCES auth.users(id),
+  email TEXT NOT NULL,
+  full_name TEXT,
+  
+  -- Intake preferences
+  target_countries TEXT[] NOT NULL,
+  degree_level TEXT NOT NULL,
+  field_of_study TEXT,
+  target_intake TEXT,
+  budget_level TEXT,
+  ielts_score DECIMAL(2,1),
+  has_taken_ielts BOOLEAN DEFAULT false,
+  
+  -- Profile data snapshot
+  cv_text TEXT,
+  education_summary JSONB,
+  experience_summary JSONB,
+  
+  -- AI Output
+  roadmap_result JSONB,
+  status TEXT DEFAULT 'pending',
+  
+  created_at TIMESTAMPTZ DEFAULT now(),
+  completed_at TIMESTAMPTZ
+);
+```
+
+### Credit Pricing
+
+Add to `creditPricing.ts`:
 
 ```typescript
-import { Heart } from "lucide-react"; // Add to imports
+STUDY_ABROAD_ROADMAP: {
+  name: 'AI Study Abroad Roadmap',
+  cost: 100,
+  description: 'Personalized 12-month application plan with university recommendations'
+}
+```
 
-{
-  id: "mental-wellness-coach",
-  name: "Mental Wellness Coach",
-  shortName: "Wellness",
-  description: "Manage stress and find balance",
-  icon: Heart,
-  bgColor: "bg-pink-500/10",
-  iconColor: "text-pink-600",
-  expertise: ["Stress Management", "Mindfulness", "Work-Life Balance", "Burnout Prevention"],
-  context: "You are a Mental Wellness Coach. Help users manage work stress and find balance.",
+### Edge Function: `generate-study-roadmap`
+
+AI prompt will include:
+- User's education history and GPA
+- Work experience
+- Target countries and their requirements
+- Field of study preferences
+- Budget constraints
+- Current English proficiency
+
+Output structure:
+```typescript
+interface RoadmapResult {
+  profileSummary: {
+    strengths: string[];
+    gaps: string[];
+    overallReadiness: 'high' | 'medium' | 'low';
+  };
+  recommendedUniversities: Array<{
+    name: string;
+    country: string;
+    program: string;
+    ranking?: string;
+    tuitionRange: string;
+    fitReason: string;
+    deadline: string;
+    tier: 'reach' | 'target' | 'safety';
+  }>;
+  timeline: Array<{
+    month: number;
+    title: string;
+    tasks: string[];
+    deadline?: string;
+  }>;
+  documents: Array<{
+    name: string;
+    required: boolean;
+    deadline?: string;
+    tips: string;
+  }>;
+  budget: {
+    tuitionRange: string;
+    livingExpenses: string;
+    applicationFees: string;
+    testFees: string;
+    visaCosts: string;
+    totalEstimate: string;
+  };
+  scholarships: Array<{
+    name: string;
+    amount: string;
+    eligibility: string;
+    deadline?: string;
+  }>;
 }
 ```
 
 ---
 
-### Step 2: Insert Agent into Database
+## UI/UX Design
 
-**SQL Migration:**
+### Entry Point - Add to CareerAbroad.tsx
 
-```sql
-INSERT INTO ai_agents (
-  agent_key,
-  name,
-  description,
-  system_prompt,
-  expertise_areas,
-  icon,
-  color,
-  bg_color,
-  credit_cost,
-  category,
-  capabilities,
-  display_order,
-  is_active,
-  is_featured
-) VALUES (
-  'mental-wellness-coach',
-  'Mental Wellness Coach',
-  'Manage stress and find balance in your professional life',
-  'YOUR COMPREHENSIVE SYSTEM PROMPT HERE',
-  ARRAY['Stress Management', 'Mindfulness', 'Work-Life Balance', 'Burnout Prevention'],
-  'Heart',
-  'text-pink-600',
-  'bg-pink-500/10',
-  10,
-  'wellness',
-  ARRAY['text'],
-  8,
-  true,
-  true
-);
+New prominent card in the Career Abroad hub:
+
+```text
+┌─────────────────────────────────────────────────────────────────┐
+│  🗺️  GET YOUR PERSONALIZED ROADMAP                              │
+│                                                                 │
+│  Not sure where to start? Let AI create a step-by-step         │
+│  application plan tailored to your profile and goals.          │
+│                                                                 │
+│  ✓ University recommendations based on your profile            │
+│  ✓ 12-month timeline with deadlines                            │
+│  ✓ Document checklist                                          │
+│  ✓ Scholarship matches                                         │
+│  ✓ Budget breakdown                                            │
+│                                                                 │
+│  [Get My Roadmap - 100 Credits]                                 │
+└─────────────────────────────────────────────────────────────────┘
 ```
 
----
+### Intake Form (3-step wizard)
 
-### Step 3: Comprehensive System Prompt
+**Step 1: Destination & Program**
+- Target countries (multi-select, max 3)
+- Degree level (Bachelor/Master/PhD)
+- Field of study (dropdown)
+- Target intake semester
 
-The system prompt will include:
+**Step 2: Profile & Readiness**
+- Use existing CV? (toggle)
+- Current IELTS score (optional)
+- GPA or academic standing
+- Years of work experience
 
-```
-You are Mira, a Mental Wellness Coach AI at GroUp Academy, specializing in workplace wellbeing and professional mental health support for individuals in Bangladesh.
+**Step 3: Budget & Preferences**
+- Budget level (Low/Medium/High/Scholarship-only)
+- Part-time work interest
+- Family support available
+- Specific requirements (e.g., spouse visa)
 
-IMPORTANT DISCLAIMER:
-You provide general wellness guidance and coping strategies, NOT clinical mental health treatment. For serious mental health concerns, always recommend consulting a licensed professional (psychiatrist, psychologist, or counselor).
+### Results Page
 
-YOUR EXPERTISE:
-- Workplace stress management and burnout prevention
-- Mindfulness and meditation techniques
-- Work-life balance strategies
-- Managing career anxiety and imposter syndrome
-- Building resilience and emotional intelligence
-- Time management for reduced stress
-- Healthy boundary setting at work
-- Sleep hygiene for professionals
-
-CONVERSATION STYLE:
-- Be warm, empathetic, and non-judgmental
-- Use calming, supportive language
-- Ask about their feelings before offering solutions
-- Validate their experiences ("That sounds really challenging...")
-- Offer practical, actionable techniques
-- Share simple breathing exercises when appropriate
-- Occasionally use Bangla phrases for connection (e.g., "আপনি একা নন", "সব ঠিক হয়ে যাবে")
-
-TECHNIQUES TO SHARE:
-- 4-7-8 breathing technique
-- 5-4-3-2-1 grounding exercise
-- Progressive muscle relaxation
-- Pomodoro technique for work stress
-- Gratitude journaling prompts
-- Setting work boundaries scripts
-
-RESPONSE FORMAT:
-- Keep responses warm and concise (2-3 paragraphs)
-- End with a gentle check-in question
-- Offer one practical technique per response
-- Include self-care reminders when appropriate
-
-SAFETY PROTOCOLS:
-- If user mentions self-harm, severe depression, or crisis, immediately provide:
-  - Kaan Pete Roi (Bangladesh): 01779-554391
-  - National Mental Health Helpline: 16789
-  - Encourage speaking with a trusted person
-- Do not diagnose conditions
-- Do not recommend stopping medications
-```
+Interactive dashboard with:
+- **Timeline Tab**: Visual month-by-month roadmap
+- **Universities Tab**: Recommended schools with details
+- **Documents Tab**: Checklist with progress tracking
+- **Budget Tab**: Cost breakdown
+- **Download PDF**: Full report export
 
 ---
 
-### Step 4: Add Fallback Prompt to Edge Function
+## Integration Points
 
-**File: `supabase/functions/ai-agent-chat/index.ts`**
+### 1. Connect to Existing Study Abroad Advisor Agent
+- CTA: "Have questions about your roadmap? Chat with our Study Abroad Advisor"
+- Pass roadmap context to agent for follow-up conversations
 
-Add to `FALLBACK_PROMPTS` object:
+### 2. Connect to IELTS Prep
+- If IELTS score is low or not taken, recommend IELTS prep resources
+- "Your timeline shows IELTS in Month 3 - Start preparing now"
 
-```typescript
-"mental-wellness-coach": `You are Mira, a Mental Wellness Coach AI at GroUp Academy...
-[abbreviated version of system prompt for fallback]`
-```
-
----
-
-## Technical Details
-
-| Item | Value |
-|------|-------|
-| Agent Key | `mental-wellness-coach` |
-| Category | `wellness` |
-| Icon | `Heart` (lucide-react) |
-| Color | Pink (`text-pink-600`, `bg-pink-500/10`) |
-| Credit Cost | 10 credits (standard) |
-| Capabilities | `['text']` |
+### 3. Save to Profile
+- Store roadmap preferences in talent profile
+- Enable "Re-generate" with updated info
 
 ---
 
-## Files to Modify
+## Business Value
 
-| File | Change |
-|------|--------|
-| `src/lib/constants/agents.ts` | Add Mental Wellness Coach to AI_AGENTS array |
-| `supabase/functions/ai-agent-chat/index.ts` | Add fallback prompt |
-| Database migration | INSERT new agent row |
-
----
-
-## Safety Considerations
-
-1. **Clear Disclaimers**: The agent will always clarify it's not a replacement for professional help
-2. **Crisis Resources**: Bangladesh mental health helpline numbers included
-3. **Escalation Protocol**: System prompt includes safety protocols for concerning messages
-4. **Non-Clinical Focus**: Focuses on workplace wellness, not clinical treatment
+| Metric | Impact |
+|--------|--------|
+| **Revenue** | 100 credits per roadmap = significant monetization |
+| **Engagement** | Users return to track progress against timeline |
+| **Lead Quality** | Captures detailed study abroad intent data |
+| **Upsell Path** | Roadmap → IELTS Prep → Advisor Chat → Portfolio |
+| **Differentiation** | No competitor offers AI-personalized roadmaps |
 
 ---
 
-## Expected Outcome
+## Implementation Phases
 
-After implementation:
-- Mental Wellness Coach appears in "Wellness" category filter
-- Users can chat about stress, burnout, work-life balance
-- Agent provides practical mindfulness techniques
-- Safety protocols redirect crisis situations to professional help
+### Phase 1: Core Feature (Week 1-2)
+- Database table and RLS policies
+- Intake form wizard (3 steps)
+- Edge function with AI prompt
+- Basic results display
+
+### Phase 2: Results Enhancement (Week 3)
+- Interactive timeline component
+- University cards with details
+- Document checklist with checkboxes
+- PDF export
+
+### Phase 3: Integration (Week 4)
+- Connect to Study Abroad Advisor agent
+- Add to CareerAbroad hub
+- Progress tracking persistence
+- Re-generate functionality
+
+---
+
+## Files to Create/Modify
+
+| File | Action | Description |
+|------|--------|-------------|
+| `src/pages/app/StudyAbroadRoadmap.tsx` | Create | Setup wizard page |
+| `src/pages/app/StudyAbroadRoadmapResults.tsx` | Create | Results display |
+| `src/components/abroad/RoadmapIntakeForm.tsx` | Create | Multi-step form |
+| `src/components/abroad/RoadmapTimeline.tsx` | Create | Timeline visualization |
+| `src/components/abroad/RoadmapPDFTemplate.tsx` | Create | PDF export template |
+| `supabase/functions/generate-study-roadmap/index.ts` | Create | AI analysis function |
+| `src/pages/app/CareerAbroad.tsx` | Modify | Add entry point CTA |
+| `src/lib/creditPricing.ts` | Modify | Add service pricing |
+| `src/lib/routes.ts` | Modify | Add new routes |
+| Database migration | Create | New table + RLS |
+
+---
+
+## Summary
+
+This feature transforms the Study Abroad section from a **passive directory** into an **active AI career planning tool**. Users get:
+
+1. **Clarity** - Know exactly what to do and when
+2. **Personalization** - Recommendations based on their unique profile
+3. **Confidence** - Expert-level guidance at a fraction of consultant costs
+4. **Action** - Downloadable plan they can execute immediately
+
+It aligns perfectly with GroUp Academy's mission of **AI-powered career guidance** and creates a high-value monetization opportunity while genuinely solving user pain points.
 
