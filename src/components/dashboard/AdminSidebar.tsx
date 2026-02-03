@@ -120,6 +120,7 @@ const navGroups: NavGroup[] = [
       { title: "Banners", icon: ImageIcon, value: "banners" },
       { title: "Professions", icon: GraduationCap, value: "professions" },
       { title: "AI Agents", icon: Bot, value: "ai-agents" },
+      { title: "Company Agents", icon: Building2, value: "company-agents" },
       { title: "Agent Sessions", icon: MessageSquare, value: "agent-sessions" },
       { title: "Credits", icon: Coins, value: "credits" },
       { title: "Notifications", icon: Bell, value: "notifications" },

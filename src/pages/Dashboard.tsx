@@ -24,6 +24,7 @@ import { AIAgentsManager } from "@/components/dashboard/AIAgentsManager";
 import { CreditsManager } from "@/components/dashboard/CreditsManager";
 import { NotificationsManager } from "@/components/dashboard/NotificationsManager";
 import { AgentSessionsManager } from "@/components/dashboard/AgentSessionsManager";
+import { CompanyAgentsManager } from "@/components/dashboard/CompanyAgentsManager";
 import { EnrollmentsManager } from "@/components/dashboard/EnrollmentsManager";
 import { LearnerProgressManager } from "@/components/dashboard/LearnerProgressManager"; // 👈 Added Import
 import { StudyAbroadManager } from "@/components/dashboard/StudyAbroadManager";
@@ -79,6 +80,7 @@ const tabAccessMap: Record<string, AppRole[]> = {
   contacts: ["admin", "talent_exec"],
   // AI & Credits tabs
   "ai-agents": ["admin"],
+  "company-agents": ["admin"],
   "agent-sessions": ["admin"],
   credits: ["admin"],
   notifications: ["admin"],
@@ -257,6 +259,8 @@ const Dashboard = () => {
         return <TeamManager />;
       case "ai-agents":
         return <AIAgentsManager />;
+      case "company-agents":
+        return <CompanyAgentsManager />;
       case "agent-sessions":
         return <AgentSessionsManager />;
       case "credits":
@@ -310,6 +314,7 @@ const Dashboard = () => {
       contacts: "Contacts",
       team: "Team Members",
       "ai-agents": "AI Agents",
+      "company-agents": "Company Agents",
       "agent-sessions": "Agent Sessions",
       credits: "Credits Manager",
       notifications: "Notifications",
