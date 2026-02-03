@@ -1,171 +1,285 @@
 
-# Pre-Publication System Audit Report
+# Admin Dashboard Reorganization Plan
 
-## Executive Summary
-Found **3 bugs**, **4 security warnings**, and **6 improvement areas** that should be addressed before publishing.
+## Current Issues Identified
+
+### Issue 1: Content Management is Bloated (15 items!)
+The "Content Management" group has become a catch-all with unrelated items mixed together:
+- Core content tools (All Content, Videos, Courses, Webinars, Batches, Seminars)
+- Learning analytics (Enrollments, Learner Progress)
+- Marketing outreach (Content Outreach, Service Outreach)
+- Career abroad content (Study Abroad, IELTS Resources)
+- Social/engagement content (Blog Posts, Feed Posts, Competitions)
+
+### Issue 2: Marketing Analytics Misplaced
+"Marketing Analytics" is under **Recruitment** but it tracks content shares, service shares, and job shares - it's a cross-cutting concern that belongs with other marketing tools.
+
+### Issue 3: Outreach Tools Scattered
+- **CV Outreach** is under Talent Management
+- **Content Outreach** is under Content Management
+- **Service Outreach** is under Content Management
+
+These are all marketing/outreach activities and should be grouped together.
+
+### Issue 4: Missing Study Abroad Roadmap Leads
+We just built the AI Study Abroad Roadmap feature but there's no admin view to see roadmap requests/leads.
+
+### Issue 5: Platform Settings is a Dumping Ground
+Contains unrelated items: UI config (Banners), data config (Professions), AI systems (Agents), monetization (Credits), and team management.
 
 ---
 
-## Critical Bugs (Must Fix)
+## Proposed Reorganization
 
-### BUG 1: Outdated Intake Date Options
-**File:** `src/components/abroad/RoadmapIntakeForm.tsx` (lines 46-52)
-**Issue:** The Study Abroad Roadmap intake options include "Fall 2025" but the current date is February 2026, making this a past date.
+### Before (Current Structure):
+```
+Talent Management (7 items)
+├── Talent Pool
+├── Lead Hunter
+├── Assessment Leads
+├── Mock Interviews
+├── Salary Analysis
+├── Portfolio Requests
+└── CV Outreach          ← Outreach tool
 
-**Current Code:**
+Recruitment (6 items)
+├── Jobs KPIs
+├── Manage Jobs
+├── Applications
+├── Companies
+├── Contacts
+└── Marketing Analytics  ← Cross-cutting, misplaced
+
+Content Management (15 items!)  ← Too many!
+├── All Content
+├── Enrollments          ← Learning analytics
+├── Learner Progress     ← Learning analytics
+├── Content Outreach     ← Marketing tool
+├── Service Outreach     ← Marketing tool
+├── Free Videos
+├── Recorded Courses
+├── Webinars
+├── Batch Classes
+├── Seminars
+├── Blog Posts           ← Marketing/engagement
+├── Feed Posts           ← Marketing/engagement
+├── Study Abroad         ← Career Abroad
+├── IELTS Resources      ← Career Abroad
+└── Competitions
+
+Platform Settings (9 items)
+├── Access Codes
+├── Banners
+├── Professions
+├── AI Agents
+├── Company Agents
+├── Agent Sessions
+├── Credits
+├── Notifications
+└── Team Members
+```
+
+### After (Proposed Structure):
+```
+Talent & Leads (6 items)
+├── Talent Pool
+├── Lead Hunter
+├── Assessment Leads
+├── Mock Interview Leads
+├── Salary Analysis Leads
+└── Portfolio Requests
+
+Recruitment (5 items)
+├── Jobs KPIs
+├── Manage Jobs
+├── Applications
+├── Companies
+└── Contacts
+
+Learning (6 items)
+├── All Content
+├── Enrollments
+├── Learner Progress
+├── Free Videos
+├── Recorded Courses
+├── Webinars/Batches/Seminars
+
+Marketing & Outreach (7 items)  ← NEW consolidated group
+├── Marketing Analytics
+├── CV Outreach
+├── Content Outreach
+├── Service Outreach
+├── Blog Posts
+├── Feed Posts
+└── Competitions
+
+Career Abroad (3 items)  ← NEW focused group
+├── Study Abroad Programs
+├── IELTS Resources
+└── Roadmap Leads        ← NEW - to track roadmap requests
+
+AI & Monetization (5 items)  ← NEW focused group
+├── AI Agents
+├── Company Agents
+├── Agent Sessions
+├── Credits Manager
+└── Notifications
+
+Platform Config (4 items)  ← Slimmed down
+├── Access Codes
+├── Banners
+├── Professions
+└── Team Members
+```
+
+---
+
+## Implementation Details
+
+### Files to Modify
+
+| File | Changes |
+|------|---------|
+| `src/components/dashboard/AdminSidebar.tsx` | Reorganize `navGroups` array with new structure |
+| `src/pages/Dashboard.tsx` | Add new tab for "roadmap-leads", update `tabAccessMap` |
+| `src/components/dashboard/StudyAbroadRoadmapLeadsManager.tsx` | **CREATE** - New component to view roadmap requests |
+
+### New Component: StudyAbroadRoadmapLeadsManager
+A new admin component to view and manage study abroad roadmap requests:
+- List all roadmap submissions with status
+- View user preferences (countries, budget, intake)
+- See AI-generated results
+- Filter by status (pending, processing, completed, failed)
+- Export functionality
+
+### Sidebar Group Changes (AdminSidebar.tsx)
+
 ```typescript
-const INTAKE_OPTIONS = [
-  "Fall 2025",    // PAST - should be removed
-  "Spring 2026",  // Current semester
-  "Fall 2026",
-  "Spring 2027",
-  "Fall 2027",
+const navGroups: NavGroup[] = [
+  {
+    title: "Talent & Leads",
+    icon: Users,
+    roles: ["admin", "talent_exec"],
+    items: [
+      { title: "Talent Pool", icon: DatabaseIcon, value: "talent" },
+      { title: "Lead Hunter", icon: Target, value: "lead-hunter" },
+      { title: "Assessment Leads", icon: ClipboardList, value: "leads" },
+      { title: "Mock Interview Leads", icon: MessageSquare, value: "interviews" },
+      { title: "Salary Analysis Leads", icon: TrendingUp, value: "salary" },
+      { title: "Portfolio Requests", icon: Briefcase, value: "portfolios" },
+    ],
+  },
+  {
+    title: "Recruitment",
+    icon: Briefcase,
+    roles: ["admin", "talent_exec"],
+    items: [
+      { title: "Jobs KPIs", icon: TrendingUp, value: "jobs-kpis" },
+      { title: "Manage Jobs", icon: Building2, value: "jobs" },
+      { title: "Applications", icon: FileCheck, value: "applications" },
+      { title: "Companies", icon: Building2, value: "companies" },
+      { title: "Contacts", icon: Users, value: "contacts" },
+    ],
+  },
+  {
+    title: "Learning",
+    icon: BookOpen,
+    roles: ["admin"],
+    items: [
+      { title: "All Content", icon: BookOpen, value: "all" },
+      { title: "Enrollments", icon: Users, value: "enrollments" },
+      { title: "Learner Progress", icon: BarChart, value: "learner-progress" },
+      { title: "Free Videos", icon: Video, value: "videos" },
+      { title: "Recorded Courses", icon: Tv, value: "courses" },
+      { title: "Live Sessions", icon: Calendar, value: "webinars" },
+    ],
+  },
+  {
+    title: "Marketing & Outreach",
+    icon: Megaphone,
+    roles: ["admin", "talent_exec"],
+    items: [
+      { title: "Marketing Analytics", icon: PieChart, value: "analytics" },
+      { title: "CV Outreach", icon: Send, value: "outreach" },
+      { title: "Content Outreach", icon: BookOpen, value: "content-outreach" },
+      { title: "Service Outreach", icon: Sparkles, value: "service-outreach" },
+      { title: "Blog Posts", icon: FileText, value: "blog" },
+      { title: "Feed Posts", icon: MessageSquare, value: "feed-posts" },
+      { title: "Competitions", icon: Trophy, value: "competitions" },
+    ],
+  },
+  {
+    title: "Career Abroad",
+    icon: Globe,
+    roles: ["admin"],
+    items: [
+      { title: "Study Abroad Programs", icon: GraduationCap, value: "study-abroad" },
+      { title: "IELTS Resources", icon: BookOpen, value: "ielts" },
+      { title: "Roadmap Leads", icon: Map, value: "roadmap-leads" },
+    ],
+  },
+  {
+    title: "AI & Monetization",
+    icon: Bot,
+    roles: ["admin"],
+    items: [
+      { title: "AI Agents", icon: Bot, value: "ai-agents" },
+      { title: "Company Agents", icon: Building2, value: "company-agents" },
+      { title: "Agent Sessions", icon: MessageSquare, value: "agent-sessions" },
+      { title: "Credits Manager", icon: Coins, value: "credits" },
+      { title: "Notifications", icon: Bell, value: "notifications" },
+    ],
+  },
+  {
+    title: "Platform Config",
+    icon: Settings,
+    roles: ["admin"],
+    items: [
+      { title: "Access Codes", icon: Key, value: "codes" },
+      { title: "Banners", icon: ImageIcon, value: "banners" },
+      { title: "Professions", icon: GraduationCap, value: "professions" },
+      { title: "Team Members", icon: UserCog, value: "team" },
+    ],
+  },
 ];
 ```
 
-**Fix:** Update to dynamically generate options or update static list:
-```typescript
-const INTAKE_OPTIONS = [
-  "Fall 2026",
-  "Spring 2027", 
-  "Fall 2027",
-  "Spring 2028",
-  "Fall 2028",
-];
-```
+---
+
+## Benefits of Reorganization
+
+| Aspect | Before | After |
+|--------|--------|-------|
+| Content Management items | 15 | 6 (Learning only) |
+| Marketing tools location | Scattered across 3 groups | Unified in 1 group |
+| Career Abroad visibility | Hidden in Content | Dedicated section |
+| Finding outreach tools | 3 different places | 1 place |
+| AI/monetization grouping | Mixed with unrelated items | Focused section |
 
 ---
 
-### BUG 2: Incomplete TODO in Production Code
-**File:** `src/pages/app/AIAgents.tsx` (line 104)
-**Issue:** Company agent name is hardcoded as `null` with a TODO comment.
+## Additional Improvements
 
-```typescript
-companyName: null, // TODO: Join with companies table
-```
+### Rename Confusing Labels
+- "Mock Interviews" → "Mock Interview Leads" (clarity)
+- "Salary Analysis" → "Salary Analysis Leads" (clarity)
+- "Webinars" → "Live Sessions" (covers webinars, batches, seminars)
 
-**Fix:** Either implement the companies table join or remove the `companyName` field if not needed.
+### Add Missing Counts to Overview
+- Study Abroad Roadmap requests count
+- Pending roadmaps needing review
 
----
-
-### BUG 3: Debug Console Log in Production
-**File:** `src/pages/app/StudyAbroadDetail.tsx` (line 37)
-**Issue:** Debug logging left in production code.
-
-```typescript
-console.log("🔍 Fetching program details for ID:", id); // Debug log
-```
-
-**Fix:** Remove or conditionally log only in development.
-
----
-
-## Security Findings (Important)
-
-### SEC 1: Leaked Password Protection Disabled (WARN)
-**Finding:** Auth configuration doesn't check passwords against known breach databases.
-**Impact:** Users may set compromised passwords.
-**Fix:** Enable leaked password protection in Auth settings.
-
-### SEC 2: RLS Policy Always True (WARN) - 9 occurrences
-**Finding:** Some RLS policies use `USING (true)` or `WITH CHECK (true)` for INSERT/UPDATE/DELETE.
-**Tables Affected:** Multiple analytics and logging tables.
-**Impact:** These tables may allow unintended write access.
-**Fix:** Review and tighten policies to require authentication or specific conditions.
-
-### SEC 3: Function Search Path Mutable (WARN) - 2 functions
-**Finding:** Two database functions don't have `search_path` set.
-**Impact:** Potential for search path injection attacks.
-**Fix:** Add `SET search_path = 'public'` to affected functions.
-
-### SEC 4: Talent Email Exposure (ERROR)
-**Finding:** RLS policies on talents table allow access via email matching in addition to user_id.
-**Impact:** Anyone knowing a user's email could potentially access their profile data.
-**Fix:** Strengthen policies to require user_id matching only.
-
----
-
-## UI/UX Improvements
-
-### UI 1: Mobile Tab Labels Too Long
-**File:** `src/pages/app/StudyAbroadRoadmapResults.tsx` (lines 309-331)
-**Issue:** 5 tabs in roadmap results may overflow on mobile.
-**Fix:** Icons are hidden on `sm:` breakpoint which is good, but consider tab scrolling.
-
-### UI 2: Processing State Could Show Progress
-**File:** `src/pages/app/StudyAbroadRoadmapResults.tsx`
-**Enhancement:** The "Generating Your Roadmap" state could show progress stages instead of just a spinner.
-
----
-
-## Code Quality Issues
-
-### CQ 1: Placeholder Text Consistency
-**Files:** Multiple service setup pages
-**Issue:** Phone placeholder formats vary (`01XXXXXXXXX`, `+880XXXXXXXXX`, `01XXX-XXXXXX`).
-**Fix:** Standardize placeholder format across forms.
-
-### CQ 2: Potential React Router Warnings
-**Console:** Two deprecation warnings about future flags.
-**Fix:** Add future flags to BrowserRouter configuration:
-```typescript
-<BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
-```
-
-### CQ 3: Duplicate Route Definitions
-**File:** `src/App.tsx`
-**Issue:** Blog routes are defined both at root level (`/blog`) and under `/app/learning/blog` and `/app/blog`.
-**Impact:** Minor - works but adds confusion.
-
----
-
-## Database Health Check Results
-
-| Check | Status | Notes |
-|-------|--------|-------|
-| RLS Enabled | Pass | All user tables have RLS |
-| Notifications | Pass | Uses `talent_id` correctly |
-| Credits System | Pass | UUID validation in place |
-| Study Abroad Roadmaps | Pass | New table properly configured |
-
----
-
-## Recommended Actions (Priority Order)
-
-### High Priority (Block Publication)
-1. Fix outdated intake dates in RoadmapIntakeForm
-2. Enable leaked password protection
-3. Review and tighten permissive RLS policies on write operations
-
-### Medium Priority (Fix Soon After Launch)
-4. Complete company agent name join implementation
-5. Remove debug console.log statements
-6. Standardize phone placeholder formats
-
-### Low Priority (Technical Debt)
-7. Add React Router future flags
-8. Clean up duplicate blog routes
-9. Add search_path to database functions
-
----
-
-## Files Requiring Changes
-
-| File | Priority | Changes |
-|------|----------|---------|
-| `src/components/abroad/RoadmapIntakeForm.tsx` | High | Update intake options |
-| `src/pages/app/StudyAbroadDetail.tsx` | Medium | Remove debug log |
-| `src/pages/app/AIAgents.tsx` | Medium | Implement company join or remove field |
-| Database migration | High | Fix function search_path |
+### Role Access Updates
+- Marketing & Outreach should be accessible to `talent_exec` role
+- Career Abroad admin-only (contains program management)
 
 ---
 
 ## Summary
 
-The codebase is generally well-structured with good error handling and timeout patterns. The main concerns are:
-
-1. **Data accuracy** - Past dates showing in forms
-2. **Security hardening** - A few RLS policies need tightening
-3. **Code cleanup** - Remove TODOs and debug logs before production
-
-Once these items are addressed, the application is ready for publication.
+This reorganization:
+1. **Reduces cognitive load** - Content Management drops from 15 to 6 items
+2. **Groups related tools** - All outreach in one place, all AI in one place
+3. **Creates logical hierarchy** - Career Abroad gets dedicated section
+4. **Adds missing functionality** - Roadmap leads tracking
+5. **Improves navigation** - Clearer labels, better grouping
