@@ -8,12 +8,14 @@ import { Textarea } from "@/components/ui/textarea";
 import { Progress } from "@/components/ui/progress";
 import { Slider } from "@/components/ui/slider";
 import { Skeleton } from "@/components/ui/skeleton";
+import { AlertDialog, AlertDialogAction, AlertDialogCancel, AlertDialogContent, AlertDialogDescription, AlertDialogFooter, AlertDialogHeader, AlertDialogTitle, AlertDialogTrigger } from "@/components/ui/alert-dialog";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Save, RefreshCw } from "lucide-react";
+import { Save, RefreshCw, Lock, Calendar } from "lucide-react";
 import { 
   IR_CONFIG, 
   formatUSD, 
+  creditsToUsd,
   calculateServiceTargets,
   calculateAutoKPIs,
   type ServiceMix,
@@ -23,6 +25,9 @@ import {
 export function MRRTargetManager() {
   const queryClient = useQueryClient();
   const currentMonth = new Date().toISOString().slice(0, 7) + "-01";
+  const startOfMonth = new Date();
+  startOfMonth.setDate(1);
+  startOfMonth.setHours(0, 0, 0, 0);
   
   const [mrrTarget, setMrrTarget] = useState<number>(0);
   const [serviceMix, setServiceMix] = useState<ServiceMix>(IR_CONFIG.DEFAULT_SERVICE_MIX as ServiceMix);
@@ -52,6 +57,46 @@ export function MRRTargetManager() {
       }
       
       return data;
+    },
+  });
+  
+  // Fetch current month credit usage (for close month)
+  const { data: creditUsage } = useQuery({
+    queryKey: ["ir-credit-usage-close", currentMonth],
+    queryFn: async () => {
+      const { data, error } = await supabase
+        .from("credit_transactions")
+        .select("amount, service_type, talent_id")
+        .in("transaction_type", ["service_usage", "usage"])
+        .gte("created_at", startOfMonth.toISOString());
+      
+      if (error) throw error;
+      
+      const totalCredits = data?.reduce((sum, t) => sum + Math.abs(t.amount), 0) || 0;
+      
+      const byService: Record<string, number> = {};
+      data?.forEach((t) => {
+        if (t.service_type) {
+          byService[t.service_type] = (byService[t.service_type] || 0) + Math.abs(t.amount);
+        }
+      });
+      
+      const activeTalents = new Set(data?.map(d => d.talent_id).filter(Boolean)).size;
+      
+      return { totalCredits, byService, activeTalents };
+    },
+  });
+  
+  // Fetch total talents count
+  const { data: totalTalentsCount } = useQuery({
+    queryKey: ["ir-total-talents-close"],
+    queryFn: async () => {
+      const { count, error } = await supabase
+        .from("talents")
+        .select("*", { count: "exact", head: true });
+      
+      if (error) throw error;
+      return count || 0;
     },
   });
   
@@ -92,6 +137,55 @@ export function MRRTargetManager() {
     },
   });
   
+  // Close month mutation
+  const closeMonthMutation = useMutation({
+    mutationFn: async () => {
+      if (!target?.id) throw new Error("No target to close");
+      
+      const actualCredits = creditUsage?.totalCredits || 0;
+      const actualMrr = creditsToUsd(actualCredits);
+      
+      // Update the target with actuals
+      const { error: updateError } = await supabase
+        .from("ir_monthly_targets")
+        .update({
+          actual_mrr_usd: actualMrr,
+          actual_credits_consumed: actualCredits,
+          total_talents: totalTalentsCount,
+          active_talents: creditUsage?.activeTalents || 0,
+          service_actuals: creditUsage?.byService || {},
+          is_closed: true,
+          closed_at: new Date().toISOString(),
+        })
+        .eq("id", target.id);
+      
+      if (updateError) throw updateError;
+      
+      // Also create a snapshot in ir_metrics_snapshots
+      const { error: snapshotError } = await supabase
+        .from("ir_metrics_snapshots")
+        .upsert({
+          snapshot_date: currentMonth,
+          mrr_usd: actualMrr,
+          arr_usd: actualMrr * 12,
+          total_credits_consumed: actualCredits,
+          paying_users: creditUsage?.activeTalents || 0,
+          total_users: totalTalentsCount,
+          service_breakdown: creditUsage?.byService || {},
+        }, { onConflict: "snapshot_date" });
+      
+      if (snapshotError) throw snapshotError;
+    },
+    onSuccess: () => {
+      toast.success("Month closed and snapshot saved!");
+      queryClient.invalidateQueries({ queryKey: ["ir-target"] });
+      queryClient.invalidateQueries({ queryKey: ["ir-historical-targets"] });
+    },
+    onError: (error) => {
+      toast.error("Failed to close month: " + error.message);
+    },
+  });
+  
   const handleMixChange = (service: ServiceKey, value: number) => {
     setServiceMix((prev) => ({ ...prev, [service]: value }));
     setHasChanges(true);
@@ -106,6 +200,9 @@ export function MRRTargetManager() {
   const serviceTargets = calculateServiceTargets(mrrTarget, serviceMix);
   const autoKPIs = calculateAutoKPIs(mrrTarget, targetPayingUsers > 0 ? mrrTarget / targetPayingUsers : 20);
   const totalCreditsTarget = mrrTarget * IR_CONFIG.USD_TO_CREDITS;
+  const currentCredits = creditUsage?.totalCredits || 0;
+  const currentMRR = creditsToUsd(currentCredits);
+  const isClosed = target?.is_closed || false;
   
   if (isLoading) {
     return (
@@ -125,13 +222,56 @@ export function MRRTargetManager() {
             Set monthly revenue targets and service mix for {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}
           </p>
         </div>
-        <Button 
-          onClick={() => saveMutation.mutate()}
-          disabled={saveMutation.isPending || !hasChanges}
-        >
-          <Save className="mr-2 h-4 w-4" />
-          Save Target
-        </Button>
+        <div className="flex items-center gap-2">
+          {isClosed && (
+            <div className="flex items-center gap-2 text-muted-foreground">
+              <Lock className="h-4 w-4" />
+              <span className="text-sm">Month Closed</span>
+            </div>
+          )}
+          {target && !isClosed && (
+            <AlertDialog>
+              <AlertDialogTrigger asChild>
+                <Button variant="outline">
+                  <Calendar className="mr-2 h-4 w-4" />
+                  Close Month
+                </Button>
+              </AlertDialogTrigger>
+              <AlertDialogContent>
+                <AlertDialogHeader>
+                  <AlertDialogTitle>Close This Month?</AlertDialogTitle>
+                  <AlertDialogDescription>
+                    This will save the current metrics as final results for{' '}
+                    {new Date().toLocaleDateString('en-US', { month: 'long', year: 'numeric' })}:
+                    <ul className="mt-2 space-y-1 text-sm">
+                      <li>• Actual MRR: {formatUSD(currentMRR)}</li>
+                      <li>• Credits Used: {currentCredits.toLocaleString()}</li>
+                      <li>• Active Users: {creditUsage?.activeTalents || 0}</li>
+                      <li>• Total Talents: {totalTalentsCount}</li>
+                    </ul>
+                    <p className="mt-2 font-medium">This action cannot be undone.</p>
+                  </AlertDialogDescription>
+                </AlertDialogHeader>
+                <AlertDialogFooter>
+                  <AlertDialogCancel>Cancel</AlertDialogCancel>
+                  <AlertDialogAction 
+                    onClick={() => closeMonthMutation.mutate()}
+                    disabled={closeMonthMutation.isPending}
+                  >
+                    {closeMonthMutation.isPending ? "Closing..." : "Close & Save Snapshot"}
+                  </AlertDialogAction>
+                </AlertDialogFooter>
+              </AlertDialogContent>
+            </AlertDialog>
+          )}
+          <Button 
+            onClick={() => saveMutation.mutate()}
+            disabled={saveMutation.isPending || !hasChanges || isClosed}
+          >
+            <Save className="mr-2 h-4 w-4" />
+            Save Target
+          </Button>
+        </div>
       </div>
       
       {/* MRR Input */}
@@ -290,7 +430,7 @@ export function MRRTargetManager() {
           </div>
           
           {totalMixPercent !== 100 && (
-            <p className="mt-4 text-sm text-yellow-600">
+            <p className="mt-4 text-sm text-amber-600 dark:text-amber-400">
               Note: Mix percentages total {totalMixPercent}%. Consider adjusting to reach 100%.
             </p>
           )}

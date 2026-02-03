@@ -1950,39 +1950,60 @@ export type Database = {
       }
       ir_monthly_targets: {
         Row: {
+          active_talents: number | null
+          actual_credits_consumed: number | null
+          actual_mrr_usd: number | null
+          closed_at: string | null
           created_at: string | null
           created_by: string | null
           id: string
+          is_closed: boolean | null
           month: string
           mrr_target_usd: number
           notes: string | null
+          service_actuals: Json | null
           service_mix: Json | null
           target_churn_rate: number | null
           target_paying_users: number | null
+          total_talents: number | null
           updated_at: string | null
         }
         Insert: {
+          active_talents?: number | null
+          actual_credits_consumed?: number | null
+          actual_mrr_usd?: number | null
+          closed_at?: string | null
           created_at?: string | null
           created_by?: string | null
           id?: string
+          is_closed?: boolean | null
           month: string
           mrr_target_usd: number
           notes?: string | null
+          service_actuals?: Json | null
           service_mix?: Json | null
           target_churn_rate?: number | null
           target_paying_users?: number | null
+          total_talents?: number | null
           updated_at?: string | null
         }
         Update: {
+          active_talents?: number | null
+          actual_credits_consumed?: number | null
+          actual_mrr_usd?: number | null
+          closed_at?: string | null
           created_at?: string | null
           created_by?: string | null
           id?: string
+          is_closed?: boolean | null
           month?: string
           mrr_target_usd?: number
           notes?: string | null
+          service_actuals?: Json | null
           service_mix?: Json | null
           target_churn_rate?: number | null
           target_paying_users?: number | null
+          total_talents?: number | null
           updated_at?: string | null
         }
         Relationships: []
