@@ -96,7 +96,7 @@ export function TalentAppShell() {
       <header className="sticky top-0 z-50 bg-white dark:bg-background/95 dark:backdrop-blur-sm border-b border-border h-14 px-4 shadow-sm transition-colors duration-300">
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between">
           {/* Left: Logo & Search */}
-          <div className="flex items-center gap-4 flex-1">
+          <div className="flex items-center flex-1 gap-[5px]">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/app/feed")}>
               <img alt="Logo" className="w-8 h-8 rounded" src="/lovable-uploads/9c7f3b64-8763-474e-951b-6420b7c33965.png" />
             </div>
