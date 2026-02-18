@@ -1,106 +1,91 @@
 
 
-# UI Size and Layout Improvements (No Color Changes)
+# Add Quick Actions Grid to Feed/Home Page
 
 ## Overview
 
-This plan focuses on improving banner dimensions, card sizes, spacing, bottom navigation touch targets, and overall element proportions -- while keeping the existing color palette exactly as-is.
+Add a 4x2 icon grid below the banner on the Feed page for quick access to key app features: Jobs, Abroad, Services, Career Tracks, Assessment, Mock Interview, Salary Analysis, and Portfolio.
 
 ---
 
-## Changes
+## Implementation
 
-### 1. Banner Carousel - Better Mobile Size
+### 1. Create New Component: `src/components/feed/QuickActionsGrid.tsx`
 
-**File: `src/components/BannerCarousel.tsx`**
+A self-contained grid component with 8 items in a `grid-cols-4` layout (4 columns, 2 rows):
 
-Currently the compact banner is only `h-40` (160px) which is too short on mobile. The non-compact version jumps to `h-64` which is too tall.
+| Row 1 | Jobs | Abroad | Services | Tracks |
+|-------|------|--------|----------|--------|
+| Row 2 | Assessment | Interview | Salary | Portfolio |
 
-**Fix:**
-- Compact mode: change from `h-40` to `h-44` (176px) for slightly more visual impact
-- Default mode: use `h-48 sm:h-56 md:h-72 lg:h-[360px]` for smoother responsive scaling
-- Reduce bottom margin in compact from `mb-4` to `mb-3`
-- Make dots and arrows always visible on mobile (remove `opacity-0 group-hover:opacity-100` since mobile has no hover)
+Each item will have:
+- A circular colored icon container (using the existing `bg-primary/10` pattern)
+- A label below the icon (11-12px text)
+- Tap navigates to the relevant route
+- Optional badge support (e.g., "New", "Hot") for future use
 
-### 2. Feed Header - Tighter on Mobile
+Routes mapped from `src/lib/routes.ts`:
+- Jobs -> `/app/jobs`
+- Abroad -> `/app/abroad`
+- Services -> `/app/services`
+- Career Tracks -> `/app/learning/tracks`
+- Assessment -> `/app/services/assessment`
+- Mock Interview -> `/app/services/mock-interview`
+- Salary Analysis -> `/app/services/salary-analysis`
+- Portfolio -> `/app/services/portfolio`
 
-**File: `src/components/feed/FeedHeader.tsx`**
+Icons from lucide-react:
+- Briefcase, Plane, Sparkles, Target, ClipboardList, Mic, DollarSign, Palette
 
-Currently uses `p-6` padding which wastes vertical space on mobile.
+### 2. Integrate into Feed Page: `src/pages/app/Feed.tsx`
 
-**Fix:**
-- Change padding to `p-4 md:p-8` for tighter mobile layout
-- Reduce avatar from `h-14 w-14` to `h-11 w-11` on mobile
-- Tighten text spacing
+Insert `<QuickActionsGrid />` directly after the `<BannerCarousel compact />` on line 218, before the mobile-only widgets section.
 
-### 3. Bottom Navigation - Better Touch Targets
+```tsx
+{/* Banner */}
+<BannerCarousel compact />
 
-**File: `src/layouts/TalentAppShell.tsx`**
+{/* Quick Actions Grid */}
+<QuickActionsGrid />
 
-Currently the bottom nav icons are `h-6 w-6` with `text-[10px]` labels and only 5 of 6 items shown. The touch area is cramped.
+{/* Mobile-Only Widgets */}
+...
+```
 
-**Fix:**
-- Reduce icon size to `h-5 w-5` to create more breathing room between items
-- Increase label size from `text-[10px]` to `text-[11px]`
-- Add a subtle active indicator (small dot or pill) under the active tab label
-- Increase bottom nav height from `h-16` to `h-[60px]` (slight refinement with safe area)
-
-### 4. AI Agents - Switch to 2-Column Card Grid
-
-**File: `src/pages/app/AIAgents.tsx`**
-
-Currently renders as a flat list. The reference shows a cleaner 2-column card grid.
-
-**Fix:**
-- Replace the single `<Card>` wrapping all `AgentListItem`s with a `grid grid-cols-2 gap-3` layout
-- Each agent becomes a standalone card with avatar centered, name, short description, credit badge, and a CTA button
-
-**File: `src/components/ai-agents/AgentCard.tsx`**
-
-Update the existing `AgentCard` component to match the compact card style:
-- Center the avatar at the top
-- Show name and one-line description
-- Credit cost badge
-- Full-width "Chat Now" button at the bottom
-- Smaller overall card padding (`p-3`)
-
-### 5. Feed Cards - Slightly Larger Touch Targets
-
-**File: `src/components/feed/FeedCardRedesigned.tsx`**
-
-**Fix:**
-- Increase action button height from `h-9` to `h-10` for better tap targets
-- Increase card content padding from `p-3` to `p-4`
-- Title font size from `text-sm` to `text-[15px]`
-
-### 6. Main Content Area Padding
-
-**File: `src/layouts/TalentAppShell.tsx`**
-
-Currently `pb-20` for bottom nav clearance. Some pages still get cut off.
-
-**Fix:**
-- Change to `pb-24` for safer clearance on all devices
+The grid will be visible on all screen sizes but most impactful on mobile.
 
 ---
 
-## Technical Summary
+## Technical Details
 
-| File | Change |
-|------|--------|
-| `src/components/BannerCarousel.tsx` | Better responsive heights, always-visible mobile controls |
-| `src/components/feed/FeedHeader.tsx` | Tighter mobile padding and avatar size |
-| `src/layouts/TalentAppShell.tsx` | Bottom nav touch targets, main content bottom padding |
-| `src/pages/app/AIAgents.tsx` | Switch to 2-column card grid layout |
-| `src/components/ai-agents/AgentCard.tsx` | Compact centered card style for grid |
-| `src/components/feed/FeedCardRedesigned.tsx` | Larger buttons and padding |
+### QuickActionsGrid Component Structure
+```tsx
+const actions = [
+  { icon: Briefcase, label: "Jobs", path: "/app/jobs" },
+  { icon: Plane, label: "Abroad", path: "/app/abroad" },
+  { icon: Sparkles, label: "Services", path: "/app/services" },
+  { icon: Target, label: "Tracks", path: "/app/learning/tracks" },
+  { icon: ClipboardList, label: "Assessment", path: "/app/services/assessment" },
+  { icon: Mic, label: "Interview", path: "/app/services/mock-interview" },
+  { icon: DollarSign, label: "Salary", path: "/app/services/salary-analysis" },
+  { icon: Palette, label: "Portfolio", path: "/app/services/portfolio" },
+];
+```
+
+Each item renders as:
+- A tappable `div` with `cursor-pointer` and `active:scale-95` for feedback
+- Circular icon container (`h-12 w-12 rounded-full bg-primary/10`)
+- Icon inside (`h-5 w-5 text-primary`)
+- Label below (`text-[11px] text-center`)
+
+The grid uses `grid grid-cols-4 gap-3` for a compact 4x2 layout.
 
 ---
 
-## What stays the same
+## Files Summary
 
-- All colors, gradients, and theme variables remain untouched
-- No changes to `src/index.css` or `tailwind.config.ts`
-- Dark mode behavior stays identical
-- All existing functionality preserved
+| File | Action | Purpose |
+|------|--------|---------|
+| `src/components/feed/QuickActionsGrid.tsx` | Create | New 4x2 icon grid component |
+| `src/pages/app/Feed.tsx` | Modify | Insert QuickActionsGrid after banner |
 
