@@ -122,7 +122,7 @@ export default function Profile() {
         {/* Gradient Background */}
         <div className="bg-gradient-primary p-6 pb-8">
           <div className="flex items-start justify-between mb-4">
-            <Avatar className="h-20 w-20 ring-4 ring-primary-foreground/30 shadow-xl">
+            <Avatar className="h-24 w-24 ring-4 ring-white shadow-xl">
               <AvatarImage src={talent.profilePhotoUrl || undefined} />
               <AvatarFallback className="text-2xl bg-primary-foreground/20 text-primary-foreground font-bold">
                 {initials}
@@ -186,13 +186,13 @@ export default function Profile() {
         currentBalance={balance}
       />
 
-      {/* Quick Actions - Horizontal Scroll */}
-      <div className="flex gap-2 mb-5 overflow-x-auto pb-1 -mx-4 px-4 scrollbar-hide">
+      {/* Quick Actions - 2x2 Grid */}
+      <div className="grid grid-cols-2 gap-2.5 mb-5">
         <Card
-          className="cursor-pointer shadow-sm border-0 flex-shrink-0 w-[110px] press-scale rounded-xl"
+          className="cursor-pointer shadow-sm border-0 press-scale rounded-xl"
           onClick={() => navigate("/app/learning/my-courses")}
         >
-          <CardContent className="p-3 flex flex-col items-center text-center gap-1.5">
+          <CardContent className="p-3 flex items-center gap-3">
             <div className="p-2 bg-primary/10 rounded-lg">
               <BookOpen className="h-4 w-4 text-primary" />
             </div>
@@ -201,10 +201,10 @@ export default function Profile() {
         </Card>
 
         <Card
-          className="cursor-pointer shadow-sm border-0 flex-shrink-0 w-[110px] press-scale rounded-xl"
+          className="cursor-pointer shadow-sm border-0 press-scale rounded-xl"
           onClick={() => navigate("/app/saved")}
         >
-          <CardContent className="p-3 flex flex-col items-center text-center gap-1.5">
+          <CardContent className="p-3 flex items-center gap-3">
             <div className="p-2 bg-warning/10 rounded-lg relative">
               <Bookmark className="h-4 w-4 text-warning" />
               {savedJobsCount > 0 && (
@@ -218,10 +218,10 @@ export default function Profile() {
         </Card>
 
         <Card
-          className="cursor-pointer shadow-sm border-0 flex-shrink-0 w-[110px] press-scale rounded-xl"
+          className="cursor-pointer shadow-sm border-0 press-scale rounded-xl"
           onClick={() => navigate("/app/applications")}
         >
-          <CardContent className="p-3 flex flex-col items-center text-center gap-1.5">
+          <CardContent className="p-3 flex items-center gap-3">
             <div className="p-2 bg-secondary/10 rounded-lg">
               <History className="h-4 w-4 text-secondary" />
             </div>
@@ -230,10 +230,10 @@ export default function Profile() {
         </Card>
 
         <Card
-          className="cursor-pointer shadow-sm border-0 flex-shrink-0 w-[110px] press-scale rounded-xl"
+          className="cursor-pointer shadow-sm border-0 press-scale rounded-xl"
           onClick={handleEditProfile}
         >
-          <CardContent className="p-3 flex flex-col items-center text-center gap-1.5">
+          <CardContent className="p-3 flex items-center gap-3">
             <div className="p-2 bg-accent/10 rounded-lg">
               <FileText className="h-4 w-4 text-accent" />
             </div>

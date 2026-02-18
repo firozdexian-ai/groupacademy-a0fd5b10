@@ -197,7 +197,7 @@ export default function Feed() {
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-8">
         {/* ================= LEFT COLUMN (MAIN FEED) ================= */}
-        <div className="lg:col-span-8 space-y-6">
+        <div className="lg:col-span-8 space-y-4">
           {/* Header */}
           <FeedHeader
             talentName={talent?.fullName}
@@ -205,15 +205,6 @@ export default function Feed() {
             onRefresh={() => refresh()}
             isRefreshing={isRefreshing}
           />
-
-          {/* Last Updated */}
-          {!isLoading && !error && items.length > 0 && (
-            <div className="flex justify-end -mt-4">
-              <p className="text-[10px] text-muted-foreground flex items-center gap-1">
-                <Clock className="w-3 h-3" /> Updated {formatDistanceToNow(lastUpdated, { addSuffix: true })}
-              </p>
-            </div>
-          )}
 
           {/* Banner */}
           <BannerCarousel compact />
