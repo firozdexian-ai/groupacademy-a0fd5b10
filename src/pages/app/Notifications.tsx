@@ -28,9 +28,9 @@ export default function Notifications() {
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6">
+    <div className="max-w-2xl mx-auto px-4 py-4">
       {/* Header */}
-      <div className="flex items-center justify-between mb-6">
+      <div className="flex items-center justify-between mb-4">
         <div className="flex items-center gap-3">
           <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
             <ArrowLeft className="h-5 w-5" />
@@ -68,7 +68,7 @@ export default function Notifications() {
         </div>
       ) : filteredNotifications.length === 0 ? (
         <Card>
-          <CardContent className="py-10 text-center">
+          <CardContent className="py-8 text-center">
             <BellOff className="h-10 w-10 text-muted-foreground mx-auto mb-3" />
             <p className="text-sm text-muted-foreground">
               {filter === 'unread' ? 'No unread notifications' : 'No notifications yet'}
