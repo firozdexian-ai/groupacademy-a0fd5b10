@@ -46,18 +46,18 @@ export default function Blog() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4">
         <Button variant="ghost" size="icon" onClick={() => navigate("/app/learning")}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Career Blog</h1>
+          <h1 className="text-xl font-bold">Career Blog</h1>
           <p className="text-muted-foreground">Articles, tutorials, and career tips</p>
         </div>
       </div>
 
       {/* Search & Categories */}
-      <div className="flex flex-col md:flex-row gap-4 mb-8">
+      <div className="flex flex-col md:flex-row gap-4 mb-5">
         <div className="relative flex-1">
           <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
           <Input
@@ -67,12 +67,13 @@ export default function Blog() {
             className="pl-10"
           />
         </div>
-        <div className="flex flex-wrap gap-2">
+        <div className="flex gap-2 overflow-x-auto flex-nowrap pb-1 -mx-4 px-4 md:mx-0 md:px-0">
           {CATEGORIES.map((category) => (
             <Button
               key={category}
               variant={selectedCategory === category ? "default" : "outline"}
               size="sm"
+              className="shrink-0"
               onClick={() => setSelectedCategory(category)}
             >
               {category}
@@ -91,7 +92,7 @@ export default function Blog() {
           </div>
         </div>
       ) : posts && posts.length > 0 ? (
-        <div className="space-y-8">
+        <div className="space-y-5">
           {/* Featured Post */}
           {featuredPost && (
             <Card
@@ -144,7 +145,7 @@ export default function Blog() {
 
           {/* Regular Posts Grid */}
           {regularPosts.length > 0 && (
-            <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+            <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
               {regularPosts.map((post) => (
                 <Card
                   key={post.id}

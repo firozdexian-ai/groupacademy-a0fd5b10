@@ -219,9 +219,9 @@ export default function SavedItems() {
 
   const renderEmptyState = (type: string) => (
     <Card className="border-dashed">
-      <CardContent className="py-12 text-center">
-        <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-          <Bookmark className="h-8 w-8 text-muted-foreground" />
+      <CardContent className="py-8 text-center">
+        <div className="w-12 h-12 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
+          <Bookmark className="h-6 w-6 text-muted-foreground" />
         </div>
         <h3 className="font-bold text-base mb-1">No saved {type === 'all' ? 'items' : type + 's'}</h3>
         <p className="text-sm text-muted-foreground mb-4 max-w-xs mx-auto">
@@ -238,7 +238,7 @@ export default function SavedItems() {
   );
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-6 space-y-5">
+    <div className="max-w-2xl mx-auto px-4 py-4 space-y-5">
       {/* Header */}
       <div className="flex items-center gap-3">
         <Button 

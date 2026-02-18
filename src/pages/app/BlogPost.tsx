@@ -115,7 +115,7 @@ export default function BlogPost() {
           )}
         </div>
 
-        <h1 className="text-3xl font-bold mb-4">{post.title}</h1>
+        <h1 className="text-2xl font-bold mb-4">{post.title}</h1>
 
         <div className="flex flex-wrap items-center gap-4 text-sm text-muted-foreground">
           {post.author_name && (
@@ -147,14 +147,14 @@ export default function BlogPost() {
 
       {/* Featured Image */}
       {post.featured_image && (
-        <div className="rounded-xl overflow-hidden mb-8 shadow-sm border border-border/50">
+        <div className="rounded-xl overflow-hidden mb-6 shadow-sm border border-border/50">
           <img src={post.featured_image} alt={post.title} className="w-full h-auto object-cover max-h-[400px]" />
         </div>
       )}
 
       {/* Excerpt */}
       {post.excerpt && (
-        <p className="text-lg text-muted-foreground mb-6 font-medium leading-relaxed border-l-4 border-primary/20 pl-4">
+        <p className="text-lg text-muted-foreground mb-4 font-medium leading-relaxed border-l-4 border-primary/20 pl-4">
           {post.excerpt}
         </p>
       )}
@@ -212,7 +212,7 @@ export default function BlogPost() {
 
       {/* Related Articles Placeholder */}
       <Card className="mt-8 bg-gradient-to-br from-primary/5 to-transparent border-primary/10">
-        <CardContent className="p-6 text-center">
+        <CardContent className="p-4 text-center">
           <h3 className="font-semibold mb-2">Want personalized career insights?</h3>
           <p className="text-sm text-muted-foreground mb-4">
             Our AI career agents can help you apply these learnings to your specific profile.

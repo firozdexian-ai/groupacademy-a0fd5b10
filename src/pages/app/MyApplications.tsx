@@ -195,9 +195,9 @@ const ApplicationCard = ({
         </div>
       )}
 
-      <CardContent className="p-5 pb-3">
+      <CardContent className="p-4 pb-3">
         {/* Top Row: Job Info & Status Badge */}
-        <div className="flex justify-between items-start mb-4">
+        <div className="flex justify-between items-start mb-3">
           <div className="flex items-center gap-3">
             <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0 border border-primary/10">
               <Briefcase className="h-5 w-5 text-primary" />
@@ -225,7 +225,7 @@ const ApplicationCard = ({
         <ApplicationTimeline status={application.application_status} isRejected={isRejected} />
       </CardContent>
 
-      <CardFooter className="px-5 py-3 bg-muted/30 flex items-center justify-between border-t text-xs">
+      <CardFooter className="px-4 py-3 bg-muted/30 flex items-center justify-between border-t text-xs">
         <div className="text-muted-foreground flex items-center gap-1">
           <Clock className="w-3.5 h-3.5" />
           <span>Applied {formatDistanceToNow(new Date(application.created_at), { addSuffix: true })}</span>
@@ -359,11 +359,11 @@ export default function MyApplications() {
 
   const EmptyState = ({ tab }: { tab: string }) => (
     <Card className="border-dashed bg-muted/30">
-      <CardContent className="py-16 text-center flex flex-col items-center">
-        <div className="w-16 h-16 bg-background rounded-full flex items-center justify-center mb-4 shadow-sm border">
-          <SearchX className="h-8 w-8 text-muted-foreground/50" />
+      <CardContent className="py-10 text-center flex flex-col items-center">
+        <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mb-4 shadow-sm border">
+          <SearchX className="h-6 w-6 text-muted-foreground/50" />
         </div>
-        <h3 className="font-semibold text-lg mb-2">
+        <h3 className="font-semibold text-base mb-2">
           {tab === "all" ? "No applications yet" : `No ${tab} applications`}
         </h3>
         <p className="text-sm text-muted-foreground mb-6 max-w-xs mx-auto">
@@ -381,13 +381,13 @@ export default function MyApplications() {
   );
 
   return (
-    <div className="max-w-3xl mx-auto px-4 py-6 min-h-screen">
-      <div className="mb-6">
-        <h1 className="text-2xl font-bold">My Applications</h1>
+    <div className="max-w-3xl mx-auto px-4 py-4 min-h-screen">
+      <div className="mb-4">
+        <h1 className="text-xl font-bold">My Applications</h1>
         <p className="text-muted-foreground">Track and manage your job journey</p>
       </div>
 
-      <Tabs defaultValue="all" className="space-y-6">
+      <Tabs defaultValue="all" className="space-y-4">
         <div className="sticky top-0 bg-background/95 backdrop-blur z-10 pb-2 -mx-4 px-4 overflow-x-auto">
           <TabsList className="w-max p-1 bg-muted/50">
             <TabsTrigger value="all" className="text-xs h-7 px-3">

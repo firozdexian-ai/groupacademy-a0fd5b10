@@ -52,18 +52,18 @@ export default function Competitions() {
   return (
     <div className="max-w-6xl mx-auto px-4 py-6">
       {/* Header */}
-      <div className="flex items-center gap-3 mb-6">
+      <div className="flex items-center gap-3 mb-4">
         <Button variant="ghost" size="icon" onClick={() => navigate('/app/learning')}>
           <ArrowLeft className="h-5 w-5" />
         </Button>
         <div>
-          <h1 className="text-2xl font-bold">Competitions</h1>
+          <h1 className="text-xl font-bold">Competitions</h1>
           <p className="text-muted-foreground">Showcase your skills and win prizes</p>
         </div>
       </div>
 
       {/* Filter Tabs */}
-      <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)} className="mb-6">
+      <Tabs value={filter} onValueChange={(v) => setFilter(v as typeof filter)} className="mb-4">
         <TabsList>
           <TabsTrigger value="all">All</TabsTrigger>
           <TabsTrigger value="active">Active</TabsTrigger>
@@ -74,7 +74,7 @@ export default function Competitions() {
 
       {/* Competitions List */}
       {isLoading ? (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {[1, 2, 3, 4].map(i => (
             <Card key={i}>
               <CardHeader>
@@ -89,7 +89,7 @@ export default function Competitions() {
           ))}
         </div>
       ) : competitions && competitions.length > 0 ? (
-        <div className="grid gap-6 md:grid-cols-2">
+        <div className="grid gap-4 md:grid-cols-2">
           {competitions.map((competition) => {
             const statusConfig = STATUS_CONFIG[competition.status] || STATUS_CONFIG.upcoming;
             const prizes = Array.isArray(competition.prizes) ? competition.prizes : [];
@@ -101,7 +101,7 @@ export default function Competitions() {
                 onClick={() => navigate(`/app/learning/competitions/${competition.slug}`)}
               >
                 {competition.featured_image && (
-                  <div className="h-40 overflow-hidden rounded-t-lg">
+                  <div className="h-32 sm:h-40 overflow-hidden rounded-t-lg">
                     <img 
                       src={competition.featured_image} 
                       alt={competition.title}
@@ -167,12 +167,6 @@ export default function Competitions() {
                     </div>
                   )}
 
-                  <div className="flex items-center justify-end mt-4">
-                    <Button variant="ghost" size="sm" className="gap-1">
-                      View Details
-                      <ArrowRight className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </CardContent>
               </Card>
             );

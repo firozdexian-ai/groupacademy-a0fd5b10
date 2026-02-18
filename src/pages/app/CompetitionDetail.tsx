@@ -119,7 +119,7 @@ export default function CompetitionDetail() {
     : null;
 
   return (
-    <div className="max-w-4xl mx-auto px-4 py-6">
+    <div className="max-w-4xl mx-auto px-4 py-6 pb-28 sm:pb-6">
       {/* Header */}
       <div className="flex items-center gap-3 mb-6">
         <Button variant="ghost" size="icon" onClick={() => navigate('/app/learning/competitions')}>
@@ -139,7 +139,7 @@ export default function CompetitionDetail() {
 
       {/* Featured Image */}
       {competition.featured_image && (
-        <div className="h-64 overflow-hidden rounded-xl mb-6">
+        <div className="h-44 sm:h-64 overflow-hidden rounded-xl mb-6">
           <img 
             src={competition.featured_image} 
             alt={competition.title}
@@ -332,6 +332,23 @@ export default function CompetitionDetail() {
           )}
         </div>
       </div>
+
+      {/* Sticky bottom CTA on mobile */}
+      {canSubmit && (
+        <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur border-t p-3 flex gap-2 sm:hidden z-30">
+          <Button className="flex-1" onClick={() => setIsSubmitDialogOpen(true)}>
+            <Upload className="h-4 w-4 mr-2" />
+            Submit Entry
+          </Button>
+        </div>
+      )}
+      {!talent && competition.status === 'active' && (
+        <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur border-t p-3 sm:hidden z-30">
+          <Button className="w-full" onClick={() => navigate('/auth')}>
+            Sign in to Participate
+          </Button>
+        </div>
+      )}
     </div>
   );
 }
