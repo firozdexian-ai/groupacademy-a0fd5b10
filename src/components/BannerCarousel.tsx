@@ -104,7 +104,7 @@ export const BannerCarousel = ({ compact = false }: BannerCarouselProps) => {
   return (
     <div className={cn(
       "relative w-full rounded-xl overflow-hidden bg-muted group",
-      compact ? "h-44 mb-3" : "h-48 sm:h-56 md:h-72 lg:h-[360px] mb-6"
+      compact ? "h-36 mb-3" : "h-48 sm:h-56 md:h-72 lg:h-[360px] mb-6"
     )}>
       {/* Banner Image with optimized loading */}
       <img
