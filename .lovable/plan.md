@@ -1,84 +1,74 @@
 
 
-# Home Page and Profile Tab Improvements
+# Jobs Page Improvements
 
 ## Overview
 
-Based on the current state of the app and the reference screenshots, here are the improvement areas for the Home (Feed) page and Profile tab.
+After reviewing the Jobs Hub, All Jobs listing, Job Detail page, and supporting components, here are the areas to improve for better mobile UX, visual consistency, and usability.
 
 ---
 
-## Home Page Improvements
+## Improvements
 
-### 1. Banner Aspect Ratio Fix
+### 1. Jobs Hub (`JobsHub.tsx`) - Tighten Layout and Spacing
 
-The reference banners show a **wider, shorter aspect ratio** (~2.5:1 to 3:1). The current `h-44` compact height makes the banner too tall relative to its width on mobile, cropping the banner artwork poorly.
+**Current issues:**
+- `space-y-8` creates too much vertical gap between sections on mobile
+- Search section gradient area has generous padding that pushes content down
+- Featured Jobs carousel cards at 300px width may be too wide on small screens (390px viewport)
 
-**Fix:** Change compact height from `h-44` to `h-36` (144px) and use `rounded-2xl` for softer corners matching the reference. Also use `aspect-ratio` approach for better responsiveness.
+**Fixes:**
+- Reduce `space-y-8` to `space-y-5` for tighter mobile feel
+- Reduce featured card width from `w-[300px]` to `w-[260px]` so users can see the next card peeking
+- Reduce search section padding from `p-5` to `p-4`
 
-**File:** `src/components/BannerCarousel.tsx`
+### 2. Jobs Hub - Quick Access Pills Styling
 
-### 2. Feed Header - Remove Redundant "Updated" Timestamp
+**Current issue:** Pills look like standard outlined buttons, lacking visual distinction.
 
-The "Updated less than a minute ago" text between the header and banner wastes vertical space. Remove or move it to be less prominent.
+**Fix:** Add subtle colored backgrounds to each pill (Saved = amber tint, Applied = blue tint, Preferences = gray tint) for better visual hierarchy and quicker scanning.
 
-**File:** `src/pages/app/Feed.tsx`
+### 3. All Jobs Page (`AppJobs.tsx`) - Mobile Grid Fix
 
-### 3. Quick Actions Grid - Add Background Cards
+**Current issue:** Jobs grid is `grid-cols-1 md:grid-cols-2 lg:grid-cols-3`. On mobile it's single column, which is fine, but the cards are tall and only ~2 fit on screen.
 
-The current quick actions are just floating icons. Add a subtle card background (`bg-card rounded-2xl p-4 shadow-sm`) around the grid for better visual grouping, matching the reference app style.
+**Fix:** On mobile, use compact variant for the first few cards to show more content above the fold. Also reduce overall outer spacing from `py-6` to `py-4`.
 
-**File:** `src/components/feed/QuickActionsGrid.tsx`
+### 4. Job Detail Page (`AppJobDetail.tsx`) - Mobile Action Button
 
-### 4. Tighten Vertical Spacing
+**Current issue:** The Apply button is buried mid-page. On mobile, users must scroll to find it.
 
-The `space-y-6` gap between sections on the main column is too generous on mobile. Reduce to `space-y-4` for a denser, more app-like feel.
+**Fix:** Add a sticky bottom CTA bar on mobile with the Apply/Save buttons, visible at all times. This is a common pattern in job apps (LinkedIn, Indeed).
 
-**File:** `src/pages/app/Feed.tsx`
+### 5. Job Detail Page - Source Image Display
 
----
+**Current issue:** The `source_image_url` field exists but isn't displayed prominently. Some jobs have a screenshot of the original posting.
 
-## Profile Tab Improvements
+**Fix:** If `source_image_url` exists, show it as a tappable image below the description card.
 
-### 5. Profile Hero - Match Reference Style
+### 6. Job Card (`JobCard.tsx`) - Salary Display Enhancement
 
-The reference shows the profile photo on the left side with a ring border, name and tagline to the right, on a branded gradient background. The current layout already has this general structure but can be improved:
+**Current issue:** Salary badge uses small text and is easy to miss.
 
-- Make the avatar slightly larger (`h-24 w-24`) with a thicker white ring (`ring-4 ring-white`)
-- Add the user's profession/tagline more prominently
-- Ensure the gradient background extends to cover the full hero area with proper padding
-
-**File:** `src/pages/app/Profile.tsx`
-
-### 6. Quick Actions - Use Grid Instead of Horizontal Scroll
-
-The horizontal scroll for quick actions (My Learning, Saved Jobs, Applications, Edit Profile) is hard to discover. Switch to a 2x2 grid layout so all items are visible without scrolling.
-
-**File:** `src/pages/app/Profile.tsx`
-
-### 7. Credits Card - Better Integration
-
-Move the credits card from floating overlap to be part of the quick actions section for cleaner layout. Show it as the first item in a stats row.
-
-**File:** `src/pages/app/Profile.tsx`
+**Fix:** When salary is present, make it slightly more prominent with a green-tinted background to draw attention (salary is a top-priority data point for job seekers).
 
 ---
 
 ## Technical Summary
 
-| File | Change |
-|------|--------|
-| `src/components/BannerCarousel.tsx` | Reduce compact height to `h-36`, use `rounded-2xl` |
-| `src/pages/app/Feed.tsx` | Remove timestamp, tighten `space-y-6` to `space-y-4` |
-| `src/components/feed/QuickActionsGrid.tsx` | Wrap grid in a card container |
-| `src/pages/app/Profile.tsx` | Larger avatar with white ring, 2x2 quick actions grid, cleaner credits integration |
+| File | Changes |
+|------|---------|
+| `src/pages/app/JobsHub.tsx` | Reduce spacing to `space-y-5`, card width to 260px, tighter search padding |
+| `src/pages/app/AppJobs.tsx` | Reduce `py-6` to `py-4` on mobile |
+| `src/pages/app/AppJobDetail.tsx` | Add sticky bottom CTA bar on mobile with Apply + Save buttons |
+| `src/components/jobs/JobCard.tsx` | Enhance salary badge styling with green tint |
 
 ---
 
 ## What stays the same
 
-- All colors, gradients, and theme remain untouched
-- No backend or database changes
-- All existing functionality preserved
-- Bottom navigation unchanged
+- All existing functionality (save, apply, AI insights, preferences)
+- Color palette and theme
+- No database changes
+- Job data fetching logic unchanged
 
