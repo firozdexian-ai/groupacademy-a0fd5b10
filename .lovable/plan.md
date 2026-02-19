@@ -1,100 +1,141 @@
 
 
-# Phase 2: AI Agent Personas + Services Merge
+# Gigs Redesign: Admin-Quality Tools for Seekers
 
-## Overview
+## The Problem
 
-Transform the AI Agents page into a two-tab hub ("Agent Network" and "Chats") with persona-style agent cards that prioritize photos over icons. Merge Career Services (Assessment, Mock Interview, Salary Analysis, Portfolio) into this hub as service-type agents, giving seekers a unified conversational experience.
+The current Gigs submission forms are basic text inputs (paste name, paste text). Meanwhile, the admin dashboard has sophisticated AI-powered workflows:
 
----
+- **CV Outreach Generator**: Upload CV, AI parses it, generates personalized WhatsApp message with share button
+- **Jobs Manager**: Paste raw job text, AI parses into structured data, share across platforms with tracking
+- **Job Sharing**: Social sharing with templates, tracked link generation, multi-platform support
+
+The goal is to give seekers those SAME tools inside Gigs, so admin just approves -- no more manual uploading, parsing, sharing, or content creation.
 
 ## What Changes
 
-### 1. AI Agents Page -- Two-Tab Layout
+### 1. CV Upload Gig -- Full AI-Powered Flow
 
-Replace the current single-scroll layout in `AIAgents.tsx` with two tabs:
+**Current**: User types friend's name, email, phone manually.
 
-- **Agent Network tab**: Shows the hero header, filters, and agent grid (same content as now, but with updated cards showing avatar photos)
-- **Chats tab**: Shows active sessions at top, then recent chat history below (content currently scattered across the page moves here)
+**New**: User uploads a friend's CV file (or pastes URL). The system:
+1. Uploads to storage
+2. Calls `parse-cv` edge function to extract name, phone, email, skills, profession
+3. Shows parsed result preview (name, phone, profession badge)
+4. Generates a WhatsApp onboarding message with a "Share on WhatsApp" button
+5. Submits: parsed data + CV URL + outreach message stored in `submission_data`
 
-This uses Radix Tabs -- already installed in the project.
+This mirrors the admin CVOutreachGenerator but simplified for seekers. Admin just sees the parsed profile + generated message and hits Approve.
 
-### 2. Agent Card Redesign (Photo-First Personas)
+### 2. Job Posting Gig -- AI Parse + Structured Output
 
-Update `AgentCard.tsx` to prioritize `avatar_url` photos:
-- If `avatar_url` exists: show a circular photo with the agent name and description below
-- If no photo: fall back to the current icon-in-circle design
-- Keep credit cost badge and Chat Now / Resume button
+**Current**: User pastes raw text into a textarea.
 
-Update `AgentListItem.tsx` similarly for the Chats tab list items -- show avatar photo when available.
+**New**: User pastes job post text OR uploads a screenshot. The system:
+1. Calls `parse-job-post` edge function to extract structured fields (title, company, location, type, requirements, deadline)
+2. Shows a preview card of the parsed job (like a mini JobCard)
+3. User can upload a source image (screenshot from Facebook/LinkedIn)
+4. Submits: parsed job data + source image URL in `submission_data`
 
-### 3. Merge Career Services into Agent Network
+Admin reviews the parsed job and can one-click approve to create it in the `jobs` table directly.
 
-Add career service shortcuts directly into the Agent Network tab as a "Career Tools" section below the agent grid. These are NOT chat agents -- they link to existing service pages:
+### 3. Job Sharing Gig -- Real Share Tools
 
-| Tool | Route | Credit Cost |
-|------|-------|-------------|
-| Career Scorecard | /app/services/assessment | 50 |
-| Mock Interview | /app/services/mock-interview | 50 |
-| Salary Analysis | /app/services/salary-analysis | 50 |
-| Portfolio Builder | /app/services/portfolio | 500 |
+**Current**: User pastes a "proof URL" and types platform name.
 
-This eliminates the need for a separate Services page. The `/app/services` route will redirect to `/app/agents` so existing links and Quick Actions still work.
+**New**: User selects a job from the active jobs list, then:
+1. Gets share links with tracking (WhatsApp, LinkedIn, Facebook, Copy Link)
+2. Clicks to share -- share action is recorded automatically
+3. No manual proof needed -- the system knows they shared
 
-### 4. Quick Actions Grid Update
+This mirrors the admin ShareJobDialog but for seekers.
 
-Update `QuickActionsGrid.tsx`:
-- Remove the separate "Services" quick action (since it merges into Agents)
-- Keep "AI Agents" which now covers both
-- Replace "Services" slot with "Abroad" (currently missing from quick actions)
+### 4. Content Creation Gig -- Structured Content Forms
 
-### 5. AgentChat Page -- Avatar Support
+**Current**: User types content type and pastes text.
 
-Update `AgentChat.tsx` and `AgentChatDialog.tsx` to show the agent's avatar photo in the chat header and message bubbles instead of just icon fallbacks.
+**New**: User picks content type (Post, Poll, Article) and gets a dedicated mini-editor:
+- **Post**: Text area + optional image upload (to `feed-images` bucket)
+- **Poll**: Question + 2-4 options
+- **Article/Blog**: Title + rich text body
 
----
+Submitted content goes to admin for approval before being published to the feed.
 
-## Files to Modify
+### 5. Course Resell Gig -- Course Picker + Share
 
-| File | Change |
-|------|--------|
-| `src/pages/app/AIAgents.tsx` | Add Tabs (Agent Network / Chats), add Career Tools section |
-| `src/components/ai-agents/AgentCard.tsx` | Photo-first avatar rendering |
-| `src/components/ai-agents/AgentListItem.tsx` | Photo-first avatar in list items |
-| `src/components/ai-agents/AgentChatDialog.tsx` | Support avatar_url in chat header and message bubbles |
-| `src/pages/app/AgentChat.tsx` | Pass avatar_url to chat dialog, fetch from DB agents |
-| `src/components/feed/QuickActionsGrid.tsx` | Remove "Services", add "Abroad" |
-| `src/App.tsx` | Add redirect from `/app/services` to `/app/agents` |
+**Current**: User types referral name, email, course name manually.
 
-## No Database Changes Needed
-
-The `ai_agents` table already has all required columns (`avatar_url`, `personality_traits`, `category`). Admins can upload agent photos via the existing AI Agents Manager in the dashboard.
+**New**: User selects a course from a dropdown of active courses, then:
+1. Gets a referral link with their talent ID embedded
+2. Share buttons (WhatsApp, Copy Link) with a pre-written pitch
+3. Submits with course ID + referral link
 
 ---
 
-## Technical Details
+## Technical Implementation
 
-### Tab Structure (AIAgents.tsx)
+### New Components
 
-```text
-Tabs
-  +-- TabsList: "Agent Network" | "Chats"
-  +-- TabsContent "network":
-  |     +-- Hero Header (existing)
-  |     +-- AgentFilters (existing)
-  |     +-- Agent Grid (existing, with photo-first cards)
-  |     +-- Career Tools Section (NEW -- 4 service cards)
-  +-- TabsContent "chats":
-        +-- Active Sessions (moved from current page)
-        +-- Recent Chats (moved from current page)
-        +-- Empty state if no conversations
-```
+| Component | Purpose |
+|-----------|---------|
+| `src/components/gigs/CVUploadGigForm.tsx` | CV upload + AI parse + WhatsApp message generator |
+| `src/components/gigs/JobPostingGigForm.tsx` | Job text paste + AI parse + source image upload |
+| `src/components/gigs/JobSharingGigForm.tsx` | Job picker + multi-platform share with tracking |
+| `src/components/gigs/ContentCreationGigForm.tsx` | Post/Poll/Article mini-editor with image upload |
+| `src/components/gigs/CourseResellGigForm.tsx` | Course picker + referral link + share buttons |
 
-### Career Tools Section
+### Modified Components
 
-A simple grid of 4 cards linking to existing service routes. Each card shows icon, title, description, and credit cost. Clicking navigates directly to the service page (no chat, just existing form flow). Styled consistently with agent cards but with a subtle "Tool" badge to differentiate.
+| Component | Change |
+|-----------|--------|
+| `src/components/gigs/GigSubmissionForm.tsx` | Route to category-specific form components instead of generic fields |
+| `src/components/dashboard/GigSubmissionsManager.tsx` | Enhanced review UI: show parsed CV data, parsed job preview, share proof -- one-click approve to create job/talent records |
 
-### Services Route Redirect
+### Database Changes
 
-In `App.tsx`, change the `/app/services` route to render a `Navigate` component that redirects to `/app/agents`. This ensures existing bookmarks, Quick Action links, and shared URLs continue to work.
+- **New table `gig_share_logs`**: Tracks seeker shares (talent_id, gig_submission_id, job_id, channel, shared_at) -- proves sharing happened without manual screenshots
+- No other schema changes needed; `submission_data` JSONB already handles rich structured data
+
+### Edge Functions Used (Existing)
+
+- `parse-cv` -- for CV Upload gig (already built)
+- `parse-job-post` -- for Job Posting gig (already built)
+- `generate-outreach-message` -- for CV Upload WhatsApp message (already built)
+
+### Storage
+
+- CV files uploaded to `portfolio-uploads` bucket (existing)
+- Job source images uploaded to `job-assets` bucket (existing)
+- Content images uploaded to `feed-images` bucket (existing)
+
+---
+
+## Implementation Steps
+
+### Step 1: Database
+- Create `gig_share_logs` table with RLS
+
+### Step 2: Category-Specific Form Components
+- Build all 5 specialized form components
+- Each reuses existing edge functions and storage buckets
+
+### Step 3: Update GigSubmissionForm Router
+- Replace the generic switch/case with imports of specialized forms
+
+### Step 4: Enhanced Admin Review
+- Update GigSubmissionsManager to render rich previews of submissions (parsed CV card, job preview card, share logs)
+- Add one-click "Approve and Create Job" action for job posting submissions
+
+### Step 5: Testing and Polish
+- Verify CV parsing flow end-to-end
+- Verify job parsing and preview
+- Verify share tracking for job sharing gig
+
+---
+
+## What This Means for Admin Workflow
+
+**Before**: Admin uploads CVs, parses them, generates WhatsApp messages, posts jobs, shares them across platforms, creates content -- all manually.
+
+**After**: Seekers do all that work through Gigs (motivated by credits). Admin just opens the review queue and approves/rejects. The AI parsing, message generation, and sharing infrastructure is the same -- it just runs on the seeker side now.
 
