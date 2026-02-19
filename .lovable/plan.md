@@ -1,97 +1,54 @@
 
 
-# Remaining Sub-Pages Mobile UX Improvements
+# Profile and Profile Edit - Mobile UX Improvements
 
 ## Overview
 
-Bringing Notifications, Saved Items, My Applications, Blog, Blog Post, Competitions, and Competition Detail pages into alignment with the tighter mobile layout standard.
+Both pages are already in good shape with smart patterns (sticky save bar, unsaved changes warning, CV auto-parse). The improvements focus on tightening spacing for mobile density consistency and reducing a few oversized elements.
 
 ---
 
 ## Improvements
 
-### 1. Notifications (`Notifications.tsx`) - Minor Tweaks
+### 1. Profile Page (`Profile.tsx`) - Tighten Spacing
 
 **Current issues:**
-- `py-6` and `mb-6` slightly generous
-- Empty state `py-10` is tall on mobile
+- `py-6` and `mb-6` on the hero header create generous top/bottom gaps
+- The hero gradient area uses `p-6 pb-8` -- slightly generous on mobile
+- `space-y-4` on profile sections (About, Experience, Education, Skills) is fine, but the `CardHeader` in each section has default padding that adds up across 4+ cards
+- Sign Out button has `mt-8` creating a large gap at the bottom
+- Experience/Education icon containers use `p-2.5` -- slightly large
 
 **Fixes:**
-- Reduce `py-6` to `py-4` and `mb-6` to `mb-4`
-- Reduce empty state `py-10` to `py-8`
+- Reduce `py-6` to `py-4` and hero `mb-6` to `mb-5`
+- Reduce hero gradient padding from `p-6 pb-8` to `p-5 pb-7`
+- Reduce Experience/Education icon containers from `p-2.5` to `p-2`
+- Reduce Sign Out `mt-8` to `mt-6`
 
-### 2. Saved Items (`SavedItems.tsx`) - Already Good
-
-This page is already well-optimized (compact cards, horizontal scroll tabs, `py-6 space-y-5`). Only minor fix:
-- Reduce `py-6` to `py-4` for consistency
-- Reduce empty state `py-12` to `py-8` and icon container from `w-16 h-16` to `w-12 h-12`
-
-### 3. My Applications (`MyApplications.tsx`) - Tighten Layout
+### 2. Profile Edit (`ProfileEdit.tsx`) - Compact Form Sections
 
 **Current issues:**
-- `py-6` and `mb-6` generous
-- Title is `text-2xl` (should be `text-xl` for mobile consistency)
-- `space-y-6` on Tabs creates large gaps
-- Empty state `py-16` is very tall on mobile with `w-16 h-16` icon and `text-lg` title
-- Application card `CardContent` uses `p-5 pb-3` and `mb-4` gaps -- slightly generous
+- `space-y-8` between form cards (Photo, CV, Basic Info, Skills, Experience, Education, Links) creates very large vertical gaps -- 7 cards x 32px = 224px of wasted spacing
+- Header `mb-6` is generous
+- CV upload empty state uses `p-6` padding and `h-8` icons -- slightly large on mobile
+- `pb-44` at the top is very generous (only needs ~120px for the sticky bar + bottom nav)
 
 **Fixes:**
-- Reduce `py-6` to `py-4` and `mb-6` to `mb-4`
-- Reduce title to `text-xl`
-- Reduce Tabs `space-y-6` to `space-y-4`
-- Compact empty state: `py-10`, `w-12 h-12` icon, `text-base` title
-- Reduce card `p-5` to `p-4`, `mb-4` to `mb-3`
+- Reduce form `space-y-8` to `space-y-5` for tighter card grouping
+- Reduce header `mb-6` to `mb-4`
+- Reduce CV upload empty state padding from `p-6` to `p-5` and icon from `h-8` to `h-7`
+- Reduce `pb-44` to `pb-36` (still sufficient clearance for sticky bar + bottom nav)
 
-### 4. Blog Listing (`Blog.tsx`) - Mobile Spacing & Category Scroll
+### 3. Profile Completion Meter (`ProfileCompletionMeter.tsx`) - Minor Polish
 
 **Current issues:**
-- Title is `text-2xl` (should be `text-xl`)
-- `mb-8` after search/filter and `space-y-8` between sections are very generous
-- Category buttons use `flex-wrap` which creates 2-3 rows on mobile, pushing content below fold
-- Regular posts grid `gap-6` is generous on mobile
+- The "full" variant's checklist items have `mb-4` below the list and `mb-4` above, creating 32px of internal spacing before the CTA button
+- The progress ring in the full variant is `w-16 h-16` which is slightly large
 
 **Fixes:**
-- Reduce title to `text-xl` and `mb-6` to `mb-4`
-- Reduce `mb-8` to `mb-5` and `space-y-8` to `space-y-5`
-- Convert category buttons to horizontal scroll (`overflow-x-auto flex-nowrap`) for single-row on mobile
-- Reduce grid `gap-6` to `gap-4` on mobile
-
-### 5. Blog Post (`BlogPost.tsx`) - Compact Mobile Reading
-
-**Current issues:**
-- Title is `text-3xl` (very large on mobile)
-- Featured image `mb-8` and excerpt `mb-6` create generous gaps
-- CTA card at bottom uses `p-6` padding
-
-**Fixes:**
-- Reduce title to `text-2xl` on mobile
-- Reduce featured image `mb-8` to `mb-6` and excerpt `mb-6` to `mb-4`
-- Reduce CTA padding from `p-6` to `p-4`
-
-### 6. Competitions Listing (`Competitions.tsx`) - Tighter Cards
-
-**Current issues:**
-- Title is `text-2xl` (should be `text-xl`)
-- `mb-6` after tabs and `gap-6` in grid are generous
-- Cards have `CardHeader` + `CardContent` with generous padding creating tall cards on mobile
-- The "View Details" button in footer wastes space -- the entire card is clickable
-
-**Fixes:**
-- Reduce title to `text-xl` and `mb-6` to `mb-4`
-- Reduce grid `gap-6` to `gap-4`
-- Remove the "View Details" ghost button (card is already clickable)
-- Reduce card image height from `h-40` to `h-32` on mobile
-
-### 7. Competition Detail (`CompetitionDetail.tsx`) - Mobile-First Layout
-
-**Current issues:**
-- The 3-column grid (`md:grid-cols-3`) stacks on mobile, but sidebar comes after the main content requiring a long scroll to reach the "Submit Entry" CTA
-- Featured image `h-64` is tall on mobile
-
-**Fixes:**
-- Add a sticky bottom CTA bar on mobile for "Submit Entry" (same pattern as Job Detail and Study Abroad Detail)
-- Add `pb-28` to main container for clearance
-- Reduce featured image from `h-64` to `h-44` on mobile
+- Reduce checklist `mb-4` to `mb-3` for tighter grouping
+- Reduce header gap `mb-4` to `mb-3`
+- Keep the ring size as-is (it serves as a visual anchor and is already well-proportioned)
 
 ---
 
@@ -99,20 +56,16 @@ This page is already well-optimized (compact cards, horizontal scroll tabs, `py-
 
 | File | Changes |
 |------|---------|
-| `src/pages/app/Notifications.tsx` | Reduce `py-6` to `py-4`, `mb-6` to `mb-4`, empty state `py-10` to `py-8` |
-| `src/pages/app/SavedItems.tsx` | Reduce `py-6` to `py-4`, compact empty state |
-| `src/pages/app/MyApplications.tsx` | Reduce spacing, title to `text-xl`, compact cards and empty state |
-| `src/pages/app/Blog.tsx` | Title to `text-xl`, horizontal scroll categories, reduce gaps |
-| `src/pages/app/BlogPost.tsx` | Title to `text-2xl`, reduce spacing, compact CTA |
-| `src/pages/app/Competitions.tsx` | Title to `text-xl`, remove "View Details" button, reduce gaps |
-| `src/pages/app/CompetitionDetail.tsx` | Sticky bottom CTA on mobile, `pb-28`, compact image |
+| `src/pages/app/Profile.tsx` | Reduce `py-6` to `py-4`, hero `mb-6` to `mb-5`, gradient `p-6 pb-8` to `p-5 pb-7`, icon containers `p-2.5` to `p-2`, sign out `mt-8` to `mt-6` |
+| `src/pages/app/ProfileEdit.tsx` | Reduce `space-y-8` to `space-y-5`, header `mb-6` to `mb-4`, CV upload `p-6` to `p-5`, `pb-44` to `pb-36` |
+| `src/components/profile/ProfileCompletionMeter.tsx` | Reduce internal `mb-4` to `mb-3` in full variant |
 
 ---
 
 ## What stays the same
 
-- All existing functionality (notifications, saved items, applications, submissions)
+- All existing functionality (CV upload/parse, photo upload, experience enhance, save/cancel, dirty state warning)
+- Sticky save bar position at `bottom-[68px]`
 - Color palette and theme
 - No database changes
-- Data fetching and navigation logic unchanged
 
