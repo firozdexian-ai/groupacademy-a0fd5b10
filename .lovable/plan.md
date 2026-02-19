@@ -1,193 +1,100 @@
 
 
-# Two Major Features: AI Agent Personas + Gigs Marketplace
+# Phase 2: AI Agent Personas + Services Merge
 
-## My Honest Assessment
+## Overview
 
-**Feature 1 (AI Agent Personas + Services Merge):** This is a strong, natural evolution. Moving career services into conversational agents creates a more engaging, modern experience. Instead of filling forms for assessments/interviews, users talk to a specialized agent who guides them through it. This reduces friction and increases engagement.
-
-**Feature 2 (Gigs/Projects for Credit Earning):** This is genuinely exciting and strategically brilliant. It creates a **circular economy** -- users earn credits by doing work that directly grows YOUR platform (uploading CVs = talent database, posting jobs = job leads, sharing = distribution). This is not just gamification; it's crowdsourced growth. The key insight: separating "earned" from "free" credits for withdrawal prevents abuse while keeping the utility of credits universal.
-
-**Recommendation:** Both features are worth pursuing. I suggest we implement them in two phases -- Gigs first (it's more self-contained and immediately impactful), then the Agent Persona upgrade (which touches more existing systems).
+Transform the AI Agents page into a two-tab hub ("Agent Network" and "Chats") with persona-style agent cards that prioritize photos over icons. Merge Career Services (Assessment, Mock Interview, Salary Analysis, Portfolio) into this hub as service-type agents, giving seekers a unified conversational experience.
 
 ---
 
-## Phase 1: Gigs Marketplace (Build First)
+## What Changes
 
-### Database Schema
+### 1. AI Agents Page -- Two-Tab Layout
 
-**New table: `gigs`** (Admin-created tasks)
+Replace the current single-scroll layout in `AIAgents.tsx` with two tabs:
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | uuid PK | |
-| title | text | "Upload a Friend's CV" |
-| description | text | Detailed instructions |
-| category | text | cv_upload, job_posting, job_sharing, content_creation, course_resell |
-| credit_reward | integer | Credits earned on approval |
-| icon | text | Lucide icon name |
-| is_active | boolean | Admin toggle |
-| max_completions_per_user | integer | Rate limit (e.g., 5 CVs/month) |
-| total_budget | integer | Optional cap on total payouts |
-| total_completed | integer | Counter |
-| requirements | text | What the user needs to submit |
-| display_order | integer | Sorting |
-| created_at / updated_at | timestamps | |
+- **Agent Network tab**: Shows the hero header, filters, and agent grid (same content as now, but with updated cards showing avatar photos)
+- **Chats tab**: Shows active sessions at top, then recent chat history below (content currently scattered across the page moves here)
 
-**New table: `gig_submissions`** (User work)
+This uses Radix Tabs -- already installed in the project.
 
-| Column | Type | Description |
-|--------|------|-------------|
-| id | uuid PK | |
-| gig_id | uuid FK -> gigs | |
-| talent_id | uuid FK -> talents | |
-| status | text | pending, approved, rejected |
-| submission_data | jsonb | Flexible: CV URL, job text, post link, etc. |
-| admin_notes | text | Rejection reason |
-| credits_awarded | integer | Filled on approval |
-| created_at / reviewed_at | timestamps | |
+### 2. Agent Card Redesign (Photo-First Personas)
 
-**New column on `talent_credits`:**
-- `earned_balance` (integer, default 0) -- tracks withdrawable credits separately
+Update `AgentCard.tsx` to prioritize `avatar_url` photos:
+- If `avatar_url` exists: show a circular photo with the agent name and description below
+- If no photo: fall back to the current icon-in-circle design
+- Keep credit cost badge and Chat Now / Resume button
 
-**New column on `credit_transactions`:**
-- `is_earned` (boolean, default false) -- marks gig-earned transactions
+Update `AgentListItem.tsx` similarly for the Chats tab list items -- show avatar photo when available.
 
-**New RPC: `award_gig_credits`** -- Admin approves a submission, atomically adds credits to both `balance` and `earned_balance`, records transaction with `is_earned = true`.
+### 3. Merge Career Services into Agent Network
 
-### Frontend Pages
+Add career service shortcuts directly into the Agent Network tab as a "Career Tools" section below the agent grid. These are NOT chat agents -- they link to existing service pages:
 
-**For Seekers:**
-- `/app/gigs` -- Gigs listing page with category tabs (CV Upload, Job Posting, Job Sharing, Content, Resell)
-- Each gig card shows: title, reward credits, description, "Start" button
-- Submission form varies by category (CV upload field, job text paste, URL input, etc.)
-- "My Submissions" tab showing status (pending/approved/rejected)
+| Tool | Route | Credit Cost |
+|------|-------|-------------|
+| Career Scorecard | /app/services/assessment | 50 |
+| Mock Interview | /app/services/mock-interview | 50 |
+| Salary Analysis | /app/services/salary-analysis | 50 |
+| Portfolio Builder | /app/services/portfolio | 500 |
 
-**For Admins:**
-- `GigsManager` component in Dashboard -- CRUD for gigs
-- `GigSubmissionsManager` -- Review queue with approve/reject actions
+This eliminates the need for a separate Services page. The `/app/services` route will redirect to `/app/agents` so existing links and Quick Actions still work.
 
-### Navigation Update
+### 4. Quick Actions Grid Update
 
-Bottom tab bar changes from 6 items to 5 core:
-```
-Home | Jobs | Learning | Abroad | Gigs
-```
+Update `QuickActionsGrid.tsx`:
+- Remove the separate "Services" quick action (since it merges into Agents)
+- Keep "AI Agents" which now covers both
+- Replace "Services" slot with "Abroad" (currently missing from quick actions)
 
-"AI Agents" and "Services" move into the feed Quick Actions grid and remain accessible from there. The Gigs tab replaces the current Services tab position in the bottom nav.
+### 5. AgentChat Page -- Avatar Support
 
-### Initial Gig Templates (Seeded Data)
-
-1. **"Help a Friend Get Discovered"** (CV Upload) -- 15 credits
-2. **"Share a Job Lead"** (Job Posting) -- 20 credits  
-3. **"Spread the Word"** (Job Sharing) -- 5 credits
-4. **"Create a Post"** (Content Creation) -- 10 credits
-5. **"Recommend a Course"** (Course Resell) -- 25 credits per enrollment
-
-### Wallet Enhancement
-
-Profile/wallet view shows:
-- Total Balance (usable for all services)
-- Earned Credits (withdrawable portion)
-- Free Credits (non-withdrawable)
+Update `AgentChat.tsx` and `AgentChatDialog.tsx` to show the agent's avatar photo in the chat header and message bubbles instead of just icon fallbacks.
 
 ---
 
-## Phase 2: AI Agent Personas + Services Merge (Build Second)
+## Files to Modify
 
-### Agent Avatar System
+| File | Change |
+|------|--------|
+| `src/pages/app/AIAgents.tsx` | Add Tabs (Agent Network / Chats), add Career Tools section |
+| `src/components/ai-agents/AgentCard.tsx` | Photo-first avatar rendering |
+| `src/components/ai-agents/AgentListItem.tsx` | Photo-first avatar in list items |
+| `src/components/ai-agents/AgentChatDialog.tsx` | Support avatar_url in chat header and message bubbles |
+| `src/pages/app/AgentChat.tsx` | Pass avatar_url to chat dialog, fetch from DB agents |
+| `src/components/feed/QuickActionsGrid.tsx` | Remove "Services", add "Abroad" |
+| `src/App.tsx` | Add redirect from `/app/services` to `/app/agents` |
 
-Update the `ai_agents` table -- it already has `avatar_url`, `personality_traits`, `sample_conversations`. We just need to:
+## No Database Changes Needed
 
-1. **Upload agent photos** via admin (already have `avatar_url` column)
-2. **Update AgentCard and AgentAvatar** to prioritize photo over icon
-3. **Add two tabs** to the AI Agents page: "Agent Network" (grid of personas) and "Chats" (conversation history)
+The `ai_agents` table already has all required columns (`avatar_url`, `personality_traits`, `category`). Admins can upload agent photos via the existing AI Agents Manager in the dashboard.
 
-### Services to Agents Migration
+---
 
-Each career service becomes a specialized agent mode:
-- Career Assessment -> "Assessment Agent" (guides you conversationally, then generates scorecard)
-- Mock Interview -> "Interview Coach" (already exists as agent, add interview simulation mode)
-- Salary Analysis -> "Salary Advisor" (already exists, add analysis generation)
-- Portfolio -> Remains as a form (too complex for chat)
+## Technical Details
 
-The `/app/services` page transforms into the AI Agents hub, merging both. The existing standalone service pages remain as direct-access routes for users who come via Quick Actions.
+### Tab Structure (AIAgents.tsx)
 
-### Updated Navigation
-
-```
-Home | Jobs | Learning | Abroad | Gigs
+```text
+Tabs
+  +-- TabsList: "Agent Network" | "Chats"
+  +-- TabsContent "network":
+  |     +-- Hero Header (existing)
+  |     +-- AgentFilters (existing)
+  |     +-- Agent Grid (existing, with photo-first cards)
+  |     +-- Career Tools Section (NEW -- 4 service cards)
+  +-- TabsContent "chats":
+        +-- Active Sessions (moved from current page)
+        +-- Recent Chats (moved from current page)
+        +-- Empty state if no conversations
 ```
 
-AI Agents accessible via:
-- Quick Actions grid on Feed
-- Direct URL `/app/agents`
-- Profile menu
+### Career Tools Section
 
----
+A simple grid of 4 cards linking to existing service routes. Each card shows icon, title, description, and credit cost. Clicking navigates directly to the service page (no chat, just existing form flow). Styled consistently with agent cards but with a subtle "Tool" badge to differentiate.
 
-## Implementation Order (Phase 1 -- Gigs)
+### Services Route Redirect
 
-### Step 1: Database
-- Create `gigs` table with RLS (public read for active, admin write)
-- Create `gig_submissions` table with RLS (user can create/read own, admin can read/update all)
-- Add `earned_balance` to `talent_credits`
-- Add `is_earned` to `credit_transactions`
-- Create `award_gig_credits` RPC
-
-### Step 2: Admin Interface
-- `GigsManager` -- Create/edit/deactivate gigs
-- `GigSubmissionsManager` -- Review queue with approve/reject
-- Seed initial 5 gig templates
-
-### Step 3: Seeker Interface
-- `/app/gigs` page with category tabs
-- Gig detail + submission forms (varies by category)
-- "My Submissions" history
-
-### Step 4: Navigation
-- Update bottom tab bar: replace Services/AI Agents with Gigs
-- Update Quick Actions grid to include AI Agents and Services shortcuts
-- Update routes
-
-### Step 5: Wallet
-- Show earned vs free credit breakdown in profile
-- Update CreditBalance component
-
----
-
-## Files to Create/Modify
-
-### New Files
-- `src/pages/app/Gigs.tsx` -- Main gigs listing
-- `src/pages/app/GigSubmission.tsx` -- Submit work for a gig
-- `src/components/gigs/GigCard.tsx` -- Gig display card
-- `src/components/gigs/GigSubmissionForm.tsx` -- Category-specific forms
-- `src/components/gigs/MySubmissions.tsx` -- User's submission history
-- `src/components/dashboard/GigsManager.tsx` -- Admin CRUD
-- `src/components/dashboard/GigSubmissionsManager.tsx` -- Admin review queue
-
-### Modified Files
-- `src/layouts/TalentAppShell.tsx` -- Update nav items
-- `src/components/feed/QuickActionsGrid.tsx` -- Add AI Agents shortcut
-- `src/lib/routes.ts` -- Add gig routes
-- `src/lib/creditPricing.ts` -- Add gig reward configs
-- `src/App.tsx` -- Add gig routes
-- `src/components/credits/CreditBalance.tsx` -- Show earned vs free
-- `src/components/dashboard/AdminSidebar.tsx` -- Add Gigs management
-
-### Database Migrations
-- Create `gigs` and `gig_submissions` tables
-- Alter `talent_credits` and `credit_transactions`
-- Create `award_gig_credits` RPC
-- RLS policies
-
----
-
-## What This Unlocks
-
-- **Viral growth loop**: Users earn credits by bringing in more users (CV uploads) and content (job posts, shares)
-- **Self-sustaining economy**: Earned credits fund service usage, reducing need for direct purchases
-- **Platform stickiness**: Users have a reason to return daily (new gigs, pending approvals)
-- **Talent database growth**: Every CV upload gig directly grows your core asset
+In `App.tsx`, change the `/app/services` route to render a `Navigate` component that redirects to `/app/agents`. This ensures existing bookmarks, Quick Action links, and shared URLs continue to work.
 
