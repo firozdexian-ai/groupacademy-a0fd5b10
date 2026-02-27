@@ -32,6 +32,15 @@ import { JOB_COLLECTIONS } from "@/lib/constants/jobTypes";
 import { toast } from "sonner";
 import { SectionHeader } from "@/components/ui/section-header";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+import { ProcessingCard, type ProcessingStage } from "@/components/ui/processing-card";
+
+const AI_PROCESSING_STAGES: ProcessingStage[] = [
+  { progress: 0, message: "Analyzing your profile and skills..." },
+  { progress: 20, message: "Scanning 2,000+ job listings..." },
+  { progress: 45, message: "Matching with job descriptions..." },
+  { progress: 65, message: "Ranking best opportunities..." },
+  { progress: 85, message: "Preparing your recommendations..." },
+];
 
 interface AISuggestion {
   job_id: string;
@@ -474,26 +483,11 @@ export default function JobsHub() {
 
             {/* AI Loading Skeleton */}
             {loadingAI && (
-              <div className="space-y-2">
-                <div className="flex items-center gap-2">
-                  <Brain className="h-4 w-4 text-primary animate-pulse" />
-                  <span className="text-xs text-muted-foreground">Finding your best matches...</span>
-                </div>
-                {[1, 2, 3].map((i) => (
-                  <Card key={i}>
-                    <CardContent className="p-3">
-                      <div className="flex items-center gap-3">
-                        <Skeleton className="h-10 w-10 rounded-lg" />
-                        <div className="flex-1 space-y-1.5">
-                          <Skeleton className="h-4 w-3/4" />
-                          <Skeleton className="h-3 w-1/2" />
-                        </div>
-                        <Skeleton className="h-5 w-20 rounded-full" />
-                      </div>
-                    </CardContent>
-                  </Card>
-                ))}
-              </div>
+              <ProcessingCard
+                title="Finding Your Best Matches"
+                stages={AI_PROCESSING_STAGES}
+                duration={25000}
+              />
             )}
 
             {/* Timestamp */}
