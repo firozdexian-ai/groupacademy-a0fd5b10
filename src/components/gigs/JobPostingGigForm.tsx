@@ -6,7 +6,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Loader2, Briefcase, MapPin, Clock, CheckCircle, ImagePlus, RotateCcw, AlertCircle } from "lucide-react";
+import { Loader2, Briefcase, MapPin, Clock, CheckCircle, ImagePlus, RotateCcw, AlertCircle, Camera, Type } from "lucide-react";
 
 interface JobPostingGigFormProps {
   gig: any;
@@ -15,7 +15,10 @@ interface JobPostingGigFormProps {
 }
 
 export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigFormProps) {
+  const [inputMode, setInputMode] = useState<"text" | "image">("text");
   const [jobText, setJobText] = useState("");
+  const [screenshotFile, setScreenshotFile] = useState<File | null>(null);
+  const [screenshotPreview, setScreenshotPreview] = useState<string | null>(null);
   const [sourceImage, setSourceImage] = useState<File | null>(null);
   const [isParsing, setIsParsing] = useState(false);
   const [isSubmitting, setIsSubmitting] = useState(false);
@@ -34,7 +37,20 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
   const hasParsed = parsedRaw !== null;
   const canSubmit = editTitle.trim() && editTitle !== "—" && editCompany.trim() && editCompany !== "—";
 
-  const handleImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
+  const canParse = inputMode === "text"
+    ? jobText.length >= MIN_CHARS
+    : !!screenshotFile;
+
+  const handleScreenshotChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    const file = e.target.files?.[0];
+    if (!file) return;
+    setScreenshotFile(file);
+    const reader = new FileReader();
+    reader.onload = () => setScreenshotPreview(reader.result as string);
+    reader.readAsDataURL(file);
+  };
+
+  const handleSourceImageChange = async (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (!file) return;
     setSourceImage(file);
@@ -51,19 +67,33 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
   };
 
   const parseJob = async () => {
-    if (!jobText || jobText.length < MIN_CHARS) {
-      toast.error(`Please paste at least ${MIN_CHARS} characters`);
-      return;
-    }
+    if (!canParse) return;
 
     setIsParsing(true);
     setParsedRaw(null);
     setParseError(null);
 
     try {
-      const { data, error } = await supabase.functions.invoke("parse-job-post", {
-        body: { rawText: jobText },
-      });
+      let body: any = {};
+
+      if (inputMode === "image" && screenshotFile) {
+        // Upload screenshot to get a public URL for the AI
+        toast.info("Uploading screenshot...");
+        const fileName = `gig-job-screenshots/${Date.now()}-${screenshotFile.name}`;
+        const { error: uploadError } = await supabase.storage.from("job-assets").upload(fileName, screenshotFile);
+        if (uploadError) throw new Error("Failed to upload screenshot");
+        const { data: { publicUrl } } = supabase.storage.from("job-assets").getPublicUrl(fileName);
+        
+        // Also set as source image URL for submission
+        setSourceImageUrl(publicUrl);
+        body = { imageUrl: publicUrl };
+        toast.info("Extracting job details from screenshot...");
+      } else {
+        body = { rawText: jobText };
+        toast.info("Parsing job with AI...");
+      }
+
+      const { data, error } = await supabase.functions.invoke("parse-job-post", { body });
       if (error) throw error;
       if (!data?.success && !data?.parsed) throw new Error(data?.error || "Parse failed");
 
@@ -117,9 +147,10 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
         talent_id: talentId,
         status: "pending",
         submission_data: {
-          raw_text: jobText,
+          raw_text: jobText || null,
           source_image_url: sourceImageUrl || null,
           parsed_job: finalParsed,
+          input_mode: inputMode,
         },
       });
       if (error) throw error;
@@ -134,30 +165,76 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
 
   return (
     <div className="space-y-4">
-      {/* Paste job text */}
-      <div className="space-y-2">
-        <Label>Paste Job Posting</Label>
-        <Textarea
-          placeholder="Copy and paste the full job posting text from Facebook, LinkedIn, company website, etc."
-          rows={5}
-          value={jobText}
-          onChange={(e) => setJobText(e.target.value)}
-        />
-        <p className={`text-xs ${jobText.length >= MIN_CHARS ? "text-muted-foreground" : "text-destructive"}`}>
-          {jobText.length}/{MIN_CHARS} characters minimum
-        </p>
-      </div>
+      {/* Input mode toggle */}
+      {!hasParsed && (
+        <div className="flex gap-2">
+          <Button
+            variant={inputMode === "text" ? "default" : "outline"}
+            size="sm"
+            className="flex-1 gap-1.5"
+            onClick={() => setInputMode("text")}
+          >
+            <Type className="h-4 w-4" /> Paste Text
+          </Button>
+          <Button
+            variant={inputMode === "image" ? "default" : "outline"}
+            size="sm"
+            className="flex-1 gap-1.5"
+            onClick={() => setInputMode("image")}
+          >
+            <Camera className="h-4 w-4" /> Upload Screenshot
+          </Button>
+        </div>
+      )}
 
-      {/* Source screenshot */}
-      <div className="space-y-2">
-        <Label className="flex items-center gap-1.5">
-          <ImagePlus className="h-4 w-4" /> Source Screenshot (optional)
-        </Label>
-        <Input type="file" accept="image/*" onChange={handleImageChange} />
-        {sourceImage && (
-          <p className="text-xs text-muted-foreground">Uploaded: {sourceImage.name}</p>
-        )}
-      </div>
+      {/* Text input mode */}
+      {inputMode === "text" && !hasParsed && (
+        <div className="space-y-2">
+          <Label>Paste Job Posting</Label>
+          <Textarea
+            placeholder="Copy and paste the full job posting text from Facebook, LinkedIn, company website, etc."
+            rows={5}
+            value={jobText}
+            onChange={(e) => setJobText(e.target.value)}
+          />
+          <p className={`text-xs ${jobText.length >= MIN_CHARS ? "text-muted-foreground" : "text-destructive"}`}>
+            {jobText.length}/{MIN_CHARS} characters minimum
+          </p>
+        </div>
+      )}
+
+      {/* Image input mode */}
+      {inputMode === "image" && !hasParsed && (
+        <div className="space-y-3">
+          <Label className="flex items-center gap-1.5">
+            <Camera className="h-4 w-4" /> Upload Job Post Screenshot
+          </Label>
+          <Input type="file" accept="image/*" onChange={handleScreenshotChange} />
+          {screenshotPreview && (
+            <img
+              src={screenshotPreview}
+              alt="Job post screenshot"
+              className="rounded-lg max-h-48 object-contain w-full border border-border"
+            />
+          )}
+          <p className="text-xs text-muted-foreground">
+            Take a screenshot of the job post from Facebook, LinkedIn, etc. and upload it here. AI will extract all the details.
+          </p>
+        </div>
+      )}
+
+      {/* Source screenshot (only in text mode, since image mode already has the screenshot) */}
+      {inputMode === "text" && !hasParsed && (
+        <div className="space-y-2">
+          <Label className="flex items-center gap-1.5">
+            <ImagePlus className="h-4 w-4" /> Source Screenshot (optional)
+          </Label>
+          <Input type="file" accept="image/*" onChange={handleSourceImageChange} />
+          {sourceImage && (
+            <p className="text-xs text-muted-foreground">Uploaded: {sourceImage.name}</p>
+          )}
+        </div>
+      )}
 
       {/* Parse error */}
       {parseError && !hasParsed && (
@@ -171,9 +248,11 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
       )}
 
       {!hasParsed && (
-        <Button onClick={parseJob} disabled={!jobText || jobText.length < MIN_CHARS || isParsing} className="w-full">
+        <Button onClick={parseJob} disabled={!canParse || isParsing} className="w-full">
           {isParsing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-          {isParsing ? "Parsing with AI..." : "Parse Job with AI"}
+          {isParsing
+            ? inputMode === "image" ? "Extracting from screenshot..." : "Parsing with AI..."
+            : inputMode === "image" ? "Extract Job from Screenshot" : "Parse Job with AI"}
         </Button>
       )}
 

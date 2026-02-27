@@ -235,11 +235,12 @@ serve(async (req) => {
       });
     }
 
-    const { jobPostText, rawText } = await req.json();
+    const { jobPostText, rawText, imageUrl } = await req.json();
     const text = jobPostText || rawText;
 
-    if (!text || text.trim().length < 20) {
-      return new Response(JSON.stringify({ error: "Please provide job post text (minimum 20 characters)" }), {
+    // Must have either text or image
+    if ((!text || text.trim().length < 20) && !imageUrl) {
+      return new Response(JSON.stringify({ error: "Please provide job post text (minimum 20 characters) or an image" }), {
         status: 400,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -254,9 +255,10 @@ serve(async (req) => {
       });
     }
 
-    console.log(`Parsing job post for user ${user.id}, text length: ${text.length}`);
+    const isImageMode = !!imageUrl && !text;
+    console.log(`Parsing job post for user ${user.id}, mode: ${isImageMode ? 'image' : 'text'}, ${isImageMode ? 'imageUrl: ' + imageUrl : 'text length: ' + text?.length}`);
 
-    const systemPrompt = `You are an expert job post parser. Extract structured information from job postings copied from social media (Facebook, LinkedIn, etc.) or websites.
+    const systemPrompt = `You are an expert job post parser. Extract structured information from job postings copied from social media (Facebook, LinkedIn, etc.) or websites.${isImageMode ? ' The job posting is provided as a screenshot image — read all visible text and extract the data.' : ''}
 
 Important parsing rules:
 - Extract ALL responsibilities and put them in the description
@@ -267,9 +269,16 @@ Important parsing rules:
 - Extract application email/URL if provided
 - Extract company website if mentioned in the post`;
 
-    const userPrompt = `Parse the following job post and extract structured information using the extract_job_data function:
-
-${text}`;
+    // Build user message content — multimodal if image, text-only otherwise
+    let userContent: any;
+    if (isImageMode) {
+      userContent = [
+        { type: "text", text: "Extract all job posting information from this screenshot image using the extract_job_data function:" },
+        { type: "image_url", image_url: { url: imageUrl } },
+      ];
+    } else {
+      userContent = `Parse the following job post and extract structured information using the extract_job_data function:\n\n${text}`;
+    }
 
     // Add timeout controller for AI call (90 seconds)
     const controller = new AbortController();
@@ -295,7 +304,7 @@ ${text}`;
             model: "google/gemini-2.5-flash",
             messages: [
               { role: "system", content: systemPrompt },
-              { role: "user", content: userPrompt },
+              { role: "user", content: userContent },
             ],
             tools: [extractJobDataTool],
             tool_choice: { type: "function", function: { name: "extract_job_data" } }
@@ -401,7 +410,9 @@ ${text}`;
     }
 
     // Match profession category
-    const professionCategoryId = matchProfessionCategory(text);
+    // Match profession category from text or parsed description for image mode
+    const categoryText = text || (parsedData.title + ' ' + parsedData.description + ' ' + (parsedData.requirements || []).join(' '));
+    const professionCategoryId = matchProfessionCategory(categoryText);
 
     console.log("Job post parsed successfully:", {
       title: parsedData.title,
