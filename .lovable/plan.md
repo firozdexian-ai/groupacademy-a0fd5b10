@@ -1,54 +1,60 @@
 
-# Jobs Hygiene Cleanup + External Apply Tracking
 
-## Problem 1: Duplicate Jobs (393 duplicates found)
+# Fix: LinkedIn JSON Upload Freezing on Large Files
 
-**Root cause**: The dedup check uses `source_url` (LinkedIn URL), but LinkedIn creates multiple URLs for the same job posting. Same role at the same company gets imported multiple times with different LinkedIn URLs.
+## Root Cause
 
-**Fix -- two parts**:
+When you upload a JSON file, `handleFileUpload` runs two dedup passes:
+1. A single `IN` query on `source_url` (fast)
+2. Individual `ilike` queries per unique title+company pair -- one DB call per pair (lines 337-349)
 
-### A. Clean up existing duplicates (one-time database cleanup)
-- Write a migration that keeps only the newest row per `title + company_name` combo, deleting older duplicates
-- This will remove ~393 duplicate rows safely
-- Only deletes jobs that have no associated applications
+For a file with 100 jobs from 80 companies, that's ~80 sequential network requests before anything appears on screen. There's no loading state during this phase, so the dialog appears frozen.
 
-### B. Strengthen dedup in future imports
-- In `BatchLinkedInJobUpload.tsx`, add a secondary dedup check: besides `source_url`, also check for existing jobs with the same `title + company_name` (case-insensitive)
-- Mark these as duplicates in the preview table so admins can see them before importing
+## Fix
 
-## Problem 2: Zero Tracking on "Apply Externally" Clicks
+### 1. Add a "processing" loading state during file parsing
 
-**Current state**: 2,640 jobs use external links. When users click "Apply Externally", `window.open()` fires with no tracking. You have zero visibility on application intent for these jobs.
+Show a spinner immediately after the file is selected, before the dedup queries run. This gives instant visual feedback.
 
-**Solution -- Create an "External Apply Click" tracking system**:
+### 2. Replace individual dedup queries with a single bulk query
 
-### A. New database table: `job_apply_clicks`
+Instead of querying each title+company pair one by one, fetch all existing jobs' `title` and `company_name` in a single query filtered by the company names present in the upload. Then do the comparison in-memory.
+
 ```text
-id (uuid), job_id (uuid), talent_id (uuid nullable), clicked_at (timestamp), source (text)
+Before: 80 sequential queries (one per pair)
+After:  1 query fetching existing jobs by company names, then in-memory Set comparison
 ```
-This captures every "Apply Externally" click, tied to the job and optionally the logged-in user.
 
-### B. Track clicks in `AppJobDetail.tsx` and `PublicJobDetail.tsx`
-- Before calling `window.open()`, insert a row into `job_apply_clicks`
-- For logged-in users: capture `talent_id`
-- For public page: anonymous click (talent_id = null)
+### 3. Add error handling for the parsing phase
 
-### C. Show apply click counts in admin dashboard
-- In `JobsManager.tsx`, add an "Apply Clicks" column next to the existing "Shared" column
-- Query `job_apply_clicks` grouped by `job_id` alongside the share logs fetch
-- Display the count per job so admins can see engagement
+Wrap the dedup logic in try/catch so any network failure during parsing surfaces a toast error instead of silently hanging.
 
-### D. Add to KPI Dashboard
-- In `JobsKPIDashboard.tsx`, add a "Total Apply Clicks" KPI card showing total external apply clicks (last 30 days)
-- This gives a quick pulse on how many people are actually trying to apply
+## Files Changed
 
-## Technical Summary
+| File | Change |
+|------|--------|
+| `src/components/dashboard/BatchLinkedInJobUpload.tsx` | Add loading state for file processing; replace per-pair dedup queries with single bulk query; add error handling |
 
-| File / Area | Change |
-|---|---|
-| Database migration | Create `job_apply_clicks` table with RLS; deduplicate existing jobs |
-| `BatchLinkedInJobUpload.tsx` | Add title+company dedup check alongside source_url check |
-| `AppJobDetail.tsx` | Track click before `window.open()` in `handleApply` |
-| `PublicJobDetail.tsx` | Same tracking for public job page |
-| `JobsManager.tsx` | Add "Apply Clicks" column fetched per page |
-| `JobsKPIDashboard.tsx` | Add "Apply Clicks" KPI card |
+## Technical Detail
+
+Replace lines 333-349 with:
+
+```typescript
+// Secondary dedup: bulk fetch existing jobs by company names, compare in-memory
+const companyNamesForDedup = [...new Set(mapped.map(j => j.company_name))];
+const existingJobPairs = new Set<string>();
+
+for (let i = 0; i < companyNamesForDedup.length; i += 20) {
+  const batch = companyNamesForDedup.slice(i, i + 20);
+  const { data: existingJobs } = await supabase
+    .from("jobs")
+    .select("title, company_name")
+    .in("company_name", batch);
+  existingJobs?.forEach(j => {
+    existingJobPairs.add(`${j.title.toLowerCase().trim()}|||${j.company_name.toLowerCase().trim()}`);
+  });
+}
+```
+
+This reduces ~80 queries down to ~4-5 batch queries (20 company names each), making the upload respond in seconds instead of hanging.
+
