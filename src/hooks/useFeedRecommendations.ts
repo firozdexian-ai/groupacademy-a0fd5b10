@@ -362,16 +362,12 @@ export function useFeedRecommendations(): UseFeedRecommendationsResult {
         return item.type === filters.type;
       })
       .sort((a, b) => {
-        // Pinned posts always first
+        // Pinned posts always first, then newest
         if (a.isPinned && !b.isPinned) return -1;
         if (!a.isPinned && b.isPinned) return 1;
-        
-        if (filters.sort === "match") {
-          return (b.matchScore || 0) - (a.matchScore || 0);
-        }
         return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
       });
-  }, [allItems, dismissedIds, filters.type, filters.sort]);
+  }, [allItems, dismissedIds, filters.type]);
 
   // Return static insights - no AI generation needed
   const insights = useMemo(() => {
