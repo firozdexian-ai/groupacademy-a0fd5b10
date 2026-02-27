@@ -1,105 +1,112 @@
 
 
-# Platform Improvement Areas
+# Home Feed Redesign -- Mobile-First Compact Layout
 
-After a thorough audit of the codebase, here are the most impactful improvement opportunities organized by priority.
+## Changes Overview
 
----
-
-## 1. Security -- Overly Permissive RLS Policies (HIGH PRIORITY)
-
-The database linter found **11 RLS policies using `USING (true)` or `WITH CHECK (true)`** on INSERT/UPDATE/DELETE operations. This means anyone with the anon key can modify data in those tables without authentication checks.
-
-**Fix**: Audit each permissive policy and restrict to `auth.uid()` or role-based checks. This is critical for data integrity.
+Based on your feedback, here are the specific changes to implement:
 
 ---
 
-## 2. Jobs Page -- Missing Pagination (HIGH PRIORITY)
+## 1. Top Bar (Mobile) -- Simplify to 3 Elements
 
-`AppJobs.tsx` fetches ALL active jobs in a single query with no `.limit()`. With 2,600+ jobs, this loads everything into memory at once. The default Supabase limit of 1,000 rows means users may not even see all jobs.
+**Current**: Logo + Search icon + Desktop nav + Notifications + Profile dropdown + Credits + Hamburger menu
+**New (mobile)**: Profile picture (left, opens sidebar) | Search bar (center) | Notification bell (right)
 
-**Fix**: Add server-side pagination (e.g., 50 jobs per page) with a "Load More" button or infinite scroll.
+- Remove the logo from mobile top bar
+- Remove the hamburger menu button (profile picture replaces it as sidebar trigger)
+- Make the search bar always visible on mobile (not hidden behind an icon)
+- Keep notification bell on the right
+- Remove credits badge from top bar (already in sidebar)
+- Desktop layout stays unchanged
 
----
-
-## 3. Search -- Limited to Jobs Only (MEDIUM)
-
-The global search bar in `TalentAppShell.tsx` only redirects to `/app/jobs/all?search=...`. Users cannot search courses, blog posts, agents, or gigs from the top bar.
-
-**Fix**: Implement a unified search that shows results across jobs, courses, blog posts, and events -- or at minimum add a search scope selector.
-
----
-
-## 4. Mobile Search -- Non-functional (MEDIUM)
-
-The mobile search icon in `TalentAppShell.tsx` (line 109) is a button that does nothing -- no `onClick` handler. Mobile users cannot search at all.
-
-**Fix**: Wire it to open a search overlay or navigate to a search page.
+**File**: `src/layouts/TalentAppShell.tsx`
 
 ---
 
-## 5. Notifications -- No Real-time Updates (MEDIUM)
+## 2. Profile Card with Admin-Managed Background Image
 
-`TalentAppShell.tsx` fetches unread notification count once on mount and never updates. Users must refresh the page to see new notifications.
+**Current**: Hero banner fetches from `banners` table with `placement = 'hero'`
+**New**: Same concept but enforce **1536x512 (3:1)** image dimensions. The background image continues to be managed from the admin Banner Manager via the `hero` placement.
 
-**Fix**: Subscribe to the notifications table via Supabase Realtime to update the badge count live.
+- Update FeedHeader to use the 3:1 aspect ratio container
+- Show compact profile info (photo, name, profession) over the background
+- Add credits badge inside the card
 
----
-
-## 6. Feed -- No Infinite Scroll / Pagination (MEDIUM)
-
-The Feed page loads items once and shows a "Load More" button that just calls `refresh()` (reloads the same data). There's no actual pagination -- users always see the same set of items.
-
-**Fix**: Implement cursor-based pagination so "Load More" actually fetches older content.
+**File**: `src/components/feed/FeedHeader.tsx`
+**Admin file** (dimension label update): `src/components/dashboard/BannerManager.tsx` -- update the dimension hint text to show "1536x512 (3:1)" for hero banners
 
 ---
 
-## 7. Profile -- No Phone Number Display (LOW)
+## 3. Home Feed Banner -- 3:1 Aspect Ratio
 
-The Profile page shows email but not the user's phone number, even though phone is collected during signup and stored in the talents table.
+**Current**: Carousel uses `h-36` (compact) or `h-48` fixed heights
+**New**: Use `aspect-[3/1]` CSS so the banner scales proportionally at 1536x512 (3:1)
 
-**Fix**: Add phone display in the profile header alongside email.
+- Replace fixed height classes with `aspect-[3/1]`
+- Remove left/right chevron arrows on mobile (auto-rotate + dots only, per previous plan)
 
----
-
-## 8. Dark Mode Toggle -- Missing from App Shell (LOW)
-
-The landing page Navbar has a dark/light theme toggle, but the in-app `TalentAppShell` has no way to switch themes. Users are stuck with whatever theme they had before logging in.
-
-**Fix**: Add a theme toggle to the profile dropdown menu or settings page.
+**File**: `src/components/BannerCarousel.tsx`
 
 ---
 
-## 9. Error Boundary -- No Error Reporting (LOW)
+## 4. Feed Cards -- Compact Reactions + Share in One Row
 
-`ErrorBoundary.tsx` only logs to console. There's an `errorTracking.ts` utility with a `trackError` function ready for integration but it's not connected to the ErrorBoundary.
+**Current layout (PostCard.tsx)**:
+- Row 1: Reaction summary (count + icons)
+- Row 2: Reaction buttons (Like, Insightful, Celebrate)
+- Row 3: Share button (separate row with border-top)
+- Top-right: Non-functional 3-dot MoreHorizontal button
 
-**Fix**: Call `trackError` from `componentDidCatch` so errors are consistently tracked.
+**New layout**:
+- Remove the 3-dot button (top-right of author section)
+- Move reaction count (e.g., "12 reactions") to the top-right where the 3-dot button was
+- Merge reaction buttons + share button into ONE row (no separate border-t for share)
+- Reaction buttons and Share button sit side-by-side in a single `flex` row
+
+**Files**: `src/components/feed/PostCard.tsx`, `src/components/feed/ReactionBar.tsx`
 
 ---
 
-## 10. Help Center -- Dead Link (LOW)
+## 5. Quick Actions Grid -- Updated Items
 
-In the profile dropdown (TalentAppShell line 176), "Help Center" is a `DropdownMenuItem` with no `onClick` handler -- clicking it does nothing.
+Per the previous approved plan, update the 8 items to:
+- Row 1: Jobs, Abroad, Recommended Jobs, Remote Jobs
+- Row 2: Career Scorecard, Mock Interview, Salary Analysis, Portfolio Builder
 
-**Fix**: Link it to a help page, FAQ, or external support channel.
+**File**: `src/components/feed/QuickActionsGrid.tsx`
 
 ---
 
-## Summary by Priority
+## 6. Bottom Navigation -- Swap Abroad for AI Agents
 
-| Priority | Area | Impact |
-|----------|------|--------|
-| HIGH | RLS policy security audit | Data protection |
-| HIGH | Jobs pagination | Performance, data completeness |
-| MEDIUM | Unified search | User experience |
-| MEDIUM | Mobile search fix | Mobile usability |
-| MEDIUM | Real-time notifications | Engagement |
-| MEDIUM | Feed pagination | Content discovery |
-| LOW | Phone on profile | Completeness |
-| LOW | Dark mode in-app | User preference |
-| LOW | Error tracking integration | Debugging |
-| LOW | Help Center link | Support |
+Per the previous approved plan:
+- Change tabs to: Home | Jobs | Learn | Gigs | AI Agents
+- Replace Globe/Abroad with Bot/AI Agents icon
 
-I'd recommend tackling the **security (RLS)** and **jobs pagination** issues first, then moving to the UX improvements. Which areas would you like me to work on?
+**File**: `src/layouts/TalentAppShell.tsx`
+
+---
+
+## 7. Spacing Tightening
+
+- Reduce `py-6` to `py-2` on mobile for main content area
+- Reduce `space-y-4` to `space-y-2` between feed sections on mobile
+
+**File**: `src/pages/app/Feed.tsx`
+
+---
+
+## Technical Summary
+
+| File | Changes |
+|------|---------|
+| `src/layouts/TalentAppShell.tsx` | Mobile top bar: avatar as sidebar trigger + always-visible search + notification only. Bottom nav: swap Abroad for AI Agents |
+| `src/components/feed/FeedHeader.tsx` | 3:1 background image, compact profile card with credits |
+| `src/components/BannerCarousel.tsx` | Use `aspect-[3/1]`, hide arrows on mobile |
+| `src/components/feed/PostCard.tsx` | Remove 3-dot button, move reaction count to top-right, merge reactions + share into one row |
+| `src/components/feed/ReactionBar.tsx` | Accept and render share button inline, export total count for parent positioning |
+| `src/components/feed/QuickActionsGrid.tsx` | Update 8 action items per wireframe |
+| `src/pages/app/Feed.tsx` | Tighten spacing for mobile |
+| `src/components/dashboard/BannerManager.tsx` | Update dimension hint to 1536x512 for hero banners |
 
