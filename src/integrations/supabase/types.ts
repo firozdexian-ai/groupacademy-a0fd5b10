@@ -3451,6 +3451,7 @@ export type Database = {
           id: string
           institution: string | null
           is_featured: boolean | null
+          languages: Json | null
           linkedin_url: string | null
           phone: string | null
           portfolio_credentials: Json | null
@@ -3478,6 +3479,7 @@ export type Database = {
           id?: string
           institution?: string | null
           is_featured?: boolean | null
+          languages?: Json | null
           linkedin_url?: string | null
           phone?: string | null
           portfolio_credentials?: Json | null
@@ -3505,6 +3507,7 @@ export type Database = {
           id?: string
           institution?: string | null
           is_featured?: boolean | null
+          languages?: Json | null
           linkedin_url?: string | null
           phone?: string | null
           portfolio_credentials?: Json | null

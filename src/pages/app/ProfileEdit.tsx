@@ -1,6 +1,6 @@
-import { useState, useEffect, useCallback } from "react";
-import { useNavigate } from "react-router-dom";
-import { ArrowLeft, Save, Loader2, FileText, Trash2, ExternalLink, Upload, AlertCircle } from "lucide-react";
+import { useState, useEffect, useCallback, useRef } from "react";
+import { useNavigate, useLocation } from "react-router-dom";
+import { ArrowLeft, Save, Loader2, FileText, Trash2, ExternalLink, Upload, AlertCircle, Plus, X } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
@@ -8,16 +8,29 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ProfilePhotoUpload } from "@/components/profile/ProfilePhotoUpload";
 import { SkillsEditor } from "@/components/profile/SkillsEditor";
 import { ExperienceEditor, ExperienceEntry } from "@/components/profile/ExperienceEditor";
 import { EducationEditor, EducationEntry } from "@/components/profile/EducationEditor";
 import { supabase } from "@/integrations/supabase/client";
-import { PhoneInput } from "@/components/ui/phone-input"; // Added Import
+import { PhoneInput } from "@/components/ui/phone-input";
+
+interface LanguageEntry {
+  language: string;
+  proficiency: string;
+}
+
+interface AchievementEntry {
+  title: string;
+  issuer: string;
+  date: string;
+}
 
 export default function ProfileEdit() {
   const navigate = useNavigate();
+  const location = useLocation();
   const { talent, updateTalent, refreshTalent } = useTalent();
   const [saving, setSaving] = useState(false);
   const [uploadingCV, setUploadingCV] = useState(false);
@@ -26,6 +39,9 @@ export default function ProfileEdit() {
 
   const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
   const [cvUrl, setCvUrl] = useState("");
+
+  // Section refs for hash-based scrolling
+  const sectionRefs = useRef<Record<string, HTMLDivElement | null>>({});
 
   const [formData, setFormData] = useState({
     fullName: "",
@@ -43,6 +59,8 @@ export default function ProfileEdit() {
   const [skills, setSkills] = useState<string[]>([]);
   const [experience, setExperience] = useState<ExperienceEntry[]>([]);
   const [education, setEducation] = useState<EducationEntry[]>([]);
+  const [languages, setLanguages] = useState<LanguageEntry[]>([]);
+  const [achievements, setAchievements] = useState<AchievementEntry[]>([]);
 
   // Initialize Data
   useEffect(() => {
@@ -62,7 +80,6 @@ export default function ProfileEdit() {
       setProfilePhotoUrl(talent.profilePhotoUrl || "");
       setCvUrl(talent.cvUrl || "");
 
-      // Safe parsing helpers
       const safeSkills = Array.isArray(talent.skills)
         ? talent.skills.map((s: any) => (typeof s === "string" ? s : s?.name || String(s)))
         : [];
@@ -89,8 +106,35 @@ export default function ProfileEdit() {
           }))
         : [];
       setEducation(safeEdu);
+
+      const safeLangs = Array.isArray(talent.languages)
+        ? talent.languages.map((l: any) => ({
+            language: l.language || "",
+            proficiency: l.proficiency || "Intermediate",
+          }))
+        : [];
+      setLanguages(safeLangs);
+
+      const safeAchievements = Array.isArray(talent.achievements)
+        ? talent.achievements.map((a: any) => ({
+            title: a.title || a.name || "",
+            issuer: a.issuer || "",
+            date: a.date || "",
+          }))
+        : [];
+      setAchievements(safeAchievements);
     }
   }, [talent]);
+
+  // Scroll to section from hash
+  useEffect(() => {
+    const hash = location.hash.replace("#", "");
+    if (hash && sectionRefs.current[hash]) {
+      setTimeout(() => {
+        sectionRefs.current[hash]?.scrollIntoView({ behavior: "smooth", block: "start" });
+      }, 300);
+    }
+  }, [location.hash]);
 
   // Warn user before leaving with unsaved changes
   useEffect(() => {
@@ -100,7 +144,6 @@ export default function ProfileEdit() {
         e.returnValue = '';
       }
     };
-    
     window.addEventListener('beforeunload', handleBeforeUnload);
     return () => window.removeEventListener('beforeunload', handleBeforeUnload);
   }, [isDirty]);
@@ -114,7 +157,6 @@ export default function ProfileEdit() {
     const file = e.target.files?.[0];
     if (!file || !talent) return;
 
-    // Validation
     const allowedTypes = [
       "application/pdf",
       "application/msword",
@@ -124,7 +166,6 @@ export default function ProfileEdit() {
       toast.error("Invalid file type", { description: "Please upload a PDF or Word document" });
       return;
     }
-
     if (file.size > 5 * 1024 * 1024) {
       toast.error("File too large", { description: "Max file size is 5MB" });
       return;
@@ -141,9 +182,7 @@ export default function ProfileEdit() {
 
       if (uploadError) throw uploadError;
 
-      const {
-        data: { publicUrl },
-      } = supabase.storage.from("portfolio-uploads").getPublicUrl(fileName);
+      const { data: { publicUrl } } = supabase.storage.from("portfolio-uploads").getPublicUrl(fileName);
 
       setCvUrl(publicUrl);
       setUploadingCV(false);
@@ -151,7 +190,6 @@ export default function ProfileEdit() {
 
       toast.info("Analyzing CV...", { description: "We're extracting details to auto-fill your profile." });
 
-      // AI Parsing
       try {
         const { data: parseResult, error: parseError } = await supabase.functions.invoke("parse-cv", {
           body: { cvUrl: publicUrl },
@@ -162,7 +200,6 @@ export default function ProfileEdit() {
         if (parseResult?.success && parseResult.parsed) {
           const parsed = parseResult.parsed;
 
-          // Smart Merge: Only overwrite if we found something new, otherwise keep existing
           setFormData((prev) => ({
             ...prev,
             fullName: parsed.full_name || prev.fullName,
@@ -172,10 +209,8 @@ export default function ProfileEdit() {
           }));
 
           if (parsed.skills?.length > 0) {
-            // Merge unique skills
             setSkills((prev) => Array.from(new Set([...prev, ...parsed.skills])));
           }
-
           if (parsed.experience?.length > 0) {
             const newExp = parsed.experience.map((exp: any) => ({
               company: exp.company || "",
@@ -184,10 +219,8 @@ export default function ProfileEdit() {
               endDate: exp.end_date || "",
               description: exp.description || "",
             }));
-            // Replace experience (usually cleaner than merging for lists)
             setExperience(newExp);
           }
-
           if (parsed.education?.length > 0) {
             const newEdu = parsed.education.map((edu: any) => ({
               institution: edu.institution || "",
@@ -199,12 +232,10 @@ export default function ProfileEdit() {
             setEducation(newEdu);
           }
 
-          // Immediately persist CV data to database
           const immediateUpdate: Record<string, any> = {
             cvUrl: publicUrl,
             cvParsedAt: new Date().toISOString(),
           };
-          
           if (parsed.full_name) immediateUpdate.fullName = parsed.full_name;
           if (parsed.phone) immediateUpdate.phone = parsed.phone;
           if (parsed.linkedin_url) immediateUpdate.linkedinUrl = parsed.linkedin_url;
@@ -231,21 +262,15 @@ export default function ProfileEdit() {
 
           await updateTalent(immediateUpdate);
           await refreshTalent();
-
-          toast.success("Profile Updated!", { 
-            description: "Your CV data has been saved automatically. Continue editing or go back." 
-          });
+          toast.success("Profile Updated!", { description: "Your CV data has been saved automatically." });
         } else {
-          // Still save the CV URL even if parsing failed
           await updateTalent({ cvUrl: publicUrl });
           await refreshTalent();
           toast.warning("CV Uploaded", { description: "Could not auto-extract details. Please fill them manually." });
         }
       } catch (parseErr) {
         console.error("CV parse error:", parseErr);
-        toast.warning("Analysis Failed", {
-          description: "CV uploaded, but auto-fill failed. Please enter details manually.",
-        });
+        toast.warning("Analysis Failed", { description: "CV uploaded, but auto-fill failed." });
       }
     } catch (error) {
       console.error("CV upload error:", error);
@@ -266,7 +291,6 @@ export default function ProfileEdit() {
     setIsDirty(true);
   }, []);
 
-  // Mark dirty when skills, experience, or education change
   const handleSkillsChange = useCallback((newSkills: string[]) => {
     setSkills(newSkills);
     setIsDirty(true);
@@ -281,6 +305,34 @@ export default function ProfileEdit() {
     setEducation(newEdu);
     setIsDirty(true);
   }, []);
+
+  // Languages handlers
+  const addLanguage = () => {
+    setLanguages((prev) => [...prev, { language: "", proficiency: "Intermediate" }]);
+    setIsDirty(true);
+  };
+  const removeLanguage = (index: number) => {
+    setLanguages((prev) => prev.filter((_, i) => i !== index));
+    setIsDirty(true);
+  };
+  const updateLanguage = (index: number, field: keyof LanguageEntry, value: string) => {
+    setLanguages((prev) => prev.map((l, i) => (i === index ? { ...l, [field]: value } : l)));
+    setIsDirty(true);
+  };
+
+  // Achievements handlers
+  const addAchievement = () => {
+    setAchievements((prev) => [...prev, { title: "", issuer: "", date: "" }]);
+    setIsDirty(true);
+  };
+  const removeAchievement = (index: number) => {
+    setAchievements((prev) => prev.filter((_, i) => i !== index));
+    setIsDirty(true);
+  };
+  const updateAchievement = (index: number, field: keyof AchievementEntry, value: string) => {
+    setAchievements((prev) => prev.map((a, i) => (i === index ? { ...a, [field]: value } : a)));
+    setIsDirty(true);
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
@@ -303,10 +355,12 @@ export default function ProfileEdit() {
         skills: skills as any,
         experience: experience as any,
         education: education as any,
+        languages: languages as any,
+        achievements: achievements as any,
       });
 
-      await refreshTalent(); // Ensure global state is fresh
-      setIsDirty(false); // Reset dirty state after successful save
+      await refreshTalent();
+      setIsDirty(false);
       toast.success("Profile saved successfully");
       navigate("/app/profile");
     } catch (error) {
@@ -317,7 +371,7 @@ export default function ProfileEdit() {
     }
   };
 
-  if (!talent) return null; // Or a loading spinner
+  if (!talent) return null;
 
   return (
     <div className="max-w-2xl mx-auto px-4 py-4 pb-36">
@@ -428,79 +482,197 @@ export default function ProfileEdit() {
         </Card>
 
         {/* Basic Info */}
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base">Basic Information</CardTitle>
-          </CardHeader>
-          <CardContent className="space-y-4">
-            <div className="grid md:grid-cols-2 gap-4">
+        <div ref={(el) => { sectionRefs.current["about"] = el; }}>
+          <Card>
+            <CardHeader>
+              <CardTitle className="text-base">Basic Information</CardTitle>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              <div className="grid md:grid-cols-2 gap-4">
+                <div className="space-y-2">
+                  <Label htmlFor="fullName">Full Name</Label>
+                  <Input
+                    id="fullName"
+                    value={formData.fullName}
+                    onChange={(e) => handleChange("fullName", e.target.value)}
+                    placeholder="Your full name"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label htmlFor="phone">Phone Number</Label>
+                  <PhoneInput
+                    value={formData.phone}
+                    countryCode={formData.countryCode}
+                    onValueChange={(value) => handleChange("phone", value)}
+                    onCountryCodeChange={(code, country) => {
+                      handleChange("countryCode", code);
+                      handleChange("country", country);
+                    }}
+                    placeholder="Enter phone number"
+                  />
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name</Label>
+                <Label htmlFor="customProfession">Profession / Headline</Label>
                 <Input
-                  id="fullName"
-                  value={formData.fullName}
-                  onChange={(e) => handleChange("fullName", e.target.value)}
-                  placeholder="Your full name"
+                  id="customProfession"
+                  value={formData.customProfession}
+                  onChange={(e) => handleChange("customProfession", e.target.value)}
+                  placeholder="e.g., Senior Software Engineer"
                 />
               </div>
+
               <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <PhoneInput
-                  value={formData.phone}
-                  countryCode={formData.countryCode}
-                  onValueChange={(value) => handleChange("phone", value)}
-                  onCountryCodeChange={(code, country) => {
-                    handleChange("countryCode", code);
-                    handleChange("country", country);
-                  }}
-                  placeholder="Enter phone number"
+                <Label htmlFor="currentStatus">About / Bio</Label>
+                <Textarea
+                  id="currentStatus"
+                  value={formData.currentStatus}
+                  onChange={(e) => handleChange("currentStatus", e.target.value)}
+                  placeholder="Tell us about your professional background..."
+                  rows={4}
                 />
               </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="customProfession">Profession / Headline</Label>
-              <Input
-                id="customProfession"
-                value={formData.customProfession}
-                onChange={(e) => handleChange("customProfession", e.target.value)}
-                placeholder="e.g., Senior Software Engineer"
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="currentStatus">About / Bio</Label>
-              <Textarea
-                id="currentStatus"
-                value={formData.currentStatus}
-                onChange={(e) => handleChange("currentStatus", e.target.value)}
-                placeholder="Tell us about your professional background..."
-                rows={4}
-              />
-            </div>
-          </CardContent>
-        </Card>
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Skills */}
-        <Card>
-          <CardContent className="pt-6">
-            <SkillsEditor skills={skills} onChange={handleSkillsChange} />
-          </CardContent>
-        </Card>
+        <div ref={(el) => { sectionRefs.current["skills"] = el; }}>
+          <Card>
+            <CardContent className="pt-6">
+              <SkillsEditor skills={skills} onChange={handleSkillsChange} />
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Experience */}
-        <Card>
-          <CardContent className="pt-6">
-            <ExperienceEditor experience={experience} onChange={handleExperienceChange} />
-          </CardContent>
-        </Card>
+        <div ref={(el) => { sectionRefs.current["experience"] = el; }}>
+          <Card>
+            <CardContent className="pt-6">
+              <ExperienceEditor experience={experience} onChange={handleExperienceChange} />
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Education */}
-        <Card>
-          <CardContent className="pt-6">
-            <EducationEditor education={education} onChange={handleEducationChange} />
-          </CardContent>
-        </Card>
+        <div ref={(el) => { sectionRefs.current["education"] = el; }}>
+          <Card>
+            <CardContent className="pt-6">
+              <EducationEditor education={education} onChange={handleEducationChange} />
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Honors & Awards */}
+        <div ref={(el) => { sectionRefs.current["achievements"] = el; }}>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">Honors & Awards</CardTitle>
+                <Button type="button" variant="ghost" size="sm" onClick={addAchievement}>
+                  <Plus className="h-4 w-4 mr-1" /> Add
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-4">
+              {achievements.length === 0 && (
+                <p className="text-sm text-muted-foreground italic">No awards added yet.</p>
+              )}
+              {achievements.map((award, i) => (
+                <div key={i} className="border rounded-xl p-4 space-y-3 relative">
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-2 right-2 h-7 w-7 text-destructive"
+                    onClick={() => removeAchievement(i)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                  <div className="space-y-2">
+                    <Label>Award / Honor Title</Label>
+                    <Input
+                      value={award.title}
+                      onChange={(e) => updateAchievement(i, "title", e.target.value)}
+                      placeholder="e.g., Dean's List"
+                    />
+                  </div>
+                  <div className="grid grid-cols-2 gap-3">
+                    <div className="space-y-2">
+                      <Label>Issuer / Organization</Label>
+                      <Input
+                        value={award.issuer}
+                        onChange={(e) => updateAchievement(i, "issuer", e.target.value)}
+                        placeholder="e.g., MIT"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label>Date</Label>
+                      <Input
+                        value={award.date}
+                        onChange={(e) => updateAchievement(i, "date", e.target.value)}
+                        placeholder="e.g., 2023"
+                      />
+                    </div>
+                  </div>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
+
+        {/* Languages */}
+        <div ref={(el) => { sectionRefs.current["languages"] = el; }}>
+          <Card>
+            <CardHeader>
+              <div className="flex items-center justify-between">
+                <CardTitle className="text-base">Languages</CardTitle>
+                <Button type="button" variant="ghost" size="sm" onClick={addLanguage}>
+                  <Plus className="h-4 w-4 mr-1" /> Add
+                </Button>
+              </div>
+            </CardHeader>
+            <CardContent className="space-y-3">
+              {languages.length === 0 && (
+                <p className="text-sm text-muted-foreground italic">No languages added yet.</p>
+              )}
+              {languages.map((lang, i) => (
+                <div key={i} className="flex items-center gap-3">
+                  <Input
+                    className="flex-1"
+                    value={lang.language}
+                    onChange={(e) => updateLanguage(i, "language", e.target.value)}
+                    placeholder="e.g., English"
+                  />
+                  <Select
+                    value={lang.proficiency}
+                    onValueChange={(val) => updateLanguage(i, "proficiency", val)}
+                  >
+                    <SelectTrigger className="w-36">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="Native">Native</SelectItem>
+                      <SelectItem value="Fluent">Fluent</SelectItem>
+                      <SelectItem value="Intermediate">Intermediate</SelectItem>
+                      <SelectItem value="Basic">Basic</SelectItem>
+                    </SelectContent>
+                  </Select>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="h-9 w-9 text-destructive"
+                    onClick={() => removeLanguage(i)}
+                  >
+                    <X className="h-4 w-4" />
+                  </Button>
+                </div>
+              ))}
+            </CardContent>
+          </Card>
+        </div>
 
         {/* Links */}
         <Card>
@@ -531,7 +703,7 @@ export default function ProfileEdit() {
           </CardContent>
         </Card>
 
-        {/* Sticky Save Bar (Mobile Friendly - positioned above bottom nav) */}
+        {/* Sticky Save Bar */}
         <div className="fixed bottom-[68px] md:bottom-0 left-0 right-0 p-4 bg-background/80 backdrop-blur-md border-t z-50 md:relative md:p-0 md:bg-transparent md:border-0 safe-bottom">
           <div className="max-w-2xl mx-auto flex gap-3">
             <Button type="button" variant="outline" className="flex-1" onClick={() => navigate("/app/profile")}>

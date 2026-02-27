@@ -23,6 +23,7 @@ export interface TalentProfile {
   skills: Skill[];
   projects: Record<string, unknown>[];
   achievements: Record<string, unknown>[];
+  languages: Array<{ language: string; proficiency: string }>;
   linkedinUrl: string | null;
   portfolioUrl: string | null;
   profilePhotoUrl: string | null;
@@ -87,6 +88,7 @@ function mapRowToTalent(row: any): TalentProfile {
     skills: Array.isArray(row.skills) ? row.skills : [],
     projects: Array.isArray(row.projects) ? row.projects : [],
     achievements: Array.isArray(row.achievements) ? row.achievements : [],
+    languages: Array.isArray(row.languages) ? row.languages : [],
     linkedinUrl: row.linkedin_url,
     portfolioUrl: row.portfolio_url,
     profilePhotoUrl: row.profile_photo_url,
@@ -199,6 +201,7 @@ export function TalentProvider({ children }: { children: React.ReactNode }) {
         mapField("skills", "skills");
         mapField("projects", "projects");
         mapField("achievements", "achievements");
+        mapField("languages", "languages");
         mapField("linkedinUrl", "linkedin_url");
         mapField("portfolioUrl", "portfolio_url");
         mapField("profilePhotoUrl", "profile_photo_url");
