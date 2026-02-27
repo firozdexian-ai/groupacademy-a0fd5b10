@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -12,6 +12,9 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Switch } from "@/components/ui/switch";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
+import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
+import { COUNTRIES } from "@/lib/constants/countries";
 import {
   Plus,
   Search,
@@ -983,6 +986,15 @@ export function JobsManager() {
   // New state for expiring jobs logic
   const [expiringLoading, setExpiringLoading] = useState(false);
   const [isLinkedInImportOpen, setIsLinkedInImportOpen] = useState(false);
+  const [locationOpen, setLocationOpen] = useState(false);
+  const [countryCounts, setCountryCounts] = useState<{ name: string; flag: string; count: number }[]>([]);
+
+  // Country name aliases for matching location strings
+  const COUNTRY_ALIASES: Record<string, string[]> = useMemo(() => ({
+    "United Arab Emirates": ["UAE", "United Arab Emirates", "Dubai", "Abu Dhabi"],
+    "United Kingdom": ["UK", "United Kingdom", "England", "Scotland", "Wales"],
+    "United States": ["USA", "United States", "US"],
+  }), []);
 
   useEffect(() => {
     const loadCategories = async () => {
@@ -993,9 +1005,46 @@ export function JobsManager() {
       const { data } = await supabase.from("companies").select("id, name").order("name");
       setCompaniesList(data || []);
     };
+    const loadCountryCounts = async () => {
+      // Fetch all distinct locations
+      const { data } = await supabase.from("jobs").select("location").eq("is_active", true);
+      if (!data) return;
+
+      const counts: Record<string, number> = {};
+      const flagMap: Record<string, string> = {};
+
+      // Build lookup: country name -> flag
+      COUNTRIES.forEach((c) => {
+        flagMap[c.name] = c.flag;
+      });
+
+      data.forEach((row) => {
+        const loc = row.location || "";
+        // Check each country (including aliases)
+        COUNTRIES.forEach((country) => {
+          const aliases = COUNTRY_ALIASES[country.name] || [country.name];
+          const matched = aliases.some((alias) =>
+            loc.toLowerCase().includes(alias.toLowerCase())
+          );
+          if (matched) {
+            // Deduplicate UK/GB
+            const key = country.name === "United Kingdom" ? "United Kingdom" : country.name;
+            counts[key] = (counts[key] || 0) + 1;
+            flagMap[key] = country.flag;
+          }
+        });
+      });
+
+      const sorted = Object.entries(counts)
+        .map(([name, count]) => ({ name, flag: flagMap[name] || "🌍", count }))
+        .sort((a, b) => b.count - a.count);
+
+      setCountryCounts(sorted);
+    };
     loadCategories();
     loadCompanies();
-  }, []);
+    loadCountryCounts();
+  }, [COUNTRY_ALIASES]);
 
   const loadJobs = useCallback(async () => {
     setLoading(true);
@@ -1020,7 +1069,15 @@ export function JobsManager() {
       } else if (locationFilter === "abroad") {
         query = query.not("location", "ilike", "%Bangladesh%");
       } else if (locationFilter !== "all") {
-        query = query.ilike("location", `%${locationFilter}%`);
+        // Per-country filter: use aliases if available
+        const aliases = COUNTRY_ALIASES[locationFilter];
+        if (aliases && aliases.length > 1) {
+          // Match any alias using OR
+          const orClauses = aliases.map((a) => `location.ilike.%${a}%`).join(",");
+          query = query.or(orClauses);
+        } else {
+          query = query.ilike("location", `%${locationFilter}%`);
+        }
       }
 
       // Company filter
@@ -1075,7 +1132,7 @@ export function JobsManager() {
     } finally {
       setLoading(false);
     }
-  }, [page, debouncedSearch, statusFilter, locationFilter, companyFilter, companiesList]);
+  }, [page, debouncedSearch, statusFilter, locationFilter, companyFilter, companiesList, COUNTRY_ALIASES]);
 
   useEffect(() => {
     loadJobs();
@@ -1233,24 +1290,85 @@ export function JobsManager() {
                 <SelectItem value="inactive">Inactive</SelectItem>
               </SelectContent>
             </Select>
-            <Select
-              value={locationFilter}
-              onValueChange={(v) => {
-                setLocationFilter(v);
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="w-[160px]">
-                <MapPin className="w-3 h-3 mr-1" />
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Locations</SelectItem>
-                <SelectItem value="bangladesh">Bangladesh</SelectItem>
-                <SelectItem value="remote">Remote</SelectItem>
-                <SelectItem value="abroad">International</SelectItem>
-              </SelectContent>
-            </Select>
+            <Popover open={locationOpen} onOpenChange={setLocationOpen}>
+              <PopoverTrigger asChild>
+                <Button variant="outline" role="combobox" aria-expanded={locationOpen} className="w-[200px] justify-between">
+                  <MapPin className="w-3 h-3 mr-1 shrink-0" />
+                  <span className="truncate">
+                    {locationFilter === "all"
+                      ? "All Locations"
+                      : locationFilter === "bangladesh"
+                      ? "🇧🇩 Bangladesh"
+                      : locationFilter === "remote"
+                      ? "🌐 Remote"
+                      : locationFilter === "abroad"
+                      ? "🌍 All International"
+                      : (() => {
+                          const c = countryCounts.find((cc) => cc.name === locationFilter);
+                          return c ? `${c.flag} ${c.name}` : locationFilter;
+                        })()}
+                  </span>
+                  <ChevronRight className="ml-1 h-3 w-3 shrink-0 opacity-50 rotate-90" />
+                </Button>
+              </PopoverTrigger>
+              <PopoverContent className="w-[250px] p-0" align="start">
+                <Command>
+                  <CommandInput placeholder="Search country..." />
+                  <CommandList>
+                    <CommandEmpty>No country found.</CommandEmpty>
+                    <CommandGroup heading="Quick Filters">
+                      {[
+                        { value: "all", label: "All Locations", icon: "📋" },
+                        { value: "bangladesh", label: "Bangladesh", icon: "🇧🇩" },
+                        { value: "remote", label: "Remote", icon: "🌐" },
+                        { value: "abroad", label: "All International", icon: "🌍" },
+                      ].map((item) => (
+                        <CommandItem
+                          key={item.value}
+                          value={item.label}
+                          onSelect={() => {
+                            setLocationFilter(item.value);
+                            setPage(1);
+                            setLocationOpen(false);
+                          }}
+                        >
+                          <span className="mr-2">{item.icon}</span>
+                          {item.label}
+                          {locationFilter === item.value && <Check className="ml-auto h-3 w-3" />}
+                        </CommandItem>
+                      ))}
+                    </CommandGroup>
+                    {countryCounts.length > 0 && (
+                      <>
+                        <CommandSeparator />
+                        <CommandGroup heading="Countries">
+                          {countryCounts
+                            .filter((c) => c.name !== "Bangladesh")
+                            .map((country) => (
+                              <CommandItem
+                                key={country.name}
+                                value={country.name}
+                                onSelect={() => {
+                                  setLocationFilter(country.name);
+                                  setPage(1);
+                                  setLocationOpen(false);
+                                }}
+                              >
+                                <span className="mr-2">{country.flag}</span>
+                                <span className="flex-1">{country.name}</span>
+                                <Badge variant="secondary" className="ml-auto text-[10px] px-1.5 py-0">
+                                  {country.count}
+                                </Badge>
+                                {locationFilter === country.name && <Check className="ml-1 h-3 w-3" />}
+                              </CommandItem>
+                            ))}
+                        </CommandGroup>
+                      </>
+                    )}
+                  </CommandList>
+                </Command>
+              </PopoverContent>
+            </Popover>
             <Select
               value={companyFilter}
               onValueChange={(v) => {
