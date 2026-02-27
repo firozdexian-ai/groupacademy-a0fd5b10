@@ -1,38 +1,98 @@
 
+# AI General -- Platform Guide Search Agent
 
-# Fix Profile Card Layout
+## Vision
 
-## Issues
-1. **Profession not showing** -- likely the text is there but truncated or the data isn't being passed. Need to verify, but the fix ensures it's always visible.
-2. **Credits toggle replaces name** -- the current `ml-auto` on the credits badge pushes it to the far right, but on small screens the flex layout causes the name/profession to shrink or disappear. The credits pill should coexist with name and profession, not replace them.
+Transform the top search bar from a simple job search into an AI-powered platform concierge called **"AI General"**. When users type a query and press Enter, instead of navigating to jobs, they enter a free conversational chat with AI General -- the ultimate platform guide that helps seekers discover features, courses, agents, jobs, and more.
 
-## Target Layout (matching reference)
+## How It Works
 
-```text
-+----------------------------------------------------------+
-|                                                          |
-|  [AVATAR]   Name                    [eye ••••]           |
-|             Profession                                   |
-|                                                          |
-+----------------------------------------------------------+
+1. **User types in the search bar** (e.g., "How do I improve my CV?" or "IELTS preparation")
+2. **Presses Enter** -- navigates to `/app/ai-general` with the query as a URL param
+3. **AI General page opens** -- immediately sends the query as the first message to the AI agent
+4. **Conversation continues** -- no session timer, no credit cost (free forever)
+5. **AI General responds** with platform-aware guidance, inline links to features/agents/courses
+
+## What AI General Does
+
+- **Platform Guide**: Knows all features (Jobs, Learning, AI Agents, Gigs, Abroad, Services) and directs users with markdown links
+- **Agent Router**: Suggests specialized agents (e.g., "For CV help, talk to our [CV Coach](/app/agents/cv-coach)")
+- **Content Discovery**: Recommends courses, blog posts, jobs based on the query
+- **Free & Unlimited**: No credits, no session timer -- its job is to increase platform engagement
+- **Trackable**: Admin can see total conversations, queries, and set engagement targets
+
+## Technical Plan
+
+### 1. Add "ai-general" to agent constants (`src/lib/constants/agents.ts`)
+
+Add a new agent entry with `id: "ai-general"` using the `Sparkles` icon. This is used for the static fallback only.
+
+### 2. Insert AI General into the database (`ai_agents` table)
+
+Insert a row with:
+- `agent_key`: "ai-general"
+- `name`: "AI General"
+- `system_prompt`: A comprehensive prompt that knows every platform feature and generates markdown links to direct users
+- `credit_cost`: 0
+- `session_duration_minutes`: 1440 (24 hours -- effectively unlimited)
+- `is_active`: true
+
+### 3. Create a dedicated page (`src/pages/app/AIGeneral.tsx`)
+
+A lightweight chat page that:
+- Reads `?q=` from URL params as the initial query
+- Uses a **simplified version** of `useAgentChat` -- no credit gating, no session timer
+- Creates a free session automatically (no CreditGateModal)
+- Reuses the existing `AgentChatDialog` component for the chat UI
+- Has a back button that returns to Feed
+
+### 4. Create a free chat hook (`src/hooks/useAIGeneralChat.ts`)
+
+A slimmed-down version of `useAgentChat` that:
+- Auto-creates a session without credit checks
+- No session expiry enforcement
+- Streams responses from the same `ai-agent-chat` edge function
+- Saves messages to `agent_chat_sessions` for analytics
+
+### 5. Update search bar behavior (`src/layouts/TalentAppShell.tsx`)
+
+Change `handleSearch`:
+```
+// Before: navigate(`/app/jobs/all?search=${searchQuery}`)
+// After:  navigate(`/app/ai-general?q=${searchQuery}`)
 ```
 
-All four elements are **always visible**. Tapping the credits pill toggles between `••••` (hidden) and the actual number.
+Update placeholder text from "Search jobs, courses..." to "Ask AI General anything..."
 
-## Changes to `src/components/feed/FeedHeader.tsx`
+### 6. Add route (`src/App.tsx`)
 
-1. **Reduce avatar size** from `h-20 w-20` to `h-14 w-14` to free up horizontal space
-2. **Reduce name font** from `text-lg` to `text-base`
-3. **Credits pill always visible** -- remove the `showCredits` conditional rendering. Instead, always show the pill:
-   - Default state: show `••••` (dots) with an eye-off icon
-   - Tapped state: show the actual balance number with a coins icon
-   - The pill sits on the right side via `ml-auto`, independent of the name/profession block
-4. **Ensure profession always renders** below the name in `text-xs text-white/70`
-5. **Move the onClick toggle** to only the credits pill, not the entire card -- so tapping the card area doesn't interfere
+Add route: `/app/ai-general` pointing to the new `AIGeneral.tsx` page.
 
-### Technical Detail
-- Remove `onClick` from the outer content div (no more full-card tap to toggle)
-- Add `onClick` with `stopPropagation` directly on the credits pill/badge
-- Always render the badge; toggle only what's inside it (dots vs number)
-- Use `Eye` / `EyeOff` icons from lucide-react for the toggle indicator
+### 7. Admin tracking (database)
 
+The existing `ai_agents` table already has `total_conversations` which gets incremented via `increment_agent_conversations` RPC. AI General will use this same mechanism. Admin can view stats in the existing `AIAgentsManager` dashboard.
+
+Optionally add a `monthly_target` column to `ai_agents` so admins can set conversation targets for AI General.
+
+## Files to Create/Modify
+
+| File | Action |
+|------|--------|
+| `src/pages/app/AIGeneral.tsx` | **Create** -- Free AI chat page |
+| `src/hooks/useAIGeneralChat.ts` | **Create** -- Credit-free chat hook |
+| `src/lib/constants/agents.ts` | **Modify** -- Add ai-general agent |
+| `src/layouts/TalentAppShell.tsx` | **Modify** -- Redirect search to AI General |
+| `src/App.tsx` | **Modify** -- Add route |
+| `src/lib/routes.ts` | **Modify** -- Add route constant |
+| Database migration | Add `monthly_target` column to `ai_agents` |
+| Database insert | Add ai-general agent row with system prompt |
+
+## AI General System Prompt (Key Points)
+
+The system prompt will instruct AI General to:
+- Always respond with platform feature suggestions using markdown links
+- Know routes like `/app/jobs`, `/app/learning`, `/app/agents/cv-coach`, etc.
+- Suggest connecting to specialized agents for deeper help
+- Be warm, brief, and action-oriented
+- Never discuss topics outside the platform scope
+- Use occasional Bangla phrases for rapport
