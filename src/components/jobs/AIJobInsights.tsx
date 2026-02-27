@@ -3,7 +3,22 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Collapsible, CollapsibleContent, CollapsibleTrigger } from "@/components/ui/collapsible";
-import { Brain, Sparkles, Coins, ChevronDown, ChevronUp, CheckCircle, XCircle, TrendingUp, Users, Loader2 } from "lucide-react";
+import { Brain, Sparkles, Coins, ChevronDown, ChevronUp, CheckCircle, XCircle, TrendingUp, Users } from "lucide-react";
+import { ProcessingCard, type ProcessingStage } from "@/components/ui/processing-card";
+
+const MATCH_STAGES: ProcessingStage[] = [
+  { progress: 0, message: "Analyzing your profile..." },
+  { progress: 25, message: "Comparing skills and experience..." },
+  { progress: 55, message: "Evaluating education fit..." },
+  { progress: 80, message: "Generating recommendations..." },
+];
+
+const MARKET_STAGES: ProcessingStage[] = [
+  { progress: 0, message: "Gathering market data..." },
+  { progress: 25, message: "Estimating competition level..." },
+  { progress: 55, message: "Analyzing salary benchmarks..." },
+  { progress: 80, message: "Compiling insights..." },
+];
 import { supabase } from "@/integrations/supabase/client";
 import { useCredits } from "@/hooks/useCredits";
 import { toast } from "sonner";
@@ -134,24 +149,7 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
             {!matchResult ? (
               loadingMatch ? (
                 // Loading skeleton that matches the expanded state
-                <div className="space-y-3 animate-pulse">
-                  <div className="flex items-center gap-2 h-12 px-4 border rounded-md">
-                    <div className="w-4 h-4 bg-purple-200 dark:bg-purple-800 rounded" />
-                    <div className="h-4 bg-muted rounded w-32" />
-                    <div className="ml-auto h-5 bg-muted rounded w-20" />
-                  </div>
-                  <div className="space-y-3 px-1">
-                    <div className="h-4 bg-muted rounded w-40" />
-                    <div className="flex gap-1 flex-wrap">
-                      {[1, 2, 3].map(i => <div key={i} className="h-6 bg-muted rounded w-16" />)}
-                    </div>
-                    <div className="grid grid-cols-2 gap-3">
-                      <div className="h-16 bg-muted/50 rounded-lg" />
-                      <div className="h-16 bg-muted/50 rounded-lg" />
-                    </div>
-                    <div className="h-12 bg-primary/5 border border-primary/20 rounded-lg" />
-                  </div>
-                </div>
+                <ProcessingCard title="Analyzing Match" stages={MATCH_STAGES} duration={18000} />
               ) : (
                 <Button
                   variant="outline"
@@ -255,20 +253,7 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
             {!marketInsight ? (
               loadingMarket ? (
                 // Loading skeleton that matches the expanded market insight state
-                <div className="space-y-3 animate-pulse">
-                  <div className="flex items-center gap-2 h-12 px-4 border rounded-md">
-                    <div className="w-4 h-4 bg-blue-200 dark:bg-blue-800 rounded" />
-                    <div className="h-4 bg-muted rounded w-40" />
-                    <div className="ml-auto h-5 bg-muted rounded w-20" />
-                  </div>
-                  <div className="space-y-3 px-1">
-                    <div className="grid grid-cols-2 gap-3">
-                      {[1, 2, 3, 4].map(i => <div key={i} className="h-14 bg-muted/50 rounded-lg" />)}
-                    </div>
-                    <div className="h-16 bg-green-50 dark:bg-green-950/30 border border-green-200 dark:border-green-800 rounded-lg" />
-                    <div className="h-12 bg-muted/50 rounded-lg" />
-                  </div>
-                </div>
+                <ProcessingCard title="Analyzing Market" stages={MARKET_STAGES} duration={18000} />
               ) : (
                 <Button
                   variant="outline"
