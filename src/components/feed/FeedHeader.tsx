@@ -2,7 +2,7 @@ import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Avatar, AvatarFallback, AvatarImage } from '@/components/ui/avatar';
 import { Badge } from '@/components/ui/badge';
-import { Coins } from 'lucide-react';
+import { Coins, Eye, EyeOff } from 'lucide-react';
 import { supabase } from '@/integrations/supabase/client';
 import { useCredits } from '@/hooks/useCredits';
 
@@ -59,25 +59,19 @@ export function FeedHeader({
       <div className="absolute inset-0 bg-gradient-to-r from-black/50 via-black/30 to-transparent z-0" />
 
       {/* Content - Left-Aligned Horizontal */}
-      <div
-        className="relative z-10 flex items-center h-full text-white cursor-pointer px-5 gap-4"
-        onClick={() => setShowCredits(prev => !prev)}
-      >
+      <div className="relative z-10 flex items-center h-full text-white px-5 gap-3">
         <Avatar
-          className="h-20 w-20 ring-4 ring-white/40 shadow-lg cursor-pointer shrink-0"
-          onClick={(e) => {
-            e.stopPropagation();
-            navigate('/app/profile');
-          }}
+          className="h-14 w-14 ring-[3px] ring-white/40 shadow-lg cursor-pointer shrink-0"
+          onClick={() => navigate('/app/profile')}
         >
           <AvatarImage src={talentPhoto} alt={talentName || 'User'} />
-          <AvatarFallback className="bg-white/20 text-white font-bold text-xl">
+          <AvatarFallback className="bg-white/20 text-white font-bold text-base">
             {initials}
           </AvatarFallback>
         </Avatar>
 
-        <div className="flex flex-col min-w-0">
-          <h1 className="font-bold text-lg leading-tight truncate">
+        <div className="flex flex-col min-w-0 flex-1">
+          <h1 className="font-bold text-base leading-tight truncate">
             {talentName || 'Welcome'}
           </h1>
           {talentProfession && (
@@ -87,12 +81,13 @@ export function FeedHeader({
           )}
         </div>
 
-        {showCredits && (
-          <Badge className="gap-1 bg-white/20 backdrop-blur-sm text-white border-white/30 text-[10px] h-5 ml-auto shrink-0 animate-fade-in">
-            <Coins className="h-3 w-3" />
-            <span className="font-bold">{balance}</span>
-          </Badge>
-        )}
+        <Badge
+          className="gap-1 bg-white/20 backdrop-blur-sm text-white border-white/30 text-[10px] h-6 shrink-0 cursor-pointer select-none"
+          onClick={() => setShowCredits(prev => !prev)}
+        >
+          {showCredits ? <Coins className="h-3 w-3" /> : <EyeOff className="h-3 w-3" />}
+          <span className="font-bold">{showCredits ? balance : '••••'}</span>
+        </Badge>
       </div>
     </div>
   );
