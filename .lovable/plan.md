@@ -1,104 +1,59 @@
 
 
-# For You Tab Redesign -- 4 Vertical Sections
+# Fix AI Job Recommendations -- Better Matching Quality
 
-## Overview
+## Root Cause Analysis
 
-Completely restructure the "For You" tab content into four distinct vertical sections with no horizontal scrolling anywhere. Each section shows 2-3 jobs initially with a "Show More" button to expand.
+Three problems are causing poor results:
 
-## Section Order
+1. **Only 50 of 2,628 jobs reach the AI.** The edge function has `.limit(50)`, so the AI never even sees 98% of jobs.
+2. **Job descriptions are not sent to the AI.** Every job has a description, but only `requirements` and `preferred_skills` are sent -- and only 5 jobs have those fields filled in. The AI is essentially matching blind.
+3. **No pre-filtering strategy.** Sending all 2,628 jobs to the AI is too expensive. We need a smart two-stage approach.
 
-```text
-1. Recommended for You (AI-powered, persisted)
-2. Featured / Promoted Jobs
-3. Expiring Soon
-4. Hot Jobs (most clicks + applications)
-```
+## Solution: Two-Stage Matching Pipeline
 
-## Detailed Section Design
+### Stage 1: Database-Level Pre-Filtering (narrow 2,628 down to ~200)
 
-### 1. Recommended for You
-- **First-time users**: Show empty state with prompt to run AI recommendations
-- **Above the list**: "Get AI Recommendations" button (10 credits) -- always visible until recommendations exist
-- **After generating**: Show top 3 jobs vertically (compact JobCard), with "Show More" to reveal up to 12
-- **Persistence**: AI recommendations are saved to the database (new `ai_job_recommendations` table) so they persist across sessions
-- **Timestamp**: Show "Last updated: [date]" below the section header so users know when to regenerate
-- **Regenerate**: Button changes to "Refresh Recommendations" once results exist
-- Remove the old `personalizedJobs` (preference-based) and `topPicks` sections -- replaced entirely by this
+Use a broad text search across job `title` and `description` against the talent's skills and experience keywords. This is done via SQL `ILIKE` or full-text search to create a shortlist of ~200 potentially relevant jobs, instead of blindly taking the latest 50.
 
-### 2. Featured / Promoted Jobs
-- Query: `is_featured = true`, active, not expired
-- Show 3 vertically, "Show More" expands to all (up to 10)
-- No horizontal scroll -- vertical list of compact JobCards
+**Fallback:** If text search returns fewer than 50 results (e.g. sparse profile), supplement with the most recent jobs to ensure the AI always has enough to work with.
 
-### 3. Expiring Soon
-- Query: deadline within next 7 days, active, ordered by deadline ascending
-- Show 3, "Show More" expands to all
-- Vertical list, compact JobCards
+### Stage 2: AI Deep Ranking (rank the ~200 down to top 10-12)
 
-### 4. Hot Jobs (Most Popular)
-- Query: Count clicks from `job_analytics` + applications from `job_applications` for active jobs in last 30 days, rank by total engagement
-- Show 3, "Show More" to expand
-- Display with a fire/trending icon
+Send the shortlisted jobs (with descriptions included) to the AI for proper contextual ranking. The AI now has real content to match against.
 
-## Database Changes
+## Changes
 
-**New table: `ai_job_recommendations`**
-- `id` (uuid, PK)
-- `talent_id` (uuid, references talents)
-- `job_id` (uuid, references jobs)
-- `match_score` (integer)
-- `reason` (text)
-- `generated_at` (timestamptz, default now())
-- RLS: talent can only read/delete their own rows
-- On regeneration: delete old rows for this talent, insert new ones
+### File: `supabase/functions/suggest-jobs-for-talent/index.ts`
 
-## Code Changes (single file + migration)
+**1. Extract search keywords from talent profile**
+- Pull skill names, job titles from experience, degree fields from education
+- Build a list of 10-20 search terms
 
-### `src/pages/app/JobsHub.tsx`
+**2. Replace the single `.limit(50)` query with a smarter approach**
+- Query jobs where `description ILIKE` any of the search keywords (using OR conditions)
+- Also match on `title ILIKE` for each keyword
+- Limit to 200 results
+- If fewer than 50 results, backfill with recent jobs
 
-**Remove:**
-- `topPicks` state and `fetchTopPicks()` -- no longer needed
-- `personalizedJobs` state and `fetchPersonalizedJobs()` -- replaced by persisted AI recommendations
-- `promotedJobs` combined query -- split into separate featured and expiring queries
-- All `ScrollArea` / horizontal scroll usage in the For You tab
-- `aiSuggestions` in-memory state -- replaced by DB-persisted recommendations
+**3. Include job descriptions in the AI payload**
+- Add `description` field to `jobSummaries` (truncated to first 300 chars to manage token usage)
+- This gives the AI actual content to judge relevance
 
-**Add:**
-- `recommendations` state: loaded from `ai_job_recommendations` table joined with `jobs`
-- `recommendationsGeneratedAt` state: timestamp of last generation
-- `featuredJobs` state: `is_featured = true` active jobs
-- `expiringJobs` state: deadline within 7 days, ordered by deadline asc
-- `hotJobs` state: jobs ranked by total clicks + applications in last 30 days (fetched via two queries aggregated in JS)
-- `showMore` state object: `{ recommended: boolean, featured: boolean, expiring: boolean, hot: boolean }` to toggle expansion per section
-- `INITIAL_SHOW_COUNT = 3` constant
+**4. Update the AI system prompt**
+- Remove "Be selective - only include genuinely relevant jobs"
+- Instead: "Consider partial matches, transferable skills, and adjacent roles. A 50-60% match is still valuable. Score generously for adjacent relevance."
+- This ensures the AI returns useful results even when exact matches are rare
 
-**Fetch functions:**
-- `fetchRecommendations()`: Select from `ai_job_recommendations` where `talent_id` = current talent, join jobs data, order by `match_score` desc
-- `fetchFeaturedJobs()`: `is_featured = true`, active, not expired, limit 10
-- `fetchExpiringJobs()`: deadline between now and now+7days, active, order by deadline asc, limit 10
-- `fetchHotJobs()`: Fetch job_analytics counts and job_applications counts for last 30 days, merge in JS, rank by total engagement, fetch job details for top 10
+**5. Increase return limit from 10 to 12**
+- More results give users a better selection
 
-**AI Recommendation flow update:**
-- On "Get AI Recommendations" click: call edge function as before, then INSERT results into `ai_job_recommendations` (delete old first), reload from DB
-- Show "Last updated: X" timestamp
-- Button text: "Refresh Recommendations (10 credits)" if recommendations already exist
+### Summary of Impact
 
-**UI per section:**
-```
-[SectionHeader]
-[JobCard compact] -- job 1
-[JobCard compact] -- job 2  
-[JobCard compact] -- job 3
-[Show More button] -- if more than 3 exist
-```
-
-All vertical, no horizontal scroll, consistent pattern across all four sections.
-
-## Technical Notes
-
-- Hot Jobs aggregation: Two queries (job_analytics grouped by job_id, job_applications grouped by job_id for last 30 days), merge counts in JS Map, sort by total, take top 10, then fetch job details in one query
-- The `ai_job_recommendations` table keeps recommendations persistent -- no need to re-fetch from AI on every page load
-- Remove `Recent Applications` section from For You tab (it was minor and doesn't fit the new structure)
-- Keep the existing `handleShowAllAI` logic but modify it to persist results to DB
+| Before | After |
+|--------|-------|
+| AI sees 50 random recent jobs | AI sees ~200 pre-filtered relevant jobs |
+| No job descriptions sent | 300-char description included |
+| Only 5 jobs have skills data | Descriptions provide rich matching context |
+| "Be selective" prompt = few low-score results | Balanced prompt = more useful results |
 
