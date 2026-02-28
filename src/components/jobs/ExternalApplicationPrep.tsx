@@ -25,11 +25,13 @@ interface QAResult {
 }
 
 const SCRAPE_STAGES: ProcessingStage[] = [
-  { progress: 0, message: "Scraping application page..." },
-  { progress: 20, message: "Detecting form questions..." },
+  { progress: 0, message: "Connecting to application page..." },
+  { progress: 15, message: "Scraping application page..." },
+  { progress: 30, message: "Detecting form questions..." },
   { progress: 45, message: "Analyzing your profile..." },
-  { progress: 70, message: "Generating personalized answers..." },
-  { progress: 90, message: "Preparing your prep sheet..." },
+  { progress: 60, message: "Generating personalized answers..." },
+  { progress: 80, message: "Writing tailored responses..." },
+  { progress: 92, message: "Preparing your prep sheet..." },
 ];
 
 const SCREENSHOT_STAGES: ProcessingStage[] = [
@@ -77,6 +79,10 @@ export function ExternalApplicationPrep({
     setError(null);
     setIsScreenshotMode(false);
 
+    const timeoutId = setTimeout(() => {
+      setError("Request timed out. The application page may be too complex. Try uploading screenshots instead.");
+    }, 90000);
+
     try {
       const { data, error: fnError } = await supabase.functions.invoke(
         "prepare-external-application",
@@ -84,6 +90,8 @@ export function ExternalApplicationPrep({
           body: { job_id: jobId, application_url: applicationUrl, mode: "scrape" },
         }
       );
+
+      clearTimeout(timeoutId);
 
       if (fnError) throw new Error(fnError.message);
       if (data?.error) throw new Error(data.error);
@@ -97,6 +105,7 @@ export function ExternalApplicationPrep({
         setPhase("results");
       }
     } catch (err: any) {
+      clearTimeout(timeoutId);
       console.error("Scrape error:", err);
       if (err.message?.includes("Insufficient credits")) {
         setError("You don't have enough credits. You need 50 credits for this service.");
@@ -192,7 +201,7 @@ export function ExternalApplicationPrep({
           <ProcessingCard
             title={isScreenshotMode ? "Analyzing Screenshots" : "Preparing Application"}
             stages={isScreenshotMode ? SCREENSHOT_STAGES : SCRAPE_STAGES}
-            duration={isScreenshotMode ? 25000 : 30000}
+            duration={isScreenshotMode ? 45000 : 60000}
             className="border-0 shadow-none"
           />
         )}
