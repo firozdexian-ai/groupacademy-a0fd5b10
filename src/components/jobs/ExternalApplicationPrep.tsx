@@ -74,7 +74,8 @@ export function ExternalApplicationPrep({
     setTimeout(() => setSummaryCopied(false), 2000);
   };
 
-  const callEdgeFunction = async (payload: Record<string, unknown>) => {
+  const callEdgeFunction = useCallback(async (payload: Record<string, unknown>) => {
+    console.log("[ApplyAI] callEdgeFunction called with:", JSON.stringify(payload).slice(0, 200));
     const { data: { session } } = await supabase.auth.getSession();
     if (!session) throw new Error("Please sign in to continue.");
 
@@ -82,6 +83,7 @@ export function ExternalApplicationPrep({
     const timeoutId = setTimeout(() => controller.abort(), 90000);
 
     try {
+      console.log("[ApplyAI] Fetching edge function...");
       const response = await fetch(
         `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/prepare-external-application`,
         {
@@ -95,15 +97,20 @@ export function ExternalApplicationPrep({
           body: JSON.stringify(payload),
         }
       );
-      clearTimeout(timeoutId);
+
+      console.log("[ApplyAI] Response status:", response.status);
 
       if (!response.ok) {
         let errBody: any = {};
         try { errBody = await response.json(); } catch {}
+        clearTimeout(timeoutId);
         throw new Error(errBody.error || `Request failed (${response.status})`);
       }
 
-      return await response.json();
+      const data = await response.json();
+      clearTimeout(timeoutId);
+      console.log("[ApplyAI] Parsed response data keys:", data ? Object.keys(data) : "null");
+      return data;
     } catch (err: any) {
       clearTimeout(timeoutId);
       if (err.name === "AbortError") {
@@ -111,7 +118,7 @@ export function ExternalApplicationPrep({
       }
       throw err;
     }
-  };
+  }, []);
 
   const startScrape = useCallback(async () => {
     setPhase("loading");
@@ -119,11 +126,14 @@ export function ExternalApplicationPrep({
     setIsScreenshotMode(false);
 
     try {
+      console.log("[ApplyAI] Starting scrape for job:", jobId);
       const data = await callEdgeFunction({
         job_id: jobId,
         application_url: applicationUrl,
         mode: "scrape",
       });
+
+      console.log("[ApplyAI] Scrape result - scrape_failed:", data?.scrape_failed, "answers:", data?.answers?.length);
 
       if (data?.scrape_failed) {
         setGeneralSummary(data.general_summary || "");
@@ -134,14 +144,15 @@ export function ExternalApplicationPrep({
         setPhase("results");
       }
     } catch (err: any) {
-      console.error("Scrape error:", err);
+      console.error("[ApplyAI] Scrape error:", err);
       if (err.message?.includes("Insufficient credits")) {
         setError("You don't have enough credits. You need 50 credits for this service.");
       } else {
         setError(err.message || "Something went wrong. Please try again.");
       }
+      setPhase("scrape_failed");
     }
-  }, [jobId, applicationUrl]);
+  }, [jobId, applicationUrl, callEdgeFunction]);
 
   const submitScreenshots = async () => {
     if (screenshots.length === 0) {
@@ -165,8 +176,9 @@ export function ExternalApplicationPrep({
       setGeneralSummary(data?.general_summary || "");
       setPhase("results");
     } catch (err: any) {
-      console.error("Screenshot error:", err);
+      console.error("[ApplyAI] Screenshot error:", err);
       setError(err.message || "Something went wrong");
+      setPhase("scrape_failed");
     }
   };
 
