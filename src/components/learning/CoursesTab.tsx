@@ -78,7 +78,7 @@ export function CoursesTab({ onOpenCourse }: CoursesTabProps) {
   return (
     <div className="space-y-4">
       {/* Icon category selector */}
-      <div className="flex gap-4">
+      <div className="grid grid-cols-4 gap-2">
         {filterOptions.map(({ key, icon: Icon, label }) => (
           <button
             key={key}

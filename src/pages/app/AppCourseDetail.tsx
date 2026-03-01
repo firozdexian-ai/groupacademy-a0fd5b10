@@ -299,7 +299,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
       </Button>
 
       {/* Media Player / Cover */}
-      <div className="mb-6 rounded-xl overflow-hidden bg-black shadow-lg">
+      <div className="mb-4 rounded-xl overflow-hidden bg-black shadow-lg">
         <AspectRatio ratio={16 / 9}>
           {embedUrl ? (
             <iframe
@@ -320,8 +320,8 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
       </div>
 
       {/* Header Info */}
-      <div className="mb-8">
-        <div className="flex flex-wrap items-center gap-2 mb-3">
+      <div className="mb-3">
+        <div className="flex flex-wrap items-center gap-2 mb-2">
           <Badge variant="secondary" className={config.color}>
             <config.icon className="h-3 w-3 mr-1" />
             {config.label}
@@ -336,20 +336,17 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
           )}
         </div>
 
-        <h1 className="text-2xl md:text-3xl font-bold mb-2 text-foreground">{course.title}</h1>
+        <h1 className="text-lg font-bold mb-1 text-foreground">{course.title}</h1>
 
         {course.instructor_name && (
-          <p className="text-muted-foreground flex items-center gap-2">
-            <span className="w-6 h-6 rounded-full bg-primary/10 flex items-center justify-center text-xs font-bold text-primary">
-              {course.instructor_name.charAt(0)}
-            </span>
+          <p className="text-sm text-muted-foreground">
             Instructor: <span className="font-medium text-foreground">{course.instructor_name}</span>
           </p>
         )}
       </div>
 
       {/* Stats Grid */}
-      <div className="grid grid-cols-2 md:grid-cols-4 gap-4 mb-8">
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-3 mb-4">
         {course.duration_hours && (
           <div className="p-3 bg-muted/50 rounded-lg flex items-center gap-3">
             <div className="p-2 bg-background rounded-full shadow-sm text-primary">
@@ -386,7 +383,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
       </div>
 
       {/* Primary Action - hidden on mobile since sticky bar handles it */}
-      <div className="mb-8 hidden md:block">
+      <div className="mb-4 hidden md:block">
         {isEnrolled ? (
           <Button
             size="lg"
@@ -419,16 +416,12 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
       </div>
 
       {/* Description Content */}
-      <Card>
-        <CardHeader className="pb-3 border-b">
-          <CardTitle className="text-lg">Course Overview</CardTitle>
-        </CardHeader>
-        <CardContent className="pt-4">
-          <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground whitespace-pre-wrap leading-relaxed">
-            {course.description}
-          </div>
-        </CardContent>
-      </Card>
+      <div>
+        <h3 className="text-base font-semibold mb-2">Course Overview</h3>
+        <p className="text-sm text-muted-foreground whitespace-pre-wrap leading-relaxed">
+          {course.description}
+        </p>
+      </div>
 
       {/* Sticky Bottom CTA - Mobile */}
       <div className="fixed bottom-16 left-0 right-0 bg-background/95 backdrop-blur-md border-t p-3 flex gap-3 md:hidden z-40">
