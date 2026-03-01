@@ -4,13 +4,14 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Video, BookOpen, Calendar, Users, MapPin, ArrowRight, Coins } from "lucide-react";
+import { LayoutGrid, BookOpen, Calendar, Users, ArrowRight, Coins } from "lucide-react";
 import { useQuery } from "@tanstack/react-query";
 import { getCourseCredits } from "@/lib/creditPricing";
+import { cn } from "@/lib/utils";
 
 type ContentType = "free_video" | "recorded_course" | "live_webinar" | "batch_class" | "offline_seminar";
+type FilterKey = "all" | "recorded_course" | "live_webinar" | "batch_class";
 
 interface Course {
   id: string; title: string; slug: string; description: string;
@@ -18,16 +19,23 @@ interface Course {
 }
 
 const contentTypeConfig = {
-  free_video: { icon: Video, label: "Video" },
+  free_video: { icon: LayoutGrid, label: "Video" },
   recorded_course: { icon: BookOpen, label: "Course" },
   live_webinar: { icon: Calendar, label: "Webinar" },
   batch_class: { icon: Users, label: "Class" },
-  offline_seminar: { icon: MapPin, label: "Seminar" },
+  offline_seminar: { icon: LayoutGrid, label: "Seminar" },
 };
+
+const filterOptions: { key: FilterKey; icon: typeof LayoutGrid; label: string }[] = [
+  { key: "all", icon: LayoutGrid, label: "All" },
+  { key: "recorded_course", icon: BookOpen, label: "Courses" },
+  { key: "live_webinar", icon: Calendar, label: "Webinars" },
+  { key: "batch_class", icon: Users, label: "Classes" },
+];
 
 export function CoursesTab() {
   const navigate = useNavigate();
-  const [selectedType, setSelectedType] = useState<ContentType | "all">("all");
+  const [selectedType, setSelectedType] = useState<FilterKey>("all");
 
   const { data: courses = [], isLoading, error, refetch } = useQuery({
     queryKey: ["app-courses"],
@@ -65,15 +73,29 @@ export function CoursesTab() {
 
   return (
     <div className="space-y-4">
-      <Tabs value={selectedType} onValueChange={(v) => setSelectedType(v as any)}>
-        <TabsList className="w-full justify-start overflow-x-auto h-9">
-          <TabsTrigger value="all" className="text-xs h-8">All</TabsTrigger>
-          <TabsTrigger value="free_video" className="text-xs h-8">Videos</TabsTrigger>
-          <TabsTrigger value="recorded_course" className="text-xs h-8">Courses</TabsTrigger>
-          <TabsTrigger value="live_webinar" className="text-xs h-8">Webinars</TabsTrigger>
-          <TabsTrigger value="batch_class" className="text-xs h-8">Classes</TabsTrigger>
-        </TabsList>
-      </Tabs>
+      {/* Icon category selector */}
+      <div className="flex gap-4">
+        {filterOptions.map(({ key, icon: Icon, label }) => (
+          <button
+            key={key}
+            onClick={() => setSelectedType(key)}
+            className="flex flex-col items-center gap-1.5"
+          >
+            <div className={cn(
+              "h-11 w-11 rounded-full flex items-center justify-center transition-colors",
+              selectedType === key
+                ? "bg-primary text-primary-foreground shadow-sm"
+                : "bg-primary/10 text-primary hover:bg-primary/20"
+            )}>
+              <Icon className="h-5 w-5" />
+            </div>
+            <span className={cn(
+              "text-xs font-medium",
+              selectedType === key ? "text-foreground" : "text-muted-foreground"
+            )}>{label}</span>
+          </button>
+        ))}
+      </div>
 
       {filteredCourses.length === 0 ? (
         <Card><CardContent className="py-8 text-center text-muted-foreground">No courses match this filter</CardContent></Card>
