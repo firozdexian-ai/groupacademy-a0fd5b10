@@ -1,66 +1,63 @@
 
 
-# Learning Hub: Convert to Tabbed Interface
+# My Courses Tab Optimization
 
-## Overview
+## Problems Identified
 
-Transform the Learning Hub from a scrollable page with navigation links into a **tabbed single-page layout**. The four quick action icons (My Courses, Tracks, All Courses, Events) become tab selectors. The default tab is **My Courses**. All content sections below the icons (CareerTracksPreview, ActiveCourseHero, UnifiedDiscovery, QuickStats) are removed from the hub page itself.
-
-## How It Works
-
-```text
-+-------------------------------+
-|  Banner Carousel (learning)   |
-+-------------------------------+
-| [My Courses] [Tracks] [All Courses] [Events]  <- icon strip (active = highlighted)
-+-------------------------------+
-|                               |
-|   Content for selected tab    |
-|   (inline, no page nav)       |
-|                               |
-+-------------------------------+
-```
-
-- Tapping an icon switches the visible content below (no route change, stays on `/app/learning`)
-- The selected icon gets a visual highlight (filled background, bold label)
-- The existing sub-routes (`/app/learning/my-courses`, `/app/learning/courses`, etc.) still work for direct links but now redirect to the hub with the correct tab pre-selected
+1. **Stats cards too large** -- The 3 stat blocks (Active, Completed, Total) are oversized with excessive padding and take up too much vertical space
+2. **"Total" stat is redundant** -- Active + Completed = Total; it adds no value
+3. **Free videos showing in enrollments** -- Free videos are not real courses; they should only appear in the feed for inline viewing (YouTube promotion)
+4. **Course cards too tall** -- The `aspect-video` image ratio + padding makes each card occupy excessive space on mobile
+5. **"Browse Catalog" button in empty state navigates away** -- Should switch to the "All Courses" tab instead
 
 ## Changes
 
-### 1. `src/pages/app/LearningHub.tsx` -- Major rewrite
+### 1. Compact the stats row
 
-- Add a `tab` state (`"my-courses" | "tracks" | "courses" | "events"`) defaulting to `"my-courses"`
-- The icon strip becomes a tab selector: clicking an icon sets the active tab instead of navigating
-- Active icon gets `bg-primary text-white` styling; inactive stays `bg-primary/10 text-primary`
-- Below the icon strip, render content conditionally based on the active tab:
-  - **My Courses**: Inline the enrollment list from `AppMyLearning` (active/completed tabs, stats cards, course cards)
-  - **Tracks**: Inline the career tracks content from `AppProfessions` (academies, schools, profession lines)
-  - **All Courses**: Inline the course catalog from `AppCourses` (filter tabs, course grid)
-  - **Events**: Inline the events list from `AppEvents` (upcoming, today, past events)
-- Remove: `CareerTracksPreview`, `ActiveCourseHero`, `UnifiedDiscovery`, `QuickStats` imports and usage
-- Keep: `BannerCarousel` at top
+Replace the 3 large cards with a slim inline summary bar -- two small pill-style indicators side by side:
 
-### 2. Extract tab content into reusable components
+```text
+[ clock icon  2 Active ]  [ check icon  1 Completed ]
+```
 
-To keep the hub file manageable, extract the inner content of each existing page into embeddable components:
+- Remove the "Total" stat entirely
+- Use a single-row flex layout with small rounded pills instead of full Card components
+- Much less vertical space consumed
 
-- **`src/components/learning/MyCoursesTab.tsx`** -- Extract from `AppMyLearning.tsx`: the stats cards, tabs (active/completed), and course grid. Remove the back button and page header. Accept `talentId` as prop.
-- **`src/components/learning/TracksTab.tsx`** -- Extract from `AppProfessions.tsx`: the academy/school/profession hierarchy. Remove back button and header.
-- **`src/components/learning/CoursesTab.tsx`** -- Extract from `AppCourses.tsx`: the filter tabs and course grid. Remove back button and header.
-- **`src/components/learning/EventsTab.tsx`** -- Extract from `AppEvents.tsx`: the event type filter and event cards. Remove header.
+### 2. Filter out free_video enrollments
 
-### 3. Update existing pages to use extracted components
+In the query or the filter logic, exclude enrollments where `content.content_type === "free_video"`. This ensures free videos never appear in My Courses.
 
-- `AppMyLearning.tsx`, `AppCourses.tsx`, `AppEvents.tsx`, `AppProfessions.tsx` -- These still exist for direct URL access but will now just wrap the extracted tab components with a back button and page header. This avoids code duplication.
+### 3. Make course cards more compact
 
-### 4. Route handling
+- Change image from `aspect-video` (16:9) to a fixed `h-24` (96px) height
+- Reduce card padding from `p-4` to `p-3`
+- Remove the hover overlay with "Resume" text (unnecessary on mobile)
+- Keep progress bar, WhatsApp group, and certificate buttons but tighten spacing
 
-- The existing sub-routes (`/app/learning/my-courses`, `/app/learning/courses`, etc.) continue to work as standalone pages
-- Optionally, support a query param like `?tab=tracks` on `/app/learning` so links can deep-link to a specific tab
+### 4. Fix empty-state navigation
 
-## Technical Notes
+Change the "Browse Catalog" button in the empty active-courses state to not navigate away but instead inform the user to check the "All Courses" tab (or accept an optional callback prop from LearningHub to switch tabs).
 
-- Each tab component manages its own data fetching via `useQuery` (queries only run when the tab is active, leveraging React Query's `enabled` flag or simply mounting/unmounting)
-- No database changes required
-- No new dependencies needed
-- The `useLearningStats` hook can be removed from LearningHub since the stats are now inside MyCoursesTab
+## Technical Details
+
+### File: `src/components/learning/MyCoursesTab.tsx`
+
+**Stats section (lines 147-169):** Replace the 3-card grid with a compact flex row of two styled pills using simple div elements with inline flex layout.
+
+**Enrollment filter (lines 117-118):** Add `.filter(e => e.content.content_type !== "free_video")` to exclude free videos from both active and completed lists.
+
+**LearningCard component (lines 34-97):**
+- Line 44: Change `aspect-video` to `h-24` for a shorter image area
+- Lines 52-56: Remove the hover overlay div
+- Line 58: Reduce padding from `p-4` to `p-3`
+- Line 69: Tighten spacing from `space-y-3` to `space-y-2`
+
+**Empty state (line 184):** Update "Browse Catalog" to use an `onBrowse` callback prop so LearningHub can pass tab-switching logic.
+
+**Props:** Add optional `onBrowseCatalog?: () => void` prop to `MyCoursesTab` so the parent (LearningHub) can pass `() => setActiveTab("courses")`.
+
+### File: `src/pages/app/LearningHub.tsx`
+
+Pass `onBrowseCatalog={() => setActiveTab("courses")}` to `<MyCoursesTab />`.
+
