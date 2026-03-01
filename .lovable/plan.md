@@ -1,97 +1,118 @@
 
 
-# Career Tracks Redesign -- Academy Tabs with Icon Strip + Current Enrollment
+# Academy Schools & Programs -- Complete Structure + UI Redesign
 
-## Overview
+## Suggested Academy Structure
 
-Restructure the Tracks tab to use the standardized icon-strip navigation (matching All Courses and Events tabs) with 4 categories: **My Program**, **Executive Academy**, **Freelancing Academy**, and **Entrepreneurship Academy**. The existing Technical Academy will be renamed/replaced with Freelancing Academy, and a new Entrepreneurship Academy will be added.
+### Executive Academy (for graduates and corporate professionals)
+| School | Programs (Professions) |
+|--------|----------------------|
+| School of Business | Sales & Distribution, Banking & Finance, Sales & Marketing, Operations & Supply Chain, Healthcare & Pharma |
+| School of Technology | Technology & IT, Data Science & Analytics, Cybersecurity, Cloud & DevOps |
+| School of Creative & Arts | Graphic Design, Content Writing, Video Production, UX/UI Design |
+| School of Leadership & HR | Human Resources, Project Management, Executive Leadership, Organizational Development |
+| School of Finance & Accounting | Financial Analysis, Auditing & Compliance, Tax & Advisory, Investment Management |
 
-## Database Changes
+### Freelancing Academy (gig economy and platform skills)
+| School | Programs (Professions) |
+|--------|----------------------|
+| School of Digital Freelancing | Virtual Assistance, Data Entry & Research, Transcription & Translation, SEO & Digital Marketing |
+| School of Creative Services | Logo & Brand Design, Social Media Management, Copywriting & Blogging, Photography & Editing |
+| School of Technical Services | Web Development, Mobile App Development, WordPress & CMS, API & Automation |
+| School of Media & Production | Video Editing, Motion Graphics, Voiceover & Podcasting, Animation |
+| School of Consulting | Business Consulting, Career Coaching, Financial Advisory, Marketing Strategy |
 
-### 1. Update existing "Technical Academy" to "Freelancing Academy"
-- Rename the existing Technical Academy record (keeping its ID to preserve school relationships)
-- Update slug to `freelancing-academy`
-- Update description to focus on freelancing, gig economy, and Fiverr-type skills
+### Entrepreneurship Academy (business builders)
+| School | Programs (Professions) |
+|--------|----------------------|
+| School of Startup & Venture | Idea Validation & MVP, Fundraising & Pitching, Product-Market Fit, Scaling & Growth |
+| School of E-Commerce | Dropshipping & Fulfillment, Amazon & Marketplace Selling, Shopify Store Management, Digital Products & SaaS |
+| School of Social Enterprise | Impact Business Design, NGO Management, Community Development, Sustainable Business |
+| School of Small Business | Restaurant & Food Business, Retail & Wholesale, Service-Based Business, Import & Export |
 
-### 2. Create new "Entrepreneurship Academy"
-- Insert a new academy with `academy_type: 'entrepreneurship'`, display_order 3
-- Create starter schools under it (e.g., "School of Startup & Venture", "School of E-Commerce", "School of Social Enterprise")
+## UI Changes
 
-### 3. Update schools under Freelancing Academy
-- Rename existing Technical Academy schools to reflect freelancing focus (e.g., "School of Digital Freelancing", "School of Creative Services", "School of Technical Services")
+### 1. Academy tabs now show only school cards (not profession cards)
 
-## Frontend Changes
+When user selects an academy tab (Executive, Freelancing, Entrepreneurship), they see a clean grid of school cards -- each showing the school name, description, and a "View Programs" button. No profession cards visible at this level.
 
-### File: `src/components/learning/TracksTab.tsx`
+### 2. School detail view (inline or navigated)
 
-**Replace the Radix TabsList/TabsTrigger with the icon-strip pattern** used in CoursesTab and EventsTab:
+When a user clicks a school card, they navigate to a school detail page showing all programs (profession categories) within that school, each with a card that links to the profession detail page.
 
-- 4-icon `grid grid-cols-4 gap-2` strip at the top
-- Icons: `BookOpen` (My Program), `Building2` (Executive), `Laptop` (Freelancing), `Rocket` (Entrepreneurship)
-- State-based filtering instead of Radix Tabs
-- "My Program" is the first/default tab
+### 3. Rename levels to Level 1, Level 2, Level 3
 
-**My Program tab content:**
-- Query the user's enrollments joined with profession_categories to show which career track they are enrolled in
-- Show an "Active" card with progress if enrolled
-- Show a "Completed" section if any tracks are fully completed
-- If not enrolled, show an empty state prompting them to browse academies
-
-**Academy tabs (Executive, Freelancing, Entrepreneurship):**
-- Filter academies by `academy_type` or slug
-- Display schools and profession lines exactly as they do now (the card grid is good)
-- Keep the same profession card design with AI instructor badge
-
-### No changes to other files
-
-The icon-strip pattern replaces the horizontal TabsList that was misaligned. This brings Tracks in line with the visual style of All Courses and Events tabs.
+In `AppProfessionDetail.tsx`, rename the tabs from "Foundation / Intermediate / Executive" to "Level 1 / Level 2 / Level 3".
 
 ## Technical Details
 
-### Database Migration
+### Database Changes
 
+**Insert new schools under Freelancing Academy:**
 ```sql
--- Rename Technical Academy to Freelancing Academy
-UPDATE academies 
-SET name = 'Freelancing Academy', 
-    slug = 'freelancing-academy', 
-    academy_type = 'freelancing',
-    description = 'Build marketable skills for freelancing platforms like Fiverr, Upwork, and the gig economy.'
-WHERE slug = 'technical-academy';
-
--- Insert Entrepreneurship Academy
-INSERT INTO academies (name, slug, academy_type, description, display_order, is_active)
-VALUES ('Entrepreneurship Academy', 'entrepreneurship-academy', 'entrepreneurship', 
-        'Launch and grow your own business with practical entrepreneurship skills.', 3, true);
-
--- Rename schools under Freelancing Academy to match new focus
-UPDATE schools SET name = 'School of Digital Freelancing', slug = 'school-of-digital-freelancing' 
-WHERE slug = 'school-of-skilled-trades-engineering';
--- (similar updates for other Technical Academy schools)
-
--- Create starter schools for Entrepreneurship Academy
 INSERT INTO schools (name, slug, academy_id, description, display_order, is_active)
 VALUES 
-  ('School of Startup & Venture', 'school-of-startup-venture', 
-   (SELECT id FROM academies WHERE slug = 'entrepreneurship-academy'),
-   'From idea validation to funding and scaling.', 1, true),
-  ('School of E-Commerce', 'school-of-ecommerce',
-   (SELECT id FROM academies WHERE slug = 'entrepreneurship-academy'),
-   'Build and grow online businesses and digital stores.', 2, true),
-  ('School of Social Enterprise', 'school-of-social-enterprise',
-   (SELECT id FROM academies WHERE slug = 'entrepreneurship-academy'),
-   'Create businesses that drive social impact.', 3, true);
+  ('School of Digital Freelancing', 'school-of-digital-freelancing',
+   (SELECT id FROM academies WHERE slug = 'freelancing-academy'),
+   'Master in-demand digital skills for remote freelancing platforms.', 1, true),
+  ('School of Creative Services', 'school-of-creative-services',
+   (SELECT id FROM academies WHERE slug = 'freelancing-academy'),
+   'Design, write, and create for clients worldwide.', 2, true),
+  ('School of Technical Services', 'school-of-technical-services',
+   (SELECT id FROM academies WHERE slug = 'freelancing-academy'),
+   'Build websites, apps, and technical solutions as a freelancer.', 3, true),
+  ('School of Media & Production', 'school-of-media-production',
+   (SELECT id FROM academies WHERE slug = 'freelancing-academy'),
+   'Video, audio, and motion graphics services.', 4, true),
+  ('School of Consulting', 'school-of-consulting',
+   (SELECT id FROM academies WHERE slug = 'freelancing-academy'),
+   'Offer expert advisory and coaching services.', 5, true);
 ```
+
+**Insert new school for Executive Academy:**
+```sql
+INSERT INTO schools (name, slug, academy_id, description, display_order, is_active)
+VALUES 
+  ('School of Finance & Accounting', 'school-of-finance-accounting',
+   (SELECT id FROM academies WHERE slug = 'executive-academy'),
+   'Financial analysis, auditing, tax advisory, and investment management.', 5, true);
+```
+
+**Insert new school for Entrepreneurship Academy:**
+```sql
+INSERT INTO schools (name, slug, academy_id, description, display_order, is_active)
+VALUES 
+  ('School of Small Business', 'school-of-small-business',
+   (SELECT id FROM academies WHERE slug = 'entrepreneurship-academy'),
+   'Start and run everyday businesses from retail to food services.', 4, true);
+```
+
+**Insert new profession categories (programs) for all new schools** -- each program as a `profession_categories` row with the correct `school_id`. Programs for existing schools (like School of Technology) that are missing will also be added.
 
 ### File: `src/components/learning/TracksTab.tsx`
 
-- Remove Radix `Tabs`, `TabsList`, `TabsTrigger`, `TabsContent` imports
-- Add icon-strip navigation with `grid grid-cols-4 gap-2`
-- Add state: `selectedCategory` with values `'my-program' | 'executive' | 'freelancing' | 'entrepreneurship'`
-- Default to `'my-program'`
-- For "My Program": fetch user's talent_id from auth, query enrollments joined with content (profession_categories) to show active/completed tracks
-- For academy tabs: filter the existing `academies` data by `academy_type` and render schools + professions as before
-- Use `BookOpen`, `Building2`, `Laptop`, `Rocket` icons from lucide-react
+**Change `renderAcademy`** to show only school cards (remove the nested profession cards loop):
+- Each school rendered as a compact card with name, description, and "View Programs" button
+- Clicking navigates to `/app/learning/tracks/school/{school-slug}`
+
+### New Route + Page: School Detail
+
+**File: `src/pages/app/SchoolDetail.tsx`** (new)
+- Fetches school by slug, its parent academy, and all profession_categories under it
+- Displays school name, academy badge, description
+- Grid of profession cards (same design currently in TracksTab's `renderAcademy`)
+- Back button to return to tracks
+
+**File: `src/lib/routes.ts`** and **`src/App.tsx`**
+- Add route `/app/learning/tracks/school/:slug` pointing to SchoolDetail
+
+### File: `src/pages/app/AppProfessionDetail.tsx`
+
+**Rename level tabs** (lines 246-255):
+- "Foundation" becomes "Level 1"
+- "Intermediate" becomes "Level 2"  
+- "Executive" becomes "Level 3"
+- Update the TabsTrigger labels and the fallback text in empty states
 
 ### No new dependencies needed
 
