@@ -1,86 +1,106 @@
 
+# Events Tab & In-Context Navigation Fix
 
-# All Courses & Events Tab Redesign
+## Problems Identified
 
-## Overview
+1. **Competition detail navigates away from Learning Hub** -- Clicking a competition card in Events tab navigates to `/app/learning/competitions/:slug`, which completely replaces the Learning Hub. The top-level tabs (My Courses, Tracks, All Courses, Events) disappear.
+2. **Back button goes to wrong page** -- CompetitionDetail's back button navigates to `/app/learning/competitions` (the standalone Competitions page), not back to the Events tab in Learning Hub.
+3. **Course detail also navigates away** -- Same issue: clicking a course leaves the Learning Hub entirely, losing the tab context.
+4. **Icon alignment in Events tab** -- The 4 filter icons (All, Webinars, In-Person, Compete) use `flex gap-4` which leaves uneven blank space on the right. Should be evenly distributed.
+5. **Duplicate "Submit Entry" button** -- CompetitionDetail shows both an inline Submit Entry button (line 286) and a sticky bottom bar one (line 339) on mobile.
 
-Replace the horizontal scrolling tab strips in both **All Courses** and **Events** tabs with an **icon-based category selector** (matching the Learning Hub's icon strip pattern). Also integrate **Competitions** into the Events tab as a new category.
+## Solution: Inline Detail Views Within Learning Hub
 
-## Visual Layout
+Instead of navigating to separate pages, load detail views **inline below the persistent tab bar**. The Learning Hub tabs always stay visible.
 
-Both tabs will use the same pattern -- a grid of circular icon buttons for filtering:
+### Architecture
 
 ```text
-ALL COURSES TAB:
-+-----------------------------------------------+
-| [All]  [Courses]  [Webinars]  [Classes]       |
-|  grid    book      calendar    users           |
-+-----------------------------------------------+
-|  Course cards (filtered)                       |
-+-----------------------------------------------+
-
-EVENTS TAB:
-+-----------------------------------------------+
-| [All]  [Webinars]  [In-Person]  [Competitions]|
-|  grid    video      map-pin      trophy        |
-+-----------------------------------------------+
-|  Today / Upcoming / Past sections              |
-|  + Competition cards when that filter is on    |
-+-----------------------------------------------+
+LearningHub
+  [My Courses] [Tracks] [All Courses] [Events]   <-- always visible
+  +-------------------------------------------------+
+  | Events tab content OR CompetitionDetail inline   |
+  | Courses tab content OR CourseDetail inline        |
+  +-------------------------------------------------+
 ```
+
+When a user clicks a competition or course, the tab content area swaps to show the detail view with a back button that returns to the list -- all without leaving the Learning Hub.
 
 ## Changes
 
-### 1. CoursesTab -- Icon category selector (`src/components/learning/CoursesTab.tsx`)
+### 1. Add sub-navigation state to LearningHub (`src/pages/app/LearningHub.tsx`)
 
-- Remove the `Tabs` / `TabsList` / `TabsTrigger` components
-- Replace with a row of circular icon buttons matching the Learning Hub's icon strip style
-- Categories: **All** (LayoutGrid), **Courses** (BookOpen), **Webinars** (Calendar), **Classes** (Users)
-- Remove "Videos" and "Seminar" from the filters (free videos are excluded from this tab; seminars go under Events)
-- Active icon gets `bg-primary text-primary-foreground`; inactive gets `bg-primary/10 text-primary`
-- Each button shows icon + label text below (same pattern as LearningHub tab selector)
+- Add state for detail view: `detailView: { type: 'competition' | 'course', slug: string } | null`
+- When `detailView` is set, render the detail component inline instead of the tab content, while keeping the tab bar visible
+- Pass an `onOpenDetail` callback to EventsTab and CoursesTab
+- Pass an `onBack` callback to detail components that clears `detailView`
+- The tab bar remains on screen at all times
 
-### 2. EventsTab -- Icon category selector + Competitions (`src/components/learning/EventsTab.tsx`)
+### 2. Make CompetitionDetail embeddable (`src/pages/app/CompetitionDetail.tsx`)
 
-- Remove the `Tabs` / `TabsList` / `TabsTrigger` components
-- Replace with the same icon strip pattern
-- Categories: **All** (LayoutGrid), **Webinars** (Video), **In-Person** (MapPin), **Competitions** (Trophy)
-- When "Competitions" is selected, fetch from the `competitions` table instead of `content`, and render competition cards (reuse the card design from `Competitions.tsx` -- featured image, status badge, prize info, dates)
-- When "All" is selected, show both events and competitions together, with competitions in their own section
-- Make the event image use `h-32` instead of `aspect-video` to match the compact course card style
+- Add optional props: `inlineSlug?: string` and `onBack?: () => void`
+- When `inlineSlug` is provided, use it instead of `useParams().slug`
+- When `onBack` is provided, use it for the back button instead of `navigate('/app/learning/competitions')`
+- Remove the standalone page wrapper padding (controlled by parent)
+- Fix duplicate Submit Entry: hide inline button on mobile (same pattern as AppCourseDetail)
 
-### 3. Extract competition card for reuse
+### 3. Make AppCourseDetail embeddable (`src/pages/app/AppCourseDetail.tsx`)
 
-- Extract the competition card markup from `src/pages/app/Competitions.tsx` into a small inline component within EventsTab (or a shared `CompetitionCard`) to avoid duplicating the full page logic
-- The card shows: featured image, title, status badge (active/upcoming/completed), prize summary, deadline, and navigates to `/app/learning/competitions/{slug}` on click
+- Add optional props: `inlineSlug?: string` and `onBack?: () => void`
+- Same pattern as CompetitionDetail -- use inline props when available, fall back to router params
+
+### 4. Update EventsTab to use inline navigation (`src/components/learning/EventsTab.tsx`)
+
+- Accept an `onOpenCompetition?: (slug: string) => void` prop
+- In CompetitionCard's `onClick`, call `onOpenCompetition(slug)` instead of `navigate()`
+- Fix icon alignment: change `flex gap-4` to `grid grid-cols-4` so icons distribute evenly across the width
+
+### 5. Update CoursesTab to use inline navigation (`src/components/learning/CoursesTab.tsx`)
+
+- Accept an `onOpenCourse?: (slug: string) => void` prop
+- In course card's `onClick`, call `onOpenCourse(slug)` instead of `navigate()`
+
+### 6. Keep standalone routes working
+
+- The existing routes `/app/learning/competitions/:slug` and `/app/courses/:slug` continue to work for direct URL access (bookmarks, sharing)
+- The detail components detect whether they're inline (props) or standalone (router params) and behave accordingly
 
 ## Technical Details
 
-### File: `src/components/learning/CoursesTab.tsx`
+### File: `src/pages/app/LearningHub.tsx`
 
-- Remove `Tabs`, `TabsList`, `TabsTrigger` imports
-- Add `LayoutGrid` import from lucide-react
-- Define filter options array: `[{ key: "all", icon: LayoutGrid, label: "All" }, { key: "recorded_course", icon: BookOpen, label: "Courses" }, { key: "live_webinar", icon: Calendar, label: "Webinars" }, { key: "batch_class", icon: Users, label: "Classes" }]`
-- Replace the Tabs block with a `div` using `flex gap-4 justify-start` containing circular icon buttons
-- Each button: `div` with `h-10 w-10 rounded-full flex items-center justify-center` + label `span` below
-- Default filter remains "all", which excludes `free_video` (current behavior preserved)
+- Add state: `const [detailView, setDetailView] = useState<{ type: 'competition' | 'course'; slug: string } | null>(null)`
+- When a tab changes, clear detailView: add `setDetailView(null)` to tab click handler
+- In the tab content section:
+  - If `detailView?.type === 'competition'`, render `<CompetitionDetail inlineSlug={detailView.slug} onBack={() => setDetailView(null)} />`
+  - If `detailView?.type === 'course'`, render `<AppCourseDetail inlineSlug={detailView.slug} onBack={() => setDetailView(null)} />`
+  - Otherwise render the normal tab content
+- Pass callbacks to EventsTab: `onOpenCompetition={(slug) => setDetailView({ type: 'competition', slug })}`
+- Pass callbacks to CoursesTab: `onOpenCourse={(slug) => setDetailView({ type: 'course', slug })}`
 
 ### File: `src/components/learning/EventsTab.tsx`
 
-- Remove `Tabs`, `TabsList`, `TabsTrigger` imports
-- Add `Trophy`, `LayoutGrid` imports from lucide-react
-- Add a new state value `'competitions'` to the event type
-- Add a separate `useQuery` for competitions (from `competitions` table) that only runs when the filter is "all" or "competitions"
-- Replace the Tabs block with the icon strip (4 icons in a grid/flex row)
-- When filter is "competitions": show only competition cards
-- When filter is "all": show events sections (Today, Upcoming, Past) plus a "Competitions" section
-- Reduce event card image from `aspect-video` to `h-32`
-- Competition card: featured image (`h-32`), title, status badge, prize count, deadline -- navigates to detail page on click
+- Add prop: `onOpenCompetition?: (slug: string) => void`
+- Line 141: Change `onClick={() => navigate(...)}` to `onClick={() => onOpenCompetition ? onOpenCompetition(competition.slug) : navigate(...)}`
+- Line 206: Change `flex gap-4` to `grid grid-cols-4` for even icon distribution
 
-### File: `src/pages/app/Competitions.tsx`
+### File: `src/components/learning/CoursesTab.tsx`
 
-- No changes needed; standalone page continues to work for direct URL access
+- Add prop: `onOpenCourse?: (slug: string) => void`
+- In course card click handler: use `onOpenCourse` callback when available, fall back to navigate
+
+### File: `src/pages/app/CompetitionDetail.tsx`
+
+- Add optional props interface: `{ inlineSlug?: string; onBack?: () => void }`
+- Use `inlineSlug || useParams().slug` for the slug
+- Use `onBack || (() => navigate('/app/learning/competitions'))` for back button
+- Add `hidden md:block` to inline Submit Entry button (line 283-326) to fix duplicate on mobile
+
+### File: `src/pages/app/AppCourseDetail.tsx`
+
+- Add optional props: `{ inlineSlug?: string; onBack?: () => void }`
+- Use `inlineSlug || useParams().slug` for the slug
+- Use `onBack || (() => navigate(-1))` for back button
 
 ### No database changes required
 ### No new dependencies required
-
