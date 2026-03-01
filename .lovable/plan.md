@@ -1,106 +1,79 @@
 
-# Events Tab & In-Context Navigation Fix
+
+# Events Detail View -- Compact & Aligned Redesign
 
 ## Problems Identified
 
-1. **Competition detail navigates away from Learning Hub** -- Clicking a competition card in Events tab navigates to `/app/learning/competitions/:slug`, which completely replaces the Learning Hub. The top-level tabs (My Courses, Tracks, All Courses, Events) disappear.
-2. **Back button goes to wrong page** -- CompetitionDetail's back button navigates to `/app/learning/competitions` (the standalone Competitions page), not back to the Events tab in Learning Hub.
-3. **Course detail also navigates away** -- Same issue: clicking a course leaves the Learning Hub entirely, losing the tab context.
-4. **Icon alignment in Events tab** -- The 4 filter icons (All, Webinars, In-Person, Compete) use `flex gap-4` which leaves uneven blank space on the right. Should be evenly distributed.
-5. **Duplicate "Submit Entry" button** -- CompetitionDetail shows both an inline Submit Entry button (line 286) and a sticky bottom bar one (line 339) on mobile.
+From the current Competition Detail page on mobile:
 
-## Solution: Inline Detail Views Within Learning Hub
+1. **Oversized layout** -- The `md:grid-cols-3` grid creates separate full-width Card blocks for "About", "Rules", "Key Info", and "Prizes" that each take up excessive vertical space with large padding
+2. **Cards within cards** -- Each section is wrapped in a `Card > CardHeader > CardContent` pattern that adds ~48px padding per section, making everything feel bloated on mobile
+3. **Prizes section is hollow** -- Shows just numbers (1, 2, 3) with badge outlines, no useful prize detail
+4. **Header area is oversized** -- Badges, title, and trophy icon use `text-xl font-bold` with `mb-6` gaps creating excessive whitespace
+5. **Featured image takes too much space** -- `h-44 sm:h-64` is tall for a mobile detail view
+6. **Sidebar info cards redundant on mobile** -- Duration, deadline, prizes are in separate cards that could be condensed into a compact info strip
 
-Instead of navigating to separate pages, load detail views **inline below the persistent tab bar**. The Learning Hub tabs always stay visible.
-
-### Architecture
-
-```text
-LearningHub
-  [My Courses] [Tracks] [All Courses] [Events]   <-- always visible
-  +-------------------------------------------------+
-  | Events tab content OR CompetitionDetail inline   |
-  | Courses tab content OR CourseDetail inline        |
-  +-------------------------------------------------+
-```
-
-When a user clicks a competition or course, the tab content area swaps to show the detail view with a back button that returns to the list -- all without leaving the Learning Hub.
+The same issues apply when viewing webinar/in-person event details (AppCourseDetail), though that page is already in better shape from previous fixes.
 
 ## Changes
 
-### 1. Add sub-navigation state to LearningHub (`src/pages/app/LearningHub.tsx`)
+### 1. Flatten CompetitionDetail layout (`src/pages/app/CompetitionDetail.tsx`)
 
-- Add state for detail view: `detailView: { type: 'competition' | 'course', slug: string } | null`
-- When `detailView` is set, render the detail component inline instead of the tab content, while keeping the tab bar visible
-- Pass an `onOpenDetail` callback to EventsTab and CoursesTab
-- Pass an `onBack` callback to detail components that clears `detailView`
-- The tab bar remains on screen at all times
+**Header**: Tighten spacing -- reduce `mb-6` to `mb-3`, keep title at `text-lg` instead of `text-xl`.
 
-### 2. Make CompetitionDetail embeddable (`src/pages/app/CompetitionDetail.tsx`)
+**Featured image**: Reduce height from `h-44` to `h-36` on mobile for a more compact feel.
 
-- Add optional props: `inlineSlug?: string` and `onBack?: () => void`
-- When `inlineSlug` is provided, use it instead of `useParams().slug`
-- When `onBack` is provided, use it for the back button instead of `navigate('/app/learning/competitions')`
-- Remove the standalone page wrapper padding (controlled by parent)
-- Fix duplicate Submit Entry: hide inline button on mobile (same pattern as AppCourseDetail)
+**Replace 3-column grid with single-column flow**: Remove `grid gap-6 md:grid-cols-3` and `md:col-span-2`. Stack everything vertically in a single flow.
 
-### 3. Make AppCourseDetail embeddable (`src/pages/app/AppCourseDetail.tsx`)
+**Key Info strip**: Instead of a separate Card, render Duration, Deadline, and Participants as a compact horizontal strip (2-col grid of small info items with icons), similar to AppCourseDetail's stats grid. No card wrapper -- just `bg-muted/50 rounded-lg p-3` items.
 
-- Add optional props: `inlineSlug?: string` and `onBack?: () => void`
-- Same pattern as CompetitionDetail -- use inline props when available, fall back to router params
+**Description**: Replace `Card > CardHeader > CardContent` with a simple section: `h3` heading + `p` text. No card border/shadow.
 
-### 4. Update EventsTab to use inline navigation (`src/components/learning/EventsTab.tsx`)
+**Rules**: Same flattening -- heading + text, no Card wrapper.
 
-- Accept an `onOpenCompetition?: (slug: string) => void` prop
-- In CompetitionCard's `onClick`, call `onOpenCompetition(slug)` instead of `navigate()`
-- Fix icon alignment: change `flex gap-4` to `grid grid-cols-4` so icons distribute evenly across the width
+**Prizes**: Render inline below rules as a compact list. If prize data is just numbers, show "Prize 1", "Prize 2", etc. If prizes have names/descriptions, show those.
 
-### 5. Update CoursesTab to use inline navigation (`src/components/learning/CoursesTab.tsx`)
+**My Submission**: Keep as a Card (it deserves visual distinction), but tighten padding.
 
-- Accept an `onOpenCourse?: (slug: string) => void` prop
-- In course card's `onClick`, call `onOpenCourse(slug)` instead of `navigate()`
+### 2. Tighten EventCard in EventsTab (`src/components/learning/EventsTab.tsx`)
 
-### 6. Keep standalone routes working
+No changes needed -- the event list cards look good already. The detail view (AppCourseDetail) was already improved in previous iterations.
 
-- The existing routes `/app/learning/competitions/:slug` and `/app/courses/:slug` continue to work for direct URL access (bookmarks, sharing)
-- The detail components detect whether they're inline (props) or standalone (router params) and behave accordingly
+### 3. Ensure consistent compact styling for AppCourseDetail (verify)
+
+AppCourseDetail already uses a flat layout with stats grid. No further changes needed -- it's the model we're aligning CompetitionDetail to follow.
+
+---
 
 ## Technical Details
 
-### File: `src/pages/app/LearningHub.tsx`
-
-- Add state: `const [detailView, setDetailView] = useState<{ type: 'competition' | 'course'; slug: string } | null>(null)`
-- When a tab changes, clear detailView: add `setDetailView(null)` to tab click handler
-- In the tab content section:
-  - If `detailView?.type === 'competition'`, render `<CompetitionDetail inlineSlug={detailView.slug} onBack={() => setDetailView(null)} />`
-  - If `detailView?.type === 'course'`, render `<AppCourseDetail inlineSlug={detailView.slug} onBack={() => setDetailView(null)} />`
-  - Otherwise render the normal tab content
-- Pass callbacks to EventsTab: `onOpenCompetition={(slug) => setDetailView({ type: 'competition', slug })}`
-- Pass callbacks to CoursesTab: `onOpenCourse={(slug) => setDetailView({ type: 'course', slug })}`
-
-### File: `src/components/learning/EventsTab.tsx`
-
-- Add prop: `onOpenCompetition?: (slug: string) => void`
-- Line 141: Change `onClick={() => navigate(...)}` to `onClick={() => onOpenCompetition ? onOpenCompetition(competition.slug) : navigate(...)}`
-- Line 206: Change `flex gap-4` to `grid grid-cols-4` for even icon distribution
-
-### File: `src/components/learning/CoursesTab.tsx`
-
-- Add prop: `onOpenCourse?: (slug: string) => void`
-- In course card click handler: use `onOpenCourse` callback when available, fall back to navigate
-
 ### File: `src/pages/app/CompetitionDetail.tsx`
 
-- Add optional props interface: `{ inlineSlug?: string; onBack?: () => void }`
-- Use `inlineSlug || useParams().slug` for the slug
-- Use `onBack || (() => navigate('/app/learning/competitions'))` for back button
-- Add `hidden md:block` to inline Submit Entry button (line 283-326) to fix duplicate on mobile
+**Header section (lines 131-146)**:
+- Change `mb-6` to `mb-3` on the header container
+- Change title from `text-xl` to `text-lg`
 
-### File: `src/pages/app/AppCourseDetail.tsx`
+**Featured image (lines 149-157)**:
+- Change `h-44 sm:h-64` to `h-36 sm:h-52`
+- Change `mb-6` to `mb-4`
 
-- Add optional props: `{ inlineSlug?: string; onBack?: () => void }`
-- Use `inlineSlug || useParams().slug` for the slug
-- Use `onBack || (() => navigate(-1))` for back button
+**Main content (lines 160-341)**:
+- Remove the `grid gap-6 md:grid-cols-3` wrapper and both column containers (`md:col-span-2` and the sidebar `div`)
+- Replace with a single `space-y-4` container holding everything in order:
 
-### No database changes required
-### No new dependencies required
+1. **Key info strip** -- a `grid grid-cols-2 gap-3` with small `bg-muted/50 rounded-lg p-3` items for Duration, Deadline, Max Participants (same pattern as AppCourseDetail stats grid). Each item: icon in a small circle + label + value.
+
+2. **Description section** -- plain `div` with `h3 text-base font-semibold mb-2` heading "About" + `p text-sm text-muted-foreground` text. No Card wrapper.
+
+3. **Rules section** (if exists) -- same flat pattern: heading + text.
+
+4. **Prizes section** (if exists) -- `h3` heading + compact list with numbered badges inline.
+
+5. **My Submission** (if exists) -- keep as Card with tighter padding (`p-4` instead of default `p-6`).
+
+**Sidebar Submit button (lines 291-340)**: Move the submit dialog trigger into the flow (above the sticky bar code), remove the sidebar wrapper entirely.
+
+### No other files need changes
+### No database changes
+### No new dependencies
+
