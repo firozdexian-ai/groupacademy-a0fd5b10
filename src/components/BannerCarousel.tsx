@@ -14,9 +14,10 @@ interface Banner {
 
 interface BannerCarouselProps {
   compact?: boolean;
+  placement?: string;
 }
 
-export const BannerCarousel = ({ compact = false }: BannerCarouselProps) => {
+export const BannerCarousel = ({ compact = false, placement = "carousel" }: BannerCarouselProps) => {
   const navigate = useNavigate();
   const [banners, setBanners] = useState<Banner[]>([]);
   const [currentIndex, setCurrentIndex] = useState(0);
@@ -26,7 +27,7 @@ export const BannerCarousel = ({ compact = false }: BannerCarouselProps) => {
 
   useEffect(() => {
     loadBanners();
-  }, []);
+  }, [placement]);
 
   useEffect(() => {
     if (banners.length > 1) {
@@ -47,7 +48,7 @@ export const BannerCarousel = ({ compact = false }: BannerCarouselProps) => {
         .from("banners")
         .select("*")
         .eq("is_active", true)
-        .eq("placement", "carousel")
+        .eq("placement", placement)
         .order("display_order");
 
       if (error) throw error;
