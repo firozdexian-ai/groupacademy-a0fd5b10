@@ -1,34 +1,39 @@
 
-# Fix AI Instructor Chat + School of Business Audit
 
-## School of Business: COMPLETE
+# School of Technology: Program Structure Fix
 
-All 5 programs are fully built out:
-- Sales & Distribution: 14 courses, 60 modules, AI Instructor (Sarah Rahman)
-- Banking & Finance: 14 courses, 61 modules, AI Instructor (Farhan Ahmed)
-- Marketing & Brand Management: 14 courses, 60 modules, AI Instructor (Nadia Chowdhury)
-- Operations & Supply Chain: 14 courses, 62 modules, AI Instructor (Rafiq Hasan)
-- Healthcare & Pharma: 14 courses, 62 modules, AI Instructor (Dr. Fahmida Akter)
+## What We're Doing
+Two changes to set up the School of Technology with 5 globally-relevant programs before we start building curricula.
 
-No missing programs, courses, or instructors.
+## Change 1: Rename "Technology & IT" to "Software Engineering"
+- Update name from "Technology & IT" to "Software Engineering"
+- Update slug from "technology-it" to "software-engineering"
+- Update icon from "laptop" to "code" (more fitting)
+- Program ID: `1e71843c-d202-4d96-834e-04fa6c784f16`
 
-## AI Instructor Chat Fix (3 bugs)
+## Change 2: Add "AI & Machine Learning" as a new program
+- Insert a new program into `profession_categories`
+- Name: AI & Machine Learning
+- Slug: ai-machine-learning
+- Icon: brain
+- School ID: `bc8f17f4-6a5a-4a6d-92ab-52d245d16998` (School of Technology)
+- Description: Master artificial intelligence, machine learning, deep learning, NLP, and MLOps to build intelligent systems and drive innovation.
+- Career outcome: AI/ML Engineer, Data Scientist (ML), Research Engineer
+- Display order: 5
 
-### Bug 1: Variable scoping error in edge function
-In `supabase/functions/ai-instructor-chat/index.ts`, the `instructor` variable is declared inside the `if (professionLineId)` block (line 64) but the curriculum knowledge base code on line 113 references `instructor` outside that block. This causes a ReferenceError at runtime.
+## Final Program Lineup (School of Technology)
 
-**Fix:** Move `instructor` declaration outside the `if` block so it remains accessible to the curriculum KB loader.
+| Order | Program | Icon | Status |
+|-------|---------|------|--------|
+| 2 | Data Science & Analytics | bar-chart-2 | Existing (unchanged) |
+| 3 | Software Engineering | code | Renamed from "Technology & IT" |
+| 3 | Cybersecurity | shield | Existing (unchanged) |
+| 4 | Cloud & DevOps | cloud | Existing (unchanged) |
+| 5 | AI & Machine Learning | brain | New |
 
-### Bug 2: Auth token not passed explicitly
-On line 36, `getUser()` is called without the token. Per the project's edge function auth pattern, stateless functions must call `getUser(token)` with the explicit token extracted from the Authorization header.
+## Technical Details
+- **UPDATE** `profession_categories` for the rename (name, slug, icon)
+- **INSERT** 1 new row into `profession_categories` for AI & ML
+- **No code changes** needed -- pages load dynamically from the database
+- After this, we proceed program-by-program with curriculum + AI instructor build-out
 
-**Fix:** Extract the token from the auth header and pass it to `getUser(token)`.
-
-### Bug 3: AIChatPanel sends anon key instead of user session token
-In `src/components/ai-instructor/AIChatPanel.tsx` (line 71), the Authorization header uses `VITE_SUPABASE_PUBLISHABLE_KEY` (the anon key) instead of the logged-in user's access token. This is what causes the "invalid claim: missing sub claim" error seen in the logs.
-
-**Fix:** Get the user's session via `supabase.auth.getSession()` and use the actual access token in the Authorization header, similar to how `useAIGeneralChat.ts` does it.
-
-### Files to change
-1. `supabase/functions/ai-instructor-chat/index.ts` -- fix instructor scoping + auth token passing
-2. `src/components/ai-instructor/AIChatPanel.tsx` -- use user session token instead of anon key
