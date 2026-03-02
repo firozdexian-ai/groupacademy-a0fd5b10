@@ -1,51 +1,103 @@
 
-# Add AI Instructor for Banking & Finance + Enhanced Knowledge Base
+# Sales & Distribution -- Complete Curriculum Build-Out
 
-## Overview
-Create an AI Instructor for the Banking & Finance program that uses all 62 module descriptions/talking points as its knowledge base. Also enhance the edge function to automatically pull all course and module content for the program, so the AI has full curriculum context in every conversation.
+## Current State
+- **Program ID**: `cd947727-350e-4fd3-813b-0034d4cf208e`
+- **Existing**: 3 Foundation courses with 12 modules already populated
+- **AI Instructor**: Sarah Rahman (already active)
+- **Missing**: 2 more Foundation courses + 5 Intermediate + 4 Executive courses
 
-## What Changes
+## New Courses to Add
 
-### 1. Database: Insert Banking & Finance AI Instructor
-Insert a new record into `ai_instructors` for the Banking & Finance program (`profession_line_id: a1c5d82c-1a1a-4b0e-89e8-19c264a3a915`).
+### Foundation Level (2 additional courses, total becomes 5)
 
-**Instructor persona:**
-- **Name**: Farhan Ahmed
-- **Persona**: A seasoned banking professional with 18+ years in commercial and investment banking across Bangladesh. Former VP at a leading commercial bank, now dedicated to training the next generation of bankers. Practical, detail-oriented, uses real examples from Bangladesh Bank regulations, local commercial banks (e.g., BRAC Bank, City Bank, Dutch-Bangla Bank), and international banking standards.
-- **Expertise areas**: Commercial Banking, Credit Analysis, Trade Finance, Treasury, Risk Management, Basel Framework, Digital Banking, Wealth Management, Corporate Finance, Banking Regulations
-- **System prompt**: Comprehensive prompt covering all 14 courses across Foundation/Intermediate/Executive levels, referencing Bangladesh banking context
+4. **Negotiation & Closing Techniques** (4 modules)
+   - Understanding Buyer Psychology in Bangladesh Markets
+   - Objection Handling Frameworks for B2B and B2C
+   - Closing Strategies: From Trial Close to Final Agreement
+   - Post-Sale Follow-Up and Relationship Building
 
-### 2. Edge Function: Enhance Knowledge Base Loading
-Update `supabase/functions/ai-instructor-chat/index.ts` to automatically fetch **all courses and module descriptions** for the instructor's program when a conversation starts. This gives the AI full curriculum knowledge without needing each module to be passed individually.
+5. **Introduction to Trade Marketing** (4 modules)
+   - What is Trade Marketing vs Consumer Marketing
+   - Point-of-Sale Materials & In-Store Promotions
+   - Trade Schemes, Discounts & Incentive Structures
+   - Measuring Trade Promotion Effectiveness (ROI)
 
-Current behavior: Only loads the specific course or module context being viewed.
+### Intermediate Level (5 courses)
 
-New behavior: Additionally loads a summary of ALL courses and their module talking points for the program, so the AI can reference any part of the curriculum in any conversation.
+1. **Advanced Distribution Network Design** (5 modules)
+   - Mapping Distribution Tiers: Super Stockist, Distributor, Sub-Distributor, Retailer
+   - Urban vs Rural Distribution Strategy in Bangladesh
+   - Warehouse & Hub Location Planning
+   - Last-Mile Delivery Challenges & Solutions
+   - Distribution Cost Analysis & Margin Optimization
 
-The enhancement adds a new query that fetches all `content` + `course_modules` for the `profession_line_id` and appends a structured "FULL CURRICULUM KNOWLEDGE BASE" section to the system prompt. This is capped to prevent token overflow (module descriptions truncated if needed).
+2. **Key Account Management** (4 modules)
+   - Identifying and Segmenting Key Accounts
+   - Building Strategic Account Plans
+   - Joint Business Planning with Retailers & Distributors
+   - Managing Multi-Stakeholder Relationships
 
-### 3. No Frontend Changes Needed
-The `AIChatPanel` component already passes `professionLineId` to the edge function, and the `DiscussStage` in the course player already renders the chat. The `SchoolDetail` page already shows an indicator when an AI instructor exists.
+3. **Sales Team Leadership & Coaching** (5 modules)
+   - Recruiting and Onboarding Sales Executives
+   - Setting Targets: Top-Down vs Bottom-Up Approaches
+   - Field Coaching: Structured Market Visits with Your Team
+   - Motivating Sales Teams: Incentives, Recognition & Culture
+   - Handling Underperformance: PIPs and Difficult Conversations
+
+4. **Modern Trade & E-Commerce Sales** (4 modules)
+   - Understanding Modern Trade Formats (Supermarkets, Chain Stores) in Bangladesh
+   - Category Management & Planogram Negotiation
+   - E-Commerce Channel Strategy: Marketplace vs D2C
+   - Omnichannel Sales Integration & Fulfillment
+
+5. **Sales Analytics & Forecasting** (5 modules)
+   - Building Sales Dashboards: Key Metrics That Matter
+   - Demand Forecasting Methods: Moving Average, Regression, Judgmental
+   - SKU-Level Analysis & Product Portfolio Optimization
+   - Territory Performance Benchmarking & Gap Analysis
+   - Using Data to Drive Route-to-Market Decisions
+
+### Executive Level (4 courses)
+
+1. **Strategic Sales Management** (4 modules)
+   - Designing Go-to-Market Strategy for New Products
+   - Sales Organization Design: Geography vs Product vs Channel
+   - Revenue Growth Frameworks: Ansoff Matrix in Sales Context
+   - Sales Budget Planning & P&L Ownership
+
+2. **National Distribution & Expansion Strategy** (5 modules)
+   - Assessing Market Potential Across Bangladesh Divisions
+   - Distributor Appointment, Evaluation & Termination
+   - Building a National Coverage Model: Numeric & Weighted Distribution
+   - Channel Conflict Resolution & Multi-Channel Governance
+   - Scaling Distribution for New Categories (FMCG, Pharma, Consumer Electronics)
+
+3. **Trade & Shopper Marketing Strategy** (4 modules)
+   - Shopper Behavior Research & In-Store Decision Making
+   - Designing Annual Trade Marketing Calendars
+   - Category Captainship & Retailer Partnership Models
+   - Measuring ROI on Trade Spend & Below-the-Line Activities
+
+4. **Sales Leadership & Business Development** (4 modules)
+   - Building a Sales Culture: Vision, Values & Accountability
+   - Cross-Functional Leadership: Sales + Marketing + Supply Chain Alignment
+   - Developing New Business Channels & Strategic Partnerships
+   - Future of Sales: AI Tools, CRM Automation & Data-Driven Selling
 
 ## Technical Details
 
-### AI Instructor Insert (Database)
-```text
-Table: ai_instructors
-Fields: profession_line_id, name, persona, system_prompt, expertise_areas, is_active
-```
+### Database Operations
+- **Delete**: 0 records (keep all existing Foundation courses and modules)
+- **Insert**: 16 new courses into `content` table with correct `profession_line_id` and `profession_level_id`
+- **Insert**: ~62 new modules into `course_modules` with talking-point descriptions
+- All courses: `content_type = 'recorded_course'`, `is_published = true`
 
-### Edge Function Enhancement (ai-instructor-chat/index.ts)
-Add after existing instructor fetch (around line 78):
+### Level IDs
+- Foundation: `9578ed0c-dfc6-4e62-a1b6-0a96161cc4fe`
+- Intermediate: `7e997803-47f3-423e-9790-da9612328cf5`
+- Executive: `b7976d18-957b-4dc4-8a95-bbfd44877225`
 
-```text
-1. Query: SELECT title, description FROM content WHERE profession_line_id = X
-2. For each course: SELECT title, description FROM course_modules WHERE content_id = course.id ORDER BY display_order
-3. Build "CURRICULUM KNOWLEDGE BASE" section with course titles and module talking points
-4. Append to system prompt
-```
-
-This ensures the AI instructor can answer questions about any topic across the entire Banking & Finance curriculum, not just the module the learner is currently viewing.
-
-### Repeatable Pattern
-This same approach will be used for every future program: insert an AI instructor record + the edge function automatically picks up all curriculum content. No additional code changes needed per program.
+### No Code Changes Needed
+- The existing pages dynamically load courses from the database
+- Sarah Rahman (AI Instructor) will automatically pick up all new modules via the enhanced knowledge base loader we just built
