@@ -1,138 +1,51 @@
 
+# Add AI Instructor for Banking & Finance + Enhanced Knowledge Base
 
-# Banking & Finance Full Curriculum + AI Module Guide Generator
+## Overview
+Create an AI Instructor for the Banking & Finance program that uses all 62 module descriptions/talking points as its knowledge base. Also enhance the edge function to automatically pull all course and module content for the program, so the AI has full curriculum context in every conversation.
 
-## What We're Building
+## What Changes
 
-A complete course curriculum for the **Banking & Finance** program with courses organized by level, each with modules and descriptive talking points. Plus an **"AI Generate Guide"** button in the admin Module Management page that auto-generates talking points for any module using AI.
+### 1. Database: Insert Banking & Finance AI Instructor
+Insert a new record into `ai_instructors` for the Banking & Finance program (`profession_line_id: a1c5d82c-1a1a-4b0e-89e8-19c264a3a915`).
 
-## Curriculum Structure
+**Instructor persona:**
+- **Name**: Farhan Ahmed
+- **Persona**: A seasoned banking professional with 18+ years in commercial and investment banking across Bangladesh. Former VP at a leading commercial bank, now dedicated to training the next generation of bankers. Practical, detail-oriented, uses real examples from Bangladesh Bank regulations, local commercial banks (e.g., BRAC Bank, City Bank, Dutch-Bangla Bank), and international banking standards.
+- **Expertise areas**: Commercial Banking, Credit Analysis, Trade Finance, Treasury, Risk Management, Basel Framework, Digital Banking, Wealth Management, Corporate Finance, Banking Regulations
+- **System prompt**: Comprehensive prompt covering all 14 courses across Foundation/Intermediate/Executive levels, referencing Bangladesh banking context
 
-### Foundation Level (5 courses)
+### 2. Edge Function: Enhance Knowledge Base Loading
+Update `supabase/functions/ai-instructor-chat/index.ts` to automatically fetch **all courses and module descriptions** for the instructor's program when a conversation starts. This gives the AI full curriculum knowledge without needing each module to be passed individually.
 
-1. **Introduction to Banking Systems** (4 modules)
-   - How Banks Work: Deposits, Lending & Interest
-   - Central Banking & Monetary Policy Basics
-   - Types of Banks: Commercial, Investment, Microfinance
-   - Banking Regulations & Compliance Overview
+Current behavior: Only loads the specific course or module context being viewed.
 
-2. **Financial Accounting Essentials** (4 modules)
-   - Understanding Financial Statements (Balance Sheet, P&L, Cash Flow)
-   - Double-Entry Bookkeeping & Journal Entries
-   - Bank Reconciliation & Internal Controls
-   - Introduction to IFRS and Local GAAP Standards
+New behavior: Additionally loads a summary of ALL courses and their module talking points for the program, so the AI can reference any part of the curriculum in any conversation.
 
-3. **Money, Credit & Financial Markets** (4 modules)
-   - Time Value of Money & Interest Rate Mechanics
-   - Credit Assessment Fundamentals
-   - Overview of Capital Markets (Equity, Debt, Derivatives)
-   - Foreign Exchange Markets & Currency Basics
+The enhancement adds a new query that fetches all `content` + `course_modules` for the `profession_line_id` and appends a structured "FULL CURRICULUM KNOWLEDGE BASE" section to the system prompt. This is capped to prevent token overflow (module descriptions truncated if needed).
 
-4. **Retail Banking Operations** (5 modules)
-   - Account Opening, KYC & Customer Onboarding
-   - Loan Products: Personal, Auto, Home & Education
-   - Payment Systems: Cards, Mobile Banking, RTGS/NEFT
-   - Deposit Products & Liability Management
-   - Customer Service & Complaint Resolution
+### 3. No Frontend Changes Needed
+The `AIChatPanel` component already passes `professionLineId` to the edge function, and the `DiscussStage` in the course player already renders the chat. The `SchoolDetail` page already shows an indicator when an AI instructor exists.
 
-5. **Ethics & Risk Awareness in Banking** (4 modules)
-   - Professional Ethics & Code of Conduct
-   - Anti-Money Laundering (AML) & KYC Compliance
-   - Introduction to Operational & Credit Risk
-   - Fraud Detection & Prevention Basics
+## Technical Details
 
-### Intermediate Level (5 courses)
+### AI Instructor Insert (Database)
+```text
+Table: ai_instructors
+Fields: profession_line_id, name, persona, system_prompt, expertise_areas, is_active
+```
 
-1. **Credit Analysis & Lending** (5 modules)
-   - Financial Statement Analysis for Lending Decisions
-   - Cash Flow-Based vs Collateral-Based Lending
-   - Credit Scoring Models & Risk Rating
-   - Loan Structuring & Documentation
-   - Non-Performing Assets & Recovery Strategies
+### Edge Function Enhancement (ai-instructor-chat/index.ts)
+Add after existing instructor fetch (around line 78):
 
-2. **Treasury & Investment Banking** (4 modules)
-   - Treasury Operations: ALM, Liquidity & Funds Management
-   - Fixed Income Securities & Bond Valuation
-   - Introduction to Derivatives: Forwards, Futures, Options
-   - Mergers, Acquisitions & Advisory Basics
+```text
+1. Query: SELECT title, description FROM content WHERE profession_line_id = X
+2. For each course: SELECT title, description FROM course_modules WHERE content_id = course.id ORDER BY display_order
+3. Build "CURRICULUM KNOWLEDGE BASE" section with course titles and module talking points
+4. Append to system prompt
+```
 
-3. **Trade Finance & International Banking** (5 modules)
-   - Letters of Credit: Types, Process & UCP 600
-   - Documentary Collections & Bank Guarantees
-   - Export-Import Financing & Pre/Post Shipment Credit
-   - Foreign Exchange Risk Management & Hedging
-   - Cross-Border Payment Systems (SWIFT, Correspondent Banking)
+This ensures the AI instructor can answer questions about any topic across the entire Banking & Finance curriculum, not just the module the learner is currently viewing.
 
-4. **Digital Banking & Fintech** (4 modules)
-   - Digital Transformation in Banking
-   - Payment Gateways, Wallets & Open Banking APIs
-   - Blockchain & Distributed Ledger in Financial Services
-   - RegTech, InsurTech & Lending Platforms
-
-5. **Risk Management & Basel Framework** (5 modules)
-   - Enterprise Risk Management Framework
-   - Credit Risk Measurement & Mitigation
-   - Market Risk: VaR, Stress Testing, Scenario Analysis
-   - Operational Risk & Business Continuity
-   - Basel III/IV Capital Adequacy & Liquidity Ratios
-
-### Executive Level (4 courses)
-
-1. **Strategic Banking Management** (4 modules)
-   - Bank Strategy, Business Models & Competitive Positioning
-   - Branch Transformation & Channel Strategy
-   - Performance Metrics: NIM, ROA, ROE, Cost-to-Income
-   - Regulatory Strategy & Board Governance
-
-2. **Corporate & Structured Finance** (5 modules)
-   - Corporate Credit Appraisal & Large Exposure Management
-   - Project Finance & Infrastructure Lending
-   - Syndicated Loans & Club Deals
-   - Structured Products & Securitization
-   - ESG & Sustainable Finance in Banking
-
-3. **Wealth Management & Private Banking** (4 modules)
-   - High Net Worth Client Advisory & Relationship Management
-   - Portfolio Construction & Asset Allocation
-   - Tax Planning, Estate Planning & Succession
-   - Alternative Investments: PE, Real Estate, Hedge Funds
-
-4. **Banking Leadership & Innovation** (4 modules)
-   - Leading Digital Transformation Initiatives
-   - Building & Managing High-Performance Banking Teams
-   - AI & Data Analytics in Banking Decision-Making
-   - Future of Banking: Embedded Finance, CBDC & Beyond
-
-## Admin Feature: AI Module Guide Generator
-
-An **"AI Generate Guide"** button on the Module Management page that:
-- Calls a new edge function `generate-module-guide`
-- Takes the course title, module title, and program context
-- Returns 5-8 bullet-point talking points for what should be covered
-- Populates the module's description field with the generated guide
-- Uses Lovable AI (Gemini Flash) for fast, cost-effective generation
-
-## Technical Plan
-
-### Step 1: Database -- Insert Curriculum Data
-- Remove the 2 existing Banking & Finance courses (they have no modules/enrollments, just placeholder data)
-- Insert 14 new courses into `content` table with proper `profession_line_id` and `profession_level_id`
-- Insert ~62 modules into `course_modules` with title, description (talking points), and display_order
-- Update `modules_count` on each course to match actual module count
-
-### Step 2: Edge Function -- `generate-module-guide`
-- New Deno edge function at `supabase/functions/generate-module-guide/index.ts`
-- Accepts: `{ courseTitle, moduleTitle, programName, levelName }`
-- System prompt instructs AI to return 5-8 concise talking points for the module
-- Returns structured text that serves as the content creation guideline
-- Uses `LOVABLE_API_KEY` with `google/gemini-3-flash-preview`
-
-### Step 3: Admin UI -- Add "AI Generate Guide" Button
-- In `ModuleManagement.tsx`, add a sparkle/wand button next to each module's description field
-- On click: calls the edge function with context, shows loading state
-- On success: populates the description textarea with the generated talking points
-- Toast notification on success/failure
-
-### Step 4: Update `supabase/config.toml`
-- Add `[functions.generate-module-guide]` with `verify_jwt = false`
-
+### Repeatable Pattern
+This same approach will be used for every future program: insert an AI instructor record + the edge function automatically picks up all curriculum content. No additional code changes needed per program.
