@@ -1,128 +1,128 @@
 
 
-# Operations & Supply Chain -- Full Curriculum + AI Instructor
+# Healthcare & Pharma -- Full Curriculum + AI Instructor
 
 ## Step 1: Remove Placeholder Courses
 Delete the 2 existing courses (no modules, no enrollments):
-- Supply Chain Management Essentials
-- Lean Operations & Process Improvement
+- Healthcare Management & Administration
+- Pharmaceutical Business & Compliance
 
 ## Step 2: Insert Full Curriculum (14 courses, ~62 modules)
 
 ### Foundation Level (5 courses)
 
-1. **Introduction to Operations Management** (4 modules)
-   - What is Operations Management: Scope, Role & Strategic Importance
-   - Operations Strategy: Cost, Quality, Speed, Flexibility & Dependability
-   - Process Design: Input-Transformation-Output Model
-   - Introduction to Capacity Planning & Facility Layout
+1. **Introduction to Healthcare Systems** (4 modules)
+   - Overview of Healthcare Systems: Public, Private & Mixed Models in Bangladesh
+   - Healthcare Stakeholders: Patients, Providers, Payers & Regulators
+   - Primary, Secondary & Tertiary Care: Structure & Referral Pathways
+   - Introduction to Health Policy & the DGHS Framework in Bangladesh
 
-2. **Supply Chain Fundamentals** (4 modules)
-   - Understanding the End-to-End Supply Chain: Suppliers to Customers
-   - Key Supply Chain Drivers: Inventory, Transportation, Facilities & Information
-   - Supply Chain Flows: Material, Information & Financial
-   - Introduction to Supply Chain Mapping & Value Stream Analysis
+2. **Pharmaceutical Industry Fundamentals** (4 modules)
+   - The Pharmaceutical Value Chain: R&D to Patient Access
+   - Drug Classification: OTC, Prescription, Generics & Biologics
+   - Pharmaceutical Manufacturing: GMP & Quality Assurance Basics
+   - Bangladesh Pharma Landscape: Top Companies, Export Markets & Growth Drivers
 
-3. **Inventory & Warehouse Management** (5 modules)
-   - Inventory Types: Raw Material, WIP, Finished Goods & MRO
-   - Inventory Models: EOQ, Safety Stock & Reorder Point Calculations
-   - ABC Analysis & SKU Rationalization
-   - Warehouse Operations: Receiving, Putaway, Picking & Shipping
-   - Introduction to WMS (Warehouse Management Systems)
+3. **Healthcare Operations & Administration** (5 modules)
+   - Hospital Operations: OPD, IPD, Emergency & Support Services
+   - Patient Flow Management & Appointment Scheduling Systems
+   - Healthcare Human Resources: Staffing Models & Credential Verification
+   - Medical Records Management & Introduction to EMR/EHR Systems
+   - Healthcare Facility Planning: Layout, Equipment & Maintenance
 
-4. **Procurement & Sourcing Basics** (4 modules)
-   - The Procurement Cycle: From Requisition to Payment
-   - Supplier Identification, Evaluation & Selection Criteria
-   - Purchase Orders, Contracts & Negotiation Basics
-   - Ethical Sourcing & Supplier Diversity in Bangladesh Context
+4. **Medical Sales & Product Knowledge** (4 modules)
+   - Understanding Drug Nomenclature: Generic, Brand & Chemical Names
+   - Therapeutic Area Basics: Cardiovascular, Diabetes, Antibiotics & Oncology
+   - Medical Device Categories & Regulatory Classification
+   - Building Product Knowledge for Effective Medical Detailing
 
-5. **Quality Management Essentials** (4 modules)
-   - Introduction to Total Quality Management (TQM) Principles
-   - Quality Tools: Pareto, Fishbone, Control Charts & Check Sheets
-   - Introduction to ISO 9001 & Quality Management Systems
-   - Cost of Quality: Prevention, Appraisal, Internal & External Failure
+5. **Healthcare Quality & Patient Safety** (4 modules)
+   - Introduction to Patient Safety & Medical Error Prevention
+   - Healthcare Quality Indicators: Mortality, Infection Rates & Readmissions
+   - Accreditation Standards: JCI, NABH & Bangladesh Hospital Accreditation
+   - Infection Prevention & Control (IPC) Fundamentals
 
 ### Intermediate Level (5 courses)
 
-1. **Production Planning & Control** (5 modules)
-   - Master Production Scheduling (MPS) & Material Requirements Planning (MRP)
-   - Production Sequencing, Scheduling & Shop Floor Control
-   - Demand Forecasting Methods: Qualitative & Quantitative Approaches
-   - Sales & Operations Planning (S&OP) Process
-   - Managing Production Bottlenecks: Theory of Constraints (TOC)
+1. **Pharmaceutical Regulatory Affairs** (5 modules)
+   - Drug Registration Process: DGDA Approval Pathway in Bangladesh
+   - International Regulatory Frameworks: FDA, EMA & WHO Prequalification
+   - Clinical Trial Phases: From Preclinical to Post-Market Surveillance
+   - Pharmacovigilance & Adverse Drug Reaction Reporting
+   - Regulatory Documentation: CTD Format, DMF & Labeling Requirements
 
-2. **Lean Operations & Six Sigma** (5 modules)
-   - Lean Principles: Value, Value Stream, Flow, Pull & Perfection
-   - Key Lean Tools: 5S, Kaizen, Kanban, Poka-Yoke & SMED
-   - Six Sigma DMAIC Methodology: Define, Measure, Analyze, Improve, Control
-   - Statistical Process Control & Process Capability Analysis
-   - Integrating Lean Six Sigma in Bangladesh Manufacturing & Service Industries
+2. **Healthcare Marketing & Market Access** (4 modules)
+   - Pharmaceutical Marketing Strategy: Ethical Promotion & DGDA Guidelines
+   - Key Account Management for Hospitals & Pharmacy Chains
+   - Market Access & Formulary Listing Strategies
+   - Digital Marketing in Healthcare: Telemedicine, Health Apps & Online Pharmacies
 
-3. **Logistics & Transportation Management** (4 modules)
-   - Transportation Modes: Road, Rail, Water, Air & Multimodal in Bangladesh
-   - Route Optimization & Fleet Management Fundamentals
-   - Freight Forwarding, Customs & Trade Documentation
-   - Third-Party Logistics (3PL) & Fourth-Party Logistics (4PL) Models
+3. **Supply Chain for Pharma & Healthcare** (5 modules)
+   - Cold Chain Management: Vaccines, Biologics & Temperature-Sensitive Products
+   - Pharmaceutical Distribution: C&F Agents, Wholesalers & Retail Pharmacies
+   - Inventory Management for Hospitals & Pharmacies: FEFO, Expiry Tracking
+   - GDP (Good Distribution Practice) & Anti-Counterfeiting Measures
+   - Procurement in Healthcare: Tenders, Rate Contracts & Group Purchasing
 
-4. **Supply Chain Analytics & Technology** (5 modules)
-   - Key Supply Chain KPIs: OTIF, Fill Rate, Inventory Turns, Perfect Order Rate
-   - ERP Systems: SAP, Oracle & Local ERP Solutions for Bangladesh
-   - Supply Chain Visibility & Control Tower Concepts
-   - Introduction to IoT, RFID & Barcode Technologies in Supply Chain
-   - Data-Driven Decision Making: Dashboards & Reporting for SC Managers
+4. **Hospital Management & Leadership** (4 modules)
+   - Hospital Financial Management: Revenue Cycle, Billing & Cost Control
+   - Managing Clinical Departments: KPIs, Protocols & Outcome Measurement
+   - Healthcare Information Systems: HIS, LIS, RIS & PACS Integration
+   - Leadership in Healthcare: Managing Doctors, Nurses & Allied Health Staff
 
-5. **Strategic Sourcing & Supplier Management** (4 modules)
-   - Strategic Sourcing Process: Spend Analysis to Contract Management
-   - Supplier Relationship Management (SRM) & Partnership Models
-   - Total Cost of Ownership (TCO) Analysis
-   - Risk Assessment in Supplier Base: Single Source vs Multi-Source Strategies
+5. **Clinical Research & Data Management** (5 modules)
+   - Introduction to Clinical Research: Study Design & Methodology
+   - Good Clinical Practice (GCP) & Ethics Committee Approval
+   - Clinical Data Management: EDC Systems, CRFs & Data Cleaning
+   - Biostatistics Fundamentals for Clinical Research
+   - Real-World Evidence & Post-Market Studies in Bangladesh Context
 
 ### Executive Level (4 courses)
 
-1. **Supply Chain Strategy & Network Design** (5 modules)
-   - Supply Chain Strategy Alignment with Corporate Strategy
-   - Network Design: Number, Location & Capacity of Facilities
-   - Make vs Buy Decisions & Outsourcing Strategy
-   - Global Supply Chain Management: Import/Export, Free Trade Zones in Bangladesh
-   - Supply Chain Segmentation: One Size Does Not Fit All
+1. **Healthcare Strategy & Policy** (5 modules)
+   - Strategic Planning for Healthcare Organizations
+   - Health Economics: Cost-Effectiveness, QALY & Budget Impact Analysis
+   - Public Health Programs: UHC, Essential Drug Lists & National Health Policy
+   - Public-Private Partnership Models in Bangladesh Healthcare
+   - Healthcare Regulation & Governance: BMDC, BPC & DGDA Roles
 
-2. **Operations Excellence & Continuous Improvement** (4 modules)
-   - Building a Culture of Continuous Improvement: Kaizen at Scale
-   - Operations Excellence Frameworks: Shingo Model & TPM
-   - Change Management for Operations Transformation
-   - Benchmarking & Best Practice Adoption from RMG, Pharma & FMCG in Bangladesh
+2. **Pharmaceutical Business Strategy** (4 modules)
+   - Pharma Business Models: Innovator vs Generic vs CDMO/CMO
+   - Export Strategy: Entering Regulated Markets (US, EU, Africa)
+   - Portfolio Strategy: Product Lifecycle Management & Pipeline Planning
+   - M&A, Licensing & Strategic Alliances in Pharma
 
-3. **Risk Management & Resilience** (4 modules)
-   - Supply Chain Risk Identification: Natural Disasters, Geopolitical, Demand Volatility
-   - Business Continuity Planning & Disaster Recovery for Operations
-   - Building Resilient Supply Chains: Dual Sourcing, Safety Stock & Nearshoring
-   - Case Studies: Bangladesh Garment Industry Resilience & COVID-19 Supply Chain Lessons
+3. **Digital Health & Innovation** (5 modules)
+   - Telemedicine & Remote Patient Monitoring Implementation
+   - AI & Machine Learning Applications in Healthcare & Drug Discovery
+   - Health Data Analytics: Predictive Models & Population Health Management
+   - Medical IoT: Wearables, Smart Devices & Connected Health Ecosystems
+   - Digital Therapeutics & the Future of Personalized Medicine
 
-4. **Operations Leadership & Digital Transformation** (5 modules)
-   - COO Mindset: From Plant Manager to Strategic Business Leader
-   - Digital Supply Chain: AI, Machine Learning & Predictive Analytics
-   - Sustainability in Operations: Green Supply Chain & Circular Economy
-   - Cross-Functional Leadership: Operations + Finance + Sales Alignment
-   - Future of Operations: Industry 4.0, Smart Factories & Autonomous Logistics
+4. **Healthcare Leadership & Transformation** (4 modules)
+   - CEO/MD Mindset: Leading Healthcare Organizations Through Change
+   - Building a Culture of Clinical Excellence & Continuous Improvement
+   - Cross-Functional Leadership: Clinical + Operations + Finance Alignment
+   - Future of Healthcare in Bangladesh: Universal Health Coverage, Biotech & Precision Medicine
 
 ## Step 3: Create AI Instructor
 
-**Name**: Rafiq Hasan
-**Persona**: A veteran operations and supply chain professional with 18+ years of experience across manufacturing, logistics, and FMCG sectors in Bangladesh. Former Head of Supply Chain at a leading garment export group, with deep expertise in lean manufacturing, procurement, and logistics optimization. Uses real examples from Bangladesh's RMG sector, pharmaceutical companies (Square, Beximco), FMCG (PRAN, ACI), and global supply chain best practices adapted for the local context.
+**Name**: Dr. Fahmida Akter
+**Persona**: A healthcare and pharmaceutical industry veteran with 16+ years of experience spanning hospital administration, pharmaceutical regulatory affairs, and clinical operations in Bangladesh. Former Director of Operations at a leading private hospital group and ex-Head of Regulatory at a top-5 pharmaceutical company. Brings real-world examples from Bangladesh's healthcare ecosystem including Square Hospitals, Evercare, United Hospital, and pharmaceutical giants like Square Pharma, Beximco Pharma, Incepta, and Renata. Passionate about improving healthcare delivery and building the next generation of healthcare leaders in Bangladesh.
 
-**Expertise areas**: Operations Management, Supply Chain Strategy, Lean Manufacturing, Six Sigma, Procurement, Logistics, Inventory Management, Quality Management, Production Planning, Digital Supply Chain
+**Expertise areas**: Healthcare Administration, Pharmaceutical Regulatory Affairs, Hospital Management, Clinical Research, Medical Sales, Healthcare Quality, Pharma Supply Chain, Digital Health, Healthcare Strategy, Patient Safety
 
 ## Technical Details
 
 ### Database Operations
 - **DELETE**: 2 placeholder courses from content table
-- **INSERT**: 14 courses into `content` table with `profession_line_id = 'a8c5f269-03bd-4589-954e-51eb1e1fbf32'`
+- **INSERT**: 14 courses into `content` table with `profession_line_id = '2c541af4-1cc0-4704-81aa-78df992aad6b'`
 - **INSERT**: ~62 modules into `course_modules` with talking-point descriptions
 - **INSERT**: 1 AI instructor record into `ai_instructors`
 - All courses: `content_type = 'recorded_course'`, `is_published = true`
 
 ### IDs
-- Program: `a8c5f269-03bd-4589-954e-51eb1e1fbf32`
+- Program: `2c541af4-1cc0-4704-81aa-78df992aad6b`
 - Foundation: `9578ed0c-dfc6-4e62-a1b6-0a96161cc4fe`
 - Intermediate: `7e997803-47f3-423e-9790-da9612328cf5`
 - Executive: `b7976d18-957b-4dc4-8a95-bbfd44877225`
