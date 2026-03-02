@@ -1,63 +1,67 @@
 
 
-# Program 2: Software Engineering — Full Curriculum Build
+# Program 3: Cybersecurity — Full Curriculum Build
 
 ## Current State
-- **Program ID**: `1e71843c-d202-4d96-834e-04fa6c784f16`
-- **Career outcome**: Already set ("Software Engineer, Full-Stack Developer, Backend Engineer")
-- **Courses**: 2 placeholders (no levels, no modules)
+- **Program ID**: `b8272dfc-5191-40c9-8908-0cd5d302de79`
+- **Career outcome**: Not set (null)
+- **Courses**: 2 placeholders (no modules)
 - **AI Instructor**: None
 
-## Step 1: Delete 2 Placeholder Courses
-Remove:
-- "IT Infrastructure & Networking Essentials"
-- "Enterprise Software & Systems Management"
+## Step 1: Update Program Metadata
+- Set `career_outcome` to "Cybersecurity Analyst, Penetration Tester, Security Engineer, SOC Analyst"
 
-## Step 2: Insert 14 Courses (3 levels)
+## Step 2: Delete 2 Placeholder Courses
+Remove:
+- "Cybersecurity Fundamentals for Professionals"
+- "Information Security & Risk Management"
+
+## Step 3: Insert 14 Courses (3 levels)
 
 ### Foundation (5 courses)
 | # | Title | Modules |
 |---|-------|---------|
-| 1 | Introduction to Programming & Computational Thinking | 4 |
-| 2 | Web Development Fundamentals (HTML, CSS, JavaScript) | 5 |
-| 3 | Version Control with Git & GitHub | 4 |
-| 4 | Data Structures & Algorithms Essentials | 5 |
-| 5 | Databases & SQL Fundamentals | 4 |
+| 1 | Introduction to Cybersecurity & Information Security | 4 |
+| 2 | Networking Fundamentals for Security | 5 |
+| 3 | Operating Systems & Command Line for Security | 4 |
+| 4 | Security Principles & Risk Management | 4 |
+| 5 | Introduction to Cryptography | 4 |
 
 ### Intermediate (5 courses)
 | # | Title | Modules |
 |---|-------|---------|
-| 1 | Backend Development with Node.js & APIs | 5 |
-| 2 | Frontend Frameworks: React & Modern UI Development | 5 |
-| 3 | Software Testing & Quality Assurance | 4 |
-| 4 | Object-Oriented Programming & Design Patterns | 4 |
-| 5 | DevOps Essentials for Software Engineers | 4 |
+| 1 | Ethical Hacking & Penetration Testing | 5 |
+| 2 | Network Security & Firewall Management | 4 |
+| 3 | Web Application Security | 5 |
+| 4 | Security Operations & Incident Response | 4 |
+| 5 | Identity & Access Management | 4 |
 
 ### Executive (4 courses)
 | # | Title | Modules |
 |---|-------|---------|
-| 1 | System Design & Scalable Architecture | 5 |
-| 2 | Advanced Full-Stack Project Development | 4 |
-| 3 | Software Engineering Leadership & Agile Practices | 4 |
-| 4 | Capstone: Build & Ship a Production Application | 4 |
+| 1 | Cloud Security & Zero Trust Architecture | 5 |
+| 2 | Digital Forensics & Malware Analysis | 4 |
+| 3 | Governance, Compliance & Security Leadership | 4 |
+| 4 | Capstone: Build a Security Operations Program | 4 |
 
 **Total: 14 courses, 66 modules**
 
-## Step 3: Create AI Instructor
+## Step 4: Create AI Instructor
 
-- **Name**: Marcus Chen
-- **Persona**: A senior software engineer with 15+ years building products at startups and Fortune 500 companies. Former tech lead at a major SaaS platform. Passionate about clean code, pragmatic architecture, and mentoring junior developers. Known for breaking down complex system design problems into digestible steps.
-- **Expertise**: Full-Stack Development, JavaScript/TypeScript, Python, System Design, APIs, React, Node.js, Software Architecture, Testing, Agile
-- **Teaching style**: Practical and hands-on; always ties theory to real codebases and production scenarios. Encourages "build first, refine later" thinking while maintaining engineering rigor. Uses examples from open-source projects and real product engineering challenges.
+- **Name**: Amara Osei
+- **Persona**: A cybersecurity veteran with 14+ years defending critical infrastructure across financial services, government, and tech. Former SOC lead and red team operator. Holds CISSP and OSCP certifications. Known for demystifying complex attack vectors and making defensive thinking second nature.
+- **Expertise**: Penetration Testing, Network Security, Incident Response, Cloud Security, Cryptography, Risk Management, SOC Operations, Web App Security, Digital Forensics
+- **Teaching style**: Threat-first and scenario-driven; starts every topic with "what can go wrong" before teaching the defense. Uses real breach case studies (SolarWinds, Log4j, Colonial Pipeline) and hands-on lab thinking. Balances offensive and defensive mindsets.
 
 ## Execution Order
-1. Delete 2 placeholder courses
-2. Insert 14 courses with correct level IDs
-3. Insert 66 modules across all courses
-4. Insert AI Instructor (Marcus Chen)
+1. Update career_outcome
+2. Delete 2 placeholder courses
+3. Insert 14 courses with correct level IDs
+4. Insert 66 modules across all courses
+5. Insert AI Instructor (Amara Osei)
 
 ## Technical Details
-- **Profession Level IDs**: Foundation (`9578ed0c-...`), Intermediate (`7e997803-...`), Executive (`b7976d18-...`)
-- All operations are data inserts/updates/deletes — no code changes needed
+- **Level IDs**: Foundation (`9578ed0c-...`), Intermediate (`7e997803-...`), Executive (`b7976d18-...`)
+- All operations are data inserts/updates/deletes -- no code changes needed
 - Courses use type `recorded_course`, status `published`, `is_active = true`
 
