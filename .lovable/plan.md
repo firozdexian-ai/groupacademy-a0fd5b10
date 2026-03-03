@@ -1,168 +1,166 @@
 
 
-# Program: Executive Leadership — Full Curriculum Build
+# Program: Human Resources — Full Curriculum Build
 
 ## Current State (Audit)
-- **Program ID**: `3170a167-197e-4d8c-b369-98de84434fd7`
+- **Program ID**: `e5489921-ce14-448b-a017-b762a3b72a8d`
 - **School**: School of Leadership & HR (Executive Academy)
 - **Career outcome**: Not set (null)
 - **Courses**: 2 placeholders (0 modules each, no level assigned)
-  - "Strategic Leadership & Decision Making" (`992e8bb0-28e6-4710-96dd-9aa61228e0a3`)
-  - "Leading High-Performance Teams" (`1348ac2b-5a22-40b5-b587-db32bf07d676`)
+  - "HR Management & Talent Acquisition" (`96a938d7-01eb-41b4-bc0f-d65e613e4203`)
+  - "Employee Engagement & Retention" (`107ab52d-7852-46ac-95a5-6f088c0f07d2`)
 - **AI Instructor**: None
 
 ## Step 1: Update Program Metadata
-- Set `career_outcome` to "Chief Executive Officer, Managing Director, VP of Operations, Director of Strategy, Chief of Staff, General Manager"
+- Set `career_outcome` to "HR Director, Chief People Officer, Head of Talent, HR Business Partner, Compensation & Benefits Manager, Learning & Development Manager"
 
 ## Step 2: Delete 2 Placeholder Courses
-- "Strategic Leadership & Decision Making" (`992e8bb0-28e6-4710-96dd-9aa61228e0a3`)
-- "Leading High-Performance Teams" (`1348ac2b-5a22-40b5-b587-db32bf07d676`)
 
 ## Step 3: Insert 14 Courses (3 levels)
 
 ### Foundation (5 courses)
 | # | Title | Modules |
 |---|-------|---------|
-| 1 | Foundations of Leadership: Theories, Styles & Self-Awareness | 4 |
-| 2 | Communication & Influence for Leaders | 5 |
-| 3 | Emotional Intelligence & Executive Presence | 4 |
-| 4 | Decision Making, Critical Thinking & Problem Solving | 5 |
-| 5 | Building & Leading High-Performance Teams | 4 |
+| 1 | Foundations of Human Resource Management | 4 |
+| 2 | Talent Acquisition & Recruitment Strategy | 5 |
+| 3 | Employment Law, Compliance & Workplace Policy | 4 |
+| 4 | Compensation, Benefits & Total Rewards | 5 |
+| 5 | Employee Onboarding, Engagement & Retention | 4 |
 
 ### Intermediate (5 courses)
 | # | Title | Modules |
 |---|-------|---------|
-| 1 | Strategic Thinking & Business Acumen | 5 |
-| 2 | Change Management & Organizational Transformation | 4 |
-| 3 | Conflict Resolution, Negotiation & Stakeholder Management | 5 |
-| 4 | Talent Development, Coaching & Succession Planning | 4 |
-| 5 | Cross-Cultural Leadership & Global Management | 4 |
+| 1 | Learning & Development Strategy | 5 |
+| 2 | Performance Management & Talent Reviews | 4 |
+| 3 | HR Analytics & Data-Driven People Decisions | 5 |
+| 4 | Diversity, Equity, Inclusion & Belonging | 4 |
+| 5 | Employee Relations & Conflict Management | 4 |
 
 ### Executive (4 courses)
 | # | Title | Modules |
 |---|-------|---------|
-| 1 | Corporate Governance, Ethics & Board Leadership | 5 |
-| 2 | Innovation Leadership & Digital Transformation | 5 |
-| 3 | Crisis Leadership & Resilience Management | 4 |
-| 4 | Capstone: Executive Leadership Simulation & Portfolio | 4 |
+| 1 | Strategic HR Business Partnership | 5 |
+| 2 | Organizational Culture & Employer Branding | 5 |
+| 3 | HR Technology, Automation & Future of Work | 4 |
+| 4 | Capstone: HR Transformation Strategy & Portfolio | 4 |
 
 **Total: 14 courses, 62 modules**
 
 ## Step 4: Create AI Instructor
 
-- **Name**: Nazmul Karim
-- **Persona**: A seasoned executive leader with 20+ years across multinational corporations, development organizations, and conglomerates. Former Country Director at a global FMCG company and Chief Operating Officer of a leading Bangladeshi group. Holds an MBA from IBA Dhaka and completed executive education at INSEAD. Has led organizations through mergers, market expansions, and digital transformations. Regularly mentors C-suite candidates and speaks at CEO roundtables across South Asia. Known for turning leadership theory into boardroom-ready practice.
-- **Expertise**: Strategic Leadership, Executive Presence, Change Management, Corporate Governance, Crisis Management, Organizational Design, Board Relations, Talent Strategy, Cross-Cultural Leadership, Innovation Management
-- **Teaching style**: Case-study driven with frameworks from Harvard Business Review and McKinsey. Every module connects to a real leadership scenario — restructuring, market entry, board presentations, or crisis response. Balances Western management theory with South Asian business realities. Emphasizes reflection journals and leadership self-assessments throughout.
+- **Name**: Tasneem Akhter
+- **Persona**: A seasoned HR leader with 18+ years across multinational corporations, NGOs, and conglomerates. Former Group Head of Human Resources at a leading Bangladeshi industrial group and HR Director at an international development organization. Holds an MBA in HRM from the University of Dhaka and is SHRM-SCP certified. Has designed talent management frameworks, led large-scale organizational restructuring, and built employer brands across South Asia. Regularly speaks at HR summits and mentors aspiring CHROs.
+- **Expertise**: Talent Acquisition, Performance Management, Compensation & Benefits, HR Analytics, Employment Law, DEI Strategy, Organizational Culture, HR Technology, Change Management, Strategic HR
+- **Teaching style**: Practitioner-focused with frameworks from SHRM, CIPD, and Mercer. Connects every module to real HR challenges — restructuring, attrition crises, compensation audits, or culture transformation. Balances global best practices with South Asian employment realities. Emphasizes case discussions, policy drafting exercises, and HR metrics throughout.
 
 ## Module Breakdown
 
 ### Foundation
 
-**1. Foundations of Leadership: Theories, Styles & Self-Awareness (4 modules)**
-1. What Is Leadership? Defining Leadership vs Management
-2. Leadership Theories: Trait, Behavioral, Situational & Transformational
-3. Discovering Your Leadership Style: Self-Assessment & 360 Feedback
-4. Servant Leadership, Authentic Leadership & Ethical Foundations
+**1. Foundations of Human Resource Management (4 modules)**
+1. What Is HRM? Evolution from Personnel to Strategic HR
+2. HR Functions: Planning, Organizing & the HR Value Chain
+3. The HR Operating Model: CoEs, HRBPs & Shared Services
+4. HR Ethics, Professionalism & the Role of HR in Governance
 
-**2. Communication & Influence for Leaders (5 modules)**
-1. Executive Communication: Clarity, Brevity & Impact
-2. Active Listening & Empathetic Communication
-3. Persuasion & Influence: Cialdini's Principles in Practice
-4. Public Speaking & Presentation Skills for Leaders
-5. Written Communication: Memos, Reports & Board Papers
+**2. Talent Acquisition & Recruitment Strategy (5 modules)**
+1. Workforce Planning & Demand Forecasting
+2. Sourcing Strategies: Job Boards, Social Recruiting & Employer Branding
+3. Selection Methods: Structured Interviews, Assessments & Background Checks
+4. Recruitment Metrics: Time-to-Hire, Cost-per-Hire & Quality-of-Hire
+5. Campus Recruiting, Internship Programs & Early Talent Pipelines
 
-**3. Emotional Intelligence & Executive Presence (4 modules)**
-1. Understanding Emotional Intelligence: Goleman's Framework
-2. Self-Regulation, Motivation & Stress Management
-3. Social Awareness & Relationship Management
-4. Building Executive Presence: Gravitas, Communication & Appearance
+**3. Employment Law, Compliance & Workplace Policy (4 modules)**
+1. Employment Law Fundamentals: Contracts, Termination & Due Process
+2. Workplace Health, Safety & Labor Standards
+3. Anti-Harassment, Anti-Discrimination & Whistleblower Policies
+4. Global Compliance: Managing HR Across Multiple Jurisdictions
 
-**4. Decision Making, Critical Thinking & Problem Solving (5 modules)**
-1. Decision-Making Frameworks: Rational, Intuitive & Evidence-Based
-2. Cognitive Biases & How Leaders Overcome Them
-3. Structured Problem Solving: Root Cause Analysis & Systems Thinking
-4. Data-Driven Decision Making for Non-Technical Leaders
-5. Making High-Stakes Decisions Under Uncertainty
+**4. Compensation, Benefits & Total Rewards (5 modules)**
+1. Compensation Philosophy: Job Evaluation & Pay Structures
+2. Salary Benchmarking, Market Surveys & Pay Equity Analysis
+3. Variable Pay: Bonuses, Incentives & Commission Structures
+4. Benefits Design: Health, Retirement, Wellness & Flexible Benefits
+5. Total Rewards Communication & Employee Value Proposition
 
-**5. Building & Leading High-Performance Teams (4 modules)**
-1. Team Dynamics: Tuckman's Model & Psychological Safety
-2. Setting Vision, Goals & Accountability Structures
-3. Delegation, Empowerment & Distributed Leadership
-4. Managing Remote, Hybrid & Cross-Functional Teams
+**5. Employee Onboarding, Engagement & Retention (4 modules)**
+1. Designing Effective Onboarding: From Offer to 90-Day Integration
+2. Measuring Engagement: Surveys, Pulse Checks & eNPS
+3. Retention Strategies: Career Pathing, Stay Interviews & Exit Analysis
+4. Building a Culture of Recognition & Employee Well-Being
 
 ### Intermediate
 
-**1. Strategic Thinking & Business Acumen (5 modules)**
-1. Strategic Thinking vs Operational Thinking
-2. Industry Analysis: Porter's Five Forces & PESTEL
-3. Competitive Strategy: Differentiation, Cost Leadership & Blue Ocean
-4. Financial Literacy for Leaders: P&L, Balance Sheet & Cash Flow
-5. Strategic Planning: Vision to Execution Roadmap
+**1. Learning & Development Strategy (5 modules)**
+1. Training Needs Analysis & Competency Frameworks
+2. Learning Design: Blended, Microlearning & Experiential Methods
+3. Leadership Development Programs & High-Potential Pipelines
+4. Measuring L&D Impact: Kirkpatrick Model & ROI of Training
+5. Building a Learning Culture & Knowledge Management Systems
 
-**2. Change Management & Organizational Transformation (4 modules)**
-1. Why Change Fails: Kotter's 8-Step Model
-2. Leading Through Resistance: Psychology of Change
-3. Organizational Design & Restructuring
-4. Sustaining Change: Culture, Systems & Continuous Improvement
+**2. Performance Management & Talent Reviews (4 modules)**
+1. Performance Management Systems: OKRs, KPIs & Balanced Scorecards
+2. Continuous Feedback, Coaching Conversations & 1-on-1s
+3. Talent Calibration, 9-Box Grid & Succession Planning
+4. Managing Underperformance: PIPs, Documentation & Fair Process
 
-**3. Conflict Resolution, Negotiation & Stakeholder Management (5 modules)**
-1. Understanding Conflict: Sources, Types & Escalation Patterns
-2. Conflict Resolution Frameworks: Thomas-Kilmann & Mediation
-3. Principled Negotiation: Getting to Yes in Business
-4. Stakeholder Mapping, Analysis & Engagement Strategy
-5. Managing Up: Working with Boards, Investors & Government
+**3. HR Analytics & Data-Driven People Decisions (5 modules)**
+1. Introduction to People Analytics: Data Sources & HR Dashboards
+2. Descriptive Analytics: Turnover, Absenteeism & Workforce Demographics
+3. Predictive Analytics: Attrition Risk, Engagement Drivers & Talent Forecasting
+4. Building Business Cases with HR Data: Storytelling for Stakeholders
+5. Data Privacy, Ethics & Responsible Use of People Data
 
-**4. Talent Development, Coaching & Succession Planning (4 modules)**
-1. The Leader as Coach: Coaching Conversations & GROW Model
-2. Mentoring, Sponsoring & Developing Future Leaders
-3. Performance Management: Beyond Annual Reviews
-4. Succession Planning & Leadership Pipeline
+**4. Diversity, Equity, Inclusion & Belonging (4 modules)**
+1. Understanding DEI: Definitions, Business Case & Global Trends
+2. Unconscious Bias: Identification, Mitigation & Inclusive Hiring
+3. Building Inclusive Workplaces: Policies, ERGs & Allyship Programs
+4. Measuring DEI Progress: Metrics, Accountability & Reporting
 
-**5. Cross-Cultural Leadership & Global Management (4 modules)**
-1. Cultural Intelligence (CQ) & Hofstede's Dimensions
-2. Leading Diverse & Multicultural Teams
-3. Global Business Etiquette & Communication Norms
-4. Managing International Operations & Joint Ventures
+**5. Employee Relations & Conflict Management (4 modules)**
+1. Employee Relations Fundamentals: Trust, Communication & Psychological Safety
+2. Grievance Handling, Disciplinary Procedures & Mediation
+3. Trade Unions, Collective Bargaining & Industrial Relations
+4. Managing Workplace Investigations & Legal Documentation
 
 ### Executive
 
-**1. Corporate Governance, Ethics & Board Leadership (5 modules)**
-1. Corporate Governance Frameworks & Best Practices
-2. Board Composition, Committees & Director Responsibilities
-3. Business Ethics, Compliance & Anti-Corruption
-4. ESG Leadership: Environmental, Social & Governance Strategy
-5. Regulatory Landscape & Stakeholder Accountability
+**1. Strategic HR Business Partnership (5 modules)**
+1. The HRBP Model: From Administrative to Strategic Partner
+2. Aligning HR Strategy with Business Strategy & Financial Goals
+3. Board-Level HR Reporting: Workforce ROI & Human Capital Metrics
+4. M&A Due Diligence: People Integration & Cultural Alignment
+5. HR in Crisis: Layoffs, Restructuring & Organizational Resilience
 
-**2. Innovation Leadership & Digital Transformation (5 modules)**
-1. The Innovation Imperative: Disruptive vs Sustaining Innovation
-2. Building an Innovation Culture & Intrapreneurship
-3. Digital Transformation Strategy & Roadmap
-4. AI, Automation & Technology Leadership for Executives
-5. Scaling Innovation: From Pilot to Enterprise Adoption
+**2. Organizational Culture & Employer Branding (5 modules)**
+1. Diagnosing Culture: Assessments, Archetypes & Culture Audits
+2. Culture Transformation: Designing & Leading Culture Change
+3. Employer Branding Strategy: EVP, Candidate Experience & Glassdoor
+4. Internal Communications & Employee Advocacy Programs
+5. Culture in M&A, Remote Work & Multi-Generational Workforces
 
-**3. Crisis Leadership & Resilience Management (4 modules)**
-1. Crisis Preparedness: Risk Assessment & Scenario Planning
-2. Leading During Crisis: Communication, Decision Speed & Empathy
-3. Business Continuity Planning & Disaster Recovery
-4. Post-Crisis Recovery: Learning, Rebuilding & Strengthening Culture
+**3. HR Technology, Automation & Future of Work (4 modules)**
+1. HR Tech Landscape: HRIS, ATS, LMS & Integrated Platforms
+2. AI in HR: Chatbots, Resume Screening & Predictive Hiring
+3. Automating HR Operations: Payroll, Attendance & Self-Service Portals
+4. Future of Work: Gig Economy, Remote Policies & Skills-Based Organizations
 
-**4. Capstone: Executive Leadership Simulation & Portfolio (4 modules)**
-1. Scenario Briefing: Company Turnaround & Strategic Pivot
-2. Stakeholder Presentation: Board Deck & Investor Pitch
-3. Crisis Response Simulation: Real-Time Decision Exercise
-4. Leadership Portfolio: Reflection, Growth Plan & Career Positioning
+**4. Capstone: HR Transformation Strategy & Portfolio (4 modules)**
+1. Scenario Briefing: Designing an HR Transformation Roadmap
+2. Stakeholder Presentation: HR Strategy Deck for the C-Suite
+3. Policy Drafting Simulation: Building an Employee Handbook
+4. HR Portfolio: Reflection, Professional Growth Plan & Career Positioning
 
 ## Execution Order
-1. Update career_outcome on profession_categories
-2. Delete 2 placeholder courses from content
-3. Insert 14 courses with correct profession_level_id values
+1. Update `career_outcome` on `profession_categories`
+2. Delete 2 placeholder courses from `content`
+3. Insert 14 courses with correct `profession_level_id` values
 4. Insert 62 modules across all courses
-5. Insert AI Instructor (Nazmul Karim)
+5. Insert AI Instructor (Tasneem Akhter)
 
 ## Technical Details
-- **Level IDs**: Foundation (`9578ed0c-dfc6-4e62-a1b6-0a96161cc4fe`), Intermediate (`7e997803-47f3-423e-9790-da9612328cf5`), Executive (`b7976d18-957b-4dc4-8a95-bbfd44877225`)
-- Courses: `content_type = 'recorded_course'`, `is_published = true`, `is_active = true`
-- Modules: `display_order` sequential per course, descriptions serve as AI instructor talking points
+- **Level IDs**: Foundation (`9578ed0c`), Intermediate (`7e997803`), Executive (`b7976d18`)
+- **Placeholder IDs to delete**: `96a938d7-01eb-41b4-bc0f-d65e613e4203`, `107ab52d-7852-46ac-95a5-6f088c0f07d2`
+- Courses: `content_type = 'recorded_course'`, `is_published = true`, `profession_line_id = 'e5489921-ce14-448b-a017-b762a3b72a8d'`
 - No code changes required — data operations only
 
