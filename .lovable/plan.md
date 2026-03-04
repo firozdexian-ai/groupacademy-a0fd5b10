@@ -1,146 +1,146 @@
 
 
-# School of Small Business — Full Build (4 Programs)
+# School of Social Enterprise — Full Build (4 Programs)
 
-Third school in the Entrepreneurship Academy. All 4 programs are completely empty — no courses, no instructors, no career outcomes.
+Last school in the Entrepreneurship Academy. All 4 programs are completely empty — no courses, no instructors, no career outcomes.
 
 ## Programs
 
 | Program | ID | Status |
 |---|---|---|
-| Restaurant & Food Business | `fb47718b` | Empty |
-| Retail & Wholesale | `9d7e43bd` | Empty |
-| Service-Based Business | `bc441679` | Empty |
-| Import & Export | `593e4cb7` | Empty |
+| Impact Business Design | `f429345b` | Empty |
+| NGO Management | `6d1d0f78` | Empty |
+| Community Development | `168ec7eb` | Empty |
+| Sustainable Business | `1712d2a6` | Empty |
 
 ---
 
-## Program 1: Restaurant & Food Business
+## Program 1: Impact Business Design
 
-**Career Outcome:** Restaurant Owner, Food Business Entrepreneur, Café & Bakery Founder, Food Truck Operator, Catering Business Owner, F&B Operations Manager
+**Career Outcome:** Social Enterprise Founder, Impact Business Designer, Chief Impact Officer, Social Innovation Consultant, Impact Investing Analyst, Head of Social Ventures
 
-**AI Instructor — Chef Amara Diallo** — Restaurant entrepreneur and food business strategist with 16+ years launching and scaling food ventures across fine dining, fast-casual, cloud kitchens, and catering in Paris, Dubai, and Nairobi. Former Executive Chef turned restaurateur with three profitable venues. Diploma from Le Cordon Bleu Paris and MBA from HEC Paris. Expert in menu engineering, food cost management, kitchen operations, restaurant marketing, franchise development, and food safety compliance. Known for helping first-time food entrepreneurs build profitable, scalable businesses.
+**AI Instructor — Amina Osei** — Social enterprise strategist and impact business designer with 15+ years creating mission-driven ventures across education, healthcare, clean energy, and financial inclusion in Accra, London, and Nairobi. Former Director of Social Innovation at a global development finance institution and founder of two award-winning social enterprises. MBA from Oxford Saïd Business School. Expert in impact measurement, theory of change, social business models, blended finance, and stakeholder engagement. Known for helping founders build businesses that solve real problems profitably.
 
 **Courses (14 courses, 62 modules):**
 
 **Foundation (5)**
-1. Introduction to the Restaurant & Food Industry (4 modules)
-2. Concept Development & Menu Design (5 modules)
-3. Location, Layout & Kitchen Setup (4 modules)
-4. Food Safety, Licensing & Regulatory Compliance (5 modules)
-5. Costing, Pricing & Financial Basics for Food Businesses (4 modules)
+1. Introduction to Social Enterprise & Impact Business (4 modules)
+2. Identifying Social Problems & Opportunity Mapping (5 modules)
+3. Social Business Models — Hybrid, Nonprofit & For-Profit (4 modules)
+4. Theory of Change & Impact Measurement Frameworks (5 modules)
+5. Legal Structures & Governance for Social Enterprises (4 modules)
 
 **Intermediate (5)**
-1. Restaurant Operations — Staff, Service & Quality Control (5 modules)
-2. Marketing Your Food Business — Digital, Local & Delivery Platforms (5 modules)
-3. Inventory Management & Supplier Relationships (4 modules)
-4. Cloud Kitchens, Food Trucks & Alternative Models (5 modules)
-5. Customer Experience & Loyalty Programs (4 modules)
+1. Designing Products & Services for Underserved Markets (5 modules)
+2. Impact Fundraising — Grants, Impact Investors & Philanthropy (5 modules)
+3. Marketing & Storytelling for Social Impact (4 modules)
+4. Financial Sustainability & Revenue Models (5 modules)
+5. Partnerships, Coalitions & Ecosystem Building (4 modules)
 
 **Executive (4)**
-1. Scaling Your Food Business — Multi-Location & Franchising (5 modules)
-2. Financial Management & Profitability Optimization (4 modules)
-3. Building a Food Brand — Packaging, Retail & E-Commerce (4 modules)
-4. Capstone: Restaurant Business Plan & Launch Strategy (4 modules)
+1. Scaling Social Impact — Replication, Licensing & Franchising (5 modules)
+2. Impact Reporting, ESG & Accountability Standards (4 modules)
+3. Policy Advocacy & Systems Change (4 modules)
+4. Capstone: Impact Business Plan & Pitch (4 modules)
 
 ---
 
-## Program 2: Retail & Wholesale
+## Program 2: NGO Management
 
-**Career Outcome:** Retail Store Owner, Wholesale Distributor, Retail Operations Manager, Visual Merchandising Specialist, Category Manager, Head of Retail Strategy
+**Career Outcome:** NGO Director, Program Manager, Grants Manager, Fundraising Director, Monitoring & Evaluation Specialist, Head of Operations (Nonprofit)
 
-**AI Instructor — James Hartley** — Retail strategist and wholesale operations expert with 18+ years across brick-and-mortar, omnichannel, and B2B distribution in London, Toronto, and Sydney. Former Regional Director at a global retail chain and founder of a wholesale distribution company. MBA from Ivey Business School. Expert in retail site selection, inventory planning, visual merchandising, wholesale negotiation, POS systems, and retail analytics. Known for helping independent retailers compete against big-box stores through smart positioning and operational efficiency.
+**AI Instructor — David Mensah** — Nonprofit management expert and organizational development consultant with 16+ years leading and advising NGOs across humanitarian aid, education, health, and human rights in Geneva, Washington DC, and Kampala. Former Country Director for an international relief organization and governance advisor to the UN system. MPA from Harvard Kennedy School. Expert in program design, donor management, M&E frameworks, nonprofit governance, team leadership, and compliance. Known for helping NGO leaders build transparent, high-performing organizations.
 
 **Courses (14 courses, 62 modules):**
 
 **Foundation (5)**
-1. Introduction to Retail & Wholesale Business Models (4 modules)
-2. Store Setup — Location, Design & Merchandising (5 modules)
-3. Product Sourcing, Procurement & Supplier Management (4 modules)
-4. Pricing Strategy & Margin Management (5 modules)
-5. Point-of-Sale Systems, Inventory & Stock Control (4 modules)
+1. Introduction to NGO Management & the Nonprofit Sector (4 modules)
+2. Mission, Vision & Strategic Planning for NGOs (5 modules)
+3. Legal Registration, Governance & Board Management (4 modules)
+4. Program Design & Logical Frameworks (5 modules)
+5. Budgeting & Financial Management for Nonprofits (4 modules)
 
 **Intermediate (5)**
-1. Retail Marketing — In-Store, Digital & Seasonal Campaigns (5 modules)
-2. Customer Service Excellence & Sales Training (5 modules)
-3. Wholesale Operations — Distribution, Logistics & B2B Sales (4 modules)
-4. E-Commerce Integration for Retail Businesses (5 modules)
-5. Staff Management, Scheduling & Retail HR (4 modules)
+1. Fundraising Strategy — Grants, Donations & Earned Income (5 modules)
+2. Monitoring, Evaluation & Learning (MEL) Systems (5 modules)
+3. Donor Relations, Reporting & Compliance (4 modules)
+4. Human Resources & Volunteer Management for NGOs (5 modules)
+5. Communications, Advocacy & Public Relations (4 modules)
 
 **Executive (4)**
-1. Multi-Store Expansion & Franchise Development (5 modules)
-2. Retail Analytics, KPIs & Performance Management (4 modules)
-3. Financial Planning & Cash Flow for Retail Businesses (4 modules)
-4. Capstone: Retail Business Growth Strategy (4 modules)
+1. Scaling NGO Operations — Multi-Country & Multi-Program (5 modules)
+2. Organizational Sustainability & Diversified Funding (4 modules)
+3. Leadership, Culture & Change Management in Nonprofits (4 modules)
+4. Capstone: NGO Strategic Growth Plan (4 modules)
 
 ---
 
-## Program 3: Service-Based Business
+## Program 3: Community Development
 
-**Career Outcome:** Service Business Owner, Consulting Firm Founder, Salon/Spa Owner, Cleaning Business Operator, Professional Services Manager, Agency Founder
+**Career Outcome:** Community Development Officer, Social Worker (Development), Program Coordinator, Community Engagement Manager, Urban Planner (Social), Head of Community Impact
 
-**AI Instructor — Sofia Martínez** — Service business strategist and operations consultant with 14+ years helping entrepreneurs build and scale service-based companies across healthcare, beauty, professional services, and home services in Miami, Madrid, and Mexico City. Former founder of a multi-location wellness brand and operations advisor at a franchise consulting firm. MBA from IE Business School. Expert in service delivery systems, client acquisition, pricing for services, team management, booking and scheduling systems, and service quality frameworks. Known for helping service providers transition from solo operator to business owner.
+**AI Instructor — Maria Santos** — Community development practitioner and participatory planning expert with 14+ years designing and implementing grassroots programs across housing, livelihoods, youth empowerment, and urban resilience in Manila, São Paulo, and Melbourne. Former Head of Community Programs at a global development agency and co-founder of a community-led housing cooperative. MSc in Development Studies from the London School of Economics. Expert in participatory methods, asset-based community development, stakeholder facilitation, social cohesion, and local economic development. Known for amplifying community voice in development decision-making.
 
 **Courses (14 courses, 62 modules):**
 
 **Foundation (5)**
-1. Introduction to Service-Based Business Models (4 modules)
-2. Defining Your Service Offering & Target Market (5 modules)
-3. Pricing Services — Hourly, Package & Value-Based Models (4 modules)
-4. Client Acquisition & Your First 50 Customers (5 modules)
-5. Legal, Insurance & Compliance for Service Businesses (4 modules)
+1. Introduction to Community Development — Principles & Practice (4 modules)
+2. Community Needs Assessment & Asset Mapping (5 modules)
+3. Participatory Planning & Stakeholder Engagement (4 modules)
+4. Project Management for Community Programs (5 modules)
+5. Ethics, Inclusion & Cultural Sensitivity in Development (4 modules)
 
 **Intermediate (5)**
-1. Service Delivery Systems & Quality Assurance (5 modules)
-2. Marketing Your Service Business — Referrals, Reviews & Digital (5 modules)
-3. Hiring, Training & Managing Service Teams (4 modules)
-4. Booking Systems, CRM & Operational Technology (5 modules)
-5. Client Retention, Upselling & Recurring Revenue (4 modules)
+1. Livelihoods, Microenterprise & Local Economic Development (5 modules)
+2. Youth Empowerment & Education Programs (5 modules)
+3. Health, WASH & Social Service Delivery (4 modules)
+4. Community Organizing, Mobilization & Advocacy (5 modules)
+5. Monitoring, Evaluation & Community Feedback Systems (4 modules)
 
 **Executive (4)**
-1. Scaling a Service Business — Multi-Location & Licensing (5 modules)
-2. Building a Service Brand & Reputation Management (4 modules)
-3. Financial Management & Profitability for Service Firms (4 modules)
-4. Capstone: Service Business Expansion Plan (4 modules)
+1. Scaling Community Programs — Replication & Policy Integration (5 modules)
+2. Funding & Resource Mobilization for Community Projects (4 modules)
+3. Leadership, Governance & Institutional Strengthening (4 modules)
+4. Capstone: Community Development Strategy & Implementation Plan (4 modules)
 
 ---
 
-## Program 4: Import & Export
+## Program 4: Sustainable Business
 
-**Career Outcome:** Import/Export Business Owner, International Trade Specialist, Freight & Logistics Coordinator, Customs Broker, Trade Compliance Manager, Global Sourcing Manager
+**Career Outcome:** Sustainability Manager, ESG Analyst, Chief Sustainability Officer, Circular Economy Consultant, Green Business Founder, Head of Corporate Social Responsibility
 
-**AI Instructor — Chen Wei Lin** — International trade strategist and import/export entrepreneur with 17+ years in cross-border commerce, trade finance, and global supply chain management across Shanghai, Rotterdam, and Dubai. Former Director of International Trade at a global commodities firm and founder of an import/export consultancy. MSc in International Business from Erasmus University Rotterdam. Expert in trade regulations, customs compliance, Incoterms, letter of credit financing, freight forwarding, and market entry for physical goods. Known for helping small businesses successfully navigate international trade.
+**AI Instructor — Erik Lindström** — Sustainability strategist and circular economy expert with 17+ years advising corporations, startups, and governments on sustainable business practices across energy, manufacturing, fashion, and food systems in Stockholm, Amsterdam, and Singapore. Former Head of Sustainability at a Fortune 500 consumer goods company and co-founder of a circular economy consultancy. MSc in Environmental Management from Yale School of the Environment. Expert in ESG frameworks, carbon accounting, sustainable supply chains, circular business models, and green finance. Known for helping businesses integrate sustainability as a competitive advantage.
 
 **Courses (14 courses, 62 modules):**
 
 **Foundation (5)**
-1. Introduction to International Trade & Import/Export (4 modules)
-2. Identifying Products & Markets for Trade (5 modules)
-3. Trade Regulations, Customs & Compliance (4 modules)
-4. Incoterms, Shipping & Freight Logistics (5 modules)
-5. Trade Finance — Letters of Credit, Payment Terms & Risk (4 modules)
+1. Introduction to Sustainable Business & the Green Economy (4 modules)
+2. Environmental, Social & Governance (ESG) Fundamentals (5 modules)
+3. Circular Economy — Principles & Business Applications (4 modules)
+4. Carbon Footprint, Climate Risk & Net-Zero Strategy (5 modules)
+5. Sustainable Supply Chain & Ethical Sourcing (4 modules)
 
 **Intermediate (5)**
-1. Supplier Sourcing & International Negotiation (5 modules)
-2. Export Marketing & International Sales Channels (5 modules)
-3. Documentation, Labeling & Regulatory Requirements (4 modules)
-4. Currency Risk, Hedging & International Payments (5 modules)
-5. Building Relationships with Customs Brokers & Freight Forwarders (4 modules)
+1. Green Product Design & Sustainable Innovation (5 modules)
+2. ESG Reporting, Standards & Compliance (GRI, SASB, TCFD) (5 modules)
+3. Green Marketing & Conscious Consumer Engagement (4 modules)
+4. Renewable Energy, Clean Tech & Green Infrastructure (5 modules)
+5. Sustainable Finance, Green Bonds & Impact Investing (4 modules)
 
 **Executive (4)**
-1. Scaling Your Trade Business — Multi-Market Expansion (5 modules)
-2. Trade Agreements, Tariffs & Geopolitical Risk (4 modules)
-3. Financial Planning & Working Capital for Traders (4 modules)
-4. Capstone: Import/Export Business Plan & Market Entry Strategy (4 modules)
+1. Building a Sustainability-First Organization (5 modules)
+2. Corporate Social Responsibility & Stakeholder Capitalism (4 modules)
+3. Policy, Regulation & Global Sustainability Frameworks (4 modules)
+4. Capstone: Sustainable Business Transformation Plan (4 modules)
 
 ---
 
 ## Execution Plan
 
 1. Set career outcomes for all 4 programs
-2. Create 4 AI instructors (Chef Amara Diallo, James Hartley, Sofia Martínez, Chen Wei Lin)
+2. Create 4 AI instructors (Amina Osei, David Mensah, Maria Santos, Erik Lindström)
 3. Insert 56 courses (14 × 4) and 248 modules (62 × 4)
 4. Verify all counts
 
-No placeholders to delete — all programs are completely empty.
+This completes the Entrepreneurship Academy (all 4 schools done). Next after this: Freelancing Academy.
 
