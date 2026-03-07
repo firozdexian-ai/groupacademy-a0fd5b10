@@ -1,61 +1,45 @@
 
 
-# Full Academy Audit — What's Built vs What's Missing
+# School of Personal Branding — Full Build (4 Programs)
 
-## Summary
+Second school in the Influencing Academy. All 4 programs are currently empty.
 
-| Academy | Schools | Programs | Courses Built | Modules Built | Status |
-|---|---|---|---|---|---|
-| Executive | 6 | 26 | 364 | ~1,586 | **100% Complete** |
-| Freelancing | 6 | 24 | 336 | ~1,492 | **100% Complete** |
-| Entrepreneurship | 4 | 16 | 224 | ~992 | **100% Complete** |
-| Influencing | 3 | 12 | **0** | **0** | **0% — Completely Empty** |
+## Programs & Instructors
 
-## Influencing Academy — ALL 12 PROGRAMS ARE EMPTY
+| Program | ID | Instructor | Persona |
+|---|---|---|---|
+| Brand Identity & Positioning | `9bb45e8f` | **Aisha Monroe** | Former brand consultant turned personal branding coach; warm, strategic |
+| Public Speaking & Presence | `cac9cf38` | **Marcus Hale** | TEDx speaker coach; energetic, performance-focused |
+| Monetization & Partnerships | `52b16cc5` | **Zara Okonkwo** | Ex-influencer turned business strategist; practical, deal-savvy |
+| Reputation & Crisis Management | `1d8ff870` | **David Lindström** | Former PR executive; calm, methodical, crisis-tested |
 
-### School of Social Media (4 programs, 0 courses)
-- Instagram & TikTok Growth (`649a8633`)
-- YouTube Strategy (`11952dc4`)
-- LinkedIn & Professional Networking (`6af3aba3`)
-- Community Management (`893dbdb0`)
+## Curriculum per Program (14 courses, ~63 modules each)
 
-### School of Personal Branding (4 programs, 0 courses)
-- Brand Identity & Positioning (`9bb45e8f`)
-- Public Speaking & Presence (`cac9cf38`)
-- Monetization & Partnerships (`52b16cc5`)
-- Reputation & Crisis Management (`1d8ff870`)
+### Brand Identity & Positioning
+**Foundation (5):** Foundations of Personal Branding · Discovering Your Unique Value · Target Audience Identification · Visual Identity Design · Brand Voice & Messaging
+**Intermediate (5):** Brand Storytelling Mastery · Online Presence Optimization · Thought Leadership Strategy · Brand Consistency Across Platforms · Competitive Brand Analysis
+**Executive (4):** Brand Empire Building · Strategic Brand Partnerships · Brand Licensing & IP · Legacy Brand Management
 
-### School of Content Creation (4 programs, 0 courses)
-- Video Production & Editing (`d93f3a99`)
-- Podcasting & Audio Content (`60c1c1f9`)
-- Writing & Newsletter Creation (`df3e277d`)
-- Photography & Visual Storytelling (`f72a0496`)
+### Public Speaking & Presence
+**Foundation (5):** Foundations of Public Speaking · Overcoming Stage Fright · Speech Structure & Storytelling · Vocal Technique & Delivery · Body Language Mastery
+**Intermediate (5):** Presentation Design Excellence · Panel & Interview Mastery · Persuasion & Influence Techniques · Virtual Speaking & Webinars · Audience Engagement Strategies
+**Executive (4):** Keynote Speaking Career · TEDx & Conference Circuit · Executive Communication · Speaking Business Management
 
-## Legacy/Orphan Programs (no school, no courses)
-These 5 programs have `school_id = null` — they predate the academy structure:
-- Student (Undergraduate)
-- Student (Graduate/Masters)
-- Fresh Graduate
-- Career Changer
-- Other
+### Monetization & Partnerships
+**Foundation (5):** Foundations of Influence Monetization · Building a Monetizable Audience · Sponsorship & Brand Deals 101 · Affiliate Marketing Strategies · Digital Product Creation
+**Intermediate (5):** Advanced Sponsorship Negotiation · Membership & Subscription Models · Course & Workshop Creation · Licensing & Merchandise · Multi-Platform Revenue Streams
+**Executive (4):** Building a Media Company · Equity Deals & Co-Ownership · Talent Agency & Representation · Scaling Influence to Enterprise
 
-These are likely used for onboarding/profiling, not curriculum. No action needed unless you want to clean them up.
+### Reputation & Crisis Management
+**Foundation (5):** Foundations of Online Reputation · Digital Footprint Audit · Review & Feedback Management · Media Relations Basics · Brand Monitoring & Alerts
+**Intermediate (5):** Crisis Communication Planning · Social Media Crisis Response · Legal Aspects of Reputation · Rebuilding After a Crisis · Stakeholder Communication
+**Executive (4):** Corporate Reputation Strategy · Executive Crisis Leadership · Global Reputation Management · Reputation as a Business Asset
 
-## Recommended Next Steps
+## Execution (5 steps)
 
-**Priority 1: Build the Influencing Academy** — 3 schools, 12 programs, ~168 courses, ~744 modules. Same pattern as the other academies (14 courses / ~62 modules per program). This would be done in 3 batches (one per school).
-
-**Priority 2: AI Descriptions** — Once all curriculum exists, batch-generate detailed AI descriptions for the ~2,000+ modules still using placeholder text.
-
----
-
-## Proposed Build Order
-
-1. **School of Social Media** (4 programs) — Instagram & TikTok, YouTube, LinkedIn, Community Management
-2. **School of Personal Branding** (4 programs) — Brand Identity, Public Speaking, Monetization, Reputation
-3. **School of Content Creation** (4 programs) — Video Production, Podcasting, Writing & Newsletter, Photography
-
-Each school follows the same pattern: set career outcomes → create 4 AI instructors → insert 56 courses → insert ~248 modules.
-
-Want to start with School of Social Media?
+1. Insert 4 AI instructors with full personas and system prompts
+2. Insert 56 courses into `content` (Foundation/Intermediate/Executive levels)
+3. Insert ~252 modules into `course_modules`
+4. Verify counts
+5. Update `.lovable/plan.md`
 
