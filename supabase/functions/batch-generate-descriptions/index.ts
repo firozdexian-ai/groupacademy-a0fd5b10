@@ -11,7 +11,6 @@ serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
   try {
-    // Auth check
     const authHeader = req.headers.get("Authorization");
     if (!authHeader) throw new Error("Missing authorization");
 
@@ -19,7 +18,6 @@ serve(async (req) => {
     const supabaseKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabase = createClient(supabaseUrl, supabaseKey);
 
-    // Verify admin
     const anonClient = createClient(supabaseUrl, Deno.env.get("SUPABASE_ANON_KEY")!);
     const token = authHeader.replace("Bearer ", "");
     const { data: { user }, error: authError } = await anonClient.auth.getUser(token);
@@ -36,57 +34,71 @@ serve(async (req) => {
     const { school_id, batch_size = 5 } = await req.json();
     if (!school_id) throw new Error("school_id required");
 
-    // Fetch modules with short descriptions for this school
-    // Join: course_modules -> content -> profession_categories (school)
-    const { data: modules, error: fetchError } = await supabase
-      .from("course_modules")
-      .select(`
-        id,
-        title,
-        description,
-        content:content_id (
-          title,
-          profession_line_id,
-          profession_category:profession_line_id (
-            name,
-            parent_id
-          )
-        )
-      `)
-      .eq("content.profession_category.parent_id", school_id)
-      .not("content", "is", null)
-      .order("created_at", { ascending: true })
-      .limit(batch_size);
+    // Get programs (profession_categories) under this school
+    const { data: programs } = await supabase
+      .from("profession_categories")
+      .select("id, name")
+      .eq("school_id", school_id);
 
-    // Filter to only modules with short/missing descriptions
-    const shortModules = (modules || []).filter((m: any) => {
-      if (!m.content) return false;
-      const desc = m.description || "";
-      return desc.length < 200;
-    });
+    if (!programs || programs.length === 0) {
+      return new Response(
+        JSON.stringify({ processed: 0, remaining: 0, message: "No programs found for this school" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const programIds = programs.map((p: any) => p.id);
+    const programMap = Object.fromEntries(programs.map((p: any) => [p.id, p.name]));
+
+    // Get content (courses) for these programs
+    const { data: courses } = await supabase
+      .from("content")
+      .select("id, title, profession_line_id")
+      .in("profession_line_id", programIds);
+
+    if (!courses || courses.length === 0) {
+      return new Response(
+        JSON.stringify({ processed: 0, remaining: 0, message: "No courses found" }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } }
+      );
+    }
+
+    const courseIds = courses.map((c: any) => c.id);
+    const courseMap = Object.fromEntries(courses.map((c: any) => [c.id, { title: c.title, programId: c.profession_line_id }]));
+
+    // Fetch modules with short descriptions
+    const { data: allModules } = await supabase
+      .from("course_modules")
+      .select("id, title, description, content_id")
+      .in("content_id", courseIds)
+      .order("created_at", { ascending: true })
+      .limit(1000);
+
+    const shortModules = (allModules || [])
+      .filter((m: any) => (m.description || "").length < 200)
+      .slice(0, batch_size);
+
+    const totalRemaining = (allModules || []).filter((m: any) => (m.description || "").length < 200).length;
 
     if (shortModules.length === 0) {
-      // Count remaining
-      const { count } = await supabase
-        .from("course_modules")
-        .select("id", { count: "exact", head: true })
-        .not("content", "is", null);
-
       return new Response(
-        JSON.stringify({ processed: 0, remaining: 0, message: "All modules in this school have descriptions" }),
+        JSON.stringify({ processed: 0, remaining: 0, message: "All modules have descriptions" }),
         { headers: { ...corsHeaders, "Content-Type": "application/json" } }
       );
     }
 
     // Build prompt
     const moduleList = shortModules.map((m: any, i: number) => {
-      const courseName = m.content?.title || "Unknown Course";
-      const programName = m.content?.profession_category?.name || "Unknown Program";
-      return `${i + 1}. Module ID: ${m.id}\n   Course: "${courseName}"\n   Program: "${programName}"\n   Module Title: "${m.title}"`;
+      const course = courseMap[m.content_id] || { title: "Unknown", programId: "" };
+      const programName = programMap[course.programId] || "Unknown Program";
+      return `${i + 1}. Module ID: ${m.id}\n   Course: "${course.title}"\n   Program: "${programName}"\n   Module Title: "${m.title}"`;
     }).join("\n\n");
 
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     if (!LOVABLE_API_KEY) throw new Error("LOVABLE_API_KEY not configured");
+
+    const controller = new AbortController();
+    const timeout = setTimeout(() => controller.abort(), 45000);
 
     const aiResponse = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
@@ -94,6 +106,7 @@ serve(async (req) => {
         Authorization: `Bearer ${LOVABLE_API_KEY}`,
         "Content-Type": "application/json",
       },
+      signal: controller.signal,
       body: JSON.stringify({
         model: "google/gemini-2.5-flash-lite",
         messages: [
@@ -138,6 +151,8 @@ serve(async (req) => {
       }),
     });
 
+    clearTimeout(timeout);
+
     if (!aiResponse.ok) {
       const status = aiResponse.status;
       const text = await aiResponse.text();
@@ -163,7 +178,6 @@ serve(async (req) => {
 
     const { descriptions } = JSON.parse(toolCall.function.arguments);
 
-    // Update modules in DB
     let updated = 0;
     for (const item of descriptions) {
       if (!item.module_id || !item.description) continue;
@@ -174,30 +188,8 @@ serve(async (req) => {
       if (!updateError) updated++;
     }
 
-    // Count remaining for this school using a raw approach
-    // We need to count modules where description < 200 chars in this school
-    const { data: remainingModules } = await supabase
-      .from("course_modules")
-      .select(`
-        id,
-        description,
-        content:content_id (
-          profession_category:profession_line_id (
-            parent_id
-          )
-        )
-      `)
-      .eq("content.profession_category.parent_id", school_id)
-      .not("content", "is", null)
-      .limit(1000);
-
-    const remaining = (remainingModules || []).filter((m: any) => {
-      if (!m.content) return false;
-      return (m.description || "").length < 200;
-    }).length;
-
     return new Response(
-      JSON.stringify({ processed: updated, remaining, batch_size: shortModules.length }),
+      JSON.stringify({ processed: updated, remaining: totalRemaining - updated }),
       { headers: { ...corsHeaders, "Content-Type": "application/json" } }
     );
   } catch (e) {

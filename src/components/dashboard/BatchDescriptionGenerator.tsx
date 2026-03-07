@@ -28,35 +28,26 @@ export function BatchDescriptionGenerator() {
   const fetchSchools = useCallback(async () => {
     setIsLoading(true);
     try {
-      // Get all schools (profession_categories where parent_id is an academy)
-      const { data: academies } = await supabase
-        .from("academies")
-        .select("id");
-
-      if (!academies) return;
-      const academyIds = academies.map((a) => a.id);
-
+      // Get all schools
       const { data: schoolsData } = await supabase
-        .from("profession_categories")
-        .select("id, name, parent_id")
-        .in("parent_id", academyIds)
+        .from("schools")
+        .select("id, name")
         .order("name");
 
       if (!schoolsData) return;
 
-      // For each school, count total & pending modules
       const schoolInfos: SchoolInfo[] = [];
       for (const school of schoolsData) {
         // Get programs under this school
         const { data: programs } = await supabase
           .from("profession_categories")
           .select("id")
-          .eq("parent_id", school.id);
+          .eq("school_id", school.id);
 
         if (!programs || programs.length === 0) continue;
         const programIds = programs.map((p) => p.id);
 
-        // Get all content for these programs
+        // Get content for these programs
         const { data: contents } = await supabase
           .from("content")
           .select("id")
@@ -65,13 +56,13 @@ export function BatchDescriptionGenerator() {
         if (!contents || contents.length === 0) continue;
         const contentIds = contents.map((c) => c.id);
 
-        // Count modules
+        // Count total modules
         const { count: totalCount } = await supabase
           .from("course_modules")
           .select("id", { count: "exact", head: true })
           .in("content_id", contentIds);
 
-        // Get modules with short descriptions
+        // Get modules to check description length
         const { data: allModules } = await supabase
           .from("course_modules")
           .select("id, description")
@@ -188,10 +179,11 @@ export function BatchDescriptionGenerator() {
         if (remaining > 0 && !stopRef.current) {
           await new Promise((r) => setTimeout(r, 2000));
         }
-      } catch (err: any) {
+      } catch (err: unknown) {
         consecutiveErrors++;
-        addLog(`❌ Error: ${err.message}`);
-        
+        const errMsg = err instanceof Error ? err.message : "Unknown error";
+        addLog(`❌ Error: ${errMsg}`);
+
         if (consecutiveErrors >= 3) {
           addLog("Too many consecutive errors. Stopping.");
           toast.error("Too many errors. Processing stopped.");
@@ -209,7 +201,7 @@ export function BatchDescriptionGenerator() {
     }
 
     setIsRunning(false);
-    fetchSchools(); // Refresh counts
+    fetchSchools();
   };
 
   const stopBatch = () => {
@@ -234,13 +226,13 @@ export function BatchDescriptionGenerator() {
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Modules Needing Descriptions</CardDescription>
-            <CardTitle className="text-2xl text-amber-600">{totalGlobalPending.toLocaleString()}</CardTitle>
+            <CardTitle className="text-2xl text-destructive">{totalGlobalPending.toLocaleString()}</CardTitle>
           </CardHeader>
         </Card>
         <Card>
           <CardHeader className="pb-2">
             <CardDescription>Schools Complete</CardDescription>
-            <CardTitle className="text-2xl text-green-600">
+            <CardTitle className="text-2xl text-primary">
               {schools.filter((s) => s.pending === 0).length} / {schools.length}
             </CardTitle>
           </CardHeader>
@@ -272,7 +264,7 @@ export function BatchDescriptionGenerator() {
                           {school.pending} pending
                         </Badge>
                       ) : (
-                        <Badge className="text-xs bg-green-100 text-green-700">✓ Done</Badge>
+                        <Badge variant="outline" className="text-xs">✓ Done</Badge>
                       )}
                     </span>
                   </SelectItem>
@@ -303,7 +295,7 @@ export function BatchDescriptionGenerator() {
               <div className="flex items-center justify-between text-sm">
                 <span className="flex items-center gap-2">
                   {isRunning && <Loader2 className="w-4 h-4 animate-spin" />}
-                  {!isRunning && processed > 0 && <CheckCircle2 className="w-4 h-4 text-green-600" />}
+                  {!isRunning && processed > 0 && <CheckCircle2 className="w-4 h-4 text-primary" />}
                   {isRunning ? "Processing..." : "Complete"}
                 </span>
                 <span className="text-muted-foreground">
@@ -351,9 +343,9 @@ export function BatchDescriptionGenerator() {
                       className="w-24 h-2"
                     />
                     {school.pending === 0 ? (
-                      <CheckCircle2 className="w-4 h-4 text-green-600" />
+                      <CheckCircle2 className="w-4 h-4 text-primary" />
                     ) : (
-                      <AlertTriangle className="w-4 h-4 text-amber-500" />
+                      <AlertTriangle className="w-4 h-4 text-destructive" />
                     )}
                   </div>
                 </div>
