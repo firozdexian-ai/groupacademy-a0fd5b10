@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { GigCard } from "@/components/gigs/GigCard";
 import { MySubmissions } from "@/components/gigs/MySubmissions";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Gift, Upload, Briefcase, Share2, FileText, BookOpen } from "lucide-react";
+import { Gift, Upload, Briefcase, Share2, FileText, BookOpen, ArrowRight } from "lucide-react";
 
 const CATEGORIES = [
   { key: "all", label: "All", icon: Gift },
