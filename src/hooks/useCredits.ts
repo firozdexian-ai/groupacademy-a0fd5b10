@@ -297,6 +297,11 @@ export function useCredits(): UseCreditsReturn {
           });
         }
 
+        // Fire-and-forget email receipt for purchases and refunds
+        if ((type === "purchase" || type === "refund") && talent.id) {
+          emailNotifications.creditReceipt(talent.id, amount, newBalance, type);
+        }
+
         return true;
       } catch (error) {
         console.error("Error adding credits:", error);

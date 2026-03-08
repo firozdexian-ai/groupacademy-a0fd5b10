@@ -10,6 +10,7 @@ import { toast } from "sonner";
 import { CheckCircle2, XCircle, Eye, Coins, User, Briefcase, MapPin, Phone, FileText, Share2, BookOpen, ExternalLink, Image, UserPlus, BriefcaseBusiness } from "lucide-react";
 import { format } from "date-fns";
 import { useState } from "react";
+import { emailNotifications } from "@/lib/emailNotifications";
 
 function SubmissionPreview({ submission }: { submission: any }) {
   const data = submission.submission_data as any;
