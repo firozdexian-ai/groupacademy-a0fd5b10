@@ -111,7 +111,7 @@ Please provide a detailed analysis in the following JSON format:
 {
   "summary": "Brief 2-3 sentence summary of the candidate's market position",
   "market_salary_range": {
-    "currency": "BDT",
+    "currency": "USD",
     "min_monthly": <number>,
     "max_monthly": <number>,
     "median_monthly": <number>,
