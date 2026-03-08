@@ -508,7 +508,7 @@ function PortfolioRequestContent() {
                     </div>
                   </div>
                   <div className="text-center sm:text-right">
-                    <div className="text-2xl font-bold">BDT 2,000</div>
+                    <div className="text-2xl font-bold">500 Credits</div>
                     <p className="text-xs text-muted-foreground">one-time fee</p>
                   </div>
                 </div>
