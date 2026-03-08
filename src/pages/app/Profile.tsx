@@ -162,11 +162,13 @@ export default function Profile() {
       {/* Cover Banner + Profile Card */}
       <div className="relative mb-5 animate-bounce-in">
         {/* Cover */}
-        {talent.coverImageUrl ? (
-          <img src={talent.coverImageUrl} alt="Cover" className="h-28 w-full object-cover rounded-t-3xl mx-4" />
-        ) : (
-          <div className="h-28 bg-gradient-primary rounded-t-3xl mx-4" />
-        )}
+        <div className="mx-4 rounded-t-3xl overflow-hidden">
+          {talent.coverImageUrl ? (
+            <img src={talent.coverImageUrl} alt="Cover" className="h-28 w-full object-cover" />
+          ) : (
+            <div className="h-28 bg-gradient-primary" />
+          )}
+        </div>
 
         {/* Profile Info - overlapping the banner */}
         <div className="mx-4 -mt-12 relative">
