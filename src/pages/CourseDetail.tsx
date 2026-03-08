@@ -506,8 +506,45 @@ const CourseDetail = () => {
   const currentUrl = window.location.href;
   const embedUrl = getYouTubeEmbedUrl(course.youtube_url);
 
+  // Dynamic SEO meta tags
+  useEffect(() => {
+    document.title = `${course.title} - GroUp Academy`;
+    const setMeta = (prop: string, content: string, attr = "property") => {
+      let el = document.querySelector(`meta[${attr}="${prop}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, prop); document.head.appendChild(el); }
+      el.setAttribute("content", content);
+    };
+    const url = `https://groupacademy.lovable.app/courses/${course.slug}`;
+    setMeta("og:title", course.title);
+    setMeta("og:description", course.description || `Enroll in ${course.title} at GroUp Academy`);
+    setMeta("og:url", url);
+    setMeta("og:type", "website");
+    if (course.cover_image_url) setMeta("og:image", course.cover_image_url);
+    setMeta("twitter:title", course.title, "name");
+    setMeta("twitter:description", course.description || course.title, "name");
+    setMeta("description", course.description || `Enroll in ${course.title} at GroUp Academy`, "name");
+  }, [course]);
+
+  const courseJsonLd = {
+    "@context": "https://schema.org",
+    "@type": "Course",
+    name: course.title,
+    description: course.description,
+    provider: { "@type": "Organization", name: "GroUp Academy", sameAs: "https://groupacademy.lovable.app" },
+    ...(course.instructor_name && { instructor: { "@type": "Person", name: course.instructor_name } }),
+    ...(course.cover_image_url && { image: course.cover_image_url }),
+    url: `https://groupacademy.lovable.app/courses/${course.slug}`,
+    offers: {
+      "@type": "Offer",
+      price: course.price || 0,
+      priceCurrency: "USD",
+      availability: isFull ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
+    },
+  };
+
   return (
     <div className="min-h-screen bg-gradient-muted flex flex-col">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }} />
       <Navbar />
       
       {/* Hero Section with Cover Image or Gradient Background */}
