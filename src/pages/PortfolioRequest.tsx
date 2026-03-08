@@ -421,7 +421,7 @@ function PortfolioRequestContent() {
                 <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
                   <li>Our Talent Success Executive will contact you on WhatsApp</li>
                   <li>They will verify your information and discuss your portfolio</li>
-                  <li>We'll create your professional portfolio (FREE for first 1,000 users, then BDT 2,000)</li>
+                  <li>We'll create your professional portfolio (FREE for first 1,000 users, then 500 Credits)</li>
                   <li>You'll receive your portfolio link + CMS access within 3-5 days</li>
                 </ol>
               </div>
@@ -508,7 +508,7 @@ function PortfolioRequestContent() {
                     </div>
                   </div>
                   <div className="text-center sm:text-right">
-                    <div className="text-2xl font-bold">BDT 2,000</div>
+                    <div className="text-2xl font-bold">500 Credits</div>
                     <p className="text-xs text-muted-foreground">one-time fee</p>
                   </div>
                 </div>
@@ -913,9 +913,9 @@ function PortfolioRequestContent() {
                   </div>
 
                   <div className="bg-primary/10 p-4 rounded-lg">
-                    <h4 className="font-semibold mb-2">Service Fee: BDT 100</h4>
+                    <h4 className="font-semibold mb-2">Service Fee: 500 Credits</h4>
                     <p className="text-sm text-muted-foreground">
-                      Payment will be collected via WhatsApp after our team contacts you.
+                      Credits will be deducted from your balance upon confirmation.
                     </p>
                   </div>
                 </div>

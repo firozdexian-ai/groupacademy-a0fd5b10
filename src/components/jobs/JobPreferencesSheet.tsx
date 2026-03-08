@@ -25,13 +25,13 @@ const JOB_TYPE_OPTIONS = Object.entries(JOB_TYPES).map(([value, config]) => ({
 }));
 
 const LOCATIONS = [
-  "Dhaka",
-  "Chittagong",
-  "Sylhet",
-  "Rajshahi",
-  "Khulna",
   "Remote",
-  "Anywhere in Bangladesh",
+  "New York",
+  "London",
+  "Dubai",
+  "Singapore",
+  "San Francisco",
+  "Anywhere",
 ];
 
 const INDUSTRIES = [
@@ -190,7 +190,7 @@ export function JobPreferencesSheet({ open, onOpenChange }: JobPreferencesSheetP
 
           {/* Salary Range */}
           <div>
-            <Label className="text-sm font-medium mb-3 block">Salary Expectations (BDT/month)</Label>
+            <Label className="text-sm font-medium mb-3 block">Salary Expectations (USD/month)</Label>
             <div className="grid grid-cols-2 gap-3">
               <div>
                 <Label className="text-xs text-muted-foreground mb-1 block">Minimum</Label>

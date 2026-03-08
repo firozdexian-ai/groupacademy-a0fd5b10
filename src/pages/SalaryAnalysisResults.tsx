@@ -102,7 +102,7 @@ const SalaryAnalysisResults = () => {
   }, [id]);
 
   const formatSalary = (amount: number) => {
-    return new Intl.NumberFormat('en-BD').format(amount);
+    return new Intl.NumberFormat('en-US').format(amount);
   };
 
   const getPositionBadge = (positioning: string) => {
@@ -252,17 +252,17 @@ const SalaryAnalysisResults = () => {
             <div className="grid grid-cols-3 gap-4 text-center">
               <div className="p-4 bg-muted/50 rounded-lg">
                 <p className="text-sm text-muted-foreground">Minimum</p>
-                <p className="text-2xl font-bold">৳{formatSalary(salaryRange?.min_monthly)}</p>
+                <p className="text-2xl font-bold">${formatSalary(salaryRange?.min_monthly)}</p>
                 <p className="text-xs text-muted-foreground">/month</p>
               </div>
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
                 <p className="text-sm text-muted-foreground">Median</p>
-                <p className="text-2xl font-bold text-primary">৳{formatSalary(salaryRange?.median_monthly)}</p>
+                <p className="text-2xl font-bold text-primary">${formatSalary(salaryRange?.median_monthly)}</p>
                 <p className="text-xs text-muted-foreground">/month</p>
               </div>
               <div className="p-4 bg-muted/50 rounded-lg">
                 <p className="text-sm text-muted-foreground">Maximum</p>
-                <p className="text-2xl font-bold">৳{formatSalary(salaryRange?.max_monthly)}</p>
+                <p className="text-2xl font-bold">${formatSalary(salaryRange?.max_monthly)}</p>
                 <p className="text-xs text-muted-foreground">/month</p>
               </div>
             </div>

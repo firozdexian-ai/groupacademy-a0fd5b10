@@ -111,12 +111,12 @@ Please provide a detailed analysis in the following JSON format:
 {
   "summary": "Brief 2-3 sentence summary of the candidate's market position",
   "market_salary_range": {
-    "currency": "BDT",
+    "currency": "USD",
     "min_monthly": <number>,
     "max_monthly": <number>,
     "median_monthly": <number>,
     "experience_level": "entry|mid|senior|executive",
-    "market_context": "Brief explanation of how this range was determined for Bangladesh market"
+    "market_context": "Brief explanation of how this range was determined for the target market"
   },
   "skills_analysis": {
     "matching_skills": ["skill1", "skill2"],

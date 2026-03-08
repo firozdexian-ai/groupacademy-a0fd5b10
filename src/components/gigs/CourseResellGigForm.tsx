@@ -37,7 +37,7 @@ export function CourseResellGigForm({ gig, talentId, onSubmitted }: CourseResell
     ? `https://groupacademy.lovable.app/app/courses/${selectedCourse.slug}?ref=${talentId}`
     : "";
   const shareMessage = selectedCourse
-    ? `📚 Check out "${selectedCourse.title}" on Growthpad Academy!\n${selectedCourse.price ? `💰 Only ৳${selectedCourse.price}` : "🆓 Free"}\n\nEnroll now: ${referralLink}`
+    ? `📚 Check out "${selectedCourse.title}" on GroUp Academy!\n${selectedCourse.price ? `💰 Only $${selectedCourse.price}` : "🆓 Free"}\n\nEnroll now: ${referralLink}`
     : "";
 
   const handleWhatsAppShare = () => {
@@ -102,7 +102,7 @@ export function CourseResellGigForm({ gig, talentId, onSubmitted }: CourseResell
                   <div className="min-w-0">
                     <p className="font-medium text-sm truncate">{course.title}</p>
                     <p className="text-xs text-muted-foreground">
-                      {course.price ? `৳${course.price}` : "Free"}
+                      {course.price ? `$${course.price}` : "Free"}
                     </p>
                   </div>
                 </div>

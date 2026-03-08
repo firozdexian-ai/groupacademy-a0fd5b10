@@ -11,7 +11,7 @@ const PRODUCT_TEMPLATES = {
   "digital-portfolio": {
     name: "GroUp Academy Digital Portfolio",
     pitch: "First 1000 FREE professional portfolio websites from GroUp Academy",
-    value: "Worth BDT 1,000 - absolutely FREE for a limited time!",
+    value: "Worth $20 - absolutely FREE for a limited time!",
     cta: 'Reply "PORTFOLIO" to claim your free professional portfolio from GroUp Academy',
     link: "/portfolio-request",
   },
@@ -39,7 +39,7 @@ const PRODUCT_TEMPLATES = {
   "salary-analysis": {
     name: "GroUp Academy AI Salary Analysis",
     pitch: "Know your market value before negotiations - powered by GroUp Academy",
-    value: "Get salary benchmarks and negotiation strategies for Bangladesh market",
+    value: "Get salary benchmarks and negotiation strategies for your market",
     cta: 'Reply "SALARY" to analyze your worth with GroUp Academy',
     link: "/salary-analysis",
   },

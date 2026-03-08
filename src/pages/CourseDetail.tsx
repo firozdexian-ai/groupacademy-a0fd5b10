@@ -232,7 +232,7 @@ const CourseDetail = () => {
 
   const handleWhatsAppClick = () => {
     const message = encodeURIComponent(
-      `Hi! I want to enroll in "${course?.title}" (BDT ${course?.price}). Please send me the access code after payment confirmation.`
+      `Hi! I want to enroll in "${course?.title}" ($${course?.price}). Please send me the access code after payment confirmation.`
     );
     const whatsappUrl = `https://wa.me/8801889825025?text=${message}`;
     window.open(whatsappUrl, "_blank");
@@ -544,7 +544,7 @@ const CourseDetail = () => {
                     <Badge className="bg-success text-success-foreground border-0">Free</Badge>
                   ) : (
                     <Badge className="bg-black/40 text-white border-0 backdrop-blur-sm">
-                      BDT {course.price}
+                      ${course.price}
                     </Badge>
                   )}
                 </div>
@@ -608,7 +608,7 @@ const CourseDetail = () => {
                     <Badge className="bg-success text-success-foreground border-0">Free</Badge>
                   ) : (
                     <Badge className="bg-primary-foreground/20 text-primary-foreground border-0">
-                      BDT {course.price}
+                      ${course.price}
                     </Badge>
                   )}
                 </div>
@@ -917,7 +917,7 @@ const CourseDetail = () => {
                   <>
                     {course.price > 0 && (
                       <div className="mb-4 p-4 bg-muted rounded-lg">
-                        <p className="text-sm font-medium mb-2">Paid Course - BDT {course.price}</p>
+                        <p className="text-sm font-medium mb-2">Paid Course - ${course.price}</p>
                         <p className="text-sm text-muted-foreground">
                           Sign up first, then contact admin via WhatsApp to get your access code
                         </p>

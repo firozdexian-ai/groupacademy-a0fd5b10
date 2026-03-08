@@ -9,7 +9,7 @@ import {
 import { Button } from '@/components/ui/button';
 import { Badge } from '@/components/ui/badge';
 import { Card, CardContent } from '@/components/ui/card';
-import { CREDIT_CONFIG, creditsToTaka } from '@/lib/creditPricing';
+import { CREDIT_CONFIG, creditsToUSD } from '@/lib/creditPricing';
 import { cn } from '@/lib/utils';
 import { SUPPORT_CONFIG, getCreditPurchaseMessage } from '@/lib/constants/support';
 
@@ -38,7 +38,7 @@ export function CreditPurchaseSheet({
             Buy Credits
           </SheetTitle>
           <SheetDescription>
-            Choose a credit bundle. Pay via bKash/Nagad on WhatsApp.
+            Choose a credit bundle. Secure online payment via WhatsApp.
           </SheetDescription>
         </SheetHeader>
 
@@ -80,14 +80,14 @@ export function CreditPurchaseSheet({
                       </div>
                       {bundle.savings > 0 && (
                         <Badge variant="secondary" className="text-accent">
-                          Save ৳{bundle.savings}
+                          Save ${bundle.savings}
                         </Badge>
                       )}
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold">৳{bundle.price}</span>
+                      <span className="text-2xl font-bold">${bundle.price}</span>
                       <span className="text-xs text-muted-foreground">
-                        ৳{(bundle.price / bundle.credits).toFixed(1)}/credit
+                        ${(bundle.price / bundle.credits).toFixed(3)}/credit
                       </span>
                     </div>
                   </CardContent>
@@ -111,7 +111,7 @@ export function CreditPurchaseSheet({
           </Button>
 
           <p className="text-xs text-center text-muted-foreground">
-            Payment via bKash, Nagad, or bank transfer. Credits added within 30 minutes.
+            Secure payment via card, bank transfer, or mobile wallet. Credits added within 30 minutes.
           </p>
         </div>
       </SheetContent>

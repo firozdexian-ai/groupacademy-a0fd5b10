@@ -14,7 +14,7 @@ const SalaryAnalysis = () => {
     {
       icon: TrendingUp,
       title: "Market Salary Range",
-      description: "Get accurate salary benchmarks for your role in the Bangladesh market"
+      description: "Get accurate salary benchmarks for your role in the global market"
     },
     {
       icon: Target,
@@ -35,7 +35,7 @@ const SalaryAnalysis = () => {
 
   const benefits = [
     "AI-powered analysis of your CV against job requirements",
-    "Salary ranges specific to Bangladesh job market",
+    "Salary ranges specific to your target job market",
     "Personalized negotiation strategies",
     "Skills gap identification with recommendations",
     "Market demand insights for your profession",
@@ -56,14 +56,14 @@ const SalaryAnalysis = () => {
             </div>
             <Badge className="mb-4 gap-2 border-primary/30 text-primary" variant="outline">
               <Sparkles className="w-3 h-3" />
-              First Analysis Free • Retakes BDT 100
+              First Analysis Free • Retakes 50 Credits
             </Badge>
             <h1 className="text-4xl md:text-5xl font-heading font-bold mb-6">
               AI Salary Analysis
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Know your worth. Upload your CV and job description to get personalized salary insights, 
-              skills gap analysis, and negotiation tips for the Bangladesh market.
+              skills gap analysis, and negotiation tips for your target market.
             </p>
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link to="/salary-analysis/setup">
@@ -71,7 +71,7 @@ const SalaryAnalysis = () => {
               </Link>
             </Button>
             <p className="text-sm text-muted-foreground mt-4">
-              First analysis FREE • Retakes BDT 100
+              First analysis FREE • Retakes 50 Credits
             </p>
           </div>
         </div>

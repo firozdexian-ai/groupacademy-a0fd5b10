@@ -62,7 +62,7 @@ const BRAND = {
 };
 
 const formatSalary = (amount: number) => {
-  return new Intl.NumberFormat('en-BD').format(amount);
+  return new Intl.NumberFormat('en-US').format(amount);
 };
 
 const getPositionLabel = (positioning: string) => {
@@ -165,22 +165,22 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
       {/* Salary Range */}
       <div style={{ marginBottom: "30px" }}>
         <h3 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "12px", color: BRAND.primary, fontFamily: "'Poppins', sans-serif" }}>
-          Market Salary Range (Bangladesh)
+          Market Salary Range
         </h3>
         <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
           <div style={{ flex: 1, backgroundColor: BRAND.background, padding: "16px", borderRadius: "12px", textAlign: "center" }}>
             <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>Minimum</p>
-            <p style={{ fontSize: "20px", fontWeight: "bold", margin: 0 }}>৳{formatSalary(salaryRange.min_monthly)}</p>
+            <p style={{ fontSize: "20px", fontWeight: "bold", margin: 0 }}>${formatSalary(salaryRange.min_monthly)}</p>
             <p style={{ fontSize: "11px", color: BRAND.muted, margin: 0 }}>/month</p>
           </div>
           <div style={{ flex: 1, background: `linear-gradient(135deg, ${BRAND.secondary}20, ${BRAND.primary}20)`, padding: "16px", borderRadius: "12px", textAlign: "center", border: `2px solid ${BRAND.secondary}` }}>
             <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>Median</p>
-            <p style={{ fontSize: "20px", fontWeight: "bold", color: BRAND.primary, margin: 0 }}>৳{formatSalary(salaryRange.median_monthly)}</p>
+            <p style={{ fontSize: "20px", fontWeight: "bold", color: BRAND.primary, margin: 0 }}>${formatSalary(salaryRange.median_monthly)}</p>
             <p style={{ fontSize: "11px", color: BRAND.muted, margin: 0 }}>/month</p>
           </div>
           <div style={{ flex: 1, backgroundColor: BRAND.background, padding: "16px", borderRadius: "12px", textAlign: "center" }}>
             <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>Maximum</p>
-            <p style={{ fontSize: "20px", fontWeight: "bold", margin: 0 }}>৳{formatSalary(salaryRange.max_monthly)}</p>
+            <p style={{ fontSize: "20px", fontWeight: "bold", margin: 0 }}>${formatSalary(salaryRange.max_monthly)}</p>
             <p style={{ fontSize: "11px", color: BRAND.muted, margin: 0 }}>/month</p>
           </div>
         </div>

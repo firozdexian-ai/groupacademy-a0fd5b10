@@ -73,7 +73,7 @@ export default function ContentEdit() {
         description: data.description || "",
         content_type: data.content_type,
         price: data.price?.toString() || "",
-        currency: data.currency || "BDT",
+        currency: data.currency || "USD",
         credit_cost: data.credit_cost ?? null,
         duration_hours: data.duration_hours?.toString() || "",
         modules_count: data.modules_count?.toString() || "",
@@ -299,7 +299,7 @@ export default function ContentEdit() {
                   onChange={(e) =>
                     setFormData({ ...formData, currency: e.target.value })
                   }
-                  placeholder="BDT"
+                  placeholder="USD"
                 />
               </div>
             </div>
@@ -319,10 +319,10 @@ export default function ContentEdit() {
                 placeholder="Auto-calculated from price if empty"
               />
               <p className="text-xs text-muted-foreground">
-                Leave empty to auto-calculate from price (1 credit = ৳2). 
+                Leave empty to auto-calculate from price (1 credit = $0.02). 
                 {formData.price && !formData.credit_cost && (
                   <span className="font-medium text-foreground ml-1">
-                    Auto: {Math.ceil(parseFloat(formData.price) / 2)} credits
+                    Auto: {Math.ceil(parseFloat(formData.price) / 0.02)} credits
                   </span>
                 )}
               </p>

@@ -270,7 +270,7 @@ export default function AppJobs() {
                     <div className="flex justify-between">
                       <Label>Min Salary</Label>
                       <span className="text-sm text-muted-foreground">
-                        {salaryRange[0] > 0 ? `৳${salaryRange[0]}k+` : "Any"}
+                        {salaryRange[0] > 0 ? `$${salaryRange[0]}k+` : "Any"}
                       </span>
                     </div>
                     <Slider value={salaryRange} onValueChange={setSalaryRange} max={150} step={5} />
@@ -337,7 +337,7 @@ export default function AppJobs() {
           ))}
           {salaryRange[0] > 0 && (
             <Badge variant="secondary" className="gap-1">
-              Min ৳{salaryRange[0]}k
+              Min ${salaryRange[0]}k
               <X className="w-3 h-3 cursor-pointer" onClick={() => setSalaryRange([0])} />
             </Badge>
           )}
