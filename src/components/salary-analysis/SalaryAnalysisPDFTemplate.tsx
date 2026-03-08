@@ -175,7 +175,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
           </div>
           <div style={{ flex: 1, background: `linear-gradient(135deg, ${BRAND.secondary}20, ${BRAND.primary}20)`, padding: "16px", borderRadius: "12px", textAlign: "center", border: `2px solid ${BRAND.secondary}` }}>
             <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>Median</p>
-            <p style={{ fontSize: "20px", fontWeight: "bold", color: BRAND.primary, margin: 0 }}>৳{formatSalary(salaryRange.median_monthly)}</p>
+            <p style={{ fontSize: "20px", fontWeight: "bold", color: BRAND.primary, margin: 0 }}>${formatSalary(salaryRange.median_monthly)}</p>
             <p style={{ fontSize: "11px", color: BRAND.muted, margin: 0 }}>/month</p>
           </div>
           <div style={{ flex: 1, backgroundColor: BRAND.background, padding: "16px", borderRadius: "12px", textAlign: "center" }}>
