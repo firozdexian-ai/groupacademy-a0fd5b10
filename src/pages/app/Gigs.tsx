@@ -1,12 +1,14 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Button } from "@/components/ui/button";
 import { GigCard } from "@/components/gigs/GigCard";
 import { MySubmissions } from "@/components/gigs/MySubmissions";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Gift, Upload, Briefcase, Share2, FileText, BookOpen } from "lucide-react";
+import { Gift, Upload, Briefcase, Share2, FileText, BookOpen, ArrowRight } from "lucide-react";
 
 const CATEGORIES = [
   { key: "all", label: "All", icon: Gift },
@@ -18,6 +20,7 @@ const CATEGORIES = [
 ];
 
 export default function Gigs() {
+  const navigate = useNavigate();
   const { talent } = useTalent();
   const [activeTab, setActiveTab] = useState("gigs");
   const [selectedCategory, setSelectedCategory] = useState("all");
@@ -61,11 +64,16 @@ export default function Gigs() {
 
   return (
     <div className="px-4 md:px-0 space-y-4">
-      <div>
-        <h1 className="text-2xl font-bold">Earn Credits</h1>
-        <p className="text-muted-foreground text-sm">
-          Complete gigs to earn credits you can use or withdraw
-        </p>
+      <div className="flex items-center justify-between">
+        <div>
+          <h1 className="text-2xl font-bold">Earn Credits</h1>
+          <p className="text-muted-foreground text-sm">
+            Complete gigs to earn credits you can use or withdraw
+          </p>
+        </div>
+        <Button variant="outline" size="sm" className="gap-1 shrink-0" onClick={() => navigate("/app/marketplace")}>
+          Marketplace <ArrowRight className="h-3.5 w-3.5" />
+        </Button>
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab}>

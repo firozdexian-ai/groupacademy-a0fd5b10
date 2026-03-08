@@ -60,6 +60,8 @@ import MyResults from "./pages/app/MyResults";
 import MyApplications from "./pages/app/MyApplications";
 import SavedItems from "./pages/app/SavedItems";
 import Gigs from "./pages/app/Gigs";
+import Marketplace from "./pages/app/Marketplace";
+import MarketplaceGigDetail from "./pages/app/MarketplaceGigDetail";
 import Transactions from "./pages/app/Transactions";
 
 // Feature Details
@@ -350,6 +352,8 @@ export default function App() {
                     <Route path="abroad" element={<CareerAbroad />} />
                     <Route path="agents" element={<AIAgents />} />
                     <Route path="gigs" element={<Gigs />} />
+                    <Route path="marketplace" element={<Marketplace />} />
+                    <Route path="marketplace/:id" element={<MarketplaceGigDetail />} />
                     <Route path="profile" element={<Profile />} />
 
                     {/* Job Routes - Specific Routes First */}

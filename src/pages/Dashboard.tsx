@@ -40,6 +40,7 @@ import { MarketingAnalytics } from "@/components/dashboard/MarketingAnalytics";
 import { FeedPostsManager } from "@/components/dashboard/FeedPostsManager";
 import { GigsManager } from "@/components/dashboard/GigsManager";
 import { GigSubmissionsManager } from "@/components/dashboard/GigSubmissionsManager";
+import { MarketplaceGigsManager } from "@/components/dashboard/MarketplaceGigsManager";
 import { IRDashboard } from "@/components/dashboard/ir/IRDashboard";
 import { MRRTargetManager } from "@/components/dashboard/ir/MRRTargetManager";
 import { BatchDescriptionGenerator } from "@/components/dashboard/BatchDescriptionGenerator";
@@ -104,6 +105,7 @@ const tabAccessMap: Record<string, AppRole[]> = {
   "company-agents": ["admin"],
   "agent-sessions": ["admin"],
   gigs: ["admin"],
+  "marketplace-gigs": ["admin"],
   "gig-submissions": ["admin"],
   credits: ["admin"],
   notifications: ["admin"],
@@ -296,6 +298,8 @@ const Dashboard = () => {
         return <AgentSessionsManager />;
       case "gigs":
         return <GigsManager />;
+      case "marketplace-gigs":
+        return <MarketplaceGigsManager />;
       case "gig-submissions":
         return <GigSubmissionsManager />;
       case "credits":
@@ -362,6 +366,7 @@ const Dashboard = () => {
       "company-agents": "Company Agents",
       "agent-sessions": "Agent Sessions",
       gigs: "Manage Gigs",
+      "marketplace-gigs": "Marketplace Gigs",
       "gig-submissions": "Gig Submissions",
       credits: "Credits Manager",
       notifications: "Notifications",

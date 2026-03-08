@@ -80,8 +80,10 @@ export const ROUTES = {
     abroadRoadmapResults: (id: string) => `/app/abroad/roadmap/${id}`,
     notifications: '/app/notifications',
     
-    // Gigs
+    // Gigs & Marketplace
     gigs: '/app/gigs',
+    marketplace: '/app/marketplace',
+    marketplaceDetail: (id: string) => `/app/marketplace/${id}`,
     transactions: '/app/transactions',
   },
 
