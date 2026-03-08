@@ -26,6 +26,8 @@ import PortfolioRequest from "./pages/PortfolioRequest";
 import PortfolioStatus from "./pages/PortfolioStatus";
 import CourseDetail from "./pages/CourseDetail";
 import PublicServiceLanding from "./pages/PublicServiceLanding";
+import PublicServices from "./pages/PublicServices";
+import PublicCourses from "./pages/PublicCourses";
 
 // Admin Pages
 import Dashboard from "./pages/Dashboard";
@@ -184,7 +186,9 @@ export default function App() {
 
                   {/* Public Content */}
                   <Route path="/courses/:slug" element={<CourseDetail />} />
-                  <Route path="/services" element={<PublicServiceLanding />} />
+                  <Route path="/courses" element={<PublicCourses />} />
+                  <Route path="/services" element={<PublicServices />} />
+                  <Route path="/career-services" element={<PublicServices />} />
                   <Route path="/blog" element={<Blog />} />
                   <Route path="/blog/:slug" element={<BlogPost />} />
 
@@ -209,9 +213,7 @@ export default function App() {
 
                   {/* Redirects */}
                   <Route path="/jobs" element={<Navigate to="/auth?returnTo=/app/jobs" replace />} />
-                  <Route path="/courses" element={<Navigate to="/auth?returnTo=/app/learning/courses" replace />} />
                   <Route path="/professions" element={<Navigate to="/auth?returnTo=/app/learning/tracks" replace />} />
-                  <Route path="/career-services" element={<PublicServiceLanding />} />
                   <Route path="/my-profile" element={<Navigate to="/app/profile" replace />} />
                   <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
                   <Route path="/my-learning" element={<Navigate to="/app/learning/my-courses" replace />} />
