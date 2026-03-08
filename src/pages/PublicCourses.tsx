@@ -30,7 +30,7 @@ export default function PublicCourses() {
         .select("id, title, slug, description, cover_image_url, thumbnail_url, content_type, duration_hours, current_enrollment, instructor_name, modules_count, credit_cost")
         .eq("is_published", true)
         .eq("is_private", false)
-        .in("content_type", ["course", "workshop"])
+        .in("content_type", ["recorded_course", "batch_class", "free_video"])
         .order("current_enrollment", { ascending: false })
         .limit(12);
       if (error) throw error;
