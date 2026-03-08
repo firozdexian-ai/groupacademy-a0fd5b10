@@ -39,7 +39,7 @@ const PRODUCT_TEMPLATES = {
   "salary-analysis": {
     name: "GroUp Academy AI Salary Analysis",
     pitch: "Know your market value before negotiations - powered by GroUp Academy",
-    value: "Get salary benchmarks and negotiation strategies for Bangladesh market",
+    value: "Get salary benchmarks and negotiation strategies for your market",
     cta: 'Reply "SALARY" to analyze your worth with GroUp Academy',
     link: "/salary-analysis",
   },

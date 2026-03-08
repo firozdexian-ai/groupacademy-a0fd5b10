@@ -265,7 +265,7 @@ Important parsing rules:
 - Separate required qualifications from preferred/bonus skills
 - For job_type, infer from context (most are full_time unless stated)
 - For experience_level: 'Junior' or 'Entry' = 'entry', 'Senior' or 'Lead' = 'senior', 'Manager/Director/VP' = 'executive', otherwise 'mid'
-- Parse salary amounts (remove BDT/Tk symbols, handle 'K' for thousands)
+- Parse salary amounts (remove currency symbols, handle 'K' for thousands)
 - Extract application email/URL if provided
 - Extract company website if mentioned in the post`;
 
