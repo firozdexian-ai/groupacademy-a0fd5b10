@@ -268,7 +268,7 @@ export default function Feed() {
             </Card>
           ) : (
             // Feed Items List
-            <div className="space-y-2 md:space-y-4 pb-20">
+            <div className="space-y-2 md:space-y-4 pb-20 md:pb-4">
               {items.map((item, index) => (
                 <div
                   key={item.id}
