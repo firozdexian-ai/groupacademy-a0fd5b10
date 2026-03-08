@@ -20,6 +20,7 @@ const CATEGORIES = [
 ];
 
 export default function Gigs() {
+  const navigate = useNavigate();
   const { talent } = useTalent();
   const [activeTab, setActiveTab] = useState("gigs");
   const [selectedCategory, setSelectedCategory] = useState("all");
