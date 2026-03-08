@@ -1,84 +1,71 @@
 
 
-# GroUp Academy — Vision Progress Report (Updated)
+# Transactional Email Notifications
 
-## What's Been Completed Since Last Check
+## Current State
+- RESEND_API_KEY is configured (secret exists)
+- `send-job-application` edge function already uses Resend successfully
+- No custom email domain configured (emails will send from `noreply@resend.dev` until a domain is set up)
+- Notifications table exists with realtime subscriptions
 
-Since the last assessment, two major items were executed:
-- **BDT/Taka → USD cleanup**: ~35 files refactored. Only 2 minor legacy references remain (a deprecated helper in `irConfig.ts` and BDT as a currency option in PaymentSettingsManager — both intentional).
-- **Payment Settings Admin Infrastructure**: `platform_settings` table, admin panel, `usePaymentConfig` hook, and dynamic purchase flow all live.
+## Architecture
 
-## Current Completion
+One new edge function `send-transactional-email` that accepts an email type and payload, selects the right HTML template, sends via Resend, and logs a notification in-app.
 
-| Domain | % | Change |
-|---|---|---|
-| Academy Content (7 Academies) | 95% | — |
-| Career Services (6 services) | 90% | — |
-| Jobs Platform | 85% | — |
-| AI Layer (29 edge functions) | 90% | — |
-| Gig Marketplace | 75% | — |
-| **Credits & Monetization** | **70%** | **↑10** (payment infra built, awaiting Stripe key) |
-| Feed & Engagement | 80% | — |
-| Admin Dashboard | 92% | ↑2 (payments tab added) |
-| Auth & Onboarding | 85% | — |
-| **Global Readiness** | **85%** | **↑15** (USD cleanup complete) |
-| Payments (Stripe) | 15% | ↑10 (infra ready, no key yet) |
-| Employer Self-Service | 0% | — |
-| In-App Messaging | 0% | — |
-| Public Discovery / SEO | 15% | — |
-| i18n / Multi-language | 0% | — |
-| PWA Polish | 40% | — |
-| Learner Analytics Dashboard | 0% | — |
-| Certificates | 0% | — |
-| Notifications (email/push) | 40% | — |
+### Email Types to Support
+
+| Event | Trigger | Data Needed |
+|-------|---------|-------------|
+| **Welcome / Signup** | DB trigger on `talents` INSERT | name, email |
+| **Service Completion** | Called from existing service edge functions | service name, result summary |
+| **Gig Bid Accepted** | Called from `award_gig_credits` or admin action | gig title, credits awarded |
+| **Credit Purchase Receipt** | Called from credit addition flow | amount, new balance, transaction type |
+
+### Flow
 
 ```text
-Overall Platform:          ████████████████████░░░░░░░░  ~62%  (was ~60%)
-Launch-Ready:              ██████████████░░░░░░░░░░░░░░  ~50%  (was ~45%)
-Market Leader:             ████████░░░░░░░░░░░░░░░░░░░░  ~30%
+Event occurs → Edge function called → 
+  1. Build HTML from template
+  2. Send via Resend API
+  3. Insert notification row (in-app)
+  4. Return success/failure
 ```
 
-## Course of Action — What's Next
+## Files
 
-### Phase A: Launch-Ready (immediate priority)
+| Action | File | Purpose |
+|--------|------|---------|
+| Create | `supabase/functions/send-transactional-email/index.ts` | Main edge function with templates + Resend sending |
+| Create | `src/lib/emailNotifications.ts` | Frontend helper to invoke the edge function from service flows |
+| Edit | `src/hooks/useCredits.ts` | Call email notification after credit purchase |
+| Edit | `src/components/dashboard/GigSubmissionsManager.tsx` | Call email on bid approval |
+| Migration | Add `email_notifications_log` table | Track sent emails, prevent duplicates |
+| Config | `supabase/config.toml` | Register new function with `verify_jwt = false` |
 
-| # | Item | Status | Impact |
-|---|------|--------|--------|
-| 1 | **Stripe Payment** — Provide API key, flip toggle in admin | Blocked on key | Critical |
-| 2 | **Email Notifications** — Transactional emails (signup, bid accepted, credits) | Not started | High |
-| 3 | **PWA Polish** — Offline fallback, install prompt, push registration | Partial | Medium |
-| 4 | **Public Landing Pages** — SEO homepage, service pages, course catalog | Not started | High |
+## Edge Function Design
 
-### Phase B: Trust & Retention
+The function accepts:
+```json
+{
+  "type": "welcome" | "service_complete" | "bid_accepted" | "credit_receipt",
+  "talent_id": "uuid",
+  "data": { /* type-specific payload */ }
+}
+```
 
-| # | Item | Status |
-|---|------|--------|
-| 5 | Verifiable Certificates (PDF + URL) | Not started |
-| 6 | Employer Self-Service Portal | Not started |
-| 7 | Learner Analytics Dashboard | Not started |
-| 8 | In-App Messaging | Not started |
+It looks up the talent's email, builds branded HTML (GroUp Academy styled), sends via Resend, and inserts a notification row. Includes idempotency check via `email_notifications_log` to prevent duplicate sends.
 
-### Phase C: Growth & Scale
+## Email Templates (inline HTML in edge function)
 
-| # | Item |
-|---|------|
-| 9 | Public Talent Directory |
-| 10 | Referral & Affiliate System |
-| 11 | Multi-Language (i18n) |
-| 12 | Mobile Push Notifications |
-| 13 | Employer Dashboard & Analytics |
-| 14 | Content Marketplace |
+All emails share a consistent branded header/footer with GroUp Academy logo, dark navy theme accent, and clear CTA buttons. Templates are kept as template literal functions inside the edge function (no external dependencies).
 
-### Phase D: Dominance
+## Email Domain Note
 
-| # | Item |
-|---|------|
-| 15 | AI Career Coach (persistent) |
-| 16 | Enterprise Tier |
-| 17 | API & Integrations |
-| 18 | Community Features |
+Currently no custom email domain is configured. Emails will send from `noreply@resend.dev` which works for testing but may have deliverability issues. Setting up a custom domain (e.g., `notify@groupacademy.com`) is recommended before production launch but is not a blocker for building the infrastructure now.
 
-## Recommended Next Step
+## Database
 
-**Item #2 — Email Notifications** is the next buildable item (Stripe is blocked on your API key). Transactional emails for signup confirmation, service completions, and credit purchases would significantly improve user trust and retention.
+New table `email_notifications_log`:
+- `id`, `talent_id`, `email_type`, `recipient_email`, `resend_id`, `status` (sent/failed), `error_message`, `created_at`
+- RLS: admin read-only, system insert via service role
 
