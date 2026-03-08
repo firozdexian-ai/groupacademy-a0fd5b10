@@ -297,6 +297,8 @@ const Dashboard = () => {
         return <AgentSessionsManager />;
       case "gigs":
         return <GigsManager />;
+      case "marketplace-gigs":
+        return <MarketplaceGigsManager />;
       case "gig-submissions":
         return <GigSubmissionsManager />;
       case "credits":
