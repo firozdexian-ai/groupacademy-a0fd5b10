@@ -146,19 +146,29 @@ export default function ServiceLanding() {
     serviceType: "Career Development",
   };
 
+  useEffect(() => {
+    document.title = `${service.title} | GroUp Academy`;
+    const setMeta = (name: string, content: string, prop?: string) => {
+      const attr = prop ? "property" : "name";
+      const val = prop || name;
+      let el = document.querySelector(`meta[${attr}="${val}"]`);
+      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, val); document.head.appendChild(el); }
+      el.setAttribute("content", content);
+    };
+    setMeta("description", service.metaDescription);
+    setMeta("og:title", `${service.title} | GroUp Academy`, "og:title");
+    setMeta("og:description", service.metaDescription, "og:description");
+
+    // JSON-LD
+    let script = document.querySelector('script[data-service-ld]') as HTMLScriptElement | null;
+    if (!script) { script = document.createElement("script"); script.type = "application/ld+json"; script.setAttribute("data-service-ld", "true"); document.head.appendChild(script); }
+    script.textContent = JSON.stringify(jsonLd);
+
+    return () => { script?.remove(); };
+  }, [serviceSlug]);
+
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>{service.title} | GroUp Academy</title>
-        <meta name="description" content={service.metaDescription} />
-        <link rel="canonical" href={`https://groupacademy.lovable.app/service/${serviceSlug}`} />
-        <meta property="og:title" content={`${service.title} | GroUp Academy`} />
-        <meta property="og:description" content={service.metaDescription} />
-        <meta property="og:type" content="website" />
-        <script type="application/ld+json">{JSON.stringify(jsonLd)}</script>
-      </Helmet>
-
-      <Navbar />
 
       {/* Hero */}
       <section className="relative overflow-hidden py-20 md:py-28">
