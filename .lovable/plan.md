@@ -1,75 +1,61 @@
 
 
-# GroUp Academy — Vision Progress Report
+# Stripe Payment Infrastructure — Implementation Plan
 
-## Current Completion
+## What Already Exists
+- `PaymentSettingsManager` admin UI with gateway, Stripe key, mode, currency fields — **fully wired** to `platform_settings` table
+- `usePaymentConfig` hook reading settings and exposing `showStripe`, `isStripeConfigured`
+- `CreditPurchaseSheet` with "Pay with Card" button (currently disabled when unconfigured)
+- All 5 `platform_settings` rows seeded in DB
 
-| Domain | % | Notes |
-|---|---|---|
-| Academy Content (7 Academies) | 95% | — |
-| Career Services (6 services) | 90% | — |
-| Jobs Platform | 85% | — |
-| AI Layer (29+ edge functions) | 90% | — |
-| Gig Marketplace | 75% | — |
-| Credits & Monetization | 70% | — |
-| Feed & Engagement | 80% | — |
-| Admin Dashboard | 92% | — |
-| Auth & Onboarding | 85% | — |
-| Global Readiness | 85% | — |
-| Payments (Stripe) | 15% | Blocked on API key |
-| Notifications (email/push) | 80% | Email triggers done |
-| Public Discovery / SEO | 85% | Blog + OG + Service pages done |
-| PWA Polish | 65% | — |
-| Certificates | 85% | PDF + verify + email done |
-| Employer Self-Service | 0% | — |
-| In-App Messaging | 0% | — |
-| Learner Analytics Dashboard | 0% | — |
-| i18n / Multi-language | 0% | — |
+## What's Missing
+The backend checkout flow: no edge function to create Stripe sessions, no webhook to fulfill payments, and the "Pay with Card" button has no handler.
 
-```text
-Overall Platform:          ███████████████████████░░░░░  ~76%
-Launch-Ready:              ████████████████████░░░░░░░░  ~67%
-Market Leader:             ██████████░░░░░░░░░░░░░░░░░░  ~37%
-```
+## Implementation
 
-## Course of Action — Priority Order
+### 1. `create-checkout` Edge Function
+Creates a Stripe Checkout session for a selected credit bundle. Reads `STRIPE_SECRET_KEY` from secrets. Returns a checkout URL that the client redirects to.
 
-### Phase A: Launch-Ready (immediate)
+- Validates authenticated user via `getClaims()`
+- Looks up bundle from request body (credits, price)
+- Creates Stripe checkout session with success/cancel URLs
+- Stores a pending `credit_transactions` record with Stripe session ID
+- Returns `{ url: "https://checkout.stripe.com/..." }`
 
-| # | Item | Status | Impact |
-|---|------|--------|--------|
-| 1 | **Stripe Payment** — Provide API key, flip toggle | Blocked on key | Critical |
-| 2 | **Stripe Admin Infrastructure** — Settings UI to input keys from dashboard | Ready to build | High |
-| 3 | **PWA: Push notifications** — Web push registration + delivery | Not started | Medium |
+### 2. `stripe-webhook` Edge Function
+Handles `checkout.session.completed` events from Stripe. No JWT required (public endpoint with signature verification).
 
-### Phase B: Trust & Retention
+- Verifies Stripe webhook signature using `STRIPE_WEBHOOK_SECRET`
+- On success: credits the user's `talent_credits` balance, updates the pending transaction record
+- Sends a notification to the user
 
-| # | Item | Status |
-|---|------|--------|
-| 4 | Employer Self-Service Portal | Not started |
-| 5 | Learner Analytics Dashboard | Not started |
-| 6 | In-App Messaging | Not started |
+### 3. Wire CreditPurchaseSheet
+- Add `handleStripeCheckout(credits, price)` that calls `supabase.functions.invoke('create-checkout', ...)`
+- Redirect to the returned Stripe checkout URL
+- Bundle selection cards route to Stripe when Stripe is active gateway
 
-### Phase C: Growth & Scale
+### 4. Add Stripe Secret Key Input to Admin Panel
+- Add a new `platform_settings` row for `stripe_secret_key` (marked `is_secret: true`)
+- In `PaymentSettingsManager`, add a masked secret key input field
+- The `create-checkout` edge function reads this from DB (or from Supabase secrets)
 
-| # | Item |
-|---|------|
-| 7 | Public Talent Directory |
-| 8 | Referral & Affiliate System |
-| 9 | Multi-Language (i18n) |
-| 10 | Mobile Push Notifications |
-| 11 | Employer Dashboard & Analytics |
+**Security note**: The Stripe *secret* key will be stored as a Supabase secret (not in `platform_settings`) since it must never be exposed client-side. The admin panel will have a "Configure Secret Key" section that calls an edge function to securely store/update it.
 
-### Phase D: Dominance
+### 5. Config + Routing
+- Register both new edge functions in `supabase/config.toml`
+- Add success/cancel return pages or handle via query params on existing pages
 
-| # | Item |
-|---|------|
-| 12 | AI Career Coach (persistent) |
-| 13 | Enterprise Tier |
-| 14 | API & Integrations |
-| 15 | Community Features |
+### Files to Create
+- `supabase/functions/create-checkout/index.ts`
+- `supabase/functions/stripe-webhook/index.ts`
 
-## Recommended Next Step
+### Files to Edit
+- `supabase/config.toml` — register new functions
+- `src/components/credits/CreditPurchaseSheet.tsx` — wire Stripe button
+- `src/components/dashboard/PaymentSettingsManager.tsx` — add secret key management section
+- `.lovable/plan.md` — update progress
 
-**Item #2 — Stripe Admin Infrastructure** is the highest-impact buildable item right now. The `PaymentSettingsManager` and `usePaymentConfig` hook already exist but the Stripe secret key needs a secure input flow via the admin panel (storing in `platform_settings` + wiring to the checkout edge function). This unblocks Stripe the moment you obtain your API key. Alternatively, **Item #3 — PWA Push Notifications** would close the engagement loop for course completions and job matches.
+### Progress Impact
+- **Payments (Stripe)**: 15% → 65% (full flow ready, just needs API key)
+- **Overall Platform**: ~76% → ~78%
 
