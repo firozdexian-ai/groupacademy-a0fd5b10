@@ -44,6 +44,7 @@ import { MarketplaceGigsManager } from "@/components/dashboard/MarketplaceGigsMa
 import { IRDashboard } from "@/components/dashboard/ir/IRDashboard";
 import { MRRTargetManager } from "@/components/dashboard/ir/MRRTargetManager";
 import { BatchDescriptionGenerator } from "@/components/dashboard/BatchDescriptionGenerator";
+import { BatchContentGenerator } from "@/components/dashboard/BatchContentGenerator";
 import { VCFirmsManager } from "@/components/dashboard/ir/VCFirmsManager";
 import { InvestorsManager } from "@/components/dashboard/ir/InvestorsManager";
 import { EmailComposer } from "@/components/dashboard/ir/EmailComposer";
