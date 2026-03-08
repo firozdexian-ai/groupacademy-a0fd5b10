@@ -1,44 +1,30 @@
 
 
-# GroUp Academy — Updated Vision Status
+# GroUp Academy — Build Progress
 
-## Current Completion: ~84% (up from ~82%)
+## Schools
 
-### What Changed Since Last Check
-- PWA Service Worker: 75% → 90% ✅ (caching strategies, update prompt, offline support)
+| School | Programs | Courses | Modules | Status |
+|---|---|---|---|---|
+| Social Media | 4 | 56 | 252 | ✅ |
+| Personal Branding | 4 | 56 | 249 | ✅ |
+| Content Creation | 4 | 56 | 248 | ✅ |
 
-## Module Status
+**Influencing Academy: 100% COMPLETE ✅**
 
-```text
-Module                          Status     %     Next Action
-─────────────────────────────── ──────── ────── ──────────────────────────────
-1. Academy / LMS                  ✅     95%   Batch video linking
-2. AI Module Descriptions         🔧     70%   Run generator across all schools
-3. AI Agents / Chat               ✅     90%   Conversation export
-4. Jobs Hub                       ✅     90%   Saved job alerts
-5. Career Services                ✅     85%   Result sharing UX
-6. Feed / Social                  ✅     85%   User-generated posts
-7. Study Abroad                   ✅     80%   Application tracker
-8. Profile & Onboarding           ✅     85%   Profile visibility settings
-9. Credits & Payments (Stripe)    🔧     65%   Configure keys, test checkout
-10. Admin Dashboard               ✅     90%   Bulk actions
-11. Notifications                 ✅     85%   Push notifications (FCM/Web Push)
-12. Public SEO / Marketing        ✅     85%   Landing page optimization
-13. Gigs / Marketplace            ✅     80%   Payment for completions
-14. PWA / Mobile                  ✅     90%   Done — just shipped ✅
-15. Auth & Security               ✅     85%   Role-based admin gate
-```
+## Certificates
 
-## Remaining Priority Queue
+- `certificates` table with unique verify codes, RLS policies
+- `CertificatePDFTemplate` - branded landscape PDF with verification URL
+- `/verify/:code` - public verification page
+- Auto-issue on quiz pass from ReportCard page
+- Copy shareable verification link
+- **Email notification on certificate issuance** ✅
 
-| #  | Task                        | Impact        | Effort |
-|----|-----------------------------|---------------|--------|
-| 1  | Run AI Descriptions         | 70% → 100%   | Low — just run batches |
-| 2  | Activate Stripe Payments    | 65% → 90%    | Medium — keys + testing |
-| 3  | Push Notifications          | 85% → 95%    | Medium |
-| 4  | Role-Based Admin Gate       | 85% → 95%    | Medium — user_roles table + RLS |
-| 5  | User-Generated Feed Posts   | 85% → 95%    | Medium |
-| 6  | Landing Page Polish         | 85% → 95%    | Low-Medium |
+## Public SEO & OpenGraph
 
-Completing items 1-4 would bring the platform to **~92%**.
-
+- `/blog` - Public blog index with JSON-LD Blog schema, category filters, search
+- `/blog/:slug` - Public blog post with Article JSON-LD, dynamic OG meta tags
+- `/courses/:slug` - Course JSON-LD structured data + dynamic OG meta tags
+- `/courses` - Public courses listing with JSON-LD ItemList schema
+- `/services/:slug` - Service landing pages with OG meta, Twitter cards, JSON-LD Service schema ✅

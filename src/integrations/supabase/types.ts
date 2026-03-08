@@ -1758,7 +1758,9 @@ export type Database = {
           media_url: string | null
           poll_ends_at: string | null
           poll_options: Json | null
+          status: string
           tags: string[] | null
+          talent_id: string | null
           text_content: string
           updated_at: string | null
         }
@@ -1776,7 +1778,9 @@ export type Database = {
           media_url?: string | null
           poll_ends_at?: string | null
           poll_options?: Json | null
+          status?: string
           tags?: string[] | null
+          talent_id?: string | null
           text_content: string
           updated_at?: string | null
         }
@@ -1794,11 +1798,21 @@ export type Database = {
           media_url?: string | null
           poll_ends_at?: string | null
           poll_options?: Json | null
+          status?: string
           tags?: string[] | null
+          talent_id?: string | null
           text_content?: string
           updated_at?: string | null
         }
-        Relationships: []
+        Relationships: [
+          {
+            foreignKeyName: "feed_posts_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+        ]
       }
       gig_share_logs: {
         Row: {

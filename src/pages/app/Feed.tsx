@@ -26,6 +26,7 @@ import { FloatingWhatsAppButton } from "@/components/feed/FloatingWhatsAppButton
 import { PersonalizedPromptCard } from "@/components/feed/PersonalizedPromptCard";
 import { BannerCarousel } from "@/components/BannerCarousel";
 import { QuickActionsGrid } from "@/components/feed/QuickActionsGrid";
+import { ComposePost } from "@/components/feed/ComposePost";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNow } from "date-fns";
 
@@ -213,6 +214,9 @@ export default function Feed() {
 
           {/* Banner Carousel */}
           <BannerCarousel compact />
+
+          {/* Compose Post */}
+          <ComposePost onPostCreated={() => refresh()} />
 
           {/* Filters */}
           <FeedFilters filters={filters} onChange={setFilters} counts={counts} />
