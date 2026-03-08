@@ -1,6 +1,6 @@
 
 
-# Influencing Academy — Build Progress
+# GroUp Academy — Build Progress
 
 ## Schools
 
@@ -11,3 +11,11 @@
 | Content Creation | 4 | 56 | 248 | ✅ |
 
 **Influencing Academy: 100% COMPLETE ✅**
+
+## Certificates
+
+- `certificates` table with unique verify codes, RLS policies
+- `CertificatePDFTemplate` - branded landscape PDF with verification URL
+- `/verify/:code` - public verification page
+- Auto-issue on quiz pass from ReportCard page
+- Copy shareable verification link
