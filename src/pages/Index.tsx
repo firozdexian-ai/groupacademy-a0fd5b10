@@ -355,11 +355,14 @@ const Index = () => {
               </span>
             </div>
             <div className="flex items-center gap-4 text-sm text-muted-foreground">
+              <button onClick={() => navigate("/courses")} className="hover:text-foreground transition-colors">
+                Courses
+              </button>
+              <button onClick={() => navigate("/career-services")} className="hover:text-foreground transition-colors">
+                Services
+              </button>
               <button onClick={() => navigate("/blog")} className="hover:text-foreground transition-colors">
                 Blog
-              </button>
-              <button onClick={() => navigate("/org")} className="hover:text-foreground transition-colors">
-                For Organizations
               </button>
               <button onClick={() => navigate("/auth")} className="hover:text-foreground transition-colors">
                 Sign In
