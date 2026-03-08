@@ -85,9 +85,9 @@ export function CreditPurchaseSheet({
                       )}
                     </div>
                     <div className="flex items-center justify-between">
-                      <span className="text-2xl font-bold">৳{bundle.price}</span>
+                      <span className="text-2xl font-bold">${bundle.price}</span>
                       <span className="text-xs text-muted-foreground">
-                        ৳{(bundle.price / bundle.credits).toFixed(1)}/credit
+                        ${(bundle.price / bundle.credits).toFixed(3)}/credit
                       </span>
                     </div>
                   </CardContent>
