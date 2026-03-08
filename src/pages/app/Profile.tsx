@@ -194,7 +194,7 @@ export default function Profile() {
             {latestExperience && (
               <p className="text-xs text-muted-foreground mt-1 flex items-center gap-1">
                 <Briefcase className="h-3 w-3" />
-                {latestExperience.title || (latestExperience as any).position} at {latestExperience.company}
+                {latestExperience.title} at {latestExperience.company}
               </p>
             )}
             {latestEducation && (
