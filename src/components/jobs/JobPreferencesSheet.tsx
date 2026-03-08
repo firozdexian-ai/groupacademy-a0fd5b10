@@ -25,13 +25,13 @@ const JOB_TYPE_OPTIONS = Object.entries(JOB_TYPES).map(([value, config]) => ({
 }));
 
 const LOCATIONS = [
-  "Dhaka",
-  "Chittagong",
-  "Sylhet",
-  "Rajshahi",
-  "Khulna",
   "Remote",
-  "Anywhere in Bangladesh",
+  "New York",
+  "London",
+  "Dubai",
+  "Singapore",
+  "San Francisco",
+  "Anywhere",
 ];
 
 const INDUSTRIES = [
