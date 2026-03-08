@@ -165,7 +165,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
       {/* Salary Range */}
       <div style={{ marginBottom: "30px" }}>
         <h3 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "12px", color: BRAND.primary, fontFamily: "'Poppins', sans-serif" }}>
-          Market Salary Range (Bangladesh)
+          Market Salary Range
         </h3>
         <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
           <div style={{ flex: 1, backgroundColor: BRAND.background, padding: "16px", borderRadius: "12px", textAlign: "center" }}>
