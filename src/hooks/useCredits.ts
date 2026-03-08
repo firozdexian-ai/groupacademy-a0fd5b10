@@ -3,6 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { CREDIT_CONFIG, ServiceType, getServiceCost } from "@/lib/creditPricing";
 import { useToast } from "@/hooks/use-toast";
+import { emailNotifications } from "@/lib/emailNotifications";
 
 export interface CreditTransaction {
   id: string;
