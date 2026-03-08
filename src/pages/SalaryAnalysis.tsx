@@ -63,7 +63,7 @@ const SalaryAnalysis = () => {
             </h1>
             <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
               Know your worth. Upload your CV and job description to get personalized salary insights, 
-              skills gap analysis, and negotiation tips for the Bangladesh market.
+              skills gap analysis, and negotiation tips for your target market.
             </p>
             <Button asChild size="lg" className="text-lg px-8 py-6">
               <Link to="/salary-analysis/setup">
