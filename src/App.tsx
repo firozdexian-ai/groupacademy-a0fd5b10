@@ -29,6 +29,7 @@ import PublicServiceLanding from "./pages/PublicServiceLanding";
 import PublicServices from "./pages/PublicServices";
 import PublicCourses from "./pages/PublicCourses";
 import ServiceLanding from "./pages/ServiceLanding";
+import VerifyCertificate from "./pages/VerifyCertificate";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
 
 // Admin Pages
