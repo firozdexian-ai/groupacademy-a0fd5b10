@@ -35,6 +35,7 @@ import {
   Target,
   Landmark,
   Mail,
+  CreditCard,
 } from "lucide-react";
 import {
   Sidebar,
