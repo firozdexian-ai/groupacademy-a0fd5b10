@@ -47,6 +47,7 @@ import { BatchDescriptionGenerator } from "@/components/dashboard/BatchDescripti
 import { VCFirmsManager } from "@/components/dashboard/ir/VCFirmsManager";
 import { InvestorsManager } from "@/components/dashboard/ir/InvestorsManager";
 import { EmailComposer } from "@/components/dashboard/ir/EmailComposer";
+import { PaymentSettingsManager } from "@/components/dashboard/PaymentSettingsManager";
 import { Menu } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
