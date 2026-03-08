@@ -257,7 +257,7 @@ const SalaryAnalysisResults = () => {
               </div>
               <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
                 <p className="text-sm text-muted-foreground">Median</p>
-                <p className="text-2xl font-bold text-primary">৳{formatSalary(salaryRange?.median_monthly)}</p>
+                <p className="text-2xl font-bold text-primary">${formatSalary(salaryRange?.median_monthly)}</p>
                 <p className="text-xs text-muted-foreground">/month</p>
               </div>
               <div className="p-4 bg-muted/50 rounded-lg">
