@@ -14,7 +14,7 @@ const SalaryAnalysis = () => {
     {
       icon: TrendingUp,
       title: "Market Salary Range",
-      description: "Get accurate salary benchmarks for your role in the Bangladesh market"
+      description: "Get accurate salary benchmarks for your role in the global market"
     },
     {
       icon: Target,
