@@ -40,6 +40,7 @@ import { MarketingAnalytics } from "@/components/dashboard/MarketingAnalytics";
 import { FeedPostsManager } from "@/components/dashboard/FeedPostsManager";
 import { GigsManager } from "@/components/dashboard/GigsManager";
 import { GigSubmissionsManager } from "@/components/dashboard/GigSubmissionsManager";
+import { MarketplaceGigsManager } from "@/components/dashboard/MarketplaceGigsManager";
 import { IRDashboard } from "@/components/dashboard/ir/IRDashboard";
 import { MRRTargetManager } from "@/components/dashboard/ir/MRRTargetManager";
 import { BatchDescriptionGenerator } from "@/components/dashboard/BatchDescriptionGenerator";
