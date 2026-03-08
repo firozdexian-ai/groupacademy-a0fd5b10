@@ -35,7 +35,7 @@ const SalaryAnalysis = () => {
 
   const benefits = [
     "AI-powered analysis of your CV against job requirements",
-    "Salary ranges specific to Bangladesh job market",
+    "Salary ranges specific to your target job market",
     "Personalized negotiation strategies",
     "Skills gap identification with recommendations",
     "Market demand insights for your profession",
