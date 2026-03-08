@@ -134,8 +134,24 @@ const Index = () => {
     { icon: BarChart3, label: "Analytics Dashboard" },
   ];
 
+  const jsonLd = {
+    "@context": "https://schema.org",
+    "@type": "EducationalOrganization",
+    name: "GroUp Academy",
+    url: "https://groupacademy.lovable.app",
+    description: "AI-powered career acceleration platform with career assessments, mock interviews, salary analysis, digital portfolios, and 300+ professional courses.",
+    sameAs: [],
+    offers: {
+      "@type": "Offer",
+      description: "Free signup with 250 welcome credits",
+      price: "0",
+      priceCurrency: "USD",
+    },
+  };
+
   return (
     <div className="min-h-screen flex flex-col bg-background">
+      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
       {/* Simple Header */}
       <header className="border-b bg-card/50 backdrop-blur-sm sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4">
