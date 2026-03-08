@@ -114,6 +114,8 @@ import Competitions from "./pages/app/Competitions";
 import CompetitionDetail from "./pages/app/CompetitionDetail";
 import Blog from "./pages/app/Blog";
 import BlogPost from "./pages/app/BlogPost";
+import PublicBlog from "./pages/PublicBlog";
+import PublicBlogPost from "./pages/PublicBlogPost";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -194,8 +196,8 @@ export default function App() {
                   <Route path="/services" element={<PublicServices />} />
                   <Route path="/career-services" element={<PublicServices />} />
                   <Route path="/service/:serviceSlug" element={<ServiceLanding />} />
-                  <Route path="/blog" element={<Blog />} />
-                  <Route path="/blog/:slug" element={<BlogPost />} />
+                  <Route path="/blog" element={<PublicBlog />} />
+                  <Route path="/blog/:slug" element={<PublicBlogPost />} />
                   <Route path="/verify/:code" element={<VerifyCertificate />} />
 
                   {/* Public Services */}
