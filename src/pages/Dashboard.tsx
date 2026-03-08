@@ -273,6 +273,8 @@ const Dashboard = () => {
         return <LearnerProgressManager />;
       case "ai-descriptions":
         return <BatchDescriptionGenerator />;
+      case "ai-content-tools":
+        return <BatchContentGenerator />;
       case "professions":
         return <ProfessionsManager />;
       case "jobs-kpis":
