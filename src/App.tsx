@@ -114,6 +114,8 @@ import Competitions from "./pages/app/Competitions";
 import CompetitionDetail from "./pages/app/CompetitionDetail";
 import Blog from "./pages/app/Blog";
 import BlogPost from "./pages/app/BlogPost";
+import PublicBlog from "./pages/PublicBlog";
+import PublicBlogPost from "./pages/PublicBlogPost";
 
 const queryClient = new QueryClient({
   defaultOptions: {
