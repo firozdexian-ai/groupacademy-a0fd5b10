@@ -198,8 +198,13 @@ export function GigSubmissionsManager() {
       if (!result?.success) throw new Error(result?.error || "Failed to approve");
       return result;
     },
-    onSuccess: (data) => {
+    onSuccess: (data, submissionId) => {
       toast.success(`Approved! ${data.credits_awarded} credits awarded.`);
+      // Send bid accepted email
+      const sub = submissions?.find((s: any) => s.id === submissionId);
+      if (sub?.talents?.full_name) {
+        emailNotifications.bidAccepted(sub.talent_id, sub.gigs?.title || "Gig", data.credits_awarded);
+      }
       queryClient.invalidateQueries({ queryKey: ["admin-gig-submissions"] });
       setSelectedSubmission(null);
       setAdminNotes("");
