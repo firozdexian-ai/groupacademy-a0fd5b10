@@ -38,7 +38,7 @@ export function CreditPurchaseSheet({
             Buy Credits
           </SheetTitle>
           <SheetDescription>
-            Choose a credit bundle. Pay via bKash/Nagad on WhatsApp.
+            Choose a credit bundle. Secure online payment via WhatsApp.
           </SheetDescription>
         </SheetHeader>
 
