@@ -138,9 +138,6 @@ export default function Profile() {
           </Button>
         )}
         <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingSection(section as any)}>
-          <Plus className="h-4 w-4" />
-        </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => setEditingSection(section as any)}>
           <Edit2 className="h-3.5 w-3.5" />
         </Button>
       </div>
