@@ -2939,6 +2939,129 @@ export type Database = {
           },
         ]
       }
+      marketplace_bids: {
+        Row: {
+          bid_amount: number
+          cover_letter: string
+          created_at: string | null
+          estimated_days: number | null
+          gig_id: string
+          id: string
+          portfolio_links: Json | null
+          status: string
+          talent_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          bid_amount: number
+          cover_letter: string
+          created_at?: string | null
+          estimated_days?: number | null
+          gig_id: string
+          id?: string
+          portfolio_links?: Json | null
+          status?: string
+          talent_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          bid_amount?: number
+          cover_letter?: string
+          created_at?: string | null
+          estimated_days?: number | null
+          gig_id?: string
+          id?: string
+          portfolio_links?: Json | null
+          status?: string
+          talent_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "marketplace_bids_gig_id_fkey"
+            columns: ["gig_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_gigs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_bids_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      marketplace_gigs: {
+        Row: {
+          attachments: Json | null
+          budget_amount: number | null
+          budget_currency: string | null
+          created_at: string | null
+          deadline: string | null
+          description: string
+          employer_email: string | null
+          employer_name: string | null
+          id: string
+          is_featured: boolean | null
+          posted_by: string | null
+          pricing_type: string
+          requirements: string | null
+          selected_bid_id: string | null
+          skill_category: string
+          skill_subcategory: string | null
+          status: string
+          title: string
+          total_bids: number | null
+          updated_at: string | null
+        }
+        Insert: {
+          attachments?: Json | null
+          budget_amount?: number | null
+          budget_currency?: string | null
+          created_at?: string | null
+          deadline?: string | null
+          description: string
+          employer_email?: string | null
+          employer_name?: string | null
+          id?: string
+          is_featured?: boolean | null
+          posted_by?: string | null
+          pricing_type?: string
+          requirements?: string | null
+          selected_bid_id?: string | null
+          skill_category: string
+          skill_subcategory?: string | null
+          status?: string
+          title: string
+          total_bids?: number | null
+          updated_at?: string | null
+        }
+        Update: {
+          attachments?: Json | null
+          budget_amount?: number | null
+          budget_currency?: string | null
+          created_at?: string | null
+          deadline?: string | null
+          description?: string
+          employer_email?: string | null
+          employer_name?: string | null
+          id?: string
+          is_featured?: boolean | null
+          posted_by?: string | null
+          pricing_type?: string
+          requirements?: string | null
+          selected_bid_id?: string | null
+          skill_category?: string
+          skill_subcategory?: string | null
+          status?: string
+          title?: string
+          total_bids?: number | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
       mock_interview_access_codes: {
         Row: {
           code: string
