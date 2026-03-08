@@ -421,7 +421,7 @@ function PortfolioRequestContent() {
                 <ol className="list-decimal list-inside text-sm text-muted-foreground space-y-1">
                   <li>Our Talent Success Executive will contact you on WhatsApp</li>
                   <li>They will verify your information and discuss your portfolio</li>
-                  <li>We'll create your professional portfolio (FREE for first 1,000 users, then BDT 2,000)</li>
+                  <li>We'll create your professional portfolio (FREE for first 1,000 users, then 500 Credits)</li>
                   <li>You'll receive your portfolio link + CMS access within 3-5 days</li>
                 </ol>
               </div>
