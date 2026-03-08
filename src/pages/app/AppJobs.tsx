@@ -270,7 +270,7 @@ export default function AppJobs() {
                     <div className="flex justify-between">
                       <Label>Min Salary</Label>
                       <span className="text-sm text-muted-foreground">
-                        {salaryRange[0] > 0 ? `৳${salaryRange[0]}k+` : "Any"}
+                        {salaryRange[0] > 0 ? `$${salaryRange[0]}k+` : "Any"}
                       </span>
                     </div>
                     <Slider value={salaryRange} onValueChange={setSalaryRange} max={150} step={5} />
