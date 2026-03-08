@@ -180,6 +180,7 @@ export default function App() {
                 <Toaster />
                 <Sonner />
                 <PWAInstallPrompt />
+                <PWAUpdatePrompt />
 
                 <Routes>
                   {/* ================= PUBLIC ROUTES ================= */}
