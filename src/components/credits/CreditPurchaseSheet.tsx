@@ -1,4 +1,4 @@
-import { Coins, MessageCircle, Check, Sparkles } from 'lucide-react';
+import { Coins, MessageCircle, Check, Sparkles, CreditCard, Loader2 } from 'lucide-react';
 import {
   Sheet,
   SheetContent,
@@ -12,6 +12,7 @@ import { Card, CardContent } from '@/components/ui/card';
 import { CREDIT_CONFIG, creditsToUSD } from '@/lib/creditPricing';
 import { cn } from '@/lib/utils';
 import { SUPPORT_CONFIG, getCreditPurchaseMessage } from '@/lib/constants/support';
+import { usePaymentConfig } from '@/hooks/usePaymentConfig';
 
 interface CreditPurchaseSheetProps {
   isOpen: boolean;
