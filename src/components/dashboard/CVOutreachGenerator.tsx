@@ -558,7 +558,7 @@ export function CVOutreachGenerator() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="space-y-6">
-                <div className="grid gap-4 md:grid-cols-4">
+                <div className="grid gap-4 grid-cols-2 md:grid-cols-4">
                   <div className="flex items-center gap-3 p-3 rounded-lg bg-muted/50">
                     <User className="w-5 h-5 text-muted-foreground" />
                     <div>
