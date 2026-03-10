@@ -363,9 +363,9 @@ export default function App() {
                     <Route path="abroad" element={<CareerAbroad />} />
                     <Route path="agents" element={<AIAgents />} />
                     <Route path="gigs" element={<Gigs />} />
-                    <Route path="marketplace" element={<Marketplace />} />
+                    <Route path="marketplace" element={<Navigate to="/app/gigs?tab=projects" replace />} />
                     <Route path="marketplace/:id" element={<MarketplaceGigDetail />} />
-                    <Route path="my-gigs" element={<MyGigs />} />
+                    <Route path="my-gigs" element={<Navigate to="/app/gigs?tab=activity" replace />} />
                     <Route path="profile" element={<Profile />} />
 
                     {/* Job Routes - Specific Routes First */}

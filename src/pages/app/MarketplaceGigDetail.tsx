@@ -108,8 +108,8 @@ export default function MarketplaceGigDetail() {
     return (
       <div className="text-center py-16">
         <p className="text-muted-foreground">Gig not found</p>
-        <Button variant="link" onClick={() => navigate("/app/marketplace")}>
-          Back to Marketplace
+        <Button variant="link" onClick={() => navigate("/app/gigs?tab=projects")}>
+          Back to Projects
         </Button>
       </div>
     );
