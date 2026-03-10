@@ -542,7 +542,8 @@ export function BlogManager() {
           <DashboardErrorState title="Error" message={error} onRetry={loadPosts} />
         ) : (
           <>
-            <div className="rounded-md border overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden sm:block rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -609,6 +610,47 @@ export function BlogManager() {
                   )}
                 </TableBody>
               </Table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="sm:hidden space-y-2">
+              {posts.length === 0 ? (
+                <p className="text-center py-8 text-muted-foreground">No posts found</p>
+              ) : (
+                posts.map((post) => (
+                  <div key={post.id} className="p-3 border rounded-lg space-y-2">
+                    <div className="flex items-start gap-3">
+                      {post.featured_image ? (
+                        <img src={post.featured_image} alt="" className="h-10 w-10 rounded object-cover flex-shrink-0" />
+                      ) : (
+                        <div className="h-10 w-10 rounded bg-muted flex items-center justify-center flex-shrink-0">
+                          <ImageIcon className="h-4 w-4 text-muted-foreground" />
+                        </div>
+                      )}
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm line-clamp-1">{post.title}</p>
+                        {post.published_at && (
+                          <p className="text-xs text-muted-foreground">{format(new Date(post.published_at), "MMM d, yyyy")}</p>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex items-center justify-between">
+                      <div className="flex items-center gap-2">
+                        {post.category && <Badge variant="outline" className="text-xs">{post.category}</Badge>}
+                        <Badge variant={post.status === "published" ? "default" : "secondary"} className="text-xs">{post.status}</Badge>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => { setEditingPost(post); setIsDialogOpen(true); }}>
+                          <Edit className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => handleDelete(post.id)}>
+                          <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Pagination Controls */}
