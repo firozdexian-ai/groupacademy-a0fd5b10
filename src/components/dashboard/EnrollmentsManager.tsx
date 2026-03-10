@@ -10,6 +10,17 @@ import type { Database } from "@/integrations/supabase/types";
 type EnrollmentStatus = Database["public"]["Enums"]["enrollment_status"];
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogTrigger,
+} from "@/components/ui/alert-dialog";
 import { toast } from "sonner";
 import {
   Search,
@@ -22,6 +33,8 @@ import {
   ChevronLeft,
   ChevronRight,
   Users,
+  PlayCircle,
+  Ban,
 } from "lucide-react";
 import { format } from "date-fns";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -95,6 +108,24 @@ export function EnrollmentsManager() {
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [statusFilter, setStatusFilter] = useState("all");
   const [selectedIds, setSelectedIds] = useState<string[]>([]);
+  const [statusCounts, setStatusCounts] = useState({ active: 0, completed: 0, cancelled: 0 });
+
+  const loadStatusCounts = useCallback(async () => {
+    try {
+      const [activeRes, completedRes, pendingRes] = await Promise.all([
+        supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "active"),
+        supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "completed"),
+        supabase.from("enrollments").select("id", { count: "exact", head: true }).eq("status", "pending_payment"),
+      ]);
+      setStatusCounts({
+        active: activeRes.count || 0,
+        completed: completedRes.count || 0,
+        cancelled: pendingRes.count || 0,
+      });
+    } catch (err) {
+      console.error("Error loading status counts:", err);
+    }
+  }, []);
 
   const loadEnrollments = useCallback(async () => {
     setLoading(true);
@@ -121,6 +152,14 @@ export function EnrollmentsManager() {
         query = query.eq("status", statusFilter as EnrollmentStatus);
       }
 
+      // Apply search filter across related tables
+      if (debouncedSearch.trim()) {
+        const term = `%${debouncedSearch.trim()}%`;
+        query = query.or(
+          `student.full_name.ilike.${term},talent.full_name.ilike.${term},content.title.ilike.${term}`,
+        );
+      }
+
       const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
       query = query.range(from, to);
@@ -144,7 +183,8 @@ export function EnrollmentsManager() {
 
   useEffect(() => {
     loadEnrollments();
-  }, [loadEnrollments]);
+    loadStatusCounts();
+  }, [loadEnrollments, loadStatusCounts]);
 
   const handleStatusUpdate = async (enrollmentId: string, newStatus: EnrollmentStatus) => {
     try {
@@ -162,6 +202,7 @@ export function EnrollmentsManager() {
       if (error) throw error;
       toast.success("Status updated");
       loadEnrollments();
+      loadStatusCounts();
     } catch (error) {
       console.error("Error updating status:", error);
       toast.error("Failed to update status");
@@ -190,6 +231,7 @@ export function EnrollmentsManager() {
       toast.success(`Updated ${selectedIds.length} enrollments`);
       setSelectedIds([]);
       loadEnrollments();
+      loadStatusCounts();
     } catch (error) {
       console.error("Error bulk updating:", error);
       toast.error("Failed to update enrollments");
@@ -233,21 +275,44 @@ export function EnrollmentsManager() {
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  const counts = {
-    total: totalCount,
-  };
-
   return (
     <div className="space-y-6">
-      {/* Compact KPI */}
+      {/* Compact KPI cards */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <Card className="p-3">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-muted-foreground">Total Enrollments</p>
-              <p className="text-lg font-bold">{counts.total}</p>
+              <p className="text-xs text-muted-foreground">Total</p>
+              <p className="text-lg font-bold">{totalCount}</p>
             </div>
             <Users className="h-4 w-4 text-muted-foreground" />
+          </div>
+        </Card>
+        <Card className="p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground">Active</p>
+              <p className="text-lg font-bold">{statusCounts.active}</p>
+            </div>
+            <PlayCircle className="h-4 w-4 text-muted-foreground" />
+          </div>
+        </Card>
+        <Card className="p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground">Completed</p>
+              <p className="text-lg font-bold">{statusCounts.completed}</p>
+            </div>
+            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
+          </div>
+        </Card>
+        <Card className="p-3">
+          <div className="flex items-center justify-between">
+            <div>
+              <p className="text-xs text-muted-foreground">Pending</p>
+              <p className="text-lg font-bold">{statusCounts.cancelled}</p>
+            </div>
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </div>
         </Card>
       </div>
@@ -300,17 +365,52 @@ export function EnrollmentsManager() {
             </Select>
           </div>
 
-          {/* Bulk Actions */}
+          {/* Bulk Actions with AlertDialog confirmation */}
           {selectedIds.length > 0 && (
             <div className="flex flex-wrap items-center gap-2 mb-4 p-3 bg-muted rounded-lg animate-in fade-in slide-in-from-top-2">
               <span className="text-sm font-medium">{selectedIds.length} selected</span>
               <div className="h-4 w-px bg-border mx-2" />
-              <Button size="sm" variant="outline" onClick={() => handleBulkStatusUpdate("active")}>
-                Mark Active
-              </Button>
-              <Button size="sm" variant="outline" onClick={() => handleBulkStatusUpdate("completed")}>
-                Mark Completed
-              </Button>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="outline">Mark Active</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Bulk Update</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to mark {selectedIds.length} enrollment{selectedIds.length > 1 ? "s" : ""} as <strong>Active</strong>?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleBulkStatusUpdate("active")}>
+                      Confirm
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
+              <AlertDialog>
+                <AlertDialogTrigger asChild>
+                  <Button size="sm" variant="outline">Mark Completed</Button>
+                </AlertDialogTrigger>
+                <AlertDialogContent>
+                  <AlertDialogHeader>
+                    <AlertDialogTitle>Confirm Bulk Update</AlertDialogTitle>
+                    <AlertDialogDescription>
+                      Are you sure you want to mark {selectedIds.length} enrollment{selectedIds.length > 1 ? "s" : ""} as <strong>Completed</strong>?
+                    </AlertDialogDescription>
+                  </AlertDialogHeader>
+                  <AlertDialogFooter>
+                    <AlertDialogCancel>Cancel</AlertDialogCancel>
+                    <AlertDialogAction onClick={() => handleBulkStatusUpdate("completed")}>
+                      Confirm
+                    </AlertDialogAction>
+                  </AlertDialogFooter>
+                </AlertDialogContent>
+              </AlertDialog>
+
               <Button size="sm" variant="ghost" onClick={() => setSelectedIds([])}>
                 Clear
               </Button>

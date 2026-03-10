@@ -513,7 +513,7 @@ export function BatchContentGenerator() {
                   {/* ─── Blog/Feed generation controls ─── */}
                   {!GENERATORS[key].needsSchool && key === "blog-posts" && (
                     <Select value={blogCategory} onValueChange={setBlogCategory} disabled={isRunning}>
-                      <SelectTrigger className="w-44">
+                      <SelectTrigger className="w-full sm:w-44">
                         <SelectValue placeholder="Category" />
                       </SelectTrigger>
                       <SelectContent>
