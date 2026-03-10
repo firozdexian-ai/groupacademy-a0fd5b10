@@ -415,7 +415,7 @@ const Dashboard = () => {
           </header>
 
           {/* Main Content */}
-          <main className="p-6">{renderContent()}</main>
+          <main className="p-3 sm:p-6">{renderContent()}</main>
         </SidebarInset>
       </div>
     </SidebarProvider>
