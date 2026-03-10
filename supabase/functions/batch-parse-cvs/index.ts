@@ -30,18 +30,18 @@ serve(async (req) => {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseAuth.auth.getUser();
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
 
-    if (authError || !user) {
-      console.error("Auth error:", authError);
+    if (claimsError || !claimsData?.claims?.sub) {
+      console.error("Auth error:", claimsError);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const userId = claimsData.claims.sub;
 
     const { cvUrls, batchId } = await req.json();
 
@@ -63,12 +63,12 @@ serve(async (req) => {
     const supabaseServiceKey = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY")!;
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log(`Starting batch processing for ${cvUrls.length} CVs, batchId: ${batchId} by user: ${user.id}`);
+    console.log(`Starting batch processing for ${cvUrls.length} CVs, batchId: ${batchId} by user: ${userId}`);
 
     // Update batch status to processing
     await supabaseAdmin
       .from("batch_uploads")
-      .update({ status: "processing", file_count: cvUrls.length, uploaded_by: user.id }) // Track who uploaded it
+      .update({ status: "processing", file_count: cvUrls.length, uploaded_by: userId })
       .eq("id", batchId);
 
     // Process CVs using background task - PASS THE AUTH HEADER
