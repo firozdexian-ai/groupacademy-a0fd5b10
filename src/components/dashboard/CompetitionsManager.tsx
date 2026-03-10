@@ -343,7 +343,8 @@ export function CompetitionsManager() {
           <DashboardErrorState title="Error" message={error} onRetry={loadCompetitions} />
         ) : (
           <>
-            <div className="rounded-md border overflow-x-auto">
+            {/* Desktop Table */}
+            <div className="hidden sm:block rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
@@ -427,6 +428,42 @@ export function CompetitionsManager() {
                   )}
                 </TableBody>
               </Table>
+            </div>
+
+            {/* Mobile Cards */}
+            <div className="sm:hidden space-y-2">
+              {competitions.length === 0 ? (
+                <p className="text-center py-8 text-muted-foreground">No competitions found</p>
+              ) : (
+                competitions.map((comp) => (
+                  <div key={comp.id} className="p-3 border rounded-lg space-y-2">
+                    <div className="flex items-start justify-between gap-2">
+                      <div className="min-w-0 flex-1">
+                        <p className="font-medium text-sm line-clamp-1">{comp.title}</p>
+                        {comp.start_date && (
+                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
+                            <Calendar className="h-3 w-3" />
+                            {format(new Date(comp.start_date), "MMM d, yyyy")}
+                          </p>
+                        )}
+                      </div>
+                      <div className="flex items-center gap-1 flex-shrink-0">
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenDialog(comp)}>
+                          <Edit className="h-3.5 w-3.5" />
+                        </Button>
+                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDelete(comp.id)}>
+                          <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                        </Button>
+                      </div>
+                    </div>
+                    <div className="flex items-center gap-2 flex-wrap">
+                      {comp.category && <Badge variant="outline" className="text-xs">{comp.category}</Badge>}
+                      <Badge variant={getStatusColor(comp.status)} className="text-xs capitalize">{comp.status}</Badge>
+                      {comp.is_featured && <Badge variant="outline" className="text-[10px]">Featured</Badge>}
+                    </div>
+                  </div>
+                ))
+              )}
             </div>
 
             {/* Pagination Controls */}
