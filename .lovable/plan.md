@@ -1,47 +1,68 @@
 
-# GroUp Academy — Vision Plan
 
-## Current Completion: ~88%
+# Talent & Leads Section — Completion Report
 
-| # | Module | Status | % | Next Action |
-|---|--------|--------|---|-------------|
-| 1 | Academy / LMS | ✅ | 95% | Batch video linking |
-| 2 | AI Module Descriptions | 🔧 | 70% | Run batch generator (4,504 pending) |
-| 3 | AI Agents / Chat | ✅ | 90% | Conversation export |
-| 4 | Jobs Hub | ✅ | 90% | Saved job alerts |
-| 5 | Career Services | ✅ | 85% | Result sharing UX |
-| 6 | Feed / Social | ✅ | 95% | Done ✅ |
-| 7 | Study Abroad | ✅ | 80% | Application tracker |
-| 8 | Profile & Onboarding | ✅ | 85% | Profile visibility settings |
-| 9 | Credits & Payments (Stripe) | 🔧 | 75% | Keys infra built ✅ — need keys + test checkout |
-| 10 | Admin Dashboard | ✅ | 90% | Bulk actions |
-| 11 | Notifications | ✅ | 85% | Push notifications |
-| 12 | Public SEO / Marketing | ✅ | 85% | Landing page optimization |
-| 13 | Gigs / Marketplace | ✅ | 80% | Payment for completions |
-| 14 | PWA / Mobile | ✅ | 90% | Done ✅ |
-| 15 | Auth & Security | ✅ | 95% | Done ✅ |
+## Section Overview
 
-## Priority Queue
+The **Talent & Leads** group contains 3 tabs: Talent Pool, Lead Hunter, and Professions. All three have been audited and improved during this cycle.
 
-| # | Task | Current → Target | Effort |
-|---|------|------------------|--------|
-| 1 | Run AI Descriptions | 70% → 100% | Low |
-| 2 | Test Stripe Checkout | 75% → 90% | Low |
-| 3 | Push Notifications | 85% → 95% | Medium |
-| 4 | Result Sharing UX | 85% → 95% | Low |
-| 5 | Study Abroad Tracker | 80% → 90% | Medium |
-| 6 | Landing Page Polish | 85% → 95% | Low-Med |
+---
 
-## Milestones
+## Tab-by-Tab Status
 
-- AI Descriptions + Stripe + Push → **~93%**
-- Result Sharing + Study Abroad Tracker → **~95%**
-- Final polish → **~98%**
+### 1. Talent Pool (791 lines) — Done
+- KPI cards: Total, New, With CV, No Phone
+- Segmented view: Registered vs Uploaded talents
+- Batch CV upload (PDF + URL parsing)
+- Outreach dropdowns (Welcome for registered, Invite for uploaded)
+- CSV export with paginated fetch
+- Mobile-responsive card layout
+- TalentDetailDialog integration
+- Country filter + search
 
-## Completed Infrastructure
+### 2. Lead Hunter (955 lines) — Done
+- KPI cards: Sessions, Matches, Shortlisted
+- AI-powered JD parsing (paste JD → auto-extract title/company/description)
+- Two-step New Hunt flow (paste → review/edit → submit)
+- Score All Unscored batch action
+- Shortlist tracking + TalentDetailDialog
+- AlertDialog confirmed deletion
+- Mobile-responsive matches view
+- Session filtering by `created_by`
 
-- Certificates with PDF + verification ✅
-- Public SEO (Blog, Courses, Services with JSON-LD) ✅
-- Stripe self-service key config from admin panel ✅
-- Influencing Academy (3 schools, 12 programs, 168 courses, 749 modules) ✅
-- Email notifications (welcome, certificate) ✅
+### 3. Professions (1186 lines) — Done
+- KPI cards: Academies, Schools, Profession Lines, AI Instructors (with active counts)
+- 4 sub-tabs: Academies, Schools, Profession Lines, AI Instructors
+- AI Instructor conversation counts (from `ai_chat_sessions`)
+- Credit cost field on Profession Lines + total credit display
+- "No AI Instructor" warning badges
+- Cascading filters for Instructors (Academy → School → Profession Line)
+- Course count + credit summary per profession
+- Auto-slug generation
+- AlertDialog for all deletes
+- Client-side search filter
+- Mobile-responsive dialogs and tab list
+- Seeker-side credit investment display (AppProfessionDetail)
+
+---
+
+## Cross-Section Consistency Check
+
+| Aspect | Talent Pool | Lead Hunter | Professions |
+|--------|------------|-------------|-------------|
+| KPI Cards | Yes | Yes | Yes |
+| Search | Yes | Yes | Yes |
+| AlertDialog deletes | Yes | Yes | Yes |
+| Mobile responsive | Yes | Yes | Yes |
+| Empty states | Yes | Yes | Yes |
+| Loading skeletons | Yes | Yes | Yes |
+| Error states | Yes | Yes | Yes |
+
+---
+
+## Verdict
+
+The **Talent & Leads** section is complete. All three tabs have KPI summaries, proper delete confirmations, mobile layouts, search, and loading/error states. No outstanding issues.
+
+**Ready to move to the next section: Recruitment** (Jobs KPIs, Manage Jobs, Applications, Companies, Contacts).
+
