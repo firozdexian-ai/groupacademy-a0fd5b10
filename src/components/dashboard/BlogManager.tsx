@@ -185,7 +185,7 @@ const BlogPostForm = ({
       </div>
 
       {/* Category and Status */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Category *</Label>
           <Select value={formData.category} onValueChange={(v) => setFormData({ ...formData, category: v })}>
