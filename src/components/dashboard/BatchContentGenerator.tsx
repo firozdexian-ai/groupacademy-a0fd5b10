@@ -431,9 +431,14 @@ export function BatchContentGenerator() {
       <Tabs value={activeTab} onValueChange={(v) => { if (!isRunning) setActiveTab(v as GeneratorType); }}>
         <TabsList className="grid grid-cols-3 lg:grid-cols-6 h-auto">
           {(Object.entries(GENERATORS) as [GeneratorType, typeof GENERATORS[GeneratorType]][]).map(([key, gen]) => (
-            <TabsTrigger key={key} value={key} disabled={isRunning} className="text-xs gap-1 py-2">
+            <TabsTrigger key={key} value={key} disabled={isRunning} className="text-xs gap-1 py-2 relative">
               <gen.icon className="w-3.5 h-3.5" />
               <span className="hidden sm:inline">{gen.label}</span>
+              {!gen.needsSchool && key === activeTab && drafts.length > 0 && (
+                <Badge variant="destructive" className="absolute -top-1.5 -right-1.5 h-4 min-w-4 px-1 text-[9px] leading-none">
+                  {drafts.length}
+                </Badge>
+              )}
             </TabsTrigger>
           ))}
         </TabsList>
