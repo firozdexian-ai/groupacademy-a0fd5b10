@@ -370,6 +370,7 @@ const Dashboard = () => {
       talent: "Talent Pool",
       companies: "Companies",
       contacts: "Contacts",
+      industries: "Industries",
       team: "Team Members",
       "ai-agents": "AI Agents",
       "company-agents": "Company Agents",
