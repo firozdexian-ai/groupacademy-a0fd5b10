@@ -45,6 +45,7 @@ import {
   Mic,
   Clock,
   MapPin,
+  ClipboardList,
   RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
