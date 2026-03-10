@@ -188,6 +188,12 @@ export function BatchContentGenerator() {
           pending = contents.filter(
             (c: any) => !c.description || !c.learning_objectives || !c.estimated_hours
           ).length;
+        } else if (activeTab === "descriptions") {
+          const { data: allModules } = await supabase
+            .from("course_modules").select("id, description").in("content_id", contentIds);
+          pending = (allModules || []).filter(
+            (m: any) => (m.description || "").length < 500
+          ).length;
         }
 
         schoolInfos.push({
