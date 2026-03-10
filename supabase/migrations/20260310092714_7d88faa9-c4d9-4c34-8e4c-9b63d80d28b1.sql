@@ -1,0 +1,1 @@
+ALTER TABLE public.profession_categories ADD COLUMN credit_cost integer DEFAULT 0;
