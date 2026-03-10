@@ -15,6 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList, CommandSeparator } from "@/components/ui/command";
 import { COUNTRIES } from "@/lib/constants/countries";
+import { useIsMobile } from "@/hooks/use-mobile";
 import {
   Plus,
   Search,
@@ -178,6 +179,14 @@ const EXPERIENCE_LEVELS: { value: ExperienceLevel; label: string }[] = [
   { value: "executive", label: "Executive" },
 ];
 
+const SOURCE_PLATFORM_ICONS: Record<string, { icon: typeof Linkedin; className: string }> = {
+  linkedin: { icon: Linkedin, className: "text-blue-600" },
+  facebook: { icon: Facebook, className: "text-blue-500" },
+  website: { icon: ExternalLink, className: "text-muted-foreground" },
+  bdjobs: { icon: Building2, className: "text-orange-500" },
+  other: { icon: LinkIcon, className: "text-muted-foreground" },
+};
+
 const ITEMS_PER_PAGE = 10;
 const emptyJob = {
   title: "",
@@ -211,6 +220,7 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
   const [customChannel, setCustomChannel] = useState("");
   const [aiCaptions, setAiCaptions] = useState<Record<string, string>>({});
   const [loadingCaption, setLoadingCaption] = useState(false);
+  const isMobile = useIsMobile();
 
   useEffect(() => {
     if (job && isOpen) {
@@ -304,110 +314,148 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
 
   const currentCaption = aiCaptions[activeTab] || "";
 
+  const channels = [
+    { id: "linkedin", label: "LinkedIn", icon: Linkedin },
+    { id: "facebook", label: "Facebook", icon: Facebook },
+    { id: "whatsapp", label: "WhatsApp", icon: MessageCircle },
+    { id: "telegram", label: "Telegram", icon: Send },
+  ];
+
+  const captionContent = (
+    <div className="space-y-4">
+      {["linkedin", "facebook", "whatsapp", "telegram"].includes(activeTab) && (
+        <div className="space-y-4">
+          <div className="flex items-center justify-between">
+            <Badge variant="outline" className="text-xs gap-1">
+              <Sparkles className="w-3 h-3" /> AI Caption
+            </Badge>
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => {
+                setAiCaptions((prev) => ({ ...prev, [activeTab]: "" }));
+                generateCaption(activeTab);
+              }}
+              disabled={loadingCaption}
+            >
+              <RefreshCw className={`w-3 h-3 mr-1 ${loadingCaption ? "animate-spin" : ""}`} />
+              Regenerate
+            </Button>
+          </div>
+          {loadingCaption && !currentCaption ? (
+            <div className="space-y-2">
+              <Skeleton className="h-4 w-full" />
+              <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
+            </div>
+          ) : (
+            <Textarea
+              value={currentCaption}
+              onChange={(e) => setAiCaptions((prev) => ({ ...prev, [activeTab]: e.target.value }))}
+              rows={8}
+              className="text-xs whitespace-pre-wrap"
+            />
+          )}
+          <Button
+            variant="outline"
+            size="sm"
+            onClick={() => { copyToClipboard(currentCaption); toast.success("Caption copied!"); }}
+            className="w-full"
+            disabled={!currentCaption}
+          >
+            <Copy className="w-3 h-3 mr-2" /> Copy Caption
+          </Button>
+          <Button className="w-full" onClick={() => handleSocialShare(activeTab as any)}>
+            <Share2 className="w-4 h-4 mr-2" /> Share on {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
+          </Button>
+          {!isShared(activeTab) && (
+            <Button variant="secondary" className="w-full" onClick={() => recordShare(activeTab)}>
+              Mark as Done Manually
+            </Button>
+          )}
+        </div>
+      )}
+      {activeTab === "custom" && (
+        <div className="space-y-4">
+          <Input placeholder="Channel Name (e.g. newsletter)" value={customChannel} onChange={(e) => setCustomChannel(e.target.value)} />
+          <div className="flex gap-2">
+            <Input readOnly value={getShareLink(customChannel || "custom")} className="bg-muted" />
+            <Button onClick={() => copyLink(customChannel || "custom")}><Copy className="w-4 h-4" /></Button>
+          </div>
+          <Button variant="secondary" className="w-full" onClick={() => { recordShare(customChannel || "custom"); toast.success("Marked!"); }}>
+            <Check className="w-4 h-4 mr-2" /> Mark as Done
+          </Button>
+        </div>
+      )}
+    </div>
+  );
+
   return (
     <Dialog open={isOpen} onOpenChange={onClose}>
-      <DialogContent className="max-w-2xl">
+      <DialogContent className={isMobile ? "max-w-full h-[90vh] overflow-y-auto" : "max-w-2xl"}>
         <DialogHeader>
-          <DialogTitle>Promote: {job.title}</DialogTitle>
+          <DialogTitle className="text-base">Promote: {job.title}</DialogTitle>
           <DialogDescription>Share across channels with AI-generated captions.</DialogDescription>
         </DialogHeader>
-        <div className="flex gap-6 mt-4">
-          <div className="w-1/3 border-r pr-6 space-y-4">
-            {[
-              { id: "linkedin", label: "LinkedIn", icon: Linkedin },
-              { id: "facebook", label: "Facebook", icon: Facebook },
-              { id: "whatsapp", label: "WhatsApp", icon: MessageCircle },
-              { id: "telegram", label: "Telegram", icon: Send },
-            ].map((ch) => (
-              <button
-                key={ch.id}
-                onClick={() => setActiveTab(ch.id)}
-                className={`w-full flex items-center justify-between p-3 rounded-lg text-sm transition-all ${activeTab === ch.id ? "bg-primary/10 ring-1 ring-primary" : "hover:bg-muted"}`}
-              >
-                <div className="flex items-center gap-3">
-                  <ch.icon className="w-4 h-4" /> <span>{ch.label}</span>
-                </div>
-                {isShared(ch.id) && <CheckCircle2 className="w-4 h-4 text-green-600" />}
-              </button>
-            ))}
-            <div className="pt-2 mt-2 border-t">
+        {isMobile ? (
+          <div className="space-y-4 mt-2">
+            {/* Horizontal scrollable pills */}
+            <div className="flex gap-2 overflow-x-auto pb-2 -mx-1 px-1">
+              {channels.map((ch) => (
+                <button
+                  key={ch.id}
+                  onClick={() => setActiveTab(ch.id)}
+                  className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
+                    activeTab === ch.id ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                  }`}
+                >
+                  <ch.icon className="w-3 h-3" />
+                  {ch.label}
+                  {isShared(ch.id) && <CheckCircle2 className="w-3 h-3" />}
+                </button>
+              ))}
               <button
                 onClick={() => setActiveTab("custom")}
-                className={`w-full flex items-center justify-between p-3 rounded-lg text-sm ${activeTab === "custom" ? "bg-primary/10 ring-1 ring-primary" : "hover:bg-muted"}`}
+                className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-xs font-medium whitespace-nowrap transition-all shrink-0 ${
+                  activeTab === "custom" ? "bg-primary text-primary-foreground" : "bg-muted text-muted-foreground"
+                }`}
               >
-                <div className="flex items-center gap-3">
-                  <LinkIcon className="w-4 h-4" /> <span>Custom Link</span>
-                </div>
+                <LinkIcon className="w-3 h-3" /> Custom
               </button>
             </div>
+            {captionContent}
           </div>
-          <div className="flex-1 space-y-4">
-            {["linkedin", "facebook", "whatsapp", "telegram"].includes(activeTab) && (
-              <div className="space-y-4">
-                <div className="flex items-center justify-between">
-                  <Badge variant="outline" className="text-xs gap-1">
-                    <Sparkles className="w-3 h-3" /> AI Caption
-                  </Badge>
-                  <Button
-                    variant="ghost"
-                    size="sm"
-                    onClick={() => {
-                      setAiCaptions((prev) => ({ ...prev, [activeTab]: "" }));
-                      generateCaption(activeTab);
-                    }}
-                    disabled={loadingCaption}
-                  >
-                    <RefreshCw className={`w-3 h-3 mr-1 ${loadingCaption ? "animate-spin" : ""}`} />
-                    Regenerate
-                  </Button>
-                </div>
-                {loadingCaption && !currentCaption ? (
-                  <div className="space-y-2">
-                    <Skeleton className="h-4 w-full" />
-                    <Skeleton className="h-4 w-3/4" />
-                    <Skeleton className="h-4 w-1/2" />
-                  </div>
-                ) : (
-                  <Textarea
-                    value={currentCaption}
-                    onChange={(e) => setAiCaptions((prev) => ({ ...prev, [activeTab]: e.target.value }))}
-                     rows={10}
-                     className="text-xs whitespace-pre-wrap"
-                  />
-                )}
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => { copyToClipboard(currentCaption); toast.success("Caption copied!"); }}
-                  className="w-full"
-                  disabled={!currentCaption}
+        ) : (
+          <div className="flex gap-6 mt-4">
+            <div className="w-1/3 border-r pr-6 space-y-4">
+              {channels.map((ch) => (
+                <button
+                  key={ch.id}
+                  onClick={() => setActiveTab(ch.id)}
+                  className={`w-full flex items-center justify-between p-3 rounded-lg text-sm transition-all ${activeTab === ch.id ? "bg-primary/10 ring-1 ring-primary" : "hover:bg-muted"}`}
                 >
-                  <Copy className="w-3 h-3 mr-2" /> Copy Caption
-                </Button>
-                <Button className="w-full" onClick={() => handleSocialShare(activeTab as any)}>
-                  <Share2 className="w-4 h-4 mr-2" /> Share on {activeTab.charAt(0).toUpperCase() + activeTab.slice(1)}
-                </Button>
-                {!isShared(activeTab) && (
-                  <Button variant="secondary" className="w-full" onClick={() => recordShare(activeTab)}>
-                    Mark as Done Manually
-                  </Button>
-                )}
+                  <div className="flex items-center gap-3">
+                    <ch.icon className="w-4 h-4" /> <span>{ch.label}</span>
+                  </div>
+                  {isShared(ch.id) && <CheckCircle2 className="w-4 h-4 text-green-600" />}
+                </button>
+              ))}
+              <div className="pt-2 mt-2 border-t">
+                <button
+                  onClick={() => setActiveTab("custom")}
+                  className={`w-full flex items-center justify-between p-3 rounded-lg text-sm ${activeTab === "custom" ? "bg-primary/10 ring-1 ring-primary" : "hover:bg-muted"}`}
+                >
+                  <div className="flex items-center gap-3">
+                    <LinkIcon className="w-4 h-4" /> <span>Custom Link</span>
+                  </div>
+                </button>
               </div>
-            )}
-            {activeTab === "custom" && (
-              <div className="space-y-4">
-                <Input placeholder="Channel Name (e.g. newsletter)" value={customChannel} onChange={(e) => setCustomChannel(e.target.value)} />
-                <div className="flex gap-2">
-                  <Input readOnly value={getShareLink(customChannel || "custom")} className="bg-muted" />
-                  <Button onClick={() => copyLink(customChannel || "custom")}><Copy className="w-4 h-4" /></Button>
-                </div>
-                <Button variant="secondary" className="w-full" onClick={() => { recordShare(customChannel || "custom"); toast.success("Marked!"); }}>
-                  <Check className="w-4 h-4 mr-2" /> Mark as Done
-                </Button>
-              </div>
-            )}
+            </div>
+            <div className="flex-1">
+              {captionContent}
+            </div>
           </div>
-        </div>
+        )}
       </DialogContent>
     </Dialog>
   );
@@ -436,7 +484,6 @@ const JobForm = ({
   const [uploadingLogo, setUploadingLogo] = useState(false);
   const [requirementInput, setRequirementInput] = useState("");
 
-  // ... (Parsing and Upload functions remain same) ...
   const handleParseJobPost = async () => {
     if (!rawJobPost.trim() || rawJobPost.length < 50) return toast.error("Please paste a complete job post");
     setParsing(true);
@@ -517,7 +564,6 @@ const JobForm = ({
     }
   };
 
-  // Validates job form data before submission
   const validateForm = () => {
     if (!formData.title?.trim()) {
       toast.error("Job title is required");
@@ -527,20 +573,15 @@ const JobForm = ({
       toast.error("Company name is required");
       return false;
     }
-
-    // Require email if application_type is 'email'
     if (formData.application_type === "email" && !formData.application_email?.trim()) {
       toast.error("Employer email is required for email applications");
       return false;
     }
-
-    // Require valid URL if application_type is 'link'
     if (formData.application_type === "link") {
       if (!formData.application_url?.trim()) {
         toast.error("Application URL is required for link applications");
         return false;
       }
-      // Validate URL format
       try {
         new URL(formData.application_url);
       } catch {
@@ -553,7 +594,6 @@ const JobForm = ({
 
   return (
     <div className="grid gap-6 py-4">
-      {/* ... (Parsing Section same as before) ... */}
       {!formData.id && (
         <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
           <div className="flex items-center justify-between">
@@ -581,7 +621,7 @@ const JobForm = ({
       )}
 
       {/* Basic Info */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Title</Label>
           <Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
@@ -594,7 +634,7 @@ const JobForm = ({
           />
         </div>
       </div>
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Location</Label>
           <Input value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} />
@@ -618,7 +658,7 @@ const JobForm = ({
       </div>
 
       {/* Type & Salary */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Type</Label>
           <Select value={formData.job_type} onValueChange={(v) => setFormData({ ...formData, job_type: v })}>
@@ -653,7 +693,7 @@ const JobForm = ({
           </Select>
         </div>
       </div>
-      <div className="grid grid-cols-3 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <div className="space-y-2">
           <Label>Min Salary</Label>
           <Input
@@ -757,7 +797,7 @@ const JobForm = ({
         )}
       </div>
 
-      {/* Application Settings (Validation Fix) */}
+      {/* Application Settings */}
       <div className="space-y-4 p-4 border rounded-lg bg-blue-50/50">
         <Label className="text-base font-semibold flex items-center gap-2">
           <Building2 className="h-4 w-4" /> Application Settings
@@ -775,7 +815,7 @@ const JobForm = ({
             <SelectContent>
               <SelectItem value="link">
                 <span className="flex items-center gap-2">
-                  <ExternalLink className="w-4 h-4" /> External Link (Redirect to URL)
+                  <ExternalLink className="w-4 h-4" /> External Link
                 </span>
               </SelectItem>
               <SelectItem value="email">
@@ -800,7 +840,7 @@ const JobForm = ({
               placeholder="hr@company.com"
               value={formData.application_email || ""}
               onChange={(e) => setFormData({ ...formData, application_email: e.target.value })}
-              className="border-blue-200 focus:border-blue-500" // Highlight
+              className="border-blue-200 focus:border-blue-500"
             />
             <p className="text-xs text-muted-foreground">⚠️ Required for email applications.</p>
           </div>
@@ -820,7 +860,7 @@ const JobForm = ({
       </div>
 
       {/* Deadline & Category */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label className="flex items-center gap-2">
             <Calendar className="w-4 h-4" /> Deadline
@@ -853,7 +893,7 @@ const JobForm = ({
       </div>
 
       {/* Status Toggles */}
-      <div className="grid grid-cols-2 gap-4">
+      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="flex items-center gap-3 p-3 border rounded-lg">
           <Switch
             checked={formData.is_active ?? true}
@@ -899,7 +939,7 @@ const JobForm = ({
         </div>
 
         {formData.ai_assessment_enabled && (
-          <div className="grid grid-cols-2 gap-4 pt-3 border-t mt-3">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 pt-3 border-t mt-3">
             <div className="space-y-2">
               <Label>Number of Questions</Label>
               <Select
@@ -963,6 +1003,7 @@ const JobForm = ({
 // --- 3. MAIN MANAGER COMPONENT ---
 export function JobsManager() {
   const [searchParams] = useSearchParams();
+  const isMobile = useIsMobile();
   const [jobs, setJobs] = useState<Job[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
@@ -983,13 +1024,11 @@ export function JobsManager() {
   const [jobShareCounts, setJobShareCounts] = useState<Record<string, number>>({});
   const [jobApplyClicks, setJobApplyClicks] = useState<Record<string, number>>({});
 
-  // New state for expiring jobs logic
   const [expiringLoading, setExpiringLoading] = useState(false);
   const [isLinkedInImportOpen, setIsLinkedInImportOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
   const [countryCounts, setCountryCounts] = useState<{ name: string; flag: string; count: number }[]>([]);
 
-  // Country name aliases for matching location strings
   const COUNTRY_ALIASES: Record<string, string[]> = useMemo(() => ({
     "United Arab Emirates": ["UAE", "United Arab Emirates", "Dubai", "Abu Dhabi"],
     "United Kingdom": ["UK", "United Kingdom", "England", "Scotland", "Wales"],
@@ -1006,28 +1045,24 @@ export function JobsManager() {
       setCompaniesList(data || []);
     };
     const loadCountryCounts = async () => {
-      // Fetch all distinct locations
       const { data } = await supabase.from("jobs").select("location").eq("is_active", true);
       if (!data) return;
 
       const counts: Record<string, number> = {};
       const flagMap: Record<string, string> = {};
 
-      // Build lookup: country name -> flag
       COUNTRIES.forEach((c) => {
         flagMap[c.name] = c.flag;
       });
 
       data.forEach((row) => {
         const loc = row.location || "";
-        // Check each country (including aliases)
         COUNTRIES.forEach((country) => {
           const aliases = COUNTRY_ALIASES[country.name] || [country.name];
           const matched = aliases.some((alias) =>
             loc.toLowerCase().includes(alias.toLowerCase())
           );
           if (matched) {
-            // Deduplicate UK/GB
             const key = country.name === "United Kingdom" ? "United Kingdom" : country.name;
             counts[key] = (counts[key] || 0) + 1;
             flagMap[key] = country.flag;
@@ -1050,7 +1085,6 @@ export function JobsManager() {
     setLoading(true);
     setError(null);
     try {
-      // Auto-deactivate expired jobs first
       await supabase.rpc("auto_deactivate_expired_jobs");
 
       let query = supabase.from("jobs").select("*", { count: "exact" }).order("created_at", { ascending: false });
@@ -1061,7 +1095,6 @@ export function JobsManager() {
             ? query.eq("is_featured", true)
             : query.eq("is_active", statusFilter === "active");
 
-      // Location filter
       if (locationFilter === "bangladesh") {
         query = query.ilike("location", "%Bangladesh%");
       } else if (locationFilter === "remote") {
@@ -1069,10 +1102,8 @@ export function JobsManager() {
       } else if (locationFilter === "abroad") {
         query = query.not("location", "ilike", "%Bangladesh%");
       } else if (locationFilter !== "all") {
-        // Per-country filter: use aliases if available
         const aliases = COUNTRY_ALIASES[locationFilter];
         if (aliases && aliases.length > 1) {
-          // Match any alias using OR
           const orClauses = aliases.map((a) => `location.ilike.%${a}%`).join(",");
           query = query.or(orClauses);
         } else {
@@ -1080,7 +1111,6 @@ export function JobsManager() {
         }
       }
 
-      // Company filter
       if (companyFilter !== "all") {
         const selectedCompany = companiesList.find((c) => c.id === companyFilter);
         if (selectedCompany) {
@@ -1096,16 +1126,16 @@ export function JobsManager() {
       setJobs(fetchedJobs);
       setTotalCount(result.count || 0);
 
-      // Fetch share log counts for visible jobs
+      // Parallelize share + click count fetches
       if (fetchedJobs.length > 0) {
         const jobIds = fetchedJobs.map(j => j.id);
-        const { data: shareLogs } = await supabase
-          .from("job_share_logs")
-          .select("job_id, channel")
-          .in("job_id", jobIds);
-        
+        const [shareResult, clickResult] = await Promise.all([
+          supabase.from("job_share_logs").select("job_id, channel").in("job_id", jobIds),
+          supabase.from("job_apply_clicks").select("job_id").in("job_id", jobIds),
+        ]);
+
         const counts: Record<string, Set<string>> = {};
-        (shareLogs || []).forEach(log => {
+        (shareResult.data || []).forEach(log => {
           if (!counts[log.job_id]) counts[log.job_id] = new Set();
           counts[log.job_id].add(log.channel);
         });
@@ -1115,14 +1145,8 @@ export function JobsManager() {
         });
         setJobShareCounts(countsMap);
 
-        // Fetch apply click counts for visible jobs
-        const { data: clickLogs } = await supabase
-          .from("job_apply_clicks")
-          .select("job_id")
-          .in("job_id", jobIds);
-        
         const clickCounts: Record<string, number> = {};
-        (clickLogs || []).forEach(log => {
+        (clickResult.data || []).forEach(log => {
           clickCounts[log.job_id] = (clickCounts[log.job_id] || 0) + 1;
         });
         setJobApplyClicks(clickCounts);
@@ -1197,18 +1221,20 @@ export function JobsManager() {
 
   const handleDelete = async (id: string) => {
     if (!confirm("Delete?")) return;
-    await supabase.from("jobs").delete().eq("id", id);
+    const { error } = await supabase.from("jobs").delete().eq("id", id);
+    if (error) {
+      toast.error(`Delete failed: ${error.message}`);
+      return;
+    }
     toast.success("Deleted");
     loadJobs();
   };
 
-  // FIX: Bulk Deactivate Expired Jobs Logic
   const handleDeactivateExpired = async () => {
     if (!confirm("Are you sure you want to deactivate all jobs where the deadline has passed?")) return;
 
     setExpiringLoading(true);
     try {
-      // Query to update listing
       const { error } = await supabase
         .from("jobs")
         .update({ is_active: false })
@@ -1227,46 +1253,126 @@ export function JobsManager() {
     }
   };
 
+  const getSourceIcon = (platform: string | null) => {
+    if (!platform) return null;
+    const config = SOURCE_PLATFORM_ICONS[platform];
+    if (!config) return null;
+    const Icon = config.icon;
+    return <Icon className={`w-3 h-3 shrink-0 ${config.className}`} />;
+  };
+
+  // Mobile job card renderer
+  const renderJobCard = (job: Job) => {
+    const shareCount = jobShareCounts[job.id] || 0;
+    const applyClickCount = jobApplyClicks[job.id] || 0;
+    return (
+      <div key={job.id} className="p-3 border rounded-lg space-y-2 bg-background">
+        <div className="flex items-start justify-between gap-2">
+          <div className="min-w-0 flex-1">
+            <div className="flex items-center gap-1.5">
+              {getSourceIcon(job.source_platform)}
+              <span className="font-medium text-sm truncate">{job.title}</span>
+            </div>
+            <p className="text-xs text-muted-foreground truncate">{job.company_name}</p>
+          </div>
+          <Badge variant={job.is_active ? "default" : "secondary"} className="text-[10px] shrink-0">
+            {job.is_active ? "Active" : "Inactive"}
+          </Badge>
+        </div>
+        <div className="flex items-center gap-3 text-xs text-muted-foreground">
+          {job.location && (
+            <span className="flex items-center gap-1 truncate">
+              <MapPin className="w-3 h-3 shrink-0" /> {job.location}
+            </span>
+          )}
+          <Badge variant="outline" className="text-[10px]">{job.job_type}</Badge>
+          {job.deadline && (
+            <span className="flex items-center gap-1 ml-auto shrink-0">
+              <Calendar className="w-3 h-3" /> {format(new Date(job.deadline), "MMM d")}
+            </span>
+          )}
+        </div>
+        <div className="flex items-center justify-between pt-1 border-t">
+          <div className="flex items-center gap-2">
+            <Badge
+              variant="outline"
+              className={`text-[10px] ${
+                shareCount >= 4
+                  ? "border-green-500 text-green-700 bg-green-50"
+                  : shareCount > 0
+                  ? "border-amber-500 text-amber-700 bg-amber-50"
+                  : "text-muted-foreground"
+              }`}
+            >
+              {shareCount}/4
+            </Badge>
+            {applyClickCount > 0 && (
+              <Badge variant="outline" className="text-[10px] border-blue-500 text-blue-700 bg-blue-50">
+                <ExternalLink className="w-2.5 h-2.5 mr-0.5" />{applyClickCount}
+              </Badge>
+            )}
+          </div>
+          <div className="flex gap-1">
+            <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => { setEditingJob(job); setIsDialogOpen(true); }}>
+              <Edit className="w-3.5 h-3.5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-600" onClick={() => { setShareJob(job); setIsShareOpen(true); }}>
+              <Share2 className="w-3.5 h-3.5" />
+            </Button>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(job.id)}>
+              <Trash2 className="w-3.5 h-3.5" />
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  };
+
   return (
     <>
       <Card>
-        <CardHeader>
-          <div className="flex justify-between items-center">
+        <CardHeader className="space-y-3">
+          <div className="flex flex-col sm:flex-row sm:justify-between sm:items-center gap-2">
             <div>
               <CardTitle>Jobs Manager</CardTitle>
               <p className="text-sm text-muted-foreground">{totalCount} jobs</p>
             </div>
-            <div className="flex gap-2">
-              {/* FIX: Added Bulk Expire Button */}
+            <div className="flex flex-col sm:flex-row gap-2">
               <Button
                 variant="outline"
                 onClick={handleDeactivateExpired}
                 disabled={expiringLoading}
                 className="text-red-600 hover:text-red-700 hover:bg-red-50"
+                size={isMobile ? "sm" : "default"}
               >
                 {expiringLoading ? (
-                  <Loader2 className="w-4 h-4 animate-spin mr-2" />
+                  <Loader2 className="w-4 h-4 animate-spin mr-1" />
                 ) : (
-                  <Clock className="w-4 h-4 mr-2" />
+                  <Clock className="w-4 h-4 mr-1" />
                 )}
-                Deactivate Expired
+                {isMobile ? "Expire" : "Deactivate Expired"}
               </Button>
-              <Button variant="outline" onClick={() => setIsLinkedInImportOpen(true)} className="gap-2">
-                <Linkedin className="w-4 h-4" /> Import LinkedIn
-              </Button>
-              <Button
-                onClick={() => {
-                  setEditingJob(null);
-                  setIsDialogOpen(true);
-                }}
-              >
-                <Plus className="w-4 h-4 mr-2" /> Add Job
-              </Button>
+              <div className="flex gap-2">
+                <Button variant="outline" onClick={() => setIsLinkedInImportOpen(true)} size={isMobile ? "sm" : "default"} className="gap-1">
+                  <Linkedin className="w-4 h-4" />
+                  {!isMobile && "Import LinkedIn"}
+                </Button>
+                <Button
+                  onClick={() => {
+                    setEditingJob(null);
+                    setIsDialogOpen(true);
+                  }}
+                  size={isMobile ? "sm" : "default"}
+                >
+                  <Plus className="w-4 h-4 mr-1" /> Add Job
+                </Button>
+              </div>
             </div>
           </div>
-          <div className="flex flex-wrap gap-3 mt-4">
-            <div className="relative flex-1 min-w-[200px]">
-              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted" />
+          {/* Filters: grid on mobile, flex on desktop */}
+          <div className="grid grid-cols-2 sm:flex sm:flex-wrap gap-2 sm:gap-3">
+            <div className="relative col-span-2">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
                 className="pl-9"
                 placeholder="Search..."
@@ -1281,7 +1387,7 @@ export function JobsManager() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-[130px]">
+              <SelectTrigger className="w-full sm:w-[130px]">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
@@ -1292,9 +1398,9 @@ export function JobsManager() {
             </Select>
             <Popover open={locationOpen} onOpenChange={setLocationOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" role="combobox" aria-expanded={locationOpen} className="w-[200px] justify-between">
+                <Button variant="outline" role="combobox" aria-expanded={locationOpen} className="w-full sm:w-[200px] justify-between">
                   <MapPin className="w-3 h-3 mr-1 shrink-0" />
-                  <span className="truncate">
+                  <span className="truncate text-xs sm:text-sm">
                     {locationFilter === "all"
                       ? "All Locations"
                       : locationFilter === "bangladesh"
@@ -1376,7 +1482,7 @@ export function JobsManager() {
                 setPage(1);
               }}
             >
-              <SelectTrigger className="w-[180px]">
+              <SelectTrigger className="w-full sm:w-[180px] col-span-2 sm:col-span-1">
                 <Building2 className="w-3 h-3 mr-1" />
                 <SelectValue placeholder="All Companies" />
               </SelectTrigger>
@@ -1391,15 +1497,24 @@ export function JobsManager() {
         </CardHeader>
         <CardContent>
           {loading ? (
-            <DashboardTableSkeleton rows={5} columns={6} />
+            <DashboardTableSkeleton rows={5} columns={isMobile ? 2 : 6} />
           ) : error ? (
             <DashboardErrorState title="Error" message={error} onRetry={loadJobs} />
+          ) : isMobile ? (
+            /* Mobile: card list */
+            <div className="space-y-2">
+              {jobs.map(renderJobCard)}
+              {jobs.length === 0 && (
+                <p className="text-center text-sm text-muted-foreground py-8">No jobs found</p>
+              )}
+            </div>
           ) : (
+            /* Desktop: table */
             <div className="rounded-md border">
               <Table>
                 <TableHeader>
                   <TableRow>
-                     <TableHead>Job</TableHead>
+                    <TableHead>Job</TableHead>
                     <TableHead>Location</TableHead>
                     <TableHead>Type</TableHead>
                     <TableHead>Status</TableHead>
@@ -1416,9 +1531,12 @@ export function JobsManager() {
                     return (
                     <TableRow key={job.id}>
                       <TableCell>
-                        <div>
-                          <div className="font-medium">{job.title}</div>
-                          <div className="text-xs text-muted-foreground">{job.company_name}</div>
+                        <div className="flex items-center gap-1.5">
+                          {getSourceIcon(job.source_platform)}
+                          <div>
+                            <div className="font-medium">{job.title}</div>
+                            <div className="text-xs text-muted-foreground">{job.company_name}</div>
+                          </div>
                         </div>
                       </TableCell>
                       <TableCell>{job.location || "-"}</TableCell>
@@ -1525,7 +1643,7 @@ export function JobsManager() {
         onComplete={loadJobs}
       />
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className={isMobile ? "max-w-full h-[90vh] overflow-y-auto" : "max-w-3xl max-h-[90vh] overflow-y-auto"}>
           <DialogHeader>
             <DialogTitle>{editingJob ? "Edit Job" : "Add Job"}</DialogTitle>
           </DialogHeader>
