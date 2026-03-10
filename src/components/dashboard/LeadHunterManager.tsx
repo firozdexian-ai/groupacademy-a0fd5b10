@@ -97,11 +97,14 @@ export function LeadHunterManager() {
 
   // New hunt state
   const [showNewHunt, setShowNewHunt] = useState(false);
+  const [rawJD, setRawJD] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [leadsRequested, setLeadsRequested] = useState(20);
   const [isSearching, setIsSearching] = useState(false);
+  const [isParsing, setIsParsing] = useState(false);
+  const [jdParsed, setJdParsed] = useState(false);
 
   // Session detail state
   const [selectedSession, setSelectedSession] = useState<LeadHuntSession | null>(null);
