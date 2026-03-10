@@ -276,9 +276,9 @@ export function IndustriesManager() {
               </CardDescription>
             </div>
             <div className="flex gap-2">
-              <Button variant="outline" onClick={loadIndustries} disabled={isLoading}>
-                <RefreshCw className={`w-4 h-4 mr-2 ${isLoading ? "animate-spin" : ""}`} />
-                Refresh
+              <Button variant="outline" size="sm" onClick={loadIndustries} disabled={isLoading}>
+                <RefreshCw className={`w-4 h-4 sm:mr-2 ${isLoading ? "animate-spin" : ""}`} />
+                <span className="hidden sm:inline">Refresh</span>
               </Button>
               {selected.size >= 2 && (
                 <Button onClick={openMergeDialog} variant="default">
