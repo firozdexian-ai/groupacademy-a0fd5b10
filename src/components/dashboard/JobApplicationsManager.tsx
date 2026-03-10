@@ -847,41 +847,62 @@ This application was submitted via GroUp Academy Jobs Board.
               className="pl-10"
             />
           </div>
-          <div className="flex gap-2">
+          <div className="flex flex-col sm:flex-row gap-2">
             <Select
-              value={statusFilter}
+              value={jobFilter}
               onValueChange={(v) => {
-                setStatusFilter(v as ApplicationStatus | "all");
+                setJobFilter(v);
                 setPage(1);
               }}
             >
-              <SelectTrigger className="flex-1 md:w-48 md:flex-none">
-                <SelectValue placeholder="Application Status" />
+              <SelectTrigger className="flex-1 md:w-56 md:flex-none">
+                <SelectValue placeholder="Filter by Job" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Statuses</SelectItem>
-                {APPLICATION_STATUSES.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                <SelectItem value="all">All Jobs</SelectItem>
+                {jobsList.map((j) => (
+                  <SelectItem key={j.id} value={j.id}>
+                    {j.title}{j.company ? ` - ${j.company}` : ""} ({j.count})
+                  </SelectItem>
                 ))}
               </SelectContent>
             </Select>
-            <Select
-              value={deliveryFilter}
-              onValueChange={(v) => {
-                setDeliveryFilter(v as DeliveryStatus | "all");
-                setPage(1);
-              }}
-            >
-              <SelectTrigger className="flex-1 md:w-48 md:flex-none">
-                <SelectValue placeholder="Delivery Status" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Delivery</SelectItem>
-                {DELIVERY_STATUSES.map((s) => (
-                  <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
+            <div className="flex gap-2">
+              <Select
+                value={statusFilter}
+                onValueChange={(v) => {
+                  setStatusFilter(v as ApplicationStatus | "all");
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="flex-1 md:w-48 md:flex-none">
+                  <SelectValue placeholder="Application Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Statuses</SelectItem>
+                  {APPLICATION_STATUSES.map((s) => (
+                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Select
+                value={deliveryFilter}
+                onValueChange={(v) => {
+                  setDeliveryFilter(v as DeliveryStatus | "all");
+                  setPage(1);
+                }}
+              >
+                <SelectTrigger className="flex-1 md:w-48 md:flex-none">
+                  <SelectValue placeholder="Delivery Status" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All Delivery</SelectItem>
+                  {DELIVERY_STATUSES.map((s) => (
+                    <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
           </div>
         </div>
       </CardHeader>

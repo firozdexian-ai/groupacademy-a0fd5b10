@@ -1377,6 +1377,9 @@ export function JobsManager() {
             <Button variant="ghost" size="icon" className="h-7 w-7 text-blue-600" onClick={() => { setShareJob(job); setIsShareOpen(true); }}>
               <Share2 className="w-3.5 h-3.5" />
             </Button>
+            <Button variant="ghost" size="icon" className="h-7 w-7 text-primary" onClick={() => { searchParams.set("tab", "applications"); searchParams.set("jobId", job.id); window.location.search = searchParams.toString(); }} title="View Applications">
+              <ClipboardList className="w-3.5 h-3.5" />
+            </Button>
             <Button variant="ghost" size="icon" className="h-7 w-7 text-destructive" onClick={() => handleDelete(job.id)}>
               <Trash2 className="w-3.5 h-3.5" />
             </Button>
