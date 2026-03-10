@@ -1663,6 +1663,15 @@ export function JobsManager() {
                           <Button
                             variant="ghost"
                             size="icon"
+                            className="text-primary"
+                            title="View Applications"
+                            onClick={() => { const p = new URLSearchParams(searchParams.toString()); p.set("tab", "applications"); p.set("jobId", job.id); window.location.search = p.toString(); }}
+                          >
+                            <ClipboardList className="w-4 h-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
                             className="text-destructive hover:bg-red-50"
                             onClick={() => handleDelete(job.id)}
                           >
