@@ -43,7 +43,6 @@ import { GigSubmissionsManager } from "@/components/dashboard/GigSubmissionsMana
 import { MarketplaceGigsManager } from "@/components/dashboard/MarketplaceGigsManager";
 import { IRDashboard } from "@/components/dashboard/ir/IRDashboard";
 import { MRRTargetManager } from "@/components/dashboard/ir/MRRTargetManager";
-import { BatchDescriptionGenerator } from "@/components/dashboard/BatchDescriptionGenerator";
 import { BatchContentGenerator } from "@/components/dashboard/BatchContentGenerator";
 import { VCFirmsManager } from "@/components/dashboard/ir/VCFirmsManager";
 import { InvestorsManager } from "@/components/dashboard/ir/InvestorsManager";
