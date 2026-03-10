@@ -668,7 +668,7 @@ export function TalentPoolManager() {
 
       {/* Talent Detail Dialog */}
       {selectedTalent && (
-        <TalentDetailDialogLazy
+        <TalentDetailDialog
           open={!!selectedTalent}
           onOpenChange={() => setSelectedTalent(null)}
           talentEmail={selectedTalent.email}
