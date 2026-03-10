@@ -25,6 +25,7 @@ import { CreditsManager } from "@/components/dashboard/CreditsManager";
 import { NotificationsManager } from "@/components/dashboard/NotificationsManager";
 import { AgentSessionsManager } from "@/components/dashboard/AgentSessionsManager";
 import { CompanyAgentsManager } from "@/components/dashboard/CompanyAgentsManager";
+import { IndustriesManager } from "@/components/dashboard/IndustriesManager";
 import { EnrollmentsManager } from "@/components/dashboard/EnrollmentsManager";
 import { LearnerProgressManager } from "@/components/dashboard/LearnerProgressManager"; // 👈 Added Import
 import { StudyAbroadManager } from "@/components/dashboard/StudyAbroadManager";
