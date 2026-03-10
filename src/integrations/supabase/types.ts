@@ -3858,6 +3858,7 @@ export type Database = {
         Row: {
           career_outcome: string | null
           created_at: string | null
+          credit_cost: number | null
           description: string | null
           display_order: number | null
           icon: string | null
@@ -3871,6 +3872,7 @@ export type Database = {
         Insert: {
           career_outcome?: string | null
           created_at?: string | null
+          credit_cost?: number | null
           description?: string | null
           display_order?: number | null
           icon?: string | null
@@ -3884,6 +3886,7 @@ export type Database = {
         Update: {
           career_outcome?: string | null
           created_at?: string | null
+          credit_cost?: number | null
           description?: string | null
           display_order?: number | null
           icon?: string | null
