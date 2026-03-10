@@ -40,7 +40,7 @@ interface DraftPost {
   author_name?: string;
 }
 
-type GeneratorType = "quizzes" | "flashcards" | "scenarios" | "course-metadata" | "blog-posts" | "feed-posts";
+type GeneratorType = "quizzes" | "flashcards" | "scenarios" | "course-metadata" | "descriptions" | "blog-posts" | "feed-posts";
 
 const GENERATORS: Record<GeneratorType, { label: string; icon: React.ElementType; description: string; endpoint: string; batchSize: number; needsSchool: boolean; countLabel: string }> = {
   "quizzes": {
