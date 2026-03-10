@@ -86,11 +86,13 @@ export function CompaniesManager() {
   const [loadError, setLoadError] = useState<string | null>(null);
   const [outreachHistory, setOutreachHistory] = useState<Record<string, { last_sent: string; template: string } | null>>({});
 
-  // Pagination & Search State
+  // Pagination & Search & Filter State
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
+  const [industryFilter, setIndustryFilter] = useState("all");
+  const [industryOptions, setIndustryOptions] = useState<string[]>([]);
 
   // Modal & Form State
   const [isDialogOpen, setIsDialogOpen] = useState(false);
