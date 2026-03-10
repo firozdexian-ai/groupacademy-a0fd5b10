@@ -676,6 +676,13 @@ export function BatchContentGenerator() {
                                     <p className="whitespace-pre-wrap">{draft.text_content}</p>
                                   )}
                                 </div>
+                                {/* Word count for feed posts */}
+                                {key === "feed-posts" && draft.text_content && (
+                                  <p className="text-[10px] text-muted-foreground">
+                                    {draft.text_content.trim().split(/\s+/).length} words
+                                  </p>
+                                )}
+                              </div>
                               )}
 
                               {draft.tags && draft.tags.length > 0 && (
