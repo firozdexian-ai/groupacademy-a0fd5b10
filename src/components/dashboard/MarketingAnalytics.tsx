@@ -543,12 +543,12 @@ function SummaryCard({
 }) {
   return (
     <Card>
-      <CardContent className="pt-4">
-        <div className="flex items-center gap-2 mb-2">
+      <CardContent className="p-3">
+        <div className="flex items-center gap-2 mb-1">
           <span className={color}>{icon}</span>
           <span className="text-xs text-muted-foreground font-medium">{title}</span>
         </div>
-        <p className="text-2xl font-bold">{value.toLocaleString()}</p>
+        <p className="text-lg font-bold">{value.toLocaleString()}</p>
       </CardContent>
     </Card>
   );
