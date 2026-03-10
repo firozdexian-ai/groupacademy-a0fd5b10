@@ -304,8 +304,8 @@ export function CompetitionsManager() {
             </CardTitle>
             <p className="text-sm text-muted-foreground mt-1">Total {totalCount} competitions found</p>
           </div>
-          <Button onClick={() => handleOpenDialog()}>
-            <Plus className="h-4 w-4 mr-2" /> Add Competition
+          <Button onClick={() => handleOpenDialog()} size="sm">
+            <Plus className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Add Competition</span>
           </Button>
         </div>
       </CardHeader>
