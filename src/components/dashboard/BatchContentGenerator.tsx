@@ -213,7 +213,7 @@ export function BatchContentGenerator() {
       } else if (activeTab === "feed-posts") {
         const { data } = await supabase
           .from("feed_posts").select("id, text_content, tags, status, created_at, author_name")
-          .eq("status", "draft").order("created_at", { ascending: false });
+          .eq("status", "pending").order("created_at", { ascending: false });
         setDrafts((data || []) as DraftPost[]);
       }
     } catch (err) {
