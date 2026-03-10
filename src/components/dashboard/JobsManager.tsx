@@ -1579,8 +1579,8 @@ export function JobsManager() {
                 <SelectValue placeholder="All Companies" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Companies</SelectItem>
-                {companiesList.map((c) => (
+                <SelectItem value="all">All Companies{filteredCompaniesList.length > 0 ? ` (${filteredCompaniesList.length})` : ""}</SelectItem>
+                {(filteredCompaniesList.length > 0 ? filteredCompaniesList : companiesList).map((c) => (
                   <SelectItem key={c.id} value={c.id}>{c.name}</SelectItem>
                 ))}
               </SelectContent>
