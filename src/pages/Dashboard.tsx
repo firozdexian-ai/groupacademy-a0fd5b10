@@ -73,12 +73,9 @@ const tabAccessMap: Record<string, AppRole[]> = {
   
   
   // Talent & Leads - Both roles
-  leads: ["admin", "talent_exec"],
-  interviews: ["admin", "talent_exec"],
-  salary: ["admin", "talent_exec"],
-  portfolios: ["admin", "talent_exec"],
   talent: ["admin", "talent_exec"],
   "lead-hunter": ["admin", "talent_exec"],
+  professions: ["admin", "talent_exec"],
   
   // Recruitment - Both roles
   "jobs-kpis": ["admin", "talent_exec"],
