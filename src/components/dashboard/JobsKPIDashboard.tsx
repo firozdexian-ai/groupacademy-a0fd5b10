@@ -15,6 +15,7 @@ import { toast } from "sonner";
 import { format, startOfMonth, endOfMonth, differenceInDays, eachDayOfInterval, subMonths } from "date-fns";
 import { BarChart, Bar, XAxis, YAxis, Tooltip, ResponsiveContainer, PieChart, Pie, Cell, Legend } from "recharts";
 import CircularProgress from "./CircularProgress";
+import { useIsMobile } from "@/hooks/use-mobile";
 
 interface KPIData {
   jobsThisMonth: number;
@@ -64,6 +65,7 @@ function getMoMTrend(current: number, previous: number): string | undefined {
 }
 
 export function JobsKPIDashboard({ onNavigateToTab }: JobsKPIDashboardProps) {
+  const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [kpiData, setKpiData] = useState<KPIData | null>(null);
@@ -322,8 +324,8 @@ export function JobsKPIDashboard({ onNavigateToTab }: JobsKPIDashboardProps) {
       {/* Hero Progress Section */}
       <Card className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20">
         <CardContent className="pt-6">
-          <div className="flex flex-col lg:flex-row items-center gap-6 lg:gap-8">
-            {/* Circular Progress - responsive via component */}
+          <div className="flex flex-row items-center gap-4 sm:gap-6 lg:gap-8">
+            {/* Circular Progress - compact on mobile */}
             <CircularProgress 
               value={Math.min(jobsProgress, 100)} 
               current={kpiData.jobsThisMonth} 
@@ -331,51 +333,51 @@ export function JobsKPIDashboard({ onNavigateToTab }: JobsKPIDashboardProps) {
             />
 
             {/* Stats */}
-            <div className="flex-1 w-full space-y-4">
+            <div className="flex-1 min-w-0 space-y-3 sm:space-y-4">
               <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                <div>
-                  <h2 className="text-xl sm:text-2xl font-bold">Monthly Jobs Target</h2>
-                  <p className="text-sm text-muted-foreground">
-                    {format(monthStart, "MMMM yyyy")} • {daysPassed}d passed, {daysRemaining}d left
+                <div className="min-w-0">
+                  <h2 className="text-base sm:text-xl lg:text-2xl font-bold truncate">Monthly Jobs Target</h2>
+                  <p className="text-xs sm:text-sm text-muted-foreground">
+                    {format(monthStart, "MMM yyyy")} • {daysPassed}d passed, {daysRemaining}d left
                   </p>
                 </div>
                 {editingTarget === "jobs_posted" ? (
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1.5">
                     <Input
                       type="number"
                       value={editValue}
                       onChange={(e) => setEditValue(parseInt(e.target.value) || 0)}
-                      className="w-24"
+                      className="w-16 sm:w-24 h-8"
                     />
-                    <Button size="sm" onClick={handleSaveTarget} disabled={savingTarget}>
-                      {savingTarget ? <Loader2 className="w-4 h-4 animate-spin" /> : <Save className="w-4 h-4" />}
+                    <Button size="sm" className="h-8 w-8 p-0" onClick={handleSaveTarget} disabled={savingTarget}>
+                      {savingTarget ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
                     </Button>
-                    <Button size="sm" variant="ghost" onClick={() => setEditingTarget(null)}>
-                      <X className="w-4 h-4" />
+                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditingTarget(null)}>
+                      <X className="w-3.5 h-3.5" />
                     </Button>
                   </div>
                 ) : (
-                  <Button variant="outline" size="sm" onClick={() => handleEditTarget("jobs_posted")}>
-                    <Edit className="w-4 h-4 mr-2" />
-                    Edit Target
+                  <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleEditTarget("jobs_posted")}>
+                    <Edit className="w-3 h-3 mr-1" />
+                    Edit
                   </Button>
                 )}
               </div>
               
-              <Progress value={Math.min(jobsProgress, 100)} className="h-3" />
+              <Progress value={Math.min(jobsProgress, 100)} className="h-2 sm:h-3" />
               
-              <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
-                <div className="p-3 bg-background rounded-lg border text-center">
-                  <p className="text-xl sm:text-2xl font-bold text-primary">{kpiData.jobsToday}</p>
-                  <p className="text-xs text-muted-foreground">Posted Today</p>
+              <div className="grid grid-cols-3 gap-2 sm:gap-3">
+                <div className="p-2 sm:p-3 bg-background rounded-lg border text-center">
+                  <p className="text-base sm:text-2xl font-bold text-primary">{kpiData.jobsToday}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Today</p>
                 </div>
-                <div className="p-3 bg-background rounded-lg border text-center">
-                  <p className="text-xl sm:text-2xl font-bold text-amber-500">{dailyRunRate}</p>
-                  <p className="text-xs text-muted-foreground">Daily Run Rate</p>
+                <div className="p-2 sm:p-3 bg-background rounded-lg border text-center">
+                  <p className="text-base sm:text-2xl font-bold text-amber-500">{dailyRunRate}</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Run Rate</p>
                 </div>
-                <div className="p-3 bg-background rounded-lg border text-center">
-                  <p className="text-xl sm:text-2xl font-bold text-emerald-500">{Math.round(jobsProgress)}%</p>
-                  <p className="text-xs text-muted-foreground">Target Achieved</p>
+                <div className="p-2 sm:p-3 bg-background rounded-lg border text-center">
+                  <p className="text-base sm:text-2xl font-bold text-emerald-500">{Math.round(jobsProgress)}%</p>
+                  <p className="text-[10px] sm:text-xs text-muted-foreground">Achieved</p>
                 </div>
               </div>
             </div>
@@ -427,9 +429,10 @@ export function JobsKPIDashboard({ onNavigateToTab }: JobsKPIDashboardProps) {
                 <BarChart data={kpiData.dailyJobsData}>
                   <XAxis 
                     dataKey="date" 
-                    tick={{ fontSize: 11 }} 
+                    tick={{ fontSize: 10 }} 
                     tickLine={false}
                     axisLine={false}
+                    interval={isMobile ? 4 : "preserveStartEnd"}
                   />
                   <YAxis 
                     tick={{ fontSize: 11 }} 
@@ -520,16 +523,16 @@ export function JobsKPIDashboard({ onNavigateToTab }: JobsKPIDashboardProps) {
                   <p className="font-medium truncate">{job.title}</p>
                   <p className="text-sm text-muted-foreground">{job.company_name}</p>
                 </div>
-                <div className="flex items-center gap-4 text-sm">
+                <div className="flex items-center gap-2 sm:gap-4 text-sm">
                   <div className="text-center">
-                    <p className="font-semibold">{job.vacancies}</p>
-                    <p className="text-xs text-muted-foreground">Vacancies</p>
+                    <p className="font-semibold text-xs sm:text-sm">{job.vacancies}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Vac.</p>
                   </div>
                   <div className="text-center">
-                    <p className="font-semibold">{job.applications_count}</p>
-                    <p className="text-xs text-muted-foreground">Applications</p>
+                    <p className="font-semibold text-xs sm:text-sm">{job.applications_count}</p>
+                    <p className="text-[10px] sm:text-xs text-muted-foreground">Apps</p>
                   </div>
-                  <Badge variant="outline" className="text-xs">
+                  <Badge variant="outline" className="text-[10px] sm:text-xs px-1.5 sm:px-2">
                     {format(new Date(job.created_at), "MMM d")}
                   </Badge>
                 </div>
@@ -563,16 +566,16 @@ function StatMiniCard({ icon: Icon, label, value, color, bgColor, trend, onClick
       className={`${clickable ? "cursor-pointer hover:border-primary/40" : ""}`}
       onClick={onClick}
     >
-      <CardContent className="pt-4 pb-3 px-4">
-        <div className="flex items-center gap-3">
-          <div className={`p-2 rounded-lg ${bgColor}`}>
-            <Icon className={`w-4 h-4 ${color}`} />
+      <CardContent className="pt-3 pb-2 px-3 sm:pt-4 sm:pb-3 sm:px-4">
+        <div className="flex items-center gap-2 sm:gap-3">
+          <div className={`p-1.5 sm:p-2 rounded-lg ${bgColor}`}>
+            <Icon className={`w-3 h-3 sm:w-4 sm:h-4 ${color}`} />
           </div>
           <div className="min-w-0">
-            <p className="text-xl font-bold leading-tight">{value}</p>
-            <p className="text-xs text-muted-foreground truncate">{label}</p>
+            <p className="text-lg sm:text-xl font-bold leading-tight">{value}</p>
+            <p className="text-[10px] sm:text-xs text-muted-foreground truncate">{label}</p>
             {trend && (
-              <p className={`text-xs font-medium ${trend.startsWith("+") ? "text-emerald-500" : "text-red-500"}`}>
+              <p className={`text-[10px] sm:text-xs font-medium ${trend.startsWith("+") ? "text-emerald-500" : "text-red-500"}`}>
                 {trend} vs last mo
               </p>
             )}
