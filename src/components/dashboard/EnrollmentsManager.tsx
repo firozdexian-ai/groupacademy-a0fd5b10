@@ -309,10 +309,10 @@ export function EnrollmentsManager() {
         <Card className="p-3">
           <div className="flex items-center justify-between">
             <div>
-              <p className="text-xs text-muted-foreground">Cancelled</p>
+              <p className="text-xs text-muted-foreground">Pending</p>
               <p className="text-lg font-bold">{statusCounts.cancelled}</p>
             </div>
-            <Ban className="h-4 w-4 text-muted-foreground" />
+            <Clock className="h-4 w-4 text-muted-foreground" />
           </div>
         </Card>
       </div>
