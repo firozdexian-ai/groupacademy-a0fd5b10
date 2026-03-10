@@ -1172,7 +1172,7 @@ export function JobsManager() {
     loadCascadingData();
   }, [statusFilter, locationFilter, companyFilter, companiesList, applyLocationToQuery, computeCountryCounts]);
 
-
+  const loadJobs = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
