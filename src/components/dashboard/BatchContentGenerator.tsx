@@ -79,6 +79,15 @@ const GENERATORS: Record<GeneratorType, { label: string; icon: React.ElementType
     needsSchool: true,
     countLabel: "courses",
   },
+  "descriptions": {
+    label: "Module Descriptions",
+    icon: FileText,
+    description: "Generate rich 5-7 bullet content guides for modules with short descriptions (<500 chars)",
+    endpoint: "batch-generate-descriptions",
+    batchSize: 3,
+    needsSchool: true,
+    countLabel: "descriptions",
+  },
   "blog-posts": {
     label: "Blog Posts",
     icon: FileText,
