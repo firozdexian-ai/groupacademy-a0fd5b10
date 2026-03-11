@@ -596,6 +596,17 @@ export function InvestorsManager() {
           </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* LinkedIn JSON Import Dialog */}
+      <Dialog open={linkedinImportOpen} onOpenChange={setLinkedinImportOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Import Investors from LinkedIn JSON</DialogTitle>
+            <DialogDescription>Upload a LinkedIn scraper JSON file to bulk-import investor contacts.</DialogDescription>
+          </DialogHeader>
+          <LinkedInJsonUpload mode="investor" onComplete={() => { setLinkedinImportOpen(false); queryClient.invalidateQueries({ queryKey: ["ir-investors"] }); }} />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
