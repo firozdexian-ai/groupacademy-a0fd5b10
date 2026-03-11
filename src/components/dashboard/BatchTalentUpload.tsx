@@ -8,9 +8,10 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Upload, FileText, Link as LinkIcon, Loader2, CheckCircle, XCircle, AlertCircle, RefreshCw, FileUp } from "lucide-react";
+import { Upload, FileText, Link as LinkIcon, Loader2, CheckCircle, XCircle, AlertCircle, RefreshCw, FileUp, FileJson2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { LinkedInJsonUpload } from "./LinkedInJsonUpload";
 
 interface BatchUpload {
   id: string;
@@ -291,7 +292,7 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs defaultValue="links" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="links" disabled={isUploading}>
               <LinkIcon className="w-4 h-4 mr-2" />
               Paste Links
@@ -299,6 +300,10 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
             <TabsTrigger value="files" disabled={isUploading}>
               <FileUp className="w-4 h-4 mr-2" />
               Upload Files
+            </TabsTrigger>
+            <TabsTrigger value="linkedin" disabled={isUploading}>
+              <FileJson2 className="w-4 h-4 mr-2" />
+              LinkedIn JSON
             </TabsTrigger>
           </TabsList>
 
@@ -394,6 +399,10 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
                 <><Upload className="w-4 h-4 mr-2" />Upload {selectedFiles.length} PDF{selectedFiles.length !== 1 ? 's' : ''}</>
               )}
             </Button>
+          </TabsContent>
+
+          <TabsContent value="linkedin" className="space-y-4">
+            <LinkedInJsonUpload mode="talent" onComplete={onComplete} />
           </TabsContent>
         </Tabs>
 

@@ -22,6 +22,8 @@ import {
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { toast } from "sonner";
+import { Dialog as ImportDialog, DialogContent as ImportDialogContent, DialogHeader as ImportDialogHeader, DialogTitle as ImportDialogTitle } from "@/components/ui/dialog";
+import { LinkedInJsonUpload } from "./LinkedInJsonUpload";
 
 import {
   Users,
@@ -120,6 +122,7 @@ export function ContactsManager() {
   const [formData, setFormData] = useState(emptyContact);
   const [saving, setSaving] = useState(false);
   const [deleteTarget, setDeleteTarget] = useState<string | null>(null);
+  const [linkedinImportOpen, setLinkedinImportOpen] = useState(false);
 
   // Fetch Data (Paginated)
   const loadData = useCallback(async () => {
@@ -347,6 +350,11 @@ export function ContactsManager() {
                 <Plus className="w-4 h-4 mr-1" />
                 <span className="hidden sm:inline">Add Contact</span>
                 <span className="sm:hidden">Add</span>
+              </Button>
+              <Button variant="outline" onClick={() => setLinkedinImportOpen(true)} size="sm">
+                <Linkedin className="w-4 h-4 mr-1" />
+                <span className="hidden sm:inline">Import LinkedIn</span>
+                <span className="sm:hidden">Import</span>
               </Button>
             </div>
           </div>
@@ -779,6 +787,16 @@ export function ContactsManager() {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {/* LinkedIn JSON Import Dialog */}
+      <ImportDialog open={linkedinImportOpen} onOpenChange={setLinkedinImportOpen}>
+        <ImportDialogContent className="max-w-lg">
+          <ImportDialogHeader>
+            <ImportDialogTitle>Import Contacts from LinkedIn JSON</ImportDialogTitle>
+          </ImportDialogHeader>
+          <LinkedInJsonUpload mode="contact" onComplete={() => { setLinkedinImportOpen(false); loadData(); }} />
+        </ImportDialogContent>
+      </ImportDialog>
     </div>
   );
 }

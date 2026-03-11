@@ -31,7 +31,8 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Mail, Users, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, Mail, Users, ExternalLink, FileJson2 } from "lucide-react";
+import { LinkedInJsonUpload } from "../LinkedInJsonUpload";
 import { IR_CONFIG } from "@/lib/irConfig";
 import { InvestorDetailSheet } from "./InvestorDetailSheet";
 
@@ -61,6 +62,7 @@ export function InvestorsManager() {
   const [editingInvestor, setEditingInvestor] = useState<Investor | null>(null);
   const [deleteConfirmId, setDeleteConfirmId] = useState<string | null>(null);
   const [selectedInvestorId, setSelectedInvestorId] = useState<string | null>(null);
+  const [linkedinImportOpen, setLinkedinImportOpen] = useState(false);
   const [filterFirmId, setFilterFirmId] = useState<string>("all");
   
   const [formData, setFormData] = useState({
@@ -249,6 +251,10 @@ export function InvestorsManager() {
               ))}
             </SelectContent>
           </Select>
+          <Button variant="outline" onClick={() => setLinkedinImportOpen(true)}>
+            <FileJson2 className="mr-2 h-4 w-4" />
+            Import LinkedIn
+          </Button>
           <Button onClick={() => { resetForm(); setDialogOpen(true); }}>
             <Plus className="mr-2 h-4 w-4" />
             Add Investor
@@ -588,6 +594,17 @@ export function InvestorsManager() {
               {deleteMutation.isPending ? "Deleting..." : "Delete"}
             </Button>
           </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* LinkedIn JSON Import Dialog */}
+      <Dialog open={linkedinImportOpen} onOpenChange={setLinkedinImportOpen}>
+        <DialogContent className="max-w-lg">
+          <DialogHeader>
+            <DialogTitle>Import Investors from LinkedIn JSON</DialogTitle>
+            <DialogDescription>Upload a LinkedIn scraper JSON file to bulk-import investor contacts.</DialogDescription>
+          </DialogHeader>
+          <LinkedInJsonUpload mode="investor" onComplete={() => { setLinkedinImportOpen(false); queryClient.invalidateQueries({ queryKey: ["ir-investors"] }); }} />
         </DialogContent>
       </Dialog>
     </div>
