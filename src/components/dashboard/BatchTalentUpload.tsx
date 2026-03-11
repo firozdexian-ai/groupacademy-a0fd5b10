@@ -293,7 +293,7 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
       </CardHeader>
       <CardContent className="space-y-4">
         <Tabs defaultValue="links" className="w-full">
-          <TabsList className="grid w-full grid-cols-2">
+          <TabsList className="grid w-full grid-cols-3">
             <TabsTrigger value="links" disabled={isUploading}>
               <LinkIcon className="w-4 h-4 mr-2" />
               Paste Links
@@ -301,6 +301,10 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
             <TabsTrigger value="files" disabled={isUploading}>
               <FileUp className="w-4 h-4 mr-2" />
               Upload Files
+            </TabsTrigger>
+            <TabsTrigger value="linkedin" disabled={isUploading}>
+              <FileJson2 className="w-4 h-4 mr-2" />
+              LinkedIn JSON
             </TabsTrigger>
           </TabsList>
 
