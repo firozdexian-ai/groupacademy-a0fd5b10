@@ -31,7 +31,8 @@ import {
 } from "@/components/ui/table";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
-import { Plus, Pencil, Trash2, Mail, Users, ExternalLink } from "lucide-react";
+import { Plus, Pencil, Trash2, Mail, Users, ExternalLink, FileJson2 } from "lucide-react";
+import { LinkedInJsonUpload } from "../LinkedInJsonUpload";
 import { IR_CONFIG } from "@/lib/irConfig";
 import { InvestorDetailSheet } from "./InvestorDetailSheet";
 
