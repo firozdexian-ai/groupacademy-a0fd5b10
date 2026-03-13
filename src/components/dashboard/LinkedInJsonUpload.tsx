@@ -516,7 +516,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
               </div>
               <div>
                 <p className="text-2xl font-bold text-amber-600">{importResult.duplicates}</p>
-                <p className="text-muted-foreground">Duplicates</p>
+                <p className="text-muted-foreground">Enriched</p>
               </div>
               <div>
                 <p className="text-2xl font-bold text-red-600">{importResult.failed}</p>
