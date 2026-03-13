@@ -437,7 +437,31 @@ export function TalentPoolManager() {
             <FileText className="w-4 h-4 mr-2 text-purple-600" /> Create Portfolio
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          {/* Welcome / Invite */}
+          {/* Email & LinkedIn outreach for phoneless talents */}
+          {talent.email && !hasPhone && (
+            <DropdownMenuItem onClick={() => {
+              const firstName = extractFirstName(talent.full_name);
+              const link = getOutreachEmailLink(talent.email, 'welcome', firstName);
+              window.open(link, '_blank');
+              supabase.from("outreach_messages").insert({ talent_id: talent.id, product: 'welcome', message_content: 'Email invite', channel: 'email' } as any);
+              toast.success("Email invite opened");
+            }}>
+              <Mail className="w-4 h-4 mr-2 text-blue-600" /> Email Invite
+            </DropdownMenuItem>
+          )}
+          {talent.linkedin_url && !hasPhone && (
+            <DropdownMenuItem onClick={() => {
+              const firstName = extractFirstName(talent.full_name);
+              const message = getOutreachLinkedInMessage('welcome', firstName);
+              navigator.clipboard.writeText(message);
+              window.open(talent.linkedin_url!, '_blank');
+              supabase.from("outreach_messages").insert({ talent_id: talent.id, product: 'welcome', message_content: 'LinkedIn invite', channel: 'linkedin' } as any);
+              toast.success("LinkedIn message copied — paste in DM");
+            }}>
+              <Linkedin className="w-4 h-4 mr-2 text-blue-700" /> LinkedIn Invite
+            </DropdownMenuItem>
+          )}
+          {/* Welcome / Invite (WhatsApp) */}
           {hasPhone && (
             talent.welcome_sent_at ? (
               <DropdownMenuItem disabled>
