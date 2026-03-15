@@ -316,7 +316,7 @@ export function TalentPoolManager() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, countryFilter, outreachFilter, sourceFilter]);
+  }, [debouncedSearch, countryFilter, outreachFilter, sourceFilter, emailFilter]);
 
   const getProfessionName = (categoryId: string | null, customProfession: string | null) => {
     if (customProfession) return customProfession;
