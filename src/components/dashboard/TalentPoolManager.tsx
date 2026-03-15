@@ -415,8 +415,12 @@ export function TalentPoolManager() {
     toast.success(`CSV exported (${exportAll ? "All Filtered" : "Current Page"} — ${rows.length} rows)`);
   };
 
-  // Client-side filtering for outreach products (no_portfolio, no_mock, etc.)
+  // Client-side filtering for outreach products and email filter
   const filteredTalents = talents.filter((talent) => {
+    // Email filter
+    if (emailFilter === "has_email" && isPlaceholderEmail(talent.email)) return false;
+    if (emailFilter === "linkedin_only" && !isPlaceholderEmail(talent.email)) return false;
+
     if (outreachFilter === "all" || outreachFilter === "no_welcome") return true;
     const talentOutreach = outreachRecords.filter((r) => r.talent_id === talent.id);
     const hasOutreachFor = (product: string) => talentOutreach.some((r) => r.product === product);
