@@ -840,7 +840,13 @@ export function TalentPoolManager() {
                             ) : <span className="text-xs text-muted-foreground">—</span>}
                           </TableCell>
                           <TableCell><Badge variant="secondary">{getProfessionName(talent.profession_category_id, talent.custom_profession)}</Badge></TableCell>
-                          <TableCell>{renderSourceBadge(talent)}</TableCell>
+                          <TableCell>
+                            <div className="flex items-center gap-1.5">
+                              {renderSourceBadge(talent)}
+                              {isPlaceholderEmail(talent.email) && <Badge className="text-[10px] px-1 py-0 bg-blue-600/10 text-blue-700 border-blue-200">LinkedIn Only</Badge>}
+                            </div>
+                          </TableCell>
+                          <TableCell>{renderOutreachBadge(talent)}</TableCell>
                           <TableCell className="text-sm text-muted-foreground">{new Date(talent.updated_at).toLocaleDateString()}</TableCell>
                           <TableCell className="text-right">{renderActionsDropdown(talent)}</TableCell>
                         </TableRow>
