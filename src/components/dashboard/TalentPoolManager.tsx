@@ -123,14 +123,17 @@ export function TalentPoolManager() {
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-      const [totalRes, newRes, cvRes, noPhoneRes, registeredRes, uploadedRes] = await Promise.all([
+      const [totalRes, newRes, cvRes, noPhoneRes, registeredRes, uploadedRes, noEmailRes, contactedRes] = await Promise.all([
         supabase.from("talents").select("*", { count: "exact", head: true }),
         supabase.from("talents").select("*", { count: "exact", head: true }).gte("created_at", oneWeekAgo.toISOString()),
         supabase.from("talents").select("*", { count: "exact", head: true }).not("cv_url", "is", null),
         supabase.from("talents").select("*", { count: "exact", head: true }).is("phone", null),
         supabase.from("talents").select("*", { count: "exact", head: true }).not("user_id", "is", null),
         supabase.from("talents").select("*", { count: "exact", head: true }).is("user_id", null),
+        supabase.from("talents").select("*", { count: "exact", head: true }).or("email.ilike.%placeholder%,email.ilike.%noemail%,email.ilike.%@linkedin.com"),
+        supabase.from("outreach_messages").select("talent_id", { count: "exact", head: false }).gte("sent_at", oneWeekAgo.toISOString()),
       ]);
+      const contactedThisWeek = new Set((contactedRes.data || []).map((r: any) => r.talent_id)).size;
       setKpiStats({
         total: totalRes.count || 0,
         newThisWeek: newRes.count || 0,
@@ -138,6 +141,9 @@ export function TalentPoolManager() {
         withoutPhone: noPhoneRes.count || 0,
         registered: registeredRes.count || 0,
         uploaded: uploadedRes.count || 0,
+        noEmail: noEmailRes.count || 0,
+        contacted: contactedThisWeek,
+        unreached: (totalRes.count || 0) - contactedThisWeek,
       });
     } catch (err) {
       console.error("Error loading KPI stats:", err);
