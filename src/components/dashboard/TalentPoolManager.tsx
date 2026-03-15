@@ -62,6 +62,7 @@ interface OutreachRecord {
   talent_id: string;
   product: string;
   sent_at: string;
+  channel: string;
 }
 
 interface ProfessionCategory {
