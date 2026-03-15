@@ -762,8 +762,21 @@ export function TalentPoolManager() {
                   </SelectContent>
                 </Select>
               </div>
-              {(countryFilter !== "all" || outreachFilter !== "all" || sourceFilter !== "all") && (
-                <Button variant="ghost" size="sm" onClick={() => { setCountryFilter("all"); setOutreachFilter("all"); setSourceFilter("all"); }} className="text-muted-foreground shrink-0">
+              <div className="flex-1">
+                <Label className="text-xs text-muted-foreground mb-1 block">Email Status</Label>
+                <Select value={emailFilter} onValueChange={(v) => setEmailFilter(v as EmailFilter)}>
+                  <SelectTrigger className="bg-background">
+                    <SelectValue placeholder="All" />
+                  </SelectTrigger>
+                  <SelectContent className="bg-popover z-50">
+                    <SelectItem value="all">All Emails</SelectItem>
+                    <SelectItem value="has_email">Has Real Email</SelectItem>
+                    <SelectItem value="linkedin_only">LinkedIn Only</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              {(countryFilter !== "all" || outreachFilter !== "all" || sourceFilter !== "all" || emailFilter !== "all") && (
+                <Button variant="ghost" size="sm" onClick={() => { setCountryFilter("all"); setOutreachFilter("all"); setSourceFilter("all"); setEmailFilter("all"); }} className="text-muted-foreground shrink-0">
                   Clear
                 </Button>
               )}
