@@ -345,6 +345,8 @@ const Dashboard = () => {
         return <EmailComposer />;
       case "payments":
         return <PaymentSettingsManager />;
+      case "support-assistant":
+        return <SupportAssistant />;
       default:
         return userRole === "talent_exec" ? <CVOutreachGenerator /> : <DashboardOverview />;
     }
