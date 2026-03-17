@@ -37,6 +37,7 @@ import {
   Mail,
   CreditCard,
   Factory,
+  Network,
 } from "lucide-react";
 import {
   Sidebar,
@@ -71,6 +72,14 @@ interface NavGroup {
 }
 
 const navGroups: NavGroup[] = [
+  {
+    title: "Workforce",
+    icon: Network,
+    roles: ["admin"],
+    items: [
+      { title: "Workforce Members", icon: UserCog, value: "workforce" },
+    ],
+  },
   {
     title: "Talent & Leads",
     icon: Users,
