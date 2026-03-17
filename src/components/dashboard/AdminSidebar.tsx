@@ -73,6 +73,14 @@ interface NavGroup {
 
 const navGroups: NavGroup[] = [
   {
+    title: "Workforce",
+    icon: Network,
+    roles: ["admin"],
+    items: [
+      { title: "Workforce Members", icon: UserCog, value: "workforce" },
+    ],
+  },
+  {
     title: "Talent & Leads",
     icon: Users,
     roles: ["admin", "talent_exec"],

@@ -407,6 +407,7 @@ const Dashboard = () => {
       "ir-emails": "Email Updates",
       payments: "Payment Settings",
       "support-assistant": "AI Support Assistant",
+      workforce: "Workforce Management",
     };
     return titles[activeTab] || "Dashboard";
   };
