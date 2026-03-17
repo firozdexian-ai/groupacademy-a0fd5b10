@@ -349,6 +349,8 @@ const Dashboard = () => {
         return <PaymentSettingsManager />;
       case "support-assistant":
         return <SupportAssistant />;
+      case "workforce":
+        return <WorkforceManager />;
       default:
         return userRole === "talent_exec" ? <CVOutreachGenerator /> : <DashboardOverview />;
     }
