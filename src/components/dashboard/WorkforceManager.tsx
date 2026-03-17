@@ -177,11 +177,11 @@ export function WorkforceManager() {
       const spec = specType && specValue ? { type: specType, value: specValue } : {};
       const { error } = await supabase.from("workforce_members").insert({
         talent_id: selectedTalent.id,
-        role_type: newRole,
+        role_type: newRole as WorkforceRoleType,
         status: newStatus,
         city: newCity || null,
         specialization: spec,
-      });
+      } as any);
       if (error) throw error;
       toast.success("Workforce member added");
       setShowAddDialog(false);
