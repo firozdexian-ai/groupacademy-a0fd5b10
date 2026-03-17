@@ -4794,6 +4794,42 @@ export type Database = {
           },
         ]
       }
+      talent_assignments: {
+        Row: {
+          assigned_at: string | null
+          assigned_to: string
+          id: string
+          talent_id: string
+        }
+        Insert: {
+          assigned_at?: string | null
+          assigned_to: string
+          id?: string
+          talent_id: string
+        }
+        Update: {
+          assigned_at?: string | null
+          assigned_to?: string
+          id?: string
+          talent_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_assignments_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "workforce_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_assignments_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       talent_credits: {
         Row: {
           balance: number
@@ -4985,6 +5021,66 @@ export type Database = {
         }
         Relationships: []
       }
+      workforce_members: {
+        Row: {
+          city: string | null
+          country: string | null
+          created_at: string | null
+          hired_at: string | null
+          id: string
+          probation_ends_at: string | null
+          reports_to: string | null
+          role_type: Database["public"]["Enums"]["workforce_role_type"]
+          specialization: Json | null
+          status: string
+          talent_id: string
+          updated_at: string | null
+        }
+        Insert: {
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          hired_at?: string | null
+          id?: string
+          probation_ends_at?: string | null
+          reports_to?: string | null
+          role_type: Database["public"]["Enums"]["workforce_role_type"]
+          specialization?: Json | null
+          status?: string
+          talent_id: string
+          updated_at?: string | null
+        }
+        Update: {
+          city?: string | null
+          country?: string | null
+          created_at?: string | null
+          hired_at?: string | null
+          id?: string
+          probation_ends_at?: string | null
+          reports_to?: string | null
+          role_type?: Database["public"]["Enums"]["workforce_role_type"]
+          specialization?: Json | null
+          status?: string
+          talent_id?: string
+          updated_at?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "workforce_members_reports_to_fkey"
+            columns: ["reports_to"]
+            isOneToOne: false
+            referencedRelation: "workforce_members"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "workforce_members_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: true
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
     }
     Views: {
       [_ in never]: never
@@ -5143,6 +5239,14 @@ export type Database = {
       session_status: "scheduled" | "ongoing" | "completed" | "cancelled"
       source_platform: "facebook" | "linkedin" | "bdjobs" | "website" | "other"
       student_status: "lead" | "free_learner" | "enrolled" | "graduated"
+      workforce_role_type:
+        | "country_director"
+        | "head_of_ta"
+        | "talent_executive"
+        | "bde"
+        | "academy_chancellor"
+        | "school_dean"
+        | "career_abroad_exec"
     }
     CompositeTypes: {
       [_ in never]: never
@@ -5343,6 +5447,15 @@ export const Constants = {
       session_status: ["scheduled", "ongoing", "completed", "cancelled"],
       source_platform: ["facebook", "linkedin", "bdjobs", "website", "other"],
       student_status: ["lead", "free_learner", "enrolled", "graduated"],
+      workforce_role_type: [
+        "country_director",
+        "head_of_ta",
+        "talent_executive",
+        "bde",
+        "academy_chancellor",
+        "school_dean",
+        "career_abroad_exec",
+      ],
     },
   },
 } as const
