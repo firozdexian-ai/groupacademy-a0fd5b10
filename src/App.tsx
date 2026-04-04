@@ -184,7 +184,8 @@ export default function App() {
                 <Routes>
                   {/* ================= PUBLIC ROUTES ================= */}
                   <Route path="/" element={<Index />} />
-                  <Route path="/auth" element={<Auth />} />
+                  <Route path="/auth" element={<AuthChat />} />
+                  <Route path="/auth/classic" element={<AuthClassic />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
 
                   {/* Public Job View */}
