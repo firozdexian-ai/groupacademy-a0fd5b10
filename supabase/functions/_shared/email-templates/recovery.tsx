@@ -24,12 +24,12 @@ export const RecoveryEmail = ({
 }: RecoveryEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Reset your password for {siteName}</Preview>
+    <Preview>Reset your password for GroUp Academy</Preview>
     <Body style={main}>
       <Container style={container}>
         <Heading style={h1}>Reset your password</Heading>
         <Text style={text}>
-          We received a request to reset your password for {siteName}. Click
+          We received a request to reset your password for GroUp Academy. Click
           the button below to choose a new password.
         </Text>
         <Button style={button} href={confirmationUrl}>
@@ -46,26 +46,27 @@ export const RecoveryEmail = ({
 
 export default RecoveryEmail
 
-const main = { backgroundColor: '#ffffff', fontFamily: 'Arial, sans-serif' }
-const container = { padding: '20px 25px' }
+const main = { backgroundColor: '#ffffff', fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }
+const container = { padding: '32px 28px' }
 const h1 = {
   fontSize: '22px',
   fontWeight: 'bold' as const,
-  color: '#000000',
+  color: '#333333',
   margin: '0 0 20px',
 }
 const text = {
   fontSize: '14px',
-  color: '#55575d',
-  lineHeight: '1.5',
+  color: '#677280',
+  lineHeight: '1.6',
   margin: '0 0 25px',
 }
 const button = {
-  backgroundColor: '#000000',
+  backgroundColor: '#2A7DDE',
   color: '#ffffff',
   fontSize: '14px',
   borderRadius: '8px',
-  padding: '12px 20px',
+  padding: '12px 24px',
   textDecoration: 'none',
+  fontWeight: '600' as const,
 }
 const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
