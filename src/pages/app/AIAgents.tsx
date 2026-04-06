@@ -201,21 +201,9 @@ export default function AIAgents() {
 
   const handleConfirmCredit = async () => {
     if (!selectedAgentKey) return;
-    const agent = agents.find((a) => a.agent_key === selectedAgentKey);
-    const success = await deductCredits(
-      "AI_AGENT_CHAT",
-      undefined,
-      `AI Agent: ${agent?.name || "Chat"} session`
-    );
-    if (success) {
-      const session = await startNewSession(selectedAgentKey);
-      if (session) {
-        setShowCreditGate(false);
-        navigate(`/app/agents/${selectedAgentKey}`);
-        toast.success("Session started! You have 30 minutes.");
-      } else {
-        toast.error("Failed to start session. Please try again.");
-      }
+    navigate(`/app/agents/${selectedAgentKey}`);
+    setShowCreditGate(false);
+  };
     } else {
       setShowCreditGate(false);
     }
