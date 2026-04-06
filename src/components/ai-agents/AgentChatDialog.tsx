@@ -27,8 +27,6 @@ interface AgentChatDialogProps {
   agent: AgentInfo;
   messages: AgentMessage[];
   isStreaming: boolean;
-  timeRemaining: number | null;
-  isSessionExpired: boolean;
   onSendMessage: (content: string) => void;
   onBack: () => void;
   onEndSession: () => void;
@@ -38,7 +36,12 @@ interface AgentChatDialogProps {
 const getSuggestions = (agentId?: string) => {
   switch (agentId) {
     case "cv-coach":
-      return ["Review my resume summary", "ATS optimization tips", "Action verbs for leadership", "Proofread this section"];
+      return [
+        "Review my resume summary",
+        "ATS optimization tips",
+        "Action verbs for leadership",
+        "Proofread this section",
+      ];
     case "interview-coach":
       return ["Start mock interview", "Tell me about yourself", "STAR method example", "Questions to ask interviewers"];
     case "salary-negotiator":
@@ -109,7 +112,7 @@ export function AgentChatDialog({
               {perResponseCost > 0 ? (
                 <span className="flex items-center gap-1 text-muted-foreground">
                   <Coins className="h-3 w-3" />
-                  {perResponseCost} credit{perResponseCost !== 1 ? 's' : ''}/response
+                  {perResponseCost} credit{perResponseCost !== 1 ? "s" : ""}/response
                 </span>
               ) : (
                 <span className="text-emerald-600 font-medium">Free</span>
@@ -232,8 +235,14 @@ export function AgentChatDialog({
               <div className="bg-muted rounded-2xl rounded-bl-sm px-4 py-3 border shadow-sm">
                 <div className="flex gap-1 h-5 items-center">
                   <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce"></span>
-                  <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: "0.1s" }}></span>
-                  <span className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce" style={{ animationDelay: "0.2s" }}></span>
+                  <span
+                    className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.1s" }}
+                  ></span>
+                  <span
+                    className="w-1.5 h-1.5 bg-primary/40 rounded-full animate-bounce"
+                    style={{ animationDelay: "0.2s" }}
+                  ></span>
                 </div>
               </div>
             </div>
