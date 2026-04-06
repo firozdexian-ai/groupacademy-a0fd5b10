@@ -167,7 +167,7 @@ export default function AIAgents() {
   // Get active sessions with agent details
   const activeConversations = useMemo(() => {
     return recentSessions
-      .filter((s) => s.is_active && new Date(s.session_expires_at) > new Date())
+      .filter((s) => s.is_active)
       .map((session) => {
         const agent = agents.find((a) => a.agent_key === session.agent_key);
         const lastMsg = session.messages?.[session.messages.length - 1];
@@ -179,10 +179,9 @@ export default function AIAgents() {
       });
   }, [recentSessions, agents]);
 
-  // Recent (inactive) conversations
   const recentChats = useMemo(() => {
     return recentSessions
-      .filter((s) => !s.is_active || new Date(s.session_expires_at) <= new Date())
+      .filter((s) => !s.is_active)
       .slice(0, 10)
       .map((session) => {
         const agent = agents.find((a) => a.agent_key === session.agent_key);
@@ -195,20 +194,9 @@ export default function AIAgents() {
       });
   }, [recentSessions, agents]);
 
-  const getActiveSession = (agentKey: string) => {
-    return recentSessions.find(
-      (s) => s.agent_key === agentKey && s.is_active && new Date(s.session_expires_at) > new Date()
-    );
-  };
-
   const handleAgentClick = (agentKey: string) => {
-    const activeSession = getActiveSession(agentKey);
-    if (activeSession) {
-      navigate(`/app/agents/${agentKey}`);
-    } else {
-      setSelectedAgentKey(agentKey);
-      setShowCreditGate(true);
-    }
+    // Per-response model: go directly to chat, no credit gate upfront
+    navigate(`/app/agents/${agentKey}`);
   };
 
   const handleConfirmCredit = async () => {
