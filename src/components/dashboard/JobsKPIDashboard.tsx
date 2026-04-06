@@ -610,4 +610,8 @@ export function JobsKPIDashboard({ onNavigateToTab }: JobsKPIDashboardProps) {
               </ResponsiveContainer>
             </div>
           </CardContent>
-        </Card
+        </Card>
+      </div>
+    </div>
+  );
+};
