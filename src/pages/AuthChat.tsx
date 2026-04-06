@@ -97,7 +97,6 @@ const AuthChat = () => {
 
   const handleClassicAuthFallback = () => {
     const returnTo = searchParams.get("returnTo");
-    // Standardize redirection parameter for the classic auth route
     navigate(`/auth/classic${returnTo ? `?returnTo=${encodeURIComponent(returnTo)}` : ""}`);
   };
 
@@ -145,14 +144,20 @@ const AuthChat = () => {
 
   return (
     <div className="min-h-screen flex flex-col bg-background">
-      {/* Header */}
-      <header className="flex items-center justify-between px-4 py-3 border-b border-border bg-card">
-        <button onClick={() => navigate("/")} className="flex items-center gap-2">
-          <img src={theme === "dark" ? logoLight : logoDark} alt="GroUp Academy" className="h-8" />
+      {/* Header with centralized branding */}
+      <header className="relative flex items-center justify-between px-4 py-3 border-b border-border bg-card">
+        <button onClick={() => navigate("/")} className="flex items-center gap-2 z-10">
+          <img src={theme === "dark" ? logoLight : logoDark} alt="Logo" className="h-8" />
         </button>
-        <div className="flex items-center gap-2 text-sm text-muted-foreground">
+
+        {/* Absolute Centered Branding */}
+        <div className="absolute left-1/2 top-1/2 -translate-x-1/2 -translate-y-1/2 z-0 pointer-events-none">
+          <span className="font-semibold text-base text-foreground">GroUp Academy</span>
+        </div>
+
+        <div className="flex items-center gap-2 text-sm text-muted-foreground z-10">
           <ShieldCheck className="w-4 h-4 text-primary" />
-          <span className="hidden sm:inline">Secure & Encrypted</span>
+          <span className="hidden sm:inline">Secure</span>
         </div>
       </header>
 
