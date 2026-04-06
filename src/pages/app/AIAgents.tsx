@@ -306,7 +306,7 @@ export default function AIAgents() {
             ) : (
               <div className="grid grid-cols-2 gap-3">
                 {filteredAgents.map((agent) => {
-                  const activeSession = getActiveSession(agent.agent_key);
+                  const activeSession = recentSessions.find(s => s.agent_key === agent.agent_key && s.is_active);
                   return (
                     <AgentCard
                       key={agent.id}
