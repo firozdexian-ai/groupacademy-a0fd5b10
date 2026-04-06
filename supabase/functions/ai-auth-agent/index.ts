@@ -1,5 +1,4 @@
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -8,48 +7,44 @@ const corsHeaders = {
 
 const AGENT_NAME = "Aisha";
 
-const SYSTEM_PROMPT = `You are ${AGENT_NAME}, the friendly and professional gatekeeper AI of GroUp Academy — a global career acceleration platform.
+// Hardcoded deterministic quizzes to guarantee they always appear
+const QUIZZES = [
+  { q: "What is the opposite of hot?", a: "cold" },
+  { q: "Which common pet animal meows?", a: "cat" },
+  { q: "What color is a clear daytime sky?", a: "blue" },
+  { q: "If you freeze water, what does it become?", a: "ice" },
+  { q: "What is the opposite of up?", a: "down" },
+  { q: "What is 10 plus 5? (Type the number)", a: "15" },
+];
 
-YOUR ROLE:
-You guide users through signing in, signing up, or resetting their password. You are warm, concise, and highly efficient.
+const SYSTEM_PROMPT = `You are ${AGENT_NAME}, the gatekeeper AI of GroUp Academy.
 
-CRITICAL RULES:
-1. STRICTLY ENGLISH ONLY: You MUST communicate EXCLUSIVELY in English. DO NOT use Bengali or any other language under any circumstances. Never use words like "স্বাগতম" or "ওহ".
-2. ALWAYS INCLUDE THE QUESTION: If your action is "verify_human", your 'reply' string MUST explicitly ask the question. Do not just say "Let's verify you're human" without actually asking the question in the same message!
-3. THE WELCOME STEP: If the context step is "welcome", you MUST directly ask the user for their email address. Example: "Welcome to GroUp Academy! 👋 To get started, please enter your email address."
-4. ALIGN WITH THE UI: Your conversational reply must perfectly match the expected action.
-5. NO PASSWORDS: You NEVER handle passwords directly. When it's time for a password, you tell the client to show a password field.
-
-HUMAN VERIFICATION QUIZ (Make it interesting!):
-Instead of boring math, ask simple, fun common-sense logic questions. 
-CRITICAL: The answer MUST be a single, easy-to-spell word (no spaces, numbers, or special characters).
-Good examples:
-- "Quick human check! What is the opposite of cold?" (Answer: hot)
-- "Let's check if you're human! Which animal meows?" (Answer: cat)
-- "Human check! What color is a clear daytime sky?" (Answer: blue)
-- "To prove you're human: If you freeze water, what does it become?" (Answer: ice)
-- "Quick puzzle: What is the opposite of up?" (Answer: down)
+ABSOLUTE RULES:
+1. ENGLISH ONLY: You are strictly forbidden from using any non-English words or characters.
+2. THE WELCOME STEP: If the context step is "welcome", directly ask for the email address. Do not ask what they want to do.
+3. FOR HUMAN VERIFICATION: If the action is "verify_human", ONLY say something like "Let's do a quick human check!" or "That wasn't right, let's try another check." DO NOT generate the actual question yourself. The system will add it automatically. 
+4. NO PASSWORDS: You NEVER handle passwords directly.
 
 RESPONSE FORMAT:
 You must ALWAYS respond with valid JSON in this exact format:
 {
   "reply": "Your conversational message to the user",
   "action": "the_next_action",
-  "quiz": {"answer": "the_single_word_answer_in_lowercase"} // ONLY include this object if action is verify_human, otherwise null
+  "quiz": null
 }
 
 AVAILABLE ACTIONS:
-- "collect_email" — Ask for email address
-- "collect_password" — Tell user to enter password (for login)
-- "collect_name" — Ask for full name (signup)
-- "collect_phone" — Ask for phone number (signup)
-- "set_password" — Tell user to create a password (signup/claim)
-- "verify_human" — Generate a logic question. Set quiz field to {"answer": "correct_answer"}
-- "do_signin" — All login info collected, client should attempt sign in
-- "do_signup" — All signup info collected, client should attempt sign up
-- "do_reset" — User wants password reset, client should trigger it
-- "complete" — Authentication is done, show "Enter Platform" button
-- "welcome" — Initial welcome state
+- "collect_email"
+- "collect_password"
+- "collect_name"
+- "collect_phone"
+- "set_password"
+- "verify_human"
+- "do_signin"
+- "do_signup"
+- "do_reset"
+- "complete"
+- "welcome"
 
 FLOW CONTEXT:
 The client will send you context about the current state, including:
@@ -82,7 +77,6 @@ serve(async (req) => {
       });
     }
 
-    // Build conversation for AI
     const aiMessages = [
       { role: "system", content: SYSTEM_PROMPT },
       ...(messages || []),
@@ -99,6 +93,7 @@ serve(async (req) => {
         model: "google/gemini-2.5-flash",
         messages: aiMessages,
         response_format: { type: "json_object" },
+        temperature: 0.1, // Highly deterministic
       }),
     });
 
@@ -118,13 +113,18 @@ serve(async (req) => {
       throw new Error("No content in AI response");
     }
 
-    // Parse the JSON response
     let parsed;
     try {
       parsed = JSON.parse(content);
     } catch {
-      // If AI didn't return valid JSON, wrap it
       parsed = { reply: content, action: "collect_email", quiz: null };
+    }
+
+    // CTO OVERRIDE: Deterministically inject the quiz if the action is verify_human
+    if (parsed.action === "verify_human") {
+      const randomQuiz = QUIZZES[Math.floor(Math.random() * QUIZZES.length)];
+      parsed.quiz = { answer: randomQuiz.a };
+      parsed.reply = `${parsed.reply}\n\nQuestion: ${randomQuiz.q}`;
     }
 
     return new Response(JSON.stringify(parsed), {
