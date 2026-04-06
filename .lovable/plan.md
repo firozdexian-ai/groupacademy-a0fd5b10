@@ -1,128 +1,98 @@
-# Conversational AI Authentication Agent
-
-## What It Does
-
-Replaces the traditional form-based `/auth` page with a **chat-based AI agent** that handles signup, login, and password reset through natural conversation. The agent acts as the platform's "gatekeeper" — welcoming users, collecting credentials conversationally, performing a quick human-verification quiz, and completing authentication behind the scenes.
-
-Also give the Agent a name and personality.
-
-## User Journey
-
-```text
-User lands on /auth
-        |
-        v
-  Chat UI with AI welcome message
-  "Welcome to GroUp Academy! I'm here to help you join or sign back in."
-        |
-        v
-  AI asks for email
-        |
-        +---> Email exists in talents table (with user_id) --> LOGIN FLOW
-        |     AI: "Welcome back! Please enter your password."
-        |     -> Authenticates via supabase.auth.signInWithPassword
-        |     -> "Forgot password?" handled conversationally
-        |
-        +---> Email exists in talents table (no user_id) --> CLAIM ACCOUNT
-        |     AI: "We have your profile! Let's set up your login."
-        |     -> Collects password, verifies name/phone
-        |     -> Signs up and links to existing talent record
-        |
-        +---> Email not found --> SIGNUP FLOW
-              AI: "Let's create your account!"
-              -> Collects: name, phone, password (step by step)
-              -> Quick human verification (simple quiz question)
-              -> Creates account via supabase.auth.signUp
-        |
-        v
-  "You're all set! Enter the platform."
-  [Enter Platform] button appears
-```
-
-## Architecture
-
-This is **not** a typical AI edge function chat. The AI generates conversational UI responses, but **authentication actions happen client-side** using the existing `useAuth` hook. The edge function only generates the conversational text and determines what step comes next.
-
-### Why hybrid (AI text + client-side auth)?
-
-- Supabase auth tokens must be set client-side (browser cookies/localStorage)
-- Password must never be sent to a custom edge function
-- The AI agent handles conversation flow, tone, and the human quiz — not actual auth operations
-
-## Technical Design
-
-### New Edge Function: `ai-auth-agent`
-
-Receives conversation context (NOT passwords) and returns:
-
-```json
-{
-  "reply": "Great! Now tell me your full name.",
-  "action": "collect_name",
-  "quiz": null
-}
-```
-
-Actions the client interprets: `collect_email`, `collect_password`, `collect_name`, `collect_phone`, `verify_human`, `do_signin`, `do_signup`, `do_reset`, `complete`
-
-For the human verification step, the function generates a simple quiz:
-
-```json
-{
-  "reply": "Quick check! What is 7 + 5?",
-  "action": "verify_human",
-  "quiz": { "answer": "12" }
-}
-```
-
-### New Page Component: `AuthChat.tsx`
-
-Replaces or sits alongside the current Auth page. A full-screen conversational UI:
-
-- Chat bubbles (AI left, user right)
-- Dynamic input area that changes based on `action`:
-  - `collect_email` → email input
-  - `collect_password` → password input (never sent to AI)
-  - `collect_phone` → phone input with country code
-  - `verify_human` → text input for quiz answer
-  - `complete` → "Enter Platform" button
-- Passwords are captured locally and used directly with `supabase.auth.signUp/signInWithPassword`
-- The AI never sees passwords — only the flow state
-
-### New Hook: `useAuthChat.ts`
-
-Manages the conversational auth state machine:
-
-- Tracks current step, collected data (email, name, phone — NOT password)
-- Calls edge function for AI responses
-- Executes auth operations client-side when ready
-- Handles email lookup (existing user detection) client-side
-
-## Files to Create/Change
 
 
-| File                                        | Action                                                                            |
-| ------------------------------------------- | --------------------------------------------------------------------------------- |
-| `supabase/functions/ai-auth-agent/index.ts` | New — generates conversational responses and quiz questions, determines flow step |
-| `src/pages/AuthChat.tsx`                    | New — conversational auth UI with chat bubbles and dynamic inputs                 |
-| `src/hooks/useAuthChat.ts`                  | New — auth chat state machine, bridges AI conversation with real auth             |
-| `src/App.tsx`                               | Update `/auth` route to use `AuthChat` instead of `Auth`                          |
-| `src/pages/Auth.tsx`                        | Keep as `AuthClassic.tsx` fallback (rename, not delete)                           |
+# Platform Data Hygiene, Jobs Dashboard Fixes & Credit Economy Redesign
 
+This plan addresses five interconnected areas: Jobs Manager filters, Jobs KPI accuracy, country/profession standardization, job recommendation locality, and a per-response credit model for AI agents.
 
-## Security Constraints
+---
 
-- Passwords never leave the client — they go directly to Supabase Auth API
-- The edge function receives only: email, name, phone, quiz answers, and flow state
-- Edge function does NOT perform any auth operations
-- Human quiz is simple math/logic — not CAPTCHA (no external dependency)
-- Rate limiting via existing `check_rate_limit` function
+## Part 1: Jobs Manager — Fix Location Filter Counts & Add Application Type Filter
 
-## UI Design
+**Problem**: Country counts next to location filter items are incorrect because the Supabase query fetching `location` data is capped at 1,000 rows (default limit), but the platform has 4,500+ jobs. Additionally, there's no way to filter by application type (LinkedIn/link, email, internal).
 
-- Full-screen chat on mobile (no sidebar)
-- GroUp Academy branding at top
-- Typing indicator while AI responds
-- Smooth auto-scroll
-- Input types change contextually (email keyboard, phone keyboard, password field)
-- "Enter Platform" button appears with confetti/celebration after completion
+**Fix**:
+1. **Country counts query** — Change `supabase.from("jobs").select("location")` to use `select("location", { count: "exact" })` with batch pagination (fetch in 1,000-row chunks) or use a head count approach per country. The simplest fix: fetch ALL locations by paginating in a loop (1,000 rows at a time) before computing counts.
+2. **Application Type filter** — Add a new `appTypeFilter` state (`all | link | email | internal`) with a dropdown next to the existing filters. Apply `.eq("application_type", filter)` to both the jobs query and cascading filter queries.
+
+**Files changed**: `src/components/dashboard/JobsManager.tsx`
+
+---
+
+## Part 2: Jobs KPI Dashboard — Fix Stagnant Numbers & Add Country Breakdown
+
+**Problem**: KPI numbers like "total job posts" only show current month's jobs (capped at 1,000 rows). The dashboard lacks country-wise active job distribution.
+
+**Fixes**:
+1. **Total Jobs (all-time)** — Add a new query: `select("id", { count: "exact", head: true })` without date filter for the true total count. Display as a new "Total Jobs" KPI card.
+2. **Live Jobs accuracy** — Already uses `count: "exact", head: true` so should be correct. Verify and keep.
+3. **This-month jobs hitting 1,000 limit** — The current query fetches full rows for this month. If there are >1,000 jobs/month, use `head: true` count + separate daily data query. For now, add pagination loop.
+4. **Country-wise active jobs** — Add a new section: fetch all active job locations (paginated), compute country counts using the same alias logic from JobsManager, display as a horizontal bar chart or ranked list.
+5. **General improvements** — Add "Total All-Time Jobs" card, "Total Companies" card, and a country distribution chart.
+
+**Files changed**: `src/components/dashboard/JobsKPIDashboard.tsx`
+
+---
+
+## Part 3: Country & Profession Standardization
+
+**Problem**: Country data is inconsistent (e.g., "BD" vs "Bangladesh", "UAE" vs "United Arab Emirates"). Professions assigned to talents don't match the `profession_categories` table.
+
+**Approach**:
+1. **Country standardization** — Create a database migration adding a `normalize_country()` function that maps common aliases (BD→Bangladesh, US→United States, UAE→United Arab Emirates, UK→United Kingdom, IN→India, etc.) to canonical names. Run a one-time data update (via insert tool) to normalize existing `talents.country` and `jobs.location` country segments.
+2. **Add a trigger** on the `talents` table to auto-normalize country on insert/update.
+3. **Profession alignment** — The `talents` table has `profession_category_id` (FK to `profession_categories`). For bulk-uploaded talents where this is NULL or incorrect, create an edge function or script that uses AI to match `custom_profession` text to the closest `profession_categories.name` and sets the FK. For new registrations, ensure onboarding collects profession from the existing dropdown.
+
+**Files changed**: New migration SQL, `src/components/onboarding/OnboardingWizard.tsx` (ensure profession step)
+
+---
+
+## Part 4: Job Recommendations — Prioritize User's Country
+
+**Problem**: The `suggest-jobs-for-talent` edge function doesn't consider the user's location, so recommendations include irrelevant international jobs.
+
+**Fix**: In the edge function:
+1. Fetch the talent's `country` field alongside the existing profile data.
+2. In Stage 1 (keyword pre-filtering), add a location-prioritized query: first fetch jobs matching the talent's country (up to 100), then fill remaining slots with international jobs.
+3. In Stage 2 (AI prompt), add explicit instruction: "Strongly prefer jobs in or near {talent_country}. Only rank international jobs highly if they are remote or an exceptional skill match."
+
+**Files changed**: `supabase/functions/suggest-jobs-for-talent/index.ts`
+
+---
+
+## Part 5: Per-Response Credit Model for AI Agents
+
+**Problem**: Current model charges 10 credits for a 30-minute session, which is rigid and doesn't scale for different agent types (e.g., image generation agents cost more compute).
+
+**New Model**:
+1. **Per-response charging** — Instead of deducting credits at session start, deduct a fractional amount per AI response. Store per-agent cost in the existing `ai_agents.credit_cost` field (e.g., 1 credit/response for text, 5 for image generation).
+2. **Fractional credits** — Change `talent_credits.balance` and related columns from `integer` to `numeric(10,1)` to support one decimal place. Update the `deduct_credits` RPC to accept numeric amounts.
+3. **Remove session time limits** — Drop `session_expires_at` enforcement. Keep a single continuous conversation per agent (no new session creation each time). The `useAgentChat` hook will deduct credits after each successful AI response rather than upfront.
+4. **AI General = 0 credits** — Set `credit_cost = 0` for the general AI chat agent.
+5. **Update UI** — Remove countdown timer, show running credit cost in chat. Update `CreditPurchaseSheet` and agent cards to reflect per-response pricing.
+
+**Files changed**:
+- New migration: alter `talent_credits.balance` to numeric, alter `credit_transactions.amount` to numeric, update `deduct_credits` RPC
+- `src/hooks/useAgentChat.ts` — Remove session timer, add per-response deduction
+- `src/components/ai-agents/AgentChatDialog.tsx` — Remove timer UI, show per-message cost
+- `src/lib/creditPricing.ts` — Update AI_AGENT_CHAT cost description
+- `supabase/functions/ai-agent-chat/index.ts` — Remove session validation if present
+
+---
+
+## Implementation Order
+
+1. **Part 1** — Jobs Manager filter fixes (highest friction, quick win)
+2. **Part 2** — Jobs KPI dashboard accuracy + country chart
+3. **Part 3** — Country & profession standardization (data foundation)
+4. **Part 4** — Job recommendation locality (depends on Part 3)
+5. **Part 5** — Per-response credit economy (largest scope, most critical for scaling)
+
+---
+
+## Technical Details
+
+- All Supabase queries fetching more than 1,000 rows will use pagination loops (`range(0,999)`, `range(1000,1999)`, etc.) until no more rows are returned.
+- Country normalization mapping will cover: BD→Bangladesh, IN→India, US/USA→United States, UK/GB→United Kingdom, AE/UAE→United Arab Emirates, SA→Saudi Arabia, plus all codes from the existing `COUNTRIES` constant.
+- The `numeric(10,1)` migration for credits preserves all existing integer balances (1 → 1.0) with zero data loss.
+- Per-response deduction uses the existing `deduct_credits` RPC (modified for numeric), keeping atomic transaction safety.
+
