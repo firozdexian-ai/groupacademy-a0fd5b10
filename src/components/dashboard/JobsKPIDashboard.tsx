@@ -61,6 +61,24 @@ interface JobsKPIDashboardProps {
 const SOURCE_COLORS = ["hsl(var(--primary))", "#10b981", "#f59e0b", "#8b5cf6", "#6b7280"];
 const COUNTRY_COLORS = ["hsl(var(--primary))", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4", "#ec4899", "#6b7280"];
 
+const StatMiniCard = ({ icon: Icon, label, value, color, bgColor, trend, onClick, clickable }: {
+  icon: any; label: string; value: string | number; color: string; bgColor: string;
+  trend?: string; onClick?: () => void; clickable?: boolean;
+}) => (
+  <Card className={`${clickable ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`} onClick={onClick}>
+    <CardContent className="p-3 flex items-center gap-3">
+      <div className={`p-2 rounded-lg ${bgColor}`}>
+        <Icon className={`w-4 h-4 ${color}`} />
+      </div>
+      <div className="min-w-0">
+        <p className="text-lg font-bold leading-tight">{value}</p>
+        <p className="text-xs text-muted-foreground truncate">{label}</p>
+      </div>
+      {trend && <span className={`ml-auto text-xs font-medium ${trend.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>{trend}</span>}
+    </CardContent>
+  </Card>
+);
+
 const COUNTRY_ALIASES: Record<string, string[]> = {
   "United Arab Emirates": ["UAE", "United Arab Emirates", "Dubai", "Abu Dhabi"],
   "United Kingdom": ["UK", "United Kingdom", "England", "Scotland", "Wales"],
