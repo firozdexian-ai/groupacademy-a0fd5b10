@@ -70,14 +70,15 @@ export function useAuthChat() {
   const callAgent = useCallback(
     async (context: Record<string, unknown>, conversationHistory?: Array<{ role: string; content: string }>) => {
       try {
-        const res = await fetch(
-          `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-auth-agent`,
-          {
-            method: "POST",
-            headers: { "Content-Type": "application/json" },
-            body: JSON.stringify({ context, messages: conversationHistory || [] }),
-          }
-        );
+        const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-auth-agent`, {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({ context, messages: conversationHistory || [] }),
+        });
 
         if (!res.ok) {
           throw new Error("AI service unavailable");
@@ -88,34 +89,68 @@ export function useAuthChat() {
         return getFallbackResponse(context);
       }
     },
-    []
+    [],
   );
 
-  const getFallbackResponse = (context: Record<string, unknown>): { reply: string; action: AuthAction; quiz: QuizData | null } => {
+  const getFallbackResponse = (
+    context: Record<string, unknown>,
+  ): { reply: string; action: AuthAction; quiz: QuizData | null } => {
     const step = context.step as string;
     switch (step) {
       case "welcome":
-        return { reply: "স্বাগতম! Welcome to GroUp Academy! 😊 I'm Aisha, your guide. What's your email address?", action: "collect_email", quiz: null };
+        return {
+          reply: "স্বাগতম! Welcome to GroUp Academy! 😊 I'm Aisha, your guide. What's your email address?",
+          action: "collect_email",
+          quiz: null,
+        };
       case "email_found":
-        return { reply: "Welcome back! 🎉 Please enter your password to continue.", action: "collect_password", quiz: null };
+        return {
+          reply: "Welcome back! 🎉 Please enter your password to continue.",
+          action: "collect_password",
+          quiz: null,
+        };
       case "email_found_unclaimed":
-        return { reply: "We have your profile! Let's set up your login. Please confirm your full name.", action: "collect_name", quiz: null };
+        return {
+          reply: "We have your profile! Let's set up your login. Please confirm your full name.",
+          action: "collect_name",
+          quiz: null,
+        };
       case "email_not_found":
         return { reply: "Let's create your account! What's your full name?", action: "collect_name", quiz: null };
       case "name_collected":
-        return { reply: "Great! Now, your phone number please — we'll use it for WhatsApp updates.", action: "collect_phone", quiz: null };
+        return {
+          reply: "Great! Now, your phone number please — we'll use it for WhatsApp updates.",
+          action: "collect_phone",
+          quiz: null,
+        };
       case "phone_collected":
         return { reply: "Quick human check! 🧮 What is 7 + 5?", action: "verify_human", quiz: { answer: "12" } };
       case "quiz_passed":
-        return { reply: "You're human! 🎉 Now create a strong password (at least 8 characters).", action: "set_password", quiz: null };
+        return {
+          reply: "You're human! 🎉 Now create a strong password (at least 8 characters).",
+          action: "set_password",
+          quiz: null,
+        };
       case "signup_success":
-        return { reply: "🎉 Account created! Welcome to GroUp Academy! You've earned 250 bonus credits!", action: "complete", quiz: null };
+        return {
+          reply: "🎉 Account created! Welcome to GroUp Academy! You've earned 250 bonus credits!",
+          action: "complete",
+          quiz: null,
+        };
       case "signin_success":
         return { reply: "Welcome back! 🎉 You're all set.", action: "complete", quiz: null };
       case "reset_sent":
-        return { reply: "Password reset link sent to your email! Check your inbox.", action: "collect_email", quiz: null };
+        return {
+          reply: "Password reset link sent to your email! Check your inbox.",
+          action: "collect_email",
+          quiz: null,
+        };
       case "auth_error":
-        return { reply: `Hmm, that didn't work: ${context.error}. Let's try again.`, action: (context.retryAction as AuthAction) || "collect_email", quiz: null };
+        return {
+          reply: `Hmm, that didn't work: ${context.error}. Let's try again.`,
+          action: (context.retryAction as AuthAction) || "collect_email",
+          quiz: null,
+        };
       default:
         return { reply: "What's your email address?", action: "collect_email", quiz: null };
     }
@@ -132,27 +167,30 @@ export function useAuthChat() {
     }
   }, [callAgent, addMessage]);
 
-  const checkEmail = useCallback(async (email: string): Promise<{ exists: boolean; hasUserId: boolean; talentName?: string }> => {
-    try {
-      const { data, error } = await supabase
-        .from("talents")
-        .select("id, full_name, user_id")
-        .eq("email", email.trim().toLowerCase())
-        .limit(1);
+  const checkEmail = useCallback(
+    async (email: string): Promise<{ exists: boolean; hasUserId: boolean; talentName?: string }> => {
+      try {
+        const { data, error } = await supabase
+          .from("talents")
+          .select("id, full_name, user_id")
+          .eq("email", email.trim().toLowerCase())
+          .limit(1);
 
-      if (error || !data || data.length === 0) {
+        if (error || !data || data.length === 0) {
+          return { exists: false, hasUserId: false };
+        }
+
+        return {
+          exists: true,
+          hasUserId: !!data[0].user_id,
+          talentName: data[0].full_name,
+        };
+      } catch {
         return { exists: false, hasUserId: false };
       }
-
-      return {
-        exists: true,
-        hasUserId: !!data[0].user_id,
-        talentName: data[0].full_name,
-      };
-    } catch {
-      return { exists: false, hasUserId: false };
-    }
-  }, []);
+    },
+    [],
+  );
 
   const handleUserInput = useCallback(
     async (input: string) => {
@@ -265,7 +303,7 @@ export function useAuthChat() {
         setIsLoading(false);
       }
     },
-    [currentAction, isLoading, isComplete, flow, quiz, collectedData, callAgent, addMessage, checkEmail]
+    [currentAction, isLoading, isComplete, flow, quiz, collectedData, callAgent, addMessage, checkEmail],
   );
 
   const handlePasswordSubmit = useCallback(
@@ -291,7 +329,7 @@ export function useAuthChat() {
             password,
             fullPhone,
             collectedData.country,
-            collectedData.countryCode
+            collectedData.countryCode,
           );
 
           if (success) {
@@ -322,7 +360,7 @@ export function useAuthChat() {
         setIsLoading(false);
       }
     },
-    [flow, collectedData, isLoading, signIn, signUp, callAgent, addMessage]
+    [flow, collectedData, isLoading, signIn, signUp, callAgent, addMessage],
   );
 
   const handleResetPassword = useCallback(async () => {
