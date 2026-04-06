@@ -11,18 +11,53 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { ToggleGroup, ToggleGroupItem } from "@/components/ui/toggle-group";
 import { toast } from "sonner";
 import {
-  Search, Users, MessageSquare, Download, RefreshCw, Eye, Loader2, Briefcase,
-  ChevronLeft, ChevronRight, Hand, Check, Mic, Banknote, ClipboardCheck,
-  Globe, Filter, MoreHorizontal, FileText, Phone, UserPlus, Mail, Upload, Linkedin, Copy, Send,
+  Search,
+  Users,
+  MessageSquare,
+  Download,
+  RefreshCw,
+  Eye,
+  Loader2,
+  Briefcase,
+  ChevronLeft,
+  ChevronRight,
+  Hand,
+  Check,
+  Mic,
+  Banknote,
+  ClipboardCheck,
+  Globe,
+  Filter,
+  MoreHorizontal,
+  FileText,
+  Phone,
+  UserPlus,
+  Mail,
+  Upload,
+  Linkedin,
+  Copy,
+  Send,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { BatchTalentUpload } from "./BatchTalentUpload";
 import { TalentDetailDialog } from "./TalentDetailDialog";
-import { OUTREACH_TEMPLATES, getOutreachWhatsAppLink, getOutreachEmailLink, getOutreachLinkedInMessage, OutreachProduct } from "@/lib/outreachTemplates";
+import {
+  OUTREACH_TEMPLATES,
+  getOutreachWhatsAppLink,
+  getOutreachEmailLink,
+  getOutreachLinkedInMessage,
+  OutreachProduct,
+} from "@/lib/outreachTemplates";
 import { COUNTRIES_WITH_PHONE, getCountryFlag } from "@/lib/constants/countries";
 import { formatWhatsAppLink, extractFirstName } from "@/lib/utils";
 import { useIsMobile } from "@/hooks/use-mobile";
@@ -74,7 +109,11 @@ type SourceFilter = "all" | "registered" | "uploaded";
 type EmailFilter = "all" | "has_email" | "linkedin_only";
 
 const isPlaceholderEmail = (email: string) =>
-  !email || email.includes("placeholder") || email.includes("noemail") || email.includes("no-email") || email.endsWith("@linkedin.com");
+  !email ||
+  email.includes("placeholder") ||
+  email.includes("noemail") ||
+  email.includes("no-email") ||
+  email.endsWith("@linkedin.com");
 
 const ITEMS_PER_PAGE = 10;
 
@@ -96,7 +135,17 @@ export function TalentPoolManager() {
   const [error, setError] = useState<string | null>(null);
 
   // KPI State
-  const [kpiStats, setKpiStats] = useState({ total: 0, newThisWeek: 0, withCV: 0, withoutPhone: 0, registered: 0, uploaded: 0, noEmail: 0, contacted: 0, unreached: 0 });
+  const [kpiStats, setKpiStats] = useState({
+    total: 0,
+    newThisWeek: 0,
+    withCV: 0,
+    withoutPhone: 0,
+    registered: 0,
+    uploaded: 0,
+    noEmail: 0,
+    contacted: 0,
+    unreached: 0,
+  });
 
   // Pagination & Search & Filters
   const [page, setPage] = useState(1);
@@ -123,16 +172,26 @@ export function TalentPoolManager() {
       const oneWeekAgo = new Date();
       oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
 
-      const [totalRes, newRes, cvRes, noPhoneRes, registeredRes, uploadedRes, noEmailRes, contactedRes] = await Promise.all([
-        supabase.from("talents").select("*", { count: "exact", head: true }),
-        supabase.from("talents").select("*", { count: "exact", head: true }).gte("created_at", oneWeekAgo.toISOString()),
-        supabase.from("talents").select("*", { count: "exact", head: true }).not("cv_url", "is", null),
-        supabase.from("talents").select("*", { count: "exact", head: true }).is("phone", null),
-        supabase.from("talents").select("*", { count: "exact", head: true }).not("user_id", "is", null),
-        supabase.from("talents").select("*", { count: "exact", head: true }).is("user_id", null),
-        supabase.from("talents").select("*", { count: "exact", head: true }).or("email.ilike.%placeholder%,email.ilike.%noemail%,email.ilike.%@linkedin.com"),
-        supabase.from("outreach_messages").select("talent_id", { count: "exact", head: false }).gte("sent_at", oneWeekAgo.toISOString()),
-      ]);
+      const [totalRes, newRes, cvRes, noPhoneRes, registeredRes, uploadedRes, noEmailRes, contactedRes] =
+        await Promise.all([
+          supabase.from("talents").select("*", { count: "exact", head: true }),
+          supabase
+            .from("talents")
+            .select("*", { count: "exact", head: true })
+            .gte("created_at", oneWeekAgo.toISOString()),
+          supabase.from("talents").select("*", { count: "exact", head: true }).not("cv_url", "is", null),
+          supabase.from("talents").select("*", { count: "exact", head: true }).is("phone", null),
+          supabase.from("talents").select("*", { count: "exact", head: true }).not("user_id", "is", null),
+          supabase.from("talents").select("*", { count: "exact", head: true }).is("user_id", null),
+          supabase
+            .from("talents")
+            .select("*", { count: "exact", head: true })
+            .or("email.ilike.%placeholder%,email.ilike.%noemail%,email.ilike.%@linkedin.com"),
+          supabase
+            .from("outreach_messages")
+            .select("talent_id", { count: "exact", head: false })
+            .gte("sent_at", oneWeekAgo.toISOString()),
+        ]);
       const contactedThisWeek = new Set((contactedRes.data || []).map((r: any) => r.talent_id)).size;
       setKpiStats({
         total: totalRes.count || 0,
@@ -164,7 +223,13 @@ export function TalentPoolManager() {
       }
 
       if (countryFilter && countryFilter !== "all") {
-        query = query.eq("country", countryFilter);
+        // Find the country config to check both name and code just to be safe
+        const selectedCountry = COUNTRIES_WITH_PHONE.find((c) => c.name === countryFilter || c.code === countryFilter);
+        if (selectedCountry) {
+          query = query.or(`country.eq.${selectedCountry.name},country.eq.${selectedCountry.code}`);
+        } else {
+          query = query.eq("country", countryFilter);
+        }
       }
 
       // Server-side source filter
@@ -227,16 +292,19 @@ export function TalentPoolManager() {
   };
 
   const getLastOutreachForTalent = (talentId: string) => {
-    const records = outreachRecords.filter(r => r.talent_id === talentId);
+    const records = outreachRecords.filter((r) => r.talent_id === talentId);
     if (records.length === 0) return null;
     return records.sort((a, b) => new Date(b.sent_at).getTime() - new Date(a.sent_at).getTime())[0];
   };
 
   const getChannelIcon = (channel: string) => {
     switch (channel) {
-      case 'email': return <Mail className="h-3 w-3 text-blue-600" />;
-      case 'linkedin': return <Linkedin className="h-3 w-3 text-blue-700" />;
-      default: return <MessageSquare className="h-3 w-3 text-green-600" />;
+      case "email":
+        return <Mail className="h-3 w-3 text-blue-600" />;
+      case "linkedin":
+        return <Linkedin className="h-3 w-3 text-blue-700" />;
+      default:
+        return <MessageSquare className="h-3 w-3 text-green-600" />;
     }
   };
 
@@ -347,7 +415,12 @@ export function TalentPoolManager() {
       if (error) throw error;
       toast.success("Portfolio request created!", {
         description: "View it in the Portfolio Requests tab.",
-        action: { label: "View", onClick: () => { window.location.href = "/dashboard?tab=portfolios"; } },
+        action: {
+          label: "View",
+          onClick: () => {
+            window.location.href = "/dashboard?tab=portfolios";
+          },
+        },
       });
       setPortfolioDialogOpen(false);
       setPortfolioNotes("");
@@ -371,11 +444,26 @@ export function TalentPoolManager() {
         let offset = 0;
         const batchSize = 1000;
         while (true) {
-          let query = supabase.from("talents").select("*").order("updated_at", { ascending: false }).range(offset, offset + batchSize - 1);
+          let query = supabase
+            .from("talents")
+            .select("*")
+            .order("updated_at", { ascending: false })
+            .range(offset, offset + batchSize - 1);
           if (debouncedSearch) {
-            query = query.or(`full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,phone.ilike.%${debouncedSearch}%`);
+            query = query.or(
+              `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,phone.ilike.%${debouncedSearch}%`,
+            );
           }
-          if (countryFilter !== "all") query = query.eq("country", countryFilter);
+          if (countryFilter !== "all") {
+            const selectedCountry = COUNTRIES_WITH_PHONE.find(
+              (c) => c.name === countryFilter || c.code === countryFilter,
+            );
+            if (selectedCountry) {
+              query = query.or(`country.eq.${selectedCountry.name},country.eq.${selectedCountry.code}`);
+            } else {
+              query = query.eq("country", countryFilter);
+            }
+          }
           if (outreachFilter === "no_welcome") query = query.is("welcome_sent_at", null);
           if (sourceFilter === "registered") query = query.not("user_id", "is", null);
           else if (sourceFilter === "uploaded") query = query.is("user_id", null);
@@ -387,8 +475,14 @@ export function TalentPoolManager() {
           offset += batchSize;
         }
         rows = allTalents.map((t) => [
-          t.full_name, t.email, t.phone || "", getProfessionName(t.profession_category_id, t.custom_profession),
-          t.country || "", t.user_id ? "Registered" : "Uploaded", t.services_used?.join("; ") || "", new Date(t.created_at).toLocaleDateString(),
+          t.full_name,
+          t.email,
+          t.phone || "",
+          getProfessionName(t.profession_category_id, t.custom_profession),
+          t.country || "",
+          t.user_id ? "Registered" : "Uploaded",
+          t.services_used?.join("; ") || "",
+          new Date(t.created_at).toLocaleDateString(),
         ]);
       } catch (err) {
         toast.error("Export failed");
@@ -399,8 +493,14 @@ export function TalentPoolManager() {
       }
     } else {
       rows = talents.map((t) => [
-        t.full_name, t.email, t.phone || "", getProfessionName(t.profession_category_id, t.custom_profession),
-        t.country || "", t.user_id ? "Registered" : "Uploaded", t.services_used?.join("; ") || "", new Date(t.created_at).toLocaleDateString(),
+        t.full_name,
+        t.email,
+        t.phone || "",
+        getProfessionName(t.profession_category_id, t.custom_profession),
+        t.country || "",
+        t.user_id ? "Registered" : "Uploaded",
+        t.services_used?.join("; ") || "",
+        new Date(t.created_at).toLocaleDateString(),
       ]);
     }
 
@@ -425,11 +525,16 @@ export function TalentPoolManager() {
     const talentOutreach = outreachRecords.filter((r) => r.talent_id === talent.id);
     const hasOutreachFor = (product: string) => talentOutreach.some((r) => r.product === product);
     switch (outreachFilter) {
-      case "no_portfolio": return !hasOutreachFor("portfolio");
-      case "no_mock": return !hasOutreachFor("mock_interview");
-      case "no_salary": return !hasOutreachFor("salary_analysis");
-      case "no_scorecard": return !hasOutreachFor("career_scorecard");
-      default: return true;
+      case "no_portfolio":
+        return !hasOutreachFor("portfolio");
+      case "no_mock":
+        return !hasOutreachFor("mock_interview");
+      case "no_salary":
+        return !hasOutreachFor("salary_analysis");
+      case "no_scorecard":
+        return !hasOutreachFor("career_scorecard");
+      default:
+        return true;
     }
   });
 
@@ -438,7 +543,9 @@ export function TalentPoolManager() {
   // Source badge renderer
   const renderSourceBadge = (talent: Talent) => {
     if (talent.user_id) {
-      return <Badge className="text-[10px] px-1.5 py-0 bg-green-600/10 text-green-700 border-green-200">Registered</Badge>;
+      return (
+        <Badge className="text-[10px] px-1.5 py-0 bg-green-600/10 text-green-700 border-green-200">Registered</Badge>
+      );
     }
     return <Badge className="text-[10px] px-1.5 py-0 bg-amber-600/10 text-amber-700 border-amber-200">Uploaded</Badge>;
   };
@@ -451,7 +558,7 @@ export function TalentPoolManager() {
     return (
       <div className="flex items-center gap-1">
         {getChannelIcon(last.channel)}
-        <span className="text-xs text-muted-foreground">{daysSince === 0 ? 'Today' : `${daysSince}d ago`}</span>
+        <span className="text-xs text-muted-foreground">{daysSince === 0 ? "Today" : `${daysSince}d ago`}</span>
       </div>
     );
   };
@@ -476,76 +583,116 @@ export function TalentPoolManager() {
               <MessageSquare className="w-4 h-4 mr-2 text-green-600" /> Open WhatsApp
             </DropdownMenuItem>
           )}
-          <DropdownMenuItem onClick={() => { setPortfolioTalent(talent); setPortfolioDialogOpen(true); }}>
+          <DropdownMenuItem
+            onClick={() => {
+              setPortfolioTalent(talent);
+              setPortfolioDialogOpen(true);
+            }}
+          >
             <FileText className="w-4 h-4 mr-2 text-purple-600" /> Create Portfolio
           </DropdownMenuItem>
           <DropdownMenuSeparator />
           {/* Email & LinkedIn outreach for phoneless talents */}
           {talent.email && !isPlaceholderEmail(talent.email) && !hasPhone && (
-            <DropdownMenuItem onClick={async () => {
-              const firstName = extractFirstName(talent.full_name);
-              const link = getOutreachEmailLink(talent.email, 'welcome', firstName);
-              window.open(link, '_blank');
-              await supabase.from("outreach_messages").insert({ talent_id: talent.id, product: 'welcome', message_content: 'Email invite', channel: 'email' } as any);
-              await loadOutreachRecords(talents.map(t => t.id));
-              toast.success("Email invite opened");
-            }}>
+            <DropdownMenuItem
+              onClick={async () => {
+                const firstName = extractFirstName(talent.full_name);
+                const link = getOutreachEmailLink(talent.email, "welcome", firstName);
+                window.open(link, "_blank");
+                await supabase
+                  .from("outreach_messages")
+                  .insert({
+                    talent_id: talent.id,
+                    product: "welcome",
+                    message_content: "Email invite",
+                    channel: "email",
+                  } as any);
+                await loadOutreachRecords(talents.map((t) => t.id));
+                toast.success("Email invite opened");
+              }}
+            >
               <Mail className="w-4 h-4 mr-2 text-blue-600" /> Email Invite
             </DropdownMenuItem>
           )}
           {talent.linkedin_url && !hasPhone && (
-            <DropdownMenuItem onClick={async () => {
-              const firstName = extractFirstName(talent.full_name);
-              const message = getOutreachLinkedInMessage('welcome', firstName);
-              navigator.clipboard.writeText(message);
-              window.open(talent.linkedin_url!, '_blank');
-              await supabase.from("outreach_messages").insert({ talent_id: talent.id, product: 'welcome', message_content: 'LinkedIn invite', channel: 'linkedin' } as any);
-              await loadOutreachRecords(talents.map(t => t.id));
-              toast.success("LinkedIn message copied — paste in DM");
-            }}>
+            <DropdownMenuItem
+              onClick={async () => {
+                const firstName = extractFirstName(talent.full_name);
+                const message = getOutreachLinkedInMessage("welcome", firstName);
+                navigator.clipboard.writeText(message);
+                window.open(talent.linkedin_url!, "_blank");
+                await supabase
+                  .from("outreach_messages")
+                  .insert({
+                    talent_id: talent.id,
+                    product: "welcome",
+                    message_content: "LinkedIn invite",
+                    channel: "linkedin",
+                  } as any);
+                await loadOutreachRecords(talents.map((t) => t.id));
+                toast.success("LinkedIn message copied — paste in DM");
+              }}
+            >
               <Linkedin className="w-4 h-4 mr-2 text-blue-700" /> LinkedIn Invite
             </DropdownMenuItem>
           )}
           {/* Welcome / Invite (WhatsApp) */}
-          {hasPhone && (
-            talent.welcome_sent_at ? (
+          {hasPhone &&
+            (talent.welcome_sent_at ? (
               <DropdownMenuItem disabled>
                 <Check className="w-4 h-4 mr-2 text-green-600" /> {isRegistered ? "Welcome Sent" : "Invite Sent"}
               </DropdownMenuItem>
             ) : (
-              <DropdownMenuItem onClick={async () => {
-                const { error } = await supabase.from("talents").update({ welcome_sent_at: new Date().toISOString() }).eq("id", talent.id);
-                if (!error) {
-                  const link = isRegistered
-                    ? formatWelcomeWhatsAppLink(talent.phone, extractFirstName(talent.full_name))
-                    : formatInviteWhatsAppLink(talent.phone, extractFirstName(talent.full_name));
-                  if (link) window.open(link, "_blank");
-                  loadTalents();
-                }
-              }}>
+              <DropdownMenuItem
+                onClick={async () => {
+                  const { error } = await supabase
+                    .from("talents")
+                    .update({ welcome_sent_at: new Date().toISOString() })
+                    .eq("id", talent.id);
+                  if (!error) {
+                    const link = isRegistered
+                      ? formatWelcomeWhatsAppLink(talent.phone, extractFirstName(talent.full_name))
+                      : formatInviteWhatsAppLink(talent.phone, extractFirstName(talent.full_name));
+                    if (link) window.open(link, "_blank");
+                    loadTalents();
+                  }
+                }}
+              >
                 {isRegistered ? (
-                  <><Hand className="w-4 h-4 mr-2 text-blue-600" /> Send Welcome</>
+                  <>
+                    <Hand className="w-4 h-4 mr-2 text-blue-600" /> Send Welcome
+                  </>
                 ) : (
-                  <><Mail className="w-4 h-4 mr-2 text-orange-600" /> Send Invite</>
+                  <>
+                    <Mail className="w-4 h-4 mr-2 text-orange-600" /> Send Invite
+                  </>
                 )}
               </DropdownMenuItem>
-            )
-          )}
+            ))}
           {/* Product outreach actions */}
-          {hasPhone && OUTREACH_ACTIONS.map(({ product, icon: Icon, label, colorClass }) => {
-            const sentAt = getOutreachSentAt(talent.id, product);
-            const isLoadingOutreach = sendingOutreach === `${talent.id}-${product}`;
-            return sentAt ? (
-              <DropdownMenuItem key={product} disabled>
-                <Check className={`w-4 h-4 mr-2 ${colorClass}`} /> {label.replace("Pitch ", "")} Sent
-              </DropdownMenuItem>
-            ) : (
-              <DropdownMenuItem key={product} disabled={isLoadingOutreach} onClick={() => sendProductOutreach(talent, product)}>
-                {isLoadingOutreach ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : <Icon className={`w-4 h-4 mr-2 ${colorClass}`} />}
-                {label}
-              </DropdownMenuItem>
-            );
-          })}
+          {hasPhone &&
+            OUTREACH_ACTIONS.map(({ product, icon: Icon, label, colorClass }) => {
+              const sentAt = getOutreachSentAt(talent.id, product);
+              const isLoadingOutreach = sendingOutreach === `${talent.id}-${product}`;
+              return sentAt ? (
+                <DropdownMenuItem key={product} disabled>
+                  <Check className={`w-4 h-4 mr-2 ${colorClass}`} /> {label.replace("Pitch ", "")} Sent
+                </DropdownMenuItem>
+              ) : (
+                <DropdownMenuItem
+                  key={product}
+                  disabled={isLoadingOutreach}
+                  onClick={() => sendProductOutreach(talent, product)}
+                >
+                  {isLoadingOutreach ? (
+                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  ) : (
+                    <Icon className={`w-4 h-4 mr-2 ${colorClass}`} />
+                  )}
+                  {label}
+                </DropdownMenuItem>
+              );
+            })}
         </DropdownMenuContent>
       </DropdownMenu>
     );
@@ -561,7 +708,12 @@ export function TalentPoolManager() {
             {renderSourceBadge(talent)}
           </div>
           <p className="text-xs text-muted-foreground truncate">{talent.email}</p>
-          {talent.phone && <p className="text-xs text-muted-foreground flex items-center gap-1"><Phone className="h-3 w-3" />{talent.phone}</p>}
+          {talent.phone && (
+            <p className="text-xs text-muted-foreground flex items-center gap-1">
+              <Phone className="h-3 w-3" />
+              {talent.phone}
+            </p>
+          )}
         </div>
         <div className="flex items-center gap-1 shrink-0">
           {talent.country && <span className="text-sm">{getCountryFlag(talent.country)}</span>}
@@ -569,10 +721,20 @@ export function TalentPoolManager() {
         </div>
       </div>
       <div className="flex flex-wrap gap-1.5">
-        <Badge variant="secondary" className="text-xs">{getProfessionName(talent.profession_category_id, talent.custom_profession)}</Badge>
-        {talent.cv_url && <Badge variant="outline" className="text-xs">Has CV</Badge>}
-        {talent.welcome_sent_at && <Badge className="text-xs bg-green-600/10 text-green-700 border-green-200">Welcome ✓</Badge>}
-        {isPlaceholderEmail(talent.email) && <Badge className="text-[10px] px-1.5 py-0 bg-blue-600/10 text-blue-700 border-blue-200">LinkedIn Only</Badge>}
+        <Badge variant="secondary" className="text-xs">
+          {getProfessionName(talent.profession_category_id, talent.custom_profession)}
+        </Badge>
+        {talent.cv_url && (
+          <Badge variant="outline" className="text-xs">
+            Has CV
+          </Badge>
+        )}
+        {talent.welcome_sent_at && (
+          <Badge className="text-xs bg-green-600/10 text-green-700 border-green-200">Welcome ✓</Badge>
+        )}
+        {isPlaceholderEmail(talent.email) && (
+          <Badge className="text-[10px] px-1.5 py-0 bg-blue-600/10 text-blue-700 border-blue-200">LinkedIn Only</Badge>
+        )}
         {renderOutreachBadge(talent)}
       </div>
       <p className="text-xs text-muted-foreground">Updated {new Date(talent.updated_at).toLocaleDateString()}</p>
@@ -581,7 +743,12 @@ export function TalentPoolManager() {
 
   return (
     <div className="space-y-4">
-      <BatchTalentUpload onComplete={() => { loadTalents(); loadKpiStats(); }} />
+      <BatchTalentUpload
+        onComplete={() => {
+          loadTalents();
+          loadKpiStats();
+        }}
+      />
 
       {/* KPI Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
@@ -696,7 +863,11 @@ export function TalentPoolManager() {
               <DropdownMenu>
                 <DropdownMenuTrigger asChild>
                   <Button variant="outline" size="sm" disabled={exportingAll}>
-                    {exportingAll ? <Loader2 className="w-4 h-4 mr-1 animate-spin" /> : <Download className="w-4 h-4 mr-1" />}
+                    {exportingAll ? (
+                      <Loader2 className="w-4 h-4 mr-1 animate-spin" />
+                    ) : (
+                      <Download className="w-4 h-4 mr-1" />
+                    )}
                     {!isMobile && "Export"}
                   </Button>
                 </DropdownMenuTrigger>
@@ -711,8 +882,17 @@ export function TalentPoolManager() {
         <CardContent>
           {/* Source Filter Toggle */}
           <div className="mb-4">
-            <ToggleGroup type="single" value={sourceFilter} onValueChange={(v) => { if (v) setSourceFilter(v as SourceFilter); }} className="justify-start">
-              <ToggleGroupItem value="all" className="text-xs px-3">All</ToggleGroupItem>
+            <ToggleGroup
+              type="single"
+              value={sourceFilter}
+              onValueChange={(v) => {
+                if (v) setSourceFilter(v as SourceFilter);
+              }}
+              className="justify-start"
+            >
+              <ToggleGroupItem value="all" className="text-xs px-3">
+                All
+              </ToggleGroupItem>
               <ToggleGroupItem value="registered" className="text-xs px-3">
                 <Check className="w-3 h-3 mr-1" /> Registered
               </ToggleGroupItem>
@@ -728,7 +908,12 @@ export function TalentPoolManager() {
               <Label className="text-xs text-muted-foreground mb-1 block">Search</Label>
               <div className="relative">
                 <Search className="absolute left-3 top-1/2 transform -translate-y-1/2 w-4 h-4 text-muted-foreground" />
-                <Input placeholder="Name, email, phone..." value={searchQuery} onChange={(e) => setSearchQuery(e.target.value)} className="pl-9" />
+                <Input
+                  placeholder="Name, email, phone..."
+                  value={searchQuery}
+                  onChange={(e) => setSearchQuery(e.target.value)}
+                  className="pl-9"
+                />
               </div>
             </div>
             <div>
@@ -738,10 +923,18 @@ export function TalentPoolManager() {
                   <SelectValue placeholder="All Countries" />
                 </SelectTrigger>
                 <SelectContent className="bg-popover z-50 max-h-60">
-                  <SelectItem value="all"><div className="flex items-center gap-2"><Globe className="h-4 w-4" />All Countries</div></SelectItem>
+                  <SelectItem value="all">
+                    <div className="flex items-center gap-2">
+                      <Globe className="h-4 w-4" />
+                      All Countries
+                    </div>
+                  </SelectItem>
                   {COUNTRIES_WITH_PHONE.map((country) => (
-                    <SelectItem key={country.code} value={country.code}>
-                      <div className="flex items-center gap-2"><span>{country.flag}</span>{country.name}</div>
+                    <SelectItem key={country.code} value={country.name}>
+                      <div className="flex items-center gap-2">
+                        <span>{country.flag}</span>
+                        {country.name}
+                      </div>
                     </SelectItem>
                   ))}
                 </SelectContent>
@@ -755,12 +948,42 @@ export function TalentPoolManager() {
                     <SelectValue placeholder="All" />
                   </SelectTrigger>
                   <SelectContent className="bg-popover z-50">
-                    <SelectItem value="all"><div className="flex items-center gap-2"><Filter className="h-4 w-4" />All Talents</div></SelectItem>
-                    <SelectItem value="no_welcome"><div className="flex items-center gap-2"><Hand className="h-4 w-4 text-blue-500" />No Welcome Sent</div></SelectItem>
-                    <SelectItem value="no_portfolio"><div className="flex items-center gap-2"><Briefcase className="h-4 w-4 text-purple-500" />No Portfolio Pitch</div></SelectItem>
-                    <SelectItem value="no_mock"><div className="flex items-center gap-2"><Mic className="h-4 w-4 text-green-500" />No Mock Interview Pitch</div></SelectItem>
-                    <SelectItem value="no_salary"><div className="flex items-center gap-2"><Banknote className="h-4 w-4 text-amber-500" />No Salary Pitch</div></SelectItem>
-                    <SelectItem value="no_scorecard"><div className="flex items-center gap-2"><ClipboardCheck className="h-4 w-4 text-teal-500" />No Scorecard Pitch</div></SelectItem>
+                    <SelectItem value="all">
+                      <div className="flex items-center gap-2">
+                        <Filter className="h-4 w-4" />
+                        All Talents
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="no_welcome">
+                      <div className="flex items-center gap-2">
+                        <Hand className="h-4 w-4 text-blue-500" />
+                        No Welcome Sent
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="no_portfolio">
+                      <div className="flex items-center gap-2">
+                        <Briefcase className="h-4 w-4 text-purple-500" />
+                        No Portfolio Pitch
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="no_mock">
+                      <div className="flex items-center gap-2">
+                        <Mic className="h-4 w-4 text-green-500" />
+                        No Mock Interview Pitch
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="no_salary">
+                      <div className="flex items-center gap-2">
+                        <Banknote className="h-4 w-4 text-amber-500" />
+                        No Salary Pitch
+                      </div>
+                    </SelectItem>
+                    <SelectItem value="no_scorecard">
+                      <div className="flex items-center gap-2">
+                        <ClipboardCheck className="h-4 w-4 text-teal-500" />
+                        No Scorecard Pitch
+                      </div>
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
@@ -777,8 +1000,21 @@ export function TalentPoolManager() {
                   </SelectContent>
                 </Select>
               </div>
-              {(countryFilter !== "all" || outreachFilter !== "all" || sourceFilter !== "all" || emailFilter !== "all") && (
-                <Button variant="ghost" size="sm" onClick={() => { setCountryFilter("all"); setOutreachFilter("all"); setSourceFilter("all"); setEmailFilter("all"); }} className="text-muted-foreground shrink-0">
+              {(countryFilter !== "all" ||
+                outreachFilter !== "all" ||
+                sourceFilter !== "all" ||
+                emailFilter !== "all") && (
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  onClick={() => {
+                    setCountryFilter("all");
+                    setOutreachFilter("all");
+                    setSourceFilter("all");
+                    setEmailFilter("all");
+                  }}
+                  className="text-muted-foreground shrink-0"
+                >
                   Clear
                 </Button>
               )}
@@ -797,7 +1033,17 @@ export function TalentPoolManager() {
               ) : (
                 <>
                   <p>No talents match the current filters</p>
-                  <Button variant="link" onClick={() => { setCountryFilter("all"); setOutreachFilter("all"); setSourceFilter("all"); }} className="mt-2">Clear filters</Button>
+                  <Button
+                    variant="link"
+                    onClick={() => {
+                      setCountryFilter("all");
+                      setOutreachFilter("all");
+                      setSourceFilter("all");
+                    }}
+                    className="mt-2"
+                  >
+                    Clear filters
+                  </Button>
                 </>
               )}
             </div>
@@ -805,9 +1051,7 @@ export function TalentPoolManager() {
             <>
               {/* Mobile: Card Layout */}
               {isMobile ? (
-                <div className="space-y-3">
-                  {filteredTalents.map(renderTalentCard)}
-                </div>
+                <div className="space-y-3">{filteredTalents.map(renderTalentCard)}</div>
               ) : (
                 /* Desktop: Table Layout */
                 <div className="rounded-md border">
@@ -818,7 +1062,7 @@ export function TalentPoolManager() {
                         <TableHead>Contact</TableHead>
                         <TableHead>Country</TableHead>
                         <TableHead>Profession</TableHead>
-                         <TableHead>Source</TableHead>
+                        <TableHead>Source</TableHead>
                         <TableHead>Outreach</TableHead>
                         <TableHead>Updated</TableHead>
                         <TableHead className="text-right">Actions</TableHead>
@@ -827,7 +1071,9 @@ export function TalentPoolManager() {
                     <TableBody>
                       {filteredTalents.map((talent) => (
                         <TableRow key={talent.id}>
-                          <TableCell><p className="font-medium">{talent.full_name}</p></TableCell>
+                          <TableCell>
+                            <p className="font-medium">{talent.full_name}</p>
+                          </TableCell>
                           <TableCell>
                             <div className="text-sm">
                               <p>{talent.email}</p>
@@ -836,18 +1082,33 @@ export function TalentPoolManager() {
                           </TableCell>
                           <TableCell>
                             {talent.country ? (
-                              <Badge variant="outline" className="gap-1"><span>{getCountryFlag(talent.country)}</span>{talent.country}</Badge>
-                            ) : <span className="text-xs text-muted-foreground">—</span>}
+                              <Badge variant="outline" className="gap-1">
+                                <span>{getCountryFlag(talent.country)}</span>
+                                {talent.country}
+                              </Badge>
+                            ) : (
+                              <span className="text-xs text-muted-foreground">—</span>
+                            )}
                           </TableCell>
-                          <TableCell><Badge variant="secondary">{getProfessionName(talent.profession_category_id, talent.custom_profession)}</Badge></TableCell>
+                          <TableCell>
+                            <Badge variant="secondary">
+                              {getProfessionName(talent.profession_category_id, talent.custom_profession)}
+                            </Badge>
+                          </TableCell>
                           <TableCell>
                             <div className="flex items-center gap-1.5">
                               {renderSourceBadge(talent)}
-                              {isPlaceholderEmail(talent.email) && <Badge className="text-[10px] px-1 py-0 bg-blue-600/10 text-blue-700 border-blue-200">LinkedIn Only</Badge>}
+                              {isPlaceholderEmail(talent.email) && (
+                                <Badge className="text-[10px] px-1 py-0 bg-blue-600/10 text-blue-700 border-blue-200">
+                                  LinkedIn Only
+                                </Badge>
+                              )}
                             </div>
                           </TableCell>
                           <TableCell>{renderOutreachBadge(talent)}</TableCell>
-                          <TableCell className="text-sm text-muted-foreground">{new Date(talent.updated_at).toLocaleDateString()}</TableCell>
+                          <TableCell className="text-sm text-muted-foreground">
+                            {new Date(talent.updated_at).toLocaleDateString()}
+                          </TableCell>
                           <TableCell className="text-right">{renderActionsDropdown(talent)}</TableCell>
                         </TableRow>
                       ))}
@@ -859,11 +1120,23 @@ export function TalentPoolManager() {
               {/* Pagination Controls */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-end space-x-2 py-4">
-                  <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.max(1, p - 1))} disabled={page === 1}>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.max(1, p - 1))}
+                    disabled={page === 1}
+                  >
                     <ChevronLeft className="h-4 w-4 mr-1" /> Prev
                   </Button>
-                  <span className="text-sm text-muted-foreground">Page {page} of {totalPages}</span>
-                  <Button variant="outline" size="sm" onClick={() => setPage((p) => Math.min(totalPages, p + 1))} disabled={page === totalPages}>
+                  <span className="text-sm text-muted-foreground">
+                    Page {page} of {totalPages}
+                  </span>
+                  <Button
+                    variant="outline"
+                    size="sm"
+                    onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                    disabled={page === totalPages}
+                  >
                     Next <ChevronRight className="h-4 w-4 ml-1" />
                   </Button>
                 </div>
@@ -886,24 +1159,47 @@ export function TalentPoolManager() {
       {/* Portfolio Request Dialog */}
       <Dialog open={portfolioDialogOpen} onOpenChange={setPortfolioDialogOpen}>
         <DialogContent>
-          <DialogHeader><DialogTitle>Create Portfolio Request</DialogTitle></DialogHeader>
+          <DialogHeader>
+            <DialogTitle>Create Portfolio Request</DialogTitle>
+          </DialogHeader>
           <div className="space-y-4">
             {portfolioTalent && (
               <div className="bg-muted p-3 rounded-lg text-sm">
-                <p><strong>Name:</strong> {portfolioTalent.full_name}</p>
-                <p><strong>Email:</strong> {portfolioTalent.email}</p>
-                <p><strong>Phone:</strong> {portfolioTalent.phone || "N/A"}</p>
+                <p>
+                  <strong>Name:</strong> {portfolioTalent.full_name}
+                </p>
+                <p>
+                  <strong>Email:</strong> {portfolioTalent.email}
+                </p>
+                <p>
+                  <strong>Phone:</strong> {portfolioTalent.phone || "N/A"}
+                </p>
               </div>
             )}
             <div>
               <Label htmlFor="notes">Notes (Optional)</Label>
-              <Textarea id="notes" value={portfolioNotes} onChange={(e) => setPortfolioNotes(e.target.value)} placeholder="Add any notes for this portfolio request..." rows={3} />
+              <Textarea
+                id="notes"
+                value={portfolioNotes}
+                onChange={(e) => setPortfolioNotes(e.target.value)}
+                placeholder="Add any notes for this portfolio request..."
+                rows={3}
+              />
             </div>
           </div>
           <DialogFooter>
-            <Button variant="outline" onClick={() => setPortfolioDialogOpen(false)}>Cancel</Button>
+            <Button variant="outline" onClick={() => setPortfolioDialogOpen(false)}>
+              Cancel
+            </Button>
             <Button onClick={handleCreatePortfolioRequest} disabled={creatingPortfolio}>
-              {creatingPortfolio ? <><Loader2 className="w-4 h-4 mr-2 animate-spin" />Creating...</> : "Create Request"}
+              {creatingPortfolio ? (
+                <>
+                  <Loader2 className="w-4 h-4 mr-2 animate-spin" />
+                  Creating...
+                </>
+              ) : (
+                "Create Request"
+              )}
             </Button>
           </DialogFooter>
         </DialogContent>
