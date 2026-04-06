@@ -171,7 +171,7 @@ export function useAuthChat() {
     async (email: string): Promise<{ exists: boolean; hasUserId: boolean; talentName?: string }> => {
       try {
         // Replaced direct RLS-blocked select with the secure RPC
-        const { data, error } = await supabase.rpc("check_auth_email", {
+        const { data, error } = await supabase.rpc("check_auth_email" as any, {
           lookup_email: email.trim().toLowerCase(),
         });
 
