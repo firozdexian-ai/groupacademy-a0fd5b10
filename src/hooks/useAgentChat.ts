@@ -31,8 +31,6 @@ interface UseAgentChatReturn {
   endSession: () => Promise<void>;
   recentSessions: AgentSession[];
   loadRecentSessions: () => Promise<void>;
-  isSessionExpired: boolean;
-  timeRemaining: number | null;
   isLoadingSessions: boolean;
   /** Per-response credit cost for the current agent */
   perResponseCost: number;
@@ -47,10 +45,6 @@ export function useAgentChat(): UseAgentChatReturn {
   const [recentSessions, setRecentSessions] = useState<AgentSession[]>([]);
   const [isLoadingSessions, setIsLoadingSessions] = useState(true);
   const [perResponseCost, setPerResponseCost] = useState<number>(1);
-
-  // No more session expiration — sessions are persistent
-  const isSessionExpired = false;
-  const timeRemaining = null;
 
   const loadRecentSessions = useCallback(async () => {
     if (!talent?.id) {
@@ -219,13 +213,12 @@ export function useAgentChat(): UseAgentChatReturn {
         if (additionalCredits > 0) {
           updatePayload.credits_charged = (session.credits_charged || 0) + additionalCredits;
         }
-        await supabase
-          .from("agent_chat_sessions")
-          .update(updatePayload)
-          .eq("id", session.id);
-        
+        await supabase.from("agent_chat_sessions").update(updatePayload).eq("id", session.id);
+
         if (additionalCredits > 0) {
-          setSession(prev => prev ? { ...prev, credits_charged: (prev.credits_charged || 0) + additionalCredits } : null);
+          setSession((prev) =>
+            prev ? { ...prev, credits_charged: (prev.credits_charged || 0) + additionalCredits } : null,
+          );
         }
       } catch (error) {
         console.error("Failed to save messages:", error);
@@ -269,7 +262,7 @@ export function useAgentChat(): UseAgentChatReturn {
         if (!response.ok) {
           const errorData = await response.json().catch(() => ({}));
           const { message, suggestion, isAIUnavailable } = handleAIError(errorData, response.status);
-          
+
           if (isAIUnavailable) {
             const { description } = getAIUnavailableToast();
             toast.error(description);
@@ -330,15 +323,24 @@ export function useAgentChat(): UseAgentChatReturn {
 
         // Deduct credits per-response (only if cost > 0)
         if (perResponseCost > 0 && assistantContent) {
-          const { data: deductResult } = await supabase.rpc("deduct_credits", {
+          const { data: deductResult, error: rpcError } = await supabase.rpc("deduct_credits", {
             p_amount: perResponseCost,
             p_service_type: "AI_AGENT_CHAT",
             p_reference_id: session.id,
             p_description: `AI Agent response (${session.agent_key})`,
           });
 
-          if (deductResult && !(deductResult as any).success) {
+          // Check for core database/RPC errors
+          if (rpcError) {
+            console.error("Credit deduction RPC error:", rpcError);
+            toast.error("Database error during credit deduction. Please try again.");
+          }
+          // Check for application-level logic errors (e.g. insufficient funds)
+          else if (deductResult && !(deductResult as any).success) {
             console.warn("Credit deduction failed:", (deductResult as any).error);
+            toast.error("Insufficient credits to continue this conversation.", {
+              description: "Please top up your credit balance.",
+            });
           }
         }
 
@@ -374,8 +376,6 @@ export function useAgentChat(): UseAgentChatReturn {
     endSession,
     recentSessions,
     loadRecentSessions,
-    isSessionExpired,
-    timeRemaining,
     isLoadingSessions,
     perResponseCost,
   };
