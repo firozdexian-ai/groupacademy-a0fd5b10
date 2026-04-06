@@ -5104,6 +5104,7 @@ export type Database = {
         Args: { p_admin_notes?: string; p_submission_id: string }
         Returns: Json
       }
+      check_auth_email: { Args: { lookup_email: string }; Returns: Json }
       check_rate_limit: {
         Args: {
           p_endpoint: string
