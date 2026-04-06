@@ -243,8 +243,8 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
 
     setIsSaving(true);
     try {
-      if (selectedCategory !== talent?.profession_category_id) {
-        await updateTalent({ profession_category_id: selectedCategory });
+      if (selectedCategory !== talent?.professionCategoryId) {
+        await updateTalent({ professionCategoryId: selectedCategory });
         await refreshTalent();
       }
       onContinue();
