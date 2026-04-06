@@ -44,7 +44,7 @@ export const ProtectedRoute = ({
     }
     // Use window.location to avoid React dependency cycles
     const returnUrl = window.location.pathname + window.location.search;
-    navigate(`/auth?returnTo=${encodeURIComponent(returnUrl)}`, { replace: true });
+    navigate(`/auth/classic?returnTo=${encodeURIComponent(returnUrl)}`, { replace: true });
   }, [navigate]);
 
   const checkAuth = useCallback(async () => {
@@ -81,7 +81,7 @@ export const ProtectedRoute = ({
 
       if (!session) {
         const returnUrl = window.location.pathname + window.location.search;
-        navigate(`/auth?returnTo=${encodeURIComponent(returnUrl)}`, { replace: true });
+        navigate(`/auth/classic?returnTo=${encodeURIComponent(returnUrl)}`, { replace: true });
         return;
       }
 
@@ -96,7 +96,7 @@ export const ProtectedRoute = ({
 
         if (!roleData) {
           toast.error("Admin access required");
-          navigate("/my-learning");
+          navigate("/app/learning");
           return;
         }
         setUserRole("admin");
@@ -112,7 +112,7 @@ export const ProtectedRoute = ({
 
         if (!roleData || roleData.length === 0) {
           toast.error("Dashboard access required");
-          navigate("/my-learning");
+          navigate("/app/learning");
           return;
         }
 
@@ -153,13 +153,13 @@ export const ProtectedRoute = ({
       data: { subscription },
     } = supabase.auth.onAuthStateChange((event, session) => {
       if (event === "SIGNED_OUT" || !session) {
-        navigate("/auth");
+        navigate("/auth/classic");
         return;
       }
 
       if (event === "TOKEN_REFRESHED" && !session) {
         console.log("[ProtectedRoute] Token refresh failed, redirecting to auth");
-        navigate("/auth");
+        navigate("/auth/classic");
       }
     });
 
@@ -209,7 +209,7 @@ export const ProtectedRoute = ({
               <RefreshCw className="h-4 w-4 mr-2" />
               Retry
             </Button>
-            <Button onClick={() => navigate("/auth")} size="sm">
+            <Button onClick={() => navigate("/auth/classic")} size="sm">
               <LogIn className="h-4 w-4 mr-2" />
               Sign In
             </Button>
