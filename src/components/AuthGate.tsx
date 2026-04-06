@@ -32,7 +32,8 @@ export function AuthGate({ children, redirectTo, message }: AuthGateProps) {
       console.warn("Error during session cleanup:", e);
     }
     const returnUrl = redirectTo || window.location.pathname;
-    navigate(`/auth?redirect=${encodeURIComponent(returnUrl)}`);
+    // Standardized to returnTo and classic auth
+    navigate(`/auth/classic?returnTo=${encodeURIComponent(returnUrl)}`);
   }, [navigate, redirectTo]);
 
   const checkAuth = useCallback(async () => {
@@ -48,16 +49,18 @@ export function AuthGate({ children, redirectTo, message }: AuthGateProps) {
       });
 
       try {
-        const { data: { session } } = await Promise.race([sessionPromise, timeoutPromise]);
+        const {
+          data: { session },
+        } = await Promise.race([sessionPromise, timeoutPromise]);
         setUser(session?.user ?? null);
       } catch (sessionErr: unknown) {
         // Check if this is an invalid refresh token error
         const errorMessage = sessionErr instanceof Error ? sessionErr.message : String(sessionErr);
-        const isInvalidToken = 
-          errorMessage.includes('refresh_token_not_found') ||
-          errorMessage.includes('Invalid Refresh Token') ||
-          errorMessage.includes('Refresh Token Not Found');
-        
+        const isInvalidToken =
+          errorMessage.includes("refresh_token_not_found") ||
+          errorMessage.includes("Invalid Refresh Token") ||
+          errorMessage.includes("Refresh Token Not Found");
+
         if (isInvalidToken) {
           console.log("[AuthGate] Invalid refresh token, clearing session...");
           await clearSessionAndRedirect();
@@ -67,7 +70,7 @@ export function AuthGate({ children, redirectTo, message }: AuthGateProps) {
       }
     } catch (err) {
       console.error("Auth check error:", err);
-      
+
       // Check if timeout
       const errorMessage = err instanceof Error ? err.message : String(err);
       if (errorMessage === "timeout") {
@@ -82,16 +85,18 @@ export function AuthGate({ children, redirectTo, message }: AuthGateProps) {
 
   useEffect(() => {
     // Set up auth listener first
-    const { data: { subscription } } = supabase.auth.onAuthStateChange((event, session) => {
+    const {
+      data: { subscription },
+    } = supabase.auth.onAuthStateChange((event, session) => {
       console.log("[AuthGate] Auth state changed:", event);
-      
-      if (event === 'SIGNED_OUT') {
+
+      if (event === "SIGNED_OUT") {
         setUser(null);
         setLoading(false);
         setError(null);
         return;
       }
-      
+
       setUser(session?.user ?? null);
       setLoading(false);
       setError(null);
@@ -106,7 +111,7 @@ export function AuthGate({ children, redirectTo, message }: AuthGateProps) {
   // Progressive loading timer
   useEffect(() => {
     if (!loading) return;
-    
+
     const interval = setInterval(() => {
       setSeconds((s) => s + 1);
     }, 1000);
@@ -156,11 +161,7 @@ export function AuthGate({ children, redirectTo, message }: AuthGateProps) {
               <RefreshCw className="mr-2 h-4 w-4" />
               Try Again
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/auth")}
-              className="w-full"
-            >
+            <Button variant="outline" onClick={() => navigate("/auth/classic")} className="w-full">
               Go to Login
             </Button>
           </CardContent>
@@ -171,7 +172,7 @@ export function AuthGate({ children, redirectTo, message }: AuthGateProps) {
 
   if (!user) {
     const returnUrl = redirectTo || window.location.pathname;
-    
+
     return (
       <div className="min-h-screen flex items-center justify-center bg-background p-4">
         <Card className="max-w-md w-full">
@@ -185,17 +186,13 @@ export function AuthGate({ children, redirectTo, message }: AuthGateProps) {
             </CardDescription>
           </CardHeader>
           <CardContent className="flex flex-col gap-4">
-            <Button 
-              onClick={() => navigate(`/auth?redirect=${encodeURIComponent(returnUrl)}`)}
+            <Button
+              onClick={() => navigate(`/auth/classic?returnTo=${encodeURIComponent(returnUrl)}`)}
               className="w-full"
             >
               Sign In to Continue
             </Button>
-            <Button 
-              variant="outline" 
-              onClick={() => navigate("/")}
-              className="w-full"
-            >
+            <Button variant="outline" onClick={() => navigate("/")} className="w-full">
               Go to Homepage
             </Button>
           </CardContent>
