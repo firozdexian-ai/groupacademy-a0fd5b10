@@ -24,8 +24,6 @@ export default function AgentChat() {
     loadSession,
     endSession,
     recentSessions,
-    isSessionExpired,
-    timeRemaining,
     isLoadingSessions,
     perResponseCost,
   } = useAgentChat();
