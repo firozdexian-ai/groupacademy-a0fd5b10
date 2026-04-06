@@ -1206,7 +1206,7 @@ export function JobsManager() {
       }
 
       if (appTypeFilter !== "all") {
-        query = query.eq("application_type", appTypeFilter);
+        query = query.eq("application_type", appTypeFilter as "email" | "link");
       }
 
       const from = (page - 1) * ITEMS_PER_PAGE;
