@@ -1,9 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
 
-/**
- * CTO Note:
- * These keys must match the TEMPLATES map in supabase/functions/_shared/transactional-email-templates/registry.ts
- */
 type TemplateKey =
   | "welcome"
   | "service-complete"
@@ -21,12 +17,7 @@ interface SendEmailParams {
   data?: Record<string, any>;
 }
 
-export async function sendTransactionalEmail({
-  template,
-  talentId,
-  recipientEmail,
-  data,
-}: SendEmailParams): Promise<boolean> {
+async function sendTransactionalEmail({ template, talentId, recipientEmail, data }: SendEmailParams): Promise<boolean> {
   try {
     const { data: result, error } = await supabase.functions.invoke("send-transactional-email", {
       body: { template, talent_id: talentId, recipient_email: recipientEmail, data },
@@ -56,7 +47,6 @@ export const emailNotifications = {
     }),
   talentInvite: (talentId: string, personalNote?: string) =>
     sendTransactionalEmail({ template: "talent-invite", talentId, data: { personal_note: personalNote } }),
-  // Add this missing method:
   investorUpdate: (recipientEmail: string, subject: string, content: string) =>
     sendTransactionalEmail({ template: "investor-update", recipientEmail, data: { subject, content } }),
 };
