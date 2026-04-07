@@ -1,80 +1,80 @@
-/// <reference types="npm:@types/react@18.3.1" />
-
-import * as React from 'npm:react@18.3.1'
-
 import {
-  Body,
-  Button,
-  Container,
-  Head,
-  Heading,
   Html,
-  Link,
-  Preview,
+  Body,
+  Container,
   Text,
-} from 'npm:@react-email/components@0.0.22'
+  Heading,
+  Button,
+  Section,
+  Preview,
+} from "https://esm.sh/@react-email/components@0.0.12";
 
-interface InviteEmailProps {
-  siteName: string
-  siteUrl: string
-  confirmationUrl: string
-}
+export default function TalentInviteEmail({ name, personal_note }: { name: string; personal_note?: string }) {
+  return (
+    <Html>
+      <Preview>You've been invited to join GroUp Academy</Preview>
+      <Body style={{ backgroundColor: "#ffffff", fontFamily: "system-ui, -apple-system, sans-serif" }}>
+        <Container style={{ margin: "0 auto", padding: "40px 20px", maxWidth: "580px" }}>
+          <Heading style={{ color: "#0f172a", fontSize: "24px", fontWeight: "bold" }}>
+            Exclusive Invite for {name}
+          </Heading>
 
-export const InviteEmail = ({
-  siteName,
-  siteUrl,
-  confirmationUrl,
-}: InviteEmailProps) => (
-  <Html lang="en" dir="ltr">
-    <Head />
-    <Preview>You've been invited to join GroUp Academy</Preview>
-    <Body style={main}>
-      <Container style={container}>
-        <Heading style={h1}>You've been invited</Heading>
-        <Text style={text}>
-          You've been invited to join{' '}
-          <Link href={siteUrl} style={link}>
-            <strong>GroUp Academy</strong>
-          </Link>
-          . Click the button below to accept the invitation and create your
-          account.
-        </Text>
-        <Button style={button} href={confirmationUrl}>
-          Accept Invitation
-        </Button>
-        <Text style={footer}>
-          If you weren't expecting this invitation, you can safely ignore this
-          email.
-        </Text>
-      </Container>
-    </Body>
-  </Html>
-)
+          <Text style={{ color: "#475569", fontSize: "16px", lineHeight: "1.6" }}>
+            A member of our Talent Executive team has invited you to join **GroUp Academy**, the premier career platform
+            for high-potential professionals in {name === "there" ? "your region" : "Bangladesh"}. [cite: 94]
+          </Text>
 
-export default InviteEmail
+          {personal_note && (
+            <Section
+              style={{
+                borderLeft: "4px solid #2A7DDE",
+                paddingLeft: "20px",
+                margin: "24px 0",
+                backgroundColor: "#f8fafc",
+                padding: "16px",
+              }}
+            >
+              <Text style={{ fontStyle: "italic", color: "#1e293b", margin: "0" }}>"{personal_note}"</Text>
+            </Section>
+          )}
 
-const main = { backgroundColor: '#ffffff', fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }
-const container = { padding: '32px 28px' }
-const h1 = {
-  fontSize: '22px',
-  fontWeight: 'bold' as const,
-  color: '#333333',
-  margin: '0 0 20px',
+          <Text style={{ color: "#475569", fontSize: "16px", lineHeight: "1.6" }}>
+            By joining today, you'll instantly receive **250 welcome credits** [cite: 296, 320, 364] to use on:
+          </Text>
+
+          <ul style={{ color: "#475569", fontSize: "15px", lineHeight: "1.8" }}>
+            <li>
+              <strong>AI Career Assessments</strong> (Benchmark your skills) [cite: 301, 383]
+            </li>
+            <li>
+              <strong>AI Mock Interviews</strong> (Real-time feedback) [cite: 301, 383]
+            </li>
+            <li>
+              <strong>Job Recommendations</strong> (Matched to your profile) [cite: 417, 498]
+            </li>
+          </ul>
+
+          <Section style={{ textAlign: "center", marginTop: "32px" }}>
+            <Button
+              href="https://groupacademy.online/auth"
+              style={{
+                backgroundColor: "#2A7DDE",
+                color: "#ffffff",
+                padding: "14px 28px",
+                borderRadius: "8px",
+                fontWeight: "bold",
+                textDecoration: "none",
+              }}
+            >
+              Accept Invite & Claim Credits
+            </Button>
+          </Section>
+
+          <Text style={{ color: "#94a3b8", fontSize: "12px", textAlign: "center", marginTop: "48px" }}>
+            This invite was sent from the GroUp Academy Operations Console. [cite: 333]
+          </Text>
+        </Container>
+      </Body>
+    </Html>
+  );
 }
-const text = {
-  fontSize: '14px',
-  color: '#677280',
-  lineHeight: '1.6',
-  margin: '0 0 25px',
-}
-const link = { color: '#2A7DDE', textDecoration: 'underline' }
-const button = {
-  backgroundColor: '#2A7DDE',
-  color: '#ffffff',
-  fontSize: '14px',
-  borderRadius: '8px',
-  padding: '12px 24px',
-  textDecoration: 'none',
-  fontWeight: '600' as const,
-}
-const footer = { fontSize: '12px', color: '#999999', margin: '30px 0 0' }
