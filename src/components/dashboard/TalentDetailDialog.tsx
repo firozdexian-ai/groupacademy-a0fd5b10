@@ -1,10 +1,5 @@
 import React from "react";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { toast } from "sonner";
 import { emailNotifications } from "@/lib/emailNotifications";
@@ -16,23 +11,20 @@ interface TalentDetailDialogProps {
   onOpenChange: (open: boolean) => void;
 }
 
-export const TalentDetailDialog = ({
-  talent,
-  open,
-  onOpenChange,
-}: TalentDetailDialogProps) => {
+export const TalentDetailDialog = ({ talent, open, onOpenChange }: TalentDetailDialogProps) => {
   if (!talent) return null;
 
   const handlePlatformInvite = async () => {
-    toast.loading("Sending invite...");
+    const toastId = toast.loading("Sending branded invite...");
+
     const success = await emailNotifications.talentInvite(
-      talent.id, 
-      "Welcome to GroUp Academy! We've identified you as a top candidate and would love for you to join our platform."
+      talent.id,
+      "Welcome to GroUp Academy! We've identified you as a top candidate and would love for you to join our platform.",
     );
-    
-    toast.dismiss();
+
+    toast.dismiss(toastId);
     if (success) {
-      toast.success("Branded invite sent from notify@groupacademy.online");
+      toast.success("Invite sent from notify@groupacademy.online");
     } else {
       toast.error("Failed to send invite via platform.");
     }
@@ -44,40 +36,41 @@ export const TalentDetailDialog = ({
         <DialogHeader>
           <DialogTitle className="text-2xl font-bold flex items-center gap-2">
             {talent.full_name || "Talent Profile"}
-          </Heading>
+          </DialogTitle>
         </DialogHeader>
 
         <div className="grid gap-6 py-4">
           {/* Quick Actions Section */}
           <div className="flex flex-wrap gap-3 p-4 bg-slate-50 rounded-lg border border-slate-200">
-            <Button 
-              onClick={handlePlatformInvite}
-              className="bg-blue-600 hover:bg-blue-700 flex gap-2"
-            >
+            <Button onClick={handlePlatformInvite} className="bg-blue-600 hover:bg-blue-700 flex gap-2">
               <UserPlus className="h-4 w-4" />
               Send Platform Invite
             </Button>
-            
-            <Button 
-              variant="outline"
-              onClick={() => window.open(`mailto:${talent.email}`)}
-              className="flex gap-2"
-            >
+
+            <Button variant="outline" onClick={() => window.open(`mailto:${talent.email}`)} className="flex gap-2">
               <Mail className="h-4 w-4" />
               Direct Email (Backup)
             </Button>
           </div>
 
-          {/* Profile Details would continue here... */}
           <div className="space-y-4">
-            <div>
-              <h4 className="text-sm font-medium text-muted-foreground">Email</h4>
-              <p>{talent.email || "No email provided"}</p>
+            <div className="grid grid-cols-2 gap-4">
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground">Email</h4>
+                <p className="text-sm font-medium">{talent.email || "No email provided"}</p>
+              </div>
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground">Country</h4>
+                <p className="text-sm font-medium">{talent.country || "Not specified"}</p>
+              </div>
             </div>
-            <div>
-              <h4 className="text-sm font-medium text-muted-foreground">Country</h4>
-              <p>{talent.country || "Not specified"}</p>
-            </div>
+
+            {talent.headline && (
+              <div>
+                <h4 className="text-sm font-medium text-muted-foreground">Headline</h4>
+                <p className="text-sm">{talent.headline}</p>
+              </div>
+            )}
           </div>
         </div>
       </DialogContent>
