@@ -343,11 +343,12 @@ export function InvestorsManager() {
                           <Button 
                             variant="ghost" 
                             size="icon"
-                            asChild
+                            onClick={() => {
+                              setSelectedInvestor(investor);
+                              setShowEmailComposer(true);
+                            }}
                           >
-                            <a href={`mailto:${investor.email}`}>
-                              <Mail className="h-4 w-4" />
-                            </a>
+                            <Mail className="h-4 w-4" />
                           </Button>
                         )}
                         <Button 
