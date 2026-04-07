@@ -1,0 +1,1 @@
+UPDATE talents SET learner_status = 'admin' WHERE email = 'gro10xnow@gmail.com';
