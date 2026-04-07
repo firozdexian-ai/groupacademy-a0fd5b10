@@ -1,14 +1,14 @@
 import React, { useState, useEffect } from "react";
 import { useSearchParams, useNavigate } from "react-router-dom";
-import AdminSidebar from "@/components/dashboard/AdminSidebar";
-import DashboardOverview from "@/components/dashboard/DashboardOverview";
-import TalentPoolManager from "@/components/dashboard/TalentPoolManager";
-import JobsManager from "@/components/dashboard/JobsManager";
-import JobsKPIDashboard from "@/components/dashboard/JobsKPIDashboard";
+import { AdminSidebar } from "@/components/dashboard/AdminSidebar";
+import { DashboardOverview } from "@/components/dashboard/DashboardOverview";
+import { TalentPoolManager } from "@/components/dashboard/TalentPoolManager";
+import { JobsManager } from "@/components/dashboard/JobsManager";
+import { JobsKPIDashboard } from "@/components/dashboard/JobsKPIDashboard";
 import ContentList from "@/components/dashboard/ContentList";
-import EnrollmentsManager from "@/components/dashboard/EnrollmentsManager";
-import { EmailComposer } from "@/components/dashboard/ir/EmailComposer"; // Updated to named export
-import IRDashboard from "@/components/dashboard/ir/IRDashboard";
+import { EnrollmentsManager } from "@/components/dashboard/EnrollmentsManager";
+import { EmailComposer } from "@/components/dashboard/ir/EmailComposer";
+import { IRDashboard } from "@/components/dashboard/ir/IRDashboard";
 import { useAuth } from "@/hooks/useAuth";
 import { useTalent } from "@/hooks/useTalent";
 import { toast } from "sonner";
@@ -16,8 +16,8 @@ import { toast } from "sonner";
 const Dashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
   const navigate = useNavigate();
-  const { user, loading: authLoading } = useAuth();
-  const { talent, loading: talentLoading } = useTalent();
+  const { user, isLoading: authLoading } = useAuth();
+  const { talent, isLoading: talentLoading } = useTalent();
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "overview");
 
   // State for Investor Relations context
@@ -39,7 +39,7 @@ const Dashboard = () => {
         return;
       }
       // Check for admin or talent_exec roles [cite: 44, 531]
-      const userRole = talent?.role;
+      const userRole = talent?.learnerStatus;
       if (userRole !== "admin" && userRole !== "talent_exec") {
         toast.error("Access denied: Administrative privileges required.");
         navigate("/app/feed");
@@ -72,14 +72,15 @@ const Dashboard = () => {
 
           {activeTab === "jobs-kpis" && <JobsKPIDashboard />}
 
-          {activeTab === "all" && <ContentList type="all" />}
+          {activeTab === "all" && <ContentList />}
 
           {activeTab === "enrollments" && <EnrollmentsManager />}
 
           {/* Investor Relations Tab Group [cite: 29, 44] */}
           {activeTab === "irdashboard" && (
+            /* IRDashboard expects onNavigate prop */
             <div className="space-y-6">
-              <IRDashboard onSelectInvestor={(inv) => setSelectedInvestor(inv)} />
+              <IRDashboard onNavigate={handleTabChange} />
               {selectedInvestor && (
                 <div className="mt-8">
                   {/* Fixed: Added mandatory onClose prop and used named export */}
