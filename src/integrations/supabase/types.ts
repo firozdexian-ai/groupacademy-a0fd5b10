@@ -642,6 +642,13 @@ export type Database = {
             referencedRelation: "instructors"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "blog_posts_author_id_fkey"
+            columns: ["author_id"]
+            isOneToOne: false
+            referencedRelation: "instructors_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       career_assessments: {
@@ -1378,6 +1385,13 @@ export type Database = {
             referencedRelation: "instructors"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "content_instructors_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors_public"
+            referencedColumns: ["id"]
+          },
         ]
       }
       content_share_logs: {
@@ -1524,6 +1538,13 @@ export type Database = {
             columns: ["instructor_id"]
             isOneToOne: false
             referencedRelation: "instructors"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_sessions_instructor_id_fkey"
+            columns: ["instructor_id"]
+            isOneToOne: false
+            referencedRelation: "instructors_public"
             referencedColumns: ["id"]
           },
         ]
@@ -3967,6 +3988,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "portfolio_requests_assigned_to_fkey"
+            columns: ["assigned_to"]
+            isOneToOne: false
+            referencedRelation: "instructors_public"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "portfolio_requests_profession_category_id_fkey"
             columns: ["profession_category_id"]
             isOneToOne: false
@@ -5194,7 +5222,48 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      instructors_public: {
+        Row: {
+          bio: string | null
+          created_at: string | null
+          email: string | null
+          expertise: string[] | null
+          full_name: string | null
+          id: string | null
+          profile_image_url: string | null
+          social_links: Json | null
+          status: string | null
+          team_role: string | null
+          updated_at: string | null
+        }
+        Insert: {
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          expertise?: string[] | null
+          full_name?: string | null
+          id?: string | null
+          profile_image_url?: string | null
+          social_links?: Json | null
+          status?: string | null
+          team_role?: string | null
+          updated_at?: string | null
+        }
+        Update: {
+          bio?: string | null
+          created_at?: string | null
+          email?: string | null
+          expertise?: string[] | null
+          full_name?: string | null
+          id?: string | null
+          profile_image_url?: string | null
+          social_links?: Json | null
+          status?: string | null
+          team_role?: string | null
+          updated_at?: string | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       add_credits: {
