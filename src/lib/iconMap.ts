@@ -103,6 +103,8 @@ import {
   Target,
   Bot,
   Palette,
+  Search,
+  Headphones,
   type LucideIcon
 } from "lucide-react";
 
