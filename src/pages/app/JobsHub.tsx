@@ -608,7 +608,7 @@ export default function JobsHub() {
           ) : (
             <div className="divide-y divide-border rounded-xl border bg-card overflow-hidden">
               {agentsWithSessions.map((agent) => {
-                const IconComponent = agent.icon ? getIconByName(agent.icon) : null;
+                const IconComponent = agent.icon ? getIcon(agent.icon) : null;
                 return (
                   <button
                     key={agent.agent_key}
