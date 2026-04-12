@@ -74,11 +74,11 @@ export default function AgentChat() {
     return null;
   }, [dbAgent, staticAgent]);
 
-  // 4. Session initialization: Corrected Redirect Logic
+  // 4. Session initialization: Logic ensures we don't redirect while loading
   useEffect(() => {
     if (isLoadingDbAgent || isLoadingSessions) return;
 
-    // FIX: If loading is finished and no agent was found, redirect
+    // CTO BUG FIX: Corrected logic to trigger redirect for non-existent agents
     if (!activeAgent && !isLoadingDbAgent && agentKey) {
       toast.error("Agent not found in registry");
       navigate("/app/agents");
