@@ -28,7 +28,6 @@ export default function AgentChat() {
 
   const { balance } = useCredits();
 
-  // 1. Fetch Agent metadata from DB (Primary Source)
   const { data: dbAgent, isLoading: isLoadingDbAgent } = useQuery({
     queryKey: ["ai-agent-detail", agentKey],
     queryFn: async () => {
@@ -46,10 +45,8 @@ export default function AgentChat() {
     staleTime: 10 * 60 * 1000,
   });
 
-  // 2. Fallback to static constants if DB record hasn't loaded or doesn't exist
   const staticAgent = useMemo(() => (agentKey ? getAgentById(agentKey) : null), [agentKey]);
 
-  // 3. Construct the active agent object dynamically
   const activeAgent = useMemo(() => {
     if (dbAgent) {
       return {
@@ -66,87 +63,82 @@ export default function AgentChat() {
         name: staticAgent.name,
         color: staticAgent.bgColor,
         iconColor: staticAgent.iconColor,
-        iconName: "MessageSquare", // Default for static
+        iconName: "MessageSquare",
         avatarUrl: null,
-        creditCost: 10,
+        creditCost: 1,
       };
     }
     return null;
   }, [dbAgent, staticAgent]);
 
-  // 4. Session initialization with improved routing logic
   useEffect(() => {
-    // Only redirect if we've finished checking both DB and static records and found nothing
-    if (!isLoadingDbAgent && !activeAgent && !agentKey) {
-      toast.error("Agent not found");
+    if (isLoadingDbAgent || isLoadingSessions) return;
+
+    if (!activeAgent && !isLoadingDbAgent && agentKey) {
+      toast.error("Agent not found in registry");
       navigate("/app/agents");
       return;
     }
 
-    if (isLoadingSessions || isLoadingDbAgent || !agentKey) return;
-
     const initializeSession = async () => {
+      if (!agentKey) return;
       try {
-        const newSession = await startOrResumeSession(agentKey);
-        if (newSession) {
+        const result = await startOrResumeSession(agentKey);
+        if (result) {
           setIsInitializing(false);
-        } else {
-          throw new Error("Session creation returned null");
         }
       } catch (err) {
-        console.error("Session Initialization Error:", err);
-        toast.error("Failed to start session");
+        console.error("AgentChat init error:", err);
         navigate("/app/agents");
       }
     };
 
     initializeSession();
-  }, [agentKey, isLoadingSessions, isLoadingDbAgent, activeAgent, navigate, startOrResumeSession]);
+  }, [agentKey, isLoadingDbAgent, isLoadingSessions, activeAgent, navigate, startOrResumeSession]);
 
-  const handleBack = () => navigate("/app/agents");
+  if (!agentKey) return null;
 
-  const handleEndSession = async () => {
-    await endSession();
-    toast.success("Conversation ended");
-    navigate("/app/agents");
-  };
-
-  // Loading State
   if (isInitializing || isLoadingDbAgent) {
     return (
       <div className="flex items-center justify-center h-[50vh]">
-        <div className="flex flex-col items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="text-sm text-muted-foreground">Connecting to {activeAgent?.name || "Agent"}...</p>
-        </div>
+        <Loader2 className="h-8 w-8 animate-spin text-primary" />
       </div>
     );
   }
 
-  if (!activeAgent || !agentKey) return null;
+  if (!activeAgent) return null;
 
-  // Resolve Icon Component from iconMap or fallback to MessageSquare
   const IconComponent = getIcon(activeAgent.iconName) || MessageSquare;
 
   return (
-    <div className="max-w-4xl mx-auto h-[calc(100vh-4rem)] md:h-[calc(100vh-2rem)] flex flex-col pb-16 md:pb-0">
-      {session && (
-        <AgentChatDialog
-          agent={{
-            id: agentKey,
-            name: activeAgent.name,
-            color: activeAgent.color,
-            icon: <IconComponent className={`h-4 w-4 ${activeAgent.iconColor}`} />,
-            avatarUrl: activeAgent.avatarUrl,
-          }}
-          messages={messages}
-          isStreaming={isStreaming}
-          onSendMessage={sendMessage}
-          onBack={handleBack}
-          onEndSession={handleEndSession}
-          perResponseCost={activeAgent.creditCost || perResponseCost}
-        />
-      )}
+    /** * CTO CRITICAL FIX:
+     * We must use 100dvh (dynamic viewport height) to account for mobile address bars.
+     * We subtract the approximate height of the top search bar and bottom nav (~120px).
+     * overflow-hidden is MANDATORY here to stop the page-level scrolling.
+     */
+    <div className="fixed inset-x-0 top-[60px] bottom-[65px] flex flex-col overflow-hidden bg-background">
+      <div className="flex-1 w-full max-w-4xl mx-auto flex flex-col overflow-hidden">
+        {session && (
+          <AgentChatDialog
+            agent={{
+              id: agentKey,
+              name: activeAgent.name,
+              color: activeAgent.color,
+              icon: <IconComponent className={`h-4 w-4 ${activeAgent.iconColor}`} />,
+              avatarUrl: activeAgent.avatarUrl,
+            }}
+            messages={messages}
+            isStreaming={isStreaming}
+            onSendMessage={sendMessage}
+            onBack={() => navigate("/app/agents")}
+            onEndSession={async () => {
+              await endSession();
+              navigate("/app/agents");
+            }}
+            perResponseCost={activeAgent.creditCost || perResponseCost}
+          />
+        )}
+      </div>
     </div>
   );
 }
