@@ -117,7 +117,6 @@ const isPlaceholderEmail = (email: string) =>
 
 const ITEMS_PER_PAGE = 10;
 
-// Outreach action config for DRY rendering
 const OUTREACH_ACTIONS: { product: OutreachProduct; icon: typeof Briefcase; label: string; colorClass: string }[] = [
   { product: "portfolio", icon: Briefcase, label: "Pitch Portfolio", colorClass: "text-purple-600" },
   { product: "mock_interview", icon: Mic, label: "Pitch Mock Interview", colorClass: "text-green-600" },
@@ -127,14 +126,12 @@ const OUTREACH_ACTIONS: { product: OutreachProduct; icon: typeof Briefcase; labe
 
 export function TalentPoolManager() {
   const isMobile = useIsMobile();
-  // Data State
   const [talents, setTalents] = useState<Talent[]>([]);
   const [professionCategories, setProfessionCategories] = useState<ProfessionCategory[]>([]);
   const [outreachRecords, setOutreachRecords] = useState<OutreachRecord[]>([]);
   const [isLoading, setIsLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
 
-  // KPI State
   const [kpiStats, setKpiStats] = useState({
     total: 0,
     newThisWeek: 0,
@@ -147,7 +144,6 @@ export function TalentPoolManager() {
     unreached: 0,
   });
 
-  // Pagination & Search & Filters
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
@@ -157,7 +153,6 @@ export function TalentPoolManager() {
   const [emailFilter, setEmailFilter] = useState<EmailFilter>("all");
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // UI State
   const [selectedTalent, setSelectedTalent] = useState<Talent | null>(null);
   const [portfolioDialogOpen, setPortfolioDialogOpen] = useState(false);
   const [portfolioNotes, setPortfolioNotes] = useState("");
@@ -166,7 +161,6 @@ export function TalentPoolManager() {
   const [sendingOutreach, setSendingOutreach] = useState<string | null>(null);
   const [exportingAll, setExportingAll] = useState(false);
 
-  // Load KPI stats
   const loadKpiStats = useCallback(async () => {
     try {
       const oneWeekAgo = new Date();
@@ -209,7 +203,6 @@ export function TalentPoolManager() {
     }
   }, []);
 
-  // Fetch Data (Paginated)
   const loadTalents = useCallback(async () => {
     setIsLoading(true);
     setError(null);
@@ -223,7 +216,6 @@ export function TalentPoolManager() {
       }
 
       if (countryFilter && countryFilter !== "all") {
-        // Find the country config to check both name and code just to be safe
         const selectedCountry = COUNTRIES_WITH_PHONE.find((c) => c.name === countryFilter || c.code === countryFilter);
         if (selectedCountry) {
           query = query.or(`country.eq.${selectedCountry.name},country.eq.${selectedCountry.code}`);
@@ -232,14 +224,12 @@ export function TalentPoolManager() {
         }
       }
 
-      // Server-side source filter
       if (sourceFilter === "registered") {
         query = query.not("user_id", "is", null);
       } else if (sourceFilter === "uploaded") {
         query = query.is("user_id", null);
       }
 
-      // Server-side outreach filters
       if (outreachFilter === "no_welcome") {
         query = query.is("welcome_sent_at", null);
       }
@@ -515,9 +505,7 @@ export function TalentPoolManager() {
     toast.success(`CSV exported (${exportAll ? "All Filtered" : "Current Page"} — ${rows.length} rows)`);
   };
 
-  // Client-side filtering for outreach products and email filter
   const filteredTalents = talents.filter((talent) => {
-    // Email filter
     if (emailFilter === "has_email" && isPlaceholderEmail(talent.email)) return false;
     if (emailFilter === "linkedin_only" && !isPlaceholderEmail(talent.email)) return false;
 
@@ -540,7 +528,6 @@ export function TalentPoolManager() {
 
   const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
-  // Source badge renderer
   const renderSourceBadge = (talent: Talent) => {
     if (talent.user_id) {
       return (
@@ -550,7 +537,6 @@ export function TalentPoolManager() {
     return <Badge className="text-[10px] px-1.5 py-0 bg-amber-600/10 text-amber-700 border-amber-200">Uploaded</Badge>;
   };
 
-  // Outreach status badge for table
   const renderOutreachBadge = (talent: Talent) => {
     const last = getLastOutreachForTalent(talent.id);
     if (!last) return <span className="text-xs text-muted-foreground">—</span>;
@@ -563,7 +549,6 @@ export function TalentPoolManager() {
     );
   };
 
-  // Renders the actions dropdown for a talent row
   const renderActionsDropdown = (talent: Talent) => {
     const hasPhone = !!talent.phone;
     const isRegistered = !!talent.user_id;
@@ -592,21 +577,18 @@ export function TalentPoolManager() {
             <FileText className="w-4 h-4 mr-2 text-purple-600" /> Create Portfolio
           </DropdownMenuItem>
           <DropdownMenuSeparator />
-          {/* Email & LinkedIn outreach for phoneless talents */}
           {talent.email && !isPlaceholderEmail(talent.email) && !hasPhone && (
             <DropdownMenuItem
               onClick={async () => {
                 const firstName = extractFirstName(talent.full_name);
                 const link = getOutreachEmailLink(talent.email, "welcome", firstName);
                 window.open(link, "_blank");
-                await supabase
-                  .from("outreach_messages")
-                  .insert({
-                    talent_id: talent.id,
-                    product: "welcome",
-                    message_content: "Email invite",
-                    channel: "email",
-                  } as any);
+                await supabase.from("outreach_messages").insert({
+                  talent_id: talent.id,
+                  product: "welcome",
+                  message_content: "Email invite",
+                  channel: "email",
+                } as any);
                 await loadOutreachRecords(talents.map((t) => t.id));
                 toast.success("Email invite opened");
               }}
@@ -621,14 +603,12 @@ export function TalentPoolManager() {
                 const message = getOutreachLinkedInMessage("welcome", firstName);
                 navigator.clipboard.writeText(message);
                 window.open(talent.linkedin_url!, "_blank");
-                await supabase
-                  .from("outreach_messages")
-                  .insert({
-                    talent_id: talent.id,
-                    product: "welcome",
-                    message_content: "LinkedIn invite",
-                    channel: "linkedin",
-                  } as any);
+                await supabase.from("outreach_messages").insert({
+                  talent_id: talent.id,
+                  product: "welcome",
+                  message_content: "LinkedIn invite",
+                  channel: "linkedin",
+                } as any);
                 await loadOutreachRecords(talents.map((t) => t.id));
                 toast.success("LinkedIn message copied — paste in DM");
               }}
@@ -636,7 +616,6 @@ export function TalentPoolManager() {
               <Linkedin className="w-4 h-4 mr-2 text-blue-700" /> LinkedIn Invite
             </DropdownMenuItem>
           )}
-          {/* Welcome / Invite (WhatsApp) */}
           {hasPhone &&
             (talent.welcome_sent_at ? (
               <DropdownMenuItem disabled>
@@ -669,7 +648,6 @@ export function TalentPoolManager() {
                 )}
               </DropdownMenuItem>
             ))}
-          {/* Product outreach actions */}
           {hasPhone &&
             OUTREACH_ACTIONS.map(({ product, icon: Icon, label, colorClass }) => {
               const sentAt = getOutreachSentAt(talent.id, product);
@@ -698,7 +676,6 @@ export function TalentPoolManager() {
     );
   };
 
-  // Mobile card layout for a talent
   const renderTalentCard = (talent: Talent) => (
     <div key={talent.id} className="p-4 border rounded-xl space-y-3">
       <div className="flex items-start justify-between">
@@ -750,7 +727,6 @@ export function TalentPoolManager() {
         }}
       />
 
-      {/* KPI Summary Cards */}
       <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-6 gap-3">
         <Card className="p-3">
           <div className="flex items-center gap-2">
@@ -808,7 +784,6 @@ export function TalentPoolManager() {
         </Card>
       </div>
 
-      {/* Outreach KPIs */}
       <div className="grid grid-cols-3 gap-3">
         <Card className="p-3">
           <div className="flex items-center gap-2">
@@ -880,7 +855,6 @@ export function TalentPoolManager() {
           </div>
         </CardHeader>
         <CardContent>
-          {/* Source Filter Toggle */}
           <div className="mb-4">
             <ToggleGroup
               type="single"
@@ -902,7 +876,6 @@ export function TalentPoolManager() {
             </ToggleGroup>
           </div>
 
-          {/* Filters Row */}
           <div className="mb-4 grid grid-cols-1 sm:grid-cols-3 gap-3 items-end">
             <div>
               <Label className="text-xs text-muted-foreground mb-1 block">Search</Label>
@@ -1049,11 +1022,9 @@ export function TalentPoolManager() {
             </div>
           ) : (
             <>
-              {/* Mobile: Card Layout */}
               {isMobile ? (
                 <div className="space-y-3">{filteredTalents.map(renderTalentCard)}</div>
               ) : (
-                /* Desktop: Table Layout */
                 <div className="rounded-md border">
                   <Table>
                     <TableHeader>
@@ -1117,7 +1088,6 @@ export function TalentPoolManager() {
                 </div>
               )}
 
-              {/* Pagination Controls */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-end space-x-2 py-4">
                   <Button
@@ -1146,17 +1116,17 @@ export function TalentPoolManager() {
         </CardContent>
       </Card>
 
-      {/* Talent Detail Dialog */}
+      {/* FIXED: PASS FULL OBJECT TO DIALOG */}
       {selectedTalent && (
         <TalentDetailDialog
           open={!!selectedTalent}
           onOpenChange={() => setSelectedTalent(null)}
+          talent={selectedTalent}
           talentEmail={selectedTalent.email}
           talentName={selectedTalent.full_name}
         />
       )}
 
-      {/* Portfolio Request Dialog */}
       <Dialog open={portfolioDialogOpen} onOpenChange={setPortfolioDialogOpen}>
         <DialogContent>
           <DialogHeader>
