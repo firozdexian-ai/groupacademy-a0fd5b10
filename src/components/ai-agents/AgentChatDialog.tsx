@@ -1,8 +1,7 @@
 import { useState, useRef, useEffect } from "react";
-import { ArrowLeft, Send, MoreVertical, Trash2, Copy, Check, Coins } from "lucide-react";
+import { ArrowLeft, Send, MoreVertical, Trash2, Copy, Check, Coins, MessageSquare } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Badge } from "@/components/ui/badge";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import {
@@ -67,6 +66,7 @@ export function AgentChatDialog({
   const inputRef = useRef<HTMLInputElement>(null);
   const [copiedId, setCopiedId] = useState<string | null>(null);
 
+  // Auto-scroll logic for new messages
   useEffect(() => {
     if (scrollAreaRef.current) {
       const scrollContainer = scrollAreaRef.current.querySelector("[data-radix-scroll-area-viewport]");
@@ -93,9 +93,9 @@ export function AgentChatDialog({
   const suggestions = getSuggestions(agent.id);
 
   return (
-    <div className="flex flex-col h-[calc(100vh-8rem)] bg-background md:max-h-[700px] md:rounded-lg md:border md:shadow-sm overflow-hidden">
-      {/* Header */}
-      <div className="flex items-center gap-3 p-4 border-b bg-muted/40 backdrop-blur-sm sticky top-0 z-10">
+    <div className="flex flex-col h-[calc(100vh-4rem)] md:h-[calc(100vh-2rem)] bg-background md:rounded-lg md:border md:shadow-sm overflow-hidden relative">
+      {/* Header - Sticky at the top */}
+      <div className="flex items-center gap-3 p-4 border-b bg-background/80 backdrop-blur-md sticky top-0 z-10">
         <Button variant="ghost" size="icon" onClick={onBack} className="shrink-0 h-9 w-9">
           <ArrowLeft className="h-5 w-5" />
         </Button>
@@ -136,11 +136,13 @@ export function AgentChatDialog({
         </DropdownMenu>
       </div>
 
-      {/* Messages */}
+      {/* Messages / Introductory Content Area */}
       <ScrollArea ref={scrollAreaRef} className="flex-1 p-4">
-        <div className="space-y-6 pb-4">
+        <div className="space-y-6 pb-20">
+          {" "}
+          {/* Bottom padding to clear the fixed input */}
           {messages.length === 0 && (
-            <div className="flex flex-col items-center justify-center py-12 px-4 text-center">
+            <div className="flex flex-col items-center justify-center py-8 px-4 text-center">
               <div className="h-16 w-16 rounded-2xl bg-muted/50 flex items-center justify-center mb-6 animate-in zoom-in duration-300">
                 <span className="text-4xl">👋</span>
               </div>
@@ -149,21 +151,25 @@ export function AgentChatDialog({
                 I'm here to help you achieve your career goals. Pick a topic below to get started.
               </p>
 
-              <div className="flex overflow-x-auto gap-2 max-w-md pb-2 scrollbar-hide md:flex-wrap md:justify-center md:overflow-visible md:pb-0">
+              {/* REFACTORED: Vertical stack for suggestions instead of horizontal carousel */}
+              <div className="flex flex-col gap-3 w-full max-w-xs mx-auto">
                 {suggestions.map((suggestion) => (
                   <button
                     key={suggestion}
                     onClick={() => onSendMessage(suggestion)}
                     disabled={isStreaming}
-                    className="px-4 py-2 text-xs font-medium rounded-full border bg-background hover:bg-primary/5 hover:border-primary/30 transition-all hover:scale-105 active:scale-95 disabled:opacity-50 disabled:hover:scale-100 shrink-0"
+                    className="w-full flex items-center gap-3 px-4 py-3 text-sm font-medium rounded-xl border bg-background hover:bg-primary/5 hover:border-primary/30 transition-all hover:translate-x-1 active:scale-[0.98] disabled:opacity-50 text-left group"
                   >
+                    <div className={cn("p-1.5 rounded-lg bg-muted group-hover:bg-primary/10 transition-colors")}>
+                      <MessageSquare className="h-4 w-4 text-muted-foreground group-hover:text-primary" />
+                    </div>
                     {suggestion}
                   </button>
                 ))}
               </div>
             </div>
           )}
-
+          {/* Message Bubbles */}
           {messages.map((message, index) => {
             const isUser = message.role === "user";
             const msgId = `msg-${index}`;
@@ -202,7 +208,6 @@ export function AgentChatDialog({
                         size="icon"
                         className="h-6 w-6 text-muted-foreground hover:text-foreground"
                         onClick={() => handleCopy(message.content, msgId)}
-                        title="Copy response"
                       >
                         {copiedId === msgId ? (
                           <Check className="h-3 w-3 text-green-500" />
@@ -224,7 +229,6 @@ export function AgentChatDialog({
               </div>
             );
           })}
-
           {/* Typing Indicator */}
           {isStreaming && messages[messages.length - 1]?.role !== "assistant" && (
             <div className="flex gap-3 justify-start">
@@ -250,31 +254,33 @@ export function AgentChatDialog({
         </div>
       </ScrollArea>
 
-      {/* Input Area */}
-      <form onSubmit={handleSubmit} className="p-3 md:p-4 border-t bg-background relative">
-        <div className="flex gap-2 items-end">
-          <Input
-            ref={inputRef}
-            value={input}
-            onChange={(e) => setInput(e.target.value)}
-            placeholder={isStreaming ? "AI is typing..." : "Type your message..."}
-            disabled={isStreaming}
-            className="flex-1 min-h-[44px] max-h-32 py-3"
-            autoComplete="off"
-          />
-          <Button
-            type="submit"
-            size="icon"
-            className="h-11 w-11 shrink-0 rounded-xl"
-            disabled={!input.trim() || isStreaming}
-          >
-            <Send className="h-5 w-5" />
-          </Button>
-        </div>
-        <div className="hidden md:block text-[10px] text-muted-foreground text-center mt-2 opacity-50">
-          AI can make mistakes. Check important info.
-        </div>
-      </form>
+      {/* FIXED Input Area - Fixed at the absolute bottom of the dialog container */}
+      <div className="mt-auto border-t bg-background p-3 md:p-4 z-20">
+        <form onSubmit={handleSubmit} className="relative">
+          <div className="flex gap-2 items-end">
+            <Input
+              ref={inputRef}
+              value={input}
+              onChange={(e) => setInput(e.target.value)}
+              placeholder={isStreaming ? "AI is typing..." : "Type your message..."}
+              disabled={isStreaming}
+              className="flex-1 min-h-[44px] max-h-32 py-3 bg-muted/30 border-none focus-visible:ring-1 focus-visible:ring-primary/30"
+              autoComplete="off"
+            />
+            <Button
+              type="submit"
+              size="icon"
+              className="h-11 w-11 shrink-0 rounded-xl shadow-sm"
+              disabled={!input.trim() || isStreaming}
+            >
+              <Send className="h-5 w-5" />
+            </Button>
+          </div>
+          <div className="hidden md:block text-[10px] text-muted-foreground text-center mt-2 opacity-50">
+            AI can make mistakes. Check important info.
+          </div>
+        </form>
+      </div>
     </div>
   );
 }
