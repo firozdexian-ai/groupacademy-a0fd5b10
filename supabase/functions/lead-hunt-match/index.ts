@@ -13,9 +13,9 @@ serve(async (req) => {
   }
 
   try {
-    // 1. SECURITY: Verify the User
+    // 1. SECURITY: Verify the User via JWT claims (no session needed)
     const authHeader = req.headers.get("Authorization");
-    if (!authHeader) {
+    if (!authHeader?.startsWith("Bearer ")) {
       return new Response(JSON.stringify({ error: "Missing authorization header" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -25,23 +25,22 @@ serve(async (req) => {
     const supabaseUrl = Deno.env.get("SUPABASE_URL")!;
     const supabaseAnonKey = Deno.env.get("SUPABASE_ANON_KEY")!;
 
-    // Client to verify user identity
     const supabaseAuth = createClient(supabaseUrl, supabaseAnonKey, {
       global: { headers: { Authorization: authHeader } },
     });
 
-    const {
-      data: { user },
-      error: authError,
-    } = await supabaseAuth.auth.getUser();
+    const token = authHeader.replace("Bearer ", "");
+    const { data: claimsData, error: claimsError } = await supabaseAuth.auth.getClaims(token);
 
-    if (authError || !user) {
-      console.error("Auth error:", authError);
+    if (claimsError || !claimsData?.claims?.sub) {
+      console.error("Auth error:", claimsError);
       return new Response(JSON.stringify({ error: "Unauthorized" }), {
         status: 401,
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
+
+    const userId = claimsData.claims.sub as string;
 
     const { sessionId, jobTitle, companyName, jobDescription, leadsRequested = 20 } = await req.json();
 
@@ -56,7 +55,7 @@ serve(async (req) => {
     // Admin client for data operations (fetching talents, managing sessions)
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log(`Starting lead hunt matching for user: ${user.id}`);
+    console.log(`Starting lead hunt matching for user: ${userId}`);
 
     // Parse job description to extract requirements
     const requirements = parseJobRequirements(jobDescription);
@@ -79,8 +78,8 @@ serve(async (req) => {
         });
       }
 
-      if (existingSession.created_by !== user.id) {
-        console.error(`Unauthorized access: User ${user.id} tried to access session ${sessionId}`);
+      if (existingSession.created_by !== userId) {
+        console.error(`Unauthorized access: User ${userId} tried to access session ${sessionId}`);
         return new Response(JSON.stringify({ error: "Unauthorized access to this session" }), {
           status: 403,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -91,7 +90,7 @@ serve(async (req) => {
       const { data: newSession, error: sessionError } = await supabaseAdmin
         .from("lead_hunt_sessions")
         .insert({
-          created_by: user.id,
+          created_by: userId,
           job_title: jobTitle || "Untitled Position",
           company_name: companyName,
           job_description: jobDescription,

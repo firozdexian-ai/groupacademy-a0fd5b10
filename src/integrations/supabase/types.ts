@@ -2997,6 +2997,7 @@ export type Database = {
           preferred_skills: Json | null
           profession_category_id: string | null
           requirements: Json | null
+          salary_currency: string | null
           salary_range_max: number | null
           salary_range_min: number | null
           source_image_url: string | null
@@ -3029,6 +3030,7 @@ export type Database = {
           preferred_skills?: Json | null
           profession_category_id?: string | null
           requirements?: Json | null
+          salary_currency?: string | null
           salary_range_max?: number | null
           salary_range_min?: number | null
           source_image_url?: string | null
@@ -3063,6 +3065,7 @@ export type Database = {
           preferred_skills?: Json | null
           profession_category_id?: string | null
           requirements?: Json | null
+          salary_currency?: string | null
           salary_range_max?: number | null
           salary_range_min?: number | null
           source_image_url?: string | null
