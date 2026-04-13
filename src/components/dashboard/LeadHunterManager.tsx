@@ -10,31 +10,73 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { toast } from "sonner";
-import { Search, Target, Loader2, Sparkles, CheckCircle, Zap, Database, Type, AlertCircle, X } from "lucide-react";
+import {
+  Search,
+  Target,
+  Loader2,
+  Star,
+  Sparkles,
+  CheckCircle,
+  ChevronRight,
+  ArrowLeft,
+  ChevronLeft,
+  Zap,
+  Database,
+  Type,
+  MoreHorizontal,
+  MessageSquare,
+  Mail,
+  Linkedin,
+  AlertCircle,
+  X,
+  Eye,
+  Download,
+} from "lucide-react";
 import { Dialog, DialogContent, DialogFooter } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+  DropdownMenuSeparator,
+} from "@/components/ui/dropdown-menu";
+import { getOutreachWhatsAppLink, getOutreachEmailLink, getOutreachLinkedInMessage } from "@/lib/outreachTemplates";
+import { extractFirstName } from "@/lib/utils";
 
 export function LeadHunterManager() {
+  // Data State
   const [sessions, setSessions] = useState<any[]>([]);
   const [activeJobs, setActiveJobs] = useState<any[]>([]);
   const [jobSearch, setJobSearch] = useState("");
   const [huntMode, setHuntMode] = useState<"select" | "paste">("select");
+
+  // Status State
   const [isLoading, setIsLoading] = useState(true);
   const [isSearching, setIsSearching] = useState(false);
   const [showNewHunt, setShowNewHunt] = useState(false);
   const [error, setError] = useState<string | null>(null);
+
+  // Form State
   const [selectedJobId, setSelectedJobId] = useState("");
   const [rawJD, setRawJD] = useState("");
   const [jobTitle, setJobTitle] = useState("");
   const [companyName, setCompanyName] = useState("");
   const [jobDescription, setJobDescription] = useState("");
   const [leadsRequested, setLeadsRequested] = useState(20);
+
+  // Detail View State
   const [selectedSession, setSelectedSession] = useState<any | null>(null);
+  const [matches, setMatches] = useState<any[]>([]);
+  const [loadingMatches, setLoadingMatches] = useState(false);
   const [talentDetailOpen, setTalentDetailOpen] = useState(false);
+  const [selectedTalent, setSelectedTalent] = useState<any>(null); // FIXED: Restored missing state
 
   const loadData = useCallback(async () => {
     setIsLoading(true);
+    setError(null);
     try {
       const [sessionsRes, jobsRes] = await Promise.all([
         supabase.from("lead_hunt_sessions").select("*").order("created_at", { ascending: false }),
@@ -59,6 +101,24 @@ export function LeadHunterManager() {
     loadData();
   }, [loadData]);
 
+  const loadSessionMatches = async (session: any) => {
+    setSelectedSession(session);
+    setLoadingMatches(true);
+    try {
+      const { data, error: matchErr } = await supabase
+        .from("lead_hunt_matches")
+        .select(`id, ai_match_score, shortlisted, talent:talents ( id, full_name, email, phone, country, cv_url )`)
+        .eq("session_id", session.id)
+        .order("ai_match_score", { ascending: false });
+      if (matchErr) throw matchErr;
+      setMatches(data || []);
+    } catch (err) {
+      toast.error("Failed to load match results");
+    } finally {
+      setLoadingMatches(false);
+    }
+  };
+
   const filteredJobs = useMemo(() => {
     if (!jobSearch) return activeJobs;
     const term = jobSearch.toLowerCase();
@@ -72,13 +132,13 @@ export function LeadHunterManager() {
     setJobTitle(job.title);
     setCompanyName(job.company_name);
     setJobDescription(job.description);
-    toast.success("Specs imported");
+    toast.success("Job specs imported");
   };
 
   const startHunt = async () => {
     setIsSearching(true);
     try {
-      const { error: huntError } = await supabase.functions.invoke("lead-hunt-match", {
+      const { data, error: huntError } = await supabase.functions.invoke("lead-hunt-match", {
         body: {
           jobTitle: huntMode === "select" ? jobTitle : "External Hunt",
           companyName: huntMode === "select" ? companyName : "Manual",
@@ -87,29 +147,134 @@ export function LeadHunterManager() {
         },
       });
       if (huntError) throw huntError;
-      toast.success("AI search complete!");
+      toast.success("AI matching complete!");
       loadData();
       setShowNewHunt(false);
     } catch (err) {
-      toast.error("Match engine error.");
+      toast.error("Match engine failed.");
     } finally {
       setIsSearching(false);
     }
   };
 
-  if (isLoading && !selectedSession) return <DashboardTableSkeleton rows={8} columns={4} />;
+  const handleInvite = async (match: any, channel: "whatsapp" | "email" | "linkedin") => {
+    const name = extractFirstName(match.talent.full_name);
+    const title = selectedSession?.job_title || jobTitle;
+    try {
+      if (channel === "whatsapp" && match.talent.phone) {
+        window.open(
+          getOutreachWhatsAppLink(match.talent.phone, "welcome", name, match.talent.country, `Opportunity: ${title}`),
+          "_blank",
+        );
+      } else if (channel === "email" && match.talent.email) {
+        window.open(
+          getOutreachEmailLink(match.talent.email, "welcome", name, match.talent.country, `Opportunity: ${title}`),
+          "_blank",
+        );
+      } else if (channel === "linkedin") {
+        const msg = getOutreachLinkedInMessage("welcome", name, match.talent.country, `Opportunity: ${title}`);
+        await navigator.clipboard.writeText(msg);
+        toast.success("Invite copied!");
+      }
+      await supabase.from("outreach_messages").insert({ talent_id: match.talent.id, product: "welcome", channel });
+    } catch (err) {
+      toast.error("Outreach failed");
+    }
+  };
+
+  if (error) return <DashboardErrorState title="Connection Error" message={error} onRetry={loadData} />;
+
+  if (selectedSession) {
+    return (
+      <div className="space-y-6 animate-in slide-in-from-left-2 duration-300">
+        <div className="flex items-center gap-4 bg-muted/20 p-4 rounded-xl border">
+          <Button variant="ghost" size="sm" onClick={() => setSelectedSession(null)}>
+            <ArrowLeft className="w-4 h-4 mr-2" /> Back
+          </Button>
+          <div className="flex-1">
+            <h2 className="text-xl font-bold">{selectedSession.job_title}</h2>
+            <p className="text-xs font-bold text-muted-foreground uppercase">{selectedSession.company_name}</p>
+          </div>
+        </div>
+
+        <Card>
+          <Table>
+            <TableHeader className="bg-muted/30">
+              <TableRow>
+                <TableHead className="font-bold">Candidate</TableHead>
+                <TableHead className="font-bold">Score</TableHead>
+                <TableHead className="text-right font-bold px-6">Outreach</TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {loadingMatches ? (
+                <TableRow>
+                  <TableCell colSpan={3} className="text-center py-10">
+                    <Loader2 className="animate-spin mx-auto" />
+                  </TableCell>
+                </TableRow>
+              ) : (
+                matches.map((m) => (
+                  <TableRow key={m.id}>
+                    <TableCell>
+                      <div className="font-bold">{m.talent.full_name}</div>
+                      <div className="text-[10px] text-muted-foreground">{m.talent.email}</div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge className={m.ai_match_score >= 80 ? "bg-emerald-500" : "bg-amber-500"}>
+                        {m.ai_match_score}% Match
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right px-6">
+                      <DropdownMenu>
+                        <DropdownMenuTrigger asChild>
+                          <Button variant="ghost" size="icon">
+                            <MoreHorizontal className="h-4 w-4" />
+                          </Button>
+                        </DropdownMenuTrigger>
+                        <DropdownMenuContent align="end" className="w-48">
+                          <DropdownMenuItem
+                            onClick={() => {
+                              setSelectedTalent(m.talent);
+                              setTalentDetailOpen(true);
+                            }}
+                          >
+                            <Eye className="w-4 h-4 mr-2" /> View Profile
+                          </DropdownMenuItem>
+                          <DropdownMenuSeparator />
+                          <DropdownMenuItem onClick={() => handleInvite(m, "whatsapp")}>
+                            <MessageSquare className="w-4 h-4 mr-2 text-emerald-500" /> WhatsApp Invite
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleInvite(m, "email")}>
+                            <Mail className="w-4 h-4 mr-2 text-blue-500" /> Email Invite
+                          </DropdownMenuItem>
+                          <DropdownMenuItem onClick={() => handleInvite(m, "linkedin")}>
+                            <Linkedin className="w-4 h-4 mr-2 text-indigo-500" /> LinkedIn Pitch
+                          </DropdownMenuItem>
+                        </DropdownMenuContent>
+                      </DropdownMenu>
+                    </TableCell>
+                  </TableRow>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </Card>
+
+        <TalentDetailDialog open={talentDetailOpen} onOpenChange={setTalentDetailOpen} talent={selectedTalent} />
+      </div>
+    );
+  }
 
   return (
     <div className="space-y-6">
-      <Card className="border-muted bg-card overflow-hidden shadow-sm">
+      <Card className="border-muted bg-card shadow-sm overflow-hidden">
         <CardHeader className="flex flex-row items-center justify-between border-b bg-muted/20 pb-4">
           <div>
-            <CardTitle className="text-xl font-black uppercase tracking-tighter flex items-center gap-2">
+            <CardTitle className="text-xl font-black uppercase tracking-tight flex items-center gap-2">
               <Target className="w-5 h-5 text-primary" /> Executive Hunter
             </CardTitle>
-            <CardDescription className="font-bold">
-              Match platform jobs against your 2,211 talent profiles.
-            </CardDescription>
+            <CardDescription className="font-bold">Identify matches across our 2,211 talent profiles.</CardDescription>
           </div>
           <Button onClick={() => setShowNewHunt(true)} className="bg-primary font-black shadow-lg shadow-primary/30">
             <Zap className="w-4 h-4 mr-2" /> New Hunt
@@ -120,15 +285,15 @@ export function LeadHunterManager() {
             {sessions.map((s) => (
               <Card
                 key={s.id}
-                className="hover:border-primary/50 cursor-pointer transition-all bg-background border-muted"
-                onClick={() => setSelectedSession(s)}
+                className="hover:border-primary/50 cursor-pointer bg-background border-muted"
+                onClick={() => loadSessionMatches(s)}
               >
                 <div className="p-4 space-y-3">
                   <p className="font-bold text-foreground truncate">{s.job_title}</p>
                   <div className="flex justify-between items-center pt-3 border-t border-muted/50">
                     <p className="text-[10px] font-bold text-muted-foreground uppercase">{s.company_name}</p>
                     <Badge variant="secondary" className="text-[10px] font-mono">
-                      {s.leads_requested} Leads
+                      {s.leads_requested} Target
                     </Badge>
                   </div>
                 </div>
@@ -140,7 +305,6 @@ export function LeadHunterManager() {
 
       <Dialog open={showNewHunt} onOpenChange={setShowNewHunt}>
         <DialogContent className="max-w-2xl h-[85vh] p-0 flex flex-col border-none shadow-2xl overflow-hidden bg-background">
-          {/* FIXED HEADER */}
           <div className="bg-primary p-6 text-white shrink-0 relative">
             <h2 className="text-xl font-black uppercase tracking-widest flex items-center gap-2">
               <Sparkles className="w-5 h-5" /> AI Lead Engine
@@ -156,7 +320,6 @@ export function LeadHunterManager() {
             </Button>
           </div>
 
-          {/* SCROLLABLE CONTENT AREA */}
           <div className="flex-1 overflow-y-auto p-6 space-y-6">
             <div className="grid grid-cols-2 gap-4">
               <Button
@@ -186,7 +349,6 @@ export function LeadHunterManager() {
                     className="pl-9 bg-muted/30 border-muted-foreground/20 h-11"
                   />
                 </div>
-
                 <div className="border border-muted rounded-xl overflow-hidden bg-muted/5">
                   <ScrollArea className="h-[300px]">
                     <div className="p-2 space-y-1">
@@ -219,7 +381,7 @@ export function LeadHunterManager() {
                 </div>
               </div>
             ) : (
-              <div className="space-y-3 animate-in slide-in-from-bottom-2">
+              <div className="space-y-3">
                 <Label className="font-bold text-xs uppercase text-muted-foreground tracking-widest">
                   Requirements Specification
                 </Label>
@@ -231,28 +393,8 @@ export function LeadHunterManager() {
                 />
               </div>
             )}
-
-            <div className="pt-4 border-t border-muted">
-              <Label className="font-bold text-[11px] uppercase text-muted-foreground mb-2 block">
-                Pool Depth (Target Candidates)
-              </Label>
-              <div className="flex items-center gap-4">
-                <Input
-                  type="number"
-                  value={leadsRequested}
-                  onChange={(e) => setLeadsRequested(Number(e.target.value))}
-                  className="w-24 bg-muted/30 font-bold"
-                  min={5}
-                  max={50}
-                />
-                <p className="text-[10px] font-medium text-muted-foreground italic">
-                  AI will prioritize the top 5-50 matching profiles based on your selection.
-                </p>
-              </div>
-            </div>
           </div>
 
-          {/* FIXED FOOTER */}
           <DialogFooter className="p-6 bg-muted/20 border-t shrink-0 flex flex-row items-center justify-end gap-3">
             <Button variant="ghost" className="font-bold text-muted-foreground" onClick={() => setShowNewHunt(false)}>
               Discard
@@ -262,14 +404,12 @@ export function LeadHunterManager() {
               disabled={isSearching || (huntMode === "select" && !selectedJobId) || (huntMode === "paste" && !rawJD)}
               className="bg-primary font-black px-12 h-11 shadow-lg shadow-primary/40"
             >
-              {isSearching ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Target className="w-4 h-4 mr-2" />}
+              {isSearching ? <Loader2 className="w-4 h-4 animate-spin mr-2" /> : <Target className="w-4 h-4 mr-2" />}{" "}
               Launch Hunt
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
-
-      <TalentDetailDialog open={talentDetailOpen} onOpenChange={setTalentDetailOpen} talent={selectedTalent} />
     </div>
   );
 }
