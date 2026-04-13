@@ -19,6 +19,8 @@ import {
   Bell,
   UserCheck,
   PlayCircle,
+  Globe,
+  TrendingUp,
 } from "lucide-react";
 import StatsCard from "@/components/dashboard/StatsCard";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
@@ -26,177 +28,111 @@ import { TIMEOUTS } from "@/lib/timeoutConfig";
 
 interface DashboardStats {
   totalTalents: number;
-  totalLearners: number;
+  registeredRate: number;
   activeEnrollments: number;
-  revenue: number;
-  freeVideoViews: number;
+  totalRevenue: number;
+  commissionPayouts: number; // CTO Addition: Track the 10% kickback
   assessments: { total: number; thisWeek: number };
-  mockInterviews: { total: number; completed: number; avgScore: number };
-  salaryAnalyses: { total: number; completed: number };
-  portfolios: { total: number; pending: number; inProgress: number; completed: number; freeRemaining: number };
-  aiAgents: { totalSessions: number; activeSessions: number };
-  credits: { totalBalance: number; transactionsToday: number };
-  notifications: { sentToday: number; unread: number };
+  mockInterviews: { total: number; completed: number };
+  portfolios: { total: number; pending: number };
+  aiAgents: { totalSessions: number };
+  credits: { totalInCirculation: number; transactionsToday: number };
+  marketShare: { bdPercentage: number }; // CTO Addition: Track market concentration
 }
 
 const initialStats: DashboardStats = {
   totalTalents: 0,
-  totalLearners: 0,
+  registeredRate: 0,
   activeEnrollments: 0,
-  revenue: 0,
-  freeVideoViews: 0,
+  totalRevenue: 0,
+  commissionPayouts: 0,
   assessments: { total: 0, thisWeek: 0 },
-  mockInterviews: { total: 0, completed: 0, avgScore: 0 },
-  salaryAnalyses: { total: 0, completed: 0 },
-  portfolios: { total: 0, pending: 0, inProgress: 0, completed: 0, freeRemaining: 0 },
-  aiAgents: { totalSessions: 0, activeSessions: 0 },
-  credits: { totalBalance: 0, transactionsToday: 0 },
-  notifications: { sentToday: 0, unread: 0 },
+  mockInterviews: { total: 0, completed: 0 },
+  portfolios: { total: 0, pending: 0 },
+  aiAgents: { totalSessions: 0 },
+  credits: { totalInCirculation: 0, transactionsToday: 0 },
+  marketShare: { bdPercentage: 0 },
 };
 
 export function DashboardOverview() {
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>(initialStats);
-  const [statsError, setStatsError] = useState<string | null>(null);
   const [isLoading, setIsLoading] = useState(true);
+  const [error, setError] = useState<string | null>(null);
 
-  // Helper to fetch count safely
   const fetchCount = async (table: string, query?: (q: any) => any) => {
     try {
-      let q = (supabase.from as any)(table).select("*", { count: "exact", head: true });
+      let q = supabase.from(table).select("*", { count: "exact", head: true });
       if (query) q = query(q);
-      const { count, error } = await withTimeout(Promise.resolve(q), TIMEOUTS.DEFAULT, `Count ${table} timed out`);
+      const { count, error } = await withTimeout(q, TIMEOUTS.DEFAULT, `Count ${table} timed out`);
       if (error) throw error;
       return count || 0;
     } catch (e) {
-      console.warn(`Failed to fetch count for ${table}`, e);
+      console.warn(`Stat error [${table}]:`, e);
       return 0;
     }
   };
 
   const loadStats = useCallback(async () => {
-    setStatsError(null);
     setIsLoading(true);
-
+    setError(null);
     try {
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      const oneWeekAgo = new Date();
-      oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
+      const today = new Date();
+      today.setHours(0, 0, 0, 0);
 
-      // PARALLEL EXECUTION: Run all independent queries at once
       const [
-        talentsCount,
-        learnersCount,
-        activeEnrollmentsCount,
-        revenueResult,
-        videoCount,
-        assessmentsData,
-        interviewsData,
-        salaryData,
-        portfolioData,
-        agentSessionsCount,
-        activeAgentSessionsCount,
-        creditsData,
-        transactionsTodayCount,
-        notificationsTodayCount,
-        unreadNotificationsCount,
+        talents,
+        registered,
+        enrollments,
+        revenueData,
+        commissions,
+        assessments,
+        interviews,
+        portfolios,
+        sessions,
+        credits,
+        txToday,
+        bdTalents,
       ] = await Promise.all([
-        // 1. Talents
         fetchCount("talents"),
-        // 2. Learners (Unique students in enrollments - approx via enrollments for now or distinct RPC)
-        fetchCount("enrollments"),
-        // 3. Active Enrollments
-        fetchCount("enrollments", (q: any) => q.eq("status", "active")),
-        // 4. Revenue (Sum)
-        supabase.from("enrollments").select("payment_amount").not("payment_amount", "is", null),
-        // 5. Free Videos
-        fetchCount("content", (q: any) => q.eq("content_type", "free_video")),
-        // 6. Assessments
-        supabase.from("career_assessments").select("created_at"),
-        // 7. Mock Interviews
-        supabase.from("mock_interviews").select("status, selection_percentage"),
-        // 8. Salary Analyses
-        supabase.from("salary_analyses").select("status"),
-        // 9. Portfolios
+        fetchCount("talents", (q) => q.not("user_id", "is", null)), // Actual registered users
+        fetchCount("enrollments", (q) => q.eq("status", "active")),
+        supabase.from("enrollments").select("payment_amount"),
+        supabase.from("credit_transactions").select("amount").eq("type", "commission"), // Track executive earnings [cite: 374]
+        fetchCount("career_assessments"),
+        supabase.from("mock_interviews").select("status"),
         supabase.from("portfolio_requests").select("status"),
-        // 10. AI Agent Sessions
         fetchCount("agent_chat_sessions"),
-        // 11. Active AI Sessions
-        fetchCount("agent_chat_sessions", (q: any) => q.eq("is_active", true)),
-        // 12. Credits
         supabase.from("talent_credits").select("balance"),
-        // 13. Credit Tx Today
-        fetchCount("credit_transactions", (q: any) => q.gte("created_at", todayStart.toISOString())),
-        // 14. Notifications Today
-        fetchCount("notifications", (q: any) => q.gte("created_at", todayStart.toISOString())),
-        // 15. Unread Notifications
-        fetchCount("notifications", (q: any) => q.eq("is_read", false)),
+        fetchCount("credit_transactions", (q) => q.gte("created_at", today.toISOString())),
+        fetchCount("talents", (q) => q.ilike("country", "Bangladesh")), // Market health tracking
       ]);
 
-      // --- Process Results ---
-
-      // Revenue
-      const totalRevenue = revenueResult.data?.reduce((sum, e) => sum + (Number(e.payment_amount) || 0), 0) || 0;
-
-      // Assessments
-      const totalAssessments = assessmentsData.data?.length || 0;
-      const thisWeekAssessments =
-        assessmentsData.data?.filter((a: any) => new Date(a.created_at) >= oneWeekAgo).length || 0;
-
-      // Interviews
-      const interviews = interviewsData.data || [];
-      const completedInterviews = interviews.filter((i: any) => i.status === "completed").length;
-      const completedWithScores = interviews.filter(
-        (i: any) => i.status === "completed" && i.selection_percentage != null,
-      );
-      const avgScore =
-        completedWithScores.length > 0
-          ? Math.round(
-              completedWithScores.reduce((sum: number, i: any) => sum + (i.selection_percentage || 0), 0) /
-                completedWithScores.length,
-            )
-          : 0;
-
-      // Salary
-      const salaryAnalyses = salaryData.data || [];
-      const completedSalary = salaryAnalyses.filter((s: any) => s.status === "completed").length;
-
-      // Portfolios
-      const portfolios = portfolioData.data || [];
-      const pendingPortfolios = portfolios.filter((p: any) => p.status === "pending").length;
-      const inProgressPortfolios = portfolios.filter((p: any) =>
-        ["in_progress", "contacted"].includes(p.status),
-      ).length;
-      const completedPortfolios = portfolios.filter((p: any) => p.status === "completed").length;
-      const FREE_LIMIT = 1000;
-
-      // Credits
-      const totalCreditsBalance = creditsData.data?.reduce((sum, c) => sum + (c.balance || 0), 0) || 0;
+      const rev = (revenueData.data || []).reduce((sum, item) => sum + (Number(item.payment_amount) || 0), 0);
+      const comms = (commissions.data || []).reduce((sum, item) => sum + Math.abs(Number(item.amount) || 0), 0);
+      const totalCreds = (credits.data || []).reduce((sum, item) => sum + (Number(item.balance) || 0), 0);
 
       setStats({
-        totalTalents: talentsCount,
-        totalLearners: learnersCount, // Approximation based on total enrollments for now
-        activeEnrollments: activeEnrollmentsCount,
-        revenue: totalRevenue,
-        freeVideoViews: videoCount,
-        assessments: { total: totalAssessments, thisWeek: thisWeekAssessments },
-        mockInterviews: { total: interviews.length, completed: completedInterviews, avgScore },
-        salaryAnalyses: { total: salaryAnalyses.length, completed: completedSalary },
-        portfolios: {
-          total: portfolios.length,
-          pending: pendingPortfolios,
-          inProgress: inProgressPortfolios,
-          completed: completedPortfolios,
-          freeRemaining: Math.max(0, FREE_LIMIT - portfolios.length),
+        totalTalents: talents,
+        registeredRate: talents > 0 ? Math.round((registered / talents) * 100) : 0,
+        activeEnrollments: enrollments,
+        totalRevenue: rev,
+        commissionPayouts: comms,
+        assessments: { total: assessments, thisWeek: 0 }, // Simplified for this view
+        mockInterviews: {
+          total: interviews.data?.length || 0,
+          completed: interviews.data?.filter((i) => i.status === "completed").length || 0,
         },
-        aiAgents: { totalSessions: agentSessionsCount, activeSessions: activeAgentSessionsCount },
-        credits: { totalBalance: totalCreditsBalance, transactionsToday: transactionsTodayCount },
-        notifications: { sentToday: notificationsTodayCount, unread: unreadNotificationsCount },
+        portfolios: {
+          total: portfolios.data?.length || 0,
+          pending: portfolios.data?.filter((p) => p.status === "pending").length || 0,
+        },
+        aiAgents: { totalSessions: sessions },
+        credits: { totalInCirculation: totalCreds, transactionsToday: txToday },
+        marketShare: { bdPercentage: talents > 0 ? Math.round((bdTalents / talents) * 100) : 0 },
       });
-    } catch (error: any) {
-      console.error("Error loading stats:", error);
-      setStatsError("Failed to load some dashboard statistics. Retrying might help.");
+    } catch (err) {
+      setError("Strategic data fetch failed. Some metrics may be stale.");
     } finally {
       setIsLoading(false);
     }
@@ -206,179 +142,155 @@ export function DashboardOverview() {
     loadStats();
   }, [loadStats]);
 
-  if (isLoading) {
-    return (
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <Skeleton className="h-8 w-48" />
-          <Skeleton className="h-10 w-32" />
-        </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {[...Array(8)].map((_, i) => (
-            <Card key={i}>
-              <CardContent className="p-6">
-                <div className="flex justify-between mb-4">
-                  <Skeleton className="h-4 w-24" />
-                  <Skeleton className="h-8 w-8 rounded" />
-                </div>
-                <Skeleton className="h-8 w-16" />
-                <Skeleton className="h-3 w-32 mt-2" />
-              </CardContent>
-            </Card>
-          ))}
-        </div>
-      </div>
-    );
-  }
+  if (isLoading) return <DashboardLoadingSkeleton />;
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-4">
+    <div className="space-y-6 p-1 animate-in fade-in duration-700">
+      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
         <div>
-          <h2 className="text-3xl font-bold tracking-tight">Dashboard Overview</h2>
-          <p className="text-muted-foreground mt-1">Operational metrics and key performance indicators.</p>
+          <h2 className="text-3xl font-bold tracking-tight text-primary">Executive Overview</h2>
+          <p className="text-muted-foreground">Real-time platform health and monetization metrics.</p>
         </div>
         <div className="flex gap-2">
-          <Button onClick={loadStats} variant="outline" size="sm">
-            <RefreshCw className="mr-2 h-4 w-4" /> Refresh
+          <Button variant="outline" size="icon" onClick={loadStats} className="rounded-full">
+            <RefreshCw className="h-4 w-4" />
           </Button>
-          <Button onClick={() => navigate("/content/new")}>
-            <Plus className="mr-2 h-4 w-4" /> Add Content
+          <Button onClick={() => navigate("/dashboard?tab=ai-content-tools")} className="shadow-md">
+            <Bot className="mr-2 h-4 w-4" /> AI Content Tools
           </Button>
         </div>
-      </div>
+      </header>
 
-      {statsError && (
-        <Card className="border-destructive/50 bg-destructive/10">
-          <CardContent className="py-4 flex items-center gap-3 text-destructive">
-            <AlertCircle className="h-5 w-5" />
-            <p className="text-sm font-medium">{statsError}</p>
-          </CardContent>
-        </Card>
+      {error && (
+        <div className="bg-destructive/15 border border-destructive/30 p-3 rounded-lg flex items-center gap-2 text-destructive text-sm">
+          <AlertCircle className="h-4 w-4" /> {error}
+        </div>
       )}
 
-      {/* Primary Stats Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <StatsCard title="Total Talents" value={stats.totalTalents} icon={Users} trendLabel="Registered users" />
+      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-4">
         <StatsCard
-          title="Total Revenue"
-          value={`$${stats.revenue.toLocaleString()}`}
+          title="Talent Pool"
+          value={stats.totalTalents.toLocaleString()}
+          icon={Users}
+          trend={`${stats.registeredRate}% Activation`}
+          trendLabel="Registered vs Uploaded" // Vital gap [cite: 171]
+        />
+        <StatsCard
+          title="Revenue"
+          value={`$${stats.totalRevenue.toLocaleString()}`}
           icon={DollarSign}
           variant="success"
-          trendLabel="Lifetime revenue"
+          trend={`$${stats.commissionPayouts.toLocaleString()} Payouts`}
+          trendLabel="Commission kickbacks" // CTO Metric [cite: 375]
         />
         <StatsCard
-          title="Active Enrollments"
-          value={stats.activeEnrollments}
-          icon={BookOpen}
+          title="Market Focus"
+          value={`${stats.marketShare.bdPercentage}%`}
+          icon={Globe}
           variant="secondary"
-          trendLabel="Current learners"
+          trend="Primary: BD"
+          trendLabel="Regional concentration"
         />
         <StatsCard
-          title="Credits Balance"
-          value={stats.credits.totalBalance.toLocaleString()}
+          title="Credit Economy"
+          value={stats.credits.totalInCirculation.toLocaleString()}
           icon={Coins}
           variant="accent"
-          trend={`${stats.credits.transactionsToday} tx today`}
+          trend={`${stats.credits.transactionsToday} daily tx`}
+          trendLabel="Total in circulation" // [cite: 139]
         />
       </div>
 
-      {/* Detailed Metrics Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 xl:grid-cols-4 gap-6">
-        <StatsCard
-          title="Career Assessments"
-          value={stats.assessments.total}
-          icon={Target}
-          trend={`${stats.assessments.thisWeek} this week`}
-        />
-        <StatsCard
-          title="Mock Interviews"
-          value={stats.mockInterviews.total}
-          icon={Bot}
-          trend={`${stats.mockInterviews.completed} completed`}
-          trendLabel={`Avg Score: ${stats.mockInterviews.avgScore}%`}
-        />
-        <StatsCard
-          title="Portfolio Requests"
-          value={stats.portfolios.total}
-          icon={Briefcase}
-          variant="secondary"
-          trend={`${stats.portfolios.pending} pending`}
-          trendLabel={`${stats.portfolios.freeRemaining} free slots`}
-        />
-        <StatsCard
-          title="Salary Analyses"
-          value={stats.salaryAnalyses.total}
-          icon={DollarSign}
-          trend={`${stats.salaryAnalyses.completed} completed`}
-        />
-        <StatsCard
-          title="AI Agent Sessions"
-          value={stats.aiAgents.totalSessions}
-          icon={Bot}
-          trend={`${stats.aiAgents.activeSessions} active now`}
-        />
-        <StatsCard
-          title="Notifications"
-          value={stats.notifications.sentToday}
-          icon={Bell}
-          trend={`${stats.notifications.unread} unread`}
-          trendLabel="Sent today"
-        />
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6">
+        <Card className="lg:col-span-2 shadow-sm">
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-md font-semibold flex items-center gap-2">
+              <TrendingUp className="h-4 w-4 text-primary" /> Service Performance
+            </CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-4">
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Assessments</p>
+              <p className="text-2xl font-bold">{stats.assessments.total}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Interviews</p>
+              <p className="text-2xl font-bold">{stats.mockInterviews.completed}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">Portfolios</p>
+              <p className="text-2xl font-bold">{stats.portfolios.pending}</p>
+            </div>
+            <div className="space-y-1">
+              <p className="text-xs text-muted-foreground uppercase font-bold tracking-wider">AI Chats</p>
+              <p className="text-2xl font-bold">{stats.aiAgents.totalSessions}</p>
+            </div>
+          </CardContent>
+        </Card>
+
+        <Card className="shadow-sm border-primary/20">
+          <CardHeader>
+            <CardTitle className="text-md">LMS Pulse</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="flex justify-between items-center">
+              <span className="text-sm text-muted-foreground">Active Learners</span>
+              <span className="font-mono font-bold text-primary">{stats.activeEnrollments}</span>
+            </div>
+            <Button
+              variant="outline"
+              className="w-full justify-between"
+              onClick={() => navigate("/dashboard?tab=learner-progress")}
+            >
+              View Progress <BookOpen className="h-4 w-4 ml-2" />
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Quick Actions Panel */}
-      <Card>
+      <Card className="bg-muted/30 border-none">
         <CardHeader>
-          <CardTitle className="text-lg">Quick Actions</CardTitle>
+          <CardTitle className="text-lg">Operational Shortcuts</CardTitle>
         </CardHeader>
-        <CardContent className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-4">
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col gap-2"
-            onClick={() => navigate("/dashboard?tab=talent")}
-          >
-            <Users className="h-5 w-5" />
-            <span>Manage Talent</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col gap-2"
-            onClick={() => navigate("/dashboard?tab=enrollments")}
-          >
-            <BookOpen className="h-5 w-5" />
-            <span>Enrollments</span>
-          </Button>
-          <Button variant="outline" className="h-auto py-4 flex flex-col gap-2" onClick={() => navigate("/dashboard?tab=jobs")}>
-            <Briefcase className="h-5 w-5" />
-            <span>Post Job</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col gap-2"
-            onClick={() => navigate("/dashboard?tab=companies")}
-          >
-            <UserCheck className="h-5 w-5" />
-            <span>Verify Company</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col gap-2"
-            onClick={() => navigate("/content/new")}
-          >
-            <Video className="h-5 w-5" />
-            <span>Upload Video</span>
-          </Button>
-          <Button
-            variant="outline"
-            className="h-auto py-4 flex flex-col gap-2"
-            onClick={() => navigate("/sessions")}
-          >
-            <PlayCircle className="h-5 w-5" />
-            <span>Live Sessions</span>
-          </Button>
+        <CardContent className="grid grid-cols-2 md:grid-cols-4 lg:grid-cols-6 gap-3">
+          <ShortcutButton icon={Users} label="Talent Pool" onClick={() => navigate("/dashboard?tab=talent")} />
+          <ShortcutButton icon={Briefcase} label="Jobs" onClick={() => navigate("/dashboard?tab=jobs")} />
+          <ShortcutButton icon={Bot} label="AI Agents" onClick={() => navigate("/dashboard?tab=ai-agents")} />
+          <ShortcutButton icon={DollarSign} label="Credits" onClick={() => navigate("/dashboard?tab=credits")} />
+          <ShortcutButton icon={Globe} label="Abroad" onClick={() => navigate("/dashboard?tab=study-abroad")} />
+          <ShortcutButton icon={TrendingUp} label="IR CRM" onClick={() => navigate("/dashboard?tab=irdashboard")} />
         </CardContent>
       </Card>
+    </div>
+  );
+}
+
+function ShortcutButton({ icon: Icon, label, onClick }: { icon: any; label: string; onClick: () => void }) {
+  return (
+    <Button
+      variant="secondary"
+      className="h-auto py-4 flex flex-col gap-2 bg-background hover:bg-primary hover:text-primary-foreground transition-all duration-300 shadow-sm"
+      onClick={onClick}
+    >
+      <Icon className="h-5 w-5" />
+      <span className="text-xs font-medium">{label}</span>
+    </Button>
+  );
+}
+
+function DashboardLoadingSkeleton() {
+  return (
+    <div className="space-y-6">
+      <div className="flex justify-between">
+        <Skeleton className="h-10 w-64" />
+        <Skeleton className="h-10 w-32" />
+      </div>
+      <div className="grid grid-cols-1 md:grid-cols-4 gap-4">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-32 w-full rounded-xl" />
+        ))}
+      </div>
+      <Skeleton className="h-64 w-full rounded-xl" />
     </div>
   );
 }
