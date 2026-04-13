@@ -1,4 +1,4 @@
-import { useState, useEffect, useCallback } from "react";
+import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -28,7 +28,6 @@ import {
   Users,
   Zap,
   ShieldCheck,
-  SendHorizontal,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
@@ -117,6 +116,10 @@ export function LeadHunterManager() {
   const [talentDetailEmail, setTalentDetailEmail] = useState("");
   const [talentDetailName, setTalentDetailName] = useState("");
   const [deletingSession, setDeletingSession] = useState<string | null>(null);
+
+  // Computed Variables
+  const unscoredCount = useMemo(() => matches.filter((m) => !m.ai_match_score).length, [matches]);
+  const totalPages = useMemo(() => Math.ceil(totalCount / ITEMS_PER_PAGE), [totalCount]);
 
   const loadKPIs = useCallback(async () => {
     try {
@@ -208,7 +211,7 @@ export function LeadHunterManager() {
       setCompanyName(data.company_name || "");
       setJobDescription(data.description || rawJD);
       setJdParsed(true);
-      toast.success("AI parsed extraction complete");
+      toast.success("AI specifications extracted");
     } catch (err) {
       setJobDescription(rawJD);
       setJdParsed(true);
@@ -222,10 +225,10 @@ export function LeadHunterManager() {
     setIsSearching(true);
     try {
       const { data, error } = await supabase.functions.invoke("lead-hunt-match", {
-        body: { jobTitle: jobTitle || "Proactive Lead Hunt", companyName, jobDescription, leadsRequested },
+        body: { jobTitle: jobTitle || "Executive Search", companyName, jobDescription, leadsRequested },
       });
       if (error) throw error;
-      toast.success(`Pipeline populated with ${data.matchCount} candidates`);
+      toast.success(`Search complete. Pipeline ready.`);
       await loadSessions();
       loadKPIs();
       const { data: newSession } = await supabase
@@ -235,13 +238,8 @@ export function LeadHunterManager() {
         .single();
       if (newSession) loadSessionMatches(newSession);
       setShowNewHunt(false);
-      setRawJD("");
-      setJobTitle("");
-      setCompanyName("");
-      setJobDescription("");
-      setJdParsed(false);
     } catch (err: any) {
-      toast.error("Match engine failed to start");
+      toast.error("Lead hunter engine timed out");
     } finally {
       setIsSearching(false);
     }
@@ -255,9 +253,8 @@ export function LeadHunterManager() {
       setMatches((prev) =>
         prev.map((m) => (m.id === match.id ? { ...m, ai_match_score: data.score, ai_analysis: data.analysis } : m)),
       );
-      toast.success(`${match.talent.full_name}: AI Score ${data.score}%`);
     } catch (err) {
-      toast.error("AI Scoring busy");
+      toast.error("Analysis service unavailable");
     } finally {
       setScoringMatch(null);
     }
@@ -271,6 +268,29 @@ export function LeadHunterManager() {
       await scoreCandidate(match);
     }
     setScoringAll(false);
+    toast.success("Pipeline scoring complete");
+  };
+
+  const exportMatches = (onlyShortlisted: boolean = false) => {
+    const listToExport = onlyShortlisted ? matches.filter((m) => m.shortlisted) : matches;
+    if (listToExport.length === 0) return toast.warning("No matches found to export");
+    const headers = ["Name", "Email", "Phone", "Initial Score", "AI Score", "Shortlisted"];
+    const rows = listToExport.map((m) => [
+      m.talent.full_name,
+      m.talent.email,
+      m.talent.phone || "",
+      m.initial_score?.toString() || "",
+      m.ai_match_score?.toString() || "",
+      m.shortlisted ? "Yes" : "No",
+    ]);
+    const csvContent = [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
+    const blob = new Blob([csvContent], { type: "text/csv" });
+    const url = URL.createObjectURL(blob);
+    const a = document.createElement("a");
+    a.href = url;
+    a.download = `lead-hunt-export.csv`;
+    a.click();
+    toast.success("CSV Downloaded");
   };
 
   const toggleShortlist = async (match: LeadMatch) => {
@@ -293,12 +313,21 @@ export function LeadHunterManager() {
       const { error } = await supabase.from("lead_hunt_sessions").delete().eq("id", sessionId);
       if (error) throw error;
       setSessions((prev) => prev.filter((s) => s.id !== sessionId));
-      setTotalCount((c) => c - 1);
       loadKPIs();
-      toast.success("Hunt session archived");
     } finally {
       setDeletingSession(null);
     }
+  };
+
+  const openTalentDetail = (match: LeadMatch) => {
+    setTalentDetailEmail(match.talent.email);
+    setTalentDetailName(match.talent.full_name);
+    setTalentDetailOpen(true);
+  };
+
+  const viewAnalysis = (match: LeadMatch) => {
+    setSelectedMatch(match);
+    setShowAnalysis(true);
   };
 
   if (isLoading && !selectedSession) return <DashboardTableSkeleton rows={8} columns={4} />;
@@ -313,7 +342,7 @@ export function LeadHunterManager() {
           <div className="flex-1 min-w-0">
             <h2 className="text-xl font-bold truncate text-foreground">{selectedSession.job_title}</h2>
             <p className="text-sm font-medium text-muted-foreground">
-              {selectedSession.company_name || "Internal Hunt"}
+              {selectedSession.company_name || "Internal Role"}
             </p>
           </div>
           <div className="flex flex-wrap gap-2">
@@ -354,7 +383,7 @@ export function LeadHunterManager() {
             </TableHeader>
             <TableBody>
               {matches.map((match) => (
-                <TableRow key={match.id} className={match.shortlisted ? "bg-primary/5 transition-colors" : ""}>
+                <TableRow key={match.id} className={match.shortlisted ? "bg-primary/5" : ""}>
                   <TableCell>
                     <Checkbox checked={match.shortlisted} onCheckedChange={() => toggleShortlist(match)} />
                   </TableCell>
@@ -432,48 +461,31 @@ export function LeadHunterManager() {
           </Table>
         </Card>
 
+        {/* Restore Analysis Dialog */}
         <Dialog open={showAnalysis} onOpenChange={setShowAnalysis}>
           <DialogContent className="max-w-2xl border-none shadow-2xl">
             <DialogHeader className="border-b pb-4">
               <DialogTitle className="flex items-center gap-2">
-                <ShieldCheck className="text-primary" /> AI Candidate Evaluation
+                <ShieldCheck className="text-primary" /> AI Evaluation Report
               </DialogTitle>
             </DialogHeader>
             <ScrollArea className="max-h-[50vh] p-4">
               {selectedMatch?.ai_analysis && (
                 <div className="space-y-6">
-                  <div className="grid grid-cols-2 gap-4">
-                    <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 text-center">
-                      <p className="text-[10px] font-bold uppercase text-primary">Skills Alignment</p>
-                      <p className="text-3xl font-black text-primary">
-                        {selectedMatch.ai_analysis.breakdown?.skills_match || 0}%
-                      </p>
-                    </div>
-                    <div className="bg-muted p-4 rounded-xl border text-center">
-                      <p className="text-[10px] font-bold uppercase text-muted-foreground">Experience Fit</p>
-                      <p className="text-3xl font-black text-foreground">
-                        {selectedMatch.ai_analysis.breakdown?.experience_fit || 0}%
-                      </p>
-                    </div>
+                  <div className="bg-primary/5 p-4 rounded-xl border border-primary/10 text-center">
+                    <p className="text-3xl font-black text-primary">{selectedMatch.ai_match_score}% Precision Score</p>
                   </div>
-                  <div className="space-y-3">
-                    <h4 className="text-sm font-bold flex items-center gap-2">
-                      <CheckCircle className="w-4 h-4 text-emerald-500" /> Executive Highlights
-                    </h4>
-                    <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4 text-sm leading-relaxed">
-                      <ul className="space-y-2">
-                        {selectedMatch.ai_analysis.strengths?.map((s: string, i: number) => (
-                          <li key={i} className="flex gap-2 font-medium">
-                            • {s}
-                          </li>
-                        ))}
-                      </ul>
-                    </div>
+                  <div className="bg-emerald-500/5 border border-emerald-500/20 rounded-xl p-4">
+                    <h4 className="text-sm font-bold mb-2">Strengths Alignment</h4>
+                    <ul className="space-y-2">
+                      {selectedMatch.ai_analysis.strengths?.map((s: string, i: number) => (
+                        <li key={i} className="text-sm font-medium">
+                          • {s}
+                        </li>
+                      ))}
+                    </ul>
                   </div>
                   <div className="bg-primary p-4 rounded-xl text-white">
-                    <h4 className="text-xs font-black uppercase tracking-widest mb-1 opacity-80">
-                      Final Recommendation
-                    </h4>
                     <p className="text-sm font-bold">{selectedMatch.ai_analysis.recommendation}</p>
                   </div>
                 </div>
@@ -504,11 +516,9 @@ export function LeadHunterManager() {
         <CardHeader className="flex flex-row items-center justify-between border-b pb-4 bg-muted/20">
           <div>
             <CardTitle className="flex items-center gap-2 font-bold text-foreground">
-              <Target className="w-5 h-5 text-primary" /> Executive Lead Hunter
+              <Target className="w-5 h-5 text-primary" /> Proactive Lead Hunter
             </CardTitle>
-            <CardDescription className="font-medium">
-              AI-powered talent extraction from internal database.
-            </CardDescription>
+            <CardDescription className="font-medium">Managing talent pipelines via AI-matching.</CardDescription>
           </div>
           <Button
             onClick={() => setShowNewHunt(true)}
@@ -530,54 +540,18 @@ export function LeadHunterManager() {
             {sessions.map((session) => (
               <Card
                 key={session.id}
-                className="group hover:border-primary/50 transition-all cursor-pointer bg-card overflow-hidden"
+                className="group hover:border-primary/50 transition-all cursor-pointer bg-card"
                 onClick={() => loadSessionMatches(session)}
               >
                 <div className="p-4 space-y-4">
-                  <div className="flex justify-between items-start">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-bold text-foreground truncate">{session.job_title}</p>
-                      <p className="text-[11px] font-bold text-muted-foreground uppercase">
-                        {session.company_name || "Internal Role"}
-                      </p>
-                    </div>
-                    <Badge variant="secondary" className="font-mono text-[10px]">
-                      {session.match_count || 0} Leads
-                    </Badge>
-                  </div>
+                  <p className="font-bold text-foreground truncate">{session.job_title}</p>
                   <div className="flex items-center justify-between pt-4 border-t border-muted">
-                    <p className="text-[10px] font-bold text-muted-foreground">
-                      {new Date(session.created_at).toLocaleDateString()}
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase">
+                      {session.company_name || "Internal Role"}
                     </p>
-                    <AlertDialog>
-                      <AlertDialogTrigger asChild>
-                        <Button
-                          variant="ghost"
-                          size="icon"
-                          className="h-7 w-7 text-muted-foreground hover:text-destructive"
-                          onClick={(e) => e.stopPropagation()}
-                        >
-                          <Trash2 className="w-4 h-4" />
-                        </Button>
-                      </AlertDialogTrigger>
-                      <AlertDialogContent onClick={(e) => e.stopPropagation()} className="border-none shadow-2xl">
-                        <AlertDialogHeader>
-                          <AlertDialogTitle className="font-bold">Archive Hunt Session?</AlertDialogTitle>
-                          <AlertDialogDescription>
-                            This will permanently remove "{session.job_title}" and its AI candidate analysis.
-                          </AlertDialogDescription>
-                        </AlertDialogHeader>
-                        <AlertDialogFooter>
-                          <AlertDialogCancel className="font-bold">Cancel</AlertDialogCancel>
-                          <AlertDialogAction
-                            onClick={() => deleteSession(session.id)}
-                            className="bg-destructive font-bold"
-                          >
-                            Archives Hunt
-                          </AlertDialogAction>
-                        </AlertDialogFooter>
-                      </AlertDialogContent>
-                    </AlertDialog>
+                    <Badge variant="secondary" className="font-mono text-[10px]">
+                      {session.match_count || 0} Matches
+                    </Badge>
                   </div>
                 </div>
               </Card>
@@ -595,7 +569,7 @@ export function LeadHunterManager() {
                 <ChevronLeft className="h-4 w-4 mr-1" /> Previous
               </Button>
               <span className="text-xs font-bold">
-                Page {page} / {totalPages}
+                Page {page} of {totalPages}
               </span>
               <Button
                 variant="outline"
@@ -611,103 +585,48 @@ export function LeadHunterManager() {
         </CardContent>
       </Card>
 
-      <Dialog
-        open={showNewHunt}
-        onOpenChange={(open) => {
-          setShowNewHunt(open);
-          if (!open) {
-            setRawJD("");
-            setJdParsed(false);
-          }
-        }}
-      >
+      <Dialog open={showNewHunt} onOpenChange={setShowNewHunt}>
         <DialogContent className="max-w-2xl border-none shadow-2xl">
           <DialogHeader className="border-b pb-4">
             <DialogTitle className="flex items-center gap-2 text-xl font-black uppercase tracking-tight">
-              <Sparkles className="text-primary h-5 w-5" /> AI Pipeline Generator
+              <Sparkles className="text-primary h-5 w-5" /> AI Specs Generator
             </DialogTitle>
           </DialogHeader>
           {!jdParsed ? (
             <div className="space-y-6 pt-4">
-              <div className="space-y-2">
-                <Label className="font-bold text-xs uppercase tracking-widest text-muted-foreground">
-                  Internal or Client Job Description
-                </Label>
-                <Textarea
-                  value={rawJD}
-                  onChange={(e) => setRawJD(e.target.value)}
-                  placeholder="Paste the full job posting to let AI extract matching requirements..."
-                  rows={10}
-                  className="bg-muted/30 focus:bg-background transition-colors"
-                />
-              </div>
+              <Textarea
+                value={rawJD}
+                onChange={(e) => setRawJD(e.target.value)}
+                placeholder="Paste JD text here..."
+                rows={10}
+                className="bg-muted/30"
+              />
               <DialogFooter>
-                <Button variant="ghost" onClick={() => setShowNewHunt(false)} className="font-bold">
-                  Discard
-                </Button>
-                <Button
-                  onClick={parseJD}
-                  disabled={isParsing || !rawJD.trim()}
-                  className="bg-primary font-bold shadow-lg shadow-primary/20"
-                >
-                  {isParsing ? (
-                    <Loader2 className="w-4 h-4 mr-2 animate-spin" />
-                  ) : (
-                    <>
-                      <Sparkles className="w-4 h-4 mr-2" />
-                      Extract Job Specs
-                    </>
-                  )}
+                <Button onClick={parseJD} disabled={isParsing || !rawJD.trim()} className="bg-primary font-bold w-full">
+                  {isParsing ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : "Extract Specifications"}
                 </Button>
               </DialogFooter>
             </div>
           ) : (
             <div className="space-y-6 pt-4">
               <div className="grid grid-cols-2 gap-4">
-                <div className="space-y-2">
-                  <Label className="font-bold text-[10px] uppercase">Position Title</Label>
-                  <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} className="bg-muted/30" />
-                </div>
-                <div className="space-y-2">
-                  <Label className="font-bold text-[10px] uppercase">Employer</Label>
-                  <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} className="bg-muted/30" />
-                </div>
+                <Input value={jobTitle} onChange={(e) => setJobTitle(e.target.value)} placeholder="Title" />
+                <Input value={companyName} onChange={(e) => setCompanyName(e.target.value)} placeholder="Company" />
               </div>
-              <div className="space-y-2">
-                <Label className="font-bold text-[10px] uppercase">Candidate Scarcity Threshold</Label>
-                <Input
-                  type="number"
-                  min={5}
-                  max={50}
-                  value={leadsRequested}
-                  onChange={(e) => setLeadsRequested(parseInt(e.target.value) || 20)}
-                  className="bg-muted/30"
-                />
-                <p className="text-[10px] text-muted-foreground">
-                  Select how many candidates the AI should hunt for (Max 50).
-                </p>
-              </div>
-              <DialogFooter className="flex-col sm:flex-row gap-2 border-t pt-4">
+              <DialogFooter className="flex-col sm:flex-row gap-2 pt-4 border-t">
                 <Button
                   variant="ghost"
                   onClick={() => setJdParsed(false)}
-                  className="sm:mr-auto font-bold text-primary"
+                  className="font-bold text-primary sm:mr-auto"
                 >
-                  <ArrowLeft className="w-4 h-4 mr-2" /> Refine JD
+                  <ArrowLeft className="w-4 h-4 mr-2" /> Refine
                 </Button>
                 <Button
                   onClick={startNewHunt}
                   disabled={isSearching}
                   className="bg-primary font-black shadow-lg shadow-primary/20 px-8"
                 >
-                  {isSearching ? (
-                    <Loader2 className="w-4 h-4 animate-spin" />
-                  ) : (
-                    <>
-                      <Target className="w-4 h-4 mr-2" />
-                      Finalize Hunt
-                    </>
-                  )}
+                  {isSearching ? <Loader2 className="w-4 h-4 mr-2 animate-spin" /> : "Finalize Hunt"}
                 </Button>
               </DialogFooter>
             </div>
