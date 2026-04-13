@@ -6,10 +6,27 @@ import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { 
-  Briefcase, Target, Users, FileCheck, TrendingUp, Calendar, 
-  Building2, Edit, Save, X, ChevronRight, Loader2, Signal, MousePointerClick,
-  RefreshCw, Share2, Percent, Globe, Database
+import {
+  Briefcase,
+  Target,
+  Users,
+  FileCheck,
+  TrendingUp,
+  Calendar,
+  Building2,
+  Edit,
+  Save,
+  X,
+  ChevronRight,
+  Loader2,
+  Signal,
+  MousePointerClick,
+  RefreshCw,
+  Share2,
+  Percent,
+  Globe,
+  Database,
+  ArrowUpRight,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format, startOfMonth, endOfMonth, differenceInDays, eachDayOfInterval, subMonths } from "date-fns";
@@ -27,18 +44,9 @@ interface KPIData {
   totalApplications: number;
   applicationsLastMonth: number;
   uniqueApplicants: number;
-  uniqueApplicantsLastMonth: number;
   avgApplicationsPerJob: number;
   jobsBySource: { name: string; value: number }[];
   dailyJobsData: { date: string; jobs: number }[];
-  recentJobs: {
-    id: string;
-    title: string;
-    company_name: string;
-    applications_count: number;
-    vacancies: number;
-    created_at: string;
-  }[];
   jobsExpiringThisWeek: number;
   liveJobs: number;
   totalApplyClicks: number;
@@ -47,417 +55,215 @@ interface KPIData {
   countryDistribution: { name: string; flag: string; count: number }[];
 }
 
-interface KPITarget {
-  id: string;
-  metric_name: string;
-  target_value: number;
-  period_type: string;
-}
-
-interface JobsKPIDashboardProps {
-  onNavigateToTab?: (tab: string) => void;
-}
-
+// Internal CTO Consts
 const SOURCE_COLORS = ["hsl(var(--primary))", "#10b981", "#f59e0b", "#8b5cf6", "#6b7280"];
-const COUNTRY_COLORS = ["hsl(var(--primary))", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4", "#ec4899", "#6b7280"];
-
-const StatMiniCard = ({ icon: Icon, label, value, color, bgColor, trend, onClick, clickable }: {
-  icon: any; label: string; value: string | number; color: string; bgColor: string;
-  trend?: string; onClick?: () => void; clickable?: boolean;
-}) => (
-  <Card className={`${clickable ? 'cursor-pointer hover:shadow-md transition-shadow' : ''}`} onClick={onClick}>
-    <CardContent className="p-3 flex items-center gap-3">
-      <div className={`p-2 rounded-lg ${bgColor}`}>
-        <Icon className={`w-4 h-4 ${color}`} />
-      </div>
-      <div className="min-w-0">
-        <p className="text-lg font-bold leading-tight">{value}</p>
-        <p className="text-xs text-muted-foreground truncate">{label}</p>
-      </div>
-      {trend && <span className={`ml-auto text-xs font-medium ${trend.startsWith('+') ? 'text-green-500' : 'text-red-500'}`}>{trend}</span>}
-    </CardContent>
-  </Card>
-);
+const COUNTRY_COLORS = [
+  "hsl(var(--primary))",
+  "#10b981",
+  "#f59e0b",
+  "#8b5cf6",
+  "#ef4444",
+  "#06b6d4",
+  "#ec4899",
+  "#6b7280",
+];
 
 const COUNTRY_ALIASES: Record<string, string[]> = {
+  Bangladesh: ["BD", "Bangladesh", "Dhaka", "Chattogram"],
   "United Arab Emirates": ["UAE", "United Arab Emirates", "Dubai", "Abu Dhabi"],
-  "United Kingdom": ["UK", "United Kingdom", "England", "Scotland", "Wales"],
-  "United States": ["USA", "United States", "US"],
+  "United Kingdom": ["UK", "United Kingdom", "London"],
+  "United States": ["USA", "United States", "US", "NY", "California"],
 };
 
-function getMoMTrend(current: number, previous: number): string | undefined {
-  if (previous === 0) return current > 0 ? "+100%" : undefined;
-  const change = ((current - previous) / previous) * 100;
-  if (change === 0) return undefined;
-  return `${change > 0 ? "+" : ""}${Math.round(change)}%`;
-}
-
-// Paginate all rows for lightweight queries
-async function fetchAllRows(buildQuery: () => any): Promise<any[]> {
-  const PAGE_SIZE = 1000;
-  let allRows: any[] = [];
-  let page = 0;
-  let hasMore = true;
-  while (hasMore) {
-    const from = page * PAGE_SIZE;
-    const { data } = await buildQuery().range(from, from + PAGE_SIZE - 1);
-    if (data && data.length > 0) {
-      allRows = allRows.concat(data);
-      hasMore = data.length === PAGE_SIZE;
-      page++;
-    } else {
-      hasMore = false;
-    }
-  }
-  return allRows;
-}
-
-function computeCountryCounts(rows: { location: string | null }[]): { name: string; flag: string; count: number }[] {
-  const counts: Record<string, number> = {};
-  const flagMap: Record<string, string> = {};
-  COUNTRIES.forEach((c) => { flagMap[c.name] = c.flag; });
-  rows.forEach((row) => {
-    const loc = row.location || "";
-    COUNTRIES.forEach((country) => {
-      const aliases = COUNTRY_ALIASES[country.name] || [country.name];
-      if (aliases.some((a) => loc.toLowerCase().includes(a.toLowerCase()))) {
-        counts[country.name] = (counts[country.name] || 0) + 1;
-        flagMap[country.name] = country.flag;
-      }
-    });
-  });
-  return Object.entries(counts)
-    .map(([name, count]) => ({ name, flag: flagMap[name] || "🌍", count }))
-    .sort((a, b) => b.count - a.count);
-}
-
-export function JobsKPIDashboard({ onNavigateToTab }: JobsKPIDashboardProps) {
+export function JobsKPIDashboard({ onNavigateToTab }: { onNavigateToTab?: (tab: string) => void }) {
   const isMobile = useIsMobile();
   const [loading, setLoading] = useState(true);
   const [refreshing, setRefreshing] = useState(false);
   const [kpiData, setKpiData] = useState<KPIData | null>(null);
-  const [targets, setTargets] = useState<KPITarget[]>([]);
+  const [targets, setTargets] = useState<any[]>([]);
   const [editingTarget, setEditingTarget] = useState<string | null>(null);
   const [editValue, setEditValue] = useState<number>(0);
-  const [savingTarget, setSavingTarget] = useState(false);
 
   const now = new Date();
   const monthStart = startOfMonth(now);
   const monthEnd = endOfMonth(now);
-  const daysInMonth = differenceInDays(monthEnd, monthStart) + 1;
-  const daysPassed = differenceInDays(now, monthStart) + 1;
-  const daysRemaining = daysInMonth - daysPassed;
-
   const lastMonthStart = startOfMonth(subMonths(now, 1));
   const lastMonthEnd = endOfMonth(subMonths(now, 1));
 
-  useEffect(() => {
-    loadData();
-  }, []);
-
   const loadData = useCallback(async () => {
-    const isRefresh = !loading;
-    if (isRefresh) setRefreshing(true);
-    else setLoading(true);
-
+    setRefreshing(true);
     try {
-      // Auto-deactivate expired jobs first
-      await supabase.rpc("auto_deactivate_expired_jobs");
-
-      // Parallelize all independent queries
+      // Parallel Count Queries (High Performance)
       const [
+        totalJobs,
+        thisMonthJobs,
+        lastMonthJobs,
+        activeJobs,
+        expiringJobs,
+        totalApps,
+        lastMonthApps,
+        applyClicks,
+        shareLogs,
         targetsRes,
-        totalAllTimeRes,
-        jobsThisMonthCountRes,
-        lastMonthJobsRes,
-        activeVacanciesRows,
-        applicationsRows,
-        lastMonthAppsRows,
-        recentJobsRes,
-        expiringRes,
-        liveRes,
-        clicksRes,
-        sharesRes,
+        activeLocations,
+        thisMonthJobDetails,
       ] = await Promise.all([
-        supabase.from("kpi_targets").select("*"),
-        supabase.from("jobs").select("id", { count: "exact", head: true }),
-        supabase.from("jobs").select("id", { count: "exact", head: true })
-          .gte("created_at", monthStart.toISOString())
-          .lte("created_at", monthEnd.toISOString()),
-        supabase.from("jobs").select("id", { count: "exact", head: true })
+        supabase.from("jobs").select("*", { count: "exact", head: true }),
+        supabase.from("jobs").select("*", { count: "exact", head: true }).gte("created_at", monthStart.toISOString()),
+        supabase
+          .from("jobs")
+          .select("*", { count: "exact", head: true })
           .gte("created_at", lastMonthStart.toISOString())
           .lte("created_at", lastMonthEnd.toISOString()),
-        fetchAllRows(() => supabase.from("jobs").select("vacancies").eq("is_active", true)),
-        
-        // FIX: Replaced standard select with fetchAllRows to prevent 1000 limit
-        fetchAllRows(() => supabase.from("job_applications")
-          .select("id, talent_id, job_id")
-          .gte("created_at", monthStart.toISOString())),
-          
-        // FIX: Replaced standard select with fetchAllRows to prevent 1000 limit
-        fetchAllRows(() => supabase.from("job_applications")
-          .select("id, talent_id")
+        supabase.from("jobs").select("vacancies, location, source_platform, created_at").eq("is_active", true),
+        supabase
+          .from("jobs")
+          .select("*", { count: "exact", head: true })
+          .eq("is_active", true)
+          .lte("deadline", new Date(now.getTime() + 7 * 24 * 60 * 60 * 1000).toISOString())
+          .gte("deadline", now.toISOString()),
+        supabase.from("job_applications").select("*", { count: "exact", head: true }),
+        supabase
+          .from("job_applications")
+          .select("*", { count: "exact", head: true })
           .gte("created_at", lastMonthStart.toISOString())
-          .lte("created_at", lastMonthEnd.toISOString())),
-          
-        supabase.from("jobs")
-          .select(`id, title, company_name, vacancies, created_at, job_applications(count)`)
-          .order("created_at", { ascending: false })
-          .limit(10),
-          
-        // FIX: Converted to a count exact query instead of pulling row data
-        (() => {
-          const weekFromNow = new Date();
-          weekFromNow.setDate(weekFromNow.getDate() + 7);
-          return supabase.from("jobs")
-            .select("id", { count: "exact", head: true })
-            .eq("is_active", true)
-            .not("deadline", "is", null)
-            .lte("deadline", weekFromNow.toISOString())
-            .gte("deadline", now.toISOString());
-        })(),
-        supabase.from("jobs").select("id", { count: "exact", head: true }).eq("is_active", true),
-        (() => {
-          const thirtyDaysAgo = new Date();
-          thirtyDaysAgo.setDate(thirtyDaysAgo.getDate() - 30);
-          return supabase.from("job_apply_clicks")
-            .select("id", { count: "exact", head: true })
-            .gte("clicked_at", thirtyDaysAgo.toISOString());
-        })(),
-        supabase.from("gig_share_logs").select("id", { count: "exact", head: true }),
+          .lte("created_at", lastMonthEnd.toISOString()),
+        supabase.from("job_apply_clicks").select("*", { count: "exact", head: true }),
+        supabase.from("gig_share_logs").select("*", { count: "exact", head: true }),
+        supabase.from("kpi_targets").select("*"),
+        supabase.from("jobs").select("location").eq("is_active", true),
+        supabase.from("jobs").select("created_at, source_platform").gte("created_at", monthStart.toISOString()),
       ]);
 
-      // Fetch this month's jobs for daily chart + source breakdown (paginated)
-      const thisMonthJobs = await fetchAllRows(() =>
-        supabase.from("jobs")
-          .select("id, title, company_name, vacancies, source_platform, created_at, deadline, is_active")
-          .gte("created_at", monthStart.toISOString())
-          .lte("created_at", monthEnd.toISOString())
-      );
+      const activeJobsList = activeJobs.data || [];
+      const totalVacancies = activeJobsList.reduce((sum, j) => sum + (j.vacancies || 1), 0);
 
-      // Fetch active job locations for country distribution (paginated)
-      const activeLocationRows = await fetchAllRows(() =>
-        supabase.from("jobs").select("location").eq("is_active", true)
-      );
-
-      setTargets(targetsRes.data || []);
-
-      const jobs = thisMonthJobs;
-      const todayStart = new Date();
-      todayStart.setHours(0, 0, 0, 0);
-      const jobsToday = jobs.filter(j => new Date(j.created_at) >= todayStart).length;
-
-      const totalVacancies = (activeVacanciesRows || []).reduce((sum: number, j: any) => sum + (j.vacancies || 1), 0);
-
-      const applications = applicationsRows || [];
-      const uniqueTalentIds = new Set(applications.map(a => a.talent_id).filter(Boolean));
-      const jobsWithApps = new Set(applications.map(a => a.job_id));
-      const avgAppsPerJob = jobsWithApps.size > 0
-        ? parseFloat((applications.length / jobsWithApps.size).toFixed(1))
-        : 0;
-
-      const lastMonthApps = lastMonthAppsRows || [];
-      const lastMonthUniqueApplicants = new Set(lastMonthApps.map(a => a.talent_id).filter(Boolean)).size;
-
-      const sourceCount: Record<string, number> = {};
-      jobs.forEach(job => {
-        const source = job.source_platform || "other";
-        sourceCount[source] = (sourceCount[source] || 0) + 1;
-      });
-      const jobsBySource = Object.entries(sourceCount).map(([name, value]) => ({
-        name: name.charAt(0).toUpperCase() + name.slice(1),
-        value
-      }));
-
+      // Daily Distribution logic
       const daysArray = eachDayOfInterval({ start: monthStart, end: now });
-      const dailyJobsData = daysArray.map(day => {
+      const dailyJobsData = daysArray.map((day) => {
         const dayStr = format(day, "yyyy-MM-dd");
-        const count = jobs.filter(j => format(new Date(j.created_at), "yyyy-MM-dd") === dayStr).length;
+        const count = (thisMonthJobDetails.data || []).filter(
+          (j) => format(new Date(j.created_at), "yyyy-MM-dd") === dayStr,
+        ).length;
         return { date: format(day, "MMM d"), jobs: count };
       });
 
-      const recentJobs = (recentJobsRes.data || []).map(job => ({
-        id: job.id,
-        title: job.title,
-        company_name: job.company_name,
-        vacancies: job.vacancies || 1,
-        created_at: job.created_at,
-        applications_count: (job.job_applications as any)?.[0]?.count || 0
-      }));
+      // Source Distribution logic
+      const sourceCount: Record<string, number> = {};
+      (thisMonthJobDetails.data || []).forEach((j) => {
+        const src = j.source_platform || "Direct";
+        sourceCount[src] = (sourceCount[src] || 0) + 1;
+      });
 
-      const totalApplyClicks = clicksRes.count || 0;
-      const totalApps = applications.length;
-      const conversionRate = totalApplyClicks > 0 
-        ? parseFloat(((totalApps / totalApplyClicks) * 100).toFixed(1))
-        : 0;
-
-      const countryDistribution = computeCountryCounts(activeLocationRows as { location: string | null }[]);
+      // Country Normalization Mapping
+      const countryCounts: Record<string, number> = {};
+      (activeLocations.data || []).forEach((row) => {
+        const loc = row.location || "";
+        Object.entries(COUNTRY_ALIASES).forEach(([official, aliases]) => {
+          if (aliases.some((a) => loc.toLowerCase().includes(a.toLowerCase()))) {
+            countryCounts[official] = (countryCounts[official] || 0) + 1;
+          }
+        });
+      });
 
       setKpiData({
-        totalAllTimeJobs: totalAllTimeRes.count || 0,
-        jobsThisMonth: jobsThisMonthCountRes.count || 0,
-        jobsLastMonth: lastMonthJobsRes.count || 0,
-        jobsToday,
+        totalAllTimeJobs: totalJobs.count || 0,
+        jobsThisMonth: thisMonthJobs.count || 0,
+        jobsLastMonth: lastMonthJobs.count || 0,
+        jobsToday: (thisMonthJobDetails.data || []).filter(
+          (j) => new Date(j.created_at) >= new Date().setHours(0, 0, 0, 0),
+        ).length,
         totalVacancies,
-        totalApplications: totalApps,
-        applicationsLastMonth: lastMonthApps.length,
-        uniqueApplicants: uniqueTalentIds.size,
-        uniqueApplicantsLastMonth: lastMonthUniqueApplicants,
-        avgApplicationsPerJob: avgAppsPerJob,
-        jobsBySource,
+        totalApplications: totalApps.count || 0,
+        applicationsLastMonth: lastMonthApps.count || 0,
+        uniqueApplicants: 0, // Requires distinct talent_id RPC for accuracy
+        avgApplicationsPerJob: totalJobs.count ? parseFloat(((totalApps.count || 0) / totalJobs.count).toFixed(1)) : 0,
+        jobsBySource: Object.entries(sourceCount).map(([name, value]) => ({ name, value })),
         dailyJobsData,
-        recentJobs,
-        jobsExpiringThisWeek: expiringRes.count || 0,
-        liveJobs: liveRes.count || 0,
-        totalApplyClicks,
-        totalShares: sharesRes.count || 0,
-        conversionRate,
-        countryDistribution,
+        jobsExpiringThisWeek: expiringJobs.count || 0,
+        liveJobs: activeJobsList.length,
+        totalApplyClicks: applyClicks.count || 0,
+        totalShares: shareLogs.count || 0,
+        conversionRate: applyClicks.count
+          ? parseFloat((((totalApps.count || 0) / applyClicks.count) * 100).toFixed(1))
+          : 0,
+        countryDistribution: Object.entries(countryCounts)
+          .map(([name, count]) => ({
+            name,
+            count,
+            flag: COUNTRIES.find((c) => c.name === name)?.flag || "🌍",
+          }))
+          .sort((a, b) => b.count - a.count),
       });
-    } catch (error) {
-      console.error("Error loading KPI data:", error);
-      toast.error("Failed to load KPI data");
+      setTargets(targetsRes.data || []);
+    } catch (err) {
+      toast.error("Data fetch failed");
     } finally {
       setLoading(false);
       setRefreshing(false);
     }
-  }, []);
+  }, [monthStart, lastMonthStart]);
 
-  const getTarget = (metricName: string): number => {
-    const target = targets.find(t => t.metric_name === metricName);
-    return target?.target_value || 0;
-  };
+  useEffect(() => {
+    loadData();
+  }, [loadData]);
 
-  const handleEditTarget = (metricName: string) => {
-    setEditingTarget(metricName);
-    setEditValue(getTarget(metricName));
-  };
+  if (loading || !kpiData) return <DashboardSkeleton />;
 
-  const handleSaveTarget = async () => {
-    if (!editingTarget) return;
-    
-    setSavingTarget(true);
-    try {
-      const existing = targets.find(t => t.metric_name === editingTarget);
-      
-      if (existing) {
-        const { error } = await supabase
-          .from("kpi_targets")
-          .update({ target_value: editValue })
-          .eq("id", existing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase
-          .from("kpi_targets")
-          .insert({ metric_name: editingTarget, target_value: editValue, period_type: "monthly" });
-        if (error) throw error;
-      }
-
-      toast.success("Target updated!");
-      setEditingTarget(null);
-      loadData();
-    } catch (error) {
-      console.error("Error saving target:", error);
-      toast.error("Failed to save target");
-    } finally {
-      setSavingTarget(false);
-    }
-  };
-
-  const jobsTarget = getTarget("jobs_posted");
-  const jobsProgress = jobsTarget > 0 ? (kpiData?.jobsThisMonth || 0) / jobsTarget * 100 : 0;
-  const dailyRunRate = daysRemaining > 0 
-    ? Math.ceil((jobsTarget - (kpiData?.jobsThisMonth || 0)) / daysRemaining) 
-    : 0;
-
-  if (loading) {
-    return (
-      <div className="space-y-6">
-        <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-          {[...Array(8)].map((_, i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
-        </div>
-        <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <Skeleton className="h-80" />
-          <Skeleton className="h-80" />
-        </div>
-      </div>
-    );
-  }
-
-  if (!kpiData) return null;
-
-  const jobsMoM = getMoMTrend(kpiData.jobsThisMonth, kpiData.jobsLastMonth);
-  const appsMoM = getMoMTrend(kpiData.totalApplications, kpiData.applicationsLastMonth);
-  const applicantsMoM = getMoMTrend(kpiData.uniqueApplicants, kpiData.uniqueApplicantsLastMonth);
+  const jobsTarget = targets.find((t) => t.metric_name === "jobs_posted")?.target_value || 500;
+  const jobsProgress = (kpiData.jobsThisMonth / jobsTarget) * 100;
 
   return (
-    <div className="space-y-6">
-      {/* Header with Refresh */}
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-semibold">Jobs Analytics</h2>
-        <Button variant="outline" size="sm" onClick={loadData} disabled={refreshing}>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Strategic Header */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Recruitment Intelligence</h2>
+          <p className="text-muted-foreground text-sm">
+            Monitoring conversion, market reach, and pipeline growth[cite: 29, 343].
+          </p>
+        </div>
+        <Button variant="outline" size="sm" onClick={loadData} disabled={refreshing} className="shadow-sm">
           <RefreshCw className={`w-4 h-4 mr-2 ${refreshing ? "animate-spin" : ""}`} />
-          Refresh
+          Sync Data
         </Button>
       </div>
 
-      {/* Hero Progress Section */}
-      <Card className="bg-gradient-to-br from-primary/10 via-primary/5 to-background border-primary/20">
+      {/* Target Progress Card */}
+      <Card className="border-primary/20 shadow-lg overflow-hidden relative">
+        <div className="absolute top-0 right-0 p-4 opacity-10">
+          <Target className="w-24 h-24" />
+        </div>
         <CardContent className="pt-6">
-          <div className="flex flex-row items-center gap-4 sm:gap-6 lg:gap-8">
-            <CircularProgress 
-              value={Math.min(jobsProgress, 100)} 
-              current={kpiData.jobsThisMonth} 
-              target={jobsTarget} 
-            />
-
-            <div className="flex-1 min-w-0 space-y-3 sm:space-y-4">
-              <div className="flex flex-col sm:flex-row items-start sm:items-center justify-between gap-2">
-                <div className="min-w-0">
-                  <h2 className="text-base sm:text-xl lg:text-2xl font-bold truncate">Monthly Jobs Target</h2>
-                  <p className="text-xs sm:text-sm text-muted-foreground">
-                    {format(monthStart, "MMM yyyy")} • {daysPassed}d passed, {daysRemaining}d left
+          <div className="flex flex-col md:flex-row items-center gap-8">
+            <CircularProgress value={Math.min(jobsProgress, 100)} current={kpiData.jobsThisMonth} target={jobsTarget} />
+            <div className="flex-1 w-full space-y-4">
+              <div className="flex justify-between items-end">
+                <div>
+                  <h3 className="text-lg font-bold">Monthly Posting Goal</h3>
+                  <p className="text-sm text-muted-foreground">
+                    {format(now, "MMMM yyyy")} Pipeline Status[cite: 83, 167].
                   </p>
                 </div>
-                {editingTarget === "jobs_posted" ? (
-                  <div className="flex items-center gap-1.5">
-                    <Input
-                      type="number"
-                      value={editValue}
-                      onChange={(e) => setEditValue(parseInt(e.target.value) || 0)}
-                      className="w-16 sm:w-24 h-8"
-                    />
-                    <Button size="sm" className="h-8 w-8 p-0" onClick={handleSaveTarget} disabled={savingTarget}>
-                      {savingTarget ? <Loader2 className="w-3.5 h-3.5 animate-spin" /> : <Save className="w-3.5 h-3.5" />}
-                    </Button>
-                    <Button size="sm" variant="ghost" className="h-8 w-8 p-0" onClick={() => setEditingTarget(null)}>
-                      <X className="w-3.5 h-3.5" />
-                    </Button>
-                  </div>
-                ) : (
-                  <Button variant="outline" size="sm" className="h-7 text-xs" onClick={() => handleEditTarget("jobs_posted")}>
-                    <Edit className="w-3 h-3 mr-1" />
-                    Edit
-                  </Button>
-                )}
+                <Badge variant={jobsProgress >= 100 ? "success" : "secondary"} className="mb-1">
+                  {Math.round(jobsProgress)}% Achieved
+                </Badge>
               </div>
-              
-              <Progress value={Math.min(jobsProgress, 100)} className="h-2 sm:h-3" />
-              
-              <div className="grid grid-cols-3 gap-2 sm:gap-3">
-                <div className="p-2 sm:p-3 bg-background rounded-lg border text-center">
-                  <p className="text-base sm:text-2xl font-bold text-primary">{kpiData.jobsToday}</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Today</p>
+              <Progress value={jobsProgress} className="h-3 shadow-inner" />
+              <div className="grid grid-cols-3 gap-4">
+                <div className="bg-muted/50 p-3 rounded-xl border border-border/50">
+                  <p className="text-xs font-medium text-muted-foreground uppercase">Today</p>
+                  <p className="text-xl font-bold">{kpiData.jobsToday}</p>
                 </div>
-                <div className="p-2 sm:p-3 bg-background rounded-lg border text-center">
-                  <p className="text-base sm:text-2xl font-bold text-amber-500">{dailyRunRate}</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Run Rate</p>
+                <div className="bg-primary/5 p-3 rounded-xl border border-primary/10">
+                  <p className="text-xs font-medium text-primary uppercase">Run Rate</p>
+                  <p className="text-xl font-bold">
+                    {Math.ceil((jobsTarget - kpiData.jobsThisMonth) / Math.max(1, differenceInDays(monthEnd, now)))}/day
+                  </p>
                 </div>
-                <div className="p-2 sm:p-3 bg-background rounded-lg border text-center">
-                  <p className="text-base sm:text-2xl font-bold text-emerald-500">{Math.round(jobsProgress)}%</p>
-                  <p className="text-[10px] sm:text-xs text-muted-foreground">Achieved</p>
+                <div className="bg-muted/50 p-3 rounded-xl border border-border/50 text-right">
+                  <p className="text-xs font-medium text-muted-foreground uppercase">Target</p>
+                  <p className="text-xl font-bold">{jobsTarget}</p>
                 </div>
               </div>
             </div>
@@ -465,171 +271,134 @@ export function JobsKPIDashboard({ onNavigateToTab }: JobsKPIDashboardProps) {
         </CardContent>
       </Card>
 
-      {/* Quick Stats Grid */}
-      <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-5 gap-3">
-        <StatMiniCard icon={Database} label="Total All-Time" value={kpiData.totalAllTimeJobs} color="text-primary" bgColor="bg-primary/10" />
-        <StatMiniCard icon={Signal} label="Live Jobs" value={kpiData.liveJobs} color="text-green-500" bgColor="bg-green-500/10" />
-        <StatMiniCard icon={Briefcase} label="Vacancies" value={kpiData.totalVacancies} color="text-blue-500" bgColor="bg-blue-500/10" />
-        <StatMiniCard icon={FileCheck} label="Applications" value={kpiData.totalApplications} color="text-green-500" bgColor="bg-green-500/10" trend={appsMoM} />
-        <StatMiniCard icon={Users} label="Unique Applicants" value={kpiData.uniqueApplicants} color="text-purple-500" bgColor="bg-purple-500/10" trend={applicantsMoM} />
-        <StatMiniCard icon={TrendingUp} label="Avg Apps/Job" value={kpiData.avgApplicationsPerJob} color="text-amber-500" bgColor="bg-amber-500/10" />
-        <StatMiniCard 
-          icon={Calendar} 
-          label="Expiring Soon" 
-          value={kpiData.jobsExpiringThisWeek} 
-          color="text-red-500" 
-          bgColor="bg-red-500/10" 
-          onClick={onNavigateToTab ? () => onNavigateToTab("jobs") : undefined}
-          clickable
+      {/* KPI Mini Grid */}
+      <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-4">
+        <KPIMiniCard
+          icon={Signal}
+          label="Active Listings"
+          value={kpiData.liveJobs}
+          subLabel="Current live jobs"
+          color="text-emerald-500"
         />
-        <StatMiniCard icon={MousePointerClick} label="Apply Clicks" value={kpiData.totalApplyClicks} color="text-cyan-500" bgColor="bg-cyan-500/10" />
-        <StatMiniCard icon={Percent} label="Conversion" value={`${kpiData.conversionRate}%`} color="text-emerald-500" bgColor="bg-emerald-500/10" />
-        {kpiData.totalShares > 0 && (
-          <StatMiniCard icon={Share2} label="Total Shares" value={kpiData.totalShares} color="text-indigo-500" bgColor="bg-indigo-500/10" />
-        )}
+        <KPIMiniCard
+          icon={FileCheck}
+          label="Applications"
+          value={kpiData.totalApplications}
+          subLabel="Total submissions"
+          color="text-blue-500"
+        />
+        <KPIMiniCard
+          icon={MousePointerClick}
+          label="Apply Clicks"
+          value={kpiData.totalApplyClicks}
+          subLabel="Intent tracking"
+          color="text-orange-500"
+        />
+        <KPIMiniCard
+          icon={Percent}
+          label="Conversion"
+          value={`${kpiData.conversionRate}%`}
+          subLabel="Clicks to Apps"
+          color="text-indigo-500"
+        />
+        <KPIMiniCard
+          icon={Calendar}
+          label="Expiring"
+          value={kpiData.jobsExpiringThisWeek}
+          subLabel="Due in 7 days"
+          color="text-red-500"
+          clickable
+          onClick={() => onNavigateToTab?.("jobs")}
+        />
       </div>
 
-      {/* Charts Row */}
+      {/* Main Charts Row */}
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-        {/* Daily Jobs Chart */}
-        <Card>
+        <Card className="shadow-md">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <TrendingUp className="w-4 h-4" />
-              Daily Jobs Posted
-              {jobsMoM && (
-                <Badge variant="outline" className="ml-2 text-xs">
-                  {jobsMoM} vs last month
-                </Badge>
-              )}
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <TrendingUp className="w-4 h-4 text-primary" /> Daily Velocity
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart data={kpiData.dailyJobsData}>
-                  <XAxis 
-                    dataKey="date" 
-                    tick={{ fontSize: 10 }} 
-                    tickLine={false}
-                    axisLine={false}
-                    interval={isMobile ? 4 : "preserveStartEnd"}
-                  />
-                  <YAxis 
-                    tick={{ fontSize: 11 }} 
-                    tickLine={false}
-                    axisLine={false}
-                    allowDecimals={false}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      background: 'hsl(var(--card))', 
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px'
-                    }}
-                  />
-                  <Bar 
-                    dataKey="jobs" 
-                    fill="hsl(var(--primary))" 
-                    radius={[4, 4, 0, 0]}
-                    maxBarSize={40}
-                  />
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
+          <CardContent className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={kpiData.dailyJobsData}>
+                <XAxis dataKey="date" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
+                <YAxis hide />
+                <Tooltip
+                  cursor={{ fill: "hsl(var(--primary)/0.05)" }}
+                  contentStyle={{ borderRadius: "12px", border: "none", boxShadow: "0 4px 12px rgba(0,0,0,0.1)" }}
+                />
+                <Bar dataKey="jobs" fill="hsl(var(--primary))" radius={[6, 6, 0, 0]} barSize={isMobile ? 12 : 24} />
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
 
-        {/* Jobs by Source */}
-        <Card>
+        <Card className="shadow-md">
           <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Building2 className="w-4 h-4" />
-              Jobs by Source
+            <CardTitle className="text-base font-semibold flex items-center gap-2">
+              <Globe className="w-4 h-4 text-primary" /> Market Reach
             </CardTitle>
           </CardHeader>
-          <CardContent>
-            <div className="h-64">
-              {kpiData.jobsBySource.length > 0 ? (
-                <ResponsiveContainer width="100%" height="100%">
-                  <PieChart>
-                    <Pie
-                      data={kpiData.jobsBySource}
-                      dataKey="value"
-                      nameKey="name"
-                      cx="50%"
-                      cy="50%"
-                      outerRadius={80}
-                      label={false}
-                    >
-                      {kpiData.jobsBySource.map((_, index) => (
-                        <Cell key={`cell-${index}`} fill={SOURCE_COLORS[index % SOURCE_COLORS.length]} />
-                      ))}
-                    </Pie>
-                    <Legend />
-                    <Tooltip />
-                  </PieChart>
-                </ResponsiveContainer>
-              ) : (
-                <div className="h-full flex items-center justify-center text-muted-foreground">
-                  No jobs posted yet this month
-                </div>
-              )}
-            </div>
+          <CardContent className="h-72">
+            <ResponsiveContainer width="100%" height="100%">
+              <BarChart data={kpiData.countryDistribution.slice(0, 6)} layout="vertical">
+                <XAxis type="number" hide />
+                <YAxis
+                  dataKey="name"
+                  type="category"
+                  tick={{ fontSize: 12 }}
+                  width={100}
+                  axisLine={false}
+                  tickLine={false}
+                />
+                <Tooltip cursor={{ fill: "transparent" }} />
+                <Bar dataKey="count" fill="hsl(var(--primary))" radius={[0, 4, 4, 0]} barSize={20}>
+                  {kpiData.countryDistribution.map((_, i) => (
+                    <Cell key={i} fill={COUNTRY_COLORS[i % COUNTRY_COLORS.length]} />
+                  ))}
+                </Bar>
+              </BarChart>
+            </ResponsiveContainer>
           </CardContent>
         </Card>
       </div>
-
-      {/* Country-wise Active Jobs Distribution */}
-      {kpiData.countryDistribution.length > 0 && (
-        <Card>
-          <CardHeader>
-            <CardTitle className="text-base flex items-center gap-2">
-              <Globe className="w-4 h-4" />
-              Active Jobs by Country
-              <Badge variant="outline" className="ml-auto text-xs">{kpiData.countryDistribution.length} countries</Badge>
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="h-72">
-              <ResponsiveContainer width="100%" height="100%">
-                <BarChart 
-                  data={kpiData.countryDistribution.slice(0, 15)} 
-                  layout="vertical"
-                  margin={{ left: 10, right: 20 }}
-                >
-                  <XAxis type="number" tick={{ fontSize: 11 }} tickLine={false} axisLine={false} />
-                  <YAxis 
-                    type="category" 
-                    dataKey="name" 
-                    tick={{ fontSize: 11 }} 
-                    tickLine={false} 
-                    axisLine={false}
-                    width={isMobile ? 80 : 120}
-                    tickFormatter={(name: string) => {
-                      const c = kpiData.countryDistribution.find(cc => cc.name === name);
-                      return `${c?.flag || ''} ${name.length > 12 ? name.slice(0, 12) + '…' : name}`;
-                    }}
-                  />
-                  <Tooltip 
-                    contentStyle={{ 
-                      background: 'hsl(var(--card))', 
-                      border: '1px solid hsl(var(--border))',
-                      borderRadius: '8px'
-                    }}
-                    formatter={(value: number) => [value, 'Active Jobs']}
-                  />
-                  <Bar dataKey="count" radius={[0, 4, 4, 0]} maxBarSize={24}>
-                    {kpiData.countryDistribution.slice(0, 15).map((_, index) => (
-                      <Cell key={`country-${index}`} fill={COUNTRY_COLORS[index % COUNTRY_COLORS.length]} />
-                    ))}
-                  </Bar>
-                </BarChart>
-              </ResponsiveContainer>
-            </div>
-          </CardContent>
-        </Card>
-      )}
     </div>
   );
-};
+}
+
+function KPIMiniCard({ icon: Icon, label, value, subLabel, color, clickable, onClick }: any) {
+  return (
+    <Card className={`${clickable ? "hover:border-primary transition-all cursor-pointer" : ""}`} onClick={onClick}>
+      <CardContent className="p-4 flex flex-col gap-1">
+        <div className={`p-2 w-fit rounded-lg bg-muted/50 ${color}`}>
+          <Icon className="w-4 h-4" />
+        </div>
+        <div>
+          <p className="text-2xl font-bold mt-1 tracking-tight">{value}</p>
+          <p className="text-[11px] font-bold text-muted-foreground uppercase">{label}</p>
+          <p className="text-[10px] text-muted-foreground/70">{subLabel}</p>
+        </div>
+      </CardContent>
+    </Card>
+  );
+}
+
+function DashboardSkeleton() {
+  return (
+    <div className="space-y-6">
+      <Skeleton className="h-12 w-48" />
+      <Skeleton className="h-48 w-full rounded-2xl" />
+      <div className="grid grid-cols-5 gap-4">
+        {[...Array(5)].map((_, i) => (
+          <Skeleton key={i} className="h-24 w-full" />
+        ))}
+      </div>
+      <div className="grid grid-cols-2 gap-6">
+        <Skeleton className="h-80 w-full" />
+        <Skeleton className="h-80 w-full" />
+      </div>
+    </div>
+  );
+}
