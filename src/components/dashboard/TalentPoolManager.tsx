@@ -38,14 +38,14 @@ import {
   Mail,
   Upload,
   Linkedin,
-  Copy,
   Bot,
   GraduationCap,
+  Hand, // FIXED: Added missing import
+  Check,
 } from "lucide-react";
 import { BatchTalentUpload } from "./BatchTalentUpload";
 import { TalentDetailDialog } from "./TalentDetailDialog";
 import {
-  OUTREACH_TEMPLATES,
   getOutreachWhatsAppLink,
   getOutreachEmailLink,
   getOutreachLinkedInMessage,
@@ -91,23 +91,6 @@ export function TalentPoolManager() {
   const [sourceFilter, setSourceFilter] = useState("all");
   const [selectedTalent, setSelectedTalent] = useState<Talent | null>(null);
 
-  const loadKpiStats = useCallback(async () => {
-    const oneWeekAgo = new Date();
-    oneWeekAgo.setDate(oneWeekAgo.getDate() - 7);
-    const [total, recent, registered, uploaded] = await Promise.all([
-      supabase.from("talents").select("*", { count: "exact", head: true }),
-      supabase.from("talents").select("*", { count: "exact", head: true }).gte("created_at", oneWeekAgo.toISOString()),
-      supabase.from("talents").select("*", { count: "exact", head: true }).not("user_id", "is", null),
-      supabase.from("talents").select("*", { count: "exact", head: true }).is("user_id", null),
-    ]);
-    return {
-      total: total.count || 0,
-      recent: recent.count || 0,
-      registered: registered.count || 0,
-      uploaded: uploaded.count || 0,
-    };
-  }, []);
-
   const loadTalents = useCallback(async () => {
     setIsLoading(true);
     try {
@@ -115,28 +98,49 @@ export function TalentPoolManager() {
         .from("talents" as any)
         .select("*", { count: "exact" })
         .order("updated_at", { ascending: false });
-      if (searchQuery) query = query.or(`full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`);
-      if (countryFilter !== "all") query = query.eq("country", countryFilter);
-      if (sourceFilter === "registered") query = query.not("user_id", "is", null);
-      else if (sourceFilter === "uploaded") query = query.is("user_id", null);
+
+      if (searchQuery) {
+        query = query.or(`full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`);
+      }
+
+      if (countryFilter !== "all") {
+        query = query.eq("country", countryFilter);
+      }
+
+      if (sourceFilter === "registered") {
+        query = query.not("user_id", "is", null);
+      } else if (sourceFilter === "uploaded") {
+        query = query.is("user_id", null);
+      }
 
       const from = (page - 1) * ITEMS_PER_PAGE;
-      const { data, count, error: err } = await query.range(from, from + ITEMS_PER_PAGE - 1);
-      if (err) throw err;
-      setTalents(data || []);
-      setTotalCount(count || 0);
+      const to = from + ITEMS_PER_PAGE - 1;
 
-      if (data && data.length > 0) {
+      // CTO FIX: Explicitly cast result to bypass SelectQueryError recursion
+      const result = (await withTimeout(
+        query.range(from, to) as any,
+        TIMEOUTS.DEFAULT,
+        "Loading talent pool timed out",
+      )) as { data: Talent[] | null; count: number | null; error: any };
+
+      if (result.error) throw result.error;
+
+      const talentData = result.data || [];
+      setTalents(talentData);
+      setTotalCount(result.count || 0);
+
+      if (talentData.length > 0) {
         const { data: outData } = await supabase
-          .from("outreach_messages")
+          .from("outreach_messages" as any)
           .select("id, talent_id, product, sent_at")
           .in(
             "talent_id",
-            data.map((t) => t.id),
+            talentData.map((t) => t.id),
           );
-        setOutreachRecords(outData || []);
+        setOutreachRecords((outData as OutreachRecord[]) || []);
       }
     } catch (err: any) {
+      console.error("Talent Load Error:", err);
       setError(err.message);
     } finally {
       setIsLoading(false);
@@ -161,18 +165,27 @@ export function TalentPoolManager() {
       } else if (channel === "linkedin") {
         const msg = getOutreachLinkedInMessage(product, firstName, talent.country || undefined);
         await navigator.clipboard.writeText(msg);
-        toast.success("LinkedIn message copied! Paste in DM.");
+        toast.success("LinkedIn message copied!");
       }
 
-      await supabase.from("outreach_messages").insert({
+      await supabase.from("outreach_messages" as any).insert({
         talent_id: talent.id,
         product,
         channel,
         sent_at: new Date().toISOString(),
       });
-      loadTalents();
+
+      // Refresh local records to show updated checkmarks
+      const { data: outData } = await supabase
+        .from("outreach_messages" as any)
+        .select("id, talent_id, product, sent_at")
+        .in(
+          "talent_id",
+          talents.map((t) => t.id),
+        );
+      setOutreachRecords((outData as OutreachRecord[]) || []);
     } catch (err) {
-      toast.error("Outreach failed to track");
+      toast.error("Failed to track outreach");
     }
   };
 
@@ -217,61 +230,78 @@ export function TalentPoolManager() {
                   ))}
                 </SelectContent>
               </Select>
+              <Select value={sourceFilter} onValueChange={(v) => setSourceFilter(v)}>
+                <SelectTrigger className="w-[140px]">
+                  <SelectValue placeholder="Source" />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="all">All</SelectItem>
+                  <SelectItem value="registered">Registered</SelectItem>
+                  <SelectItem value="uploaded">Uploaded</SelectItem>
+                </SelectContent>
+              </Select>
             </div>
           </div>
 
-          <div className="rounded-xl border shadow-sm">
-            <Table>
-              <TableHeader className="bg-muted/50">
-                <TableRow>
-                  <TableHead>Talent</TableHead>
-                  <TableHead>Market</TableHead>
-                  <TableHead>Source</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead className="text-right">Outreach</TableHead>
-                </TableRow>
-              </TableHeader>
-              <TableBody>
-                {talents.map((talent) => (
-                  <TableRow key={talent.id}>
-                    <TableCell className="font-medium">{talent.full_name}</TableCell>
-                    <TableCell>
-                      {talent.country && (
-                        <Badge variant="outline">
-                          {getCountryFlag(talent.country)} {talent.country}
-                        </Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      {talent.user_id ? (
-                        <Badge className="bg-green-500/10 text-green-700 border-green-200 shadow-none">
-                          Registered
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-amber-500/10 text-amber-700 border-amber-200 shadow-none">Uploaded</Badge>
-                      )}
-                    </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-xs text-muted-foreground">
-                        {outreachRecords.filter((r) => r.talent_id === talent.id).length > 0 ? (
-                          <Check className="h-3 w-3 text-primary" />
-                        ) : (
-                          <Filter className="h-3 w-3" />
-                        )}
-                        {outreachRecords.filter((r) => r.talent_id === talent.id).length} contacted
-                      </div>
-                    </TableCell>
-                    <TableCell className="text-right">
-                      <OutreachDropdown
-                        talent={talent}
-                        onOutreach={handleOutreach}
-                        onView={() => setSelectedTalent(talent)}
-                      />
-                    </TableCell>
+          {isLoading ? (
+            <DashboardTableSkeleton rows={5} columns={6} />
+          ) : (
+            <div className="rounded-xl border shadow-sm overflow-hidden bg-card">
+              <Table>
+                <TableHeader className="bg-muted/50">
+                  <TableRow>
+                    <TableHead>Talent</TableHead>
+                    <TableHead>Market</TableHead>
+                    <TableHead>Source</TableHead>
+                    <TableHead>History</TableHead>
+                    <TableHead className="text-right">Outreach</TableHead>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
+                </TableHeader>
+                <TableBody>
+                  {talents.map((talent) => (
+                    <TableRow key={talent.id} className="hover:bg-muted/5">
+                      <TableCell className="font-medium">{talent.full_name}</TableCell>
+                      <TableCell>
+                        {talent.country && (
+                          <Badge variant="outline">
+                            {getCountryFlag(talent.country)} {talent.country}
+                          </Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        {talent.user_id ? (
+                          <Badge className="bg-green-500/10 text-green-700 border-green-200">Registered</Badge>
+                        ) : (
+                          <Badge className="bg-amber-500/10 text-amber-700 border-amber-200">Uploaded</Badge>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-1 text-xs text-muted-foreground">
+                          {outreachRecords.some((r) => r.talent_id === talent.id) ? (
+                            <Check className="h-3 w-3 text-primary" />
+                          ) : (
+                            <Filter className="h-3 w-3" />
+                          )}
+                          {outreachRecords.filter((r) => r.talent_id === talent.id).length} attempts
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-right">
+                        <OutreachDropdown
+                          talent={talent}
+                          onOutreach={handleOutreach}
+                          onView={() => setSelectedTalent(talent)}
+                        />
+                      </TableCell>
+                    </TableRow>
+                  ))}
+                </TableBody>
+              </Table>
+            </div>
+          )}
+
+          <div className="flex justify-between items-center mt-4">
+            <p className="text-xs text-muted-foreground">Syncing {talents.length} records</p>
+            <PaginationControls page={page} setPage={setPage} totalPages={Math.ceil(totalCount / ITEMS_PER_PAGE)} />
           </div>
         </CardContent>
       </Card>
@@ -305,10 +335,10 @@ function OutreachDropdown({ talent, onOutreach, onView }: any) {
         <p className="text-[10px] font-bold text-muted-foreground px-2 py-1 uppercase tracking-wider">
           Service Pitches
         </p>
-        <OutreachItem icon={Hand} label="Global Welcome" onClick={(c) => onOutreach(talent, "welcome", c)} />
-        <OutreachItem icon={Bot} label="AI Agents" onClick={(c) => onOutreach(talent, "ai_agent", c)} />
-        <OutreachItem icon={GraduationCap} label="LMS Courses" onClick={(c) => onOutreach(talent, "course", c)} />
-        <OutreachItem icon={Briefcase} label="Portfolios" onClick={(c) => onOutreach(talent, "portfolio", c)} />
+        <OutreachItem icon={Hand} label="Global Welcome" onClick={(c: any) => onOutreach(talent, "welcome", c)} />
+        <OutreachItem icon={Bot} label="AI Agents" onClick={(c: any) => onOutreach(talent, "ai_agent", c)} />
+        <OutreachItem icon={GraduationCap} label="LMS Courses" onClick={(c: any) => onOutreach(talent, "course", c)} />
+        <OutreachItem icon={Briefcase} label="Portfolios" onClick={(c: any) => onOutreach(talent, "portfolio", c)} />
       </DropdownMenuContent>
     </DropdownMenu>
   );
@@ -316,29 +346,45 @@ function OutreachDropdown({ talent, onOutreach, onView }: any) {
 
 function OutreachItem({ icon: Icon, label, onClick }: any) {
   return (
-    <div className="relative group">
-      <div className="flex items-center px-2 py-1.5 text-sm hover:bg-muted cursor-default rounded-sm">
-        <Icon className="h-4 w-4 mr-2 text-primary" /> {label}
-        <div className="ml-auto flex gap-1">
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onClick("whatsapp")}>
-            <MessageSquare className="h-3.5 w-3.5 text-green-600" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onClick("email")}>
-            <Mail className="h-3.5 w-3.5 text-blue-600" />
-          </Button>
-          <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onClick("linkedin")}>
-            <Linkedin className="h-3.5 w-3.5 text-blue-800" />
-          </Button>
-        </div>
+    <div className="flex items-center px-2 py-1.5 text-sm hover:bg-muted cursor-default rounded-sm">
+      <Icon className="h-4 w-4 mr-2 text-primary" /> {label}
+      <div className="ml-auto flex gap-1">
+        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onClick("whatsapp")}>
+          <MessageSquare className="h-3.5 w-3.5 text-green-600" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onClick("email")}>
+          <Mail className="h-3.5 w-3.5 text-blue-600" />
+        </Button>
+        <Button variant="ghost" size="icon" className="h-6 w-6" onClick={() => onClick("linkedin")}>
+          <Linkedin className="h-3.5 w-3.5 text-blue-800" />
+        </Button>
       </div>
     </div>
   );
 }
 
-function Check({ className }: { className: string }) {
+function PaginationControls({ page, setPage, totalPages }: any) {
   return (
-    <svg className={className} fill="none" viewBox="0 0 24 24" stroke="currentColor">
-      <path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M5 13l4 4L19 7" />
-    </svg>
+    <div className="flex items-center gap-2">
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setPage((p: number) => Math.max(1, p - 1))}
+        disabled={page === 1}
+      >
+        <ChevronLeft className="h-4 w-4" />
+      </Button>
+      <span className="text-xs font-medium">
+        Page {page} / {totalPages}
+      </span>
+      <Button
+        variant="outline"
+        size="sm"
+        onClick={() => setPage((p: number) => Math.min(totalPages, p + 1))}
+        disabled={page === totalPages}
+      >
+        <ChevronRight className="h-4 w-4" />
+      </Button>
+    </div>
   );
 }
