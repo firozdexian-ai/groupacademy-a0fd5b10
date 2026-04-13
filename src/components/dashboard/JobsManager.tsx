@@ -98,7 +98,7 @@ const copyToClipboard = async (text: string) => {
   }
 };
 
-// --- RESTORED: VALID JOB FIELDS ---
+// --- Restored: Validation Whitelist ---
 const VALID_JOB_FIELDS = [
   "title",
   "company_name",
@@ -108,7 +108,7 @@ const VALID_JOB_FIELDS = [
   "experience_level",
   "salary_range_min",
   "salary_range_max",
-  "salary_currency", // MERGED: Currency Support
+  "salary_currency",
   "description",
   "ai_enhanced_description",
   "requirements",
@@ -146,7 +146,7 @@ interface Job {
   experience_level: ExperienceLevel;
   salary_range_min: number | null;
   salary_range_max: number | null;
-  salary_currency: string | null; // MERGED: Interface update
+  salary_currency: string | null;
   description: string;
   ai_enhanced_description: string | null;
   requirements: string[];
@@ -174,7 +174,7 @@ interface ShareLog {
   shared_at: string;
 }
 
-// --- RESTORED: CONSTANTS ---
+// --- Restored: Constants & Maps ---
 const JOB_TYPES: { value: JobType; label: string }[] = [
   { value: "full_time", label: "Full Time" },
   { value: "part_time", label: "Part Time" },
@@ -200,6 +200,7 @@ const SOURCE_PLATFORM_ICONS: Record<string, { icon: any; className: string }> = 
 };
 
 const ITEMS_PER_PAGE = 10;
+
 const emptyJob = {
   title: "",
   company_name: "",
@@ -209,7 +210,7 @@ const emptyJob = {
   experience_level: "entry" as ExperienceLevel,
   salary_range_min: null as number | null,
   salary_range_max: null as number | null,
-  salary_currency: "BDT", // MERGED: Default
+  salary_currency: "BDT",
   description: "",
   ai_enhanced_description: null as string | null,
   requirements: [] as string[],
@@ -227,7 +228,9 @@ const emptyJob = {
   vacancies: 1,
 };
 
-// --- RESTORED: SHARE JOB DIALOG ---
+/**
+ * SHARE JOB DIALOG COMPONENT (Full Logic Restored)
+ */
 const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boolean; onClose: () => void }) => {
   const [activeTab, setActiveTab] = useState("linkedin");
   const [shareLogs, setShareLogs] = useState<ShareLog[]>([]);
@@ -301,20 +304,15 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
     });
     if (error) {
       setShareLogs((prev) => prev.filter((l) => l.channel !== channel));
-      toast.error("Failed to save progress");
+      toast.error("Failed to record share");
     } else {
-      toast.success(`Marked as shared on ${channel}`);
+      toast.success(`Progress saved for ${channel}`);
     }
   };
 
   if (!job) return null;
   const jobUrl = `${window.location.origin}/jobs/${job.id}`;
   const getShareLink = (source: string) => `${jobUrl}?source=${source}`;
-
-  const copyLink = async (source: string) => {
-    await copyToClipboard(getShareLink(source));
-    toast.success(`Link for ${source} copied!`);
-  };
 
   const handleSocialShare = (platform: "linkedin" | "facebook" | "whatsapp" | "telegram") => {
     const link = getShareLink(platform);
@@ -345,15 +343,13 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
     { id: "telegram", label: "Telegram", icon: Send },
   ];
 
-  const currentCaption = aiCaptions[activeTab] || "";
-
   const captionContent = (
     <div className="space-y-4">
       {["linkedin", "facebook", "whatsapp", "telegram"].includes(activeTab) && (
         <div className="space-y-4">
           <div className="flex items-center justify-between">
             <Badge variant="outline" className="text-xs gap-1">
-              <Sparkles className="w-3 h-3" /> AI Caption
+              <Sparkles className="w-3 h-3 text-primary" /> AI Caption
             </Badge>
             <Button
               variant="ghost"
@@ -367,50 +363,58 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
               <RefreshCw className={`w-3 h-3 mr-1 ${loadingCaption ? "animate-spin" : ""}`} /> Regenerate
             </Button>
           </div>
-          {loadingCaption && !currentCaption ? (
+          {loadingCaption && !aiCaptions[activeTab] ? (
             <div className="space-y-2">
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-3/4" />
+              <Skeleton className="h-4 w-1/2" />
             </div>
           ) : (
             <Textarea
-              value={currentCaption}
+              value={aiCaptions[activeTab] || ""}
               onChange={(e) => setAiCaptions((p) => ({ ...p, [activeTab]: e.target.value }))}
               rows={8}
-              className="text-xs whitespace-pre-wrap"
+              className="text-xs leading-relaxed"
             />
           )}
           <div className="grid grid-cols-2 gap-2">
             <Button
               variant="outline"
-              size="sm"
               onClick={() => {
-                copyToClipboard(currentCaption);
+                copyToClipboard(aiCaptions[activeTab] || "");
                 toast.success("Copied!");
               }}
-              disabled={!currentCaption}
             >
-              <Copy className="w-3 h-3 mr-2" /> Copy text
+              <Copy className="w-4 h-4 mr-2" /> Copy Text
             </Button>
-            <Button size="sm" onClick={() => handleSocialShare(activeTab as any)}>
-              <Share2 className="w-3 h-3 mr-2" /> Open {activeTab}
+            <Button onClick={() => handleSocialShare(activeTab as any)}>
+              <Share2 className="w-4 h-4 mr-2" /> Share Now
             </Button>
           </div>
         </div>
       )}
       {activeTab === "custom" && (
         <div className="space-y-4">
+          <Label>Custom Channel Name</Label>
           <Input
-            placeholder="Channel (e.g. newsletter)"
+            placeholder="e.g. email-newsletter"
             value={customChannel}
             onChange={(e) => setCustomChannel(e.target.value)}
           />
           <div className="flex gap-2">
-            <Input readOnly value={getShareLink(customChannel || "custom")} className="bg-muted text-xs" />
-            <Button size="icon" onClick={() => copyLink(customChannel || "custom")}>
+            <Input readOnly value={getShareLink(customChannel || "custom")} className="bg-muted" />
+            <Button
+              onClick={() => {
+                copyToClipboard(getShareLink(customChannel || "custom"));
+                toast.success("Link copied!");
+              }}
+            >
               <Copy className="w-4 h-4" />
             </Button>
           </div>
+          <Button className="w-full" variant="secondary" onClick={() => recordShare(customChannel || "custom")}>
+            Mark as Shared
+          </Button>
         </div>
       )}
     </div>
@@ -432,7 +436,7 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
                 onClick={() => setActiveTab(ch.id)}
               >
                 <ch.icon className="w-4 h-4" /> <span>{ch.label}</span>
-                {isShared(ch.id) && <CheckCircle2 className="ml-auto w-3 h-3" />}
+                {isShared(ch.id) && <CheckCircle2 className="ml-auto w-3 h-3 text-green-500" />}
               </Button>
             ))}
             <Button
@@ -440,7 +444,7 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
               className="w-full justify-start gap-2"
               onClick={() => setActiveTab("custom")}
             >
-              <LinkIcon className="w-4 h-4" /> <span>Custom</span>
+              <LinkIcon className="w-4 h-4" /> <span>Custom Link</span>
             </Button>
           </div>
           <div className="flex-1">{captionContent}</div>
@@ -450,7 +454,9 @@ const ShareJobDialog = ({ job, isOpen, onClose }: { job: Job | null; isOpen: boo
   );
 };
 
-// --- RESTORED: JOB FORM ---
+/**
+ * RESTORED: JOB FORM COMPONENT (Full Complexity)
+ */
 const JobForm = ({
   initialData,
   categories,
@@ -474,23 +480,23 @@ const JobForm = ({
   const [requirementInput, setRequirementInput] = useState("");
 
   const handleParseJobPost = async () => {
-    if (!rawJobPost.trim() || rawJobPost.length < 50) return toast.error("Paste full post");
+    if (!rawJobPost.trim() || rawJobPost.length < 50) return toast.error("Please paste a complete job post");
     setParsing(true);
     try {
       const { data, error } = await supabase.functions.invoke("parse-job-post", { body: { jobPostText: rawJobPost } });
-      if (error || !data?.success) throw new Error("Parse failed");
+      if (error || !data?.success) throw new Error("AI Parse failed");
       setFormData((prev: any) => ({ ...prev, ...data.parsed }));
-      toast.success("AI Parsed!");
+      toast.success("AI extraction complete!");
       setShowParseSection(false);
     } catch {
-      toast.error("AI Parse failed");
+      toast.error("AI Parse could not process text.");
     } finally {
       setParsing(false);
     }
   };
 
   const handleEnhanceDescription = async () => {
-    if (!formData.description) return toast.error("Description required");
+    if (!formData.description) return toast.error("Need a description to enhance");
     setEnhancing(true);
     try {
       const { data, error } = await supabase.functions.invoke("enhance-job-description", {
@@ -498,9 +504,9 @@ const JobForm = ({
       });
       if (error) throw error;
       setFormData((p: any) => ({ ...p, ai_enhanced_description: data.enhanced_description }));
-      toast.success("AI Enhanced!");
+      toast.success("Description professionally enhanced!");
     } catch {
-      toast.error("Enhance failed");
+      toast.error("AI Enhancement failed.");
     } finally {
       setEnhancing(false);
     }
@@ -520,8 +526,9 @@ const JobForm = ({
     try {
       const url = await uploadToStorage(file, "company-logos");
       setFormData((p: any) => ({ ...p, company_logo_url: url }));
+      toast.success("Logo uploaded");
     } catch {
-      toast.error("Upload failed");
+      toast.error("Logo upload failed");
     } finally {
       setUploadingLogo(false);
     }
@@ -534,8 +541,9 @@ const JobForm = ({
     try {
       const url = await uploadToStorage(file, "source-images");
       setFormData((p: any) => ({ ...p, source_image_url: url }));
+      toast.success("Screenshot saved");
     } catch {
-      toast.error("Upload failed");
+      toast.error("Image upload failed");
     } finally {
       setUploadingImage(false);
     }
@@ -543,11 +551,11 @@ const JobForm = ({
 
   const validateForm = () => {
     if (!formData.title?.trim() || !formData.company_name?.trim()) {
-      toast.error("Title and Company required");
+      toast.error("Job title and Company name are mandatory.");
       return false;
     }
     if (formData.application_type === "link" && !formData.application_url) {
-      toast.error("Apply URL required");
+      toast.error("Link application requires a URL.");
       return false;
     }
     return true;
@@ -559,36 +567,36 @@ const JobForm = ({
         <div className="space-y-3 p-4 border rounded-lg bg-muted/30">
           <div className="flex items-center justify-between">
             <Label className="flex items-center gap-2">
-              <Wand2 className="w-4 h-4" /> AI Parse
+              <Wand2 className="w-4 h-4 text-primary" /> Auto-Fill with AI
             </Label>
             <Button variant="ghost" size="sm" onClick={() => setShowParseSection(!showParseSection)}>
-              {showParseSection ? "Hide" : "Show"}
+              {showParseSection ? "Close" : "Open Parser"}
             </Button>
           </div>
           {showParseSection && (
             <div className="space-y-2">
               <Textarea
-                placeholder="Paste job text..."
+                placeholder="Paste raw job description from LinkedIn/Facebook..."
                 value={rawJobPost}
                 onChange={(e) => setRawJobPost(e.target.value)}
                 rows={4}
               />
               <Button onClick={handleParseJobPost} disabled={parsing} className="w-full">
-                {parsing ? <Loader2 className="animate-spin" /> : "Fill Fields"}
+                {parsing ? <Loader2 className="animate-spin mr-2" /> : <Sparkles className="w-4 h-4 mr-2" />} Process
+                Text
               </Button>
             </div>
           )}
         </div>
       )}
 
-      {/* Header Info */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>Title</Label>
+          <Label>Job Title *</Label>
           <Input value={formData.title} onChange={(e) => setFormData({ ...formData, title: e.target.value })} />
         </div>
         <div className="space-y-2">
-          <Label>Company</Label>
+          <Label>Company Name *</Label>
           <Input
             value={formData.company_name}
             onChange={(e) => setFormData({ ...formData, company_name: e.target.value })}
@@ -599,10 +607,14 @@ const JobForm = ({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Location</Label>
-          <Input value={formData.location} onChange={(e) => setFormData({ ...formData, location: e.target.value })} />
+          <Input
+            value={formData.location}
+            placeholder="e.g. Remote or Dhaka, Bangladesh"
+            onChange={(e) => setFormData({ ...formData, location: e.target.value })}
+          />
         </div>
         <div className="space-y-2">
-          <Label>Logo</Label>
+          <Label>Company Logo URL</Label>
           <div className="flex gap-2">
             <Input
               value={formData.company_logo_url || ""}
@@ -612,14 +624,13 @@ const JobForm = ({
             <div className="relative">
               <input type="file" onChange={handleLogoUpload} className="absolute inset-0 opacity-0 cursor-pointer" />
               <Button variant="outline" size="icon" disabled={uploadingLogo}>
-                {uploadingLogo ? <Loader2 className="animate-spin" /> : <Plus className="w-4 h-4" />}
+                {uploadingLogo ? <Loader2 className="animate-spin" /> : <ImageIcon className="w-4 h-4" />}
               </Button>
             </div>
           </div>
         </div>
       </div>
 
-      {/* MERGED: Full Selectors */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
           <Label>Job Type</Label>
@@ -656,10 +667,12 @@ const JobForm = ({
         </div>
       </div>
 
-      {/* MERGED: SALARY SECTION WITH CURRENCY */}
-      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 p-4 bg-muted/20 rounded-lg">
+      {/* MERGED: Restored Salary Section with Currency Selector */}
+      <div className="grid grid-cols-1 sm:grid-cols-4 gap-4 p-4 border rounded-lg bg-emerald-50/20">
         <div className="space-y-2">
-          <Label>Currency</Label>
+          <Label className="flex items-center gap-2">
+            <Banknote className="w-3 h-3 text-emerald-600" /> Currency
+          </Label>
           <Select
             value={formData.salary_currency || "BDT"}
             onValueChange={(v) => setFormData({ ...formData, salary_currency: v })}
@@ -676,7 +689,7 @@ const JobForm = ({
           </Select>
         </div>
         <div className="space-y-2">
-          <Label>Min Salary</Label>
+          <Label>Min Range</Label>
           <Input
             type="number"
             value={formData.salary_range_min || ""}
@@ -684,7 +697,7 @@ const JobForm = ({
           />
         </div>
         <div className="space-y-2">
-          <Label>Max Salary</Label>
+          <Label>Max Range</Label>
           <Input
             type="number"
             value={formData.salary_range_max || ""}
@@ -703,37 +716,44 @@ const JobForm = ({
 
       <div className="space-y-2">
         <div className="flex items-center justify-between">
-          <Label>Description</Label>
+          <Label>Full Job Description</Label>
           <Button variant="outline" size="sm" onClick={handleEnhanceDescription} disabled={enhancing}>
-            <Sparkles className="w-4 h-4 mr-2" /> AI Enhance
+            <Sparkles className="w-4 h-4 mr-2 text-purple-600" /> Professionalize with AI
           </Button>
         </div>
         <Textarea
           value={formData.description}
           onChange={(e) => setFormData({ ...formData, description: e.target.value })}
           rows={6}
+          className="text-sm"
         />
       </div>
 
-      {/* Requirements List */}
+      {/* Restored: Requirements List Management */}
       <div className="space-y-2">
-        <Label>Requirements</Label>
+        <Label>Key Requirements</Label>
         <div className="flex gap-2">
           <Input
             value={requirementInput}
             onChange={(e) => setRequirementInput(e.target.value)}
-            onKeyDown={(e) =>
-              e.key === "Enter" &&
-              (e.preventDefault(),
-              setFormData((p) => ({ ...p, requirements: [...p.requirements, requirementInput] })),
-              setRequirementInput(""))
-            }
-            placeholder="Add requirement..."
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                e.preventDefault();
+                if (requirementInput.trim()) {
+                  setFormData((p) => ({ ...p, requirements: [...p.requirements, requirementInput.trim()] }));
+                  setRequirementInput("");
+                }
+              }
+            }}
+            placeholder="Add a core requirement..."
           />
           <Button
+            type="button"
             onClick={() => {
-              setFormData((p) => ({ ...p, requirements: [...p.requirements, requirementInput] }));
-              setRequirementInput("");
+              if (requirementInput.trim()) {
+                setFormData((p) => ({ ...p, requirements: [...p.requirements, requirementInput.trim()] }));
+                setRequirementInput("");
+              }
             }}
           >
             Add
@@ -741,15 +761,17 @@ const JobForm = ({
         </div>
         <div className="flex flex-wrap gap-2 mt-2">
           {formData.requirements?.map((req: string, i: number) => (
-            <Badge key={i} variant="secondary" className="gap-1">
-              {req}{" "}
+            <Badge key={i} variant="secondary" className="px-3 py-1 gap-2">
+              {req}
               <button
+                type="button"
                 onClick={() =>
                   setFormData((p) => ({
                     ...p,
                     requirements: p.requirements.filter((_: any, idx: number) => idx !== i),
                   }))
                 }
+                className="text-muted-foreground hover:text-destructive"
               >
                 ×
               </button>
@@ -758,66 +780,76 @@ const JobForm = ({
         </div>
       </div>
 
-      {/* Source Image */}
-      <div className="space-y-2">
+      {/* Restored: Source Image Tracking */}
+      <div className="space-y-2 p-3 border rounded-lg bg-muted/10">
         <Label className="flex items-center gap-2">
-          <ImageIcon className="w-4 h-4" /> Source Image (Upload Screenshot)
+          <ImageIcon className="w-4 h-4" /> Proof of Source (Social Media Screenshot)
         </Label>
         <div className="flex gap-2">
           <Input
             value={formData.source_image_url || ""}
             onChange={(e) => setFormData({ ...formData, source_image_url: e.target.value })}
+            placeholder="URL or Upload..."
             className="flex-1"
           />
           <div className="relative">
             <input
               type="file"
+              accept="image/*"
               onChange={handleSourceImageUpload}
               className="absolute inset-0 opacity-0 cursor-pointer"
             />
-            <Button variant="outline" size="icon" disabled={uploadingImage}>
+            <Button variant="outline" size="icon">
               {uploadingImage ? <Loader2 className="animate-spin" /> : <Plus className="w-4 h-4" />}
             </Button>
           </div>
         </div>
-      </div>
-
-      {/* Application Method */}
-      <div className="space-y-4 p-4 border rounded-lg bg-blue-50/50">
-        <Label className="font-bold">Application Settings</Label>
-        <Select
-          value={formData.application_type}
-          onValueChange={(v) => setFormData({ ...formData, application_type: v })}
-        >
-          <SelectTrigger>
-            <SelectValue />
-          </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="link">External URL</SelectItem>
-            <SelectItem value="email">Direct Email</SelectItem>
-            <SelectItem value="internal">Platform Only</SelectItem>
-          </SelectContent>
-        </Select>
-        {formData.application_type === "link" && (
-          <Input
-            placeholder="https://..."
-            value={formData.application_url || ""}
-            onChange={(e) => setFormData({ ...formData, application_url: e.target.value })}
-          />
-        )}
-        {formData.application_type === "email" && (
-          <Input
-            placeholder="hr@..."
-            value={formData.application_email || ""}
-            onChange={(e) => setFormData({ ...formData, application_email: e.target.value })}
-          />
+        {formData.source_image_url && (
+          <img src={formData.source_image_url} alt="Proof" className="h-20 w-auto rounded border mt-2" />
         )}
       </div>
 
-      {/* Deadline & Category */}
+      {/* Restored: Application Flow Settings */}
+      <div className="space-y-4 p-4 border rounded-lg bg-blue-50/30">
+        <Label className="text-blue-900 font-bold flex items-center gap-2">
+          <Send className="w-4 h-4" /> Candidate Application Flow
+        </Label>
+        <div className="space-y-3">
+          <Select
+            value={formData.application_type}
+            onValueChange={(v) => setFormData({ ...formData, application_type: v })}
+          >
+            <SelectTrigger>
+              <SelectValue />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="link">Redirect to External Website</SelectItem>
+              <SelectItem value="email">Send CV directly to HR Email</SelectItem>
+              <SelectItem value="internal">Use GroUp Academy internal flow</SelectItem>
+            </SelectContent>
+          </Select>
+          {formData.application_type === "link" && (
+            <Input
+              placeholder="https://job-site.com/apply"
+              value={formData.application_url || ""}
+              onChange={(e) => setFormData({ ...formData, application_url: e.target.value })}
+            />
+          )}
+          {formData.application_type === "email" && (
+            <Input
+              placeholder="hr@company.com"
+              type="email"
+              value={formData.application_email || ""}
+              onChange={(e) => setFormData({ ...formData, application_email: e.target.value })}
+            />
+          )}
+        </div>
+      </div>
+
+      {/* Restored: Management Metadata */}
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <div className="space-y-2">
-          <Label>Deadline</Label>
+          <Label>Application Deadline</Label>
           <Input
             type="date"
             value={formData.deadline?.split("T")[0] || ""}
@@ -825,7 +857,7 @@ const JobForm = ({
           />
         </div>
         <div className="space-y-2">
-          <Label>Category</Label>
+          <Label>Industry Category</Label>
           <Select
             value={formData.profession_category_id || "none"}
             onValueChange={(v) => setFormData({ ...formData, profession_category_id: v === "none" ? null : v })}
@@ -834,7 +866,7 @@ const JobForm = ({
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="none">None</SelectItem>
+              <SelectItem value="none">Uncategorized</SelectItem>
               {categories.map((c) => (
                 <SelectItem key={c.id} value={c.id}>
                   {c.name}
@@ -845,78 +877,84 @@ const JobForm = ({
         </div>
       </div>
 
-      {/* Toggles */}
-      <div className="flex gap-4">
-        <div className="flex items-center gap-2">
+      <div className="flex gap-6 items-center border-t pt-4">
+        <div className="flex items-center gap-3">
           <Switch checked={formData.is_active} onCheckedChange={(c) => setFormData({ ...formData, is_active: c })} />
-          <Label>Active</Label>
+          <Label>Publicly Active</Label>
         </div>
-        <div className="flex items-center gap-2">
+        <div className="flex items-center gap-3">
           <Switch
             checked={formData.is_featured}
             onCheckedChange={(c) => setFormData({ ...formData, is_featured: c })}
           />
-          <Label>Featured</Label>
+          <Label className="text-amber-600 flex items-center gap-1">
+            <Star className="w-3 h-3 fill-current" /> Featured Position
+          </Label>
         </div>
       </div>
 
-      {/* AI Assessment */}
-      <div className="p-4 border rounded-lg bg-purple-50/30 space-y-4">
-        <div className="flex items-center gap-2">
+      {/* Restored: AI Assessment Block */}
+      <div className="p-4 border rounded-lg bg-purple-50/50 space-y-4">
+        <div className="flex items-center gap-3">
           <Switch
             checked={formData.ai_assessment_enabled}
             onCheckedChange={(c) => setFormData({ ...formData, ai_assessment_enabled: c })}
           />
-          <Label className="flex items-center gap-2">
-            <Brain className="w-4 h-4" /> Enable AI Assessment
+          <Label className="font-bold flex items-center gap-2 text-purple-900">
+            <Brain className="w-4 h-4" /> Enable AI Skills Assessment
           </Label>
         </div>
         {formData.ai_assessment_enabled && (
-          <div className="flex gap-4">
-            <Select
-              value={String(formData.assessment_config?.questions || 5)}
-              onValueChange={(v) =>
-                setFormData({
-                  ...formData,
-                  assessment_config: { ...formData.assessment_config, questions: parseInt(v) },
-                })
-              }
-            >
-              <SelectTrigger className="w-32">
-                <SelectValue />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="3">3 Qs</SelectItem>
-                <SelectItem value="5">5 Qs</SelectItem>
-                <SelectItem value="10">10 Qs</SelectItem>
-              </SelectContent>
-            </Select>
-            <div className="flex items-center gap-2">
+          <div className="grid grid-cols-2 gap-4 animate-in fade-in slide-in-from-top-2">
+            <div className="space-y-2">
+              <Label>Questions</Label>
+              <Select
+                value={String(formData.assessment_config?.questions || 5)}
+                onValueChange={(v) =>
+                  setFormData({
+                    ...formData,
+                    assessment_config: { ...formData.assessment_config, questions: parseInt(v) },
+                  })
+                }
+              >
+                <SelectTrigger>
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="3">3 questions</SelectItem>
+                  <SelectItem value="5">5 questions</SelectItem>
+                  <SelectItem value="10">10 questions</SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+            <div className="flex items-center gap-2 mt-6">
               <Switch
                 checked={formData.assessment_config?.voice}
                 onCheckedChange={(c) =>
                   setFormData({ ...formData, assessment_config: { ...formData.assessment_config, voice: c } })
                 }
               />
-              <Label>Voice Mode</Label>
+              <Label>Voice Assessment</Label>
             </div>
           </div>
         )}
       </div>
 
-      <div className="flex justify-end gap-2 pt-4 border-t">
+      <div className="flex justify-end gap-2 pt-4 border-t sticky bottom-0 bg-background py-2">
         <Button variant="outline" onClick={onCancel}>
           Cancel
         </Button>
         <Button onClick={() => validateForm() && onSave(formData)} disabled={saving}>
-          {saving && <Loader2 className="animate-spin mr-2" />} Save Job
+          {saving && <Loader2 className="animate-spin mr-2" />} Save Position
         </Button>
       </div>
     </div>
   );
 };
 
-// --- MAIN MANAGER COMPONENT ---
+/**
+ * MAIN MANAGER COMPONENT (Fully Restored & Cascading)
+ */
 export function JobsManager() {
   const [searchParams] = useSearchParams();
   const isMobile = useIsMobile();
@@ -928,7 +966,7 @@ export function JobsManager() {
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
 
-  // RESTORED: ALL FILTERS
+  // All Filters Restored
   const [statusFilter, setStatusFilter] = useState("all");
   const [locationFilter, setLocationFilter] = useState("all");
   const [companyFilter, setCompanyFilter] = useState(searchParams.get("company") || "all");
@@ -951,15 +989,6 @@ export function JobsManager() {
   const [isLinkedInImportOpen, setIsLinkedInImportOpen] = useState(false);
   const [locationOpen, setLocationOpen] = useState(false);
 
-  const COUNTRY_ALIASES: Record<string, string[]> = useMemo(
-    () => ({
-      "United Arab Emirates": ["UAE", "United Arab Emirates", "Dubai", "Abu Dhabi"],
-      "United Kingdom": ["UK", "United Kingdom"],
-      "United States": ["USA", "United States", "US"],
-    }),
-    [],
-  );
-
   useEffect(() => {
     const loadMetadata = async () => {
       const [{ data: cats }, { data: cos }] = await Promise.all([
@@ -972,7 +1001,6 @@ export function JobsManager() {
     loadMetadata();
   }, []);
 
-  // RESTORED: CASCADING FILTER LOGIC
   const fetchAllRows = useCallback(async (baseQuery: () => any) => {
     let allRows: any[] = [];
     let p = 0;
@@ -988,13 +1016,10 @@ export function JobsManager() {
     return allRows;
   }, []);
 
+  // Compute live cascading filter counts
   useEffect(() => {
     const computeFilters = async () => {
-      const rows = await fetchAllRows(() =>
-        supabase.from("jobs").select("location, is_active, is_featured, application_type, company_name"),
-      );
-
-      // Compute Status Counts
+      const rows = await fetchAllRows(() => supabase.from("jobs").select("location, is_active, is_featured"));
       setStatusCounts({
         all: rows.length,
         active: rows.filter((r) => r.is_active).length,
@@ -1002,7 +1027,6 @@ export function JobsManager() {
         featured: rows.filter((r) => r.is_featured).length,
       });
 
-      // Compute Country Counts
       const counts: Record<string, number> = {};
       rows.forEach((r) => {
         const loc = r.location?.toLowerCase() || "";
@@ -1027,16 +1051,16 @@ export function JobsManager() {
     setLoading(true);
     try {
       let query = supabase.from("jobs").select("*", { count: "exact" }).order("created_at", { ascending: false });
-
       if (debouncedSearch) query = query.or(`title.ilike.%${debouncedSearch}%,company_name.ilike.%${debouncedSearch}%`);
-      if (statusFilter !== "all") {
-        if (statusFilter === "featured") query = query.eq("is_featured", true);
-        else query = query.eq("is_active", statusFilter === "active");
-      }
-      if (locationFilter !== "all") {
-        if (locationFilter === "bangladesh") query = query.ilike("location", "%Bangladesh%");
-        else query = query.ilike("location", `%${locationFilter}%`);
-      }
+      if (statusFilter !== "all")
+        statusFilter === "featured"
+          ? (query = query.eq("is_featured", true))
+          : (query = query.eq("is_active", statusFilter === "active"));
+      if (locationFilter !== "all")
+        query =
+          locationFilter === "bangladesh"
+            ? query.ilike("location", "%Bangladesh%")
+            : query.ilike("location", `%${locationFilter}%`);
       if (companyFilter !== "all") {
         const co = companiesList.find((c) => c.id === companyFilter);
         if (co) query = query.ilike("company_name", `%${co.name}%`);
@@ -1045,19 +1069,17 @@ export function JobsManager() {
 
       const from = (page - 1) * ITEMS_PER_PAGE;
       const { data, count, error } = await query.range(from, from + ITEMS_PER_PAGE - 1);
-
       if (error) throw error;
       setJobs((data as Job[]) || []);
       setTotalCount(count || 0);
 
-      // Fetch analytics for these jobs
+      // Fetch analytics parallel
       if (data?.length) {
         const ids = data.map((j) => j.id);
         const [{ data: shares }, { data: clicks }] = await Promise.all([
           supabase.from("job_share_logs").select("job_id, channel").in("job_id", ids),
           supabase.from("job_apply_clicks").select("job_id").in("job_id", ids),
         ]);
-
         const sCounts: Record<string, Set<string>> = {};
         shares?.forEach((s) => {
           if (!sCounts[s.job_id]) sCounts[s.job_id] = new Set();
@@ -1066,7 +1088,6 @@ export function JobsManager() {
         const finalShares: Record<string, number> = {};
         Object.entries(sCounts).forEach(([id, set]) => (finalShares[id] = set.size));
         setJobShareCounts(finalShares);
-
         const cCounts: Record<string, number> = {};
         clicks?.forEach((c) => (cCounts[c.job_id] = (cCounts[c.job_id] || 0) + 1));
         setJobApplyClicks(cCounts);
@@ -1085,7 +1106,6 @@ export function JobsManager() {
   const handleSaveJob = async (formData: any) => {
     setSaving(true);
     try {
-      // Auto-create/resolve company
       let companyId = formData.company_id;
       if (!companyId && formData.company_name) {
         const { data: existing } = await supabase
@@ -1103,17 +1123,14 @@ export function JobsManager() {
           companyId = newCo?.id;
         }
       }
-
       const payload = Object.fromEntries(
         Object.entries({ ...formData, company_id: companyId }).filter(([key]) => VALID_JOB_FIELDS.includes(key)),
       );
-
       const { error } = editingJob
         ? await supabase.from("jobs").update(payload).eq("id", editingJob.id)
         : await supabase.from("jobs").insert([payload]);
-
       if (error) throw error;
-      toast.success("Job Saved");
+      toast.success("Position saved successfully");
       setIsDialogOpen(false);
       loadJobs();
     } catch (err: any) {
@@ -1124,10 +1141,10 @@ export function JobsManager() {
   };
 
   const handleDelete = async (id: string) => {
-    if (!confirm("Delete this job?")) return;
+    if (!confirm("Are you sure? This action cannot be undone.")) return;
     const { error } = await supabase.from("jobs").delete().eq("id", id);
     if (!error) {
-      toast.success("Deleted");
+      toast.success("Position removed");
       loadJobs();
     }
   };
@@ -1150,37 +1167,42 @@ export function JobsManager() {
     }
   };
 
-  // RESTORED: MOBILE CARD RENDERER
   const renderJobCard = (job: Job) => {
     const shareCount = jobShareCounts[job.id] || 0;
     const clickCount = jobApplyClicks[job.id] || 0;
     const SourceIcon = job.source_platform ? SOURCE_PLATFORM_ICONS[job.source_platform]?.icon : null;
 
     return (
-      <div key={job.id} className="p-4 border rounded-lg bg-background space-y-3 shadow-sm">
+      <div
+        key={job.id}
+        className="p-4 border rounded-xl bg-background space-y-3 shadow-sm hover:border-primary/30 transition-all"
+      >
         <div className="flex justify-between items-start">
           <div className="flex items-center gap-2">
-            {SourceIcon && <SourceIcon className="w-3 h-3 text-primary" />}
-            <span className="font-bold text-sm truncate max-w-[150px]">{job.title}</span>
+            {SourceIcon && <SourceIcon className="w-3 h-3" />}
+            <span className="font-bold text-sm truncate max-w-[200px]">{job.title}</span>
           </div>
-          <Badge variant={job.is_active ? "default" : "secondary"}>{job.is_active ? "Active" : "Inactive"}</Badge>
+          <Badge variant={job.is_active ? "default" : "secondary"} className="text-[10px]">
+            {job.is_active ? "Active" : "Inactive"}
+          </Badge>
         </div>
-        <p className="text-xs text-muted-foreground">{job.company_name}</p>
+        <div className="text-xs text-muted-foreground flex items-center gap-2">
+          <Building2 className="w-3 h-3" /> {job.company_name}
+        </div>
         <div className="flex flex-wrap gap-2 text-[10px]">
           <Badge variant="outline" className="gap-1">
             <MapPin className="w-2 h-2" /> {job.location || "Remote"}
           </Badge>
-          <Badge variant="outline">{job.job_type}</Badge>
-          <Badge variant="outline" className="border-green-200 text-green-700">
+          <Badge variant="outline" className={shareCount >= 4 ? "border-green-500 text-green-700 bg-green-50" : ""}>
             {shareCount}/4 Shared
           </Badge>
           {clickCount > 0 && (
-            <Badge variant="outline" className="border-blue-200 text-blue-700">
+            <Badge variant="outline" className="border-blue-500 text-blue-700">
               {clickCount} Clicks
             </Badge>
           )}
         </div>
-        <div className="flex justify-end gap-1 pt-2 border-t">
+        <div className="flex justify-end gap-1 pt-2 border-t mt-2">
           <Button
             variant="ghost"
             size="icon"
@@ -1225,12 +1247,12 @@ export function JobsManager() {
   };
 
   return (
-    <div className="space-y-4">
+    <div className="space-y-4 pb-12">
       <Card>
-        <CardHeader className="flex flex-col sm:flex-row sm:justify-between gap-4">
+        <CardHeader className="flex flex-col sm:flex-row sm:justify-between items-start sm:items-center gap-4">
           <div>
-            <CardTitle>Jobs Manager</CardTitle>
-            <p className="text-sm text-muted-foreground">{totalCount} total jobs</p>
+            <CardTitle className="text-xl">Jobs Manager</CardTitle>
+            <p className="text-xs text-muted-foreground">{totalCount} positions found</p>
           </div>
           <div className="flex flex-wrap gap-2">
             <Button
@@ -1238,12 +1260,12 @@ export function JobsManager() {
               size="sm"
               onClick={handleDeactivateExpired}
               disabled={expiringLoading}
-              className="text-destructive"
+              className="text-destructive border-destructive/20 hover:bg-destructive/10"
             >
-              <Clock className="w-4 h-4 mr-2" /> Expire Old
+              <Clock className="w-4 h-4 mr-2" /> Bulk Expire
             </Button>
             <Button variant="outline" size="sm" onClick={() => setIsLinkedInImportOpen(true)}>
-              <Linkedin className="w-4 h-4 mr-2" /> Import
+              <Linkedin className="w-4 h-4 mr-2 text-blue-600" /> Batch Upload
             </Button>
             <Button
               size="sm"
@@ -1252,54 +1274,54 @@ export function JobsManager() {
                 setIsDialogOpen(true);
               }}
             >
-              <Plus className="w-4 h-4 mr-2" /> Add Job
+              <Plus className="w-4 h-4 mr-2" /> Post Job
             </Button>
           </div>
         </CardHeader>
         <CardContent>
-          {/* RESTORED: COMPLEX FILTER BAR */}
-          <div className="grid grid-cols-1 sm:flex sm:flex-wrap gap-3 mb-6">
+          <div className="flex flex-wrap gap-3 mb-6 bg-muted/20 p-3 rounded-lg border">
             <div className="relative flex-1 min-w-[200px]">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                className="pl-9"
-                placeholder="Search..."
+                className="pl-9 h-9"
+                placeholder="Search title or company..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
             </div>
 
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-32">
+              <SelectTrigger className="w-full sm:w-36 h-9">
                 <SelectValue />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All ({statusCounts.all})</SelectItem>
-                <SelectItem value="active">Active ({statusCounts.active})</SelectItem>
-                <SelectItem value="featured">Featured ({statusCounts.featured})</SelectItem>
+                <SelectItem value="all">All Status ({statusCounts.all || 0})</SelectItem>
+                <SelectItem value="active">Active ({statusCounts.active || 0})</SelectItem>
+                <SelectItem value="inactive">Inactive ({statusCounts.inactive || 0})</SelectItem>
+                <SelectItem value="featured">Featured ({statusCounts.featured || 0})</SelectItem>
               </SelectContent>
             </Select>
 
             <Popover open={locationOpen} onOpenChange={setLocationOpen}>
               <PopoverTrigger asChild>
-                <Button variant="outline" className="w-full sm:w-48 justify-between">
+                <Button variant="outline" className="w-full sm:w-48 h-9 justify-between">
                   <MapPin className="w-4 h-4 mr-2" />
                   <span className="truncate">{locationFilter === "all" ? "All Locations" : locationFilter}</span>
-                  <ChevronRight className="ml-2 w-4 h-4 rotate-90" />
+                  <ChevronRight className="ml-2 w-4 h-4 rotate-90 opacity-50" />
                 </Button>
               </PopoverTrigger>
               <PopoverContent className="w-64 p-0">
                 <Command>
                   <CommandInput placeholder="Search country..." />
                   <CommandList>
-                    <CommandGroup heading="Quick">
+                    <CommandGroup heading="Global">
                       <CommandItem
                         onSelect={() => {
                           setLocationFilter("all");
                           setLocationOpen(false);
                         }}
                       >
-                        🌍 All
+                        🌍 Global
                       </CommandItem>
                       <CommandItem
                         onSelect={() => {
@@ -1328,26 +1350,12 @@ export function JobsManager() {
               </PopoverContent>
             </Popover>
 
-            <Select value={companyFilter} onValueChange={setCompanyFilter}>
-              <SelectTrigger className="w-full sm:w-40">
-                <SelectValue placeholder="Company" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Companies</SelectItem>
-                {companiesList.map((c) => (
-                  <SelectItem key={c.id} value={c.id}>
-                    {c.name}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-
             <Select value={appTypeFilter} onValueChange={setAppTypeFilter}>
-              <SelectTrigger className="w-full sm:w-32">
-                <SelectValue placeholder="Type" />
+              <SelectTrigger className="w-full sm:w-32 h-9">
+                <SelectValue placeholder="Flow Type" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Apps</SelectItem>
+                <SelectItem value="all">All Flows</SelectItem>
                 <SelectItem value="link">Link</SelectItem>
                 <SelectItem value="email">Email</SelectItem>
                 <SelectItem value="internal">Internal</SelectItem>
@@ -1356,62 +1364,71 @@ export function JobsManager() {
           </div>
 
           {loading ? (
-            <DashboardTableSkeleton rows={5} columns={6} />
+            <DashboardTableSkeleton rows={8} columns={isMobile ? 1 : 6} />
           ) : isMobile ? (
-            <div className="space-y-4">{jobs.map(renderJobCard)}</div>
+            <div className="grid grid-cols-1 gap-4">{jobs.map(renderJobCard)}</div>
           ) : (
-            <div className="rounded-md border">
+            <div className="rounded-xl border shadow-sm overflow-hidden">
               <Table>
-                <TableHeader>
+                <TableHeader className="bg-muted/50">
                   <TableRow>
-                    <TableHead>Job & Company</TableHead>
-                    <TableHead>Location</TableHead>
-                    <TableHead>Salary</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead>Analytics</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableHead className="font-bold">Job Profile</TableHead>
+                    <TableHead className="font-bold">Locale</TableHead>
+                    <TableHead className="font-bold">Salary (Merged)</TableHead>
+                    <TableHead className="font-bold">Status</TableHead>
+                    <TableHead className="font-bold">Marketing</TableHead>
+                    <TableHead className="text-right font-bold pr-6">Manage</TableHead>
                   </TableRow>
                 </TableHeader>
                 <TableBody>
                   {jobs.map((job) => {
-                    const shareCount = jobShareCounts[job.id] || 0;
-                    const clickCount = jobApplyClicks[job.id] || 0;
+                    const shares = jobShareCounts[job.id] || 0;
+                    const clicks = jobApplyClicks[job.id] || 0;
                     return (
-                      <TableRow key={job.id}>
+                      <TableRow key={job.id} className="hover:bg-muted/30">
                         <TableCell>
-                          <div className="font-bold">{job.title}</div>
-                          <div className="text-xs text-muted-foreground">{job.company_name}</div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-1">
-                            <MapPin className="w-3 h-3" /> {job.location || "-"}
+                          <div className="font-bold text-sm">{job.title}</div>
+                          <div className="text-xs text-muted-foreground flex items-center gap-1">
+                            <Building2 className="w-3 h-3" />
+                            {job.company_name}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="text-xs font-medium">
+                          <div className="flex items-center gap-1 text-sm">
+                            <MapPin className="w-3 h-3 text-muted-foreground" /> {job.location || "-"}
+                          </div>
+                        </TableCell>
+                        <TableCell>
+                          <div className="text-xs font-semibold px-2 py-1 bg-emerald-50 text-emerald-800 rounded-md border border-emerald-100 inline-block">
                             {job.salary_range_min
-                              ? `${job.salary_currency} ${job.salary_range_min.toLocaleString()}`
+                              ? `${job.salary_currency || "BDT"} ${job.salary_range_min.toLocaleString()}`
                               : "N/A"}
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant={job.is_active ? "default" : "secondary"}>
-                            {job.is_active ? "Active" : "Inactive"}
+                          <Badge
+                            variant={job.is_active ? "default" : "secondary"}
+                            className="text-[10px] uppercase tracking-wider"
+                          >
+                            {job.is_active ? "Active" : "Paused"}
                           </Badge>
                         </TableCell>
                         <TableCell>
                           <div className="flex gap-2">
-                            <Badge variant="outline" className={shareCount >= 4 ? "bg-green-50" : ""}>
-                              {shareCount}/4
+                            <Badge
+                              variant="outline"
+                              className={`text-[10px] ${shares >= 4 ? "bg-green-50 border-green-500 text-green-700" : ""}`}
+                            >
+                              {shares}/4 Shared
                             </Badge>
-                            {clickCount > 0 && (
-                              <Badge variant="outline" className="bg-blue-50">
-                                {clickCount} Clicks
+                            {clicks > 0 && (
+                              <Badge variant="outline" className="text-[10px] bg-blue-50 border-blue-500 text-blue-700">
+                                {clicks} Clicks
                               </Badge>
                             )}
                           </div>
                         </TableCell>
-                        <TableCell className="text-right">
+                        <TableCell className="text-right pr-6">
                           <div className="flex justify-end gap-1">
                             <Button
                               variant="ghost"
@@ -1426,7 +1443,7 @@ export function JobsManager() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-blue-600"
+                              className="text-blue-600 hover:bg-blue-50"
                               onClick={() => {
                                 setShareJob(job);
                                 setIsShareOpen(true);
@@ -1437,7 +1454,7 @@ export function JobsManager() {
                             <Button
                               variant="ghost"
                               size="icon"
-                              className="text-destructive"
+                              className="text-destructive hover:bg-red-50"
                               onClick={() => handleDelete(job.id)}
                             >
                               <Trash2 className="w-4 h-4" />
@@ -1452,30 +1469,36 @@ export function JobsManager() {
             </div>
           )}
 
-          {/* Pagination */}
+          {/* Pagination Controls Restored */}
           {Math.ceil(totalCount / ITEMS_PER_PAGE) > 1 && (
-            <div className="flex justify-end gap-2 mt-4">
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((p) => Math.max(1, p - 1))}
-                disabled={page === 1}
-              >
-                <ChevronLeft className="h-4 w-4" />
-              </Button>
-              <Button
-                variant="outline"
-                size="sm"
-                onClick={() => setPage((p) => p + 1)}
-                disabled={page >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
-              >
-                <ChevronRight className="h-4 w-4" />
-              </Button>
+            <div className="flex justify-between items-center mt-6">
+              <p className="text-xs text-muted-foreground">
+                Showing page {page} of {Math.ceil(totalCount / ITEMS_PER_PAGE)}
+              </p>
+              <div className="flex gap-2">
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  disabled={page === 1}
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setPage((p) => p + 1)}
+                  disabled={page >= Math.ceil(totalCount / ITEMS_PER_PAGE)}
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
+              </div>
             </div>
           )}
         </CardContent>
       </Card>
 
+      {/* Auxiliary Dialogs Full Restoration */}
       <ShareJobDialog job={shareJob} isOpen={isShareOpen} onClose={() => setIsShareOpen(false)} />
       <BatchLinkedInJobUpload
         isOpen={isLinkedInImportOpen}
@@ -1484,9 +1507,10 @@ export function JobsManager() {
       />
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-4xl max-h-[95vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingJob ? "Edit Job" : "Post New Job"}</DialogTitle>
+            <DialogTitle className="text-2xl">{editingJob ? "Edit Job Posting" : "Create New Job Listing"}</DialogTitle>
+            <DialogDescription>Provide comprehensive details to attract the best talent.</DialogDescription>
           </DialogHeader>
           <JobForm
             initialData={editingJob || emptyJob}
