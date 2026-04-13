@@ -141,7 +141,7 @@ const Dashboard = () => {
     setSearchParams({ tab });
   };
 
-  if (authLoading || talentLoading) {
+  if (authLoading || roleLoading) {
     return <div className="flex items-center justify-center h-screen">Loading Command Center...</div>;
   }
 
