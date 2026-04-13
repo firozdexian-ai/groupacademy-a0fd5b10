@@ -55,7 +55,7 @@ serve(async (req) => {
     // Admin client for data operations (fetching talents, managing sessions)
     const supabaseAdmin = createClient(supabaseUrl, supabaseServiceKey);
 
-    console.log(`Starting lead hunt matching for user: ${user.id}`);
+    console.log(`Starting lead hunt matching for user: ${userId}`);
 
     // Parse job description to extract requirements
     const requirements = parseJobRequirements(jobDescription);
@@ -78,8 +78,8 @@ serve(async (req) => {
         });
       }
 
-      if (existingSession.created_by !== user.id) {
-        console.error(`Unauthorized access: User ${user.id} tried to access session ${sessionId}`);
+      if (existingSession.created_by !== userId) {
+        console.error(`Unauthorized access: User ${userId} tried to access session ${sessionId}`);
         return new Response(JSON.stringify({ error: "Unauthorized access to this session" }), {
           status: 403,
           headers: { ...corsHeaders, "Content-Type": "application/json" },
@@ -90,7 +90,7 @@ serve(async (req) => {
       const { data: newSession, error: sessionError } = await supabaseAdmin
         .from("lead_hunt_sessions")
         .insert({
-          created_by: user.id,
+          created_by: userId,
           job_title: jobTitle || "Untitled Position",
           company_name: companyName,
           job_description: jobDescription,
