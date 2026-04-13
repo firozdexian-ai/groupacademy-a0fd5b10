@@ -139,7 +139,8 @@ const Index = () => {
     "@type": "EducationalOrganization",
     name: "GroUp Academy",
     url: "https://groupacademy.lovable.app",
-    description: "AI-powered career acceleration platform with career assessments, mock interviews, salary analysis, digital portfolios, and 300+ professional courses.",
+    description:
+      "AI-powered career acceleration platform with career assessments, mock interviews, salary analysis, digital portfolios, and 300+ professional courses.",
     sameAs: [],
     offers: {
       "@type": "Offer",
