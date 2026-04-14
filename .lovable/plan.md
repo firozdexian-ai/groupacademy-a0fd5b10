@@ -1,70 +1,90 @@
 
 
-# Fix: Stale Session Redirect Loop Breaking Login
+# Enable Built-in Stripe Payments + Admin Payment Dashboard
 
-## Problem
+## Overview
 
-When a user (e.g., `gro10xnow@gmail.com`) visits `/auth`, a **redirect loop** occurs:
+Enable Lovable's built-in Stripe payments, remove the old custom Stripe code, and add a dedicated **Payments Dashboard** for admins to track revenue, successful payments, failed transactions, and export reports.
 
-1. Browser has a stale Supabase session in localStorage (expired refresh token)
-2. `useAuth` hook's `onAuthStateChange` fires with the cached (stale) user object momentarily
-3. `AuthChat` sees `user` is truthy, redirects to `/app/feed`
-4. `ProtectedRoute` on `/app/feed` calls `getSession()`, refresh fails → redirects back to `/auth`
-5. Loop repeats — user is stuck, cannot sign in
+## What Already Exists
 
-The console confirms: `AuthApiError: Invalid Refresh Token: Refresh Token Not Found`
+- **CreditsManager** in the admin dashboard tracks credit balances, consumption stats, and service breakdowns — but it does NOT track Stripe payment revenue or checkout sessions.
+- Custom Stripe edge functions (`create-checkout`, `stripe-webhook`, `update-stripe-secret`) handle payments today but will be replaced by the built-in system.
+- `credit_transactions` table logs purchases with `stripe_purchase` transaction type.
 
-## Root Cause
+## Plan
 
-The `useAuth` hook does not clear stale sessions when token refresh fails. It catches the error and sets `user = null`, but by then `onAuthStateChange` has already emitted the stale user, triggering the premature redirect in `AuthChat`.
+### Step 1: Enable Lovable's built-in Stripe payments
+Call `enable_stripe_payments` to provision the managed integration with test environment.
 
-## Fix (3 changes)
+### Step 2: Remove custom Stripe edge functions
+Delete `create-checkout`, `stripe-webhook`, and `update-stripe-secret` edge functions.
 
-### 1. `src/hooks/useAuth.ts` — Clear stale tokens on refresh failure
+### Step 3: Update frontend payment components
+- **CreditPurchaseSheet**: Rewrite to use built-in checkout flow
+- **PaymentSettingsManager**: Replace manual key config with a simple status display
+- **usePaymentConfig**: Simplify to check built-in Stripe status
 
-In the `checkSession` catch block, detect refresh token errors and call `supabase.auth.signOut()` to purge localStorage. Also handle the `TOKEN_REFRESHED` event with null session in `onAuthStateChange`:
+### Step 4: Create products
+Set up credit bundles (100/$2, 500/$9, 1000/$16, 2500/$37.50) in the built-in product catalog.
 
-```typescript
-// In onAuthStateChange:
-if (event === 'TOKEN_REFRESHED' && !session) {
-  // Stale token was rejected — clear everything
-  supabase.auth.signOut();
-}
+### Step 5: Add Admin Payments Dashboard
+Create a new **PaymentsAnalytics** component in the admin dashboard with:
 
-// In checkSession catch:
-if (error.message?.includes('Refresh Token') || error.code === 'refresh_token_not_found') {
-  await supabase.auth.signOut();
-}
-```
+1. **Revenue Summary Cards**
+   - Total revenue (all-time)
+   - Monthly revenue (current month)
+   - Total successful transactions count
+   - Average transaction value
 
-### 2. `src/pages/AuthChat.tsx` — Validate session before redirecting
+2. **Payment Transactions Table**
+   - Filterable by date range (24h, 7d, 30d, custom)
+   - Filterable by status (successful, pending, failed)
+   - Columns: User, Amount, Credits, Status, Date, Stripe Session ID
+   - Color-coded status badges (green=success, red=failed, yellow=pending)
+   - Paginated with 25 rows per page
 
-Instead of redirecting on any truthy `user`, verify the session is actually valid first:
+3. **Revenue Chart**
+   - Daily/weekly revenue trend line using recharts (already installed)
+   - Toggle between credit purchases vs dollar revenue view
 
-```typescript
-useEffect(() => {
-  if (!authLoading && user) {
-    // Double-check session is valid before redirecting
-    supabase.auth.getSession().then(({ data: { session } }) => {
-      if (session) {
-        const returnTo = searchParams.get("returnTo");
-        const safeReturn = returnTo && returnTo !== "/auth" && returnTo !== "/" 
-          ? returnTo : "/app/feed";
-        navigate(safeReturn, { replace: true });
-      }
-    });
-  }
-}, [user, authLoading, navigate, searchParams]);
-```
+4. **Service Revenue Breakdown**
+   - Pie/bar chart showing which credit bundles sell most
+   - Percentage split of purchase amounts
 
-### 3. `src/pages/AuthClassic.tsx` — Same session validation fix
+5. **CSV Export**
+   - Export filtered transactions to CSV for accounting
+   - Include all fields: date, user email, amount, credits, status, transaction ID
 
-Apply the identical session validation to the classic auth page to keep both auth routes consistent.
+6. **Real-time Notifications**
+   - Admin gets a notification on each successful Stripe payment (already exists in webhook logic, will be preserved)
 
-## Impact
+### Step 6: Wire into Admin Sidebar
+Add "Payments" or "Revenue" entry under the Platform Config group in the admin sidebar, linking to the new dashboard section.
 
-- Breaks the redirect loop permanently for users with stale sessions
-- No database changes needed
-- No changes to the signup flow logic or role definitions
-- Both `/auth` and `/auth/classic` routes are hardened
+## Data Source
+
+All payment data will come from the existing `credit_transactions` table filtered by `transaction_type = 'stripe_purchase'` (or the built-in equivalent). No new database tables needed — the built-in Stripe integration will continue logging to this table via webhook fulfillment.
+
+## Technical Details
+
+- **Revenue charts**: Built with `recharts` (already a dependency)
+- **CSV export**: Client-side generation using existing `downloadFile` utility pattern
+- **Date filtering**: Uses `date-fns` (already installed)
+- **No new database tables**: Queries `credit_transactions` and `talent_credits`
+- **Component location**: `src/components/dashboard/PaymentsAnalytics.tsx`
+
+## Files Changed
+
+| Action | File |
+|--------|------|
+| Delete | `supabase/functions/create-checkout/index.ts` |
+| Delete | `supabase/functions/stripe-webhook/index.ts` |
+| Delete | `supabase/functions/update-stripe-secret/index.ts` |
+| Rewrite | `src/components/credits/CreditPurchaseSheet.tsx` |
+| Rewrite | `src/components/dashboard/PaymentSettingsManager.tsx` |
+| Update | `src/hooks/usePaymentConfig.ts` |
+| **New** | `src/components/dashboard/PaymentsAnalytics.tsx` |
+| Update | `src/components/dashboard/AdminSidebar.tsx` |
+| Update | `src/pages/Dashboard.tsx` |
 
