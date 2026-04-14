@@ -1,4 +1,5 @@
 import { useState, useEffect, useRef, FormEvent } from "react";
+import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAuthChat, AuthAction } from "@/hooks/useAuthChat";
@@ -38,12 +39,16 @@ const AuthChat = () => {
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const inputRef = useRef<HTMLInputElement>(null);
 
-  // Redirect if already authenticated
+  // Redirect if already authenticated — validate session first to avoid stale-token loops
   useEffect(() => {
     if (!authLoading && user) {
-      const returnTo = searchParams.get("returnTo");
-      const safeReturn = returnTo && returnTo !== "/auth" && returnTo !== "/" ? returnTo : "/app/feed";
-      navigate(safeReturn, { replace: true });
+      supabase.auth.getSession().then(({ data: { session } }) => {
+        if (session) {
+          const returnTo = searchParams.get("returnTo");
+          const safeReturn = returnTo && returnTo !== "/auth" && returnTo !== "/" ? returnTo : "/app/feed";
+          navigate(safeReturn, { replace: true });
+        }
+      });
     }
   }, [user, authLoading, navigate, searchParams]);
 
