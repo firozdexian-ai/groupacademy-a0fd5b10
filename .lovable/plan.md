@@ -1,37 +1,70 @@
 
 
-# Critical Fix: Auth Page Overwritten — Users Cannot Sign Up or Sign In
+# Fix: Stale Session Redirect Loop Breaking Login
 
 ## Problem
 
-The file `src/pages/AuthChat.tsx` (the conversational AI auth page mapped to `/auth`) was accidentally overwritten with the `AgentChat` component code during a previous edit. This means:
+When a user (e.g., `gro10xnow@gmail.com`) visits `/auth`, a **redirect loop** occurs:
 
-- Visiting `/auth` shows the AI Agent Chat UI instead of the login/signup flow
-- The Agent Chat requires authentication to work, creating a dead end
-- **No new users can sign up, and no existing users can sign in** via the primary auth route
+1. Browser has a stale Supabase session in localStorage (expired refresh token)
+2. `useAuth` hook's `onAuthStateChange` fires with the cached (stale) user object momentarily
+3. `AuthChat` sees `user` is truthy, redirects to `/app/feed`
+4. `ProtectedRoute` on `/app/feed` calls `getSession()`, refresh fails → redirects back to `/auth`
+5. Loop repeats — user is stuck, cannot sign in
+
+The console confirms: `AuthApiError: Invalid Refresh Token: Refresh Token Not Found`
 
 ## Root Cause
 
-During the Agent routing fix (Fix 4), the content of `src/pages/app/AgentChat.tsx` was mistakenly written into `src/pages/AuthChat.tsx`, replacing the original 323-line conversational auth component.
+The `useAuth` hook does not clear stale sessions when token refresh fails. It catches the error and sets `user = null`, but by then `onAuthStateChange` has already emitted the stale user, triggering the premature redirect in `AuthChat`.
 
-## Fix
+## Fix (3 changes)
 
-**Single file restore**: Revert `src/pages/AuthChat.tsx` to its original content from git commit `d06e513` (the last correct version). This restores the conversational Aisha auth agent with:
+### 1. `src/hooks/useAuth.ts` — Clear stale tokens on refresh failure
 
-- Email collection and validation
-- Password input with show/hide toggle
-- Sign up flow (name, country, phone collection)
-- Sign in flow
-- Password reset flow
-- Chat-style UI with `useAuthChat` hook
-- Return-to redirect after successful auth
-- "Switch to classic login" fallback link
+In the `checkSession` catch block, detect refresh token errors and call `supabase.auth.signOut()` to purge localStorage. Also handle the `TOKEN_REFRESHED` event with null session in `onAuthStateChange`:
 
-No other files need to change — the routing in `App.tsx` and the `useAuthChat` hook are both intact and correct.
+```typescript
+// In onAuthStateChange:
+if (event === 'TOKEN_REFRESHED' && !session) {
+  // Stale token was rejected — clear everything
+  supabase.auth.signOut();
+}
+
+// In checkSession catch:
+if (error.message?.includes('Refresh Token') || error.code === 'refresh_token_not_found') {
+  await supabase.auth.signOut();
+}
+```
+
+### 2. `src/pages/AuthChat.tsx` — Validate session before redirecting
+
+Instead of redirecting on any truthy `user`, verify the session is actually valid first:
+
+```typescript
+useEffect(() => {
+  if (!authLoading && user) {
+    // Double-check session is valid before redirecting
+    supabase.auth.getSession().then(({ data: { session } }) => {
+      if (session) {
+        const returnTo = searchParams.get("returnTo");
+        const safeReturn = returnTo && returnTo !== "/auth" && returnTo !== "/" 
+          ? returnTo : "/app/feed";
+        navigate(safeReturn, { replace: true });
+      }
+    });
+  }
+}, [user, authLoading, navigate, searchParams]);
+```
+
+### 3. `src/pages/AuthClassic.tsx` — Same session validation fix
+
+Apply the identical session validation to the classic auth page to keep both auth routes consistent.
 
 ## Impact
 
-- Restores the primary authentication flow for all users
+- Breaks the redirect loop permanently for users with stale sessions
 - No database changes needed
-- No other files affected
+- No changes to the signup flow logic or role definitions
+- Both `/auth` and `/auth/classic` routes are hardened
 
