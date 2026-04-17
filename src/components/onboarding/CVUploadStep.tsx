@@ -170,11 +170,12 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
 
       clearInterval(progressInterval);
 
-      if (parseError) {
-        // Fallback: save URL only
+      if (parseError || (parseResult && parseResult.error)) {
+        // Fallback: save URL only — keep user moving even if AI parsing fails
+        console.error("[CVUpload] Parse failed:", parseError || parseResult?.error);
         await updateTalent({ cvUrl: publicUrl });
-        setParseError("Uploaded successfully (Auto-fill unavailable)");
-        toast.warning("CV uploaded. Please fill details manually.");
+        setParseError("CV uploaded, but auto-fill couldn't read it. Please fill your details manually below.");
+        toast.warning("CV uploaded. Auto-fill unavailable — please complete your profile manually.");
         setIsParsing(false);
         setParseComplete(true);
         return;
