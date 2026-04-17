@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeIlike } from "@/lib/supabaseQuery";
 import type { Database } from "@/integrations/supabase/types";
@@ -79,9 +79,12 @@ export function WorkforceManager() {
   const [assignTalentSearch, setAssignTalentSearch] = useState("");
   const [assignTalentOptions, setAssignTalentOptions] = useState<TalentOption[]>([]);
 
-  useEffect(() => { fetchMembers(); }, []);
+  useEffect(() => {
+    fetchMembers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch workforce members
