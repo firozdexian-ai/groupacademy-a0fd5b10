@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
@@ -116,7 +117,8 @@ export function CompetitionsManager() {
 
       // Search Logic
       if (debouncedSearch) {
-        query = query.ilike("title", `%${debouncedSearch}%`);
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) query = query.ilike("title", `%${safe}%`);
       }
 
       // Filter Logic

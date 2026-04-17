@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
@@ -137,9 +138,12 @@ export default function PortfolioRequestsManager() {
         .order("created_at", { ascending: false });
 
       if (debouncedSearch) {
-        query = query.or(
-          `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,phone.ilike.%${debouncedSearch}%`,
-        );
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(
+            `full_name.ilike.%${safe}%,email.ilike.%${safe}%,phone.ilike.%${safe}%`,
+          );
+        }
       }
 
       if (statusFilter !== "all") {

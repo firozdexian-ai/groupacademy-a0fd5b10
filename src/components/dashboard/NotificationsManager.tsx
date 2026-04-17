@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -119,7 +120,8 @@ export function NotificationsManager() {
       if (debouncedSearch) {
         // Note: Searching relations deeply isn't supported in simple client query,
         // falling back to title search only for server-side
-        query = query.ilike("title", `%${debouncedSearch}%`);
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) query = query.ilike("title", `%${safe}%`);
       }
 
       const from = (page - 1) * ITEMS_PER_PAGE;

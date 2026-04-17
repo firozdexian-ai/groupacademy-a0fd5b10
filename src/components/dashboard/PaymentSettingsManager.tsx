@@ -34,6 +34,9 @@ export function PaymentSettingsManager() {
     },
   });
 
+  // The `update-stripe-secret` edge function is being phased out in favour of
+  // the built-in Stripe integration. Until the new flow ships we silently
+  // assume "not configured" rather than surfacing 404s in the UI.
   const { data: stripeSecretStatus } = useQuery({
     queryKey: ['stripe-secret-status'],
     queryFn: async () => {
@@ -48,6 +51,7 @@ export function PaymentSettingsManager() {
       }
     },
     staleTime: 30_000,
+    retry: false,
   });
 
   const [gateway, setGateway] = useState<GatewayOption>('whatsapp');

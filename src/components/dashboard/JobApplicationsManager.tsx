@@ -1,4 +1,5 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
@@ -542,6 +543,41 @@ export const JobApplicationsManager = () => {
       if (deliveryFilter !== "all") query = query.eq("delivery_status", deliveryFilter);
       if (jobFilter !== "all") query = query.eq("job_id", jobFilter);
 
+      // Server-side search across talents + jobs. We resolve matching ids in
+      // parallel, then constrain the main query so search works across ALL
+      // pages, not just the current one.
+      if (debouncedSearch) {
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          const [talentMatch, jobMatch] = await Promise.all([
+            supabase
+              .from("talents")
+              .select("id")
+              .or(`full_name.ilike.%${safe}%,email.ilike.%${safe}%`)
+              .limit(500),
+            supabase
+              .from("jobs")
+              .select("id")
+              .or(`title.ilike.%${safe}%,company_name.ilike.%${safe}%`)
+              .limit(500),
+          ]);
+          const talentIds = (talentMatch.data || []).map((t: any) => t.id);
+          const jobIds = (jobMatch.data || []).map((j: any) => j.id);
+
+          if (talentIds.length === 0 && jobIds.length === 0) {
+            setApplications([]);
+            setTotalCount(0);
+            setLoading(false);
+            return;
+          }
+
+          const orParts: string[] = [];
+          if (talentIds.length) orParts.push(`talent_id.in.(${talentIds.join(",")})`);
+          if (jobIds.length) orParts.push(`job_id.in.(${jobIds.join(",")})`);
+          query = query.or(orParts.join(","));
+        }
+      }
+
       const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
       query = query.range(from, to);
@@ -550,7 +586,7 @@ export const JobApplicationsManager = () => {
 
       if (result.error) throw result.error;
 
-      let data = result.data as unknown as JobApplication[];
+      const data = result.data as unknown as JobApplication[];
 
       setApplications(data);
       setTotalCount(result.count || 0);
@@ -561,23 +597,19 @@ export const JobApplicationsManager = () => {
     } finally {
       setLoading(false);
     }
-  }, [page, statusFilter, deliveryFilter, jobFilter]);
+  }, [page, statusFilter, deliveryFilter, jobFilter, debouncedSearch]);
 
   useEffect(() => {
     loadApplications();
   }, [loadApplications]);
 
-  // Client-side search filtering on current page
-  const filteredApplications = useMemo(() => {
-    if (!debouncedSearch) return applications;
-    const q = debouncedSearch.toLowerCase();
-    return applications.filter(app =>
-      (app.talents?.full_name || "").toLowerCase().includes(q) ||
-      (app.talents?.email || "").toLowerCase().includes(q) ||
-      (app.jobs?.title || "").toLowerCase().includes(q) ||
-      (app.jobs?.company_name || "").toLowerCase().includes(q)
-    );
-  }, [applications, debouncedSearch]);
+  // Reset to page 1 whenever search input changes
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch]);
+
+  // Search now runs server-side; render the full result list directly.
+  const filteredApplications = applications;
 
   const handleStatusChange = async (applicationId: string, newStatus: ApplicationStatus) => {
     try {
@@ -827,7 +859,7 @@ Applied: ${app.created_at ? format(new Date(app.created_at), "MMMM d, yyyy HH:mm
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search this page..."
+              placeholder="Search applicants, jobs, or companies..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10"

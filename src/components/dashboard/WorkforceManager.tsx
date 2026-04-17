@@ -1,5 +1,6 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import type { Database } from "@/integrations/supabase/types";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -78,9 +79,12 @@ export function WorkforceManager() {
   const [assignTalentSearch, setAssignTalentSearch] = useState("");
   const [assignTalentOptions, setAssignTalentOptions] = useState<TalentOption[]>([]);
 
-  useEffect(() => { fetchMembers(); }, []);
+  useEffect(() => {
+    fetchMembers();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
-  const fetchMembers = async () => {
+  const fetchMembers = useCallback(async () => {
     setLoading(true);
     try {
       // Fetch workforce members
@@ -140,7 +144,7 @@ export function WorkforceManager() {
     } finally {
       setLoading(false);
     }
-  };
+  }, []);
 
   // Search talents for add dialog
   useEffect(() => {
@@ -149,7 +153,7 @@ export function WorkforceManager() {
       const { data } = await supabase
         .from("talents")
         .select("id, full_name, email")
-        .or(`full_name.ilike.%${talentSearch}%,email.ilike.%${talentSearch}%`)
+        .or(`full_name.ilike.%${sanitizeIlike(talentSearch)}%,email.ilike.%${sanitizeIlike(talentSearch)}%`)
         .limit(10);
       setTalentOptions(data || []);
     }, 300);
@@ -163,7 +167,7 @@ export function WorkforceManager() {
       const { data } = await supabase
         .from("talents")
         .select("id, full_name, email")
-        .or(`full_name.ilike.%${assignTalentSearch}%,email.ilike.%${assignTalentSearch}%`)
+        .or(`full_name.ilike.%${sanitizeIlike(assignTalentSearch)}%,email.ilike.%${sanitizeIlike(assignTalentSearch)}%`)
         .limit(10);
       setAssignTalentOptions(data || []);
     }, 300);

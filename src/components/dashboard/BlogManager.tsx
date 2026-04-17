@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
@@ -386,7 +387,10 @@ export function BlogManager() {
       let query = supabase.from("blog_posts").select("*", { count: "exact" }).order("created_at", { ascending: false });
 
       if (debouncedSearch) {
-        query = query.or(`title.ilike.%${debouncedSearch}%,author_name.ilike.%${debouncedSearch}%`);
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(`title.ilike.%${safe}%,author_name.ilike.%${safe}%`);
+        }
       }
 
       if (statusFilter !== "all") {

@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
@@ -118,9 +119,12 @@ export function StudyAbroadManager() {
         .order("created_at", { ascending: false });
 
       if (debouncedSearch) {
-        query = query.or(
-          `university_name.ilike.%${debouncedSearch}%,program_name.ilike.%${debouncedSearch}%,country_name.ilike.%${debouncedSearch}%`,
-        );
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(
+            `university_name.ilike.%${safe}%,program_name.ilike.%${safe}%,country_name.ilike.%${safe}%`,
+          );
+        }
       }
 
       if (countryFilter !== "all") {

@@ -1,6 +1,7 @@
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -130,9 +131,12 @@ export function CompaniesManager() {
       let query = supabase.from("companies").select("*", { count: "exact" }).order("name");
 
       if (debouncedSearch) {
-        query = query.or(
-          `name.ilike.%${debouncedSearch}%,industry.ilike.%${debouncedSearch}%,primary_email.ilike.%${debouncedSearch}%`,
-        );
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(
+            `name.ilike.%${safe}%,industry.ilike.%${safe}%,primary_email.ilike.%${safe}%`,
+          );
+        }
       }
 
       if (industryFilter === "none") {

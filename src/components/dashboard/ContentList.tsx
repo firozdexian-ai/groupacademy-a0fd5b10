@@ -1,5 +1,6 @@
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -132,9 +133,12 @@ const ContentList = ({ filter }: ContentListProps) => {
       if (filters.levelId !== "all") query = query.eq("profession_level_id", filters.levelId);
 
       if (debouncedSearch) {
-        query = query.or(
-          `title.ilike.%${debouncedSearch}%,description.ilike.%${debouncedSearch}%,instructor_name.ilike.%${debouncedSearch}%`,
-        );
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(
+            `title.ilike.%${safe}%,description.ilike.%${safe}%,instructor_name.ilike.%${safe}%`,
+          );
+        }
       }
 
       // For readiness filter we need to fetch all matching IDs first, then filter client-side

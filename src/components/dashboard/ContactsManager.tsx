@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -140,9 +141,12 @@ export function ContactsManager() {
         .order("full_name");
 
       if (debouncedSearch) {
-        query = query.or(
-          `full_name.ilike.%${debouncedSearch}%,email.ilike.%${debouncedSearch}%,phone.ilike.%${debouncedSearch}%`,
-        );
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(
+            `full_name.ilike.%${safe}%,email.ilike.%${safe}%,phone.ilike.%${safe}%`,
+          );
+        }
       }
 
       if (companyFilter !== "all") {
