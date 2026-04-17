@@ -149,7 +149,7 @@ export function WorkforceManager() {
       const { data } = await supabase
         .from("talents")
         .select("id, full_name, email")
-        .or(`full_name.ilike.%${talentSearch}%,email.ilike.%${talentSearch}%`)
+        .or(`full_name.ilike.%${sanitizeIlike(talentSearch)}%,email.ilike.%${sanitizeIlike(talentSearch)}%`)
         .limit(10);
       setTalentOptions(data || []);
     }, 300);
@@ -163,7 +163,7 @@ export function WorkforceManager() {
       const { data } = await supabase
         .from("talents")
         .select("id, full_name, email")
-        .or(`full_name.ilike.%${assignTalentSearch}%,email.ilike.%${assignTalentSearch}%`)
+        .or(`full_name.ilike.%${sanitizeIlike(assignTalentSearch)}%,email.ilike.%${sanitizeIlike(assignTalentSearch)}%`)
         .limit(10);
       setAssignTalentOptions(data || []);
     }, 300);

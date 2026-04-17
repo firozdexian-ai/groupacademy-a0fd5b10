@@ -999,7 +999,10 @@ export function JobsManager() {
     try {
       let query = supabase.from("jobs").select("*", { count: "exact" }).order("created_at", { ascending: false });
 
-      if (debouncedSearch) query = query.or(`title.ilike.%${debouncedSearch}%,company_name.ilike.%${debouncedSearch}%`);
+      if (debouncedSearch) {
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) query = query.or(`title.ilike.%${safe}%,company_name.ilike.%${safe}%`);
+      }
       if (statusFilter !== "all") {
         if (statusFilter === "featured") query = query.eq("is_featured", true);
         else query = query.eq("is_active", statusFilter === "active");

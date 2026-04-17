@@ -386,7 +386,10 @@ export function BlogManager() {
       let query = supabase.from("blog_posts").select("*", { count: "exact" }).order("created_at", { ascending: false });
 
       if (debouncedSearch) {
-        query = query.or(`title.ilike.%${debouncedSearch}%,author_name.ilike.%${debouncedSearch}%`);
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(`title.ilike.%${safe}%,author_name.ilike.%${safe}%`);
+        }
       }
 
       if (statusFilter !== "all") {

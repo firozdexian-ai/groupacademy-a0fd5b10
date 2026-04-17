@@ -130,9 +130,12 @@ export function CompaniesManager() {
       let query = supabase.from("companies").select("*", { count: "exact" }).order("name");
 
       if (debouncedSearch) {
-        query = query.or(
-          `name.ilike.%${debouncedSearch}%,industry.ilike.%${debouncedSearch}%,primary_email.ilike.%${debouncedSearch}%`,
-        );
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(
+            `name.ilike.%${safe}%,industry.ilike.%${safe}%,primary_email.ilike.%${safe}%`,
+          );
+        }
       }
 
       if (industryFilter === "none") {

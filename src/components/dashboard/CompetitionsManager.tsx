@@ -116,7 +116,8 @@ export function CompetitionsManager() {
 
       // Search Logic
       if (debouncedSearch) {
-        query = query.ilike("title", `%${debouncedSearch}%`);
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) query = query.ilike("title", `%${safe}%`);
       }
 
       // Filter Logic

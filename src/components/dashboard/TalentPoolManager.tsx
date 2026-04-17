@@ -74,7 +74,10 @@ export function TalentPoolManager() {
         .from("talents" as any)
         .select("*", { count: "exact" })
         .order("updated_at", { ascending: false });
-      if (searchQuery) query = query.or(`full_name.ilike.%${searchQuery}%,email.ilike.%${searchQuery}%`);
+      if (searchQuery) {
+        const safe = sanitizeIlike(searchQuery);
+        if (safe) query = query.or(`full_name.ilike.%${safe}%,email.ilike.%${safe}%`);
+      }
       if (countryFilter !== "all") query = query.eq("country", countryFilter);
 
       const from = (page - 1) * ITEMS_PER_PAGE;

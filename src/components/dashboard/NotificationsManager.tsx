@@ -119,7 +119,8 @@ export function NotificationsManager() {
       if (debouncedSearch) {
         // Note: Searching relations deeply isn't supported in simple client query,
         // falling back to title search only for server-side
-        query = query.ilike("title", `%${debouncedSearch}%`);
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) query = query.ilike("title", `%${safe}%`);
       }
 
       const from = (page - 1) * ITEMS_PER_PAGE;

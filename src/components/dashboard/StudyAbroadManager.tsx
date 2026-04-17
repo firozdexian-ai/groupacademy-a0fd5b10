@@ -118,9 +118,12 @@ export function StudyAbroadManager() {
         .order("created_at", { ascending: false });
 
       if (debouncedSearch) {
-        query = query.or(
-          `university_name.ilike.%${debouncedSearch}%,program_name.ilike.%${debouncedSearch}%,country_name.ilike.%${debouncedSearch}%`,
-        );
+        const safe = sanitizeIlike(debouncedSearch);
+        if (safe) {
+          query = query.or(
+            `university_name.ilike.%${safe}%,program_name.ilike.%${safe}%,country_name.ilike.%${safe}%`,
+          );
+        }
       }
 
       if (countryFilter !== "all") {
