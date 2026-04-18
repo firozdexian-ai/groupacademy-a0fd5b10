@@ -60,7 +60,7 @@ export function GigSubmissionForm({ gig, open, onOpenChange }: GigSubmissionForm
     }
   };
 
-  // Determine width based on form complexity
+  // Determine width based on form complexity to avoid excessive scrolling
   const getDialogWidth = () => {
     if (["content_creation", "job_posting"].includes(gig.category)) return "max-w-xl";
     if (gig.category === "job_sharing") return "max-w-lg";
@@ -87,9 +87,9 @@ export function GigSubmissionForm({ gig, open, onOpenChange }: GigSubmissionForm
           <DialogDescription className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex items-center justify-between">
             <div className="flex flex-col">
               <span className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-                Completion Reward
+                Potential Reward
               </span>
-              <span className="text-sm font-black text-amber-600">Pending Verification</span>
+              <span className="text-sm font-black text-amber-600">Pending Review</span>
             </div>
             <div className="flex items-center gap-1.5 bg-amber-500 text-white px-3 py-1.5 rounded-xl shadow-lg shadow-amber-500/20">
               <Coins className="h-4 w-4" />
