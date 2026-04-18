@@ -24,11 +24,17 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { JobCard, type JobCardData } from "@/components/jobs/JobCard";
 import { JOB_TYPES } from "@/lib/constants/jobTypes";
 
+/**
+ * CTO Note:
+ * 1. Honors URL params from JobsHub (?company, ?location, ?sort).
+ * 2. Standardizes salary filtering across BDT and USD markets.
+ * 3. Uses range-based pagination to handle our 2,600+ jobs gracefully.
+ */
+
 interface JobWithSalary extends JobCardData {
   salary_range_min?: number | null;
   salary_range_max?: number | null;
   salary_currency?: string | null;
-  industry?: string | null;
 }
 
 export default function AppJobs() {
@@ -43,9 +49,7 @@ export default function AppJobs() {
     searchParams.get("type") ? [searchParams.get("type")!] : [],
   );
 
-  // New States to fix Audit Finding #2 (Missing parameter honoring)
   const targetCompany = searchParams.get("company");
-  const targetIndustry = searchParams.get("industry");
   const targetLocation = searchParams.get("location");
   const sortOrder = searchParams.get("sort") || "newest";
 
@@ -69,7 +73,7 @@ export default function AppJobs() {
       setSearchParams(newParams, { replace: true });
     }, 300);
     return () => clearTimeout(timer);
-  }, [searchQuery]);
+  }, [searchQuery, searchParams, setSearchParams]);
 
   const fetchJobs = useCallback(
     async (pageNum = 0, append = false) => {
@@ -83,20 +87,32 @@ export default function AppJobs() {
         const from = pageNum * PAGE_SIZE;
         const to = from + PAGE_SIZE - 1;
 
+        // select list matches the DB schema: 'industry' removed per Audit
         let query = supabase
           .from("jobs")
           .select(
-            "id, title, company_name, company_logo_url, location, job_type, experience_level, is_featured, created_at, deadline, salary_range_min, salary_range_max, salary_currency, industry",
+            `
+          id, 
+          title, 
+          company_name, 
+          company_logo_url, 
+          location, 
+          job_type, 
+          experience_level, 
+          is_featured, 
+          created_at, 
+          deadline, 
+          salary_range_min, 
+          salary_range_max, 
+          salary_currency
+        `,
           )
           .eq("is_active", true)
           .or("deadline.is.null,deadline.gte.now()");
 
-        // Honor incoming URL filters from JobsHub
         if (targetCompany) query = query.ilike("company_name", `%${targetCompany}%`);
-        if (targetIndustry) query = query.ilike("industry", `%${targetIndustry}%`);
         if (targetLocation && targetLocation !== "abroad") query = query.ilike("location", `%${targetLocation}%`);
 
-        // Sorting Logic
         if (sortOrder === "hot") {
           query = query.order("is_featured", { ascending: false });
         } else if (sortOrder === "expiring") {
@@ -118,7 +134,7 @@ export default function AppJobs() {
         setLoadingMore(false);
       }
     },
-    [targetCompany, targetIndustry, targetLocation, sortOrder],
+    [targetCompany, targetLocation, sortOrder],
   );
 
   useEffect(() => {
@@ -140,14 +156,13 @@ export default function AppJobs() {
         selectedExpLevels.includes(job.experience_level) ||
         selectedExpLevels.some((sel) => sel.replace("_level", "") === normalizedExpLevel);
 
-      // FIX: Salary Normalization (BDT vs USD)
+      // Audit Fix: Normalizing BDT to USD (110:1) for consistent slider filtering
       const minSalaryK = salaryRange[0];
       let matchSalary = true;
       if (minSalaryK > 0 && job.salary_range_max) {
-        const threshold = minSalaryK * 1000;
-        // If BDT, convert threshold to BDT or job to USD (using 110 rate)
+        const thresholdInUSD = minSalaryK * 1000;
         const jobMaxInUSD = job.salary_currency === "BDT" ? job.salary_range_max / 110 : job.salary_range_max;
-        matchSalary = jobMaxInUSD >= threshold;
+        matchSalary = jobMaxInUSD >= thresholdInUSD;
       }
 
       const matchLocationFilter =
@@ -189,7 +204,7 @@ export default function AppJobs() {
           </Button>
           <div>
             <h1 className="text-2xl font-bold tracking-tight">
-              {targetCompany ? `${targetCompany} Jobs` : targetIndustry ? `${targetIndustry} Roles` : "All Jobs"}
+              {targetCompany ? `${targetCompany} Jobs` : "All Jobs"}
             </h1>
             <p className="text-sm text-muted-foreground">
               {loading ? "Scanning pipeline..." : `${filteredJobs.length} matches found`}
@@ -199,9 +214,9 @@ export default function AppJobs() {
 
         <div className="flex gap-2 w-full md:w-auto md:min-w-[400px]">
           <div className="relative group flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary" />
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground group-focus-within:text-primary transition-colors" />
             <Input
-              placeholder="Search by role, company..."
+              placeholder="Role, company, or keyword..."
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
               className="pl-10 h-11 bg-background"
@@ -289,17 +304,17 @@ export default function AppJobs() {
                     </div>
                     <Slider value={salaryRange} onValueChange={setSalaryRange} max={150} step={5} />
                     <p className="text-[10px] text-muted-foreground italic">
-                      *BDT salaries are automatically converted for comparison.
+                      *Note: BDT salaries are automatically converted (110:1) for comparison.
                     </p>
                   </div>
                 </div>
               </ScrollArea>
               <SheetFooter className="mt-4 gap-2">
                 <Button variant="outline" className="flex-1" onClick={clearFilters}>
-                  Clear
+                  Clear All
                 </Button>
                 <Button className="flex-1" onClick={() => setIsFilterOpen(false)}>
-                  Results
+                  Show Results
                 </Button>
               </SheetFooter>
             </SheetContent>
@@ -355,21 +370,21 @@ export default function AppJobs() {
             <h3 className="font-bold text-lg mb-2">Sync Error</h3>
             <p className="text-muted-foreground text-sm mb-4">{error}</p>
             <Button onClick={() => fetchJobs()} className="gap-2">
-              <RefreshCw className="h-4 w-4" /> Retry
+              <RefreshCw className="h-4 w-4" /> Retry Connection
             </Button>
           </CardContent>
         </Card>
       ) : filteredJobs.length === 0 ? (
         <div className="py-20 text-center">
           <Briefcase className="h-12 w-12 text-muted-foreground/30 mx-auto mb-4" />
-          <h3 className="text-xl font-semibold">No matches for current criteria</h3>
+          <h3 className="text-xl font-semibold">No jobs match your current search</h3>
           <Button variant="link" onClick={clearFilters}>
-            Try clearing all filters
+            Clear all filters and start over
           </Button>
         </div>
       ) : (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 pb-8">
-          {filteredJobs.map((job, index) => (
+          {filteredJobs.map((job) => (
             <JobCard
               key={job.id}
               job={job}
