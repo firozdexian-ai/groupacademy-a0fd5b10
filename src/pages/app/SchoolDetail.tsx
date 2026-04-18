@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { getIcon } from "@/lib/iconMap";
-import { ArrowLeft, ArrowRight, Bot, RefreshCw, AlertCircle, GraduationCap } from "lucide-react";
+import { ArrowLeft, ArrowRight, Bot, RefreshCw, AlertCircle, GraduationCap, Briefcase, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 interface School {
@@ -25,7 +25,7 @@ interface ProfessionLine {
   icon: string;
   career_outcome: string;
   school_id: string;
-  ai_instructors: any; // Flexible JSON handling
+  ai_instructors: { name: string }[] | null;
 }
 
 export default function SchoolDetail() {
@@ -48,9 +48,11 @@ export default function SchoolDetail() {
         .from("schools")
         .select("*, academies(name, slug)")
         .eq("slug", slug)
-        .single();
+        .maybeSingle();
 
       if (schoolError) throw schoolError;
+      if (!schoolData) throw new Error("School not found");
+
       setSchool(schoolData as School);
 
       const { data: professionData, error: profError } = await supabase
@@ -58,13 +60,13 @@ export default function SchoolDetail() {
         .select("*, ai_instructors(name)")
         .eq("school_id", schoolData.id)
         .eq("is_active", true)
-        .order("display_order");
+        .order("display_order", { ascending: true });
 
       if (profError) throw profError;
       setProfessions((professionData as ProfessionLine[]) || []);
     } catch (error: any) {
-      console.error("Error loading school data:", error);
-      setLoadingError("Unable to retrieve the faculty information. Please check your connection.");
+      console.error("Critical School Load Error:", error);
+      setLoadingError(error.message || "Connection timed out.");
     } finally {
       setIsLoading(false);
     }
@@ -72,15 +74,14 @@ export default function SchoolDetail() {
 
   if (isLoading) {
     return (
-      <div className="max-w-5xl mx-auto px-4 py-8 space-y-6">
-        <Skeleton className="h-10 w-32" />
-        <div className="space-y-2">
-          <Skeleton className="h-12 w-2/3" />
-          <Skeleton className="h-6 w-full" />
+      <div className="max-w-5xl mx-auto px-4 py-8 space-y-10">
+        <Skeleton className="h-8 w-40 rounded-full" />
+        <div className="space-y-4">
+          <Skeleton className="h-[200px] w-full rounded-[32px]" />
         </div>
         <div className="grid gap-6 md:grid-cols-2">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-40 rounded-2xl" />
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-48 rounded-[24px]" />
           ))}
         </div>
       </div>
@@ -89,20 +90,18 @@ export default function SchoolDetail() {
 
   if (loadingError || !school) {
     return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <div className="bg-destructive/10 w-16 h-16 rounded-full flex items-center justify-center mx-auto mb-6">
-          <AlertCircle className="h-8 w-8 text-destructive" />
+      <div className="flex flex-col items-center justify-center min-h-[60vh] px-6 text-center">
+        <div className="p-4 rounded-3xl bg-destructive/5 mb-6">
+          <AlertCircle className="h-10 w-10 text-destructive" />
         </div>
-        <h1 className="text-2xl font-bold mb-2">Faculty Not Found</h1>
-        <p className="text-muted-foreground mb-8 max-w-md mx-auto">
-          {loadingError || "This school might have been moved or renamed."}
-        </p>
-        <div className="flex gap-4 justify-center">
-          <Button onClick={loadSchoolData} className="gap-2">
-            <RefreshCw className="h-4 w-4" /> Retry
+        <h1 className="text-2xl font-black tracking-tight">Faculty Offline</h1>
+        <p className="text-muted-foreground mt-2 max-w-sm">This school is currently undergoing curriculum updates.</p>
+        <div className="flex flex-col sm:flex-row gap-3 mt-8">
+          <Button onClick={loadSchoolData} className="rounded-xl h-11 px-8 font-bold">
+            <RefreshCw className="mr-2 h-4 w-4" /> Reconnect
           </Button>
-          <Button variant="outline" onClick={() => navigate("/app/learning/tracks")}>
-            Browse All Tracks
+          <Button variant="ghost" onClick={() => navigate("/app/learning/tracks")} className="font-bold">
+            Learning Hub
           </Button>
         </div>
       </div>
@@ -110,92 +109,106 @@ export default function SchoolDetail() {
   }
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 space-y-8">
-      {/* Breadcrumb & Navigation */}
-      <nav className="flex items-center gap-2 text-sm text-muted-foreground">
+    <div className="max-w-6xl mx-auto px-4 py-6 space-y-10 animate-in fade-in duration-700">
+      {/* Dynamic Navigation */}
+      <header className="flex items-center justify-between">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/app/learning/tracks")}
-          className="gap-1.5 h-8 px-2 -ml-2"
+          className="rounded-full h-10 pl-2 pr-5 font-bold text-xs uppercase tracking-widest hover:bg-primary/5 transition-all"
         >
-          <ArrowLeft className="h-4 w-4" /> Learning Hub
+          <ArrowLeft className="mr-2 h-4 w-4" /> Hub
         </Button>
-        <span>/</span>
-        <span className="text-foreground font-medium">{school.name}</span>
-      </nav>
+        <Badge
+          variant="outline"
+          className="border-primary/20 text-primary font-black uppercase text-[10px] tracking-tighter"
+        >
+          System Verified
+        </Badge>
+      </header>
 
-      {/* Hero Header */}
-      <section className="relative overflow-hidden rounded-3xl border bg-card p-8 shadow-sm">
-        <div className="absolute top-0 right-0 w-64 h-64 bg-primary/5 rounded-full blur-3xl -mr-32 -mt-32" />
-        <div className="relative space-y-4 max-w-3xl">
+      {/* Hero Section - Elevated Glassmorphism */}
+      <section className="relative overflow-hidden rounded-[40px] border border-border/50 bg-card p-8 md:p-12 shadow-2xl">
+        <div className="absolute top-0 right-0 w-[400px] h-[400px] bg-primary/5 rounded-full blur-[100px] -mr-48 -mt-48" />
+        <div className="relative space-y-6 max-w-3xl">
           {school.academies && (
-            <Badge variant="secondary" className="px-3 py-1 bg-primary/10 text-primary hover:bg-primary/15 border-none">
-              <GraduationCap className="w-3.5 h-3.5 mr-1.5" />
-              {school.academies.name}
-            </Badge>
+            <div className="flex items-center gap-2">
+              <Badge className="px-4 py-1.5 bg-primary/10 text-primary border-none text-[10px] font-black uppercase tracking-widest rounded-full">
+                <GraduationCap className="w-3.5 h-3.5 mr-2" />
+                {school.academies.name}
+              </Badge>
+              <div className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+              <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+                Faculty Department
+              </span>
+            </div>
           )}
-          <h1 className="text-3xl md:text-4xl font-extrabold tracking-tight">{school.name}</h1>
-          <p className="text-lg text-muted-foreground leading-relaxed">{school.description}</p>
+          <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-none">{school.name}</h1>
+          <p className="text-lg text-muted-foreground leading-relaxed font-medium max-w-2xl">{school.description}</p>
         </div>
       </section>
 
-      {/* Programs/Professions Grid */}
-      <div className="space-y-6">
-        <div className="flex items-center justify-between">
-          <h2 className="text-2xl font-bold tracking-tight">Available Programs</h2>
-          <Badge variant="outline" className="font-medium">
-            {professions.length} Professional Tracks
+      {/* Program Grid */}
+      <div className="space-y-8">
+        <div className="flex items-center justify-between px-2">
+          <div className="space-y-1">
+            <h2 className="text-2xl font-black tracking-tight flex items-center gap-2">
+              Specialized Tracks <Sparkles className="h-5 w-5 text-amber-500" />
+            </h2>
+            <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest">
+              Industry-Ready Certification Pathways
+            </p>
+          </div>
+          <Badge variant="secondary" className="h-7 px-3 rounded-lg font-black text-[10px] uppercase tracking-widest">
+            {professions.length} Modules
           </Badge>
         </div>
 
         {professions.length > 0 ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2 pb-12">
+          <div className="grid gap-6 md:grid-cols-2 pb-20">
             {professions.map((profession) => {
-              const IconComponent = getIcon(profession.icon);
-              const aiInstructors = profession.ai_instructors;
-              const hasAIInstructor = aiInstructors && (Array.isArray(aiInstructors) ? aiInstructors.length > 0 : true);
+              const IconComponent = getIcon(profession.icon) || Briefcase;
+              const hasAIInstructor = Array.isArray(profession.ai_instructors) && profession.ai_instructors.length > 0;
 
               return (
                 <Card
                   key={profession.id}
-                  className="group cursor-pointer hover:shadow-lg hover:border-primary/40 transition-all duration-300 overflow-hidden flex flex-col"
+                  className="group cursor-pointer hover:shadow-2xl transition-all duration-500 rounded-[32px] border-border/40 bg-card/50 backdrop-blur-sm overflow-hidden flex flex-col hover:border-primary/30"
                   onClick={() => navigate(`/app/learning/tracks/${profession.slug}`)}
                 >
-                  <CardHeader className="pb-2">
-                    <div className="flex items-center justify-between mb-4">
-                      <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center group-hover:scale-110 transition-transform">
-                        <IconComponent className="h-6 w-6 text-primary" />
+                  <CardHeader className="p-8 pb-4">
+                    <div className="flex items-center justify-between mb-6">
+                      <div className="h-14 w-14 rounded-2xl bg-primary/5 flex items-center justify-center group-hover:bg-primary group-hover:text-white transition-all duration-500 shadow-inner">
+                        <IconComponent className="h-7 w-7" />
                       </div>
                       {hasAIInstructor && (
-                        <Badge
-                          variant="secondary"
-                          className="gap-1.5 px-2.5 py-1 bg-amber-50 text-amber-700 dark:bg-amber-950/30 dark:text-amber-400 border-amber-200/50"
-                        >
-                          <Bot className="h-3.5 w-3.5" /> AI Augmented
+                        <Badge className="bg-emerald-500/10 text-emerald-600 border-none px-3 py-1 text-[9px] font-black uppercase tracking-widest rounded-lg">
+                          <Bot className="h-3 w-3 mr-1.5" /> AI Synced
                         </Badge>
                       )}
                     </div>
-                    <CardTitle className="text-xl group-hover:text-primary transition-colors">
+                    <CardTitle className="text-xl font-black tracking-tight leading-tight group-hover:text-primary transition-colors">
                       {profession.name}
                     </CardTitle>
                   </CardHeader>
-                  <CardContent className="flex-1 space-y-4">
-                    <CardDescription className="line-clamp-2 text-sm leading-relaxed">
+                  <CardContent className="px-8 pb-8 flex-1 flex flex-col">
+                    <CardDescription className="line-clamp-3 text-[13px] font-medium leading-relaxed text-muted-foreground/80">
                       {profession.description}
                     </CardDescription>
 
-                    <div className="pt-4 mt-auto border-t flex items-center justify-between">
-                      <span className="text-xs font-bold uppercase tracking-wider text-muted-foreground">
-                        Career Path
-                      </span>
-                      <Button
-                        variant="link"
-                        size="sm"
-                        className="h-auto p-0 text-primary font-bold group-hover:gap-2 transition-all"
-                      >
-                        Explore Track <ArrowRight className="h-4 w-4 ml-1" />
-                      </Button>
+                    <div className="pt-8 mt-auto border-t border-border/40 flex items-center justify-between">
+                      <div className="space-y-0.5">
+                        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
+                          Career Outcome
+                        </p>
+                        <p className="text-[11px] font-bold text-foreground line-clamp-1">
+                          {profession.career_outcome || "Professional Placement"}
+                        </p>
+                      </div>
+                      <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center group-hover:bg-primary/10 group-hover:text-primary transition-all">
+                        <ArrowRight className="h-5 w-5 group-hover:translate-x-0.5 transition-transform" />
+                      </div>
                     </div>
                   </CardContent>
                 </Card>
@@ -203,17 +216,15 @@ export default function SchoolDetail() {
             })}
           </div>
         ) : (
-          <Card className="border-dashed py-16 bg-muted/20">
-            <CardContent className="flex flex-col items-center justify-center text-center">
-              <div className="h-12 w-12 rounded-full bg-muted flex items-center justify-center mb-4">
-                <GraduationCap className="h-6 w-6 text-muted-foreground" />
-              </div>
-              <h3 className="text-lg font-semibold">New Tracks Pending</h3>
-              <p className="text-muted-foreground max-w-xs mx-auto mt-1">
-                We are currently designing the curriculum for this faculty. Please check back soon.
-              </p>
-            </CardContent>
-          </Card>
+          <div className="py-24 text-center border-2 border-dashed rounded-[40px] border-border/40 bg-muted/10">
+            <div className="h-16 w-16 rounded-full bg-background mx-auto flex items-center justify-center mb-6 shadow-sm">
+              <GraduationCap className="h-8 w-8 text-muted-foreground/20" />
+            </div>
+            <h3 className="text-xl font-black tracking-tight">Curriculum Development in Progress</h3>
+            <p className="text-sm text-muted-foreground mt-2 font-medium">
+              New career tracks are being synced for this department.
+            </p>
+          </div>
         )}
       </div>
     </div>
