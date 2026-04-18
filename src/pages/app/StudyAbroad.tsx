@@ -2,7 +2,20 @@ import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { GraduationCap, MapPin, Calendar, DollarSign, ArrowLeft, Search, Award, X, AlertCircle } from "lucide-react";
+import {
+  GraduationCap,
+  MapPin,
+  Calendar,
+  DollarSign,
+  ArrowLeft,
+  Search,
+  Award,
+  X,
+  AlertCircle,
+  Coins,
+  Sparkles,
+  ArrowRight,
+} from "lucide-react";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -10,48 +23,34 @@ import { Input } from "@/components/ui/input";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
 import { COUNTRIES, getCountryFlag } from "@/lib/constants/countries";
+import { useCredits } from "@/hooks/useCredits";
 
-// Filter for study abroad popular countries
 const STUDY_COUNTRIES = COUNTRIES.filter((c) =>
   ["US", "UK", "CA", "AU", "DE", "SG", "JP", "SE", "NL", "MY"].includes(c.code),
 );
 
 const DEGREE_TYPES = ["All Degrees", "Bachelor", "Master", "PhD", "Diploma"];
 
-// --- INLINE HOOK: useDebounce ---
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
-
   useEffect(() => {
-    const timer = setTimeout(() => {
-      setDebouncedValue(value);
-    }, delay);
-
-    return () => {
-      clearTimeout(timer);
-    };
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
   }, [value, delay]);
-
   return debouncedValue;
 }
 
 export default function StudyAbroad() {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
+  const { balance } = useCredits();
 
-  // 1. Initialize state from URL params
-  const initialCountry = searchParams.get("country") || "all";
-  const initialDegree = searchParams.get("degree") || "All Degrees";
-  const initialSearch = searchParams.get("search") || "";
+  const [searchTerm, setSearchTerm] = useState(searchParams.get("search") || "");
+  const [selectedCountry, setSelectedCountry] = useState(searchParams.get("country") || "all");
+  const [selectedDegree, setSelectedDegree] = useState(searchParams.get("degree") || "All Degrees");
 
-  const [searchTerm, setSearchTerm] = useState(initialSearch);
-  const [selectedCountry, setSelectedCountry] = useState(initialCountry);
-  const [selectedDegree, setSelectedDegree] = useState(initialDegree);
-
-  // 2. Debounce Search Term (500ms delay)
   const debouncedSearch = useDebounce(searchTerm, 500);
 
-  // 3. Sync state changes back to URL (using debounced value)
   useEffect(() => {
     const params: any = {};
     if (selectedCountry !== "all") params.country = selectedCountry;
@@ -60,7 +59,6 @@ export default function StudyAbroad() {
     setSearchParams(params, { replace: true });
   }, [selectedCountry, selectedDegree, debouncedSearch, setSearchParams]);
 
-  // FIX 1: Destructure error states and refetch
   const {
     data: programs,
     isLoading,
@@ -70,7 +68,6 @@ export default function StudyAbroad() {
   } = useQuery({
     queryKey: ["study-abroad-programs", selectedCountry, selectedDegree, debouncedSearch],
     queryFn: async ({ signal }) => {
-      // FIX 2: Use abortSignal for proper cancellation
       let query = supabase
         .from("study_abroad_programs")
         .select("*")
@@ -79,25 +76,17 @@ export default function StudyAbroad() {
         .order("university_name")
         .abortSignal(signal);
 
-      if (selectedCountry !== "all") {
-        query = query.eq("country_code", selectedCountry);
-      }
-      if (selectedDegree !== "All Degrees") {
-        query = query.eq("degree_type", selectedDegree);
-      }
+      if (selectedCountry !== "all") query = query.eq("country_code", selectedCountry);
+      if (selectedDegree !== "All Degrees") query = query.eq("degree_type", selectedDegree);
       if (debouncedSearch) {
-        // Safe search across multiple columns
-        query = query.or(
-          `university_name.ilike.%${debouncedSearch}%,program_name.ilike.%${debouncedSearch}%,field_of_study.ilike.%${debouncedSearch}%`,
-        );
+        query = query.or(`university_name.ilike.%${debouncedSearch}%,program_name.ilike.%${debouncedSearch}%`);
       }
 
       const { data, error } = await query;
       if (error) throw error;
       return data || [];
     },
-    staleTime: 5 * 60 * 1000, // Keep data fresh for 5 minutes
-    retry: 2, // Retry failed requests twice
+    staleTime: 5 * 60 * 1000,
   });
 
   const clearFilters = () => {
@@ -106,201 +95,164 @@ export default function StudyAbroad() {
     setSelectedDegree("All Degrees");
   };
 
-  const activeFilterCount =
-    (selectedCountry !== "all" ? 1 : 0) + (selectedDegree !== "All Degrees" ? 1 : 0) + (searchTerm ? 1 : 0);
-
   return (
-    <div className="max-w-5xl mx-auto px-4 py-4">
-      {/* Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3 mb-4">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/app/abroad")} className="rounded-full">
+    <div className="max-w-6xl mx-auto px-4 py-6 space-y-6">
+      {/* CTO Header: Awareness of Credit Economy */}
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
+        <div className="flex items-center gap-4">
+          <Button variant="ghost" size="icon" onClick={() => navigate("/app/abroad")} className="shrink-0">
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div>
-            <h1 className="text-xl font-bold">Study Abroad</h1>
-            <p className="text-muted-foreground text-sm">Explore top universities and programs</p>
+            <h1 className="text-2xl font-bold tracking-tight">Study Abroad</h1>
+            <p className="text-sm text-muted-foreground italic">Global degree programs and university matching.</p>
           </div>
         </div>
+
+        <Card className="bg-primary/5 border-primary/10">
+          <CardContent className="p-3 flex items-center gap-4">
+            <div className="text-right">
+              <p className="text-[10px] uppercase font-bold text-muted-foreground">Your Balance</p>
+              <p className="text-sm font-bold flex items-center justify-end gap-1">
+                <Coins className="h-3 w-3 text-amber-500" /> {balance}
+              </p>
+            </div>
+            <Button size="sm" className="h-8 gap-1.5" onClick={() => navigate("/app/agents/global_admissions_bot")}>
+              <Sparkles className="h-3.5 w-3.5" /> AI Consultant
+            </Button>
+          </CardContent>
+        </Card>
       </div>
 
-      {/* Filters Bar */}
-      <div className="bg-card border rounded-xl p-3 mb-4 shadow-sm sticky top-0 z-10">
+      {/* Unified Filter Bar */}
+      <div className="bg-card border rounded-2xl p-4 shadow-sm sticky top-2 z-20">
         <div className="flex flex-col md:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search universities, programs..."
+              placeholder="Search universities or fields of study..."
               value={searchTerm}
               onChange={(e) => setSearchTerm(e.target.value)}
-              className="pl-9 bg-background border-muted-foreground/20"
+              className="pl-9 h-11 bg-background"
             />
           </div>
           <Select value={selectedCountry} onValueChange={setSelectedCountry}>
-            <SelectTrigger className="w-full md:w-[180px] bg-background border-muted-foreground/20">
-              <SelectValue placeholder="Select country" />
+            <SelectTrigger className="w-full md:w-[200px] h-11">
+              <SelectValue placeholder="Destination" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">
-                <span className="flex items-center gap-2">
-                  <span>🌍</span>
-                  <span>All Countries</span>
-                </span>
-              </SelectItem>
-              {STUDY_COUNTRIES.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  <span className="flex items-center gap-2">
-                    <span>{getCountryFlag(country.code)}</span>
-                    <span>{country.name}</span>
-                  </span>
+              <SelectItem value="all">🌍 All Destinations</SelectItem>
+              {STUDY_COUNTRIES.map((c) => (
+                <SelectItem key={c.code} value={c.code}>
+                  {getCountryFlag(c.code)} {c.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
           <Select value={selectedDegree} onValueChange={setSelectedDegree}>
-            <SelectTrigger className="w-full md:w-[150px] bg-background border-muted-foreground/20">
-              <SelectValue placeholder="Degree type" />
+            <SelectTrigger className="w-full md:w-[160px] h-11">
+              <SelectValue placeholder="Degree" />
             </SelectTrigger>
             <SelectContent>
-              {DEGREE_TYPES.map((degree) => (
-                <SelectItem key={degree} value={degree}>
-                  {degree}
+              {DEGREE_TYPES.map((d) => (
+                <SelectItem key={d} value={d}>
+                  {d}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
-
-          {activeFilterCount > 0 && (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={clearFilters}
-              className="shrink-0 text-muted-foreground hover:text-foreground"
-              title="Clear filters"
-            >
-              <X className="h-4 w-4" />
+          {(searchTerm || selectedCountry !== "all" || selectedDegree !== "All Degrees") && (
+            <Button variant="ghost" onClick={clearFilters} className="h-11">
+              Reset
             </Button>
           )}
         </div>
       </div>
 
-      {/* Results */}
       {isLoading ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          {[1, 2, 3, 4].map((i) => (
-            <Card key={i}>
-              <CardHeader>
-                <Skeleton className="h-6 w-3/4 mb-2" />
-                <Skeleton className="h-4 w-1/2" />
-              </CardHeader>
-              <CardContent>
-                <Skeleton className="h-4 w-full mb-2" />
-                <Skeleton className="h-4 w-2/3" />
-              </CardContent>
-            </Card>
+        <div className="grid gap-4 md:grid-cols-2 lg:grid-cols-3">
+          {[1, 2, 3].map((i) => (
+            <Skeleton key={i} className="h-64 w-full rounded-2xl" />
           ))}
         </div>
       ) : isError ? (
-        // FIX 3: Added Error UI State
-        <Card className="border-destructive/50 bg-destructive/5">
-          <CardContent className="py-12 text-center">
-            <div className="w-12 h-12 bg-background rounded-full flex items-center justify-center mx-auto mb-4 border border-destructive/20">
-              <AlertCircle className="h-6 w-6 text-destructive" />
-            </div>
-            <h3 className="font-semibold mb-2">Failed to load programs</h3>
-            <p className="text-sm text-muted-foreground mb-4">
-              {(error as Error)?.message || "Please check your connection and try again."}
-            </p>
-            <Button
-              onClick={() => refetch()}
-              variant="outline"
-              className="border-destructive/20 hover:bg-destructive/10"
-            >
-              Try Again
-            </Button>
-          </CardContent>
+        <Card className="border-destructive/20 bg-destructive/5 py-12 text-center">
+          <AlertCircle className="h-10 w-10 text-destructive mx-auto mb-4" />
+          <h3 className="font-bold">Sync Error</h3>
+          <p className="text-sm text-muted-foreground mb-4">Could not retrieve program list.</p>
+          <Button onClick={() => refetch()} variant="outline">
+            Retry Connection
+          </Button>
         </Card>
-      ) : programs && programs.length > 0 ? (
-        <div className="grid gap-4 md:grid-cols-2">
-          {programs.map((program) => (
+      ) : programs?.length ? (
+        <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3 pb-20">
+          {programs.map((p) => (
             <Card
-              key={program.id}
-              className="hover:shadow-md transition-all cursor-pointer group border-muted-foreground/20 hover:border-primary/50"
-              onClick={() => navigate(`/app/abroad/study/${program.id}`)}
+              key={p.id}
+              className="group hover:shadow-xl transition-all hover:border-primary/50 overflow-hidden flex flex-col"
             >
+              <div className="h-2 bg-muted group-hover:bg-primary/20 transition-colors" />
               <CardHeader className="pb-3">
-                <div className="flex items-start justify-between">
-                  <div className="flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-full bg-primary/5 flex items-center justify-center text-xl border">
-                      {getCountryFlag(program.country_code)}
-                    </div>
-                    <div>
-                      <CardTitle className="text-base group-hover:text-primary transition-colors line-clamp-1">
-                        {program.university_name}
-                      </CardTitle>
-                      <CardDescription className="flex items-center gap-1 mt-0.5">
-                        <MapPin className="h-3 w-3" />
-                        {program.country_name}
-                      </CardDescription>
-                    </div>
+                <div className="flex justify-between items-start">
+                  <div className="h-12 w-12 rounded-xl bg-muted flex items-center justify-center text-2xl border shadow-sm shrink-0">
+                    {getCountryFlag(p.country_code)}
                   </div>
-                  {program.featured && (
-                    <Badge className="bg-yellow-500/10 text-yellow-600 hover:bg-yellow-500/20 border-yellow-500/20 shrink-0">
-                      Featured
+                  {p.featured && (
+                    <Badge variant="secondary" className="bg-amber-100 text-amber-700 border-amber-200">
+                      <Star className="w-3 h-3 fill-current mr-1" /> Featured
                     </Badge>
                   )}
                 </div>
-              </CardHeader>
-              <CardContent>
-                <h3 className="font-semibold text-sm mb-3 line-clamp-1">{program.program_name}</h3>
-
-                <div className="flex flex-wrap gap-2 text-xs text-muted-foreground">
-                  {program.degree_type && (
-                    <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md">
-                      <GraduationCap className="h-3 w-3" />
-                      {program.degree_type}
-                    </div>
-                  )}
-                  {program.duration && (
-                    <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md">
-                      <Calendar className="h-3 w-3" />
-                      {program.duration}
-                    </div>
-                  )}
-                  {program.tuition_range && (
-                    <div className="flex items-center gap-1 bg-muted px-2 py-1 rounded-md">
-                      <DollarSign className="h-3 w-3" />
-                      {program.tuition_range}
-                    </div>
-                  )}
+                <div className="pt-3">
+                  <CardTitle className="text-lg line-clamp-1 group-hover:text-primary transition-colors">
+                    {p.university_name}
+                  </CardTitle>
+                  <CardDescription className="flex items-center gap-1.5 font-medium">
+                    <MapPin className="h-3 w-3" /> {p.country_name}
+                  </CardDescription>
                 </div>
-
-                {program.scholarship_available && (
-                  <div className="mt-3 flex items-center gap-1.5 text-xs text-green-600 font-medium">
-                    <Award className="h-3.5 w-3.5" />
-                    Scholarship Available
+              </CardHeader>
+              <CardContent className="space-y-4 flex-1">
+                <p className="text-sm font-bold text-foreground/80 line-clamp-1">{p.program_name}</p>
+                <div className="grid grid-cols-2 gap-2">
+                  <div className="flex items-center gap-2 text-[11px] text-muted-foreground bg-muted/50 p-2 rounded-lg">
+                    <GraduationCap className="h-3.5 w-3.5" /> {p.degree_type}
+                  </div>
+                  <div className="flex items-center gap-2 text-[11px] text-muted-foreground bg-muted/50 p-2 rounded-lg">
+                    <Calendar className="h-3.5 w-3.5" /> {p.duration || "N/A"}
+                  </div>
+                </div>
+                {p.scholarship_available && (
+                  <div className="flex items-center gap-2 text-xs text-emerald-600 font-bold">
+                    <Award className="h-4 w-4" /> Financial Aid Available
                   </div>
                 )}
               </CardContent>
+              <div className="p-4 pt-0">
+                <Button
+                  className="w-full h-10 group-hover:bg-primary"
+                  onClick={() => navigate(`/app/abroad/study/${p.id}`)}
+                >
+                  View Details <ArrowRight className="ml-2 h-4 w-4" />
+                </Button>
+              </div>
             </Card>
           ))}
         </div>
       ) : (
-        <Card className="py-12 border-dashed">
-          <CardContent className="text-center">
-            <div className="w-16 h-16 bg-muted rounded-full flex items-center justify-center mx-auto mb-4">
-              <Search className="h-8 w-8 text-muted-foreground" />
-            </div>
-            <h3 className="text-lg font-semibold mb-2">No programs found</h3>
-            <p className="text-muted-foreground mb-4 max-w-xs mx-auto">
-              We couldn't find any programs matching your filters. Try adjusting your search criteria.
-            </p>
-            <Button variant="outline" onClick={clearFilters}>
-              Clear All Filters
-            </Button>
-          </CardContent>
-        </Card>
+        <div className="py-20 text-center space-y-4 bg-muted/20 rounded-3xl border-2 border-dashed">
+          <Search className="h-12 w-12 text-muted-foreground/30 mx-auto" />
+          <h3 className="text-xl font-bold">No Matching Programs</h3>
+          <p className="text-muted-foreground">Try broadening your destination or degree filters.</p>
+          <Button onClick={clearFilters} variant="link">
+            Clear all criteria
+          </Button>
+        </div>
       )}
     </div>
   );
+}
+
+function Star({ className }: { className?: string }) {
+  return <Sparkles className={className} />;
 }
