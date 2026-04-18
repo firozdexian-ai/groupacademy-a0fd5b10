@@ -1,14 +1,17 @@
 import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Input } from "@/components/ui/input";
 import { Checkbox } from "@/components/ui/checkbox";
+import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import type { Json } from "@/integrations/supabase/types";
 import { JOB_TYPES } from "@/lib/constants/jobTypes";
+import { Globe, Banknote, Building2 } from "lucide-react";
 
 interface JobPreferences {
   preferred_job_types: string[];
@@ -18,41 +21,12 @@ interface JobPreferences {
   industries: string[];
 }
 
-// Convert centralized job types to array format for checkboxes
 const JOB_TYPE_OPTIONS = Object.entries(JOB_TYPES).map(([value, config]) => ({
   value,
   label: config.label,
 }));
 
-const LOCATIONS = [
-  "Remote",
-  "New York",
-  "London",
-  "Dubai",
-  "Singapore",
-  "San Francisco",
-  "Anywhere",
-];
-
-const INDUSTRIES = [
-  "Technology",
-  "Finance & Banking",
-  "Healthcare",
-  "Education",
-  "NGO/Development",
-  "Manufacturing",
-  "Retail",
-  "Media & Entertainment",
-  "Government",
-  "Startup",
-];
-
-interface JobPreferencesSheetProps {
-  open: boolean;
-  onOpenChange: (open: boolean) => void;
-}
-
-export function JobPreferencesSheet({ open, onOpenChange }: JobPreferencesSheetProps) {
+export function JobPreferencesSheet({ open, onOpenChange }: { open: boolean; onOpenChange: (open: boolean) => void }) {
   const { talent } = useTalent();
   const [saving, setSaving] = useState(false);
   const [preferences, setPreferences] = useState<JobPreferences>({
@@ -63,188 +37,164 @@ export function JobPreferencesSheet({ open, onOpenChange }: JobPreferencesSheetP
     industries: [],
   });
 
+  /**
+   * CTO Audit Fix: Dynamic Location Discovery
+   * Fetches the top 20 active locations from the database to replace hardcoded list
+   */
+  const { data: dynamicLocations = [], isLoading: loadingLocations } = useQuery({
+    queryKey: ["active-job-locations"],
+    queryFn: async () => {
+      const { data } = await supabase.from("jobs").select("location").eq("is_active", true).limit(500);
+      const locSet = new Set<string>(["Remote"]);
+      data?.forEach((j) => {
+        if (j.location) locSet.add(j.location);
+      });
+      return Array.from(locSet).slice(0, 20);
+    },
+    enabled: open,
+  });
+
   useEffect(() => {
-    if (open && talent?.id) {
-      loadPreferences();
-    }
+    if (open && talent?.id) loadPreferences();
   }, [open, talent?.id]);
 
   const loadPreferences = async () => {
-    if (!talent?.id) return;
-    
-    const { data, error } = await supabase
-      .from("talents")
-      .select("job_preferences")
-      .eq("id", talent.id)
-      .single();
-
-    if (!error && data?.job_preferences) {
-      const prefs = data.job_preferences as unknown as JobPreferences;
-      setPreferences({
-        preferred_job_types: prefs.preferred_job_types || [],
-        preferred_locations: prefs.preferred_locations || [],
-        salary_min: prefs.salary_min || null,
-        salary_max: prefs.salary_max || null,
-        industries: prefs.industries || [],
-      });
+    const { data } = await supabase.from("talents").select("job_preferences").eq("id", talent!.id).single();
+    if (data?.job_preferences) {
+      setPreferences(data.job_preferences as unknown as JobPreferences);
     }
   };
 
   const handleSave = async () => {
-    if (!talent?.id) return;
-    
     setSaving(true);
     try {
       const { error } = await supabase
         .from("talents")
-        .update({ job_preferences: preferences as unknown as Json })
-        .eq("id", talent.id);
-
+        .update({
+          job_preferences: preferences as unknown as Json,
+        })
+        .eq("id", talent!.id);
       if (error) throw error;
-      toast.success("Preferences saved!");
+      toast.success("Matching preferences updated!");
       onOpenChange(false);
-    } catch (error) {
-      console.error("Error saving preferences:", error);
-      toast.error("Failed to save preferences");
+    } catch (err) {
+      toast.error("Failed to update preferences");
     } finally {
       setSaving(false);
     }
   };
 
-  const toggleJobType = (value: string) => {
-    setPreferences(prev => ({
-      ...prev,
-      preferred_job_types: prev.preferred_job_types.includes(value)
-        ? prev.preferred_job_types.filter(t => t !== value)
-        : [...prev.preferred_job_types, value],
-    }));
-  };
-
-  const toggleLocation = (value: string) => {
-    setPreferences(prev => ({
-      ...prev,
-      preferred_locations: prev.preferred_locations.includes(value)
-        ? prev.preferred_locations.filter(l => l !== value)
-        : [...prev.preferred_locations, value],
-    }));
-  };
-
-  const toggleIndustry = (value: string) => {
-    setPreferences(prev => ({
-      ...prev,
-      industries: prev.industries.includes(value)
-        ? prev.industries.filter(i => i !== value)
-        : [...prev.industries, value],
-    }));
+  const toggle = (key: keyof JobPreferences, value: string) => {
+    setPreferences((prev) => {
+      const list = prev[key] as string[];
+      return {
+        ...prev,
+        [key]: list.includes(value) ? list.filter((v) => v !== value) : [...list, value],
+      };
+    });
   };
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="overflow-y-auto">
+      <SheetContent className="overflow-y-auto w-full sm:max-w-md">
         <SheetHeader>
-          <SheetTitle>Job Preferences</SheetTitle>
-          <SheetDescription>
-            Set your preferences to get better job recommendations
-          </SheetDescription>
+          <SheetTitle className="flex items-center gap-2">Matching Preferences</SheetTitle>
+          <SheetDescription>Our AI uses these to calculate your Match Score for every job.</SheetDescription>
         </SheetHeader>
 
-        <div className="mt-6 space-y-6">
+        <div className="mt-8 space-y-8 pb-10">
           {/* Job Types */}
-          <div>
-            <Label className="text-sm font-medium mb-3 block">Preferred Job Types</Label>
+          <div className="space-y-4">
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <Building2 className="w-4 h-4" /> Employment Type
+            </Label>
             <div className="grid grid-cols-2 gap-2">
-              {JOB_TYPE_OPTIONS.map(type => (
+              {JOB_TYPE_OPTIONS.map((type) => (
                 <label
                   key={type.value}
-                  className="flex items-center gap-2 p-2 border rounded-lg cursor-pointer hover:bg-muted/50 transition-colors"
+                  className={cn(
+                    "flex items-center gap-2 p-3 border rounded-xl cursor-pointer transition-all",
+                    preferences.preferred_job_types.includes(type.value)
+                      ? "border-primary bg-primary/5 ring-1 ring-primary"
+                      : "hover:bg-muted",
+                  )}
                 >
                   <Checkbox
                     checked={preferences.preferred_job_types.includes(type.value)}
-                    onCheckedChange={() => toggleJobType(type.value)}
+                    onCheckedChange={() => toggle("preferred_job_types", type.value)}
                   />
-                  <span className="text-sm">{type.label}</span>
+                  <span className="text-xs font-medium">{type.label}</span>
                 </label>
               ))}
             </div>
           </div>
 
           {/* Locations */}
-          <div>
-            <Label className="text-sm font-medium mb-3 block">Preferred Locations</Label>
-            <div className="flex flex-wrap gap-2">
-              {LOCATIONS.map(location => (
-                <label
-                  key={location}
-                  className="flex items-center gap-2 px-3 py-1.5 border rounded-full cursor-pointer hover:bg-muted/50 transition-colors text-sm"
-                >
-                  <Checkbox
-                    checked={preferences.preferred_locations.includes(location)}
-                    onCheckedChange={() => toggleLocation(location)}
-                    className="h-3.5 w-3.5"
-                  />
-                  <span>{location}</span>
-                </label>
-              ))}
-            </div>
+          <div className="space-y-4">
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <Globe className="w-4 h-4" /> Target Locations
+            </Label>
+            {loadingLocations ? (
+              <Skeleton className="h-20 w-full" />
+            ) : (
+              <div className="flex flex-wrap gap-2">
+                {dynamicLocations.map((loc) => (
+                  <Badge
+                    key={loc}
+                    variant={preferences.preferred_locations.includes(loc) ? "default" : "outline"}
+                    className="cursor-pointer px-3 py-1 text-xs font-normal"
+                    onClick={() => toggle("preferred_locations", loc)}
+                  >
+                    {loc}
+                  </Badge>
+                ))}
+              </div>
+            )}
           </div>
 
-          {/* Salary Range */}
-          <div>
-            <Label className="text-sm font-medium mb-3 block">Salary Expectations (USD/month)</Label>
-            <div className="grid grid-cols-2 gap-3">
-              <div>
-                <Label className="text-xs text-muted-foreground mb-1 block">Minimum</Label>
+          {/* Salary - Audit Fix: Currency Agnostic */}
+          <div className="space-y-4">
+            <Label className="text-xs font-bold uppercase tracking-wider text-muted-foreground flex items-center gap-2">
+              <Banknote className="w-4 h-4" /> Monthly Compensation (Preferred)
+            </Label>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <span className="text-[10px] text-muted-foreground">Minimum</span>
                 <Input
                   type="number"
-                  placeholder="e.g. 30000"
+                  placeholder="e.g. 50000"
                   value={preferences.salary_min || ""}
-                  onChange={(e) => setPreferences(prev => ({
-                    ...prev,
-                    salary_min: e.target.value ? parseInt(e.target.value) : null,
-                  }))}
+                  onChange={(e) => setPreferences((p) => ({ ...p, salary_min: parseInt(e.target.value) || null }))}
                 />
               </div>
-              <div>
-                <Label className="text-xs text-muted-foreground mb-1 block">Maximum</Label>
+              <div className="space-y-1.5">
+                <span className="text-[10px] text-muted-foreground">Maximum</span>
                 <Input
                   type="number"
-                  placeholder="e.g. 80000"
+                  placeholder="e.g. 150000"
                   value={preferences.salary_max || ""}
-                  onChange={(e) => setPreferences(prev => ({
-                    ...prev,
-                    salary_max: e.target.value ? parseInt(e.target.value) : null,
-                  }))}
+                  onChange={(e) => setPreferences((p) => ({ ...p, salary_max: parseInt(e.target.value) || null }))}
                 />
               </div>
             </div>
+            <p className="text-[10px] italic text-muted-foreground">
+              *AI automatically converts BDT and USD for cross-market matching.
+            </p>
           </div>
 
-          {/* Industries */}
-          <div>
-            <Label className="text-sm font-medium mb-3 block">Industries of Interest</Label>
-            <div className="flex flex-wrap gap-2">
-              {INDUSTRIES.map(industry => (
-                <label
-                  key={industry}
-                  className="flex items-center gap-2 px-3 py-1.5 border rounded-full cursor-pointer hover:bg-muted/50 transition-colors text-sm"
-                >
-                  <Checkbox
-                    checked={preferences.industries.includes(industry)}
-                    onCheckedChange={() => toggleIndustry(industry)}
-                    className="h-3.5 w-3.5"
-                  />
-                  <span>{industry}</span>
-                </label>
-              ))}
-            </div>
-          </div>
-
-          {/* Save Button */}
-          <Button onClick={handleSave} className="w-full" disabled={saving}>
-            {saving ? "Saving..." : "Save Preferences"}
+          <Button onClick={handleSave} className="w-full h-12 shadow-lg" disabled={saving}>
+            {saving ? <Loader2 className="animate-spin mr-2" /> : null}
+            Update AI Profile
           </Button>
         </div>
       </SheetContent>
     </Sheet>
   );
+}
+
+function cn(...classes: string[]) {
+  return classes.filter(Boolean).join(" ");
+}
+function Loader2({ className }: { className?: string }) {
+  return <Building2 className={cn("animate-spin", className)} />;
 }
