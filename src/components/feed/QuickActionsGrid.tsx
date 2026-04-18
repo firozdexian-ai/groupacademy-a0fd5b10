@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Bot, Globe, LucideIcon } from "lucide-react";
+import { Bot, Globe, LucideIcon, Zap } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { Skeleton } from "@/components/ui/skeleton";
 import { iconMap } from "@/lib/iconMap";
+import { cn } from "@/lib/utils";
 
 interface QuickAgent {
   agent_key: string;
@@ -13,92 +14,93 @@ interface QuickAgent {
   color: string | null;
   bg_color: string | null;
   avatar_url: string | null;
+  isShortcut?: boolean;
 }
 
-// Fixed shortcut to the Career Abroad hub — always shown so the vertical is reachable from the feed.
-const ABROAD_SHORTCUT = {
-  key: "__abroad",
+const ABROAD_SHORTCUT: QuickAgent = {
+  agent_key: "__abroad",
   name: "Abroad",
-  path: "/app/abroad",
+  icon: "Globe",
+  color: null,
+  bg_color: null,
+  avatar_url: null,
+  isShortcut: true,
 };
 
 export function QuickActionsGrid() {
   const navigate = useNavigate();
   const { talent } = useTalent();
 
-  const { data: agents = [], isLoading } = useQuery({
-    queryKey: ["quick-agents", talent?.id],
+  const { data: actions = [], isLoading } = useQuery({
+    queryKey: ["quick-actions", talent?.id],
     queryFn: async () => {
-      // Try to get user's most-used agents first
       let personalAgentKeys: string[] = [];
+
       if (talent?.id) {
         const { data: sessions } = await supabase
           .from("agent_chat_sessions")
           .select("agent_key")
           .eq("talent_id", talent.id)
           .order("updated_at", { ascending: false })
-          .limit(100);
+          .limit(50);
 
-        if (sessions && sessions.length > 0) {
-          // Count by agent_key, deduplicate
-          const countMap = new Map<string, number>();
-          for (const s of sessions) {
-            countMap.set(s.agent_key, (countMap.get(s.agent_key) || 0) + 1);
-          }
-          personalAgentKeys = Array.from(countMap.entries())
+        if (sessions) {
+          const counts = sessions.reduce(
+            (acc, s) => {
+              acc[s.agent_key] = (acc[s.agent_key] || 0) + 1;
+              return acc;
+            },
+            {} as Record<string, number>,
+          );
+
+          personalAgentKeys = Object.entries(counts)
             .sort((a, b) => b[1] - a[1])
-            .slice(0, 7) // reserve last slot for the Abroad shortcut
             .map(([key]) => key);
         }
       }
 
-      // Get all active agents sorted by popularity
       const { data: allAgents, error } = await supabase
         .from("ai_agents")
         .select("agent_key, name, icon, color, bg_color, avatar_url, total_conversations")
         .eq("is_active", true)
         .order("total_conversations", { ascending: false })
-        .limit(20);
+        .limit(15);
 
       if (error) throw error;
-      if (!allAgents) return [];
 
-      const agentMap = new Map(allAgents.map((a) => [a.agent_key, a]));
-
-      // Build final list: personal first, then popular
+      const agentMap = new Map(allAgents?.map((a) => [a.agent_key, a]));
       const result: QuickAgent[] = [];
-      const used = new Set<string>();
+      const seen = new Set<string>();
 
-      // Reserve last slot for the Abroad shortcut → max 7 agents
-      for (const key of personalAgentKeys) {
-        const agent = agentMap.get(key);
-        if (agent && result.length < 7) {
-          result.push(agent);
-          used.add(key);
+      // Fill up to 7 slots (leaving 1 for Abroad)
+      const addToResult = (keys: string[]) => {
+        for (const key of keys) {
+          const agent = agentMap.get(key);
+          if (agent && !seen.has(key) && result.length < 7) {
+            result.push(agent);
+            seen.add(key);
+          }
         }
-      }
+      };
 
-      // Fill remaining with popular agents
-      for (const agent of allAgents) {
-        if (!used.has(agent.agent_key) && result.length < 7) {
-          result.push(agent);
-          used.add(agent.agent_key);
-        }
-      }
+      addToResult(personalAgentKeys);
+      addToResult(allAgents?.map((a) => a.agent_key) || []);
 
+      // Always append Abroad shortcut at the end
+      result.push(ABROAD_SHORTCUT);
       return result;
     },
-    staleTime: 5 * 60 * 1000,
+    staleTime: 1000 * 60 * 10, // 10 minutes cache
   });
 
   if (isLoading) {
     return (
-      <div className="bg-card rounded-xl p-3 shadow-sm">
-        <div className="grid grid-cols-4 gap-2">
-          {[1, 2, 3, 4, 5, 6, 7, 8].map((i) => (
-            <div key={i} className="flex flex-col items-center gap-1">
-              <Skeleton className="h-10 w-10 rounded-full" />
-              <Skeleton className="h-3 w-12" />
+      <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-4 border border-border/40 shadow-sm">
+        <div className="grid grid-cols-4 gap-4">
+          {[...Array(8)].map((_, i) => (
+            <div key={i} className="flex flex-col items-center gap-2">
+              <Skeleton className="h-12 w-12 rounded-2xl" />
+              <Skeleton className="h-2 w-10" />
             </div>
           ))}
         </div>
@@ -106,51 +108,47 @@ export function QuickActionsGrid() {
     );
   }
 
-  // Note: even if no agents are available we still render the Abroad shortcut.
-
   return (
-    <div className="bg-card rounded-xl p-3 shadow-sm">
-      <div className="grid grid-cols-4 gap-2">
-        {agents.map((agent) => {
-          const IconComponent = agent.icon ? (iconMap[agent.icon] as LucideIcon) : Bot;
+    <div className="bg-card/50 backdrop-blur-sm rounded-2xl p-4 border border-border/40 shadow-sm">
+      <div className="flex items-center gap-2 mb-4 px-1">
+        <Zap className="h-3.5 w-3.5 text-primary fill-current" />
+        <h3 className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">Quick Launch</h3>
+      </div>
+
+      <div className="grid grid-cols-4 gap-x-2 gap-y-5">
+        {actions.map((item) => {
+          const isAbroad = item.agent_key === "__abroad";
+          const IconComponent = isAbroad ? Globe : ((item.icon ? iconMap[item.icon] : Bot) as LucideIcon);
+
           return (
             <button
-              key={agent.agent_key}
-              onClick={() => navigate(`/app/agents/${agent.agent_key}`)}
-              className="flex flex-col items-center gap-1 cursor-pointer active:scale-95 transition-transform"
+              key={item.agent_key}
+              onClick={() => navigate(isAbroad ? "/app/abroad" : `/app/agents/${item.agent_key}`)}
+              className="group flex flex-col items-center gap-2 outline-none"
             >
               <div
-                className="h-10 w-10 rounded-full flex items-center justify-center"
-                style={{ backgroundColor: agent.bg_color || "hsl(var(--primary) / 0.1)" }}
+                className={cn(
+                  "h-12 w-12 rounded-2xl flex items-center justify-center transition-all duration-300",
+                  "group-hover:scale-110 group-active:scale-90 group-hover:shadow-lg",
+                  isAbroad ? "bg-primary text-white shadow-primary/20" : "bg-muted/40",
+                )}
+                style={!isAbroad ? { backgroundColor: item.bg_color || undefined } : {}}
               >
-                {agent.avatar_url ? (
-                  <img src={agent.avatar_url} alt={agent.name} className="h-10 w-10 rounded-full object-cover" />
-                ) : IconComponent ? (
-                  <IconComponent className="h-4 w-4" style={{ color: agent.color || "hsl(var(--primary))" }} />
+                {item.avatar_url ? (
+                  <img src={item.avatar_url} alt="" className="h-full w-full rounded-2xl object-cover" />
                 ) : (
-                  <Bot className="h-4 w-4 text-primary" />
+                  <IconComponent
+                    className={cn("h-5 w-5", isAbroad ? "animate-pulse-slow" : "")}
+                    style={{ color: !isAbroad && item.color ? item.color : "inherit" }}
+                  />
                 )}
               </div>
-              <span className="text-[10px] text-center text-muted-foreground leading-tight line-clamp-1">
-                {agent.name.split(" ").slice(0, 2).join(" ")}
+              <span className="text-[10px] font-bold text-center text-muted-foreground group-hover:text-foreground transition-colors leading-tight line-clamp-1 px-1">
+                {item.name.split(" ")[0]}
               </span>
             </button>
           );
         })}
-
-        {/* Always-visible Career Abroad shortcut */}
-        <button
-          key={ABROAD_SHORTCUT.key}
-          onClick={() => navigate(ABROAD_SHORTCUT.path)}
-          className="flex flex-col items-center gap-1 cursor-pointer active:scale-95 transition-transform"
-        >
-          <div className="h-10 w-10 rounded-full flex items-center justify-center bg-primary/10">
-            <Globe className="h-4 w-4 text-primary" />
-          </div>
-          <span className="text-[10px] text-center text-muted-foreground leading-tight line-clamp-1">
-            {ABROAD_SHORTCUT.name}
-          </span>
-        </button>
       </div>
     </div>
   );
