@@ -4,10 +4,11 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
-import { Loader2, BookOpen, MessageSquare, Copy, CheckCircle } from "lucide-react";
+import { Loader2, BookOpen, MessageSquare, Copy, CheckCircle, ExternalLink, Sparkles, Share2 } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface CourseResellGigFormProps {
-  gig: any;
+  gig: { id: string; title: string };
   talentId: string;
   onSubmitted: () => void;
 }
@@ -26,7 +27,7 @@ export function CourseResellGigForm({ gig, talentId, onSubmitted }: CourseResell
         .eq("is_published", true)
         .in("content_type", ["batch_class", "recorded_course", "live_webinar"])
         .order("display_order", { ascending: true })
-        .limit(20);
+        .limit(10);
       if (error) throw error;
       return data;
     },
@@ -34,24 +35,29 @@ export function CourseResellGigForm({ gig, talentId, onSubmitted }: CourseResell
 
   const selectedCourse = courses?.find((c: any) => c.id === selectedCourseId);
   const referralLink = selectedCourse
-    ? `https://groupacademy.lovable.app/app/courses/${selectedCourse.slug}?ref=${talentId}`
+    ? `https://groupacademy.app/app/courses/${selectedCourse.slug}?ref=${talentId}`
     : "";
+
   const shareMessage = selectedCourse
-    ? `📚 Check out "${selectedCourse.title}" on GroUp Academy!\n${selectedCourse.price ? `💰 Only $${selectedCourse.price}` : "🆓 Free"}\n\nEnroll now: ${referralLink}`
+    ? `🚀 Level up your career with "${selectedCourse.title}"!\n\nJoin me on GroUp Academy. ${selectedCourse.price ? `Value: $${selectedCourse.price}` : "Limited Free Access"}\n\nClaim your spot: ${referralLink}`
     : "";
 
-  const handleWhatsAppShare = () => {
-    window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, "_blank");
-    setShared(true);
-  };
-
-  const handleCopyLink = () => {
-    navigator.clipboard.writeText(shareMessage);
-    toast.success("Copied!");
+  const handleAction = (type: "whatsapp" | "copy") => {
+    if (type === "whatsapp") {
+      window.open(`https://wa.me/?text=${encodeURIComponent(shareMessage)}`, "_blank");
+    } else {
+      navigator.clipboard.writeText(shareMessage);
+      toast.success("Affiliate link copied!");
+    }
     setShared(true);
   };
 
   const handleSubmit = async () => {
+    if (!shared) {
+      toast.error("Please share or copy the link before submitting.");
+      return;
+    }
+
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("gig_submissions").insert({
@@ -59,52 +65,68 @@ export function CourseResellGigForm({ gig, talentId, onSubmitted }: CourseResell
         talent_id: talentId,
         status: "pending",
         submission_data: {
+          type: "course_referral",
           course_id: selectedCourseId,
           course_title: selectedCourse?.title,
           referral_link: referralLink,
+          attribution_meta: {
+            timestamp: new Date().toISOString(),
+            platform: "web",
+          },
         },
       });
+
       if (error) throw error;
-      toast.success("Referral submitted! Credits will be awarded on approval.");
+      toast.success("Referral logged for review!");
       onSubmitted();
     } catch (err: any) {
-      toast.error(err.message || "Failed to submit");
+      toast.error(err.message || "Submission failed");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-4">
-      {/* Course picker */}
-      <div className="space-y-2">
-        <Label>Select a Course to Promote</Label>
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Selection Header */}
+      <div className="space-y-3">
+        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+          Select Campaign
+        </Label>
+
         {isLoading ? (
-          <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
-            <Loader2 className="h-4 w-4 animate-spin" /> Loading courses...
+          <div className="flex items-center justify-center py-8 bg-muted/20 rounded-2xl border-2 border-dashed border-border/40">
+            <Loader2 className="h-5 w-5 animate-spin text-primary" />
           </div>
-        ) : !courses?.length ? (
-          <p className="text-sm text-muted-foreground py-4">No courses available.</p>
         ) : (
-          <div className="space-y-2 max-h-48 overflow-y-auto">
-            {courses.map((course: any) => (
+          <div className="grid gap-2 max-h-56 overflow-y-auto pr-1 no-scrollbar">
+            {courses?.map((course: any) => (
               <button
                 key={course.id}
-                onClick={() => { setSelectedCourseId(course.id); setShared(false); }}
-                className={`w-full text-left p-3 rounded-lg border transition-colors ${
+                onClick={() => {
+                  setSelectedCourseId(course.id);
+                  setShared(false);
+                }}
+                className={cn(
+                  "group w-full text-left p-4 rounded-2xl border-2 transition-all flex items-center gap-4",
                   selectedCourseId === course.id
-                    ? "border-primary bg-primary/5"
-                    : "border-border hover:border-primary/50"
-                }`}
+                    ? "border-primary bg-primary/5 shadow-inner"
+                    : "border-border/40 hover:border-primary/30 bg-card",
+                )}
               >
-                <div className="flex items-start gap-2">
-                  <BookOpen className="h-4 w-4 text-muted-foreground mt-0.5 flex-shrink-0" />
-                  <div className="min-w-0">
-                    <p className="font-medium text-sm truncate">{course.title}</p>
-                    <p className="text-xs text-muted-foreground">
-                      {course.price ? `$${course.price}` : "Free"}
-                    </p>
-                  </div>
+                <div
+                  className={cn(
+                    "h-10 w-10 rounded-xl flex items-center justify-center shrink-0 transition-colors",
+                    selectedCourseId === course.id ? "bg-primary text-white" : "bg-muted text-muted-foreground",
+                  )}
+                >
+                  <BookOpen className="h-5 w-5" />
+                </div>
+                <div className="min-w-0 flex-1">
+                  <p className="font-bold text-xs truncate leading-tight">{course.title}</p>
+                  <p className="text-[10px] font-black uppercase text-primary tracking-widest mt-1">
+                    {course.price ? `$${course.price}` : "Free Track"}
+                  </p>
                 </div>
               </button>
             ))}
@@ -112,33 +134,61 @@ export function CourseResellGigForm({ gig, talentId, onSubmitted }: CourseResell
         )}
       </div>
 
-      {/* Share tools */}
+      {/* Campaign Assets */}
       {selectedCourse && (
-        <div className="space-y-3">
-          <div className="bg-muted/50 rounded-xl p-3">
-            <Label className="text-xs text-muted-foreground mb-1 block">Your Referral Message</Label>
-            <p className="text-sm whitespace-pre-wrap">{shareMessage}</p>
-          </div>
-
-          <div className="grid grid-cols-2 gap-2">
-            <Button variant="outline" className="gap-1.5" onClick={handleWhatsAppShare}>
-              <MessageSquare className="h-3.5 w-3.5 text-green-600" /> WhatsApp
-            </Button>
-            <Button variant="outline" className="gap-1.5" onClick={handleCopyLink}>
-              <Copy className="h-3.5 w-3.5" /> Copy Link
-            </Button>
-          </div>
-
-          {shared && (
-            <div className="flex items-center gap-1.5 text-xs text-green-600">
-              <CheckCircle className="h-3.5 w-3.5" /> Shared! Now submit for review.
+        <div className="space-y-4 pt-2">
+          <div className="relative group">
+            <div className="absolute -inset-0.5 bg-gradient-to-r from-primary/50 to-violet-500/50 rounded-2xl blur opacity-20 group-hover:opacity-40 transition" />
+            <div className="relative bg-card rounded-2xl border border-border/40 p-5 space-y-4">
+              <div className="flex items-center justify-between">
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+                  Live Share Preview
+                </span>
+                <Share2 className="h-3 w-3 text-muted-foreground" />
+              </div>
+              <p className="text-xs font-medium leading-relaxed bg-muted/30 p-4 rounded-xl border border-border/20 italic text-muted-foreground">
+                "{shareMessage.substring(0, 100)}..."
+              </p>
             </div>
-          )}
+          </div>
 
-          <Button onClick={handleSubmit} disabled={isSubmitting} className="w-full">
-            {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : null}
-            Submit for Review
-          </Button>
+          <div className="grid grid-cols-2 gap-3">
+            <Button
+              variant="outline"
+              className="rounded-xl h-12 gap-2 font-bold text-xs uppercase tracking-widest border-emerald-500/20 text-emerald-600 hover:bg-emerald-50"
+              onClick={() => handleAction("whatsapp")}
+            >
+              <MessageSquare className="h-4 w-4" /> WhatsApp
+            </Button>
+            <Button
+              variant="outline"
+              className="rounded-xl h-12 gap-2 font-bold text-xs uppercase tracking-widest"
+              onClick={() => handleAction("copy")}
+            >
+              <Copy className="h-4 w-4" /> Copy Link
+            </Button>
+          </div>
+
+          <div className="pt-4 border-t border-border/40">
+            <Button
+              onClick={handleSubmit}
+              disabled={isSubmitting}
+              className={cn(
+                "w-full h-12 rounded-2xl font-black uppercase tracking-widest shadow-lg transition-all",
+                shared ? "shadow-primary/20" : "grayscale opacity-50 cursor-not-allowed",
+              )}
+            >
+              {isSubmitting ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
+              {shared ? "Submit Completion" : "Complete Share to Submit"}
+            </Button>
+
+            {shared && (
+              <div className="flex items-center justify-center gap-2 mt-3 text-emerald-600 animate-in fade-in slide-in-from-top-1">
+                <CheckCircle className="h-4 w-4" />
+                <span className="text-[10px] font-black uppercase tracking-widest">Share Verified</span>
+              </div>
+            )}
+          </div>
         </div>
       )}
     </div>
