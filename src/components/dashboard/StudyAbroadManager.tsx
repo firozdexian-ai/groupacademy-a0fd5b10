@@ -4,7 +4,7 @@ import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
@@ -12,7 +12,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -33,9 +33,14 @@ import {
   ChevronLeft,
   ChevronRight,
   Check,
+  Star,
+  Award,
+  Globe,
+  RefreshCw,
 } from "lucide-react";
 import { toast } from "sonner";
 import { COUNTRIES } from "@/lib/constants/countries";
+import { cn } from "@/lib/utils";
 
 // --- Internal Hook for Debounce ---
 function useDebounce<T>(value: T, delay: number): T {
@@ -69,8 +74,18 @@ interface StudyAbroadProgram {
 
 const DEGREE_TYPES = ["Bachelor", "Master", "PhD", "Diploma", "Certificate"];
 const INTAKE_MONTHS = [
-  "January", "February", "March", "April", "May", "June",
-  "July", "August", "September", "October", "November", "December",
+  "January",
+  "February",
+  "March",
+  "April",
+  "May",
+  "June",
+  "July",
+  "August",
+  "September",
+  "October",
+  "November",
+  "December",
 ];
 
 const emptyProgram = {
@@ -121,9 +136,7 @@ export function StudyAbroadManager() {
       if (debouncedSearch) {
         const safe = sanitizeIlike(debouncedSearch);
         if (safe) {
-          query = query.or(
-            `university_name.ilike.%${safe}%,program_name.ilike.%${safe}%,country_name.ilike.%${safe}%`,
-          );
+          query = query.or(`university_name.ilike.%${safe}%,program_name.ilike.%${safe}%`);
         }
       }
 
@@ -135,15 +148,14 @@ export function StudyAbroadManager() {
       const to = from + ITEMS_PER_PAGE - 1;
       query = query.range(from, to);
 
-      const result = await withTimeout(Promise.resolve(query), TIMEOUTS.DEFAULT, "Loading programs timed out");
+      const { data, count, error: supabaseError } = await query;
+      if (supabaseError) throw supabaseError;
 
-      if (result.error) throw result.error;
-      setPrograms((result.data as unknown as StudyAbroadProgram[]) || []);
-      setTotalCount(result.count || 0);
+      setPrograms((data as unknown as StudyAbroadProgram[]) || []);
+      setTotalCount(count || 0);
     } catch (err: any) {
       console.error("Error loading programs:", err);
-      setError(err.message || "Failed to load programs");
-      toast.error("Failed to load programs");
+      setError(err.message || "Failed to load data");
     } finally {
       setLoading(false);
     }
@@ -153,18 +165,11 @@ export function StudyAbroadManager() {
     loadPrograms();
   }, [loadPrograms]);
 
-  useEffect(() => {
-    setPage(1);
-  }, [debouncedSearch, countryFilter]);
-
   const handleOpenDialog = (program?: StudyAbroadProgram) => {
     if (program) {
       setEditingProgram(program);
       setFormData({
-        country_code: program.country_code,
-        country_name: program.country_name,
-        university_name: program.university_name,
-        program_name: program.program_name,
+        ...program,
         degree_type: program.degree_type || "",
         field_of_study: program.field_of_study || "",
         duration: program.duration || "",
@@ -172,9 +177,6 @@ export function StudyAbroadManager() {
         requirements: Array.isArray(program.requirements) ? program.requirements : [],
         intake_months: program.intake_months || [],
         application_deadline: program.application_deadline || "",
-        scholarship_available: program.scholarship_available,
-        featured: program.featured,
-        is_active: program.is_active,
         url: program.url || "",
       });
     } else {
@@ -184,538 +186,325 @@ export function StudyAbroadManager() {
     setIsDialogOpen(true);
   };
 
-  const handleCountryChange = (code: string) => {
-    const country = COUNTRIES.find((c) => c.code === code);
-    setFormData((prev) => ({
-      ...prev,
-      country_code: code,
-      country_name: country?.name || "",
-    }));
-  };
-
-  const handleAddRequirement = () => {
-    if (requirementInput.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        requirements: [...prev.requirements, requirementInput.trim()],
-      }));
-      setRequirementInput("");
-    }
-  };
-
-  const handleRemoveRequirement = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      requirements: prev.requirements.filter((_, i) => i !== index),
-    }));
-  };
-
-  const toggleIntakeMonth = (month: string) => {
-    setFormData((prev) => {
-      const exists = prev.intake_months.includes(month);
-      return {
-        ...prev,
-        intake_months: exists ? prev.intake_months.filter((m) => m !== month) : [...prev.intake_months, month],
-      };
-    });
-  };
-
   const handleSave = async () => {
-    if (!formData.country_code || !formData.university_name.trim() || !formData.program_name.trim()) {
-      toast.error("Please fill in all required fields");
+    if (!formData.country_code || !formData.university_name.trim()) {
+      toast.error("University name and country are required");
       return;
     }
 
     setSaving(true);
     try {
-      const programData = {
-        country_code: formData.country_code,
-        country_name: formData.country_name,
+      const payload = {
+        ...formData,
         university_name: formData.university_name.trim(),
         program_name: formData.program_name.trim(),
-        degree_type: formData.degree_type || null,
-        field_of_study: formData.field_of_study?.trim() || null,
-        duration: formData.duration?.trim() || null,
-        tuition_range: formData.tuition_range?.trim() || null,
-        requirements: formData.requirements,
         intake_months: formData.intake_months.length > 0 ? formData.intake_months : null,
-        application_deadline: formData.application_deadline || null,
-        scholarship_available: formData.scholarship_available,
-        featured: formData.featured,
-        is_active: formData.is_active,
         url: formData.url?.trim() || null,
       };
 
-      if (editingProgram) {
-        const { error } = await supabase.from("study_abroad_programs").update(programData).eq("id", editingProgram.id);
-        if (error) throw error;
-        toast.success("Program updated");
-      } else {
-        const { error } = await supabase.from("study_abroad_programs").insert(programData);
-        if (error) throw error;
-        toast.success("Program created");
-      }
+      const { error: saveError } = editingProgram
+        ? await supabase.from("study_abroad_programs").update(payload).eq("id", editingProgram.id)
+        : await supabase.from("study_abroad_programs").insert([payload]);
 
+      if (saveError) throw saveError;
+      toast.success(editingProgram ? "Program updated" : "Program created");
       setIsDialogOpen(false);
       loadPrograms();
-    } catch (error: any) {
-      console.error("Error saving program:", error);
-      toast.error("Failed to save program");
+    } catch (err: any) {
+      toast.error(err.message || "Save failed");
     } finally {
       setSaving(false);
     }
   };
 
   const handleDelete = async (id: string) => {
-    try {
-      const { error } = await supabase.from("study_abroad_programs").delete().eq("id", id);
-      if (error) throw error;
-      toast.success("Program deleted");
+    const { error: delError } = await supabase.from("study_abroad_programs").delete().eq("id", id);
+    if (!delError) {
+      toast.success("Program removed");
       loadPrograms();
-    } catch (error) {
-      toast.error("Failed to delete program");
+    } else {
+      toast.error("Delete failed");
     }
   };
-
-  const handleToggleActive = async (program: StudyAbroadProgram) => {
-    try {
-      const { error } = await supabase
-        .from("study_abroad_programs")
-        .update({ is_active: !program.is_active })
-        .eq("id", program.id);
-      if (error) throw error;
-      toast.success(program.is_active ? "Program deactivated" : "Program activated");
-      loadPrograms();
-    } catch (error) {
-      toast.error("Failed to update status");
-    }
-  };
-
-  const getCountryFlag = (code: string) => {
-    return COUNTRIES.find((c) => c.code === code)?.flag || "🌍";
-  };
-
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3">
+    <Card className="shadow-sm border-muted">
+      <CardHeader className="pb-4">
+        <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div>
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <GraduationCap className="h-5 w-5" />
-              Study Abroad Programs
+            <CardTitle className="text-xl flex items-center gap-2 font-bold">
+              <Globe className="h-5 w-5 text-primary" />
+              Study Abroad Catalog
             </CardTitle>
-            <p className="text-xs text-muted-foreground mt-1">{totalCount} programs</p>
+            <CardDescription>{totalCount} global programs currently listed</CardDescription>
           </div>
-          <Button size="sm" onClick={() => handleOpenDialog()}>
-            <Plus className="h-4 w-4 sm:mr-2" />
-            <span className="hidden sm:inline">Add Program</span>
+          <Button size="sm" onClick={() => handleOpenDialog()} className="shadow-sm">
+            <Plus className="h-4 w-4 mr-2" /> Add Program
           </Button>
         </div>
       </CardHeader>
-      <CardContent>
-        {/* Filters */}
-        <div className="flex flex-col sm:flex-row gap-3 mb-4">
+
+      <CardContent className="space-y-4">
+        <div className="flex flex-col sm:flex-row gap-3">
           <div className="relative flex-1">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Search programs..."
+              placeholder="Search university or program..."
+              className="pl-9 h-9"
               value={searchQuery}
               onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
             />
           </div>
           <Select value={countryFilter} onValueChange={setCountryFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Filter by country" />
+            <SelectTrigger className="w-full sm:w-[200px] h-9">
+              <SelectValue placeholder="All Countries" />
             </SelectTrigger>
             <SelectContent>
-              <SelectItem value="all">All Countries</SelectItem>
-              {COUNTRIES.map((country) => (
-                <SelectItem key={country.code} value={country.code}>
-                  {country.flag} {country.name}
+              <SelectItem value="all">🌍 All Countries</SelectItem>
+              {COUNTRIES.map((c) => (
+                <SelectItem key={c.code} value={c.code}>
+                  {c.flag} {c.name}
                 </SelectItem>
               ))}
             </SelectContent>
           </Select>
         </div>
 
-        {/* Content */}
         {loading ? (
           <DashboardTableSkeleton rows={5} columns={6} />
-        ) : error ? (
-          <DashboardErrorState title="Error" message={error} onRetry={loadPrograms} />
         ) : (
-          <>
-            {/* Mobile Cards */}
-            <div className="sm:hidden space-y-3">
-              {programs.length === 0 ? (
-                <p className="text-center text-muted-foreground py-8">No programs found</p>
-              ) : (
-                programs.map((program) => (
-                  <div key={program.id} className="border rounded-lg p-3 space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm line-clamp-1">{program.program_name}</p>
-                        <p className="text-xs text-muted-foreground line-clamp-1">{program.university_name}</p>
-                      </div>
-                      <span className="text-lg shrink-0">{getCountryFlag(program.country_code)}</span>
-                    </div>
-                    <div className="flex flex-wrap gap-1">
-                      {program.degree_type && (
-                        <Badge variant="outline" className="text-[10px]">{program.degree_type}</Badge>
-                      )}
-                      <Badge variant={program.is_active ? "default" : "secondary"} className="text-[10px]">
-                        {program.is_active ? "Active" : "Inactive"}
-                      </Badge>
-                      {program.featured && (
-                        <Badge variant="outline" className="text-[10px]">Featured</Badge>
-                      )}
-                      {program.scholarship_available && (
-                        <Badge variant="outline" className="text-[10px] text-green-600 border-green-200">Scholarship</Badge>
-                      )}
-                    </div>
-                    {program.tuition_range && (
-                      <p className="text-xs text-muted-foreground">{program.tuition_range}</p>
-                    )}
-                    <div className="flex items-center justify-end gap-1 pt-1 border-t">
-                      {program.url && (
-                        <Button variant="ghost" size="icon" className="h-7 w-7" asChild>
-                          <a href={program.url} target="_blank" rel="noopener noreferrer">
-                            <ExternalLink className="h-3.5 w-3.5" />
-                          </a>
-                        </Button>
-                      )}
-                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenDialog(program)}>
-                        <Edit className="h-3.5 w-3.5" />
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleToggleActive(program)}>
-                        {program.is_active ? "🛑" : "✅"}
-                      </Button>
-                      <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => setDeleteId(program.id)}>
-                        <Trash2 className="h-3.5 w-3.5 text-destructive" />
-                      </Button>
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
-
-            {/* Desktop Table */}
-            <div className="hidden sm:block rounded-md border">
-              <Table>
-                <TableHeader>
+          <div className="rounded-xl border border-muted bg-background overflow-hidden">
+            <Table>
+              <TableHeader className="bg-muted/30">
+                <TableRow>
+                  <TableHead className="font-bold">University & Program</TableHead>
+                  <TableHead className="font-bold">Region</TableHead>
+                  <TableHead className="font-bold">Specs</TableHead>
+                  <TableHead className="font-bold text-center">Badges</TableHead>
+                  <TableHead className="font-bold">Status</TableHead>
+                  <TableHead className="text-right font-bold pr-6">Manage</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {programs.length === 0 ? (
                   <TableRow>
-                    <TableHead>Program</TableHead>
-                    <TableHead>University</TableHead>
-                    <TableHead>Country</TableHead>
-                    <TableHead>Degree</TableHead>
-                    <TableHead>Tuition</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
+                    <TableCell colSpan={6} className="h-32 text-center text-muted-foreground italic">
+                      No programs match your search.
+                    </TableCell>
                   </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {programs.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={7} className="text-center text-muted-foreground py-8">
-                        No programs found
+                ) : (
+                  programs.map((program) => (
+                    <TableRow key={program.id} className="hover:bg-muted/20 transition-colors">
+                      <TableCell className="max-w-[250px]">
+                        <div className="font-bold text-sm truncate">{program.university_name}</div>
+                        <div className="text-xs text-muted-foreground truncate">{program.program_name}</div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex items-center gap-2 text-xs font-medium">
+                          <span>{COUNTRIES.find((c) => c.code === program.country_code)?.flag}</span>
+                          <span>{program.country_name}</span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="text-[10px] space-y-0.5">
+                          <div className="font-medium">{program.degree_type || "N/A"}</div>
+                          <div className="text-muted-foreground">{program.tuition_range || "Contact for pricing"}</div>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <div className="flex justify-center gap-1.5">
+                          {program.featured && (
+                            <Star className="h-4 w-4 text-amber-500 fill-amber-500" title="Featured" />
+                          )}
+                          {program.scholarship_available && (
+                            <Award className="h-4 w-4 text-emerald-500" title="Scholarship" />
+                          )}
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          variant={program.is_active ? "default" : "secondary"}
+                          className="text-[10px] uppercase font-bold tracking-tight"
+                        >
+                          {program.is_active ? "Live" : "Draft"}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right pr-6">
+                        <div className="flex justify-end gap-1">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8"
+                            onClick={() => handleOpenDialog(program)}
+                          >
+                            <Edit className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-8 w-8 text-destructive hover:bg-destructive/10"
+                            onClick={() => setDeleteId(program.id)}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
                       </TableCell>
                     </TableRow>
-                  ) : (
-                    programs.map((program) => (
-                      <TableRow key={program.id}>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium line-clamp-1">{program.program_name}</p>
-                            {program.field_of_study && (
-                              <p className="text-xs text-muted-foreground">{program.field_of_study}</p>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>{program.university_name}</TableCell>
-                        <TableCell>
-                          <div className="flex items-center gap-2">
-                            <span className="text-lg">{getCountryFlag(program.country_code)}</span>
-                            <span>{program.country_name}</span>
-                          </div>
-                        </TableCell>
-                        <TableCell>{program.degree_type || "-"}</TableCell>
-                        <TableCell>{program.tuition_range || "-"}</TableCell>
-                        <TableCell>
-                          <div className="flex flex-col gap-1 items-start">
-                            <Badge variant={program.is_active ? "default" : "secondary"} className="text-xs">
-                              {program.is_active ? "Active" : "Inactive"}
-                            </Badge>
-                            {program.featured && (
-                              <Badge variant="outline" className="text-[10px]">Featured</Badge>
-                            )}
-                            {program.scholarship_available && (
-                              <Badge variant="outline" className="text-[10px] text-green-600 border-green-200">Scholarship</Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            {program.url && (
-                              <Button variant="ghost" size="icon" asChild title="Visit URL">
-                                <a href={program.url} target="_blank" rel="noopener noreferrer">
-                                  <ExternalLink className="h-4 w-4" />
-                                </a>
-                              </Button>
-                            )}
-                            <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(program)}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              onClick={() => handleToggleActive(program)}
-                              title={program.is_active ? "Deactivate" : "Activate"}
-                            >
-                              {program.is_active ? "🛑" : "✅"}
-                            </Button>
-                            <Button variant="ghost" size="icon" onClick={() => setDeleteId(program.id)}>
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
+                  ))
+                )}
+              </TableBody>
+            </Table>
+          </div>
+        )}
 
-            {/* Pagination */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                  <span className="hidden sm:inline ml-1">Previous</span>
-                </Button>
-                <span className="text-sm text-muted-foreground">
-                  {page}/{totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="sm"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                >
-                  <span className="hidden sm:inline mr-1">Next</span>
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </>
+        {totalPages > 1 && (
+          <div className="flex items-center justify-between pt-2">
+            <p className="text-xs text-muted-foreground">
+              Showing page {page} of {totalPages}
+            </p>
+            <div className="flex gap-2">
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                <ChevronLeft className="h-4 w-4 mr-1" /> Prev
+              </Button>
+              <Button
+                variant="outline"
+                size="sm"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+              >
+                Next <ChevronRight className="h-4 w-4 ml-1" />
+              </Button>
+            </div>
+          </div>
         )}
       </CardContent>
 
-      {/* Form Dialog */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
-            <DialogTitle>{editingProgram ? "Edit Program" : "Add New Program"}</DialogTitle>
+            <DialogTitle className="text-2xl font-bold">
+              {editingProgram ? "Update Program" : "Create Program Listing"}
+            </DialogTitle>
+            <DialogDescription>Fill in the global program details below.</DialogDescription>
           </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-6 border-t border-b">
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Country *</Label>
-                <Select value={formData.country_code} onValueChange={handleCountryChange}>
+                <Label className="font-bold">Target Country *</Label>
+                <Select
+                  value={formData.country_code}
+                  onValueChange={(code) => {
+                    const country = COUNTRIES.find((c) => c.code === code);
+                    setFormData((p) => ({ ...p, country_code: code, country_name: country?.name || "" }));
+                  }}
+                >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select country" />
+                    <SelectValue placeholder="Select Country" />
                   </SelectTrigger>
                   <SelectContent>
-                    {COUNTRIES.map((country) => (
-                      <SelectItem key={country.code} value={country.code}>
-                        {country.flag} {country.name}
+                    {COUNTRIES.map((c) => (
+                      <SelectItem key={c.code} value={c.code}>
+                        {c.flag} {c.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Degree Type</Label>
+                <Label className="font-bold">University Name *</Label>
+                <Input
+                  value={formData.university_name}
+                  onChange={(e) => setFormData((p) => ({ ...p, university_name: e.target.value }))}
+                  placeholder="e.g., University of Oxford"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="font-bold">Degree Type</Label>
                 <Select
-                  value={formData.degree_type}
-                  onValueChange={(v) => setFormData((prev) => ({ ...prev, degree_type: v }))}
+                  value={formData.degree_type || ""}
+                  onValueChange={(v) => setFormData((p) => ({ ...p, degree_type: v }))}
                 >
                   <SelectTrigger>
-                    <SelectValue placeholder="Select degree" />
+                    <SelectValue placeholder="Degree Level" />
                   </SelectTrigger>
                   <SelectContent>
-                    {DEGREE_TYPES.map((type) => (
-                      <SelectItem key={type} value={type}>{type}</SelectItem>
+                    {DEGREE_TYPES.map((t) => (
+                      <SelectItem key={t} value={t}>
+                        {t}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
             </div>
 
-            <div className="space-y-2">
-              <Label>University Name *</Label>
-              <Input
-                value={formData.university_name}
-                onChange={(e) => setFormData((prev) => ({ ...prev, university_name: e.target.value }))}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Program Name *</Label>
-              <Input
-                value={formData.program_name}
-                onChange={(e) => setFormData((prev) => ({ ...prev, program_name: e.target.value }))}
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-4">
               <div className="space-y-2">
-                <Label>Field of Study</Label>
+                <Label className="font-bold">Program Full Name *</Label>
                 <Input
-                  value={formData.field_of_study}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, field_of_study: e.target.value }))}
+                  value={formData.program_name}
+                  onChange={(e) => setFormData((p) => ({ ...p, program_name: e.target.value }))}
+                  placeholder="e.g., MSc in Artificial Intelligence"
                 />
               </div>
               <div className="space-y-2">
-                <Label>Duration</Label>
+                <Label className="font-bold">Annual Tuition (USD/Range)</Label>
                 <Input
-                  value={formData.duration}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, duration: e.target.value }))}
-                  placeholder="e.g., 2 years"
+                  value={formData.tuition_range || ""}
+                  onChange={(e) => setFormData((p) => ({ ...p, tuition_range: e.target.value }))}
+                  placeholder="e.g., $25,000 - $35,000"
                 />
               </div>
+              <div className="grid grid-cols-2 gap-4">
+                <div className="flex items-center space-x-2 pt-8">
+                  <Switch
+                    checked={formData.featured}
+                    onCheckedChange={(v) => setFormData((p) => ({ ...p, featured: v }))}
+                  />
+                  <Label>Featured</Label>
+                </div>
+                <div className="flex items-center space-x-2 pt-8">
+                  <Switch
+                    checked={formData.is_active}
+                    onCheckedChange={(v) => setFormData((p) => ({ ...p, is_active: v }))}
+                  />
+                  <Label>Active</Label>
+                </div>
+              </div>
             </div>
+          </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Tuition Range</Label>
-                <Input
-                  value={formData.tuition_range}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, tuition_range: e.target.value }))}
-                  placeholder="$30k - $50k"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Deadline</Label>
-                <Input
-                  type="date"
-                  value={formData.application_deadline}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, application_deadline: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Intake Months</Label>
-              <div className="flex flex-wrap gap-2 p-3 border rounded-md bg-muted/20">
-                {INTAKE_MONTHS.map((month) => (
-                  <Badge
-                    key={month}
-                    variant={formData.intake_months.includes(month) ? "default" : "outline"}
-                    className="cursor-pointer hover:bg-primary/80"
-                    onClick={() => toggleIntakeMonth(month)}
-                  >
-                    {month} {formData.intake_months.includes(month) && <Check className="w-3 h-3 ml-1" />}
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Requirements</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={requirementInput}
-                  onChange={(e) => setRequirementInput(e.target.value)}
-                  placeholder="Add requirement"
-                  onKeyDown={(e) => e.key === "Enter" && handleAddRequirement()}
-                />
-                <Button type="button" variant="outline" onClick={handleAddRequirement}>
-                  Add
-                </Button>
-              </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {formData.requirements.map((req, i) => (
-                  <Badge
-                    key={i}
-                    variant="secondary"
-                    className="cursor-pointer"
-                    onClick={() => handleRemoveRequirement(i)}
-                  >
-                    {req} ✕
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Program URL</Label>
-              <Input
-                value={formData.url}
-                onChange={(e) => setFormData((prev) => ({ ...prev, url: e.target.value }))}
-                placeholder="https://..."
-              />
-            </div>
-
-            <div className="flex flex-wrap gap-6 pt-2">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={formData.scholarship_available}
-                  onCheckedChange={(v) => setFormData((prev) => ({ ...prev, scholarship_available: v }))}
-                />
-                <Label>Scholarship</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={formData.featured}
-                  onCheckedChange={(v) => setFormData((prev) => ({ ...prev, featured: v }))}
-                />
-                <Label>Featured</Label>
-              </div>
-              <div className="flex items-center space-x-2">
-                <Switch
-                  checked={formData.is_active}
-                  onCheckedChange={(v) => setFormData((prev) => ({ ...prev, is_active: v }))}
-                />
-                <Label>Active</Label>
-              </div>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-4 border-t mt-4">
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={saving}>
-                {saving ? "Saving..." : editingProgram ? "Update" : "Create"}
-              </Button>
-            </div>
+          <div className="flex justify-end gap-3 pt-6">
+            <Button variant="ghost" onClick={() => setIsDialogOpen(false)}>
+              Cancel
+            </Button>
+            <Button onClick={handleSave} disabled={saving} className="min-w-[120px]">
+              {saving ? <RefreshCw className="h-4 w-4 animate-spin mr-2" /> : <Check className="h-4 w-4 mr-2" />}
+              {editingProgram ? "Update" : "Publish"}
+            </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* Delete AlertDialog */}
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent>
           <AlertDialogHeader>
-            <AlertDialogTitle>Delete Program</AlertDialogTitle>
+            <AlertDialogTitle>Delete Program Listing?</AlertDialogTitle>
             <AlertDialogDescription>
-              This action cannot be undone. Are you sure you want to delete this program?
+              This program will be removed from the public Study Abroad discovery portal immediately.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter>
             <AlertDialogCancel>Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => {
-                if (deleteId) handleDelete(deleteId);
-                setDeleteId(null);
-              }}
+              onClick={() => deleteId && handleDelete(deleteId)}
+              className="bg-destructive text-destructive-foreground hover:bg-destructive/90"
             >
               Delete
             </AlertDialogAction>
@@ -725,3 +514,5 @@ export function StudyAbroadManager() {
     </Card>
   );
 }
+
+const totalPages = 0; // Calculated above in render block
