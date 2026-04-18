@@ -5,22 +5,53 @@ import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/c
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { BookOpen, Building2, Laptop, Rocket, Megaphone, ArrowRight, RefreshCw, AlertCircle, GraduationCap, ChevronRight } from "lucide-react";
+import {
+  BookOpen,
+  Building2,
+  Laptop,
+  Rocket,
+  Megaphone,
+  ArrowRight,
+  RefreshCw,
+  AlertCircle,
+  GraduationCap,
+  ChevronRight,
+  Sparkles,
+} from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { getIcon } from "@/lib/iconMap";
+import { cn } from "@/lib/utils";
 
-interface Academy { id: string; name: string; slug: string; academy_type: string; description: string; }
-interface School { id: string; name: string; slug: string; description: string; academy_id: string; icon: string | null; }
-interface Enrollment { id: string; progress: number; status: string; content: { title: string; profession_line_id: string | null } | null; }
+interface Academy {
+  id: string;
+  name: string;
+  slug: string;
+  academy_type: string;
+  description: string;
+}
+interface School {
+  id: string;
+  name: string;
+  slug: string;
+  description: string;
+  academy_id: string;
+  icon: string | null;
+}
+interface Enrollment {
+  id: string;
+  progress: number;
+  status: string;
+  content: { title: string; profession_line_id: string | null } | null;
+}
 
 type Category = "my-program" | "executive" | "freelancing" | "entrepreneurship" | "influencing";
 
-const categories: { key: Category; icon: typeof BookOpen; label: string }[] = [
-  { key: "my-program", icon: BookOpen, label: "My Program" },
+const categories: { key: Category; icon: any; label: string }[] = [
+  { key: "my-program", icon: GraduationCap, label: "My Tracks" },
   { key: "executive", icon: Building2, label: "Executive" },
-  { key: "freelancing", icon: Laptop, label: "Freelancing" },
+  { key: "freelancing", icon: Laptop, label: "Freelance" },
   { key: "entrepreneurship", icon: Rocket, label: "Startup" },
-  { key: "influencing", icon: Megaphone, label: "Influencing" },
+  { key: "influencing", icon: Megaphone, label: "Influence" },
 ];
 
 const academyTypeMap: Record<string, Category> = {
@@ -30,13 +61,37 @@ const academyTypeMap: Record<string, Category> = {
   influencing: "influencing",
 };
 
-// Distinct color themes per academy for visual differentiation
-const academyColors: Record<Category, { bg: string; icon: string; border: string }> = {
-  "my-program": { bg: "bg-primary/10", icon: "text-primary", border: "hover:border-primary/50" },
-  executive: { bg: "bg-blue-500/10", icon: "text-blue-600 dark:text-blue-400", border: "hover:border-blue-500/50" },
-  freelancing: { bg: "bg-emerald-500/10", icon: "text-emerald-600 dark:text-emerald-400", border: "hover:border-emerald-500/50" },
-  entrepreneurship: { bg: "bg-orange-500/10", icon: "text-orange-600 dark:text-orange-400", border: "hover:border-orange-500/50" },
-  influencing: { bg: "bg-pink-500/10", icon: "text-pink-600 dark:text-pink-400", border: "hover:border-pink-500/50" },
+const academyColors: Record<Category, { bg: string; icon: string; border: string; accent: string }> = {
+  "my-program": {
+    bg: "bg-primary/10",
+    icon: "text-primary",
+    border: "group-hover:border-primary/40",
+    accent: "bg-primary",
+  },
+  executive: {
+    bg: "bg-blue-500/10",
+    icon: "text-blue-600",
+    border: "group-hover:border-blue-500/40",
+    accent: "bg-blue-500",
+  },
+  freelancing: {
+    bg: "bg-emerald-500/10",
+    icon: "text-emerald-600",
+    border: "group-hover:border-emerald-500/40",
+    accent: "bg-emerald-500",
+  },
+  entrepreneurship: {
+    bg: "bg-orange-500/10",
+    icon: "text-orange-600",
+    border: "group-hover:border-orange-500/40",
+    accent: "bg-orange-500",
+  },
+  influencing: {
+    bg: "bg-pink-500/10",
+    icon: "text-pink-600",
+    border: "group-hover:border-pink-500/40",
+    accent: "bg-pink-500",
+  },
 };
 
 export function TracksTab() {
@@ -48,13 +103,17 @@ export function TracksTab() {
   const [isLoading, setIsLoading] = useState(true);
   const [loadingError, setLoadingError] = useState<string | null>(null);
 
-  useEffect(() => { loadData(); }, []);
+  useEffect(() => {
+    loadData();
+  }, []);
 
   const loadData = async () => {
     setLoadingError(null);
     setIsLoading(true);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
 
       const [academiesResult, schoolsResult] = await Promise.all([
         supabase.from("academies").select("*").eq("is_active", true).order("display_order"),
@@ -68,204 +127,213 @@ export function TracksTab() {
       setSchools(schoolsResult.data || []);
 
       if (user) {
-        const { data: talent } = await supabase
-          .from("talents")
-          .select("id")
-          .eq("user_id", user.id)
-          .maybeSingle();
-
+        const { data: talent } = await supabase.from("talents").select("id").eq("user_id", user.id).maybeSingle();
         if (talent) {
           const { data: enrollmentData } = await supabase
             .from("enrollments")
-            .select("id, progress, status, content(title, profession_line_id)")
+            .select("id, progress, status, content:content_id(title, profession_line_id)")
             .eq("talent_id", talent.id)
             .order("created_at", { ascending: false });
 
-          setEnrollments((enrollmentData as unknown as Enrollment[]) || []);
+          setEnrollments((enrollmentData as any) || []);
         }
       }
     } catch (error: any) {
-      console.error("Error loading data:", error);
-      setLoadingError("Failed to load career tracks.");
+      console.error("Data Load Error:", error);
+      setLoadingError("Could not sync career tracks.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const getSchoolsForAcademy = (academyId: string) => schools.filter((s) => s.academy_id === academyId);
-  const getAcademyForCategory = (cat: Category) => academies.find((a) => academyTypeMap[a.academy_type] === cat);
+  const renderMyProgram = () => {
+    const active = enrollments.filter((e) => e.status !== "completed");
+    const completed = enrollments.filter((e) => e.status === "completed");
 
-  if (isLoading) {
     return (
-      <div className="space-y-4">
-        <div className="grid grid-cols-5 gap-2">
-          {[1, 2, 3, 4, 5].map(i => <Skeleton key={i} className="h-20 rounded-lg" />)}
-        </div>
-        <div className="grid gap-4 md:grid-cols-2">
-          {[1, 2, 3, 4].map(i => <Skeleton key={i} className="h-28 rounded-lg" />)}
-        </div>
-      </div>
-    );
-  }
-
-  if (loadingError) {
-    return (
-      <div className="text-center py-8">
-        <AlertCircle className="h-12 w-12 mx-auto text-destructive mb-4" />
-        <p className="text-muted-foreground mb-4">{loadingError}</p>
-        <Button onClick={loadData}><RefreshCw className="h-4 w-4 mr-2" /> Try Again</Button>
-      </div>
-    );
-  }
-
-  const activeEnrollments = enrollments.filter(e => e.status !== "completed");
-  const completedEnrollments = enrollments.filter(e => e.status === "completed");
-
-  const renderMyProgram = () => (
-    <div className="space-y-6">
-      {activeEnrollments.length > 0 && (
-        <div>
-          <h3 className="text-base font-semibold mb-3">Active Tracks</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            {activeEnrollments.map((enrollment) => (
-              <Card key={enrollment.id} className="hover:shadow-md transition-all">
-                <CardContent className="pt-4">
-                  <div className="flex items-start gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <GraduationCap className="h-5 w-5 text-primary" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base mb-1">{enrollment.content?.title || "Career Track"}</CardTitle>
-                      <div className="flex items-center gap-2 mb-2">
-                        <Progress value={enrollment.progress || 0} className="h-2 flex-1" />
-                        <span className="text-xs text-muted-foreground shrink-0">{enrollment.progress || 0}%</span>
+      <div className="space-y-8 animate-in fade-in duration-700">
+        {active.length > 0 && (
+          <section className="space-y-4">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
+              <Sparkles className="h-3 w-3 text-primary" /> Active Development
+            </h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {active.map((enr) => (
+                <Card
+                  key={enr.id}
+                  className="group cursor-pointer hover:border-primary/40 transition-all rounded-[24px] bg-card/50 overflow-hidden"
+                  onClick={() => navigate(`/app/learning/tracks`)}
+                >
+                  <CardContent className="p-5">
+                    <div className="flex items-start gap-4">
+                      <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
+                        <GraduationCap className="h-6 w-6 text-primary" />
                       </div>
-                      <Badge variant="secondary" className="text-xs">In Progress</Badge>
+                      <div className="flex-1 min-w-0 space-y-3">
+                        <CardTitle className="text-sm font-black tracking-tight leading-tight line-clamp-1">
+                          {enr.content?.title || "Career Track"}
+                        </CardTitle>
+                        <div className="space-y-1.5">
+                          <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase">
+                            <span>Progression</span>
+                            <span className="text-primary">{enr.progress}%</span>
+                          </div>
+                          <Progress value={enr.progress} className="h-1.5" />
+                        </div>
+                      </div>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
-      {completedEnrollments.length > 0 && (
-        <div>
-          <h3 className="text-base font-semibold mb-3">Completed Tracks</h3>
-          <div className="grid gap-4 md:grid-cols-2">
-            {completedEnrollments.map((enrollment) => (
-              <Card key={enrollment.id} className="border-green-200 dark:border-green-800">
-                <CardContent className="pt-4">
-                  <div className="flex items-start gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-green-100 dark:bg-green-900/30 flex items-center justify-center shrink-0">
-                      <GraduationCap className="h-5 w-5 text-green-600 dark:text-green-400" />
+        {completed.length > 0 && (
+          <section className="space-y-4">
+            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              Certified Achievements
+            </h3>
+            <div className="grid gap-4 sm:grid-cols-2">
+              {completed.map((enr) => (
+                <Card key={enr.id} className="rounded-[24px] border-emerald-500/20 bg-emerald-500/[0.02]">
+                  <CardContent className="p-5 flex items-center gap-4">
+                    <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0">
+                      <GraduationCap className="h-6 w-6 text-emerald-600" />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base mb-1">{enrollment.content?.title || "Career Track"}</CardTitle>
-                      <Badge variant="outline" className="text-xs text-green-600 border-green-300">✓ Completed</Badge>
+                    <div className="min-w-0">
+                      <CardTitle className="text-sm font-black tracking-tight">{enr.content?.title}</CardTitle>
+                      <Badge className="bg-emerald-500 text-white border-none text-[9px] font-black uppercase tracking-widest mt-1">
+                        ✓ Credentialed
+                      </Badge>
                     </div>
-                  </div>
-                </CardContent>
-              </Card>
-            ))}
-          </div>
-        </div>
-      )}
+                  </CardContent>
+                </Card>
+              ))}
+            </div>
+          </section>
+        )}
 
-      {enrollments.length === 0 && (
-        <Card className="border-dashed">
-          <CardContent className="py-10 text-center">
-            <GraduationCap className="h-12 w-12 mx-auto text-muted-foreground/50 mb-3" />
-            <p className="text-muted-foreground mb-3">You haven't enrolled in any career track yet.</p>
-            <Button variant="outline" size="sm" onClick={() => setSelectedCategory("executive")}>
-              Browse Academies <ArrowRight className="h-3 w-3 ml-1" />
+        {enrollments.length === 0 && (
+          <div className="py-20 text-center border-2 border-dashed rounded-[32px] border-border/40">
+            <GraduationCap className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
+            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-6">
+              No track enrollments found
+            </p>
+            <Button
+              onClick={() => setSelectedCategory("executive")}
+              className="rounded-xl font-black uppercase tracking-widest h-10 px-6"
+            >
+              Explore Academies
             </Button>
-          </CardContent>
-        </Card>
-      )}
-    </div>
-  );
+          </div>
+        )}
+      </div>
+    );
+  };
 
-  const renderAcademy = (category: Category) => {
-    const academy = getAcademyForCategory(category);
-    if (!academy) {
+  const renderAcademy = (cat: Category) => {
+    const academy = academies.find((a) => academyTypeMap[a.academy_type] === cat);
+    if (!academy)
       return (
-        <Card className="border-dashed">
-          <CardContent className="py-8 text-center text-muted-foreground">Coming soon</CardContent>
-        </Card>
+        <div className="py-20 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+          Academy Node Offline
+        </div>
       );
-    }
 
-    const academySchools = getSchoolsForAcademy(academy.id);
-    const colors = academyColors[category];
+    const academySchools = schools.filter((s) => s.academy_id === academy.id);
+    const theme = academyColors[cat];
 
     return (
-      <div className="space-y-3">
-        {academy.description && (
-          <p className="text-sm text-muted-foreground">{academy.description}</p>
-        )}
-        <div className="grid gap-3 md:grid-cols-2">
+      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
+        <div className="px-1">
+          <h2 className="text-lg font-black tracking-tight">{academy.name}</h2>
+          <p className="text-xs font-medium text-muted-foreground mt-1 leading-relaxed">{academy.description}</p>
+        </div>
+
+        <div className="grid gap-4 sm:grid-cols-2">
           {academySchools.map((school) => {
             const SchoolIcon = getIcon(school.icon);
             return (
               <Card
                 key={school.id}
-                className={`cursor-pointer hover:shadow-md ${colors.border} transition-all group`}
+                className={cn(
+                  "group cursor-pointer transition-all duration-300 rounded-[24px] border-border/40 bg-card/50 backdrop-blur-sm overflow-hidden",
+                  theme.border,
+                )}
                 onClick={() => navigate(`/app/learning/tracks/school/${school.slug}`)}
               >
-                <CardContent className="p-4">
-                  <div className="flex items-start gap-3">
-                    <div className={`h-10 w-10 rounded-lg ${colors.bg} flex items-center justify-center shrink-0 transition-transform group-hover:scale-110`}>
-                      <SchoolIcon className={`h-5 w-5 ${colors.icon}`} />
+                <CardContent className="p-5">
+                  <div className="flex items-center gap-4">
+                    <div
+                      className={cn(
+                        "h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
+                        theme.bg,
+                      )}
+                    >
+                      <SchoolIcon className={cn("h-6 w-6", theme.icon)} />
                     </div>
                     <div className="flex-1 min-w-0">
-                      <CardTitle className="text-base mb-1">{school.name}</CardTitle>
-                      <CardDescription className="line-clamp-2 text-sm">{school.description}</CardDescription>
+                      <h4 className="font-black text-sm tracking-tight leading-tight truncate">{school.name}</h4>
+                      <p className="text-[11px] font-medium text-muted-foreground line-clamp-1 mt-0.5">
+                        {school.description}
+                      </p>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground shrink-0 mt-1 transition-transform group-hover:translate-x-0.5" />
+                    <ChevronRight className="h-5 w-5 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
                   </div>
                 </CardContent>
               </Card>
             );
           })}
         </div>
-        {academySchools.length === 0 && (
-          <Card className="border-dashed">
-            <CardContent className="py-8 text-center text-muted-foreground">Schools coming soon</CardContent>
-          </Card>
-        )}
       </div>
     );
   };
 
+  if (isLoading) {
+    return (
+      <div className="space-y-8">
+        <div className="grid grid-cols-5 gap-3">
+          {[...Array(5)].map((_, i) => (
+            <Skeleton key={i} className="h-16 rounded-2xl" />
+          ))}
+        </div>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {[...Array(4)].map((_, i) => (
+            <Skeleton key={i} className="h-32 rounded-[24px]" />
+          ))}
+        </div>
+      </div>
+    );
+  }
+
   return (
-    <div className="space-y-4">
-      {/* Icon strip navigation */}
+    <div className="space-y-8">
+      {/* Dynamic Nav Strip */}
       <div className="grid grid-cols-5 gap-2">
         {categories.map(({ key, icon: Icon, label }) => (
           <button
             key={key}
             onClick={() => setSelectedCategory(key)}
-            className={`flex flex-col items-center gap-1.5 rounded-xl p-3 text-xs font-medium transition-colors ${
+            className={cn(
+              "flex flex-col items-center gap-2 p-3 rounded-2xl transition-all duration-300 group outline-none",
               selectedCategory === key
-                ? "bg-primary/10 text-primary"
-                : "bg-muted/50 text-muted-foreground hover:bg-muted"
-            }`}
+                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
+                : "bg-muted/50 text-muted-foreground hover:bg-muted",
+            )}
           >
-            <div className={`h-10 w-10 rounded-full flex items-center justify-center ${
-              selectedCategory === key ? "bg-primary/20" : "bg-background"
-            }`}>
-              <Icon className="h-5 w-5" />
-            </div>
-            <span className="text-center leading-tight">{label}</span>
+            <Icon
+              className={cn(
+                "h-5 w-5 transition-transform group-hover:scale-110",
+                selectedCategory === key ? "text-white" : "text-primary/60",
+              )}
+            />
+            <span className="text-[9px] font-black uppercase tracking-widest text-center leading-none">{label}</span>
           </button>
         ))}
       </div>
 
-      {/* Content */}
-      {selectedCategory === "my-program" && renderMyProgram()}
-      {selectedCategory !== "my-program" && renderAcademy(selectedCategory)}
+      {selectedCategory === "my-program" ? renderMyProgram() : renderAcademy(selectedCategory)}
     </div>
   );
 }
