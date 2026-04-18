@@ -207,7 +207,7 @@ export function PostCard({ post }: PostCardProps) {
             <ReactionBar
               reactions={reactions}
               userReaction={userReaction}
-              onReact={handleReact}
+              onReact={toggleReaction}
               disabled={reactionsLoading}
               inline
             />
