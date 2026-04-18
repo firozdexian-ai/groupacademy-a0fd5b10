@@ -137,6 +137,20 @@ export function QuickActionsGrid() {
             </button>
           );
         })}
+
+        {/* Always-visible Career Abroad shortcut */}
+        <button
+          key={ABROAD_SHORTCUT.key}
+          onClick={() => navigate(ABROAD_SHORTCUT.path)}
+          className="flex flex-col items-center gap-1 cursor-pointer active:scale-95 transition-transform"
+        >
+          <div className="h-10 w-10 rounded-full flex items-center justify-center bg-primary/10">
+            <Globe className="h-4 w-4 text-primary" />
+          </div>
+          <span className="text-[10px] text-center text-muted-foreground leading-tight line-clamp-1">
+            {ABROAD_SHORTCUT.name}
+          </span>
+        </button>
       </div>
     </div>
   );
