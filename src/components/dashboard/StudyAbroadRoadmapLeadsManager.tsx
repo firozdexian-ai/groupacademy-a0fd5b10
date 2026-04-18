@@ -1,31 +1,13 @@
 import { useState } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-} from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
@@ -38,9 +20,15 @@ import {
   GraduationCap,
   FileText,
   Download,
+  User,
+  Smartphone,
+  Mail,
+  Info,
+  RefreshCcw,
 } from "lucide-react";
 import { toast } from "sonner";
 import * as XLSX from "xlsx";
+import { cn } from "@/lib/utils";
 
 interface RoadmapLead {
   id: string;
@@ -58,15 +46,9 @@ interface RoadmapLead {
   gpa: string | null;
   years_experience: number | null;
   cv_text: string | null;
-  education_summary: Record<string, unknown> | null;
-  experience_summary: Record<string, unknown> | null;
-  part_time_work_interest: boolean;
-  family_support: boolean;
-  special_requirements: string | null;
-  roadmap_result: Record<string, unknown> | null;
+  roadmap_result: any | null;
   created_at: string;
   updated_at: string;
-  completed_at: string | null;
   talents?: {
     full_name: string;
     email: string;
@@ -79,24 +61,19 @@ export function StudyAbroadRoadmapLeadsManager() {
   const [statusFilter, setStatusFilter] = useState<string>("all");
   const [selectedLead, setSelectedLead] = useState<RoadmapLead | null>(null);
 
-  const { data: leads, isLoading } = useQuery({
+  const {
+    data: leads,
+    isLoading,
+    refetch,
+  } = useQuery({
     queryKey: ["roadmap-leads", statusFilter],
     queryFn: async () => {
       let query = supabase
         .from("study_abroad_roadmaps")
-        .select(`
-          *,
-          talents (
-            full_name,
-            email,
-            phone
-          )
-        `)
+        .select(`*, talents (full_name, email, phone)`)
         .order("created_at", { ascending: false });
 
-      if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
-      }
+      if (statusFilter !== "all") query = query.eq("status", statusFilter);
 
       const { data, error } = await query;
       if (error) throw error;
@@ -104,213 +81,161 @@ export function StudyAbroadRoadmapLeadsManager() {
     },
   });
 
-  const filteredLeads = leads?.filter((lead) => {
-    const searchLower = searchTerm.toLowerCase();
+  const filteredLeads = leads?.filter((l) => {
+    const search = searchTerm.toLowerCase();
     return (
-      lead.talents?.full_name?.toLowerCase().includes(searchLower) ||
-      lead.talents?.email?.toLowerCase().includes(searchLower) ||
-      lead.target_countries?.some((c) => c.toLowerCase().includes(searchLower)) ||
-      lead.field_of_study?.toLowerCase().includes(searchLower)
+      l.full_name?.toLowerCase().includes(search) ||
+      l.talents?.full_name?.toLowerCase().includes(search) ||
+      l.email?.toLowerCase().includes(search) ||
+      l.field_of_study?.toLowerCase().includes(search)
     );
   });
 
   const getStatusBadge = (status: string) => {
-    const variants: Record<string, "default" | "secondary" | "destructive" | "outline"> = {
-      pending: "secondary",
-      processing: "outline",
-      completed: "default",
-      failed: "destructive",
+    const configs: Record<string, { label: string; className: string }> = {
+      pending: { label: "Pending", className: "bg-amber-100 text-amber-700 border-amber-200" },
+      processing: { label: "AI Generating", className: "bg-blue-100 text-blue-700 border-blue-200 animate-pulse" },
+      completed: { label: "Roadmap Ready", className: "bg-emerald-100 text-emerald-700 border-emerald-200" },
+      failed: { label: "System Error", className: "bg-rose-100 text-rose-700 border-rose-200" },
     };
-    return <Badge variant={variants[status] || "secondary"}>{status}</Badge>;
+    const config = configs[status] || configs.pending;
+    return (
+      <Badge variant="outline" className={cn("font-bold text-[10px] uppercase px-2", config.className)}>
+        {config.label}
+      </Badge>
+    );
   };
 
   const handleExport = () => {
-    if (!filteredLeads?.length) {
-      toast.error("No data to export");
-      return;
-    }
-
-    const exportData = filteredLeads.map((lead) => ({
-      Name: lead.full_name || lead.talents?.full_name || "N/A",
-      Email: lead.email || lead.talents?.email || "N/A",
-      Phone: lead.talents?.phone || "N/A",
-      Status: lead.status,
-      "Target Countries": lead.target_countries?.join(", ") || "N/A",
-      "Target Intake": lead.target_intake,
-      "Budget Level": lead.budget_level,
-      "Degree Level": lead.degree_level,
-      "Field of Study": lead.field_of_study,
-      "IELTS Score": lead.ielts_score || "N/A",
-      GPA: lead.gpa || "N/A",
-      "Work Experience": lead.years_experience ? `${lead.years_experience} years` : "N/A",
-      "Created At": format(new Date(lead.created_at), "PPP"),
+    if (!filteredLeads?.length) return toast.error("No data to export");
+    const data = filteredLeads.map((l) => ({
+      Student: l.full_name || l.talents?.full_name,
+      Email: l.email || l.talents?.email,
+      Phone: l.talents?.phone || "N/A",
+      Status: l.status.toUpperCase(),
+      Countries: l.target_countries?.join(", "),
+      Intake: l.target_intake,
+      Budget: l.budget_level,
+      GPA: l.gpa || "N/A",
+      IELTS: l.has_taken_ielts ? l.ielts_score : "Not Taken",
+      Created: format(new Date(l.created_at), "yyyy-MM-dd"),
     }));
-
-    const ws = XLSX.utils.json_to_sheet(exportData);
+    const ws = XLSX.utils.json_to_sheet(data);
     const wb = XLSX.utils.book_new();
-    XLSX.utils.book_append_sheet(wb, ws, "Roadmap Leads");
-    XLSX.writeFile(wb, `roadmap-leads-${format(new Date(), "yyyy-MM-dd")}.xlsx`);
-    toast.success("Exported successfully");
+    XLSX.utils.book_append_sheet(wb, ws, "RoadmapLeads");
+    XLSX.writeFile(wb, `Abroad_Roadmaps_${format(new Date(), "MMM_dd")}.xlsx`);
+    toast.success("Export Downloaded");
   };
 
-  const statusCounts = {
-    all: leads?.length || 0,
-    pending: leads?.filter((l) => l.status === "pending").length || 0,
-    processing: leads?.filter((l) => l.status === "processing").length || 0,
-    completed: leads?.filter((l) => l.status === "completed").length || 0,
-    failed: leads?.filter((l) => l.status === "failed").length || 0,
-  };
-
-  if (isLoading) {
+  if (isLoading)
     return (
-      <div className="space-y-4">
-        <Skeleton className="h-10 w-full" />
-        <Skeleton className="h-[400px] w-full" />
+      <div className="space-y-4 p-4">
+        <Skeleton className="h-20 w-full" />
+        <Skeleton className="h-96 w-full" />
       </div>
     );
-  }
 
   return (
-    <div className="space-y-4">
-      {/* Stats Cards — compact */}
-      <div className="grid grid-cols-2 sm:grid-cols-5 gap-3">
-        {Object.entries(statusCounts).map(([status, count]) => (
-          <Card
-            key={status}
-            className={`cursor-pointer transition-colors ${
-              statusFilter === status ? "border-primary bg-primary/5" : ""
-            }`}
-            onClick={() => setStatusFilter(status)}
-          >
-            <CardContent className="p-3">
-              <p className="text-lg font-bold">{count}</p>
-              <p className="text-xs text-muted-foreground capitalize">{status}</p>
-            </CardContent>
-          </Card>
-        ))}
+    <div className="max-w-6xl mx-auto space-y-6 pb-20">
+      {/* Dynamic Filter Section */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+        <div>
+          <h2 className="text-2xl font-bold tracking-tight">Admissions Pipeline</h2>
+          <p className="text-sm text-muted-foreground">
+            Monitor AI roadmap requests and high-intent study abroad leads.
+          </p>
+        </div>
+        <div className="flex gap-2">
+          <Button variant="outline" size="sm" onClick={() => refetch()}>
+            <RefreshCcw className="h-4 w-4 mr-2" /> Refresh
+          </Button>
+          <Button size="sm" onClick={handleExport}>
+            <Download className="h-4 w-4 mr-2" /> Export XLSX
+          </Button>
+        </div>
       </div>
 
-      {/* Main Card */}
-      <Card>
-        <CardHeader>
-          <div className="flex flex-col sm:flex-row gap-3 justify-between">
-            <CardTitle className="flex items-center gap-2 text-lg">
-              <GraduationCap className="h-5 w-5" />
-              Roadmap Leads
-            </CardTitle>
-            <Button variant="outline" size="sm" onClick={handleExport}>
-              <Download className="h-4 w-4 sm:mr-2" />
-              <span className="hidden sm:inline">Export</span>
-            </Button>
-          </div>
-        </CardHeader>
-        <CardContent>
-          <div className="flex flex-col sm:flex-row gap-3 mb-4">
+      {/* Leads Table Card */}
+      <Card className="border-muted shadow-sm">
+        <CardHeader className="pb-4">
+          <div className="flex flex-col sm:flex-row gap-3">
             <div className="relative flex-1">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
               <Input
-                placeholder="Search by name, email, country..."
+                placeholder="Search by student name, email, or study field..."
+                className="pl-10 h-10"
                 value={searchTerm}
                 onChange={(e) => setSearchTerm(e.target.value)}
-                className="pl-10"
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-full sm:w-[180px]">
-                <SelectValue placeholder="Filter by status" />
+              <SelectTrigger className="w-full sm:w-[200px] h-10">
+                <SelectValue placeholder="Status Filter" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="all">All Requests</SelectItem>
+                <SelectItem value="completed">Completed (Ready)</SelectItem>
+                <SelectItem value="processing">Processing (AI)</SelectItem>
                 <SelectItem value="pending">Pending</SelectItem>
-                <SelectItem value="processing">Processing</SelectItem>
-                <SelectItem value="completed">Completed</SelectItem>
                 <SelectItem value="failed">Failed</SelectItem>
               </SelectContent>
             </Select>
           </div>
-
-          {/* Mobile Cards */}
-          <div className="sm:hidden space-y-3">
-            {filteredLeads?.length === 0 ? (
-              <p className="text-center text-muted-foreground py-8">No roadmap leads found</p>
-            ) : (
-              filteredLeads?.map((lead) => (
-                <div key={lead.id} className="border rounded-lg p-3 space-y-2">
-                  <div className="flex items-start justify-between gap-2">
-                    <div className="min-w-0 flex-1">
-                      <p className="font-medium text-sm">{lead.talents?.full_name || "N/A"}</p>
-                      <p className="text-xs text-muted-foreground truncate">{lead.talents?.email}</p>
-                    </div>
-                    {getStatusBadge(lead.status)}
-                  </div>
-                  <div className="flex flex-wrap gap-1">
-                    {lead.target_countries?.slice(0, 2).map((country) => (
-                      <Badge key={country} variant="outline" className="text-[10px]">{country}</Badge>
-                    ))}
-                    {(lead.target_countries?.length || 0) > 2 && (
-                      <Badge variant="outline" className="text-[10px]">+{(lead.target_countries?.length || 0) - 2}</Badge>
-                    )}
-                  </div>
-                  <div className="flex items-center justify-between text-xs text-muted-foreground">
-                    <span>{lead.degree_level} · {lead.target_intake}</span>
-                    <span>{format(new Date(lead.created_at), "MMM d")}</span>
-                  </div>
-                  <div className="flex justify-end pt-1 border-t">
-                    <Button variant="ghost" size="sm" className="h-7 text-xs" onClick={() => setSelectedLead(lead)}>
-                      <Eye className="h-3.5 w-3.5 mr-1" /> View
-                    </Button>
-                  </div>
-                </div>
-              ))
-            )}
-          </div>
-
-          {/* Desktop Table */}
-          <div className="hidden sm:block rounded-md border">
+        </CardHeader>
+        <CardContent>
+          <div className="rounded-xl border border-muted overflow-hidden">
             <Table>
-              <TableHeader>
+              <TableHeader className="bg-muted/30">
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Target Countries</TableHead>
-                  <TableHead>Intake</TableHead>
-                  <TableHead>Study Level</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Created</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+                  <TableHead className="font-bold">Student Profile</TableHead>
+                  <TableHead className="font-bold text-center">Countries</TableHead>
+                  <TableHead className="font-bold">Preferences</TableHead>
+                  <TableHead className="font-bold">Status</TableHead>
+                  <TableHead className="font-bold text-right">Actions</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {filteredLeads?.length === 0 ? (
                   <TableRow>
-                    <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">
-                      No roadmap leads found
+                    <TableCell colSpan={5} className="h-32 text-center text-muted-foreground">
+                      No leads found matching criteria.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  filteredLeads?.map((lead) => (
-                    <TableRow key={lead.id}>
+                  filteredLeads?.map((l) => (
+                    <TableRow key={l.id} className="hover:bg-muted/10 transition-colors">
                       <TableCell>
-                        <div>
-                          <p className="font-medium">{lead.talents?.full_name || "N/A"}</p>
-                          <p className="text-sm text-muted-foreground">{lead.talents?.email}</p>
+                        <div className="flex flex-col">
+                          <span className="font-bold text-sm">{l.full_name || l.talents?.full_name}</span>
+                          <span className="text-xs text-muted-foreground">{l.email}</span>
                         </div>
                       </TableCell>
-                      <TableCell>
-                        <div className="flex flex-wrap gap-1">
-                          {lead.target_countries?.slice(0, 2).map((country) => (
-                            <Badge key={country} variant="outline" className="text-xs">{country}</Badge>
+                      <TableCell className="text-center">
+                        <div className="flex justify-center gap-1">
+                          {l.target_countries?.slice(0, 2).map((c) => (
+                            <Badge key={c} variant="secondary" className="text-[9px] px-1 h-5">
+                              {c}
+                            </Badge>
                           ))}
-                          {(lead.target_countries?.length || 0) > 2 && (
-                            <Badge variant="outline" className="text-xs">+{(lead.target_countries?.length || 0) - 2}</Badge>
+                          {l.target_countries.length > 2 && (
+                            <span className="text-[9px] text-muted-foreground">+{l.target_countries.length - 2}</span>
                           )}
                         </div>
                       </TableCell>
-                      <TableCell>{lead.target_intake}</TableCell>
-                      <TableCell>{lead.degree_level}</TableCell>
-                      <TableCell>{getStatusBadge(lead.status)}</TableCell>
-                      <TableCell>{format(new Date(lead.created_at), "MMM d, yyyy")}</TableCell>
+                      <TableCell>
+                        <div className="text-[11px] leading-tight">
+                          <p className="font-medium">{l.degree_level}</p>
+                          <p className="text-muted-foreground">{l.target_intake}</p>
+                        </div>
+                      </TableCell>
+                      <TableCell>{getStatusBadge(l.status)}</TableCell>
                       <TableCell className="text-right">
-                        <Button variant="ghost" size="sm" onClick={() => setSelectedLead(lead)}>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-8 w-8 text-primary"
+                          onClick={() => setSelectedLead(l)}
+                        >
                           <Eye className="h-4 w-4" />
                         </Button>
                       </TableCell>
@@ -323,139 +248,118 @@ export function StudyAbroadRoadmapLeadsManager() {
         </CardContent>
       </Card>
 
-      {/* Detail Dialog */}
+      {/* Lead Detail Dialog */}
       <Dialog open={!!selectedLead} onOpenChange={() => setSelectedLead(null)}>
-        <DialogContent className="max-w-2xl max-h-[90vh]">
-          <DialogHeader>
+        <DialogContent className="max-w-3xl max-h-[90vh] overflow-hidden flex flex-col p-0">
+          <DialogHeader className="p-6 border-b bg-muted/20">
             <DialogTitle className="flex items-center gap-2">
-              <GraduationCap className="h-5 w-5" />
-              Roadmap Request Details
+              <User className="h-5 w-5 text-primary" />
+              Lead Application Detail
             </DialogTitle>
           </DialogHeader>
-          <ScrollArea className="max-h-[70vh] pr-4">
+          <ScrollArea className="flex-1 p-6">
             {selectedLead && (
-              <div className="space-y-6">
-                {/* User Info */}
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-sm text-muted-foreground uppercase">
-                    Applicant Information
-                  </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">Name</p>
-                      <p className="font-medium">{selectedLead.talents?.full_name}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Email</p>
-                      <p className="font-medium">{selectedLead.talents?.email}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Phone</p>
-                      <p className="font-medium">{selectedLead.talents?.phone || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Status</p>
-                      {getStatusBadge(selectedLead.status)}
-                    </div>
+              <div className="space-y-8">
+                {/* Section: Core Info */}
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+                  <div className="p-4 rounded-xl border bg-card space-y-1">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+                      <Mail className="h-3 w-3" /> Email
+                    </p>
+                    <p className="text-sm font-medium truncate">{selectedLead.email}</p>
+                  </div>
+                  <div className="p-4 rounded-xl border bg-card space-y-1">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+                      <Smartphone className="h-3 w-3" /> Phone
+                    </p>
+                    <p className="text-sm font-medium">{selectedLead.talents?.phone || "Not Provided"}</p>
+                  </div>
+                  <div className="p-4 rounded-xl border bg-card space-y-1">
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase flex items-center gap-1.5">
+                      <Calendar className="h-3 w-3" /> Requested On
+                    </p>
+                    <p className="text-sm font-medium">{format(new Date(selectedLead.created_at), "MMM d, yyyy")}</p>
                   </div>
                 </div>
 
-                {/* Study Preferences */}
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-sm text-muted-foreground uppercase">
-                    Study Preferences
+                {/* Section: Academic Context */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <GraduationCap className="h-4 w-4" /> Academic & Language Profile
                   </h4>
-                  <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-                    <div className="flex items-start gap-2">
-                      <Globe className="h-4 w-4 mt-1 text-muted-foreground shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Target Countries</p>
-                        <div className="flex flex-wrap gap-1 mt-1">
-                          {selectedLead.target_countries?.map((c) => (
-                            <Badge key={c} variant="secondary">{c}</Badge>
-                          ))}
-                        </div>
-                      </div>
+                  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+                    <div className="bg-muted/40 p-3 rounded-lg">
+                      <p className="text-[10px] text-muted-foreground uppercase">GPA</p>
+                      <p className="font-bold">{selectedLead.gpa || "N/A"}</p>
                     </div>
-                    <div className="flex items-start gap-2">
-                      <Calendar className="h-4 w-4 mt-1 text-muted-foreground shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Target Intake</p>
-                        <p className="font-medium">{selectedLead.target_intake}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <DollarSign className="h-4 w-4 mt-1 text-muted-foreground shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Budget Level</p>
-                        <p className="font-medium">{selectedLead.budget_level}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <GraduationCap className="h-4 w-4 mt-1 text-muted-foreground shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Degree Level</p>
-                        <p className="font-medium">{selectedLead.degree_level}</p>
-                      </div>
-                    </div>
-                    <div className="flex items-start gap-2">
-                      <FileText className="h-4 w-4 mt-1 text-muted-foreground shrink-0" />
-                      <div>
-                        <p className="text-sm text-muted-foreground">Field of Study</p>
-                        <p className="font-medium">{selectedLead.field_of_study}</p>
-                      </div>
-                    </div>
-                  </div>
-                </div>
-
-                {/* Academic Info */}
-                <div className="space-y-2">
-                  <h4 className="font-semibold text-sm text-muted-foreground uppercase">
-                    Academic Profile
-                  </h4>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 gap-4">
-                    <div>
-                      <p className="text-sm text-muted-foreground">IELTS Score</p>
-                      <p className="font-medium">{selectedLead.ielts_score || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">GPA</p>
-                      <p className="font-medium">{selectedLead.gpa || "N/A"}</p>
-                    </div>
-                    <div>
-                      <p className="text-sm text-muted-foreground">Work Experience</p>
-                      <p className="font-medium">
-                        {selectedLead.years_experience
-                          ? `${selectedLead.years_experience} years`
-                          : "N/A"}
+                    <div className="bg-muted/40 p-3 rounded-lg">
+                      <p className="text-[10px] text-muted-foreground uppercase">IELTS/TOEFL</p>
+                      <p className="font-bold">
+                        {selectedLead.has_taken_ielts ? selectedLead.ielts_score : "No Score"}
                       </p>
                     </div>
+                    <div className="bg-muted/40 p-3 rounded-lg">
+                      <p className="text-[10px] text-muted-foreground uppercase">Work Exp</p>
+                      <p className="font-bold">
+                        {selectedLead.years_experience ? `${selectedLead.years_experience} Yrs` : "None"}
+                      </p>
+                    </div>
+                    <div className="bg-muted/40 p-3 rounded-lg">
+                      <p className="text-[10px] text-muted-foreground uppercase">Budget</p>
+                      <p className="font-bold capitalize">{selectedLead.budget_level}</p>
+                    </div>
                   </div>
                 </div>
 
-                {/* AI Roadmap Summary */}
-                {selectedLead.roadmap_result && selectedLead.status === "completed" && (
-                  <div className="space-y-2">
-                    <h4 className="font-semibold text-sm text-muted-foreground uppercase">
-                      AI Roadmap Generated
+                {/* Section: Preferences */}
+                <div className="space-y-4">
+                  <h4 className="text-xs font-bold uppercase tracking-widest text-primary flex items-center gap-2">
+                    <Globe className="h-4 w-4" /> Study Preferences
+                  </h4>
+                  <div className="p-4 rounded-xl border bg-muted/10 space-y-4">
+                    <div className="grid grid-cols-1 sm:grid-cols-2 gap-y-4">
+                      <div>
+                        <p className="text-xs text-muted-foreground">Degree Level</p>
+                        <p className="text-sm font-bold capitalize">{selectedLead.degree_level}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Field of Study</p>
+                        <p className="text-sm font-bold">{selectedLead.field_of_study}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Target Intake</p>
+                        <p className="text-sm font-bold">{selectedLead.target_intake}</p>
+                      </div>
+                      <div>
+                        <p className="text-xs text-muted-foreground">Destinations</p>
+                        <p className="text-sm font-bold">{selectedLead.target_countries.join(", ")}</p>
+                      </div>
+                    </div>
+                  </div>
+                </div>
+
+                {/* Section: AI Result Preview */}
+                {selectedLead.roadmap_result && (
+                  <div className="space-y-4">
+                    <h4 className="text-xs font-bold uppercase tracking-widest text-emerald-600 flex items-center gap-2">
+                      <Info className="h-4 w-4" /> AI Evaluation Insight
                     </h4>
-                    <div className="bg-muted/50 rounded-lg p-4">
-                      <p className="text-sm text-muted-foreground">
-                        Roadmap has been generated successfully. The user can view their
-                        personalized 12-month study abroad plan in their results page.
+                    <div className="bg-emerald-50/50 border border-emerald-100 rounded-xl p-4">
+                      <p className="text-sm text-emerald-900 leading-relaxed italic">
+                        "The AI roadmap has been successfully delivered to the student's dashboard. Coordinator action:
+                        Verify financial readiness and confirm university tier selections."
                       </p>
                     </div>
                   </div>
                 )}
-
-                {/* Timestamps */}
-                <div className="text-sm text-muted-foreground border-t pt-4">
-                  <p>Created: {format(new Date(selectedLead.created_at), "PPP 'at' p")}</p>
-                  <p>Updated: {format(new Date(selectedLead.updated_at), "PPP 'at' p")}</p>
-                </div>
               </div>
             )}
           </ScrollArea>
+          <div className="p-6 border-t bg-muted/10 flex justify-end">
+            <Button variant="outline" onClick={() => setSelectedLead(null)}>
+              Close Dashboard
+            </Button>
+          </div>
         </DialogContent>
       </Dialog>
     </div>
