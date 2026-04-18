@@ -107,11 +107,9 @@ export function JobsManager() {
   const fetchEngagement = useCallback(async (jobIds: string[]) => {
     if (jobIds.length === 0) return;
 
-    const [clicksRes, savesRes, recsRes] = await Promise.all([
-      supabase.from("job_analytics").select("job_id").in("job_id", jobIds),
-      supabase.from("saved_items").select("item_id").eq("kind", "job").in("item_id", jobIds),
-      supabase.from("ai_job_recommendations").select("job_id").in("job_id", jobIds),
-    ]);
+    const clicksRes = await supabase.from("job_analytics").select("job_id").in("job_id", jobIds);
+    const savesRes = await supabase.from("saved_items").select("item_id").eq("kind", "job").in("item_id", jobIds);
+    const recsRes = await supabase.from("ai_job_recommendations").select("job_id").in("job_id", jobIds);
 
     const stats: Record<string, EngagementData> = {};
     jobIds.forEach((id) => (stats[id] = { job_id: id, clicks: 0, saves: 0, recommendations: 0 }));
