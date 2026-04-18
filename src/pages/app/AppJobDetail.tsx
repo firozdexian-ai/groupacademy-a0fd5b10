@@ -13,13 +13,12 @@ import {
   MapPin,
   Clock,
   Briefcase,
-  CheckCircle,
-  Brain,
   Bookmark,
-  Banknote,
-  Sparkles,
+  Brain,
   ArrowRight,
   ShieldCheck,
+  Flame,
+  Sparkles,
 } from "lucide-react";
 import { toast } from "sonner";
 import { AIJobInsights } from "@/components/jobs/AIJobInsights";
@@ -27,7 +26,7 @@ import { ExternalApplicationPrep } from "@/components/jobs/ExternalApplicationPr
 import { useCredits } from "@/hooks/useCredits";
 import { CREDIT_CONFIG } from "@/lib/creditPricing";
 import { RelatedJobs } from "@/components/jobs/RelatedJobs";
-import { getJobTypeLabel, getExperienceLevelLabel, isDeadlineUrgent, isDeadlinePassed } from "@/lib/constants/jobTypes";
+import { getJobTypeLabel, getExperienceLevelLabel, isDeadlinePassed } from "@/lib/constants/jobTypes";
 
 interface Job {
   id: string;
@@ -136,9 +135,9 @@ export default function AppJobDetail() {
       {/* Header / Hero */}
       <div className="flex flex-col md:flex-row gap-6 items-start justify-between bg-card p-6 rounded-2xl border shadow-sm">
         <div className="flex gap-4 items-start">
-          <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center border shrink-0">
+          <div className="w-16 h-16 rounded-2xl bg-primary/5 flex items-center justify-center border shrink-0 overflow-hidden">
             {job.company_logo_url ? (
-              <img src={job.company_logo_url} alt="logo" className="rounded-xl" />
+              <img src={job.company_logo_url} alt="logo" className="object-cover w-full h-full" />
             ) : (
               <Building2 className="text-primary w-8 h-8" />
             )}
@@ -146,7 +145,11 @@ export default function AppJobDetail() {
           <div className="space-y-1">
             <div className="flex items-center gap-2">
               <h1 className="text-2xl font-bold">{job.title}</h1>
-              {job.is_featured && <Badge className="bg-amber-500/10 text-amber-600 border-amber-200">Featured</Badge>}
+              {job.is_featured && (
+                <Badge className="bg-amber-500/10 text-amber-600 border-amber-200 gap-1">
+                  <Flame className="w-3 h-3" /> Featured
+                </Badge>
+              )}
             </div>
             <p className="text-muted-foreground flex items-center gap-2">
               <span className="font-semibold text-foreground">{job.company_name}</span>
@@ -177,7 +180,6 @@ export default function AppJobDetail() {
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Main Content */}
         <div className="lg:col-span-2 space-y-8">
-          {/* Audit Fix: Render AI Insights */}
           {talent?.id && <AIJobInsights jobId={job.id} talentId={talent.id} />}
 
           <Card>
@@ -189,21 +191,27 @@ export default function AppJobDetail() {
             </CardContent>
           </Card>
 
-          {/* Related Jobs */}
-          <RelatedJobs currentJobId={job.id} />
+          {/* CTO FIX: Satisfying RelatedJobsProps interface requirements */}
+          <RelatedJobs
+            currentJobId={job.id}
+            companyName={job.company_name}
+            location={job.location || "Remote"}
+            linkPrefix="/app/jobs"
+          />
         </div>
 
         {/* Sidebar */}
         <div className="space-y-6">
-          {/* Assessment CTA - Audit Fix #9 */}
           {existingApp && job.ai_assessment_enabled && existingApp.assessment_status !== "completed" && (
-            <Card className="border-primary bg-primary/5">
+            <Card className="border-primary bg-primary/5 shadow-md">
               <CardContent className="p-6 space-y-4">
                 <div className="flex items-center gap-2 text-primary">
-                  <Brain className="w-5 h-5" />
-                  <span className="font-bold">Action Required</span>
+                  <Brain className="w-5 h-5 animate-pulse" />
+                  <span className="font-bold">AI Interview Pending</span>
                 </div>
-                <p className="text-sm">Complete your AI Assessment to boost your profile for this role.</p>
+                <p className="text-sm">
+                  This employer uses AI interviewing. Take it now to appear at the top of their list.
+                </p>
                 <Button className="w-full" onClick={() => navigate(`/app/job-assessment/${existingApp.assessment_id}`)}>
                   Take Assessment <ArrowRight className="ml-2 w-4 h-4" />
                 </Button>
@@ -232,7 +240,7 @@ export default function AppJobDetail() {
                 <span className="flex items-center gap-2">
                   <Clock className="w-4 h-4" /> Deadline
                 </span>
-                <span className={deadlinePassed ? "text-destructive" : ""}>
+                <span className={deadlinePassed ? "text-destructive font-bold" : ""}>
                   {job.deadline ? new Date(job.deadline).toLocaleDateString() : "Open"}
                 </span>
               </div>
