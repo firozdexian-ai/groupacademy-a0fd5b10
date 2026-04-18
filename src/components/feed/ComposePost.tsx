@@ -44,7 +44,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
         text_content: trimmed,
         author_name: talent.fullName || "Anonymous",
         author_avatar: talent.profilePhotoUrl || null,
-        author_title: talent.customProfession || talent.currentTitle || "Professional",
+        author_title: talent.customProfession || "Professional",
         talent_id: talent.id,
         content_type: "text",
         tags: tags.length > 0 ? tags : null,
