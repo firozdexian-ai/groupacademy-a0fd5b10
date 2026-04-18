@@ -107,7 +107,7 @@ export function JobsManager() {
   const fetchEngagement = useCallback(async (jobIds: string[]) => {
     if (jobIds.length === 0) return;
 
-    const [clicks, saves, recs] = await Promise.all([
+    const [clicksRes, savesRes, recsRes] = await Promise.all([
       supabase.from("job_analytics").select("job_id").in("job_id", jobIds),
       supabase.from("saved_items").select("item_id").eq("kind", "job").in("item_id", jobIds),
       supabase.from("ai_job_recommendations").select("job_id").in("job_id", jobIds),
@@ -116,9 +116,13 @@ export function JobsManager() {
     const stats: Record<string, EngagementData> = {};
     jobIds.forEach((id) => (stats[id] = { job_id: id, clicks: 0, saves: 0, recommendations: 0 }));
 
-    clicks.data?.forEach((c) => stats[c.job_id].clicks++);
-    saves.data?.forEach((s) => stats[s.item_id].saves++);
-    recs.data?.forEach((r) => stats[r.job_id].recommendations++);
+    const clicks = (clicksRes.data ?? []) as Array<{ job_id: string }>;
+    const saves = (savesRes.data ?? []) as Array<{ item_id: string }>;
+    const recs = (recsRes.data ?? []) as Array<{ job_id: string }>;
+
+    clicks.forEach((c) => stats[c.job_id] && stats[c.job_id].clicks++);
+    saves.forEach((s) => stats[s.item_id] && stats[s.item_id].saves++);
+    recs.forEach((r) => stats[r.job_id] && stats[r.job_id].recommendations++);
 
     setEngagement(stats);
   }, []);
