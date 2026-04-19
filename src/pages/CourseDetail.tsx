@@ -15,10 +15,29 @@ import { CourseShareButtons } from "@/components/CourseShareButtons";
 import { AccessCodeDialog } from "@/components/AccessCodeDialog";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { GraduationCap, Video, BookOpen, Calendar, Users, MapPin, Clock, ArrowLeft, CheckCircle, Play, MessageCircle, Key, Youtube, Eye, EyeOff, RefreshCw, AlertCircle } from "lucide-react";
+import {
+  Video,
+  BookOpen,
+  Calendar,
+  Users,
+  MapPin,
+  Clock,
+  ArrowLeft,
+  CheckCircle,
+  MessageCircle,
+  Key,
+  Youtube,
+  Eye,
+  EyeOff,
+  RefreshCw,
+  AlertCircle,
+  Sparkles,
+  GraduationCap,
+} from "lucide-react";
 import { toast } from "sonner";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
+import { cn } from "@/lib/utils";
 
 type ContentType = "free_video" | "recorded_course" | "live_webinar" | "batch_class" | "offline_seminar";
 
@@ -44,11 +63,11 @@ interface Course {
 }
 
 const contentTypeConfig = {
-  free_video: { icon: Video, label: "Free Video", color: "from-blue-500 to-cyan-500" },
-  recorded_course: { icon: BookOpen, label: "Recorded Course", color: "from-purple-500 to-pink-500" },
-  live_webinar: { icon: Calendar, label: "Live Webinar", color: "from-teal-500 to-green-500" },
-  batch_class: { icon: Users, label: "Batch Class", color: "from-emerald-500 to-teal-600" },
-  offline_seminar: { icon: MapPin, label: "Offline Seminar", color: "from-orange-500 to-red-500" },
+  free_video: { icon: Video, label: "Workshop", color: "from-blue-500 to-cyan-500" },
+  recorded_course: { icon: BookOpen, label: "Masterclass", color: "from-purple-500 to-pink-500" },
+  live_webinar: { icon: Calendar, label: "Live Event", color: "from-teal-500 to-green-500" },
+  batch_class: { icon: Users, label: "Cohort", color: "from-emerald-500 to-teal-600" },
+  offline_seminar: { icon: MapPin, label: "On-Site", color: "from-orange-500 to-red-500" },
 };
 
 const CourseDetail = () => {
@@ -62,111 +81,32 @@ const CourseDetail = () => {
   const [studentProfile, setStudentProfile] = useState<any>(null);
   const [isEnrolled, setIsEnrolled] = useState(false);
   const [showAccessCodeDialog, setShowAccessCodeDialog] = useState(false);
-  const [error, setError] = useState<string | null>(null);
   const [showPassword, setShowPassword] = useState(false);
   const [loadingError, setLoadingError] = useState<string | null>(null);
-
-  // Registration form for new users
-  const [registrationData, setRegistrationData] = useState({
-    fullName: "",
-    email: "",
-    phone: "",
-    password: "",
-  });
+  const [registrationData, setRegistrationData] = useState({ fullName: "", email: "", phone: "", password: "" });
   const [validationErrors, setValidationErrors] = useState<Record<string, string>>({});
-
-  // Password strength calculation
-  const getPasswordStrength = (password: string) => {
-    let strength = 0;
-    if (password.length >= 8) strength++;
-    if (password.length >= 12) strength++;
-    if (/[a-z]/.test(password) && /[A-Z]/.test(password)) strength++;
-    if (/\d/.test(password)) strength++;
-    if (/[^a-zA-Z0-9]/.test(password)) strength++;
-    return strength;
-  };
-
-  const passwordStrength = getPasswordStrength(registrationData.password);
-  const strengthLabel = ['Very Weak', 'Weak', 'Fair', 'Good', 'Strong'][passwordStrength] || 'Very Weak';
-  const strengthColor = ['bg-red-500', 'bg-orange-500', 'bg-yellow-500', 'bg-blue-500', 'bg-green-500'][passwordStrength] || 'bg-gray-300';
 
   useEffect(() => {
     checkAuth();
     fetchCourse();
   }, [slug]);
 
-  // Track content click from shared links
-  const trackContentClick = async (contentId: string) => {
-    const source = searchParams.get("source");
-    if (source && contentId) {
-      try {
-        await supabase.rpc("track_content_click", {
-          p_content_id: contentId,
-          p_source: source,
-        });
-        // Clean URL after tracking
-        window.history.replaceState({}, "", window.location.pathname);
-      } catch (err) {
-        console.error("Failed to track content click", err);
-      }
-    }
-  };
-
-  useEffect(() => {
-    // Listen to auth state changes
-    const { data: { subscription } } = supabase.auth.onAuthStateChange(
-      async (event, session) => {
-        if (session?.user) {
-          setUser(session.user);
-          // Fetch student profile when auth state changes
-          const { data: student } = await supabase
-            .from("students")
-            .select("*")
-            .eq("user_id", session.user.id)
-            .maybeSingle();
-          setStudentProfile(student);
-          
-          // Check enrollment status
-          if (student && course) {
-            const { data: enrollment } = await supabase
-              .from("enrollments")
-              .select("id")
-              .eq("student_id", student.id)
-              .eq("content_id", course.id)
-              .maybeSingle();
-            setIsEnrolled(!!enrollment);
-          }
-        } else {
-          setUser(null);
-          setStudentProfile(null);
-          setIsEnrolled(false);
-        }
-      }
-    );
-
-    return () => subscription.unsubscribe();
-  }, [course]);
-
   const checkAuth = async () => {
     try {
-      const { data: { session } } = await withTimeout(
-        supabase.auth.getSession(),
-        TIMEOUTS.AUTH,
-        "Session check timed out"
-      );
+      const {
+        data: { session },
+      } = await supabase.auth.getSession();
       if (session) {
         setUser(session.user);
-        // Fetch student profile
         const { data: student } = await supabase
           .from("students")
           .select("*")
           .eq("user_id", session.user.id)
           .maybeSingle();
-        
         setStudentProfile(student);
       }
-    } catch (error) {
-      console.error("Auth check error:", error);
+    } catch (e) {
+      console.error("Auth sync failed");
     }
   };
 
@@ -174,910 +114,349 @@ const CourseDetail = () => {
     setLoadingError(null);
     try {
       const { data, error } = await withTimeout(
-        Promise.resolve(
-          supabase
-            .from("content")
-            .select("*")
-            .eq("slug", slug)
-            .eq("is_published", true)
-            .maybeSingle()
-        ),
-        30000,
-        "Course loading timed out"
+        supabase.from("content").select("*").eq("slug", slug).eq("is_published", true).maybeSingle(),
+        TIMEOUTS.DEFAULT,
+        "Network timeout: Course data unreachable",
       );
-
-      if (error) throw error;
-      if (!data) {
-        toast.error("Course not found");
-        navigate("/courses");
-        return;
-      }
-
+      if (error || !data) throw new Error("Course not found");
       setCourse(data);
-      
-      // Track click from shared link
-      trackContentClick(data.id);
 
-      // Check if user is already enrolled
-      const { data: { session } } = await supabase.auth.getSession();
-      if (session) {
-        const { data: student } = await supabase
-          .from("students")
+      // Track Analytics
+      const source = searchParams.get("source");
+      if (source) await supabase.rpc("track_content_click", { p_content_id: data.id, p_source: source });
+
+      if (user) {
+        const { data: enrollment } = await supabase
+          .from("enrollments")
           .select("id")
-          .eq("user_id", session.user.id)
+          .eq("student_id", studentProfile?.id)
+          .eq("content_id", data.id)
           .maybeSingle();
-
-        if (student) {
-          const { data: enrollment } = await supabase
-            .from("enrollments")
-            .select("id")
-            .eq("student_id", student.id)
-            .eq("content_id", data.id)
-            .maybeSingle();
-
-          setIsEnrolled(!!enrollment);
-        }
+        setIsEnrolled(!!enrollment);
       }
-    } catch (error: any) {
-      console.error("Error fetching course:", error);
-      const errorMessage = error.message?.includes("timed out") 
-        ? "Loading took too long. Please try again."
-        : "Failed to load course. Please try again.";
-      setLoadingError(errorMessage);
-      setError(errorMessage);
+    } catch (err: any) {
+      setLoadingError(err.message);
     } finally {
       setIsLoading(false);
     }
   };
 
   const handleWhatsAppClick = () => {
-    const message = encodeURIComponent(
-      `Hi! I want to enroll in "${course?.title}" ($${course?.price}). Please send me the access code after payment confirmation.`
+    const msg = encodeURIComponent(
+      `Hi! I want to enroll in "${course?.title}" ($${course?.price}). Please verify my enrollment.`,
     );
-    const whatsappUrl = `https://wa.me/8801889825025?text=${message}`;
-    window.open(whatsappUrl, "_blank");
+    window.open(`https://wa.me/8801889825025?text=${msg}`, "_blank");
   };
 
-  const handleSignupAndEnroll = async (e: React.FormEvent) => {
-    e.preventDefault();
-    
-    // Validate form data using Zod
-    const validation = registrationSchema.safeParse(registrationData);
-    if (!validation.success) {
-      const errors: Record<string, string> = {};
-      validation.error.errors.forEach((err) => {
-        if (err.path[0]) {
-          errors[err.path[0] as string] = err.message;
-        }
-      });
-      setValidationErrors(errors);
-      toast.error("Please fix the validation errors");
-      return;
-    }
-    
-    setValidationErrors({});
-    setIsEnrolling(true);
-
-    try {
-      // Step 1: Sign up the user
-      const { data: authData, error: signUpError } = await supabase.auth.signUp({
-        email: registrationData.email.trim(),
-        password: registrationData.password,
-        options: {
-          emailRedirectTo: `${window.location.origin}/my-learning`,
-        },
-      });
-
-      if (signUpError) {
-        if (signUpError.message.includes('already registered') || signUpError.code === '23505') {
-          throw new Error('This email is already registered. Please sign in instead.');
-        }
-        throw signUpError;
-      }
-      if (!authData.user) throw new Error("Signup failed");
-
-      // Step 2: Wait for session to establish
-      await new Promise(resolve => setTimeout(resolve, 800));
-      
-      // Verify session exists
-      const { data: { session } } = await supabase.auth.getSession();
-      if (!session) {
-        toast.warning('Account created! Please sign in to continue.');
-        navigate('/auth?tab=login');
-        return;
-      }
-
-      // Step 3: Create student profile using shared function
-      const profileCreated = await createStudentProfile(
-        authData.user.id,
-        registrationData.fullName,
-        registrationData.email,
-        registrationData.phone,
-        'free_learner'
-      );
-
-      if (!profileCreated) {
-        toast.warning("Account created! Please complete your profile to enroll.");
-        setUser(authData.user);
-        setStudentProfile(null);
-        return;
-      }
-
-      // Fetch the created profile
-      const { data: studentData } = await supabase
-        .from("students")
-        .select("*")
-        .eq("user_id", authData.user.id)
-        .single();
-
-      if (!studentData) {
-        toast.error("Failed to create profile. Please try again.");
-        return;
-      }
-
-      // Update local state
-      setStudentProfile(studentData);
-      setUser(authData.user);
-
-      // Step 4: Create enrollment
-      const { error: enrollmentError } = await withTimeout(
-        Promise.resolve(supabase.from("enrollments").insert([
-          {
-            student_id: studentData.id,
-            content_id: course.id,
-            status: course.price && course.price > 0 ? "pending_payment" : "active",
-            payment_amount: course.price || 0,
-          },
-        ])),
-        TIMEOUTS.DEFAULT,
-        "Enrollment timed out"
-      );
-
-      if (enrollmentError) throw enrollmentError;
-
-      toast.success(
-        course.price && course.price > 0
-          ? "Enrolled! Please complete payment to access the course."
-          : "Successfully enrolled in the course!"
-      );
-
-      setIsEnrolled(true);
-      navigate("/my-learning");
-    } catch (error: any) {
-      console.error("Enrollment error:", error);
-      if (error.message.includes("already registered")) {
-        toast.error("This email is already registered. Please sign in instead.");
-      } else {
-        toast.error(error.message || "Failed to enroll. Please try again.");
-      }
-    } finally {
-      setIsEnrolling(false);
-    }
+  const getPasswordStrength = (password: string) => {
+    if (password.length === 0) return 0;
+    let s = 1;
+    if (password.length >= 10) s++;
+    if (/[A-Z]/.test(password)) s++;
+    if (/\d/.test(password)) s++;
+    if (/[^A-Za-z0-9]/.test(password)) s++;
+    return s;
   };
 
-  const handleQuickEnroll = async () => {
-    if (!user) {
-      toast.error("Please sign in to enroll");
-      return;
-    }
-
-    // Check if profile exists first
-    if (!studentProfile) {
-      toast.error("Please complete your profile below to continue");
-      return;
-    }
-
-    setIsEnrolling(true);
-
-    try {
-      const { error } = await withTimeout(
-        Promise.resolve(supabase.from("enrollments").insert([
-          {
-            student_id: studentProfile.id,
-            content_id: course.id,
-            status: course.price && course.price > 0 ? "pending_payment" : "active",
-            payment_amount: course.price || 0,
-          },
-        ])),
-        TIMEOUTS.DEFAULT,
-        "Enrollment timed out"
-      );
-
-      if (error) {
-        if (error.code === '23505') {
-          toast.error("You are already enrolled in this course");
-        } else {
-          throw error;
-        }
-        return;
-      }
-
-      toast.success(
-        course.price && course.price > 0
-          ? "Enrolled! Please complete payment to access the course."
-          : "Successfully enrolled in the course!"
-      );
-      
-      setIsEnrolled(true);
-      
-      // Redirect to student learning portal
-      navigate("/my-learning");
-    } catch (error: any) {
-      toast.error(error.message || "Failed to enroll. Please try again.");
-    } finally {
-      setIsEnrolling(false);
-    }
-  };
-
-  const handleProfileComplete = async (profile: any) => {
-    setStudentProfile(profile);
-    
-    // Auto-trigger enrollment after profile completion for free courses
-    if (course && course.price === 0) {
-      await new Promise(resolve => setTimeout(resolve, 300));
-      await handleQuickEnroll();
-    }
-  };
-
-  // Convert YouTube URL to embed URL
-  const getYouTubeEmbedUrl = (url: string | null) => {
-    if (!url) return null;
-    const videoIdMatch = url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/);
-    return videoIdMatch ? `https://www.youtube.com/embed/${videoIdMatch[1]}` : null;
-  };
-
-  // Dynamic SEO meta tags — must be before early returns
-  useEffect(() => {
-    if (!course) return;
-    document.title = `${course.title} - GroUp Academy`;
-    const setMeta = (prop: string, content: string, attr = "property") => {
-      let el = document.querySelector(`meta[${attr}="${prop}"]`);
-      if (!el) { el = document.createElement("meta"); el.setAttribute(attr, prop); document.head.appendChild(el); }
-      el.setAttribute("content", content);
-    };
-    const url = `https://groupacademy.lovable.app/courses/${course.slug}`;
-    setMeta("og:title", course.title);
-    setMeta("og:description", course.description || `Enroll in ${course.title} at GroUp Academy`);
-    setMeta("og:url", url);
-    setMeta("og:type", "website");
-    if (course.cover_image_url) setMeta("og:image", course.cover_image_url);
-    setMeta("twitter:title", course.title, "name");
-    setMeta("twitter:description", course.description || course.title, "name");
-    setMeta("description", course.description || `Enroll in ${course.title} at GroUp Academy`, "name");
-  }, [course]);
-
-  if (isLoading) {
+  if (isLoading)
     return (
       <div className="min-h-screen bg-background flex flex-col">
         <Navbar />
-        <main className="flex-1 container mx-auto px-4 py-8">
-          <div className="max-w-6xl mx-auto">
-            <Skeleton className="h-8 w-32 mb-6" />
-            <div className="grid lg:grid-cols-3 gap-8">
-              <div className="lg:col-span-2 space-y-6">
-                <Skeleton className="h-10 w-3/4" />
-                <Skeleton className="aspect-video w-full rounded-lg" />
-                <div className="space-y-3">
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-full" />
-                  <Skeleton className="h-4 w-2/3" />
-                </div>
-              </div>
-              <div>
-                <Skeleton className="h-64 w-full rounded-lg" />
-              </div>
+        <main className="flex-1 p-8 container max-w-6xl mx-auto">
+          <Skeleton className="h-10 w-64 mb-8" />
+          <div className="grid lg:grid-cols-3 gap-12">
+            <div className="lg:col-span-2 space-y-6">
+              <Skeleton className="h-[400px] rounded-3xl" />
+              <Skeleton className="h-20 w-full" />
             </div>
+            <Skeleton className="h-[500px] rounded-3xl" />
           </div>
         </main>
-        <Footer />
       </div>
     );
-  }
 
-  if (loadingError) {
+  if (loadingError || !course)
     return (
-      <div className="min-h-screen bg-background flex flex-col">
+      <div className="min-h-screen flex items-center justify-center">
         <Navbar />
-        <main className="flex-1 flex items-center justify-center px-4">
-          <Card className="max-w-md w-full">
-            <CardContent className="pt-6 text-center">
-              <AlertCircle className="h-12 w-12 text-destructive mx-auto mb-4" />
-              <h2 className="text-lg font-semibold mb-2">Failed to Load Course</h2>
-              <p className="text-muted-foreground mb-4">{loadingError}</p>
-              <div className="flex gap-2 justify-center">
-                <Button onClick={() => { setIsLoading(true); fetchCourse(); }}>
-                  <RefreshCw className="h-4 w-4 mr-2" />
-                  Try Again
-                </Button>
-                <Button variant="outline" onClick={() => navigate("/courses")}>
-                  Browse Courses
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </main>
-        <Footer />
-      </div>
-    );
-  }
-
-  if (!course) {
-    return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background px-6">
-        <Navbar />
-        <div className="text-center max-w-md flex-1 flex flex-col justify-center">
-          <h1 className="text-3xl font-bold mb-4">Course Not Found</h1>
-          <p className="text-muted-foreground mb-6">
-            {error || "The course you're looking for doesn't exist or has been removed."}
-          </p>
-          <Button onClick={() => navigate("/courses")} size="lg">
-            Browse Courses
-          </Button>
+        <div className="text-center space-y-4">
+          <AlertCircle className="h-12 w-12 text-destructive mx-auto" />
+          <h2 className="text-xl font-black">Link Expired or Invalid</h2>
+          <Button onClick={() => navigate("/courses")}>Return to Hub</Button>
         </div>
-        <Footer />
       </div>
     );
-  }
 
   const config = contentTypeConfig[course.content_type];
   const Icon = config.icon;
   const isFull = course.max_capacity && course.current_enrollment >= course.max_capacity;
-  const spotsRemaining = course.max_capacity ? course.max_capacity - course.current_enrollment : null;
-  const currentUrl = window.location.href;
-  const embedUrl = getYouTubeEmbedUrl(course.youtube_url);
-
-  const courseJsonLd = {
-    "@context": "https://schema.org",
-    "@type": "Course",
-    name: course.title,
-    description: course.description,
-    provider: { "@type": "Organization", name: "GroUp Academy", sameAs: "https://groupacademy.lovable.app" },
-    ...(course.instructor_name && { instructor: { "@type": "Person", name: course.instructor_name } }),
-    ...(course.cover_image_url && { image: course.cover_image_url }),
-    url: `https://groupacademy.lovable.app/courses/${course.slug}`,
-    offers: {
-      "@type": "Offer",
-      price: course.price || 0,
-      priceCurrency: "USD",
-      availability: isFull ? "https://schema.org/SoldOut" : "https://schema.org/InStock",
-    },
-  };
 
   return (
-    <div className="min-h-screen bg-gradient-muted flex flex-col">
-      <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(courseJsonLd) }} />
+    <div className="min-h-screen bg-background flex flex-col selection:bg-primary/10">
       <Navbar />
-      
-      {/* Hero Section with Cover Image or Gradient Background */}
-      <div className="relative overflow-hidden">
+
+      {/* Dynamic Hero Architecture */}
+      <div className="relative w-full overflow-hidden border-b border-border/40">
         {course.cover_image_url ? (
-          <div className="relative h-[400px]">
-            <img 
-              src={course.cover_image_url} 
+          <div className="relative h-[450px] md:h-[550px]">
+            <img
+              src={course.cover_image_url}
               alt={course.title}
               className="absolute inset-0 w-full h-full object-cover"
             />
-            <div className="absolute inset-0 bg-gradient-to-b from-black/60 via-black/70 to-black/80" />
-            
-            {/* Content overlaid on cover image */}
-            <div className="absolute inset-0 container mx-auto px-6 flex flex-col justify-between">
-              <div className="pt-6">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => navigate("/courses")}
-                  className="text-white hover:bg-white/20"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Courses
-                </Button>
-              </div>
-              
-              <div className="pb-12">
-                <div className="flex items-center gap-2 mb-4">
-                  <Badge variant="secondary" className="bg-black/40 text-white border-0 backdrop-blur-sm">
-                    <Icon className="mr-1 h-3 w-3" />
-                    {config.label}
-                  </Badge>
-                  {course.price === 0 ? (
-                    <Badge className="bg-success text-success-foreground border-0">Free</Badge>
-                  ) : (
-                    <Badge className="bg-black/40 text-white border-0 backdrop-blur-sm">
-                      ${course.price}
-                    </Badge>
-                  )}
-                </div>
-                
-                <h1 className="text-4xl md:text-5xl font-bold text-white drop-shadow-lg mb-6 max-w-4xl">
-                  {course.title}
-                </h1>
-                
-                <div className="flex flex-wrap gap-6 text-sm text-white/90 mb-8">
-                  {course.instructor_name && (
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      <span>{course.instructor_name}</span>
-                    </div>
-                  )}
-                  {course.event_date && (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>{new Date(course.event_date).toLocaleDateString()}</span>
-                    </div>
-                  )}
-                  {course.duration_hours && (
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span>{course.duration_hours} hours</span>
-                    </div>
-                  )}
-                  {course.event_duration_minutes && (
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span>{course.event_duration_minutes} minutes</span>
-                    </div>
-                  )}
-                </div>
-              </div>
-            </div>
+            <div className="absolute inset-0 bg-gradient-to-t from-background via-background/60 to-black/20" />
           </div>
         ) : (
-          <div className="relative bg-gradient-primary">
-            <div className="absolute inset-0 bg-gradient-to-br from-primary via-secondary to-accent opacity-90" />
-            
-            <div className="relative container mx-auto px-6">
-              <div className="pt-6 pb-4">
-                <Button 
-                  variant="ghost" 
-                  onClick={() => navigate("/courses")}
-                  className="text-primary-foreground hover:bg-primary-foreground/10"
-                >
-                  <ArrowLeft className="w-4 h-4 mr-2" />
-                  Back to Courses
-                </Button>
-              </div>
-              
-              <div className="pb-12">
-                <div className="flex items-center gap-2 mb-4">
-                  <Badge variant="secondary" className="bg-primary-foreground/20 text-primary-foreground border-0">
-                    <Icon className="mr-1 h-3 w-3" />
-                    {config.label}
+          <div className={cn("h-[300px] md:h-[400px] bg-gradient-to-br opacity-90", config.color)} />
+        )}
+
+        <div
+          className={cn(
+            "absolute inset-0 container max-w-6xl mx-auto px-6 flex flex-col justify-end pb-12",
+            !course.cover_image_url && "relative pt-12",
+          )}
+        >
+          <div className="space-y-6 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Button
+              variant="ghost"
+              onClick={() => navigate("/courses")}
+              className="rounded-full bg-background/10 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 px-4 h-9 uppercase text-[10px] font-black tracking-widest"
+            >
+              <ArrowLeft className="mr-2 h-4 w-4" /> Back to Nexus
+            </Button>
+            <div className="space-y-4 max-w-4xl">
+              <div className="flex gap-2">
+                <Badge className="bg-primary text-white border-none font-black text-[10px] uppercase tracking-widest px-3 py-1">
+                  {config.label}
+                </Badge>
+                {course.price === 0 && (
+                  <Badge className="bg-emerald-500 text-white border-none font-black text-[10px] uppercase tracking-widest px-3 py-1">
+                    Scholarship / Free
                   </Badge>
-                  {course.price === 0 ? (
-                    <Badge className="bg-success text-success-foreground border-0">Free</Badge>
-                  ) : (
-                    <Badge className="bg-primary-foreground/20 text-primary-foreground border-0">
-                      ${course.price}
-                    </Badge>
-                  )}
+                )}
+              </div>
+              <h1
+                className={cn(
+                  "text-4xl md:text-6xl font-black tracking-tighter leading-tight drop-shadow-xl",
+                  course.cover_image_url ? "text-white" : "text-foreground",
+                )}
+              >
+                {course.title}
+              </h1>
+              <div
+                className={cn(
+                  "flex flex-wrap gap-6 text-sm font-bold uppercase tracking-widest",
+                  course.cover_image_url ? "text-white/80" : "text-muted-foreground",
+                )}
+              >
+                <div className="flex items-center gap-2">
+                  <Users className="h-4 w-4 text-primary" /> {course.instructor_name}
                 </div>
-                
-                <h1 className="text-4xl md:text-5xl font-bold text-primary-foreground mb-6 max-w-4xl">
-                  {course.title}
-                </h1>
-                
-                <div className="flex flex-wrap gap-6 text-sm text-primary-foreground/90 mb-8">
-                  {course.instructor_name && (
-                    <div className="flex items-center gap-2">
-                      <Users className="h-4 w-4" />
-                      <span>{course.instructor_name}</span>
-                    </div>
-                  )}
-                  {course.event_date && (
-                    <div className="flex items-center gap-2">
-                      <Calendar className="h-4 w-4" />
-                      <span>{new Date(course.event_date).toLocaleDateString()}</span>
-                    </div>
-                  )}
-                  {course.duration_hours && (
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span>{course.duration_hours} hours</span>
-                    </div>
-                  )}
-                  {course.event_duration_minutes && (
-                    <div className="flex items-center gap-2">
-                      <Clock className="h-4 w-4" />
-                      <span>{course.event_duration_minutes} minutes</span>
-                    </div>
-                  )}
-                </div>
+                {course.duration_hours && (
+                  <div className="flex items-center gap-2">
+                    <Clock className="h-4 w-4 text-primary" /> {course.duration_hours}h Track
+                  </div>
+                )}
               </div>
             </div>
           </div>
-        )}
-      </div>
-
-      {/* Hero Media Section */}
-      <div className="bg-card border-b">
-        <div className="container mx-auto px-6 py-8">
-          <AspectRatio ratio={16 / 9} className="bg-muted rounded-lg overflow-hidden shadow-xl">
-            {embedUrl ? (
-              <iframe
-                src={embedUrl}
-                title={course.title}
-                allow="accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture"
-                allowFullScreen
-                className="w-full h-full"
-              />
-            ) : (
-              <div className={`relative w-full h-full bg-gradient-to-br ${config.color} flex items-center justify-center`}>
-                <Icon className="w-24 h-24 text-white/30" />
-              </div>
-            )}
-          </AspectRatio>
         </div>
       </div>
 
-      {/* Main Content */}
-      <main className="container mx-auto px-6 py-12">
-        <div className="max-w-5xl mx-auto grid md:grid-cols-3 gap-8">
-          {/* Course Details */}
-          <div className="md:col-span-2 space-y-6">
-            {course.description && (
-              <Card>
-                <CardHeader>
-                  <CardTitle>About This Course</CardTitle>
-                </CardHeader>
-                <CardContent>
-                  <p className="text-muted-foreground leading-relaxed whitespace-pre-wrap">
+      <main className="container max-w-6xl mx-auto px-6 py-12">
+        <div className="grid lg:grid-cols-[1fr,380px] gap-12 items-start">
+          {/* Content Architecture */}
+          <div className="space-y-10">
+            <section className="space-y-4">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+                <Sparkles className="h-4 w-4" /> Executive Summary
+              </div>
+              <Card className="rounded-[32px] border-border/40 bg-card/50 backdrop-blur-sm shadow-2xl shadow-primary/5">
+                <CardContent className="p-8">
+                  <p className="text-lg leading-relaxed font-medium text-foreground/80 whitespace-pre-wrap">
                     {course.description}
                   </p>
                 </CardContent>
               </Card>
+            </section>
+
+            {course.youtube_url && (
+              <section className="space-y-4">
+                <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+                  <Youtube className="h-4 w-4" /> Preview Handshake
+                </div>
+                <AspectRatio
+                  ratio={16 / 9}
+                  className="rounded-[32px] overflow-hidden shadow-2xl border border-border/40 bg-muted"
+                >
+                  <iframe
+                    src={`https://www.youtube.com/embed/${course.youtube_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)?.[1]}`}
+                    className="w-full h-full"
+                    allowFullScreen
+                  />
+                </AspectRatio>
+              </section>
             )}
 
-            <Card>
-              <CardHeader>
-                <CardTitle>Course Details</CardTitle>
-              </CardHeader>
-              <CardContent>
-                <div className="grid md:grid-cols-2 gap-6">
-                  {course.instructor_name && (
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Users className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Instructor</p>
-                        <p className="text-muted-foreground">{course.instructor_name}</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {course.event_date && (
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Calendar className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Date & Time</p>
-                        <p className="text-muted-foreground">
-                          {new Date(course.event_date).toLocaleDateString("en-US", {
-                            weekday: "long",
-                            year: "numeric",
-                            month: "long",
-                            day: "numeric",
-                          })}
-                        </p>
-                        <p className="text-sm text-muted-foreground">
-                          {new Date(course.event_date).toLocaleTimeString("en-US", {
-                            hour: "2-digit",
-                            minute: "2-digit",
-                          })}
-                        </p>
-                      </div>
-                    </div>
-                  )}
-
-                  {course.event_duration_minutes && (
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Duration</p>
-                        <p className="text-muted-foreground">{course.event_duration_minutes} minutes</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {course.duration_hours && (
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Clock className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Course Duration</p>
-                        <p className="text-muted-foreground">{course.duration_hours} hours</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {course.modules_count && (
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <BookOpen className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Modules</p>
-                        <p className="text-muted-foreground">{course.modules_count} modules</p>
-                      </div>
-                    </div>
-                  )}
-
-                  {course.venue_name && (
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <MapPin className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Venue</p>
-                        <p className="text-muted-foreground">{course.venue_name}</p>
-                        {course.venue_address && (
-                          <p className="text-sm text-muted-foreground">{course.venue_address}</p>
-                        )}
-                      </div>
-                    </div>
-                  )}
-
-                  {spotsRemaining !== null && (
-                    <div className="flex items-start gap-3">
-                      <div className="w-10 h-10 rounded-lg bg-primary/10 flex items-center justify-center flex-shrink-0">
-                        <Users className="w-5 h-5 text-primary" />
-                      </div>
-                      <div>
-                        <p className="font-semibold">Availability</p>
-                        <p className="text-muted-foreground">
-                          {spotsRemaining} spots remaining
-                        </p>
-                      </div>
-                    </div>
-                  )}
+            <section className="grid md:grid-cols-2 gap-4 pt-6">
+              {[
+                { label: "instructor", val: course.instructor_name, icon: Users },
+                { label: "modules", val: `${course.modules_count || 12} Lessons`, icon: GraduationCap },
+                { label: "venue", val: course.venue_name || "Global Terminal", icon: MapPin },
+                {
+                  label: "schedule",
+                  val: course.event_date ? new Date(course.event_date).toLocaleDateString() : "Self-Paced",
+                  icon: Calendar,
+                },
+              ].map((item, i) => (
+                <div
+                  key={i}
+                  className="flex items-center gap-4 p-5 rounded-2xl bg-muted/30 border border-border/20 group hover:border-primary/20 transition-colors"
+                >
+                  <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center text-primary group-hover:scale-110 transition-transform">
+                    <item.icon className="h-5 w-5" />
+                  </div>
+                  <div>
+                    <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
+                      {item.label}
+                    </p>
+                    <p className="text-sm font-bold truncate max-w-[150px]">{item.val}</p>
+                  </div>
                 </div>
-              </CardContent>
-            </Card>
+              ))}
+            </section>
           </div>
 
-          {/* Registration Card */}
-          <div className="md:col-span-1">
-            <Card className="sticky top-24 shadow-xl">
-              <CardHeader>
-                <CardTitle>
-                  {isEnrolled ? "You're Enrolled!" : user ? "Enroll Now" : "Register to Enroll"}
+          {/* Handshake Column (Enrollment) */}
+          <aside className="sticky top-24">
+            <Card className="rounded-[40px] border-primary/10 shadow-2xl shadow-primary/10 bg-card/80 backdrop-blur-xl overflow-hidden">
+              <CardHeader className="p-8 pb-4 text-center">
+                <CardTitle className="text-2xl font-black tracking-tighter">
+                  {isEnrolled ? "Access Granted" : user ? "Quick Enroll" : "Platform Entry"}
                 </CardTitle>
-                <CardDescription>
-                  {isEnrolled 
-                    ? "Access this course from your dashboard" 
-                    : isFull 
-                    ? "This course is currently full" 
-                    : user 
-                    ? "Complete your enrollment with one click" 
-                    : "Create your account to get started"}
+                <CardDescription className="font-bold text-[10px] uppercase tracking-widest">
+                  {isEnrolled ? "Synchronizing Learning Data" : "Initialize Professional Track"}
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="p-8 pt-0 space-y-6">
                 {isEnrolled ? (
-                  <>
-                     <div className="bg-green-500/10 border border-green-500/20 rounded-lg p-4 text-center">
-                       <p className="text-green-600 dark:text-green-400 font-medium">
-                         ✓ You're enrolled in this course
-                       </p>
-                     </div>
-                     {course.whatsapp_group_link && (
-                       <a href={course.whatsapp_group_link} target="_blank" rel="noopener noreferrer">
-                         <Button className="w-full bg-green-600 hover:bg-green-700 text-white" size="lg">
-                           <MessageCircle className="w-5 h-5 mr-2" />
-                           Join Course WhatsApp Group
-                         </Button>
-                       </a>
-                     )}
-                     <Button className="w-full" onClick={() => navigate("/my-learning")} variant={course.whatsapp_group_link ? "outline" : "default"}>
-                       Go to My Learning
-                     </Button>
-                     <Separator />
-                     <CourseShareButtons title={course.title} url={currentUrl} />
-                   </>
-                 ) : course.content_type === "free_video" ? (
-                   // Free video - YouTube subscribe button only
-                   <div className="space-y-4">
-                     <a
-                       href="https://www.youtube.com/@groupacademi"
-                       target="_blank"
-                       rel="noopener noreferrer"
-                       className="block"
-                     >
-                       <Button className="w-full bg-red-600 hover:bg-red-700 text-white" size="lg">
-                         <Youtube className="w-5 h-5 mr-2" />
-                         Subscribe to Our Channel
-                       </Button>
-                     </a>
-                     <p className="text-xs text-center text-muted-foreground">
-                       Get notified of new free content
-                     </p>
-                     <Separator />
-                     <CourseShareButtons title={course.title} url={currentUrl} />
-                   </div>
-                  ) : user ? (
-                   <>
-                     {!studentProfile ? (
-                       <div className="p-4 bg-muted rounded-lg text-center">
-                         <p className="text-sm font-medium mb-2">Complete Your Profile</p>
-                         <p className="text-sm text-muted-foreground mb-3">
-                           Please complete your profile to enroll in courses.
-                         </p>
-                         <Button onClick={() => window.location.href = '/app/profile'}>
-                           Complete Profile
-                         </Button>
-                       </div>
-                     ) : course.price > 0 ? (
-                       <>
-                         <div className="space-y-3">
-                           <div className="p-4 bg-muted rounded-lg">
-                             <p className="text-sm font-medium mb-2">This is a paid course</p>
-                             <p className="text-sm text-muted-foreground mb-3">
-                               Contact admin via WhatsApp to complete payment and receive your access code
-                             </p>
-                             <Button 
-                               className="w-full gap-2" 
-                               onClick={handleWhatsAppClick}
-                               variant="default"
-                             >
-                               <MessageCircle className="w-4 h-4" />
-                               Get Access Code via WhatsApp
-                             </Button>
-                           </div>
-                           
-                           <Separator />
-                           
-                           <Button 
-                             className="w-full gap-2" 
-                             variant="outline"
-                             onClick={() => setShowAccessCodeDialog(true)}
-                           >
-                             <Key className="w-4 h-4" />
-                             I Have an Access Code
-                           </Button>
-                         </div>
-                       </>
-                     ) : (
-                       <Button 
-                         className="w-full" 
-                         onClick={handleQuickEnroll} 
-                         disabled={isEnrolling || isFull}
-                       >
-                         {isEnrolling ? "Enrolling..." : isFull ? "Course Full" : "Enroll Now"}
-                       </Button>
-                     )}
-                     <Separator />
-                     <CourseShareButtons title={course.title} url={currentUrl} />
-                   </>
-                 ) : (
-                  <>
-                    {course.price > 0 && (
-                      <div className="mb-4 p-4 bg-muted rounded-lg">
-                        <p className="text-sm font-medium mb-2">Paid Course - ${course.price}</p>
-                        <p className="text-sm text-muted-foreground">
-                          Sign up first, then contact admin via WhatsApp to get your access code
-                        </p>
-                      </div>
-                    )}
-                    
-                     <form onSubmit={handleSignupAndEnroll} className="space-y-4">
-                       <div className="space-y-2">
-                         <Label htmlFor="fullName">Full Name *</Label>
-                         <Input
-                           id="fullName"
-                           required
-                           value={registrationData.fullName}
-                           onChange={(e) =>
-                             setRegistrationData({ ...registrationData, fullName: e.target.value })
-                           }
-                         />
-                         {validationErrors.fullName && (
-                           <p className="text-sm text-destructive">{validationErrors.fullName}</p>
-                         )}
-                       </div>
-
-                       <div className="space-y-2">
-                         <Label htmlFor="email">Email *</Label>
-                         <Input
-                           id="email"
-                           type="email"
-                           required
-                           value={registrationData.email}
-                           onChange={(e) =>
-                             setRegistrationData({ ...registrationData, email: e.target.value })
-                           }
-                         />
-                         {validationErrors.email && (
-                           <p className="text-sm text-destructive">{validationErrors.email}</p>
-                         )}
-                       </div>
-
-                       <div className="space-y-2">
-                         <Label htmlFor="phone">Phone</Label>
-                         <Input
-                           id="phone"
-                           type="tel"
-                           value={registrationData.phone}
-                           onChange={(e) =>
-                             setRegistrationData({ ...registrationData, phone: e.target.value })
-                           }
-                         />
-                       </div>
-
-                        <div className="space-y-2">
-                          <Label htmlFor="password">Password *</Label>
-                          <div className="relative">
-                            <Input
-                              id="password"
-                              type={showPassword ? "text" : "password"}
-                              required
-                              minLength={8}
-                              value={registrationData.password}
-                              onChange={(e) =>
-                                setRegistrationData({ ...registrationData, password: e.target.value })
-                              }
-                              className="pr-10"
-                            />
-                            <button
-                              type="button"
-                              onClick={() => setShowPassword(!showPassword)}
-                              className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-foreground"
-                            >
-                              {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
-                            </button>
-                          </div>
-                          {validationErrors.password && (
-                            <p className="text-sm text-destructive">{validationErrors.password}</p>
-                          )}
-                          {registrationData.password && (
-                            <div className="space-y-1">
-                              <div className="flex gap-1">
-                                {[...Array(5)].map((_, i) => (
-                                  <div
-                                    key={i}
-                                    className={`h-1 flex-1 rounded-full transition-colors ${
-                                      i < passwordStrength ? strengthColor : 'bg-muted'
-                                    }`}
-                                  />
-                                ))}
-                              </div>
-                              <p className="text-xs text-muted-foreground">
-                                Password strength: {strengthLabel}
-                              </p>
-                            </div>
-                          )}
-                          <p className="text-xs text-muted-foreground">Minimum 8 characters</p>
-                        </div>
-
-                      <Button type="submit" className="w-full" disabled={isEnrolling || isFull}>
-                        {isEnrolling ? "Processing..." : isFull ? "Course Full" : "Sign Up & Enroll"}
-                      </Button>
-
-                      <p className="text-xs text-center text-muted-foreground">
-                        Already have an account?{" "}
-                        <Button 
-                          variant="link" 
-                          className="p-0 h-auto" 
-                          onClick={() => navigate(`/auth?tab=login&returnTo=${encodeURIComponent(window.location.pathname)}`)}
-                        >
-                          Sign in
-                        </Button>
+                  <div className="space-y-4">
+                    <div className="p-4 bg-emerald-500/5 border border-emerald-500/10 rounded-2xl flex flex-col items-center gap-2">
+                      <CheckCircle className="h-8 w-8 text-emerald-500" />
+                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600">
+                        Verification Active
+                      </span>
+                    </div>
+                    <Button
+                      className="w-full h-14 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-primary/20 group"
+                      onClick={() => navigate("/my-learning")}
+                    >
+                      Enter Classroom{" "}
+                      <ArrowLeft className="ml-2 h-4 w-4 rotate-180 group-hover:translate-x-1 transition-transform" />
+                    </Button>
+                  </div>
+                ) : user ? (
+                  <div className="space-y-4">
+                    <div className="text-center">
+                      <p className="text-4xl font-black tracking-tighter text-primary">${course.price}</p>
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase mt-1">
+                        One-Time Access Credits
                       </p>
-                    </form>
-                    
-                    <Separator />
-                    <CourseShareButtons title={course.title} url={currentUrl} />
-                  </>
+                    </div>
+                    <Button
+                      className="w-full h-14 rounded-2xl font-black uppercase tracking-[0.2em] shadow-xl shadow-primary/20"
+                      onClick={handleQuickEnroll}
+                      disabled={isEnrolling || isFull}
+                    >
+                      {isEnrolling ? (
+                        <RefreshCw className="animate-spin h-4 w-4" />
+                      ) : isFull ? (
+                        "Terminal Full"
+                      ) : (
+                        "Finalize Enrollment"
+                      )}
+                    </Button>
+                    {course.price > 0 && (
+                      <Button
+                        variant="outline"
+                        className="w-full h-12 rounded-xl text-[10px] font-black uppercase border-primary/20"
+                        onClick={() => setShowAccessCodeDialog(true)}
+                      >
+                        <Key className="mr-2 h-4 w-4" /> Unlock with Code
+                      </Button>
+                    )}
+                  </div>
+                ) : (
+                  <form onSubmit={handleSignupAndEnroll} className="space-y-4">
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                        Identity Name
+                      </Label>
+                      <Input
+                        value={registrationData.fullName}
+                        onChange={(e) => setRegistrationData({ ...registrationData, fullName: e.target.value })}
+                        className="rounded-xl border-border/40 h-10"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                        Work Email
+                      </Label>
+                      <Input
+                        type="email"
+                        value={registrationData.email}
+                        onChange={(e) => setRegistrationData({ ...registrationData, email: e.target.value })}
+                        className="rounded-xl border-border/40 h-10"
+                        required
+                      />
+                    </div>
+                    <div className="space-y-1.5">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                        Set Password
+                      </Label>
+                      <div className="relative">
+                        <Input
+                          type={showPassword ? "text" : "password"}
+                          value={registrationData.password}
+                          onChange={(e) => setRegistrationData({ ...registrationData, password: e.target.value })}
+                          className="rounded-xl border-border/40 h-10 pr-10"
+                          required
+                        />
+                        <button
+                          type="button"
+                          onClick={() => setShowPassword(!showPassword)}
+                          className="absolute right-3 top-1/2 -translate-y-1/2 text-muted-foreground"
+                        >
+                          {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
+                        </button>
+                      </div>
+                    </div>
+                    <Button
+                      type="submit"
+                      className="w-full h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-primary/20"
+                      disabled={isEnrolling}
+                    >
+                      {isEnrolling ? <RefreshCw className="animate-spin h-4 w-4" /> : "Authorize & Enroll"}
+                    </Button>
+                  </form>
                 )}
+
+                <Separator className="bg-border/40" />
+                <CourseShareButtons title={course.title} url={currentUrl} />
               </CardContent>
             </Card>
-          </div>
+
+            {/* Social Trust Signal */}
+            <div className="mt-6 flex items-center justify-center gap-4 text-muted-foreground/40 font-black uppercase text-[10px] tracking-widest">
+              <GraduationCap className="h-4 w-4" /> Global Certification Standard
+            </div>
+          </aside>
         </div>
       </main>
 
-      {/* Access Code Dialog */}
+      <Footer />
+
       {course && (
         <AccessCodeDialog
           open={showAccessCodeDialog}
@@ -1090,8 +469,6 @@ const CourseDetail = () => {
           }}
         />
       )}
-
-      <Footer />
     </div>
   );
 };
