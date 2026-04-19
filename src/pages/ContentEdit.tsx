@@ -6,18 +6,27 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
-import { ArrowLeft, Save, Copy, Check } from "lucide-react";
+import {
+  ArrowLeft,
+  Save,
+  Copy,
+  Check,
+  Info,
+  Youtube,
+  MessageSquare,
+  Calendar,
+  MapPin,
+  DollarSign,
+  Hash,
+  Layers,
+  Globe,
+} from "lucide-react";
 import { useToast } from "@/hooks/use-toast";
 import { ImageUpload } from "@/components/ImageUpload";
 import { youtubeUrlSchema, whatsappUrlSchema } from "@/lib/validations";
+import { cn } from "@/lib/utils";
 
 export default function ContentEdit() {
   const { id } = useParams();
@@ -26,11 +35,12 @@ export default function ContentEdit() {
   const [loading, setLoading] = useState(true);
   const [saving, setSaving] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
+
   const [formData, setFormData] = useState({
     title: "",
     slug: "",
     description: "",
-    content_type: "recorded_course" as "batch_class" | "free_video" | "live_webinar" | "offline_seminar" | "recorded_course",
+    content_type: "recorded_course" as any,
     price: "",
     currency: "USD",
     credit_cost: null as number | null,
@@ -51,53 +61,26 @@ export default function ContentEdit() {
   });
 
   useEffect(() => {
-    if (id) {
-      loadContent();
-    }
+    if (id) loadContent();
   }, [id]);
 
   const loadContent = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase
-        .from("content")
-        .select("*")
-        .eq("id", id)
-        .single();
-
+      const { data, error } = await supabase.from("content").select("*").eq("id", id).single();
       if (error) throw error;
 
       setFormData({
-        title: data.title || "",
-        slug: data.slug || "",
-        description: data.description || "",
-        content_type: data.content_type,
+        ...data,
         price: data.price?.toString() || "",
-        currency: data.currency || "USD",
-        credit_cost: data.credit_cost ?? null,
         duration_hours: data.duration_hours?.toString() || "",
         modules_count: data.modules_count?.toString() || "",
-        instructor_name: data.instructor_name || "",
-        venue_name: data.venue_name || "",
-        venue_address: data.venue_address || "",
-        event_date: data.event_date
-          ? new Date(data.event_date).toISOString().slice(0, 16)
-          : "",
+        event_date: data.event_date ? new Date(data.event_date).toISOString().slice(0, 16) : "",
         event_duration_minutes: data.event_duration_minutes?.toString() || "",
         max_capacity: data.max_capacity?.toString() || "",
-        youtube_url: data.youtube_url || "",
-        cover_image_url: data.cover_image_url || "",
-        is_published: data.is_published ?? true,
-        is_private: data.is_private ?? false,
-        display_order: data.display_order ?? 0,
-        whatsapp_group_link: data.whatsapp_group_link || "",
       });
     } catch (error: any) {
-      toast({
-        title: "Error loading content",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast({ title: "Load Error", description: error.message, variant: "destructive" });
       navigate("/dashboard");
     } finally {
       setLoading(false);
@@ -109,514 +92,430 @@ export default function ContentEdit() {
     setSaving(true);
 
     try {
-      // Validate URLs if provided
-      if (formData.youtube_url) {
-        const ytValidation = youtubeUrlSchema.safeParse(formData.youtube_url);
-        if (!ytValidation.success) {
-          toast({
-            title: "Invalid YouTube URL",
-            description: ytValidation.error.errors[0].message,
-            variant: "destructive",
-          });
-          setSaving(false);
-          return;
-        }
+      // Logic validation for URLs
+      if (formData.youtube_url && !youtubeUrlSchema.safeParse(formData.youtube_url).success) {
+        throw new Error("Invalid YouTube URL format.");
       }
-
-      if (formData.whatsapp_group_link) {
-        const waValidation = whatsappUrlSchema.safeParse(formData.whatsapp_group_link);
-        if (!waValidation.success) {
-          toast({
-            title: "Invalid WhatsApp Link",
-            description: waValidation.error.errors[0].message,
-            variant: "destructive",
-          });
-          setSaving(false);
-          return;
-        }
+      if (formData.whatsapp_group_link && !whatsappUrlSchema.safeParse(formData.whatsapp_group_link).success) {
+        throw new Error("Invalid WhatsApp link format.");
       }
 
       const { error } = await supabase
         .from("content")
         .update({
-          title: formData.title,
-          slug: formData.slug,
-          description: formData.description,
-          content_type: formData.content_type,
+          ...formData,
           price: formData.price ? parseFloat(formData.price) : null,
-          currency: formData.currency,
-          credit_cost: formData.credit_cost,
-          duration_hours: formData.duration_hours
-            ? parseInt(formData.duration_hours)
-            : null,
-          modules_count: formData.modules_count
-            ? parseInt(formData.modules_count)
-            : null,
-          instructor_name: formData.instructor_name || null,
-          venue_name: formData.venue_name || null,
-          venue_address: formData.venue_address || null,
+          duration_hours: formData.duration_hours ? parseInt(formData.duration_hours) : null,
+          modules_count: formData.modules_count ? parseInt(formData.modules_count) : null,
+          event_duration_minutes: formData.event_duration_minutes ? parseInt(formData.event_duration_minutes) : null,
+          max_capacity: formData.max_capacity ? parseInt(formData.max_capacity) : null,
           event_date: formData.event_date || null,
-          event_duration_minutes: formData.event_duration_minutes
-            ? parseInt(formData.event_duration_minutes)
-            : null,
-          max_capacity: formData.max_capacity
-            ? parseInt(formData.max_capacity)
-            : null,
-          youtube_url: formData.youtube_url || null,
-          cover_image_url: formData.cover_image_url || null,
-          whatsapp_group_link: formData.whatsapp_group_link || null,
-          is_published: formData.is_published,
-          is_private: formData.is_private,
-          display_order: formData.display_order,
         })
         .eq("id", id);
 
       if (error) throw error;
-
-      toast({
-        title: "Success",
-        description: "Content updated successfully",
-      });
+      toast({ title: "Success", description: "Academy record synchronized." });
       navigate("/dashboard");
     } catch (error: any) {
-      toast({
-        title: "Error",
-        description: error.message,
-        variant: "destructive",
-      });
+      toast({ title: "Update Failed", description: error.message, variant: "destructive" });
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
+  if (loading)
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <p>Loading content...</p>
+      <div className="h-screen flex items-center justify-center font-bold text-muted-foreground animate-pulse">
+        Initializing Data Stream...
       </div>
     );
-  }
+
+  const calculatedCredits = formData.price ? Math.ceil(parseFloat(formData.price) / 0.02) : 0;
 
   return (
-    <div className="min-h-screen bg-background">
-      <div className="container mx-auto px-4 py-8 max-w-3xl">
-        <Button
-          variant="ghost"
-          onClick={() => navigate("/dashboard")}
-          className="mb-4"
-        >
-          <ArrowLeft className="mr-2 h-4 w-4" />
-          Back to Dashboard
-        </Button>
+    <div className="min-h-screen bg-background pb-20">
+      <div className="container mx-auto px-4 py-8 max-w-4xl space-y-6">
+        <header className="flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => navigate("/dashboard")}
+            className="rounded-xl font-bold uppercase text-[10px] tracking-widest"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Nexus
+          </Button>
+          <div className="flex items-center gap-2">
+            <Badge
+              variant="outline"
+              className="font-black uppercase text-[10px] py-1 border-primary/20 text-primary bg-primary/5 tracking-tighter"
+            >
+              ID: {id?.split("-")[0]}
+            </Badge>
+            <Badge variant="secondary" className="font-black uppercase text-[10px] py-1 tracking-tighter">
+              {formData.content_type?.replace("_", " ")}
+            </Badge>
+          </div>
+        </header>
 
-        <Card className="p-8">
-          <h1 className="text-3xl font-bold mb-6">Edit Content</h1>
-
-          <form onSubmit={handleSubmit} className="space-y-6">
-            {/* Cover Image Upload */}
-            <ImageUpload
-              value={formData.cover_image_url}
-              onUpload={(url) => setFormData({ ...formData, cover_image_url: url })}
-              onRemove={() => setFormData({ ...formData, cover_image_url: "" })}
-            />
-
-            <div className="space-y-2">
-              <Label htmlFor="title">Title *</Label>
-              <Input
-                id="title"
-                value={formData.title}
-                onChange={(e) =>
-                  setFormData({ ...formData, title: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="slug">Slug *</Label>
-              <Input
-                id="slug"
-                value={formData.slug}
-                onChange={(e) =>
-                  setFormData({ ...formData, slug: e.target.value })
-                }
-                required
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="description">Description</Label>
-              <Textarea
-                id="description"
-                value={formData.description}
-                onChange={(e) =>
-                  setFormData({ ...formData, description: e.target.value })
-                }
-                rows={4}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="content_type">Content Type *</Label>
-              <Select
-                value={formData.content_type}
-                onValueChange={(value: any) =>
-                  setFormData({ ...formData, content_type: value })
-                }
-              >
-                <SelectTrigger>
-                  <SelectValue />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="recorded_course">Recorded Course</SelectItem>
-                  <SelectItem value="free_video">Free Video</SelectItem>
-                  <SelectItem value="live_webinar">Live Webinar</SelectItem>
-                  <SelectItem value="batch_class">Batch Class</SelectItem>
-                  <SelectItem value="offline_seminar">Offline Seminar</SelectItem>
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label htmlFor="price">Price</Label>
-                <Input
-                  id="price"
-                  type="number"
-                  step="0.01"
-                  value={formData.price}
-                  onChange={(e) =>
-                    setFormData({ ...formData, price: e.target.value })
-                  }
+        <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-[1fr,300px] gap-8">
+          <div className="space-y-6">
+            {/* Core Identity Section */}
+            <Card className="rounded-3xl border-border/40 overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-4 border-b border-border/20">
+                <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Layers className="h-4 w-4 text-primary" /> Content Blueprint
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6 pt-8">
+                <ImageUpload
+                  value={formData.cover_image_url}
+                  onUpload={(url) => setFormData({ ...formData, cover_image_url: url })}
+                  onRemove={() => setFormData({ ...formData, cover_image_url: "" })}
                 />
-              </div>
 
-              <div className="space-y-2">
-                <Label htmlFor="currency">Currency</Label>
-                <Input
-                  id="currency"
-                  value={formData.currency}
-                  onChange={(e) =>
-                    setFormData({ ...formData, currency: e.target.value })
-                  }
-                  placeholder="USD"
-                />
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label htmlFor="credit_cost">Credit Cost (Override)</Label>
-              <Input
-                id="credit_cost"
-                type="number"
-                value={formData.credit_cost ?? ""}
-                onChange={(e) =>
-                  setFormData({ 
-                    ...formData, 
-                    credit_cost: e.target.value ? parseInt(e.target.value) : null 
-                  })
-                }
-                placeholder="Auto-calculated from price if empty"
-              />
-              <p className="text-xs text-muted-foreground">
-                Leave empty to auto-calculate from price (1 credit = $0.02). 
-                {formData.price && !formData.credit_cost && (
-                  <span className="font-medium text-foreground ml-1">
-                    Auto: {Math.ceil(parseFloat(formData.price) / 0.02)} credits
-                  </span>
-                )}
-              </p>
-            </div>
-
-            {/* YouTube URL - Available for ALL content types */}
-            <div className="space-y-2">
-              <Label htmlFor="youtube_url">
-                {formData.content_type === "free_video" 
-                  ? "YouTube Video URL *" 
-                  : "Trailer Video (YouTube URL)"}
-              </Label>
-              <Input
-                id="youtube_url"
-                value={formData.youtube_url}
-                onChange={(e) =>
-                  setFormData({ ...formData, youtube_url: e.target.value })
-                }
-                placeholder="https://www.youtube.com/watch?v=..."
-                required={formData.content_type === "free_video"}
-              />
-              <p className="text-xs text-muted-foreground">
-                {formData.content_type === "free_video" 
-                  ? "YouTube URL for the main video content" 
-                  : "Add a trailer or preview video (optional)"}
-              </p>
-            </div>
-
-            {/* WhatsApp Group Link */}
-            <div className="space-y-2">
-              <Label htmlFor="whatsapp_group_link">WhatsApp Group Link</Label>
-              <Input
-                id="whatsapp_group_link"
-                type="url"
-                placeholder="https://chat.whatsapp.com/..."
-                value={formData.whatsapp_group_link}
-                onChange={(e) =>
-                  setFormData({ ...formData, whatsapp_group_link: e.target.value })
-                }
-              />
-              <p className="text-xs text-muted-foreground">
-                Share your course WhatsApp group link with enrolled students
-              </p>
-            </div>
-
-            {(formData.content_type === "recorded_course" ||
-              formData.content_type === "free_video") && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="duration_hours">Duration (hours)</Label>
-                  <Input
-                    id="duration_hours"
-                    type="number"
-                    value={formData.duration_hours}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        duration_hours: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="instructor_name">Instructor Name</Label>
-                  <Input
-                    id="instructor_name"
-                    value={formData.instructor_name}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        instructor_name: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-              </>
-            )}
-
-            {formData.content_type === "recorded_course" && (
-              <div className="space-y-2">
-                <Label htmlFor="modules_count">Number of Modules</Label>
-                <Input
-                  id="modules_count"
-                  type="number"
-                  value={formData.modules_count}
-                  onChange={(e) =>
-                    setFormData({ ...formData, modules_count: e.target.value })
-                  }
-                />
-              </div>
-            )}
-
-            {(formData.content_type === "live_webinar" ||
-              formData.content_type === "batch_class" ||
-              formData.content_type === "offline_seminar") && (
-              <>
-                <div className="space-y-2">
-                  <Label htmlFor="event_date">Event Date & Time</Label>
-                  <Input
-                    id="event_date"
-                    type="datetime-local"
-                    value={formData.event_date}
-                    onChange={(e) =>
-                      setFormData({ ...formData, event_date: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="venue_name">Venue Name</Label>
-                  <Input
-                    id="venue_name"
-                    value={formData.venue_name}
-                    onChange={(e) =>
-                      setFormData({ ...formData, venue_name: e.target.value })
-                    }
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label htmlFor="venue_address">Venue Address</Label>
-                  <Input
-                    id="venue_address"
-                    value={formData.venue_address}
-                    onChange={(e) =>
-                      setFormData({
-                        ...formData,
-                        venue_address: e.target.value,
-                      })
-                    }
-                  />
-                </div>
-
-                <div className="grid grid-cols-2 gap-4">
+                <div className="grid gap-6">
                   <div className="space-y-2">
-                    <Label htmlFor="event_duration_minutes">
-                      Duration (minutes)
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      Internal Title *
                     </Label>
                     <Input
-                      id="event_duration_minutes"
-                      type="number"
-                      value={formData.event_duration_minutes}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          event_duration_minutes: e.target.value,
-                        })
-                      }
+                      value={formData.title}
+                      onChange={(e) => setFormData({ ...formData, title: e.target.value })}
+                      required
+                      className="rounded-xl border-border/40 font-bold"
                     />
+                  </div>
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        URL Path (Slug) *
+                      </Label>
+                      <Input
+                        value={formData.slug}
+                        onChange={(e) =>
+                          setFormData({ ...formData, slug: e.target.value.toLowerCase().replace(/ /g, "-") })
+                        }
+                        required
+                        className="rounded-xl border-border/40 font-mono text-xs"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Catalog Type
+                      </Label>
+                      <Select
+                        value={formData.content_type}
+                        onValueChange={(val) => setFormData({ ...formData, content_type: val })}
+                      >
+                        <SelectTrigger className="rounded-xl border-border/40 font-bold">
+                          <SelectValue />
+                        </SelectTrigger>
+                        <SelectContent>
+                          <SelectItem value="recorded_course">Recorded Course</SelectItem>
+                          <SelectItem value="free_video">Free Video</SelectItem>
+                          <SelectItem value="live_webinar">Live Webinar</SelectItem>
+                          <SelectItem value="batch_class">Batch Class</SelectItem>
+                          <SelectItem value="offline_seminar">Offline Seminar</SelectItem>
+                        </SelectContent>
+                      </Select>
+                    </div>
                   </div>
 
                   <div className="space-y-2">
-                    <Label htmlFor="max_capacity">Max Capacity</Label>
-                    <Input
-                      id="max_capacity"
-                      type="number"
-                      value={formData.max_capacity}
-                      onChange={(e) =>
-                        setFormData({
-                          ...formData,
-                          max_capacity: e.target.value,
-                        })
-                      }
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                      Marketplace Description
+                    </Label>
+                    <Textarea
+                      value={formData.description}
+                      onChange={(e) => setFormData({ ...formData, description: e.target.value })}
+                      rows={5}
+                      className="rounded-2xl border-border/40 resize-none font-medium leading-relaxed"
                     />
                   </div>
                 </div>
-            </>
+              </CardContent>
+            </Card>
+
+            {/* Logistics & Delivery Section (Conditional) */}
+            {formData.content_type !== "free_video" && (
+              <Card className="rounded-3xl border-border/40 overflow-hidden animate-in fade-in slide-in-from-top-2">
+                <CardHeader className="bg-muted/30 pb-4 border-b border-border/20">
+                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                    <Globe className="h-4 w-4 text-primary" /> Delivery Logic
+                  </CardTitle>
+                </CardHeader>
+                <CardContent className="p-6 grid gap-6 pt-8">
+                  {["live_webinar", "batch_class", "offline_seminar"].includes(formData.content_type) && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2 col-span-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                          Event Schedule
+                        </Label>
+                        <Input
+                          type="datetime-local"
+                          value={formData.event_date}
+                          onChange={(e) => setFormData({ ...formData, event_date: e.target.value })}
+                          className="rounded-xl"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                          Capacity Limit
+                        </Label>
+                        <Input
+                          type="number"
+                          value={formData.max_capacity}
+                          onChange={(e) => setFormData({ ...formData, max_capacity: e.target.value })}
+                          placeholder="Seats"
+                          className="rounded-xl"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                          Duration (Mins)
+                        </Label>
+                        <Input
+                          type="number"
+                          value={formData.event_duration_minutes}
+                          onChange={(e) => setFormData({ ...formData, event_duration_minutes: e.target.value })}
+                          placeholder="60"
+                          className="rounded-xl"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  {formData.content_type === "offline_seminar" && (
+                    <div className="grid grid-cols-2 gap-4">
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                          Venue
+                        </Label>
+                        <Input
+                          value={formData.venue_name}
+                          onChange={(e) => setFormData({ ...formData, venue_name: e.target.value })}
+                          className="rounded-xl"
+                        />
+                      </div>
+                      <div className="space-y-2">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                          Coordinates
+                        </Label>
+                        <Input
+                          value={formData.venue_address}
+                          onChange={(e) => setFormData({ ...formData, venue_address: e.target.value })}
+                          className="rounded-xl"
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Lead Instructor
+                      </Label>
+                      <Input
+                        value={formData.instructor_name}
+                        onChange={(e) => setFormData({ ...formData, instructor_name: e.target.value })}
+                        className="rounded-xl font-bold"
+                      />
+                    </div>
+                    <div className="space-y-2">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                        Estimated Study Hours
+                      </Label>
+                      <Input
+                        type="number"
+                        value={formData.duration_hours}
+                        onChange={(e) => setFormData({ ...formData, duration_hours: e.target.value })}
+                        className="rounded-xl"
+                      />
+                    </div>
+                  </div>
+                </CardContent>
+              </Card>
             )}
 
-            {/* Display Order */}
-            <div className="space-y-2">
-              <Label htmlFor="display_order">Display Order</Label>
-              <Input
-                id="display_order"
-                type="number"
-                value={formData.display_order}
-                onChange={(e) =>
-                  setFormData({ ...formData, display_order: parseInt(e.target.value) || 0 })
-                }
-              />
-              <p className="text-xs text-muted-foreground">
-                Lower numbers appear first in the course catalog
-              </p>
-            </div>
+            {/* Media & Community */}
+            <Card className="rounded-3xl border-border/40 overflow-hidden">
+              <CardHeader className="bg-muted/30 pb-4 border-b border-border/20">
+                <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                  <Youtube className="h-4 w-4 text-primary" /> Integration Channels
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6 pt-8">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    Stream Target (YouTube)
+                  </Label>
+                  <Input
+                    value={formData.youtube_url}
+                    onChange={(e) => setFormData({ ...formData, youtube_url: e.target.value })}
+                    placeholder="https://youtube.com/..."
+                    className="rounded-xl border-border/40"
+                  />
+                </div>
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    Engagement Hub (WhatsApp)
+                  </Label>
+                  <Input
+                    value={formData.whatsapp_group_link}
+                    onChange={(e) => setFormData({ ...formData, whatsapp_group_link: e.target.value })}
+                    placeholder="https://chat.whatsapp.com/..."
+                    className="rounded-xl border-border/40"
+                  />
+                </div>
+              </CardContent>
+            </Card>
+          </div>
 
-            {/* Publish & Private Toggles */}
-            <div className="space-y-3">
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="published"
-                  checked={formData.is_published}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
-                />
-                <Label htmlFor="published">Publish</Label>
-              </div>
+          {/* Sidebar Panel */}
+          <aside className="space-y-6">
+            <Card className="rounded-[32px] border-primary/20 bg-primary/[0.02] shadow-xl overflow-hidden sticky top-8">
+              <CardHeader className="bg-primary/5 pb-4">
+                <CardTitle className="text-xs font-black uppercase tracking-widest text-primary">
+                  Financial Engine
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-6 space-y-6">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">
+                      Currency Pricing
+                    </Label>
+                    <div className="flex gap-2">
+                      <Input
+                        type="number"
+                        step="0.01"
+                        value={formData.price}
+                        onChange={(e) => setFormData({ ...formData, price: e.target.value })}
+                        className="rounded-xl border-border/40 h-11"
+                        placeholder="0.00"
+                      />
+                      <Input
+                        value={formData.currency}
+                        onChange={(e) => setFormData({ ...formData, currency: e.target.value })}
+                        className="rounded-xl w-20 border-border/40 h-11 uppercase font-bold"
+                      />
+                    </div>
+                  </div>
 
-              <div className="flex items-center space-x-2">
-                <Switch
-                  id="private"
-                  checked={formData.is_private}
-                  onCheckedChange={(checked) => setFormData({ ...formData, is_private: checked })}
-                />
-                <Label htmlFor="private" className="flex flex-col gap-1">
-                  <span>Private (B2B Only)</span>
-                  <span className="text-xs text-muted-foreground font-normal">
-                    Hide from public catalog - accessible only via direct link
-                  </span>
-                </Label>
-              </div>
-            </div>
+                  <div className="space-y-2">
+                    <Label className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">
+                      Credit Cost Override
+                    </Label>
+                    <Input
+                      type="number"
+                      value={formData.credit_cost ?? ""}
+                      onChange={(e) =>
+                        setFormData({ ...formData, credit_cost: e.target.value ? parseInt(e.target.value) : null })
+                      }
+                      placeholder={calculatedCredits.toString()}
+                      className="rounded-xl h-11 font-black text-primary border-primary/20"
+                    />
+                  </div>
 
-            <Button type="submit" className="w-full" disabled={saving}>
-              <Save className="mr-2 h-4 w-4" />
-              {saving ? "Saving..." : "Update Content"}
-            </Button>
-          </form>
-        </Card>
+                  <div className="bg-primary/10 rounded-2xl p-4 space-y-1">
+                    <p className="text-[8px] font-black uppercase text-primary/60 tracking-widest">
+                      Effective Marketplace Rate
+                    </p>
+                    <p className="text-xl font-black text-primary tracking-tighter">
+                      {formData.credit_cost || calculatedCredits} Credits
+                    </p>
+                  </div>
+                </div>
 
-        {/* Course Management Cards */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mt-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Course Modules</CardTitle>
-              <CardDescription>
-                Add and manage video lessons for this course
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button 
-                variant="outline" 
-                className="w-full"
+                <div className="pt-6 border-t border-border/20 space-y-4">
+                  <div className="flex items-center justify-between space-x-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest">Visible</Label>
+                    <Switch
+                      checked={formData.is_published}
+                      onCheckedChange={(checked) => setFormData({ ...formData, is_published: checked })}
+                    />
+                  </div>
+                  <div className="flex items-center justify-between space-x-2">
+                    <div className="space-y-0.5">
+                      <Label className="text-[10px] font-black uppercase tracking-widest">Exclusive Link</Label>
+                      <p className="text-[8px] text-muted-foreground font-bold uppercase tracking-tighter">
+                        B2B Private Mode
+                      </p>
+                    </div>
+                    <Switch
+                      checked={formData.is_private}
+                      onCheckedChange={(checked) => setFormData({ ...formData, is_private: checked })}
+                    />
+                  </div>
+                </div>
+
+                <Button
+                  className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 group"
+                  disabled={saving}
+                  type="submit"
+                >
+                  {saving ? (
+                    <Save className="animate-pulse" />
+                  ) : (
+                    <Save className="mr-2 group-hover:scale-110 transition-transform" />
+                  )}
+                  Update Schema
+                </Button>
+              </CardContent>
+            </Card>
+
+            {/* Quick Navigation Cards */}
+            <div className="grid gap-4">
+              <Button
+                variant="outline"
+                className="h-16 rounded-[24px] border-border/40 justify-between group"
                 onClick={() => navigate(`/content/${id}/modules`)}
               >
-                Manage Modules
+                <div className="text-left">
+                  <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">
+                    Expansion Pack
+                  </p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">Manage Modules</p>
+                </div>
+                <Layers className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
               </Button>
-            </CardContent>
-          </Card>
-
-          <Card>
-            <CardHeader>
-              <CardTitle>Quiz Assessment</CardTitle>
-              <CardDescription>
-                Create 10 MCQs to assess student learning
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <Button 
-                variant="outline" 
-                className="w-full"
+              <Button
+                variant="outline"
+                className="h-16 rounded-[24px] border-border/40 justify-between group"
                 onClick={() => navigate(`/quiz-manage/${id}`)}
               >
-                Manage Quiz
+                <div className="text-left">
+                  <p className="text-[8px] font-black uppercase text-muted-foreground tracking-widest">Certification</p>
+                  <p className="text-[10px] font-black uppercase tracking-widest">Manage Quiz</p>
+                </div>
+                <Check className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
               </Button>
-            </CardContent>
-          </Card>
-        </div>
+            </div>
+          </aside>
+        </form>
 
-        {/* B2B Private Link Card */}
         {formData.is_private && (
-          <Card className="mt-6">
-            <CardHeader>
-              <CardTitle>Private Course Link</CardTitle>
-              <CardDescription>
-                Share this link with your B2B clients to access this course
-              </CardDescription>
-            </CardHeader>
-            <CardContent>
-              <div className="flex gap-2">
-                <Input
-                  value={`${window.location.origin}/courses/${formData.slug}`}
-                  readOnly
-                  className="flex-1"
-                />
-                <Button
-                  onClick={() => {
-                    navigator.clipboard.writeText(
-                      `${window.location.origin}/courses/${formData.slug}`
-                    );
-                    setCopiedLink(true);
-                    toast({
-                      title: "Link copied!",
-                      description: "Private course link copied to clipboard",
-                    });
-                    setTimeout(() => setCopiedLink(false), 2000);
-                  }}
-                >
-                  {copiedLink ? (
-                    <Check className="w-4 h-4" />
-                  ) : (
-                    <Copy className="w-4 h-4" />
-                  )}
-                </Button>
+          <Card className="rounded-[32px] border-dashed border-primary/40 bg-primary/[0.01] animate-in zoom-in-95">
+            <CardContent className="p-6 flex items-center justify-between gap-4">
+              <div className="min-w-0">
+                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-1">
+                  Direct Secure Access URL
+                </p>
+                <code className="text-xs text-muted-foreground truncate block font-mono">{`${window.location.origin}/courses/${formData.slug}`}</code>
               </div>
+              <Button
+                size="icon"
+                variant="outline"
+                className="rounded-xl shrink-0"
+                onClick={() => {
+                  navigator.clipboard.writeText(`${window.location.origin}/courses/${formData.slug}`);
+                  setCopiedLink(true);
+                  setTimeout(() => setCopiedLink(false), 2000);
+                  toast({ title: "Secure URL Cached" });
+                }}
+              >
+                {copiedLink ? <Check className="h-4 w-4 text-emerald-500" /> : <Copy className="h-4 w-4" />}
+              </Button>
             </CardContent>
           </Card>
         )}
