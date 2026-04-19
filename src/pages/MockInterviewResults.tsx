@@ -74,6 +74,7 @@ interface Interview {
   question_count: number;
   status: string;
   created_at: string;
+  completed_at: string | null;
 }
 
 const performanceLevelMap: Record<string, { color: string; label: string }> = {
