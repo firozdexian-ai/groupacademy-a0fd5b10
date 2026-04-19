@@ -12,23 +12,37 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
-import { ArrowRight, Clock, Target, TrendingUp, CheckCircle, Lock, KeyRound, CalendarDays, ExternalLink, Loader2, Sparkles } from "lucide-react";
+import {
+  ArrowRight,
+  Clock,
+  Target,
+  TrendingUp,
+  CheckCircle,
+  Lock,
+  KeyRound,
+  CalendarDays,
+  ExternalLink,
+  Loader2,
+  Sparkles,
+  ShieldCheck,
+  Zap,
+} from "lucide-react";
 import { toast } from "sonner";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { useProgressiveLoadingMessage } from "@/hooks/useProgressiveLoadingMessage";
 import { AuthGate } from "@/components/AuthGate";
 import { useTalent } from "@/hooks/useTalent";
+import { cn } from "@/lib/utils";
 
 // Brand icon
 import iconScorecard from "@/assets/icons/icon-scorecard.png";
 
 const ASSESSMENT_PROCESSING_STAGES = [
-  { progress: 0, message: "Preparing your assessment..." },
-  { progress: 15, message: "Analyzing your responses..." },
-  { progress: 35, message: "AI is evaluating your career readiness..." },
-  { progress: 55, message: "Identifying strengths and improvement areas..." },
-  { progress: 75, message: "Generating personalized insights..." },
-  { progress: 90, message: "Creating your report..." },
+  { progress: 0, message: "Initializing Neural Engine..." },
+  { progress: 20, message: "Mapping professional responses..." },
+  { progress: 45, message: "Cross-referencing industry benchmarks..." },
+  { progress: 70, message: "Gemini AI: Generating strategic report..." },
+  { progress: 95, message: "Finalizing readiness certificate..." },
 ];
 
 interface ProfessionCategory {
@@ -39,10 +53,18 @@ interface ProfessionCategory {
   icon: string | null;
 }
 
-type AssessmentStep = "landing" | "email-check" | "cooldown" | "access-code" | "profession" | "questions" | "lead-capture" | "processing";
+type AssessmentStep =
+  | "landing"
+  | "email-check"
+  | "cooldown"
+  | "access-code"
+  | "profession"
+  | "questions"
+  | "lead-capture"
+  | "processing";
 
 function CareerAssessmentContent() {
-  const { talent, user, addServiceUsed } = useTalent();
+  const { talent, user } = useTalent();
   const [searchParams] = useSearchParams();
   const [step, setStep] = useState<AssessmentStep>("landing");
   const [email, setEmail] = useState("");
@@ -55,80 +77,39 @@ function CareerAssessmentContent() {
   const [accessCode, setAccessCode] = useState("");
   const [validatingCode, setValidatingCode] = useState(false);
   const [daysRemaining, setDaysRemaining] = useState(0);
-  const [urlProfessionId] = useState(() => searchParams.get("profession"));
 
-  // Auto-fill email from talent profile
+  // Auto-fill and State Sync
   useEffect(() => {
-    if (talent?.email) {
-      setEmail(talent.email);
-    } else if (user?.email) {
-      setEmail(user.email);
-    }
+    if (talent?.email) setEmail(talent.email);
+    else if (user?.email) setEmail(user.email);
   }, [talent, user]);
-
-  // Auto-select profession category from URL param or talent profile
-  useEffect(() => {
-    if (categories.length === 0) return;
-    
-    // Priority 1: URL profession param
-    if (urlProfessionId && !selectedCategory) {
-      const urlCategory = categories.find(c => c.id === urlProfessionId);
-      if (urlCategory) {
-        setSelectedCategory(urlCategory);
-        return;
-      }
-    }
-    
-    // Priority 2: Talent's profession category
-    if (talent?.professionCategoryId && !selectedCategory) {
-      const talentCategory = categories.find(c => c.id === talent.professionCategoryId);
-      if (talentCategory) {
-        setSelectedCategory(talentCategory);
-      }
-    }
-  }, [talent, categories, selectedCategory, urlProfessionId]);
 
   useEffect(() => {
     loadCategories();
   }, []);
 
   const loadCategories = async () => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUTS.CATEGORY_LOAD);
-    
     try {
       const { data, error } = await supabase
         .from("profession_categories")
         .select("*")
         .eq("is_active", true)
-        .order("display_order")
-        .abortSignal(controller.signal);
-
-      clearTimeout(timeoutId);
+        .order("display_order");
       if (error) throw error;
       if (data) setCategories(data);
-    } catch (error: any) {
-      clearTimeout(timeoutId);
-      console.error("Error loading categories:", error);
+    } catch (err) {
+      console.error("Critical: Failed to load taxonomy.");
     }
   };
 
   const { message: loadingMessage } = useProgressiveLoadingMessage(checkingEmail);
 
   const handleEmailCheck = async () => {
-    if (!email.trim()) {
-      toast.error("Please enter your email address");
-      return;
-    }
-
+    if (!email.trim()) return toast.error("Entry identity required.");
     setCheckingEmail(true);
-    setEmailCheckError(null);
-    
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUTS.DEFAULT);
 
     try {
-      const queryPromise = supabase
+      const { data: existing, error } = await supabase
         .from("career_assessments")
         .select("*")
         .eq("email", email.toLowerCase().trim())
@@ -136,54 +117,28 @@ function CareerAssessmentContent() {
         .limit(1)
         .maybeSingle();
 
-      const abortPromise = new Promise<never>((_, reject) => {
-        controller.signal.addEventListener('abort', () => 
-          reject(new Error("Request timed out"))
-        );
-      });
-
-      const { data: existing, error } = await Promise.race([queryPromise, abortPromise]);
-      clearTimeout(timeoutId);
-
-      if (error) {
-        console.error("Database error checking email:", error);
-        throw new Error("Failed to check email. Please try again.");
-      }
+      if (error) throw error;
 
       if (existing && new Date(existing.expires_at) > new Date()) {
         setExistingAssessment(existing);
-        const expiresAt = new Date(existing.expires_at);
-        const now = new Date();
-        const diffTime = expiresAt.getTime() - now.getTime();
-        const diffDays = Math.ceil(diffTime / (1000 * 60 * 60 * 24));
+        const diffDays = Math.ceil((new Date(existing.expires_at).getTime() - Date.now()) / (1000 * 60 * 60 * 24));
         setDaysRemaining(diffDays);
         setStep("cooldown");
       } else {
         setStep("profession");
       }
-    } catch (error: any) {
-      clearTimeout(timeoutId);
-      console.error("Error checking email:", error);
-      const errorMessage = error?.name === "AbortError" || error?.message?.includes("timed out")
-        ? "Connection timed out. Please check your internet and try again."
-        : "Something went wrong. Please try again.";
-      setEmailCheckError(errorMessage);
-      toast.error(errorMessage);
+    } catch (err) {
+      setEmailCheckError("Network handshake failed. Please refresh.");
     } finally {
       setCheckingEmail(false);
     }
   };
 
   const handleAccessCodeValidation = async () => {
-    if (!accessCode.trim()) {
-      toast.error("Please enter an access code");
-      return;
-    }
-
+    if (!accessCode.trim()) return toast.error("Verification code required.");
     setValidatingCode(true);
     try {
-      // Check if the access code is valid
-      const { data: codeData, error: codeError } = await supabase
+      const { data: codeData, error } = await supabase
         .from("assessment_access_codes")
         .select("*")
         .eq("code", accessCode.trim().toUpperCase())
@@ -191,108 +146,57 @@ function CareerAssessmentContent() {
         .eq("is_used", false)
         .maybeSingle();
 
-      if (codeError || !codeData) {
-        toast.error("Invalid or expired access code");
-        return;
-      }
+      if (error || !codeData) throw new Error("Invalid sequence.");
 
-      // Check if code is expired
-      if (codeData.expires_at && new Date(codeData.expires_at) < new Date()) {
-        toast.error("This access code has expired");
-        return;
-      }
-
-      // Mark code as used
-      await supabase
-        .from("assessment_access_codes")
-        .update({ is_used: true })
-        .eq("id", codeData.id);
-
-      toast.success("Access code validated! You can now retake the assessment.");
+      await supabase.from("assessment_access_codes").update({ is_used: true }).eq("id", codeData.id);
+      toast.success("Retake Authorized.");
       setStep("profession");
-    } catch (error) {
-      console.error("Error validating code:", error);
-      toast.error("Failed to validate access code");
+    } catch (err: any) {
+      toast.error(err.message);
     } finally {
       setValidatingCode(false);
     }
   };
 
-  const handleCategorySelect = (category: ProfessionCategory) => {
-    setSelectedCategory(category);
-    setStep("questions");
-  };
-
-  const handleQuestionsComplete = (questionAnswers: Record<string, any>) => {
-    setAnswers(questionAnswers);
-    setStep("lead-capture");
-  };
-
-  const handleLeadCaptureComplete = () => {
-    setStep("processing");
-  };
-
   return (
-    <div className="min-h-screen bg-background flex flex-col">
+    <div className="min-h-screen bg-background flex flex-col selection:bg-primary/10">
       <Navbar />
-      
       <main className="flex-1">
-        {step === "landing" && (
-          <LandingSection onStart={() => setStep("email-check")} />
-        )}
+        {step === "landing" && <LandingSection onStart={() => setStep("email-check")} />}
 
         {step === "email-check" && (
-          <div className="container max-w-md mx-auto px-4 py-16">
-            <Card>
-              <CardHeader className="text-center">
-                <CardTitle>Let's Get Started</CardTitle>
-                <CardDescription>
-                  Enter your email to begin or check your previous assessment
+          <div className="container max-w-md mx-auto px-4 py-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
+            <Card className="rounded-[32px] border-border/40 shadow-2xl overflow-hidden">
+              <CardHeader className="text-center pb-2">
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <ShieldCheck className="w-7 h-7 text-primary" />
+                </div>
+                <CardTitle className="text-2xl font-black tracking-tighter">Initialize Identity</CardTitle>
+                <CardDescription className="font-medium text-xs uppercase tracking-widest">
+                  Saving your progress to the cloud
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6 pt-4">
                 <div className="space-y-2">
-                  <Label htmlFor="email">Email Address</Label>
+                  <Label htmlFor="email" className="text-[10px] font-black uppercase tracking-widest ml-1">
+                    Work Email
+                  </Label>
                   <Input
                     id="email"
                     type="email"
-                    placeholder="your@email.com"
+                    placeholder="name@company.com"
                     value={email}
-                    onChange={(e) => {
-                      setEmail(e.target.value);
-                      setEmailCheckError(null);
-                    }}
-                    onKeyDown={(e) => e.key === "Enter" && !checkingEmail && handleEmailCheck()}
+                    onChange={(e) => setEmail(e.target.value)}
+                    className="h-12 rounded-xl border-border/40 focus-visible:ring-primary/20"
                   />
                 </div>
-                
-                {emailCheckError && (
-                  <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg text-sm text-destructive">
-                    {emailCheckError}
-                  </div>
-                )}
-                
-                <Button 
-                  className="w-full" 
+                <Button
+                  className="w-full h-12 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-primary/20"
                   onClick={handleEmailCheck}
                   disabled={checkingEmail}
                 >
-                {checkingEmail ? (
-                    <>
-                      <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                      {loadingMessage}
-                    </>
-                  ) : emailCheckError ? (
-                    <>
-                      Try Again
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  ) : (
-                    <>
-                      Continue
-                      <ArrowRight className="ml-2 h-4 w-4" />
-                    </>
-                  )}
+                  {checkingEmail ? <Loader2 className="mr-2 h-4 w-4 animate-spin" /> : null}
+                  {checkingEmail ? loadingMessage : "Begin Handshake"}
                 </Button>
               </CardContent>
             </Card>
@@ -300,146 +204,106 @@ function CareerAssessmentContent() {
         )}
 
         {step === "cooldown" && existingAssessment && (
-          <div className="container max-w-lg mx-auto px-4 py-16">
-            <Card>
-              <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-amber-100 dark:bg-amber-900/30 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <Lock className="w-8 h-8 text-amber-600 dark:text-amber-400" />
+          <div className="container max-w-lg mx-auto px-4 py-20 animate-in zoom-in-95 duration-500">
+            <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden">
+              <div className="bg-amber-500/5 p-8 text-center border-b border-amber-500/10">
+                <div className="w-16 h-16 bg-amber-500/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                  <Clock className="w-8 h-8 text-amber-600" />
                 </div>
-                <CardTitle>Assessment Cooldown Active</CardTitle>
-                <CardDescription>
-                  You've already completed an assessment recently
-                </CardDescription>
-              </CardHeader>
-              <CardContent className="space-y-6">
-                {/* Previous Assessment Info */}
-                <div className="bg-muted rounded-lg p-4 space-y-3">
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Last Assessment</span>
-                    <span className="font-medium">
-                      {new Date(existingAssessment.created_at).toLocaleDateString()}
-                    </span>
+                <CardTitle className="text-2xl font-black tracking-tighter text-amber-900">Analysis Cooldown</CardTitle>
+                <p className="text-xs font-bold text-amber-700/60 uppercase tracking-widest mt-1">
+                  One assessment per quarter permitted
+                </p>
+              </div>
+              <CardContent className="p-8 space-y-8">
+                <div className="grid grid-cols-2 gap-4">
+                  <div className="p-4 bg-muted/40 rounded-2xl border border-border/40">
+                    <p className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground mb-1">
+                      Previous Score
+                    </p>
+                    <p className="text-xl font-black text-primary">{existingAssessment.percentage}%</p>
                   </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Your Score</span>
-                    <Badge variant="secondary" className="text-lg">
-                      {existingAssessment.percentage}%
-                    </Badge>
-                  </div>
-                  <div className="flex items-center justify-between">
-                    <span className="text-sm text-muted-foreground">Readiness Level</span>
-                    <Badge variant="outline" className="capitalize">
+                  <div className="p-4 bg-muted/40 rounded-2xl border border-border/40">
+                    <p className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground mb-1">
+                      Status
+                    </p>
+                    <p className="text-xl font-black uppercase text-foreground/40">
                       {existingAssessment.readiness_level}
-                    </Badge>
+                    </p>
                   </div>
                 </div>
 
-                {/* Days Remaining */}
-                <div className="text-center p-4 border rounded-lg">
-                  <div className="flex items-center justify-center gap-2 text-muted-foreground mb-2">
-                    <CalendarDays className="w-5 h-5" />
-                    <span className="text-sm">Free Retake Available In</span>
+                <div className="text-center py-6 px-4 bg-primary/5 rounded-3xl border border-primary/10 relative overflow-hidden group">
+                  <div className="relative z-10">
+                    <CalendarDays className="w-6 h-6 text-primary mx-auto mb-2 opacity-50" />
+                    <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">
+                      Free Retake Window
+                    </p>
+                    <p className="text-4xl font-black text-primary tracking-tighter mt-1">{daysRemaining} Days</p>
                   </div>
-                  <p className="text-3xl font-bold text-primary">{daysRemaining} days</p>
                 </div>
 
-                {/* Actions */}
                 <div className="space-y-3">
-                  <Button 
-                    className="w-full" 
+                  <Button
+                    className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs"
                     variant="outline"
-                    onClick={() => window.location.href = `/assessment-results/${existingAssessment.id}`}
+                    onClick={() => (window.location.href = `/assessment-results/${existingAssessment.id}`)}
                   >
-                    <ExternalLink className="mr-2 h-4 w-4" />
-                    View Previous Results
+                    <ExternalLink className="mr-2 h-4 w-4" /> Review Current Report
                   </Button>
-                  
-                  <div className="relative">
+                  <div className="relative py-4">
                     <div className="absolute inset-0 flex items-center">
-                      <span className="w-full border-t" />
+                      <span className="w-full border-t border-border/40" />
                     </div>
-                    <div className="relative flex justify-center text-xs uppercase">
-                      <span className="bg-background px-2 text-muted-foreground">
-                        Or retake now
-                      </span>
+                    <div className="relative flex justify-center text-[10px] font-black uppercase tracking-widest">
+                      <span className="bg-card px-4 text-muted-foreground/40">Override Protocol</span>
                     </div>
                   </div>
-
-                  <Button 
-                    className="w-full"
+                  <Button
+                    className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs bg-foreground text-background hover:bg-foreground/90"
                     onClick={() => setStep("access-code")}
                   >
-                    <KeyRound className="mr-2 h-4 w-4" />
-                    Use Access Code (50 Credits)
+                    <KeyRound className="mr-2 h-4 w-4" /> Use Priority Access Code
                   </Button>
-                  
-                  <p className="text-xs text-center text-muted-foreground">
-                    Contact us on WhatsApp to purchase an access code
-                  </p>
                 </div>
-
-                <p className="text-xs text-center text-muted-foreground">
-                  Wait for cooldown to end or use an access code to try again.
-                </p>
               </CardContent>
             </Card>
           </div>
         )}
 
         {step === "access-code" && (
-          <div className="container max-w-md mx-auto px-4 py-16">
-            <Card>
+          <div className="container max-w-md mx-auto px-4 py-20 animate-in fade-in duration-500">
+            <Card className="rounded-[32px] border-border/40 shadow-2xl">
               <CardHeader className="text-center">
-                <div className="w-16 h-16 bg-primary/10 rounded-full flex items-center justify-center mx-auto mb-4">
-                  <KeyRound className="w-8 h-8 text-primary" />
+                <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
+                  <Zap className="w-7 h-7 text-primary fill-primary" />
                 </div>
-                <CardTitle>Enter Access Code</CardTitle>
-                <CardDescription>
-                  Enter your paid access code to retake the assessment
+                <CardTitle className="text-2xl font-black tracking-tighter">Bypass Cooldown</CardTitle>
+                <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+                  Enter priority access sequence
                 </CardDescription>
               </CardHeader>
-              <CardContent className="space-y-4">
-                <div className="space-y-2">
-                  <Label htmlFor="accessCode">Access Code</Label>
-                  <Input
-                    id="accessCode"
-                    type="text"
-                    placeholder="XXXXXXXX"
-                    value={accessCode}
-                    onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
-                    onKeyDown={(e) => e.key === "Enter" && handleAccessCodeValidation()}
-                    className="text-center text-lg tracking-widest font-mono"
-                    maxLength={8}
-                  />
-                </div>
-                <Button 
-                  className="w-full" 
+              <CardContent className="space-y-6">
+                <Input
+                  value={accessCode}
+                  onChange={(e) => setAccessCode(e.target.value.toUpperCase())}
+                  placeholder="CODE-XXXX"
+                  className="h-14 text-center text-xl font-black tracking-[0.3em] rounded-xl border-border/40 bg-muted/20"
+                  maxLength={8}
+                />
+                <Button
+                  className="w-full h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-primary/20"
                   onClick={handleAccessCodeValidation}
                   disabled={validatingCode}
                 >
-                  {validatingCode ? "Validating..." : "Validate & Continue"}
-                  <ArrowRight className="ml-2 h-4 w-4" />
+                  {validatingCode ? <Loader2 className="animate-spin h-4 w-4" /> : "Verify Code"}
                 </Button>
-                
-                <div className="text-center space-y-2 pt-4">
-                  <p className="text-sm text-muted-foreground">
-                    Don't have an access code?
-                  </p>
-                  <Button 
-                    variant="link" 
-                    className="text-primary"
-                    onClick={() => window.open("https://wa.me/8801889825025?text=Hi, I want to purchase an assessment retake access code for " + email, "_blank")}
-                  >
-                    Purchase on WhatsApp (50 Credits)
-                  </Button>
-                </div>
-
-                <Button 
-                  variant="ghost" 
-                  className="w-full"
+                <Button
+                  variant="ghost"
+                  className="w-full text-[10px] font-black uppercase tracking-widest text-muted-foreground"
                   onClick={() => setStep("cooldown")}
                 >
-                  Go Back
+                  Abort Bypass
                 </Button>
               </CardContent>
             </Card>
@@ -449,42 +313,40 @@ function CareerAssessmentContent() {
         {step === "profession" && (
           <ProfessionSelector
             categories={categories}
-            onSelect={handleCategorySelect}
-            onBack={() => existingAssessment ? setStep("cooldown") : setStep("email-check")}
+            onSelect={(c) => {
+              setSelectedCategory(c);
+              setStep("questions");
+            }}
+            onBack={() => (existingAssessment ? setStep("cooldown") : setStep("email-check"))}
           />
         )}
-
         {step === "questions" && selectedCategory && (
           <AssessmentStepper
             categoryId={selectedCategory.id}
             categoryName={selectedCategory.name}
-            onComplete={handleQuestionsComplete}
+            onComplete={(a) => {
+              setAnswers(a);
+              setStep("lead-capture");
+            }}
             onBack={() => setStep("profession")}
           />
         )}
-
         {step === "lead-capture" && selectedCategory && (
           <LeadCaptureForm
             email={email}
             categoryId={selectedCategory.id}
             categoryName={selectedCategory.name}
             answers={answers}
-            onComplete={handleLeadCaptureComplete}
+            onComplete={() => setStep("processing")}
             onBack={() => setStep("questions")}
           />
         )}
-
         {step === "processing" && (
-          <div className="container max-w-md mx-auto px-4 py-16">
-            <ProcessingCard
-              title="Analyzing Your Responses"
-              stages={ASSESSMENT_PROCESSING_STAGES}
-              duration={60000}
-            />
+          <div className="container max-w-md mx-auto px-4 py-32">
+            <ProcessingCard title="Synthesizing Career DNA" stages={ASSESSMENT_PROCESSING_STAGES} duration={60000} />
           </div>
         )}
       </main>
-
       <Footer />
     </div>
   );
@@ -493,100 +355,84 @@ function CareerAssessmentContent() {
 function LandingSection({ onStart }: { onStart: () => void }) {
   return (
     <>
-      {/* Hero Section */}
-      <section className="relative py-16 md:py-24 bg-gradient-to-b from-primary/5 via-secondary/5 to-background overflow-hidden">
-        <div className="absolute inset-0 bg-[radial-gradient(circle_at_30%_20%,hsl(var(--primary)/0.1),transparent_50%)]" />
-        <div className="container mx-auto px-6 relative">
-          <div className="max-w-3xl mx-auto text-center">
-            <div className="icon-container-lg mx-auto mb-6">
-              <img src={iconScorecard} alt="Career Scorecard" className="w-11 h-11 object-contain" />
-            </div>
-            <Badge className="mb-4 gap-2 border-primary/30 text-primary" variant="outline">
-              <Sparkles className="w-3 h-3" />
-              FREE Assessment • 5 Minutes
-            </Badge>
-            <h1 className="text-4xl md:text-5xl font-heading font-bold mb-6">
-              How Job-Ready Are You?
+      <section className="relative py-20 md:py-32 bg-background overflow-hidden">
+        <div className="absolute top-0 left-1/2 -translate-x-1/2 w-full h-full bg-[radial-gradient(circle_at_center,hsl(var(--primary)/0.05)_0%,transparent_70%)]" />
+        <div className="container mx-auto px-6 relative text-center space-y-8">
+          <div className="inline-flex items-center gap-2 px-4 py-2 rounded-full bg-primary/5 border border-primary/10 animate-fade-in">
+            <Sparkles className="w-4 h-4 text-primary" />
+            <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+              Gemini-Powered Professional Audit
+            </span>
+          </div>
+          <div className="max-w-4xl mx-auto space-y-6">
+            <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9]">
+              Are You Truly <br />
+              <span className="text-primary">Market Ready?</span>
             </h1>
-            <p className="text-xl text-muted-foreground mb-8 max-w-2xl mx-auto">
-              Take our AI-powered Career Readiness Scorecard and discover your strengths, 
-              areas for improvement, and personalized recommendations to accelerate your career.
+            <p className="text-lg md:text-xl text-muted-foreground font-medium max-w-2xl mx-auto leading-relaxed">
+              Discover your professional velocity. Our AI-driven scorecard identifies your elite strengths and critical
+              gaps in under 5 minutes.
             </p>
-            <Button size="lg" onClick={onStart} className="text-lg px-8 py-6">
-              Start Free Assessment
-              <ArrowRight className="ml-2 h-5 w-5" />
+          </div>
+          <div className="flex flex-col sm:flex-row items-center justify-center gap-4 pt-4">
+            <Button
+              size="lg"
+              onClick={onStart}
+              className="h-16 px-10 rounded-[20px] text-sm font-black uppercase tracking-widest shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+            >
+              Analyze Readiness <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
+            <div className="flex items-center gap-2 text-muted-foreground/60 text-[10px] font-black uppercase tracking-widest">
+              <CheckCircle className="w-4 h-4 text-emerald-500" /> Free Performance Report
+            </div>
           </div>
         </div>
       </section>
 
-      {/* Benefits Section */}
-      <section className="container mx-auto px-6 py-16 border-t">
-        <div className="grid md:grid-cols-3 gap-8 max-w-4xl mx-auto">
-          <div className="text-center">
-            <div className="w-14 h-14 bg-primary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Target className="w-7 h-7 text-primary" />
-            </div>
-            <h3 className="font-semibold mb-2">Personalized Insights</h3>
-            <p className="text-sm text-muted-foreground">
-              Get AI-powered analysis tailored to your profession and experience level
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="w-14 h-14 bg-secondary/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <TrendingUp className="w-7 h-7 text-secondary" />
-            </div>
-            <h3 className="font-semibold mb-2">Actionable Steps</h3>
-            <p className="text-sm text-muted-foreground">
-              Receive specific recommendations to improve your career readiness
-            </p>
-          </div>
-          <div className="text-center">
-            <div className="w-14 h-14 bg-accent/10 rounded-xl flex items-center justify-center mx-auto mb-4">
-              <Clock className="w-7 h-7 text-accent" />
-            </div>
-            <h3 className="font-semibold mb-2">Quick & Free</h3>
-            <p className="text-sm text-muted-foreground">
-              Complete in just 5 minutes with instant results and PDF download
-            </p>
-          </div>
-        </div>
-      </section>
-
-      {/* What You'll Get Section */}
-      <section className="container mx-auto px-6 py-16 border-t">
-        <div className="max-w-2xl mx-auto">
-          <h2 className="text-2xl font-bold text-center mb-8">What You'll Get</h2>
-          <div className="space-y-4">
-            {[
-              "Overall Career Readiness Score with industry benchmarks",
-              "Detailed breakdown by skills, market awareness, and planning",
-              "AI-generated strengths and improvement areas",
-              "Personalized course and resource recommendations",
-              "Downloadable PDF report to track your progress",
-            ].map((item, index) => (
-              <div key={index} className="flex items-start gap-3">
-                <CheckCircle className="w-5 h-5 text-accent mt-0.5 flex-shrink-0" />
-                <span>{item}</span>
+      <section className="container mx-auto px-6 py-20 border-t border-border/40">
+        <div className="grid md:grid-cols-3 gap-12">
+          {[
+            {
+              icon: Target,
+              title: "Precision Mapping",
+              desc: "Identify exact skills required for your next tier of professional growth.",
+              tint: "primary",
+            },
+            {
+              icon: TrendingUp,
+              title: "Velocity Gaps",
+              desc: "AI detects the missing links preventing your promotion or salary increase.",
+              tint: "secondary",
+            },
+            {
+              icon: ShieldCheck,
+              title: "Industry Standard",
+              desc: "Benchmark your score against 10k+ professionals in your specific niche.",
+              tint: "accent",
+            },
+          ].map((feat, i) => (
+            <div key={i} className="space-y-4 group">
+              <div
+                className={cn(
+                  "w-14 h-14 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110",
+                  `bg-${feat.tint}/10`,
+                )}
+              >
+                <feat.icon className={cn("w-7 h-7", `text-${feat.tint}`)} />
               </div>
-            ))}
-          </div>
-          <div className="text-center mt-8">
-            <Button size="lg" onClick={onStart}>
-              Take the Assessment
-              <ArrowRight className="ml-2 h-4 w-4" />
-            </Button>
-          </div>
+              <h3 className="text-lg font-black tracking-tight uppercase">{feat.title}</h3>
+              <p className="text-sm text-muted-foreground font-medium leading-relaxed">{feat.desc}</p>
+            </div>
+          ))}
         </div>
       </section>
     </>
   );
 }
 
-// Wrap with AuthGate
 export default function CareerAssessment() {
   return (
-    <AuthGate message="Sign in to access Career Readiness Scorecard. Your results will be saved to your account.">
+    <AuthGate message="Secure your professional roadmap. Results are archived to your encrypted career profile.">
       <CareerAssessmentContent />
     </AuthGate>
   );
