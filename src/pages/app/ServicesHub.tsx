@@ -1,17 +1,35 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { ClipboardCheck, Mic, DollarSign, Palette, Coins, Sparkles, History, ArrowRight } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  ClipboardCheck,
+  Mic,
+  DollarSign,
+  Palette,
+  Coins,
+  Sparkles,
+  History,
+  ArrowRight,
+  ShieldCheck,
+  Zap,
+  Target,
+} from "lucide-react";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
+import { Badge } from "@/components/ui/badge";
 import { CreditGateModal } from "@/components/credits/CreditGateModal";
 import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
-
 import { ServiceHistoryCard } from "@/components/credits/ServiceHistoryCard";
 import { useCredits } from "@/hooks/useCredits";
 import { ServiceType } from "@/lib/creditPricing";
 import { cn } from "@/lib/utils";
 import { SectionHeader } from "@/components/ui/section-header";
+
+/**
+ * Platform Logic: Service Orchestration Node
+ * High-fidelity hub for AI-powered career calibration and performance tools.
+ * 2026 Standard: Executive Logic geometry with real-time economic telemetry.
+ */
 
 interface ServiceCardData {
   id: ServiceType;
@@ -21,44 +39,49 @@ interface ServiceCardData {
   href: string;
   iconColor: string;
   iconBg: string;
+  tagline: string;
 }
 
 const CAREER_SERVICES: ServiceCardData[] = [
   {
     id: "CAREER_ASSESSMENT",
-    title: "Career Scorecard",
-    description: "Evaluate your readiness & skills gap",
+    title: "Logic Scorecard",
+    description: "Multi-modal readiness & skills gap calibration",
     icon: ClipboardCheck,
     href: "/app/services/assessment",
-    iconColor: "text-primary",
-    iconBg: "bg-primary/10",
+    iconColor: "text-blue-500",
+    iconBg: "bg-blue-500/10",
+    tagline: "Neural Assessment",
   },
   {
     id: "MOCK_INTERVIEW",
-    title: "Mock Interview",
-    description: "Practice with AI-driven scenarios",
+    title: "Interview Synthesis",
+    description: "Practice with high-fidelity AI-driven scenarios",
     icon: Mic,
     href: "/app/services/mock-interview",
-    iconColor: "text-accent-foreground",
-    iconBg: "bg-accent/10",
+    iconColor: "text-purple-500",
+    iconBg: "bg-purple-500/10",
+    tagline: "Vocal Calibration",
   },
   {
     id: "SALARY_ANALYSIS",
-    title: "Salary Analysis",
-    description: "Know your market worth accurately",
+    title: "Market Benchmarking",
+    description: "Precise market worth indexing and negotiation logic",
     icon: DollarSign,
     href: "/app/services/salary-analysis",
-    iconColor: "text-warning",
-    iconBg: "bg-warning/10",
+    iconColor: "text-emerald-500",
+    iconBg: "bg-emerald-500/10",
+    tagline: "Economic Intel",
   },
   {
     id: "PORTFOLIO",
-    title: "Portfolio",
-    description: "Build & showcase your best work",
+    title: "Artifact Showcase",
+    description: "Synthesize and deploy your professional evidence",
     icon: Palette,
     href: "/app/services/portfolio",
-    iconColor: "text-secondary",
-    iconBg: "bg-secondary/10",
+    iconColor: "text-amber-500",
+    iconBg: "bg-amber-500/10",
+    tagline: "Digital Identity",
   },
 ];
 
@@ -71,11 +94,10 @@ export default function ServicesHub() {
   const [showCreditGate, setShowCreditGate] = useState(false);
   const [showPurchaseSheet, setShowPurchaseSheet] = useState(false);
 
-  // Track service clicks from external sources
   useEffect(() => {
     const source = searchParams.get("source");
     const serviceSlug = searchParams.get("service");
-    
+
     if (source && serviceSlug) {
       const trackClick = async () => {
         try {
@@ -84,12 +106,10 @@ export default function ServicesHub() {
             p_source: source,
           });
         } catch (err) {
-          console.error("Failed to track service click", err);
+          console.error("Transmission Error: Tracking sync failed", err);
         }
       };
       trackClick();
-      
-      // Clean URL without reloading
       window.history.replaceState({}, "", window.location.pathname);
     }
   }, [searchParams]);
@@ -111,51 +131,63 @@ export default function ServicesHub() {
     }
   };
 
-  const handleBuyCredits = () => {
-    setShowCreditGate(false);
-    setShowPurchaseSheet(true);
-  };
-
   return (
-    <div className="max-w-4xl mx-auto px-4 py-4 space-y-5">
-      {/* Header with Credits */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-3">
-        <div>
-          <h1 className="text-2xl font-bold flex items-center gap-2 mb-1">
-            <Sparkles className="h-6 w-6 text-primary" />
-            Career Services
-          </h1>
-          <p className="text-muted-foreground">AI-powered tools to accelerate your career growth</p>
+    <div className="max-w-5xl mx-auto px-6 py-10 pb-40 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      {/* Executive Header: Telemetry Handshake */}
+      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+        <div className="space-y-2">
+          <div className="flex items-center gap-4">
+            <div className="h-12 w-12 rounded-[20px] bg-primary/10 flex items-center justify-center border border-primary/20">
+              <Zap className="h-6 w-6 text-primary" />
+            </div>
+            <h1 className="text-5xl font-black tracking-tighter uppercase italic leading-none">Service Node</h1>
+          </div>
+          <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.3em] ml-16 italic">
+            Neural Career Calibration v2.6
+          </p>
         </div>
 
-        {/* Compact Credits Card */}
-        <Card className="overflow-hidden border-0 shadow-lg md:w-auto w-full bg-gradient-to-br from-primary to-primary/90 text-primary-foreground">
-          <div className="p-3 sm:p-4 flex items-center justify-between gap-6">
-            <div className="flex items-center gap-3">
-              <div className="p-2 sm:p-2.5 bg-white/20 rounded-xl backdrop-blur-sm">
-                <Coins className="h-5 w-5 sm:h-6 sm:w-6 text-white" />
+        {/* Economic Ledger HUD */}
+        <Card className="rounded-[32px] border-2 border-primary/20 bg-primary/5 shadow-2xl overflow-hidden min-w-[320px] group transition-all hover:border-primary/40">
+          <CardContent className="p-6 flex items-center justify-between gap-6">
+            <div className="flex items-center gap-4">
+              <div className="h-14 w-14 rounded-[24px] bg-primary flex items-center justify-center rotate-3 shadow-primary/20 shadow-xl group-hover:rotate-0 transition-transform">
+                <Coins className="h-7 w-7 text-white" />
               </div>
               <div>
-                <p className="text-xl sm:text-2xl font-bold leading-none mb-1">{balance}</p>
-                <p className="text-[10px] uppercase tracking-wider font-medium opacity-90">Credits Available</p>
+                <p className="text-3xl font-black tracking-tighter italic leading-none">{balance}</p>
+                <p className="text-[9px] font-black uppercase text-primary tracking-widest mt-1 italic">
+                  Active Ledger Balance
+                </p>
               </div>
             </div>
             <Button
-              variant="secondary"
+              variant="outline"
               size="sm"
-              className="rounded-full px-4 h-9 font-semibold shadow-sm hover:bg-white text-primary"
+              className="rounded-xl h-11 px-5 border-2 font-black uppercase text-[9px] tracking-widest hover:bg-primary hover:text-white transition-all shadow-sm"
               onClick={() => setShowPurchaseSheet(true)}
             >
-              Get More
+              Inject Credits
             </Button>
-          </div>
+          </CardContent>
         </Card>
-      </div>
+      </header>
 
-      {/* Services Grid */}
-      <div>
-        <SectionHeader icon={Sparkles} title="Available Tools" />
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-3 sm:gap-4">
+      {/* Main Orchestration Viewport */}
+      <section className="space-y-8">
+        <div className="flex items-center justify-between border-b border-border/40 pb-4">
+          <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-3">
+            <Target className="h-4 w-4" /> Available Protocols
+          </h2>
+          <Badge
+            variant="outline"
+            className="rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] tracking-widest italic px-3 py-1"
+          >
+            4 Logic Chains Sync'd
+          </Badge>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {CAREER_SERVICES.map((service, index) => {
             const cost = getServiceCost(service.id);
             const affordable = canAfford(service.id);
@@ -164,68 +196,101 @@ export default function ServicesHub() {
               <Card
                 key={service.id}
                 className={cn(
-                  "cursor-pointer border hover:border-primary/50 shadow-sm hover:shadow-lg transition-all duration-300 overflow-hidden group",
-                  !affordable && "opacity-90",
+                  "group cursor-pointer rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm transition-all duration-500 hover:border-primary/40 hover:shadow-2xl overflow-hidden flex flex-col",
+                  !affordable && "opacity-80 grayscale-[0.5]",
                 )}
-                style={{ animationDelay: `${index * 100}ms` }}
                 onClick={() => handleServiceClick(service)}
               >
-                <CardContent className="p-4 sm:p-5 flex flex-col h-full items-center text-center sm:items-start sm:text-left">
-                  {/* Icon */}
+                <CardContent className="p-8 flex flex-col h-full">
                   <div
                     className={cn(
-                      "w-11 h-11 sm:w-12 sm:h-12 rounded-2xl flex items-center justify-center mb-3 sm:mb-4 transition-transform group-hover:scale-110 duration-300 shadow-inner",
+                      "h-16 w-16 rounded-[24px] flex items-center justify-center mb-8 transition-all duration-500 group-hover:rotate-6 shadow-inner",
                       service.iconBg,
                     )}
                   >
-                    <service.icon className={cn("h-5 w-5 sm:h-6 sm:w-6", service.iconColor)} />
+                    <service.icon className={cn("h-8 w-8", service.iconColor)} />
                   </div>
 
-                  {/* Title & Desc */}
-                  <div className="flex-1 mb-3 sm:mb-4">
-                    <h3 className="font-bold text-sm sm:text-base text-foreground mb-1 group-hover:text-primary transition-colors">
+                  <div className="space-y-2 flex-1">
+                    <p className={cn("text-[9px] font-black uppercase tracking-widest italic", service.iconColor)}>
+                      {service.tagline}
+                    </p>
+                    <h3 className="text-2xl font-black tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">
                       {service.title}
                     </h3>
-                    <p className="text-[11px] sm:text-xs text-muted-foreground leading-relaxed">{service.description}</p>
+                    <p className="text-sm text-muted-foreground/80 font-medium leading-relaxed italic pt-2">
+                      {service.description}
+                    </p>
                   </div>
 
-                  {/* Footer: Cost & Usage */}
-                  <div className="flex items-center justify-between w-full mt-auto pt-3 sm:pt-4 border-t border-border/40">
-                    <div className="flex items-center gap-1.5 bg-muted/50 px-2 py-1 rounded-md">
-                      <Coins className={cn("h-3.5 w-3.5", affordable ? "text-amber-500" : "text-muted-foreground")} />
-                      <span className={cn("text-xs font-bold", affordable ? "text-foreground" : "text-destructive")}>
-                        {cost}
+                  <div className="flex items-center justify-between w-full mt-10 pt-6 border-t border-border/10">
+                    <div className="flex items-center gap-2.5">
+                      <div className="p-2 bg-muted rounded-lg shadow-inner">
+                        <Coins className={cn("h-4 w-4", affordable ? "text-amber-500" : "text-destructive")} />
+                      </div>
+                      <span
+                        className={cn(
+                          "text-lg font-black tracking-tighter italic",
+                          affordable ? "text-foreground" : "text-destructive",
+                        )}
+                      >
+                        {cost}{" "}
+                        <span className="text-[10px] uppercase tracking-widest text-muted-foreground/40 font-bold ml-1">
+                          Credits
+                        </span>
                       </span>
                     </div>
-                    <ArrowRight className="h-3.5 w-3.5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    <div className="h-10 w-10 rounded-full bg-muted/50 flex items-center justify-center transition-all group-hover:bg-primary group-hover:text-white">
+                      <ArrowRight className="h-5 w-5" />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
             );
           })}
         </div>
-      </div>
+      </section>
 
-      {/* Service History */}
-      <div>
-        <SectionHeader icon={History} title="Recent Activity" />
-        <ServiceHistoryCard />
-      </div>
+      {/* Historical Telemetry Registry */}
+      <section className="space-y-8">
+        <div className="flex items-center gap-3 border-b border-border/40 pb-4">
+          <History className="h-5 w-5 text-primary" />
+          <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary">Service Telemetry Registry</h2>
+        </div>
+        <div className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl overflow-hidden shadow-sm">
+          <ServiceHistoryCard />
+        </div>
+      </section>
 
-      {/* Credit Gate Modal */}
-      {selectedService && (
-        <CreditGateModal
-          isOpen={showCreditGate}
-          onClose={() => setShowCreditGate(false)}
-          onConfirm={handleConfirmService}
-          onBuyCredits={handleBuyCredits}
-          serviceName={selectedService.title}
-          cost={getServiceCost(selectedService.id)}
-          currentBalance={balance}
-        />
-      )}
+      {/* Operational Trace Footer */}
+      <footer className="mt-20 pt-10 border-t border-border/40 flex items-center justify-between opacity-30">
+        <div className="space-y-1">
+          <p className="text-[9px] font-black uppercase tracking-[0.4em] italic">Service Node Registry: Active Sync</p>
+          <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest italic">
+            Protocol: Verified Executive Logic 2026.4
+          </p>
+        </div>
+        <div className="flex gap-2">
+          {[...Array(3)].map((_, i) => (
+            <div key={i} className="h-1 w-8 rounded-full bg-primary/20" />
+          ))}
+        </div>
+      </footer>
 
-      {/* Credit Purchase Sheet */}
+      {/* Logic Handshake Overlays */}
+      <CreditGateModal
+        isOpen={showCreditGate}
+        onClose={() => setShowCreditGate(false)}
+        onConfirm={handleConfirmService}
+        onBuyCredits={() => {
+          setShowCreditGate(false);
+          setShowPurchaseSheet(true);
+        }}
+        serviceName={selectedService?.title || "Career Module"}
+        cost={selectedService ? getServiceCost(selectedService.id) : 0}
+        currentBalance={balance}
+      />
+
       <CreditPurchaseSheet
         isOpen={showPurchaseSheet}
         onClose={() => setShowPurchaseSheet(false)}
