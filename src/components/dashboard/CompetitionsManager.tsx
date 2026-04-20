@@ -26,7 +26,6 @@ import {
   ShieldCheck,
   Activity,
   Zap,
-  Layers,
   Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
@@ -50,7 +49,7 @@ interface Competition {
   end_date: string | null;
   submission_deadline: string | null;
   max_participants: number | null;
-  prizes: { place: string; prize: string }[];
+  prizes: { place: string; prize: string }[] | null;
   rules: string | null;
   status: string;
   is_featured: boolean;
@@ -68,7 +67,6 @@ const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
 const CATEGORIES = ["Design", "Development", "Data Science", "Marketing", "Business", "Writing"];
 const ITEMS_PER_PAGE = 10;
 
-// --- Internal Hook for Debounce ---
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
   useEffect(() => {
@@ -93,6 +91,8 @@ export function CompetitionsManager() {
   const [saving, setSaving] = useState(false);
   const [prizeInput, setPrizeInput] = useState({ place: "", prize: "" });
   const [formData, setFormData] = useState<Partial<Competition>>({});
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   const loadRegistry = useCallback(async () => {
     setLoading(true);
@@ -159,17 +159,19 @@ export function CompetitionsManager() {
     if (!formData.title?.trim()) return toast.error("Logic Fault: Title required");
     setSaving(true);
     try {
-      const payload = { ...formData, slug: editingCompetition ? formData.slug : generateLogicSlug(formData.title) };
+      const slug = editingCompetition ? formData.slug : generateLogicSlug(formData.title);
+      const payload = { ...formData, slug };
+
       const { error } = editingCompetition
         ? await supabase.from("competitions").update(payload).eq("id", editingCompetition.id)
-        : await supabase.from("competitions").insert(payload);
+        : await supabase.from("competitions").insert([payload]); // CTO FIX: Wrapped in array for insert overload
 
       if (error) throw error;
       toast.success("Registry Synchronized");
       setIsDialogOpen(false);
       loadRegistry();
-    } catch (err) {
-      toast.error("Handshake Failed: Registry entry rejected");
+    } catch (err: any) {
+      toast.error(err.message?.includes("duplicate") ? "Logic Fault: Slug conflict" : "Handshake Failed");
     } finally {
       setSaving(false);
     }
@@ -189,10 +191,11 @@ export function CompetitionsManager() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-1000">
-      {/* Executive Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
-          <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Arena Registry</h2>
+          <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            Arena Registry
+          </h2>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Authorized Tournaments: {totalCount} Nodes Detected
           </p>
@@ -292,10 +295,10 @@ export function CompetitionsManager() {
                       <Badge
                         className={cn(
                           "rounded-lg font-black text-[8px] uppercase tracking-[0.2em] border-none px-3 py-1",
-                          STATUS_CONFIG[comp.status].color,
+                          STATUS_CONFIG[comp.status]?.color,
                         )}
                       >
-                        {STATUS_CONFIG[comp.status].label}
+                        {STATUS_CONFIG[comp.status]?.label || "UNKNOWN"}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-right pr-8">
@@ -359,7 +362,7 @@ export function CompetitionsManager() {
             <DialogHeader className="mb-10">
               <div className="flex items-center gap-4">
                 <ShieldCheck className="h-8 w-8 text-primary" />
-                <div className="space-y-1">
+                <div className="space-y-1 text-left">
                   <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
                     Arena Calibration
                   </DialogTitle>
@@ -431,7 +434,7 @@ export function CompetitionsManager() {
                   </div>
                   <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/30 border-2 border-border/10 mt-6">
                     <Switch
-                      checked={formData.is_featured}
+                      checked={formData.is_featured || false}
                       onCheckedChange={(v) => setFormData({ ...formData, is_featured: v })}
                     />
                     <Label className="text-[10px] font-black uppercase tracking-widest">Promoted Arena</Label>
@@ -498,7 +501,7 @@ export function CompetitionsManager() {
                 <Button
                   variant="ghost"
                   onClick={() => setIsDialogOpen(false)}
-                  className="h-14 px-8 font-black uppercase text-[10px] tracking-widest"
+                  className="h-14 px-8 font-black uppercase text-[10px] tracking-widest text-foreground"
                 >
                   Abort
                 </Button>
@@ -523,7 +526,6 @@ export function CompetitionsManager() {
   );
 }
 
-// Missing component from Lucide import in original
 const XCircle = ({ className, onClick }: { className?: string; onClick?: () => void }) => (
   <svg
     xmlns="http://www.w3.org/2000/svg"
