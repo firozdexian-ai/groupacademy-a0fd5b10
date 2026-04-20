@@ -6,6 +6,10 @@ import { Controller, ControllerProps, FieldPath, FieldValues, FormProvider, useF
 import { cn } from "@/lib/utils";
 import { Label } from "@/components/ui/label";
 
+/**
+ * Platform Logic: Data Entry Protocol
+ * High-precision form management system integrating React Hook Form & Radix UI.
+ */
 const Form = FormProvider;
 
 type FormFieldContextValue<
@@ -38,7 +42,7 @@ const useFormField = () => {
   const fieldState = getFieldState(fieldContext.name, formState);
 
   if (!fieldContext) {
-    throw new Error("useFormField should be used within <FormField>");
+    throw new Error("useFormField logic node must be used within <FormField>");
   }
 
   const { id } = itemContext;
@@ -65,7 +69,7 @@ const FormItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 
     return (
       <FormItemContext.Provider value={{ id }}>
-        <div ref={ref} className={cn("space-y-2", className)} {...props} />
+        <div ref={ref} className={cn("space-y-3 p-1", className)} {...props} />
       </FormItemContext.Provider>
     );
   },
@@ -78,7 +82,18 @@ const FormLabel = React.forwardRef<
 >(({ className, ...props }, ref) => {
   const { error, formItemId } = useFormField();
 
-  return <Label ref={ref} className={cn(error && "text-destructive", className)} htmlFor={formItemId} {...props} />;
+  return (
+    <Label
+      ref={ref}
+      className={cn(
+        "text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground transition-colors",
+        error && "text-rose-500",
+        className,
+      )}
+      htmlFor={formItemId}
+      {...props}
+    />
+  );
 });
 FormLabel.displayName = "FormLabel";
 
@@ -92,6 +107,7 @@ const FormControl = React.forwardRef<React.ElementRef<typeof Slot>, React.Compon
         id={formItemId}
         aria-describedby={!error ? `${formDescriptionId}` : `${formDescriptionId} ${formMessageId}`}
         aria-invalid={!!error}
+        className={cn("transition-all duration-300", error && "border-rose-500/50 focus-visible:ring-rose-500/20")}
         {...props}
       />
     );
@@ -103,7 +119,14 @@ const FormDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttribu
   ({ className, ...props }, ref) => {
     const { formDescriptionId } = useFormField();
 
-    return <p ref={ref} id={formDescriptionId} className={cn("text-sm text-muted-foreground", className)} {...props} />;
+    return (
+      <p
+        ref={ref}
+        id={formDescriptionId}
+        className={cn("text-[10px] font-medium leading-relaxed text-muted-foreground/60 italic", className)}
+        {...props}
+      />
+    );
   },
 );
 FormDescription.displayName = "FormDescription";
@@ -113,12 +136,18 @@ const FormMessage = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<
     const { error, formMessageId } = useFormField();
     const body = error ? String(error?.message) : children;
 
-    if (!body) {
-      return null;
-    }
+    if (!body) return null;
 
     return (
-      <p ref={ref} id={formMessageId} className={cn("text-sm font-medium text-destructive", className)} {...props}>
+      <p
+        ref={ref}
+        id={formMessageId}
+        className={cn(
+          "text-[10px] font-black uppercase tracking-tight text-rose-500 animate-in fade-in slide-in-from-top-1 duration-300",
+          className,
+        )}
+        {...props}
+      >
         {body}
       </p>
     );
