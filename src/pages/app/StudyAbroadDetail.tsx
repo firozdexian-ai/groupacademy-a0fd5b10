@@ -14,14 +14,24 @@ import {
   AlertTriangle,
   Sparkles,
   MessageCircle,
+  ShieldCheck,
+  Zap,
+  Globe,
 } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { format } from "date-fns";
-import { COUNTRIES, getCountryFlag } from "@/lib/constants/countries";
+import { getCountryFlag } from "@/lib/constants/countries";
 import { useTalent } from "@/hooks/useTalent";
+import { cn } from "@/lib/utils";
+
+/**
+ * Platform Logic: Academic Specification Viewport
+ * High-fidelity orchestrator for university interrogation and admission telemetry.
+ * 2026 Standard: Executive Logic geometry with reinforced lead-gen handshakes.
+ */
 
 export default function StudyAbroadDetail() {
   const { id } = useParams();
@@ -36,7 +46,7 @@ export default function StudyAbroadDetail() {
   } = useQuery({
     queryKey: ["study-abroad-program", id],
     queryFn: async () => {
-      if (!id) throw new Error("No Program ID provided");
+      if (!id) throw new Error("Registry Error: Null Program ID");
       const { data, error } = await supabase.from("study_abroad_programs").select("*").eq("id", id).maybeSingle();
       if (error) throw error;
       if (!data) return null;
@@ -46,17 +56,15 @@ export default function StudyAbroadDetail() {
     retry: 1,
   });
 
-  // CTO FIX: Lead Generation Trigger (Corrected snake_case vs camelCase)
   const handleExternalClick = async (url: string) => {
     if (talent?.id && program) {
-      // Note: 'talent_id' column doesn't exist in the 'contacts' array insert overload,
-      // but 'full_name' is mapped from 'fullName' in our hook.
+      // CTO Lead-Gen Protocol: Sync interest artifact with contact registry
       await supabase.from("contacts").insert([
         {
-          full_name: talent.fullName || "Interested Talent",
-          email: talent.email || "",
-          subject: `Interest in ${program.university_name}`,
-          message: `Lead generated via Study Abroad Detail: ${program.program_name} at ${program.university_name}.`,
+          full_name: talent.fullName || "Anonymous Participant",
+          email: talent.email || "internal-sync-node",
+          subject: `Admission Intel: ${program.university_name}`,
+          message: `High-intent lead generated for ${program.program_name} logic path. Initializing recruitment handshake.`,
         },
       ]);
     }
@@ -65,120 +73,186 @@ export default function StudyAbroadDetail() {
 
   if (isLoading)
     return (
-      <div className="max-w-4xl mx-auto p-10 space-y-4">
-        <Skeleton className="h-12 w-3/4" />
-        <Skeleton className="h-64 w-full" />
+      <div className="max-w-5xl mx-auto p-12 space-y-10 animate-pulse">
+        <Skeleton className="h-10 w-48 rounded-xl bg-muted/40" />
+        <Skeleton className="h-[500px] w-full rounded-[40px] bg-muted/40" />
       </div>
     );
 
-  if (isError || !program) {
+  if (isError || !program)
     return (
-      <div className="max-w-4xl mx-auto px-4 py-20 text-center">
-        <AlertTriangle className="h-12 w-12 text-destructive mx-auto mb-4" />
-        <h2 className="text-xl font-bold mb-2">Program Sync Error</h2>
-        <p className="text-muted-foreground mb-6">{(error as Error)?.message || "Program data unavailable."}</p>
-        <Button onClick={() => navigate("/app/abroad/study")} variant="outline">
+      <div className="max-w-4xl mx-auto py-32 text-center animate-in zoom-in-95">
+        <AlertTriangle className="h-16 w-16 text-destructive/20 mx-auto mb-6 rotate-12" />
+        <h2 className="text-3xl font-black uppercase tracking-tighter italic">Registry Sync Failure</h2>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 italic mt-2">
+          Artifact disappeared or access restricted by protocol.
+        </p>
+        <Button
+          onClick={() => navigate("/app/abroad/study")}
+          variant="outline"
+          className="mt-8 rounded-xl px-10 h-12 font-black uppercase text-[10px] border-2"
+        >
           Return to Catalog
         </Button>
       </div>
     );
-  }
 
-  // CTO FIX: ReactNode JSON Cast Fix
   const requirements = Array.isArray(program.requirements) ? (program.requirements as string[]) : [];
 
   return (
-    <div className="max-w-5xl mx-auto px-4 py-6 pb-32 sm:pb-10 space-y-6">
-      {/* Header Navigation */}
-      <div className="flex items-center justify-between gap-4">
-        <Button variant="ghost" className="gap-2" onClick={() => navigate(-1)}>
-          <ArrowLeft className="h-4 w-4" /> Back to Search
+    <div className="max-w-6xl mx-auto px-6 py-10 pb-40 space-y-12 animate-in fade-in duration-1000">
+      {/* Executive Navigation Handshake */}
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
+        <Button
+          variant="ghost"
+          className="group rounded-xl h-11 px-4 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-primary/5 -ml-4"
+          onClick={() => navigate(-1)}
+        >
+          <ArrowLeft className="mr-3 h-4 w-4 transition-transform group-hover:-translate-x-1" /> Back to Discovery
         </Button>
-        {program.url && (
-          <Button
-            onClick={() => handleExternalClick(program.url!)}
-            className="hidden sm:flex shadow-lg shadow-primary/20"
+        <div className="flex items-center gap-4">
+          <Badge
+            variant="outline"
+            className="rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] px-3 py-1.5 tracking-widest"
           >
-            Apply Externally <ExternalLink className="h-4 w-4 ml-2" />
-          </Button>
-        )}
-      </div>
+            REGISTRY_ID: {program.id.split("-")[0].toUpperCase()}
+          </Badge>
+          {program.url && (
+            <Button
+              onClick={() => handleExternalClick(program.url!)}
+              className="hidden sm:flex rounded-xl h-11 px-8 font-black uppercase text-[10px] tracking-widest shadow-2xl shadow-primary/20 hover:scale-105 transition-all"
+            >
+              Initialize Application <ExternalLink className="h-4 w-4 ml-3" />
+            </Button>
+          )}
+        </div>
+      </header>
 
-      {/* Hero Section */}
-      <div className="flex flex-col md:flex-row gap-6 items-start">
-        <div className="h-20 w-20 rounded-3xl bg-primary/5 flex items-center justify-center text-4xl border shadow-inner shrink-0">
+      {/* Hero Module: University Identity */}
+      <div className="flex flex-col md:flex-row gap-8 items-center md:items-end border-b border-border/10 pb-10">
+        <div className="h-28 w-28 rounded-[32px] bg-primary/5 border-2 border-primary/20 flex items-center justify-center text-5xl shadow-2xl rotate-3 shrink-0">
           {getCountryFlag(program.country_code)}
         </div>
-        <div className="space-y-1">
-          <div className="flex flex-wrap items-center gap-2">
-            <h1 className="text-2xl md:text-3xl font-extrabold tracking-tight">{program.university_name}</h1>
+        <div className="space-y-3 text-center md:text-left flex-1">
+          <div className="flex flex-wrap items-center justify-center md:justify-start gap-3">
+            <h1 className="text-4xl md:text-6xl font-black tracking-tighter uppercase italic leading-[0.9] selection:bg-primary/20">
+              {program.university_name}
+            </h1>
             {program.featured && (
-              <Badge className="bg-amber-500/10 text-amber-600 border-amber-200">Featured University</Badge>
+              <Badge className="bg-amber-500 text-white border-none px-4 py-1.5 text-[8px] font-black uppercase tracking-widest rounded-lg shadow-xl animate-pulse">
+                <Zap className="h-3 w-3 mr-2 fill-current" /> Elite Artifact
+              </Badge>
             )}
           </div>
-          <p className="text-lg text-muted-foreground flex items-center gap-2">
-            <MapPin className="h-4 w-4 text-primary" /> {program.country_name}
-          </p>
+          <div className="flex items-center justify-center md:justify-start gap-4">
+            <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">
+              <MapPin className="h-4 w-4" /> {program.country_name}
+            </div>
+            <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
+            <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+              Global Node Verified
+            </p>
+          </div>
         </div>
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-6">
-          <Card className="border-primary/10 shadow-sm overflow-hidden">
-            <div className="h-1.5 bg-primary" />
-            <CardHeader>
-              <CardTitle className="text-2xl text-foreground">{program.program_name}</CardTitle>
-              <CardDescription className="text-base font-medium">{program.field_of_study}</CardDescription>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-12">
+        {/* Primary Spec: Program Logic */}
+        <div className="lg:col-span-8 space-y-10">
+          <Card className="rounded-[48px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden relative group">
+            <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+              <Globe className="h-64 w-64" />
+            </div>
+            <div className="h-2.5 bg-gradient-to-r from-primary via-blue-600 to-primary" />
+            <CardHeader className="p-10 pb-6">
+              <div className="space-y-2">
+                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary italic">
+                  Pathway Specification
+                </p>
+                <CardTitle className="text-4xl font-black tracking-tight leading-none uppercase italic selection:bg-primary/20">
+                  {program.program_name}
+                </CardTitle>
+                <p className="text-lg font-medium text-muted-foreground italic pt-2">{program.field_of_study}</p>
+              </div>
             </CardHeader>
-            <CardContent className="space-y-8">
-              {/* Quick Specs */}
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
-                <div className="p-3 rounded-xl bg-muted/50 border space-y-1">
-                  <GraduationCap className="h-4 w-4 text-primary" />
-                  <p className="text-[10px] uppercase font-bold text-muted-foreground">Degree</p>
-                  <p className="text-sm font-bold">{program.degree_type}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-muted/50 border space-y-1">
-                  <Clock className="h-4 w-4 text-blue-500" />
-                  <p className="text-[10px] uppercase font-bold text-muted-foreground">Duration</p>
-                  <p className="text-sm font-bold">{program.duration || "N/A"}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-muted/50 border space-y-1">
-                  <DollarSign className="h-4 w-4 text-emerald-500" />
-                  <p className="text-[10px] uppercase font-bold text-muted-foreground">Tuition</p>
-                  <p className="text-sm font-bold">{program.tuition_range || "Contact"}</p>
-                </div>
-                <div className="p-3 rounded-xl bg-muted/50 border space-y-1">
-                  <Calendar className="h-4 w-4 text-orange-500" />
-                  <p className="text-[10px] uppercase font-bold text-muted-foreground">Deadline</p>
-                  <p className="text-sm font-bold">
-                    {program.application_deadline ? format(new Date(program.application_deadline), "MMM d") : "Rolling"}
-                  </p>
-                </div>
+            <CardContent className="p-10 pt-0 space-y-12">
+              {/* Telemetry Specs */}
+              <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+                {[
+                  {
+                    icon: GraduationCap,
+                    label: "Degree Logic",
+                    val: program.degree_type,
+                    color: "text-primary",
+                    bg: "bg-primary/5",
+                  },
+                  {
+                    icon: Clock,
+                    label: "Temporal Span",
+                    val: program.duration || "N/A",
+                    color: "text-blue-500",
+                    bg: "bg-blue-500/5",
+                  },
+                  {
+                    icon: DollarSign,
+                    label: "Economic Value",
+                    val: program.tuition_range || "Syncing...",
+                    color: "text-emerald-500",
+                    bg: "bg-emerald-500/5",
+                  },
+                  {
+                    icon: Calendar,
+                    label: "Sync Deadline",
+                    val: program.application_deadline
+                      ? format(new Date(program.application_deadline), "MMM d, yyyy")
+                      : "OPEN",
+                    color: "text-orange-500",
+                    bg: "bg-orange-500/5",
+                  },
+                ].map((spec, i) => (
+                  <div
+                    key={i}
+                    className={cn(
+                      "p-5 rounded-3xl border border-border/10 space-y-3 shadow-inner group/spec transition-all hover:bg-card",
+                      spec.bg,
+                    )}
+                  >
+                    <spec.icon className={cn("h-6 w-6 group-hover/spec:scale-110 transition-transform", spec.color)} />
+                    <div>
+                      <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/60 mb-1">
+                        {spec.label}
+                      </p>
+                      <p className="text-sm font-black uppercase tracking-tight">{spec.val}</p>
+                    </div>
+                  </div>
+                ))}
               </div>
 
-              {/* Requirements List */}
-              <div className="space-y-4">
-                <h3 className="text-lg font-bold flex items-center gap-2">
-                  <CheckCircle className="h-5 w-5 text-primary" /> Admission Requirements
-                </h3>
-                <div className="grid gap-3">
+              {/* Requirement Protocol */}
+              <div className="space-y-8">
+                <div className="flex items-center gap-4 border-b border-border/10 pb-4">
+                  <ShieldCheck className="h-6 w-6 text-primary" />
+                  <h3 className="text-lg font-black uppercase tracking-tighter italic">Calibration Requirements</h3>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
                   {requirements.length > 0 ? (
                     requirements.map((req, idx) => (
                       <div
                         key={idx}
-                        className="flex gap-3 p-3 rounded-lg border bg-background hover:border-primary/30 transition-colors"
+                        className="flex gap-5 p-6 rounded-[28px] border-2 border-border/40 bg-background/50 hover:border-primary/40 transition-all group/req"
                       >
-                        <div className="h-5 w-5 rounded-full bg-primary/10 text-primary flex items-center justify-center text-[10px] font-bold shrink-0">
-                          {idx + 1}
+                        <div className="h-8 w-8 rounded-xl bg-muted/50 text-muted-foreground flex items-center justify-center text-[11px] font-black shrink-0 border group-hover/req:bg-primary group-hover/req:text-white transition-colors">
+                          {(idx + 1).toString().padStart(2, "0")}
                         </div>
-                        <span className="text-sm leading-snug">{req}</span>
+                        <span className="text-sm font-medium italic leading-relaxed text-foreground/80">{req}</span>
                       </div>
                     ))
                   ) : (
-                    <p className="text-sm text-muted-foreground italic">
-                      Consult our advisor for specific requirements.
-                    </p>
+                    <div className="col-span-full p-10 text-center border-2 border-dashed rounded-[32px] bg-muted/5">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
+                        Standard Registry Logic applies. Initialize consultation for specific artifacts.
+                      </p>
+                    </div>
                   )}
                 </div>
               </div>
@@ -186,47 +260,70 @@ export default function StudyAbroadDetail() {
           </Card>
         </div>
 
-        {/* Sidebar CTAs */}
-        <div className="space-y-6">
-          <Card className="border-primary bg-primary/[0.02] shadow-lg shadow-primary/5">
-            <CardContent className="p-6 space-y-4">
-              <div className="flex items-center gap-2 text-primary">
-                <Sparkles className="h-5 w-5" />
-                <span className="font-bold tracking-tight">AI Admissions Help</span>
+        {/* Sidebar: AI Consultant Node */}
+        <aside className="lg:col-span-4 space-y-8 sticky top-24">
+          <Card className="rounded-[40px] border-2 border-primary/20 bg-primary/5 shadow-[0_40px_80px_-20px_rgba(var(--primary-rgb),0.2)] overflow-hidden">
+            <CardContent className="p-10 space-y-8">
+              <div className="space-y-4">
+                <div className="flex items-center gap-3 text-primary">
+                  <Sparkles className="h-6 w-6 fill-current animate-pulse" />
+                  <span className="text-xl font-black uppercase tracking-tighter italic">Neural Advisor</span>
+                </div>
+                <p className="text-sm font-medium italic text-muted-foreground leading-relaxed">
+                  Synthesize a custom admission roadmap, visa logic paths, and automated SOP editing with our global
+                  node.
+                </p>
               </div>
-              <p className="text-sm text-muted-foreground leading-relaxed">
-                Get a custom roadmap, visa guidance, and SOP editing from our specialized Admissions Agent.
-              </p>
-              <Button className="w-full h-11" onClick={() => navigate("/app/agents/study-abroad-advisor")}>
-                <MessageCircle className="mr-2 h-4 w-4" /> Start Consultation
+              <Button
+                className="w-full h-16 rounded-[24px] font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95"
+                onClick={() => navigate("/app/agents/study-abroad-advisor")}
+              >
+                <MessageCircle className="mr-3 h-5 w-5 fill-current" /> Initialize Consult
               </Button>
             </CardContent>
           </Card>
 
           {program.scholarship_available && (
-            <Card className="bg-emerald-50/50 border-emerald-200">
-              <CardContent className="p-4 flex items-center gap-3">
-                <div className="h-10 w-10 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-600">
-                  <Award className="h-6 w-6" />
+            <Card className="rounded-[32px] border-2 border-emerald-500/20 bg-emerald-500/5 shadow-sm group">
+              <CardContent className="p-8 flex items-center gap-6">
+                <div className="h-16 w-16 rounded-[24px] bg-emerald-100 flex items-center justify-center text-emerald-600 transition-transform group-hover:rotate-6">
+                  <Award className="h-8 w-8" />
                 </div>
                 <div>
-                  <p className="text-xs font-bold text-emerald-800 uppercase tracking-wider">Financial Aid</p>
-                  <p className="text-xs text-emerald-700">Scholarships are active for this program.</p>
+                  <p className="text-[10px] font-black text-emerald-800 uppercase tracking-widest italic">
+                    Financial Aid Active
+                  </p>
+                  <p className="text-base font-black uppercase tracking-tighter leading-tight mt-1">
+                    Scholarship Node Accessible
+                  </p>
                 </div>
               </CardContent>
             </Card>
           )}
-        </div>
+
+          <div className="px-6 opacity-30">
+            <p className="text-[9px] font-black uppercase tracking-[0.4em] italic leading-relaxed text-center">
+              Academy Registry: Encrypted Protocol v2.6.4 Synchronized
+            </p>
+          </div>
+        </aside>
       </div>
 
-      {/* Mobile Sticky CTA */}
-      <div className="fixed bottom-16 left-0 right-0 p-4 bg-background/80 backdrop-blur-xl border-t z-20 flex gap-3 sm:hidden">
-        <Button variant="outline" className="flex-1 h-12" onClick={() => navigate("/app/agents/study-abroad-advisor")}>
-          Chat AI
+      {/* Mobile Tactical Control */}
+      <div className="fixed bottom-0 left-0 right-0 p-6 bg-background/80 backdrop-blur-2xl border-t-2 border-border/10 z-50 flex gap-4 sm:hidden shadow-[0_-20px_50px_rgba(0,0,0,0.1)] animate-in slide-in-from-bottom-full duration-700">
+        <Button
+          variant="outline"
+          className="flex-1 h-16 rounded-[24px] border-2 font-black uppercase text-[10px] tracking-widest"
+          onClick={() => navigate("/app/agents/study-abroad-advisor")}
+        >
+          Neural Advisor
         </Button>
         {program.url && (
-          <Button className="flex-1 h-12" onClick={() => handleExternalClick(program.url!)}>
-            Visit University
+          <Button
+            className="flex-1 h-16 rounded-[24px] font-black uppercase text-[10px] tracking-widest shadow-2xl shadow-primary/30"
+            onClick={() => handleExternalClick(program.url!)}
+          >
+            Authorize Entry
           </Button>
         )}
       </div>
