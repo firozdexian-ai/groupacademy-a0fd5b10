@@ -25,9 +25,17 @@ import {
   ShieldCheck,
   Zap,
   Info,
+  Target,
+  FileSearch,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+
+/**
+ * Platform Logic: Mission Registry & Proposal Handshake
+ * High-fidelity orchestrator for project interrogation and contractual bidding.
+ * 2026 Standard: Executive Logic geometry with reinforced reputation guards.
+ */
 
 export default function MarketplaceGigDetail() {
   const { id } = useParams<{ id: string }>();
@@ -84,7 +92,7 @@ export default function MarketplaceGigDetail() {
 
   const submitProposal = useMutation({
     mutationFn: async () => {
-      if (!talent?.id || !id) throw new Error("Authentication required");
+      if (!talent?.id || !id) throw new Error("Registry Access Denied: Auth Required");
       const { error } = await supabase.from("marketplace_bids").insert({
         gig_id: id,
         talent_id: talent.id,
@@ -95,7 +103,7 @@ export default function MarketplaceGigDetail() {
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Proposal transmitted to employer!");
+      toast.success("Handshake Initialized: Proposal transmitted to partner registry.");
       queryClient.invalidateQueries({ queryKey: ["my-marketplace-bid", id] });
       queryClient.invalidateQueries({ queryKey: ["marketplace-gig", id] });
     },
@@ -103,102 +111,126 @@ export default function MarketplaceGigDetail() {
 
   if (isLoading)
     return (
-      <div className="max-w-5xl mx-auto p-6 space-y-6">
-        <Skeleton className="h-10 w-40 rounded-full" />
-        <div className="grid lg:grid-cols-[1fr,380px] gap-8">
-          <Skeleton className="h-[500px] rounded-[32px]" />
-          <Skeleton className="h-[400px] rounded-[32px]" />
+      <div className="max-w-6xl mx-auto p-12 space-y-10 animate-pulse">
+        <Skeleton className="h-10 w-48 rounded-xl bg-muted/40" />
+        <div className="grid lg:grid-cols-[1fr,380px] gap-10">
+          <Skeleton className="h-[600px] rounded-[40px] bg-muted/40" />
+          <Skeleton className="h-[400px] rounded-[40px] bg-muted/40" />
         </div>
       </div>
     );
 
-  if (!gig) return <div className="py-20 text-center">Gig vanished or restricted.</div>;
+  if (!gig)
+    return (
+      <div className="max-w-2xl mx-auto py-32 text-center animate-in fade-in zoom-in-95">
+        <FileSearch className="mx-auto h-16 w-16 text-destructive/20 mb-6" />
+        <h2 className="text-3xl font-black uppercase tracking-tighter">Registry Error</h2>
+        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 italic mt-2">
+          Node vanished or restricted by protocol.
+        </p>
+        <Button
+          variant="outline"
+          onClick={() => navigate("/app/gigs?tab=projects")}
+          className="mt-8 rounded-xl px-10 h-12 font-black uppercase text-[10px] tracking-widest border-2"
+        >
+          Return to Arena
+        </Button>
+      </div>
+    );
 
   const isFixed = gig.pricing_type === "fixed";
   const avgRating = reviews?.length ? (reviews.reduce((s, r) => s + r.rating, 0) / reviews.length).toFixed(1) : null;
 
   return (
-    <div className="max-w-6xl mx-auto px-4 py-8 space-y-8 animate-in fade-in duration-700 pb-32">
-      <header className="flex items-center justify-between">
+    <div className="max-w-6xl mx-auto px-6 py-10 pb-40 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
+      <header className="flex flex-col md:flex-row md:items-center justify-between gap-6">
         <Button
           variant="ghost"
           size="sm"
           onClick={() => navigate("/app/gigs?tab=projects")}
-          className="rounded-full font-bold text-xs uppercase tracking-widest px-4 h-10 hover:bg-primary/5"
+          className="group rounded-xl h-11 px-4 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-primary/5 -ml-4"
         >
-          <ArrowLeft className="mr-2 h-4 w-4" /> All Projects
+          <ArrowLeft className="mr-3 h-4 w-4 transition-transform group-hover:-translate-x-1" />
+          Back to Project Arena
         </Button>
         <Badge
           variant="outline"
-          className="border-primary/20 text-primary font-black uppercase text-[10px] tracking-tighter"
+          className="rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] px-3 py-1.5 tracking-widest"
         >
-          Reference: {gig.id.split("-")[0]}
+          PROJECT_ID: {gig.id.split("-")[0].toUpperCase()}
         </Badge>
       </header>
 
-      <div className="grid lg:grid-cols-[1fr,380px] gap-8 items-start">
-        {/* Main Content: Gig Spec */}
-        <div className="space-y-8">
-          <section className="space-y-6">
-            <div className="space-y-4">
-              <div className="flex items-center gap-2 flex-wrap">
-                <Badge className="bg-primary/10 text-primary border-none text-[9px] font-black uppercase tracking-widest">
+      <div className="grid lg:grid-cols-[1fr,380px] gap-12 items-start">
+        {/* Project Mission Specification */}
+        <div className="space-y-12">
+          <section className="space-y-8">
+            <div className="space-y-6">
+              <div className="flex items-center gap-3 flex-wrap">
+                <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">
                   {MARKETPLACE_SCHOOL_MAP[gig.skill_category]?.label}
                 </Badge>
-                <Badge
-                  variant="secondary"
-                  className="bg-amber-500/10 text-amber-600 border-none text-[9px] font-black uppercase tracking-widest"
-                >
-                  <Zap className="h-3 w-3 mr-1" /> {isFixed ? "Fixed Budget" : "Negotiable"}
+                <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                  <Zap className="h-3 w-3 mr-1.5 fill-current" /> {isFixed ? "Fixed Unit" : "Competitive Protocol"}
                 </Badge>
                 {avgRating && (
-                  <Badge variant="outline" className="gap-1.5 text-[9px] font-black uppercase border-amber-200">
-                    <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> {avgRating} Client Rating
+                  <Badge
+                    variant="outline"
+                    className="bg-background/50 border-amber-200 text-amber-700 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest gap-2"
+                  >
+                    <Star className="h-3 w-3 fill-amber-400 text-amber-400" /> {avgRating} Logic Trust
                   </Badge>
                 )}
               </div>
-              <h1 className="text-3xl md:text-4xl font-black tracking-tighter leading-tight">{gig.title}</h1>
-              <div className="flex items-center gap-2 text-xs font-bold text-muted-foreground uppercase tracking-widest">
-                <Users className="h-4 w-4 text-primary/40" /> {gig.employer_name || "Academy Partner"}
+              <h1 className="text-5xl md:text-6xl font-black tracking-tighter uppercase italic leading-[0.9] selection:bg-primary/20">
+                {gig.title}
+              </h1>
+              <div className="flex items-center gap-3 text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.3em] italic">
+                <Users className="h-4 w-4 text-primary" /> Entity: {gig.employer_name || "Platform Architect"}
               </div>
             </div>
 
-            <Card className="rounded-[32px] border-border/40 bg-card/50 backdrop-blur-sm overflow-hidden">
-              <CardContent className="p-8 space-y-6">
-                <div className="space-y-2">
-                  <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-primary">Project Mission</h3>
-                  <p className="text-sm leading-relaxed font-medium text-foreground/80 whitespace-pre-wrap">
-                    {gig.description}
-                  </p>
+            <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden relative group">
+              <div className="absolute top-0 right-0 p-10 opacity-[0.03] group-hover:opacity-[0.08] transition-opacity">
+                <Target className="h-48 w-48" />
+              </div>
+              <CardContent className="p-10 space-y-10">
+                <div className="space-y-4">
+                  <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-primary">Briefing Summary</h3>
+                  <div className="prose prose-sm dark:prose-invert max-w-none text-muted-foreground font-medium leading-relaxed italic text-base">
+                    <p className="whitespace-pre-wrap">{gig.description}</p>
+                  </div>
                 </div>
 
                 {gig.requirements && (
-                  <div className="pt-6 border-t border-border/40 space-y-3">
-                    <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-                      Candidate Requirements
+                  <div className="pt-10 border-t border-border/10 space-y-6">
+                    <h3 className="text-[11px] font-black uppercase tracking-[0.4em] text-muted-foreground">
+                      Calibration Requirements
                     </h3>
-                    <div className="bg-muted/30 p-4 rounded-2xl border border-border/20 italic text-xs font-medium leading-relaxed">
-                      {gig.requirements}
-                    </div>
+                    <Card className="rounded-[28px] bg-muted/20 border-2 border-dashed border-border/60">
+                      <CardContent className="p-8 text-sm font-medium leading-relaxed whitespace-pre-wrap italic opacity-80">
+                        {gig.requirements}
+                      </CardContent>
+                    </Card>
                   </div>
                 )}
 
-                <div className="grid grid-cols-2 gap-4 pt-4">
-                  <div className="p-4 bg-primary/[0.03] rounded-2xl border border-primary/10">
-                    <p className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground mb-1">
-                      Proposed Value
+                <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 pt-6">
+                  <div className="bg-primary/5 rounded-[28px] p-8 border border-primary/10 shadow-inner group/val transition-all hover:bg-primary/10">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary/60 mb-3 italic">
+                      Economic Value
                     </p>
-                    <div className="flex items-center gap-1.5 text-lg font-black text-primary">
-                      <Coins className="h-5 w-5 text-amber-500" /> {gig.budget_amount}
+                    <div className="flex items-center gap-3 text-3xl font-black italic tracking-tighter text-primary">
+                      <Coins className="h-7 w-7 text-amber-500" /> {gig.budget_amount}
                     </div>
                   </div>
-                  <div className="p-4 bg-muted/20 rounded-2xl border border-border/20">
-                    <p className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground mb-1">
-                      Time Horizon
+                  <div className="bg-muted/30 rounded-[28px] p-8 border border-border/40 shadow-inner group/time transition-all hover:bg-muted/50">
+                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 mb-3 italic">
+                      Temporal Deadline
                     </p>
-                    <div className="flex items-center gap-1.5 text-xs font-bold">
-                      <Clock className="h-4 w-4 text-primary" />{" "}
-                      {gig.deadline ? format(new Date(gig.deadline), "MMM d, yyyy") : "ASAP"}
+                    <div className="flex items-center gap-3 text-xl font-black uppercase tracking-tight">
+                      <Clock className="h-7 w-7 text-muted-foreground/40" />
+                      {gig.deadline ? format(new Date(gig.deadline), "MMM d, yyyy") : "OPEN_PROTOCOL"}
                     </div>
                   </div>
                 </div>
@@ -206,132 +238,149 @@ export default function MarketplaceGigDetail() {
             </Card>
           </section>
 
-          {/* Feedback Section */}
+          {/* Reputation Ledger */}
           {reviews && reviews.length > 0 && (
-            <section className="space-y-4">
-              <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-emerald-500" /> Employer Reputation ({reviews.length})
+            <section className="space-y-8">
+              <h2 className="text-[11px] font-black uppercase tracking-[0.4em] text-primary flex items-center gap-4">
+                <ShieldCheck className="h-5 w-5 text-emerald-500" /> Trust Telemetry Registry ({reviews.length})
               </h2>
-              <div className="space-y-3">
+              <div className="grid gap-6">
                 {reviews.map((r: any) => (
-                  <div key={r.id} className="p-5 rounded-2xl bg-muted/20 border border-border/40 space-y-2">
-                    <div className="flex justify-between items-center">
-                      <div className="flex gap-0.5">
-                        {[...Array(5)].map((_, i) => (
-                          <Star
-                            key={i}
-                            className={cn(
-                              "h-3 w-3",
-                              i < r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/20",
-                            )}
-                          />
-                        ))}
+                  <Card
+                    key={r.id}
+                    className="rounded-[32px] border-border/40 bg-card/50 backdrop-blur-sm p-8 shadow-sm group hover:border-amber-500/20 transition-all"
+                  >
+                    <div className="space-y-4">
+                      <div className="flex justify-between items-center">
+                        <div className="flex gap-1">
+                          {[...Array(5)].map((_, i) => (
+                            <Star
+                              key={i}
+                              className={cn(
+                                "h-4 w-4",
+                                i < r.rating ? "fill-amber-400 text-amber-400" : "text-muted-foreground/10",
+                              )}
+                            />
+                          ))}
+                        </div>
+                        <span className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest italic">
+                          SYNC_DATE: {format(new Date(r.created_at), "MMM yyyy")}
+                        </span>
                       </div>
-                      <span className="text-[9px] font-bold text-muted-foreground uppercase">
-                        {format(new Date(r.created_at), "MMM yyyy")}
-                      </span>
+                      <p className="text-base font-medium italic text-foreground/80 leading-relaxed">"{r.comment}"</p>
                     </div>
-                    <p className="text-xs font-medium italic text-muted-foreground leading-relaxed">"{r.comment}"</p>
-                  </div>
+                  </Card>
                 ))}
               </div>
             </section>
           )}
         </div>
 
-        {/* Sidebar: Submission Logic */}
-        <aside className="sticky top-24 space-y-6">
+        {/* Sidebar: Transmission Handshake */}
+        <aside className="sticky top-24 space-y-8 animate-in slide-in-from-right-8 duration-700 delay-150">
           {existingBid ? (
-            <Card className="rounded-[32px] border-emerald-500/20 bg-emerald-500/[0.02] shadow-xl overflow-hidden animate-in zoom-in-95">
-              <CardContent className="p-8 text-center space-y-4">
-                <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center mx-auto mb-2">
-                  <CheckCircle2 className="h-8 w-8 text-emerald-600" />
+            <Card className="rounded-[40px] border-emerald-500/20 bg-emerald-500/5 shadow-2xl overflow-hidden py-12 text-center border-t-8 border-t-emerald-500">
+              <CardContent className="space-y-8">
+                <div className="h-20 w-20 rounded-[28px] bg-emerald-500/10 flex items-center justify-center mx-auto border-2 border-emerald-500/20 rotate-3 shadow-xl">
+                  <CheckCircle2 className="h-10 w-10 text-emerald-600" />
                 </div>
-                <div className="space-y-1">
-                  <h3 className="text-lg font-black tracking-tight">Proposal Active</h3>
-                  <p className="text-xs font-medium text-muted-foreground uppercase tracking-widest">
-                    Status: {existingBid.status}
+                <div className="space-y-2">
+                  <h3 className="text-2xl font-black uppercase tracking-tighter italic">Handshake Active</h3>
+                  <p className="text-[10px] font-bold text-emerald-600/60 uppercase tracking-[0.3em] italic">
+                    Protocol: {existingBid.status}
                   </p>
                 </div>
-                <div className="pt-4 border-t border-emerald-500/10 flex justify-between items-center">
-                  <span className="text-[10px] font-black uppercase tracking-tighter text-muted-foreground">
-                    Your Bid
+                <div className="pt-8 border-t border-emerald-500/10 flex flex-col gap-2 items-center">
+                  <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
+                    Committed Artifact Value
                   </span>
-                  <span className="text-sm font-black text-emerald-600">{existingBid.bid_amount} Credits</span>
+                  <span className="text-4xl font-black tracking-tighter text-emerald-600 italic leading-none">
+                    {existingBid.bid_amount} Credits
+                  </span>
                 </div>
               </CardContent>
             </Card>
           ) : (
-            <Card className="rounded-[32px] border-primary/10 shadow-2xl overflow-hidden bg-card/80 backdrop-blur-xl">
-              <CardHeader className="p-8 pb-4">
-                <CardTitle className="text-xl font-black tracking-tighter flex items-center gap-2">
-                  <Send className="h-5 w-5 text-primary" /> Apply for Gig
+            <Card className="rounded-[40px] border-2 border-primary/20 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.2)] overflow-hidden bg-background/80 backdrop-blur-3xl">
+              <CardHeader className="p-10 pb-6 text-center">
+                <CardTitle className="text-3xl font-black uppercase tracking-tighter italic leading-none flex items-center justify-center gap-4">
+                  Initialize Handshake
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
-                  Position your expertise
+                <CardDescription className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 mt-3 italic">
+                  Proposal Transmission Node
                 </CardDescription>
               </CardHeader>
-              <CardContent className="p-8 pt-0 space-y-6">
-                {!isFixed && (
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">
-                      Proposed Credits
+              <CardContent className="p-10 pt-0 space-y-10">
+                <div className="space-y-8">
+                  {!isFixed && (
+                    <div className="space-y-3">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-2">
+                        Economic Proposal
+                      </Label>
+                      <div className="relative group">
+                        <Coins className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-amber-500 transition-transform group-focus-within:scale-110" />
+                        <Input
+                          type="number"
+                          placeholder={`Target: ${gig.budget_amount}`}
+                          className="pl-12 h-16 rounded-2xl border-2 border-border/40 bg-card/50 text-xl font-black tracking-tighter focus:border-primary/50 transition-all"
+                          value={bidAmount}
+                          onChange={(e) => setBidAmount(e.target.value)}
+                        />
+                      </div>
+                    </div>
+                  )}
+
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 ml-2">
+                      Temporal Commitment (Days)
                     </Label>
-                    <div className="relative">
-                      <Coins className="absolute left-3 top-3 h-4 w-4 text-amber-500" />
+                    <div className="relative group">
+                      <Clock className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40" />
                       <Input
                         type="number"
-                        placeholder={`Target: ${gig.budget_amount}`}
-                        className="pl-10 h-11 rounded-xl font-bold"
-                        value={bidAmount}
-                        onChange={(e) => setBidAmount(e.target.value)}
+                        placeholder="Expected Logic Sync Time"
+                        className="pl-12 h-16 rounded-2xl border-2 border-border/40 bg-card/50 font-bold"
+                        value={estimatedDays}
+                        onChange={(e) => setEstimatedDays(e.target.value)}
                       />
                     </div>
                   </div>
-                )}
 
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">
-                    Project Timeline (Days)
-                  </Label>
-                  <Input
-                    type="number"
-                    placeholder="e.g. 7"
-                    className="h-11 rounded-xl font-bold"
-                    value={estimatedDays}
-                    onChange={(e) => setEstimatedDays(e.target.value)}
-                  />
-                </div>
-
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest ml-1 text-muted-foreground">
-                    Strategic Proposal
-                  </Label>
-                  <Textarea
-                    placeholder="How will you deliver value on this project?"
-                    className="rounded-2xl min-h-[140px] resize-none"
-                    value={coverLetter}
-                    onChange={(e) => setCoverLetter(e.target.value)}
-                  />
+                  <div className="space-y-3">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-2">
+                      Strategic Narrative
+                    </Label>
+                    <Textarea
+                      placeholder="Articulate your technical value proposition..."
+                      className="rounded-3xl min-h-[220px] bg-muted/10 border-2 border-border/40 p-6 italic font-medium leading-relaxed resize-none focus:border-primary/40 transition-all"
+                      value={coverLetter}
+                      onChange={(e) => setCoverLetter(e.target.value)}
+                    />
+                  </div>
                 </div>
 
                 <Button
-                  className="w-full h-14 rounded-2xl font-black uppercase tracking-[0.15em] text-xs shadow-lg shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+                  className="w-full h-20 rounded-[32px] font-black uppercase tracking-[0.3em] text-[12px] shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 group overflow-hidden"
                   onClick={() => submitProposal.mutate()}
                   disabled={!coverLetter.trim() || (!isFixed && !bidAmount) || submitProposal.isPending}
                 >
-                  {submitProposal.isPending ? (
-                    <Loader2 className="h-5 w-5 animate-spin" />
-                  ) : (
-                    <>{isFixed ? "Accept Fixed Mission" : "Launch Proposal"}</>
-                  )}
+                  <span className="relative z-10 flex items-center gap-4">
+                    {submitProposal.isPending ? (
+                      <Loader2 className="h-6 w-6 animate-spin" />
+                    ) : (
+                      <>
+                        <Zap className="h-6 w-6 fill-current" />
+                        {isFixed ? "Execute Mission" : "Authorize Proposal"}
+                      </>
+                    )}
+                  </span>
+                  <div className="absolute inset-0 bg-gradient-to-r from-primary via-blue-600 to-primary opacity-50 group-hover:opacity-100 transition-opacity" />
                 </Button>
 
-                <div className="flex items-start gap-3 p-3 bg-muted/40 rounded-xl">
-                  <Info className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                  <p className="text-[9px] font-medium leading-relaxed text-muted-foreground">
-                    Submitting a proposal deducts 0 credits. Once accepted, a contract is generated and payment is
-                    handled via platform escrow.
+                <div className="p-6 rounded-2xl bg-primary/5 border border-primary/10 flex items-start gap-4">
+                  <ShieldCheck className="h-5 w-5 text-primary shrink-0" />
+                  <p className="text-[10px] font-bold leading-relaxed text-primary/60 uppercase tracking-widest italic">
+                    Protocol: 0 Credit Transmission Node. Escrow logic activates upon handshake acceptance.
                   </p>
                 </div>
               </CardContent>
