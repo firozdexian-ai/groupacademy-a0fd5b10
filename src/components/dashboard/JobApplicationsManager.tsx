@@ -39,8 +39,16 @@ import {
   Activity,
   ShieldCheck,
   Zap,
+  Terminal, // CTO FIX: Restored Terminal icon
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter, // CTO FIX: Restored DialogFooter
+} from "@/components/ui/dialog";
 import { Progress } from "@/components/ui/progress";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { format } from "date-fns";
@@ -137,6 +145,9 @@ export const JobApplicationsManager = () => {
   const [jobsList, setJobsList] = useState<{ id: string; title: string; company: string; count: number }[]>([]);
   const [selectedAssessment, setSelectedAssessment] = useState<any>(null);
 
+  // CTO FIX: Defined totalPages within the component scope
+  const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
+
   const loadRegistryTelemetry = useCallback(async () => {
     try {
       const { data } = await supabase.from("job_applications").select("job_id, jobs(title, company_name)");
@@ -227,6 +238,13 @@ export const JobApplicationsManager = () => {
     } catch (err) {
       toast.error("Handshake Failed");
     }
+  };
+
+  // CTO FIX: Defined handleCopyDetails within component scope
+  const handleCopyDetails = (app: JobApplication) => {
+    const details = `APPLICANT: ${app.talents?.full_name}\nEMAIL: ${app.talents?.email}\nJOB: ${app.jobs?.title}\nCOMPANY: ${app.jobs?.company_name}`;
+    navigator.clipboard.writeText(details);
+    toast.success("Handshake Copied to Clipboard");
   };
 
   const handleNotifyWhatsApp = async (app: JobApplication) => {
@@ -344,7 +362,6 @@ export const JobApplicationsManager = () => {
         </CardHeader>
 
         <CardContent className="p-8">
-          {/* Query Console */}
           <div className="grid grid-cols-1 lg:grid-cols-3 gap-4 mb-8 bg-muted/20 p-4 rounded-[28px] border-2 border-border/40">
             <div className="relative group lg:col-span-1">
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
@@ -401,155 +418,147 @@ export const JobApplicationsManager = () => {
             </div>
           </div>
 
-          {loading ? (
-            <DashboardTableSkeleton rows={5} columns={6} />
-          ) : (
-            <div className="rounded-[24px] border-2 border-border/20 overflow-hidden bg-background/50">
-              <Table>
-                <TableHeader className="bg-muted/30">
-                  <TableRow className="hover:bg-transparent border-b-2 border-border/10">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-6">
-                      Candidate Artifact
-                    </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
-                      Logic Target (Job)
-                    </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">AI_Forensics</TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">Status Protocol</TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
-                      Interrogation
-                    </TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {applications.map((app) => {
-                    const status = APPLICATION_STATUS_CONFIG[app.application_status || "submitted"];
-                    const score = app.job_assessments?.[0]?.ai_score || 0;
-                    return (
-                      <TableRow
-                        key={app.id}
-                        className="group transition-all hover:bg-primary/[0.02] border-b-2 border-border/5 last:border-0"
-                      >
-                        <TableCell className="px-6 py-6">
-                          <div className="space-y-1 text-left">
-                            <p className="font-black text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
-                              {app.talents?.full_name || "NULL_ENTITY"}
-                            </p>
-                            <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
-                              {app.talents?.email}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-left">
-                          <div className="space-y-1">
-                            <p className="font-black text-xs uppercase tracking-tighter italic leading-none">
-                              {app.jobs?.title}
-                            </p>
-                            <p className="text-[9px] font-bold text-muted-foreground/30 uppercase tracking-widest">
-                              {app.jobs?.company_name}
-                            </p>
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          {app.jobs?.ai_assessment_enabled ? (
-                            <div
-                              className="flex items-center gap-3 cursor-pointer group/ai"
-                              onClick={() =>
-                                setSelectedAssessment({
-                                  assessment: app.job_assessments![0],
-                                  applicantName: app.talents?.full_name,
-                                  jobTitle: app.jobs?.title,
-                                })
-                              }
-                            >
-                              <Brain
-                                className={cn(
-                                  "h-5 w-5 transition-transform group-hover/ai:scale-110",
-                                  score >= 70 ? "text-emerald-500" : "text-amber-500",
-                                )}
-                              />
-                              <span
-                                className={cn(
-                                  "font-black text-lg italic tracking-tighter leading-none",
-                                  score >= 70 ? "text-emerald-500" : "text-amber-500",
-                                )}
-                              >
-                                {score}%
-                              </span>
-                            </div>
-                          ) : (
-                            <span className="text-[9px] font-black opacity-10 uppercase tracking-widest">
-                              No_AI_Sync
-                            </span>
-                          )}
-                        </TableCell>
-                        <TableCell>
-                          <Select
-                            value={app.application_status || "submitted"}
-                            onValueChange={(v) => handleStatusUpdate(app.id, v as any)}
+          <div className="rounded-[24px] border-2 border-border/20 overflow-hidden bg-background/50">
+            <Table>
+              <TableHeader className="bg-muted/30">
+                <TableRow className="hover:bg-transparent border-b-2 border-border/10">
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-6">
+                    Candidate Artifact
+                  </TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Logic Target</TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest">AI_Forensics</TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Status Protocol</TableHead>
+                  <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                    Interrogation
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {applications.map((app) => {
+                  const status = APPLICATION_STATUS_CONFIG[app.application_status || "submitted"];
+                  const score = app.job_assessments?.[0]?.ai_score || 0;
+                  return (
+                    <TableRow
+                      key={app.id}
+                      className="group transition-all hover:bg-primary/[0.02] border-b-2 border-border/5 last:border-0"
+                    >
+                      <TableCell className="px-6 py-6">
+                        <div className="space-y-1 text-left">
+                          <p className="font-black text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
+                            {app.talents?.full_name || "NULL_ENTITY"}
+                          </p>
+                          <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                            {app.talents?.email}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell className="text-left">
+                        <div className="space-y-1">
+                          <p className="font-black text-xs uppercase tracking-tighter italic leading-none">
+                            {app.jobs?.title}
+                          </p>
+                          <p className="text-[9px] font-bold text-muted-foreground/30 uppercase tracking-widest">
+                            {app.jobs?.company_name}
+                          </p>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        {app.jobs?.ai_assessment_enabled ? (
+                          <div
+                            className="flex items-center gap-3 cursor-pointer group/ai"
+                            onClick={() =>
+                              setSelectedAssessment({
+                                assessment: app.job_assessments![0],
+                                applicantName: app.talents?.full_name,
+                                jobTitle: app.jobs?.title,
+                              })
+                            }
                           >
-                            <SelectTrigger
+                            <Brain
                               className={cn(
-                                "w-36 h-9 rounded-xl border-2 font-black uppercase text-[9px] tracking-widest shadow-sm",
-                                status.bg,
-                                status.color,
+                                "h-5 w-5 transition-transform group-hover/ai:scale-110",
+                                score >= 70 ? "text-emerald-500" : "text-amber-500",
+                              )}
+                            />
+                            <span
+                              className={cn(
+                                "font-black text-lg italic tracking-tighter leading-none",
+                                score >= 70 ? "text-emerald-500" : "text-amber-500",
                               )}
                             >
-                              <SelectValue />
-                            </SelectTrigger>
-                            <SelectContent className="rounded-xl border-2">
-                              {Object.entries(APPLICATION_STATUS_CONFIG).map(([k, v]) => (
-                                <SelectItem key={k} value={k} className="font-bold text-[9px] uppercase">
-                                  {v.label}
-                                </SelectItem>
-                              ))}
-                            </SelectContent>
-                          </Select>
-                        </TableCell>
-                        <TableCell className="text-right pr-8">
-                          <div className="flex justify-end gap-2">
-                            {app.cv_url && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all"
-                                onClick={() => window.open(app.cv_url!, "_blank")}
-                              >
-                                <FileText className="h-4 w-4" />
-                              </Button>
+                              {score}%
+                            </span>
+                          </div>
+                        ) : (
+                          <span className="text-[9px] font-black opacity-10 uppercase tracking-widest">No_AI_Sync</span>
+                        )}
+                      </TableCell>
+                      <TableCell>
+                        <Select
+                          value={app.application_status || "submitted"}
+                          onValueChange={(v) => handleStatusUpdate(app.id, v as any)}
+                        >
+                          <SelectTrigger
+                            className={cn(
+                              "w-36 h-9 rounded-xl border-2 font-black uppercase text-[9px] tracking-widest shadow-sm",
+                              status.bg,
+                              status.color,
                             )}
+                          >
+                            <SelectValue />
+                          </SelectTrigger>
+                          <SelectContent className="rounded-xl border-2">
+                            {Object.entries(APPLICATION_STATUS_CONFIG).map(([k, v]) => (
+                              <SelectItem key={k} value={k} className="font-bold text-[9px] uppercase">
+                                {v.label}
+                              </SelectItem>
+                            ))}
+                          </SelectContent>
+                        </Select>
+                      </TableCell>
+                      <TableCell className="text-right pr-8">
+                        <div className="flex justify-end gap-2">
+                          {app.cv_url && (
                             <Button
                               variant="ghost"
                               size="icon"
                               className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all"
-                              onClick={() => handleCopyDetails(app)}
+                              onClick={() => window.open(app.cv_url!, "_blank")}
                             >
-                              <Copy className="h-4 w-4" />
+                              <FileText className="h-4 w-4" />
                             </Button>
-                            {app.talents?.phone && app.delivery_status === "sent" && (
-                              <Button
-                                variant="ghost"
-                                size="icon"
-                                className={cn(
-                                  "h-10 w-10 rounded-xl transition-all",
-                                  app.applicant_notified_at
-                                    ? "text-emerald-500/30"
-                                    : "text-emerald-500 hover:bg-emerald-500/10",
-                                )}
-                                onClick={() => !app.applicant_notified_at && handleNotifyWhatsApp(app)}
-                              >
-                                <MessageSquare className="h-4 w-4" />
-                              </Button>
-                            )}
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    );
-                  })}
-                </TableBody>
-              </Table>
-            </div>
-          )}
+                          )}
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all"
+                            onClick={() => handleCopyDetails(app)}
+                          >
+                            <Copy className="h-4 w-4" />
+                          </Button>
+                          {app.talents?.phone && app.delivery_status === "sent" && (
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className={cn(
+                                "h-10 w-10 rounded-xl transition-all",
+                                app.applicant_notified_at
+                                  ? "text-emerald-500/30"
+                                  : "text-emerald-500 hover:bg-emerald-500/10",
+                              )}
+                              onClick={() => !app.applicant_notified_at && handleNotifyWhatsApp(app)}
+                            >
+                              <MessageSquare className="h-4 w-4" />
+                            </Button>
+                          )}
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  );
+                })}
+              </TableBody>
+            </Table>
+          </div>
 
           {totalPages > 1 && (
             <div className="flex items-center justify-between mt-10 p-8 bg-muted/20 rounded-[32px] border-2 border-border/40">
@@ -558,7 +567,7 @@ export const JobApplicationsManager = () => {
                   Registry Frame
                 </p>
                 <p className="text-xl font-black italic tracking-tighter leading-none">
-                  {page} <span className="text-xs opacity-20">of</span> {totalCount}
+                  {page} <span className="text-xs opacity-20">of</span> {totalPages}
                 </p>
               </div>
               <div className="flex gap-4">
@@ -586,7 +595,6 @@ export const JobApplicationsManager = () => {
         </CardContent>
       </Card>
 
-      {/* AI Forensics Modal */}
       <AssessmentDetailDialog
         isOpen={!!selectedAssessment}
         onClose={() => setSelectedAssessment(null)}
@@ -649,21 +657,18 @@ const AssessmentDetailDialog = ({ isOpen, onClose, assessment, applicantName, jo
                   Metadata
                 </TabsTrigger>
               </TabsList>
-              <TabsContent value="summary" className="space-y-6 animate-in fade-in slide-in-from-bottom-2">
-                <div className="p-6 bg-primary/5 rounded-[24px] border-2 border-primary/10 italic font-medium leading-relaxed text-foreground/80">
+              <TabsContent value="summary" className="space-y-6 text-left">
+                <div className="p-6 bg-primary/5 rounded-[24px] border-2 border-primary/10 italic font-medium leading-relaxed">
                   "{analysis.overall_assessment}"
                 </div>
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-6 text-left">
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="p-6 bg-emerald-500/5 rounded-[24px] border-2 border-emerald-500/10">
                     <p className="text-[10px] font-black text-emerald-600 uppercase tracking-widest mb-4">
                       Core Strengths
                     </p>
                     <ul className="space-y-2">
                       {analysis.strengths?.map((s: string, i: number) => (
-                        <li
-                          key={i}
-                          className="text-xs font-bold text-emerald-900 dark:text-emerald-100 flex items-start gap-2"
-                        >
+                        <li key={i} className="text-xs font-bold text-emerald-900 flex items-start gap-2">
                           <span>//</span> {s}
                         </li>
                       ))}
@@ -675,10 +680,7 @@ const AssessmentDetailDialog = ({ isOpen, onClose, assessment, applicantName, jo
                     </p>
                     <ul className="space-y-2">
                       {analysis.areas_for_improvement?.map((s: string, i: number) => (
-                        <li
-                          key={i}
-                          className="text-xs font-bold text-amber-900 dark:text-amber-100 flex items-start gap-2"
-                        >
+                        <li key={i} className="text-xs font-bold text-amber-900 flex items-start gap-2">
                           <span>//</span> {s}
                         </li>
                       ))}
@@ -686,7 +688,7 @@ const AssessmentDetailDialog = ({ isOpen, onClose, assessment, applicantName, jo
                   </div>
                 </div>
               </TabsContent>
-              <TabsContent value="breakdown" className="animate-in fade-in slide-in-from-bottom-2">
+              <TabsContent value="breakdown">
                 <div className="space-y-6">
                   {Object.entries(analysis.score_breakdown || {}).map(([key, val]: any) => (
                     <div key={key} className="space-y-2">
