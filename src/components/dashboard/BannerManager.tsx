@@ -21,13 +21,15 @@ import { cn } from "@/lib/utils";
  * 2026 Standard: Executive Logic geometry with reinforced placement telemetry.
  */
 
+type PlacementType = "carousel" | "hero" | "learning";
+
 interface Banner {
   id: string;
   image_url: string;
   link_content_id: string | null;
   display_order: number;
   is_active: boolean;
-  placement: "carousel" | "hero" | "learning";
+  placement: PlacementType;
   content?: {
     id: string;
     title: string;
@@ -48,7 +50,7 @@ export const BannerManager = () => {
     image_url: "",
     link_content_id: "none",
     display_order: 0,
-    placement: "carousel" as "carousel" | "hero" | "learning",
+    placement: "carousel" as PlacementType,
   });
 
   useEffect(() => {
@@ -72,7 +74,14 @@ export const BannerManager = () => {
         "Registry Link Timeout",
       );
       if (bannersResult.error) throw bannersResult.error;
-      setBanners(bannersResult.data || []);
+
+      // CTO FIX: Assert types for generic database strings to match our strict union types
+      const typedBanners = (bannersResult.data as any[]).map((banner) => ({
+        ...banner,
+        placement: banner.placement as PlacementType,
+      })) as Banner[];
+
+      setBanners(typedBanners);
 
       const contentResult = await withTimeout(
         Promise.resolve(supabase.from("content").select("id, title").eq("is_published", true).order("title")),
@@ -237,7 +246,7 @@ export const BannerManager = () => {
                     </Label>
                     <Select
                       value={newBanner.placement}
-                      onValueChange={(v: any) => setNewBanner({ ...newBanner, placement: v })}
+                      onValueChange={(v: PlacementType) => setNewBanner({ ...newBanner, placement: v })}
                     >
                       <SelectTrigger className="h-14 rounded-2xl border-2 font-bold bg-background/50">
                         <SelectValue />
