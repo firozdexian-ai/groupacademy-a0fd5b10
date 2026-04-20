@@ -255,8 +255,8 @@ export default function AppCareerAssessment() {
               categoryName={selectedCategory.name}
               answers={answers}
               email={email}
-              onComplete={(capturedEmail: string) => {
-                if (capturedEmail) setEmail(capturedEmail);
+              // FIX: Handshake aligned with () => void signature
+              onComplete={() => {
                 setStep("processing");
               }}
               onBack={() => setStep("questions")}
