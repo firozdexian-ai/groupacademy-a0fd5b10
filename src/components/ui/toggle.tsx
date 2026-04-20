@@ -11,12 +11,12 @@ import { cn } from "@/lib/utils";
  */
 
 const toggleVariants = cva(
-  "inline-flex items-center justify-center transition-all duration-300 outline-none disabled:pointer-events-none disabled:opacity-20",
+  "inline-flex items-center justify-center transition-all duration-300 outline-none disabled:pointer-events-none disabled:opacity-20 data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-lg data-[state=on]:shadow-primary/20 focus-visible:ring-4 focus-visible:ring-primary/10",
   {
     variants: {
       variant: {
         default: "bg-transparent hover:bg-primary/10 hover:text-primary",
-        outline: 
+        outline:
           "border-2 border-border/40 bg-background/50 hover:border-primary/40 hover:bg-primary/5 active:scale-95",
       },
       size: {
@@ -24,11 +24,6 @@ const toggleVariants = cva(
         sm: "h-10 px-3.5 rounded-lg text-[9px] font-black uppercase tracking-widest",
         lg: "h-14 px-8 rounded-2xl text-[11px] font-black uppercase tracking-widest",
       },
-    },
-    {
-      // Executive Logic State Hardening
-      "data-[state=on]:bg-primary data-[state=on]:text-primary-foreground data-[state=on]:shadow-lg data-[state=on]:shadow-primary/20",
-      "focus-visible:ring-4 focus-visible:ring-primary/10 focus-visible:ring-offset-0",
     },
     defaultVariants: {
       variant: "default",
@@ -41,11 +36,7 @@ const Toggle = React.forwardRef<
   React.ElementRef<typeof TogglePrimitive.Root>,
   React.ComponentPropsWithoutRef<typeof TogglePrimitive.Root> & VariantProps<typeof toggleVariants>
 >(({ className, variant, size, ...props }, ref) => (
-  <TogglePrimitive.Root 
-    ref={ref} 
-    className={cn(toggleVariants({ variant, size, className }))} 
-    {...props} 
-  />
+  <TogglePrimitive.Root ref={ref} className={cn(toggleVariants({ variant, size, className }))} {...props} />
 ));
 
 Toggle.displayName = TogglePrimitive.Root.displayName;
