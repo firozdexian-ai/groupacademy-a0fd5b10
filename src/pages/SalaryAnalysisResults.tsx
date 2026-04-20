@@ -11,13 +11,27 @@ import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
 import { SalaryAnalysisPDFTemplate } from "@/components/salary-analysis/SalaryAnalysisPDFTemplate";
 import { generateSalaryAnalysisPDF } from "@/lib/salaryPdfGenerator";
-import { 
-  TrendingUp, Target, Lightbulb, CheckCircle, AlertTriangle, 
-  ArrowRight, Download, Share2, Briefcase, FileText, Loader2, RefreshCw
+import {
+  TrendingUp,
+  Target,
+  Lightbulb,
+  CheckCircle2,
+  AlertCircle,
+  ArrowRight,
+  Download,
+  Share2,
+  Briefcase,
+  FileText,
+  Loader2,
+  Sparkles,
+  ShieldCheck,
+  Globe,
+  Zap,
 } from "lucide-react";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { RetryErrorCard, getErrorType } from "@/components/ui/retry-error-card";
+import { cn } from "@/lib/utils";
 
 interface RecommendedCourse {
   id: string;
@@ -31,7 +45,7 @@ interface RecommendedCourse {
 const SalaryAnalysisResults = () => {
   const { id } = useParams<{ id: string }>();
   const { toast } = useToast();
-  
+
   const [analysis, setAnalysis] = useState<any>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [loadError, setLoadError] = useState<string | null>(null);
@@ -41,500 +55,343 @@ const SalaryAnalysisResults = () => {
 
   const fetchAnalysis = async () => {
     if (!id) return;
-    setLoadError(null);
-
+    setIsLoading(true);
     try {
-      const result = await withTimeout(
-        (async () => {
-          const { data, error } = await supabase
-            .from("salary_analyses")
-            .select("*, profession_categories(name)")
-            .eq("id", id)
-            .single();
-          return { data, error };
-        })(),
-        TIMEOUTS.DEFAULT,
-        "Loading results timed out"
-      );
-
-      const { data, error } = result;
+      const { data, error } = await supabase
+        .from("salary_analyses")
+        .select("*, profession_categories(name)")
+        .eq("id", id)
+        .single();
 
       if (error) throw error;
       setAnalysis(data);
 
-      // Load recommended courses based on profession
       if (data.profession_category_id) {
         loadRecommendedCourses(data.profession_category_id);
       }
-    } catch (error: any) {
-      console.error("Error fetching analysis:", error);
-      const errorMessage = error.message?.includes("timed out")
-        ? "Loading took too long. Please try again."
-        : "Failed to load results.";
-      setLoadError(errorMessage);
+    } catch (err: any) {
+      setLoadError("Results node currently unreachable.");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const loadRecommendedCourses = async (professionCategoryId: string) => {
+  const loadRecommendedCourses = async (catId: string) => {
     setLoadingCourses(true);
-    try {
-      const { data, error } = await supabase
-        .from('content')
-        .select('id, title, slug, description, estimated_hours, thumbnail_url')
-        .eq('profession_line_id', professionCategoryId)
-        .eq('is_published', true)
-        .limit(3);
-
-      if (!error && data) {
-        setRecommendedCourses(data);
-      }
-    } catch (error) {
-      console.error('Error loading recommended courses:', error);
-    } finally {
-      setLoadingCourses(false);
-    }
+    const { data } = await supabase
+      .from("content")
+      .select("id, title, slug, description, estimated_hours, thumbnail_url")
+      .eq("profession_line_id", catId)
+      .eq("is_published", true)
+      .limit(3);
+    if (data) setRecommendedCourses(data);
+    setLoadingCourses(false);
   };
 
   useEffect(() => {
     fetchAnalysis();
   }, [id]);
 
-  const formatSalary = (amount: number) => {
-    return new Intl.NumberFormat('en-US').format(amount);
-  };
-
-  const getPositionBadge = (positioning: string) => {
-    switch (positioning) {
-      case "above_market":
-        return <Badge className="bg-green-500">Above Market</Badge>;
-      case "below_market":
-        return <Badge variant="destructive">Below Market</Badge>;
-      default:
-        return <Badge variant="secondary">At Market Rate</Badge>;
-    }
-  };
-
-  const getDemandBadge = (level: string) => {
-    switch (level) {
-      case "high":
-        return <Badge className="bg-green-500">High Demand</Badge>;
-      case "low":
-        return <Badge variant="destructive">Low Demand</Badge>;
-      default:
-        return <Badge variant="secondary">Medium Demand</Badge>;
-    }
-  };
+  const formatSalary = (amount: number) => new Intl.NumberFormat("en-US").format(amount);
 
   const handleDownloadPDF = async () => {
     setIsGeneratingPDF(true);
-    try {
-      const filename = `salary-analysis-${analysis.full_name.replace(/\s+/g, "-").toLowerCase()}.pdf`;
-      const success = await generateSalaryAnalysisPDF("salary-analysis-pdf-content", filename);
-      if (success) {
-        toast({ title: "PDF downloaded successfully!" });
-      } else {
-        toast({ title: "Failed to generate PDF", variant: "destructive" });
-      }
-    } catch (error) {
-      console.error("PDF generation error:", error);
-      toast({ title: "Failed to generate PDF", variant: "destructive" });
-    } finally {
-      setIsGeneratingPDF(false);
-    }
+    const filename = `valuation-${analysis.full_name.split(" ")[0]}-${id?.slice(0, 5)}.pdf`;
+    const success = await generateSalaryAnalysisPDF("salary-analysis-pdf-content", filename);
+    if (success) toast({ title: "Intelligence Exported." });
+    setIsGeneratingPDF(false);
   };
 
-  if (isLoading) {
+  if (isLoading)
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="container mx-auto py-20 flex flex-col items-center justify-center">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <p className="mt-4 text-muted-foreground">Loading your results...</p>
-        </div>
-        <Footer />
+      <div className="min-h-screen bg-background flex flex-col items-center justify-center p-6">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground mt-4">
+          Decrypting Market Logic
+        </p>
       </div>
     );
-  }
 
-  if (loadError) {
+  if (loadError || !analysis?.ai_analysis)
     return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="container mx-auto py-20 max-w-md">
-          <RetryErrorCard
-            type={getErrorType({ message: loadError })}
-            description={loadError}
-            onRetry={() => { setIsLoading(true); fetchAnalysis(); }}
-          />
-        </div>
-        <Footer />
+      <div className="min-h-screen bg-background flex items-center justify-center p-6">
+        <RetryErrorCard type="server" description={loadError || "Analysis missing"} onRetry={fetchAnalysis} />
       </div>
     );
-  }
 
-  if (!analysis || !analysis.ai_analysis) {
-    return (
-      <div className="min-h-screen bg-background">
-        <Navbar />
-        <div className="container mx-auto py-20 text-center">
-          <h1 className="text-2xl font-bold mb-4">Results Not Found</h1>
-          <p className="text-muted-foreground mb-8">This analysis may still be processing or doesn't exist.</p>
-          <Button asChild>
-            <Link to="/salary-analysis">Back to Salary Analysis</Link>
-          </Button>
-        </div>
-        <Footer />
-      </div>
-    );
-  }
-
-  const ai = analysis.ai_analysis;
+  const { ai_analysis: ai } = analysis;
   const salaryRange = ai.market_salary_range;
   const skills = ai.skills_analysis;
-  const tips = ai.negotiation_tips;
   const insights = ai.market_insights;
 
   return (
-    <div className="min-h-screen bg-background">
+    <div className="min-h-screen bg-muted/20 selection:bg-primary/10">
       <Navbar />
-      
-      <div className="container mx-auto max-w-4xl py-12 px-4">
-        {/* Header */}
-        <div className="text-center mb-10">
-          <h1 className="text-3xl font-bold mb-2">Your Salary Analysis Results</h1>
-          <p className="text-muted-foreground">
-            {analysis.job_title ? `For: ${analysis.job_title}` : "Job Analysis"} 
-            {analysis.company_name && ` at ${analysis.company_name}`}
-          </p>
-          <div className="flex justify-center gap-2 mt-4">
-            {getPositionBadge(ai.salary_positioning)}
-            {getDemandBadge(insights?.demand_level)}
+
+      <main className="container max-w-5xl mx-auto py-12 px-6 space-y-10 animate-in fade-in duration-700">
+        {/* Executive Header */}
+        <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
+          <div className="space-y-3">
+            <Badge
+              variant="outline"
+              className="rounded-full px-4 py-1 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[9px] tracking-[0.2em]"
+            >
+              <Sparkles className="w-3 h-3 mr-2" /> Valuation Artifact Optimized
+            </Badge>
+            <h1 className="text-4xl md:text-5xl font-black tracking-tighter uppercase leading-none">
+              Market Intelligence
+            </h1>
+            <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground uppercase tracking-tight">
+              <Briefcase className="h-4 w-4 text-primary" /> {analysis.job_title || "Professional Role"}
+              <span className="opacity-20">•</span>
+              <Globe className="h-4 w-4" /> Global Market Node
+            </div>
           </div>
-        </div>
+          <div className="flex gap-2">
+            <Button
+              variant="outline"
+              className="rounded-xl h-12 font-black uppercase text-[10px] tracking-widest border-border/40"
+              onClick={handleDownloadPDF}
+              disabled={isGeneratingPDF}
+            >
+              {isGeneratingPDF ? <Loader2 className="animate-spin" /> : <Download className="h-4 w-4 mr-2" />} Export
+              PDF
+            </Button>
+          </div>
+        </header>
 
-        {/* Summary */}
-        <Card className="mb-6 bg-gradient-to-br from-primary/5 to-accent/5">
-          <CardContent className="pt-6">
-            <p className="text-lg text-center">{ai.summary}</p>
-          </CardContent>
-        </Card>
-
-        {/* Readiness Score */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-primary" />
-              Overall Readiness Score
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="flex items-center gap-4">
-              <div className="flex-1">
-                <Progress value={ai.overall_readiness_score} className="h-4" />
-              </div>
-              <span className="text-3xl font-bold text-primary">{ai.overall_readiness_score}%</span>
-            </div>
-          </CardContent>
-        </Card>
-
-        {/* Salary Range */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <TrendingUp className="h-5 w-5 text-green-500" />
-              Market Salary Range
-            </CardTitle>
-            <CardDescription>{salaryRange?.market_context}</CardDescription>
-          </CardHeader>
-          <CardContent>
-            <div className="grid grid-cols-3 gap-4 text-center">
-              <div className="p-4 bg-muted/50 rounded-lg">
-                <p className="text-sm text-muted-foreground">Minimum</p>
-                <p className="text-2xl font-bold">${formatSalary(salaryRange?.min_monthly)}</p>
-                <p className="text-xs text-muted-foreground">/month</p>
-              </div>
-              <div className="p-4 bg-primary/10 rounded-lg border-2 border-primary">
-                <p className="text-sm text-muted-foreground">Median</p>
-                <p className="text-2xl font-bold text-primary">${formatSalary(salaryRange?.median_monthly)}</p>
-                <p className="text-xs text-muted-foreground">/month</p>
-              </div>
-              <div className="p-4 bg-muted/50 rounded-lg">
-                <p className="text-sm text-muted-foreground">Maximum</p>
-                <p className="text-2xl font-bold">${formatSalary(salaryRange?.max_monthly)}</p>
-                <p className="text-xs text-muted-foreground">/month</p>
-              </div>
-            </div>
-            <p className="text-center mt-4 text-sm text-muted-foreground">
-              Experience Level: <Badge variant="outline">{salaryRange?.experience_level}</Badge>
-            </p>
-          </CardContent>
-        </Card>
-
-        {/* Skills Analysis */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Target className="h-5 w-5 text-blue-500" />
-              Skills Gap Analysis
-            </CardTitle>
-            <CardDescription>
-              Skills Gap Score: {skills?.skills_gap_score}% match
-            </CardDescription>
-          </CardHeader>
-          <CardContent className="space-y-6">
-            <div className="grid md:grid-cols-2 gap-6">
-              <div>
-                <h4 className="font-medium mb-3 flex items-center gap-2">
-                  <CheckCircle className="h-4 w-4 text-green-500" />
-                  Matching Skills
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {skills?.matching_skills?.map((skill: string, idx: number) => (
-                    <Badge key={idx} variant="secondary" className="bg-green-100 text-green-800">
-                      {skill}
-                    </Badge>
-                  ))}
-                  {(!skills?.matching_skills || skills.matching_skills.length === 0) && (
-                    <p className="text-sm text-muted-foreground">No matching skills identified</p>
-                  )}
+        <div className="grid lg:grid-cols-3 gap-8">
+          <div className="lg:col-span-2 space-y-8">
+            {/* Logic Score HUD */}
+            <Card className="rounded-[40px] border-border/40 shadow-2xl bg-card overflow-hidden">
+              <CardContent className="p-10 flex flex-col md:flex-row items-center gap-10">
+                <div className="relative h-32 w-32 shrink-0">
+                  <div className="absolute inset-0 rounded-full border-[8px] border-primary/10" />
+                  <div
+                    className="absolute inset-0 rounded-full border-[8px] border-primary border-t-transparent -rotate-45"
+                    style={{
+                      clipPath: `polygon(0 0, 100% 0, 100% ${ai.overall_readiness_score}%, 0 ${ai.overall_readiness_score}%)`,
+                    }}
+                  />
+                  <div className="absolute inset-0 flex flex-col items-center justify-center">
+                    <span className="text-3xl font-black">{ai.overall_readiness_score}%</span>
+                    <span className="text-[8px] font-black uppercase tracking-tighter opacity-40 text-primary">
+                      Readiness
+                    </span>
+                  </div>
                 </div>
-              </div>
-              <div>
-                <h4 className="font-medium mb-3 flex items-center gap-2">
-                  <AlertTriangle className="h-4 w-4 text-amber-500" />
-                  Skills to Develop
-                </h4>
-                <div className="flex flex-wrap gap-2">
-                  {skills?.missing_skills?.map((skill: string, idx: number) => (
-                    <Badge key={idx} variant="outline" className="border-amber-500 text-amber-700">
-                      {skill}
-                    </Badge>
-                  ))}
-                  {(!skills?.missing_skills || skills.missing_skills.length === 0) && (
-                    <p className="text-sm text-muted-foreground">No skill gaps identified</p>
-                  )}
+                <div className="space-y-4 text-center md:text-left">
+                  <h3 className="text-xl font-black uppercase tracking-tight">Strategic Summary</h3>
+                  <p className="text-muted-foreground leading-relaxed font-medium italic">"{ai.summary}"</p>
                 </div>
-              </div>
-            </div>
-            {skills?.recommendations && skills.recommendations.length > 0 && (
-              <div>
-                <h4 className="font-medium mb-3">Recommendations</h4>
-                <ul className="space-y-2">
-                  {skills.recommendations.map((rec: string, idx: number) => (
-                    <li key={idx} className="flex items-start gap-2">
-                      <ArrowRight className="h-4 w-4 text-primary mt-1 flex-shrink-0" />
-                      <span className="text-sm">{rec}</span>
-                    </li>
-                  ))}
-                </ul>
-              </div>
-            )}
-          </CardContent>
-        </Card>
+              </CardContent>
+            </Card>
 
-        {/* Negotiation Tips */}
-        <Card className="mb-6">
-          <CardHeader>
-            <CardTitle className="flex items-center gap-2">
-              <Lightbulb className="h-5 w-5 text-amber-500" />
-              Negotiation Tips
-            </CardTitle>
-          </CardHeader>
-          <CardContent>
-            <div className="space-y-4">
-              {tips?.map((tip: any, idx: number) => (
-                <div key={idx} className="p-4 bg-muted/30 rounded-lg">
-                  <p className="font-medium">{tip.tip}</p>
-                  <p className="text-sm text-muted-foreground mt-1">{tip.rationale}</p>
-                </div>
+            {/* Salary Grid Nodes */}
+            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+              {[
+                {
+                  label: "Minimum Node",
+                  val: salaryRange?.min_monthly,
+                  color: "bg-muted/30 border-border/40 text-muted-foreground",
+                },
+                {
+                  label: "Median Target",
+                  val: salaryRange?.median_monthly,
+                  color: "bg-primary/5 border-primary/20 text-primary",
+                },
+                {
+                  label: "Alpha Tier",
+                  val: salaryRange?.max_monthly,
+                  color: "bg-emerald-500/5 border-emerald-500/20 text-emerald-600",
+                },
+              ].map((node, i) => (
+                <Card
+                  key={i}
+                  className={cn("rounded-3xl border-2 overflow-hidden transition-all hover:scale-[1.02]", node.color)}
+                >
+                  <CardContent className="p-6 text-center space-y-1">
+                    <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-60">{node.label}</p>
+                    <p className="text-3xl font-black tracking-tighter">${formatSalary(node.val)}</p>
+                    <p className="text-[10px] font-bold opacity-40">Monthly USD</p>
+                  </CardContent>
+                </Card>
               ))}
             </div>
-          </CardContent>
-        </Card>
 
-        {/* Action Plan */}
-        {ai.action_plan && ai.action_plan.length > 0 && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Your Action Plan</CardTitle>
-            </CardHeader>
-            <CardContent>
-              <ol className="space-y-3">
-                {ai.action_plan.map((action: string, idx: number) => (
-                  <li key={idx} className="flex items-start gap-3">
-                    <span className="w-6 h-6 rounded-full bg-primary text-primary-foreground flex items-center justify-center text-sm font-medium flex-shrink-0">
-                      {idx + 1}
-                    </span>
-                    <span>{action}</span>
-                  </li>
+            {/* Logic Gaps (Skills) */}
+            <Card className="rounded-[40px] border-border/40 shadow-xl bg-card overflow-hidden">
+              <CardHeader className="p-8 pb-4 border-b border-border/10 bg-muted/20">
+                <CardTitle className="text-xl font-black tracking-tight uppercase flex items-center gap-2">
+                  <Target className="h-5 w-5 text-primary" /> Verification Matrix
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8 space-y-10">
+                <div className="grid md:grid-cols-2 gap-10">
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-emerald-600 flex items-center gap-2">
+                      <CheckCircle2 className="h-3 w-3" /> Validated Core Skills
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {skills?.matching_skills?.map((s: string) => (
+                        <Badge
+                          key={s}
+                          className="bg-emerald-500/10 text-emerald-700 border-none rounded-lg font-bold px-3 py-1.5"
+                        >
+                          {s}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                  <div className="space-y-4">
+                    <h4 className="text-[10px] font-black uppercase tracking-widest text-amber-600 flex items-center gap-2">
+                      <AlertCircle className="h-3 w-3" /> Growth Nodes Detected
+                    </h4>
+                    <div className="flex flex-wrap gap-2">
+                      {skills?.missing_skills?.map((s: string) => (
+                        <Badge
+                          key={s}
+                          variant="outline"
+                          className="border-amber-500/30 text-amber-700 rounded-lg font-bold px-3 py-1.5"
+                        >
+                          {s}
+                        </Badge>
+                      ))}
+                    </div>
+                  </div>
+                </div>
+
+                {skills?.recommendations && (
+                  <div className="p-6 rounded-3xl bg-primary/[0.03] border border-primary/10 space-y-4">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-primary">
+                      Strategic Recommendations
+                    </p>
+                    <ul className="space-y-3">
+                      {skills.recommendations.map((rec: string, i: number) => (
+                        <li key={i} className="flex gap-3 text-sm font-medium leading-tight">
+                          <Zap className="h-4 w-4 text-primary shrink-0" /> {rec}
+                        </li>
+                      ))}
+                    </ul>
+                  </div>
+                )}
+              </CardContent>
+            </Card>
+
+            {/* Negotiation Protocol */}
+            <Card className="rounded-[40px] border-border/40 shadow-xl bg-card overflow-hidden">
+              <CardHeader className="p-8 pb-4 bg-amber-500/[0.03] border-b border-amber-500/10">
+                <CardTitle className="text-xl font-black tracking-tight uppercase flex items-center gap-2">
+                  <Lightbulb className="h-5 w-5 text-amber-500" /> Negotiation Protocols
+                </CardTitle>
+              </CardHeader>
+              <CardContent className="p-8 space-y-6">
+                {ai.negotiation_tips?.map((tip: any, i: number) => (
+                  <div key={i} className="space-y-2 group">
+                    <p className="font-black text-sm uppercase tracking-tight group-hover:text-primary transition-colors">
+                      {tip.tip}
+                    </p>
+                    <p className="text-sm text-muted-foreground leading-relaxed border-l-2 border-border/40 pl-4">
+                      {tip.rationale}
+                    </p>
+                  </div>
                 ))}
-              </ol>
-            </CardContent>
-          </Card>
-        )}
+              </CardContent>
+            </Card>
+          </div>
 
-        {/* Market Insights */}
-        {insights && (
-          <Card className="mb-6">
-            <CardHeader>
-              <CardTitle>Market Insights</CardTitle>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              <div className="flex gap-4">
-                <Badge variant="outline">
-                  Growth: {insights.growth_trajectory}
+          {/* Upsell Sidebar HUD */}
+          <aside className="space-y-8">
+            <Card className="rounded-[32px] border-primary/20 bg-primary/5 shadow-2xl overflow-hidden sticky top-24">
+              <CardContent className="p-8 space-y-8">
+                <div className="space-y-2">
+                  <h4 className="font-black uppercase tracking-widest text-[10px] text-primary flex items-center gap-2">
+                    <ShieldCheck className="h-4 w-4" /> Skill Injection
+                  </h4>
+                  <p className="text-xs font-medium leading-relaxed">
+                    Closing identified growth nodes will increase your Market Node valuation by up to 25%.
+                  </p>
+                </div>
+
+                <div className="space-y-4">
+                  {loadingCourses ? (
+                    <Loader2 className="h-6 w-6 animate-spin mx-auto text-primary" />
+                  ) : (
+                    recommendedCourses.map((c) => (
+                      <Link key={c.id} to={`/courses/${c.slug}`} className="block group">
+                        <div className="p-4 rounded-2xl bg-background border border-border/40 hover:border-primary/40 transition-all shadow-sm">
+                          <p className="text-[10px] font-black uppercase text-primary mb-1">Target Skill Unlocked</p>
+                          <h5 className="font-bold text-sm line-clamp-1 group-hover:underline underline-offset-4">
+                            {c.title}
+                          </h5>
+                        </div>
+                      </Link>
+                    ))
+                  )}
+                </div>
+
+                <Button
+                  asChild
+                  className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20"
+                >
+                  <Link to="/courses">
+                    Explore Academy Hub <ArrowRight className="ml-2 h-4 w-4" />
+                  </Link>
+                </Button>
+              </CardContent>
+            </Card>
+
+            <Card className="rounded-[32px] border-border/40 bg-card p-8 space-y-6">
+              <div className="space-y-1">
+                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Market Pulse</p>
+                <Badge className="bg-emerald-500/10 text-emerald-600 border-none uppercase text-[8px] font-black">
+                  {insights?.demand_level} Demand
                 </Badge>
               </div>
-              {insights.industry_trends && insights.industry_trends.length > 0 && (
-                <div>
-                  <p className="text-sm font-medium mb-2">Industry Trends:</p>
-                  <ul className="text-sm text-muted-foreground space-y-1">
-                    {insights.industry_trends.map((trend: string, idx: number) => (
-                      <li key={idx}>• {trend}</li>
-                    ))}
-                  </ul>
-                </div>
-              )}
-            </CardContent>
-          </Card>
-        )}
-
-        <Separator className="my-8" />
-
-        {/* CTAs */}
-        <div className="grid md:grid-cols-2 gap-4 mb-8">
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-primary/10">
-                  <Briefcase className="h-6 w-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold">Ready to Apply?</h3>
-                  <p className="text-sm text-muted-foreground">Browse job openings now</p>
-                </div>
-                <Button asChild>
-                  <Link to="/jobs">View Jobs</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-          <Card>
-            <CardContent className="pt-6">
-              <div className="flex items-center gap-4">
-                <div className="p-3 rounded-full bg-primary/10">
-                  <FileText className="h-6 w-6 text-primary" />
-                </div>
-                <div className="flex-1">
-                  <h3 className="font-semibold">Build Your Portfolio</h3>
-                  <p className="text-sm text-muted-foreground">Stand out from other candidates</p>
-                </div>
-                <Button asChild variant="outline">
-                  <Link to="/portfolio-request">Get Portfolio</Link>
-                </Button>
-              </div>
-            </CardContent>
-          </Card>
-        </div>
-
-        {/* Recommended Courses */}
-        <Card className="mb-8">
-          <CardContent className="pt-6">
-            <div className="mb-4">
-              <h3 className="font-semibold mb-1">Recommended Courses for You</h3>
-              <p className="text-sm text-muted-foreground">
-                Develop the skills employers are looking for
-              </p>
-            </div>
-            
-            {loadingCourses ? (
-              <div className="flex items-center justify-center py-4">
-                <Loader2 className="h-6 w-6 animate-spin text-muted-foreground" />
-              </div>
-            ) : recommendedCourses.length > 0 ? (
-              <div className="grid sm:grid-cols-3 gap-4 mb-4">
-                {recommendedCourses.map((course) => (
-                  <Link
-                    key={course.id}
-                    to={`/courses/${course.slug}`}
-                    className="rounded-lg border bg-card p-4 hover:shadow-md transition-shadow"
-                  >
-                    {course.thumbnail_url && (
-                      <img
-                        src={course.thumbnail_url}
-                        alt={course.title}
-                        className="w-full h-24 object-cover rounded-md mb-3"
-                      />
-                    )}
-                    <h4 className="font-medium text-sm mb-1 line-clamp-2">{course.title}</h4>
-                    {course.estimated_hours && (
-                      <p className="text-xs text-muted-foreground">{course.estimated_hours}h estimated</p>
-                    )}
-                  </Link>
+              <div className="space-y-4">
+                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 border-b pb-2">
+                  Industry Trends
+                </p>
+                {insights?.industry_trends?.map((t: string, i: number) => (
+                  <div key={i} className="flex gap-3 items-start text-[11px] font-medium leading-tight">
+                    <div className="h-1.5 w-1.5 rounded-full bg-primary mt-1 shrink-0" /> {t}
+                  </div>
                 ))}
               </div>
-            ) : null}
-            
-            <Button asChild variant="secondary" className="w-full sm:w-auto">
-              <Link to="/courses">
-                Explore All Courses
-                <ArrowRight className="ml-2 h-4 w-4" />
-              </Link>
-            </Button>
-          </CardContent>
-        </Card>
-
-        {/* Share/Download */}
-        <div className="flex flex-wrap justify-center gap-4">
-          <Button 
-            variant="outline" 
-            onClick={handleDownloadPDF}
-            disabled={isGeneratingPDF}
-          >
-            {isGeneratingPDF ? (
-              <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-            ) : (
-              <Download className="mr-2 h-4 w-4" />
-            )}
-            {isGeneratingPDF ? "Generating..." : "Download PDF"}
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={() => {
-              const text = `I just completed my AI Salary Analysis on GroUp Academy! My readiness score: ${ai.overall_readiness_score}%. Check out your market value too!`;
-              const url = window.location.href;
-              window.open(`https://www.linkedin.com/sharing/share-offsite/?url=${encodeURIComponent(url)}`, "_blank");
-            }}
-          >
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M20.447 20.452h-3.554v-5.569c0-1.328-.027-3.037-1.852-3.037-1.853 0-2.136 1.445-2.136 2.939v5.667H9.351V9h3.414v1.561h.046c.477-.9 1.637-1.85 3.37-1.85 3.601 0 4.267 2.37 4.267 5.455v6.286zM5.337 7.433c-1.144 0-2.063-.926-2.063-2.065 0-1.138.92-2.063 2.063-2.063 1.14 0 2.064.925 2.064 2.063 0 1.139-.925 2.065-2.064 2.065zm1.782 13.019H3.555V9h3.564v11.452zM22.225 0H1.771C.792 0 0 .774 0 1.729v20.542C0 23.227.792 24 1.771 24h20.451C23.2 24 24 23.227 24 22.271V1.729C24 .774 23.2 0 22.222 0h.003z"/>
-            </svg>
-            LinkedIn
-          </Button>
-          <Button 
-            variant="outline"
-            onClick={() => {
-              const text = `I just completed my AI Salary Analysis on @GroUpAcademy! My readiness score: ${ai.overall_readiness_score}%. Discover your market value 👉`;
-              const url = window.location.href;
-              window.open(`https://twitter.com/intent/tweet?text=${encodeURIComponent(text)}&url=${encodeURIComponent(url)}`, "_blank");
-            }}
-          >
-            <svg className="mr-2 h-4 w-4" viewBox="0 0 24 24" fill="currentColor">
-              <path d="M18.244 2.25h3.308l-7.227 8.26 8.502 11.24H16.17l-5.214-6.817L4.99 21.75H1.68l7.73-8.835L1.254 2.25H8.08l4.713 6.231zm-1.161 17.52h1.833L7.084 4.126H5.117z"/>
-            </svg>
-            Twitter/X
-          </Button>
+            </Card>
+          </aside>
         </div>
 
-        {/* Hidden PDF Template */}
-        <div style={{ display: "none" }}>
-          <SalaryAnalysisPDFTemplate analysis={analysis} />
+        {/* Global Action Nodes */}
+        <Separator className="bg-border/40" />
+        <div className="grid md:grid-cols-2 gap-4 pb-20">
+          <Button
+            variant="ghost"
+            asChild
+            className="h-16 rounded-[24px] bg-muted/30 border border-border/40 font-black uppercase text-[10px] tracking-widest"
+          >
+            <Link to="/app/feed">
+              <RefreshCw className="h-4 w-4 mr-2" /> Return to Sequence Feed
+            </Link>
+          </Button>
+          <Button
+            variant="ghost"
+            asChild
+            className="h-16 rounded-[24px] bg-primary/5 border border-primary/20 text-primary font-black uppercase text-[10px] tracking-widest"
+          >
+            <Link to="/portfolio-request">
+              <FileText className="h-4 w-4 mr-2" /> Engineering Artifact (Portfolio)
+            </Link>
+          </Button>
         </div>
-      </div>
+      </main>
 
       <Footer />
+
+      {/* Serialization Engine */}
+      <div className="hidden">
+        <SalaryAnalysisPDFTemplate analysis={analysis} />
+      </div>
     </div>
   );
 };
