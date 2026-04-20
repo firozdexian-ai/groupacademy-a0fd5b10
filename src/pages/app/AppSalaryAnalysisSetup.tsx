@@ -10,7 +10,18 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { supabase } from "@/integrations/supabase/client";
 import { useToast } from "@/hooks/use-toast";
-import { Upload, FileText, Loader2, CheckCircle, FileCheck, ArrowLeft, Coins } from "lucide-react";
+import {
+  Upload,
+  FileText,
+  Loader2,
+  CheckCircle,
+  FileCheck,
+  ArrowLeft,
+  Coins,
+  Zap,
+  Target,
+  ShieldCheck,
+} from "lucide-react";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
@@ -18,6 +29,13 @@ import { ExistingCVCard } from "@/components/cv/ExistingCVCard";
 import { ProfileCompletionPrompt } from "@/components/profile/ProfileCompletionPrompt";
 import { CreditGateModal } from "@/components/credits/CreditGateModal";
 import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
+import { cn } from "@/lib/utils";
+
+/**
+ * Platform Logic: Market Value Diagnostic
+ * High-fidelity orchestrator for AI-powered salary telemetry.
+ * Synchronized with the 2026 'Executive Logic' depth and transaction standards.
+ */
 
 const SALARY_ANALYSIS_COST = 50;
 
@@ -55,7 +73,6 @@ export default function AppSalaryAnalysisSetup() {
       if (talent.professionCategoryId) {
         setSelectedProfession((prev) => prev || talent.professionCategoryId || "");
       }
-      // Auto-select existing CV mode if available
       if (hasExistingCv && cvInputMode === "text") {
         setCvInputMode("existing");
         if (talent.cvUrl) setCvUrl(talent.cvUrl);
@@ -70,7 +87,6 @@ export default function AppSalaryAnalysisSetup() {
     const loadCategories = async () => {
       const controller = new AbortController();
       const timeoutId = setTimeout(() => controller.abort(), TIMEOUTS.CATEGORY_LOAD);
-
       try {
         const { data, error } = await supabase
           .from("profession_categories")
@@ -78,13 +94,12 @@ export default function AppSalaryAnalysisSetup() {
           .eq("is_active", true)
           .order("display_order")
           .abortSignal(controller.signal);
-
         clearTimeout(timeoutId);
         if (error) throw error;
         if (data) setProfessionCategories(data);
       } catch (error: any) {
         clearTimeout(timeoutId);
-        console.error("Error loading categories:", error);
+        console.error("Telemetry Failure: Category Load", error);
       }
     };
     loadCategories();
@@ -92,12 +107,11 @@ export default function AppSalaryAnalysisSetup() {
 
   const handleFileUpload = async (file: File) => {
     if (!file.type.includes("pdf") && !file.type.includes("document")) {
-      toast({ title: "Please upload a PDF or document file", variant: "destructive" });
+      toast({ title: "Unsupported Artifact", description: "Please upload a PDF or DOC.", variant: "destructive" });
       return;
     }
-
     if (file.size > 10 * 1024 * 1024) {
-      toast({ title: "File too large. Max 10MB", variant: "destructive" });
+      toast({ title: "Capacity Exceeded", description: "Artifact must be under 10MB.", variant: "destructive" });
       return;
     }
 
@@ -106,25 +120,20 @@ export default function AppSalaryAnalysisSetup() {
 
     try {
       const fileName = `salary-cv/${Date.now()}-${file.name}`;
-      const { data, error } = await supabase.storage.from("portfolio-uploads").upload(fileName, file);
-
+      const { error } = await supabase.storage.from("portfolio-uploads").upload(fileName, file);
       if (error) throw error;
 
       const { data: publicUrl } = supabase.storage.from("portfolio-uploads").getPublicUrl(fileName);
       setCvUrl(publicUrl.publicUrl);
 
-      // Optionally update talent profile with new CV
       if (talent?.id) {
         await updateTalent({ cvUrl: publicUrl.publicUrl });
         await refreshTalent();
       }
-
-      toast({ title: "CV uploaded successfully!" });
+      toast({ title: "Registry Node Secured" });
     } catch (error: any) {
-      console.error("Upload error:", error);
-      toast({ title: "Upload failed. Try pasting text instead.", variant: "destructive" });
+      toast({ title: "Transmission Failed", description: "Revert to text paste logic.", variant: "destructive" });
       setCvInputMode("text");
-      setCvFile(null);
     } finally {
       setIsUploading(false);
     }
@@ -132,16 +141,14 @@ export default function AppSalaryAnalysisSetup() {
 
   const handleSubmit = async () => {
     if (!fullName.trim() || !email.trim() || !jobDescription.trim()) {
-      toast({ title: "Please fill in required fields", variant: "destructive" });
+      toast({ title: "Incomplete Parameters", description: "Required fields missing.", variant: "destructive" });
       return;
     }
-
     if (!cvText.trim() && !cvUrl) {
-      toast({ title: "Please provide your CV (text or file)", variant: "destructive" });
+      toast({ title: "Missing Career Node", description: "Provide CV text or file.", variant: "destructive" });
       return;
     }
 
-    // Payment Logic Check
     if (!canAfford("SALARY_ANALYSIS")) {
       setShowCreditGate(true);
       return;
@@ -149,21 +156,10 @@ export default function AppSalaryAnalysisSetup() {
 
     setIsSubmitting(true);
     try {
-      // 1. Deduct Credits
-      const paid = await deductCredits("SALARY_ANALYSIS", undefined, "Salary Analysis Request");
-      if (!paid) {
-        throw new Error("Payment failed. Please try again.");
-      }
-
-      const isValidUUID = (str: string | null | undefined): boolean => {
-        if (!str) return false;
-        const uuidV4Regex = /^[0-9a-f]{8}-[0-9a-f]{4}-4[0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
-        return uuidV4Regex.test(str);
-      };
+      const paid = await deductCredits("SALARY_ANALYSIS", undefined, "Salary Analysis Telemetry");
+      if (!paid) throw new Error("Credit handshake failed.");
 
       const tempAnalysisId = crypto.randomUUID();
-
-      // 2. Insert Record
       const { error } = await supabase.from("salary_analyses").insert({
         id: tempAnalysisId,
         user_id: user?.id || null,
@@ -176,241 +172,236 @@ export default function AppSalaryAnalysisSetup() {
         job_description: jobDescription.trim(),
         cv_text: cvText.trim() || null,
         cv_url: cvUrl || null,
-        profession_category_id: isValidUUID(selectedProfession) ? selectedProfession : null,
+        profession_category_id: selectedProfession || null,
         status: "pending",
       });
 
       if (error) throw error;
+      if (talent?.id) await addServiceUsed("salary_analysis");
 
-      if (talent?.id) {
-        await addServiceUsed("salary_analysis");
-      }
-
+      toast({ title: "Diagnostic Initiated" });
       navigate(`/salary-analysis/processing/${tempAnalysisId}`);
     } catch (error) {
-      console.error("Submit error:", error);
-      toast({
-        title: "Failed to start analysis",
-        description: "Payment or submission failed.",
-        variant: "destructive",
-      });
+      toast({ title: "Handshake Failed", description: "Logic sync interrupted.", variant: "destructive" });
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-4">
-      <Button variant="ghost" className="mb-4" onClick={() => navigate("/app/services")}>
-        <ArrowLeft className="mr-2 h-4 w-4" />
-        Back to Services
-      </Button>
-
-      <ProfileCompletionPrompt variant="banner" className="mb-6" />
-
-      <div className="text-center mb-6">
-        <Badge variant="secondary" className="mb-4">
-          AI Salary Analysis
+    <div className="max-w-3xl mx-auto px-6 py-10 min-h-svh space-y-10 animate-in fade-in duration-700">
+      <header className="flex items-center justify-between">
+        <Button
+          variant="ghost"
+          size="sm"
+          className="group rounded-xl px-4 h-11 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-primary/5"
+          onClick={() => navigate("/app/services")}
+        >
+          <ArrowLeft className="mr-3 h-4 w-4 transition-transform group-hover:-translate-x-1" /> Revert to Hub
+        </Button>
+        <Badge
+          variant="outline"
+          className="rounded-lg border-primary/20 text-primary font-black uppercase tracking-widest text-[9px] px-3 py-1"
+        >
+          Market Intelligence v2.6
         </Badge>
-        <h1 className="text-2xl font-bold">Get Your Salary Insights</h1>
-        <p className="text-muted-foreground mt-2">
-          Provide your CV and target job details for a personalized market value report.
+      </header>
+
+      <ProfileCompletionPrompt variant="banner" className="rounded-[24px] border-2 border-dashed border-primary/20" />
+
+      <div className="text-center space-y-4">
+        <div className="h-16 w-16 bg-primary/10 rounded-[28px] flex items-center justify-center mx-auto rotate-3 shadow-xl">
+          <Target className="h-8 w-8 text-primary" />
+        </div>
+        <h1 className="text-4xl font-black uppercase tracking-tighter leading-none italic">Salary Synthesis</h1>
+        <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 italic max-w-lg mx-auto">
+          Input your career artifact and target parameters for high-fidelity market value telemetry.
         </p>
       </div>
 
-      <Card>
-        <CardHeader>
-          <CardTitle className="flex items-center gap-2">
-            <CheckCircle className="h-5 w-5 text-green-500" />
-            Complete the Form
-          </CardTitle>
-          <CardDescription>Fill in the details below to generate your analysis</CardDescription>
+      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+        <CardHeader className="p-10 border-b border-border/10 bg-muted/20">
+          <div className="flex justify-between items-center">
+            <CardTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-3">
+              <ShieldCheck className="h-5 w-5 text-emerald-500" /> Parameter Input
+            </CardTitle>
+            <div className="flex items-center gap-2 bg-primary/5 px-3 py-1.5 rounded-lg border border-primary/10">
+              <Coins className="h-3.5 w-3.5 text-primary" />
+              <span className="text-[10px] font-black uppercase tracking-widest">{SALARY_ANALYSIS_COST} Credits</span>
+            </div>
+          </div>
         </CardHeader>
-        <CardContent className="space-y-6">
-          {/* Personal Info */}
-          <div className="grid gap-4">
-            <div>
-              <Label htmlFor="fullName">Full Name *</Label>
+        <CardContent className="p-10 space-y-10">
+          {/* Identity Logic */}
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+            <div className="space-y-2">
+              <Label className="text-[11px] font-black uppercase tracking-widest text-primary ml-1">Entity Name</Label>
               <Input
-                id="fullName"
-                placeholder="Your full name"
+                className="h-12 rounded-xl border-2 bg-background/50 font-bold"
                 value={fullName}
                 onChange={(e) => setFullName(e.target.value)}
+                placeholder="Full Name"
               />
             </div>
-            <div>
-              <Label htmlFor="email">Email *</Label>
+            <div className="space-y-2">
+              <Label className="text-[11px] font-black uppercase tracking-widest ml-1">Email Node</Label>
               <Input
-                id="email"
-                type="email"
-                placeholder="your@email.com"
+                className="h-12 rounded-xl border-2 bg-background/50 font-bold"
                 value={email}
                 onChange={(e) => setEmail(e.target.value)}
-              />
-            </div>
-            <div>
-              <Label htmlFor="phone">Phone (Optional)</Label>
-              <Input
-                id="phone"
-                placeholder="01XXXXXXXXX"
-                value={phone}
-                onChange={(e) => {
-                  let value = e.target.value.replace(/\D/g, "");
-                  if (value.startsWith("880")) {
-                    value = value.slice(3);
-                  }
-                  value = value.slice(0, 10);
-                  setPhone(value);
-                }}
+                placeholder="uplink@domain.com"
               />
             </div>
           </div>
 
-          {/* Job Details */}
-          <div className="grid gap-4">
-            <div className="grid sm:grid-cols-2 gap-4">
-              <div>
-                <Label htmlFor="jobTitle">Target Job Title</Label>
+          {/* Role Parameters */}
+          <div className="space-y-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+              <div className="space-y-2">
+                <Label className="text-[11px] font-black uppercase tracking-widest ml-1">Target Role</Label>
                 <Input
-                  id="jobTitle"
-                  placeholder="e.g., Senior Developer"
+                  className="h-12 rounded-xl border-2 bg-background/50 font-bold"
                   value={jobTitle}
                   onChange={(e) => setJobTitle(e.target.value)}
+                  placeholder="e.g. Lead Architect"
                 />
               </div>
-              <div>
-                <Label htmlFor="companyName">Company Name</Label>
-                <Input
-                  id="companyName"
-                  placeholder="e.g., Tech Company"
-                  value={companyName}
-                  onChange={(e) => setCompanyName(e.target.value)}
-                />
+              <div className="space-y-2">
+                <Label className="text-[11px] font-black uppercase tracking-widest ml-1">Sector Alignment</Label>
+                <Select value={selectedProfession} onValueChange={setSelectedProfession}>
+                  <SelectTrigger className="h-12 rounded-xl border-2 bg-background/50 font-bold">
+                    <SelectValue placeholder="Select Category" />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {professionCategories.map((cat) => (
+                      <SelectItem key={cat.id} value={cat.id} className="font-bold">
+                        {cat.name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
             </div>
-            <div>
-              <Label htmlFor="profession">Profession Category</Label>
-              <Select value={selectedProfession} onValueChange={setSelectedProfession}>
-                <SelectTrigger>
-                  <SelectValue placeholder="Select category (optional)" />
-                </SelectTrigger>
-                <SelectContent>
-                  {professionCategories.map((cat) => (
-                    <SelectItem key={cat.id} value={cat.id}>
-                      {cat.name}
-                    </SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-            <div>
-              <Label htmlFor="jobDescription">Job Description *</Label>
+            <div className="space-y-2">
+              <Label className="text-[11px] font-black uppercase tracking-widest ml-1 text-primary">
+                Job Blueprint Artifact
+              </Label>
               <Textarea
-                id="jobDescription"
-                placeholder="Paste the job description here..."
+                className="min-h-[160px] rounded-2xl bg-muted/10 border-2 border-border/40 p-6 italic font-medium leading-relaxed"
                 value={jobDescription}
                 onChange={(e) => setJobDescription(e.target.value)}
-                className="min-h-[120px]"
+                placeholder="Paste full job description for calibration..."
               />
             </div>
           </div>
 
-          {/* CV Input */}
-          <div className="space-y-3">
-            <Label>Your CV/Resume *</Label>
+          {/* Registry Registry (CV) */}
+          <div className="space-y-4">
+            <Label className="text-[11px] font-black uppercase tracking-widest ml-1">Candidate Registry Node</Label>
             <Tabs value={cvInputMode} onValueChange={(v) => setCvInputMode(v as any)}>
-              <TabsList className="grid w-full grid-cols-3">
+              <TabsList className="grid w-full grid-cols-3 p-1 h-12 bg-muted/30 rounded-2xl border border-border/40">
                 {hasExistingCv && (
-                  <TabsTrigger value="existing" className="flex items-center gap-2">
-                    <FileCheck className="h-4 w-4" />
-                    Use Existing
+                  <TabsTrigger
+                    value="existing"
+                    className="rounded-xl font-black uppercase text-[9px] tracking-widest gap-2"
+                  >
+                    <FileCheck className="h-3.5 w-3.5" /> Registry
                   </TabsTrigger>
                 )}
-                <TabsTrigger value="text" className="flex items-center gap-2">
-                  <FileText className="h-4 w-4" />
-                  Paste Text
+                <TabsTrigger value="text" className="rounded-xl font-black uppercase text-[9px] tracking-widest gap-2">
+                  <FileText className="h-3.5 w-3.5" /> Text Synth
                 </TabsTrigger>
-                <TabsTrigger value="file" className="flex items-center gap-2">
-                  <Upload className="h-4 w-4" />
-                  Upload
+                <TabsTrigger value="file" className="rounded-xl font-black uppercase text-[9px] tracking-widest gap-2">
+                  <Upload className="h-3.5 w-3.5" /> Artifact
                 </TabsTrigger>
               </TabsList>
 
-              {hasExistingCv && (
-                <TabsContent value="existing" className="mt-4">
-                  <ExistingCVCard
-                    talent={talent}
-                    onUseExisting={() => {
-                      if (talent?.cvUrl) setCvUrl(talent.cvUrl);
-                      if (talent?.cvText) setCvText(talent.cvText);
-                    }}
-                    onUploadNew={() => {}}
-                  />
-                </TabsContent>
-              )}
-
-              <TabsContent value="text" className="mt-4">
-                <Textarea
-                  placeholder="Paste your CV/resume content here..."
-                  value={cvText}
-                  onChange={(e) => setCvText(e.target.value)}
-                  className="min-h-[200px]"
+              <TabsContent value="existing" className="mt-6 animate-in zoom-in-95">
+                <ExistingCVCard
+                  talent={talent}
+                  onUseExisting={() => {
+                    if (talent?.cvUrl) setCvUrl(talent.cvUrl);
+                    if (talent?.cvText) setCvText(talent.cvText);
+                  }}
+                  onUploadNew={() => {}}
                 />
               </TabsContent>
 
-              <TabsContent value="file" className="mt-4">
-                <div className="border-2 border-dashed rounded-lg p-6 text-center hover:bg-muted/50 transition-colors">
-                  {cvFile ? (
-                    <div className="flex items-center justify-center gap-2">
-                      <FileText className="h-5 w-5 text-primary" />
-                      <span className="font-medium">{cvFile.name}</span>
+              <TabsContent value="text" className="mt-6 animate-in slide-in-from-bottom-2">
+                <Textarea
+                  placeholder="Paste CV source code/text here..."
+                  value={cvText}
+                  onChange={(e) => setCvText(e.target.value)}
+                  className="min-h-[240px] rounded-2xl bg-muted/10 border-2 p-6 italic"
+                />
+              </TabsContent>
+
+              <TabsContent value="file" className="mt-6">
+                <div className="border-2 border-dashed border-border/40 rounded-[32px] p-12 text-center hover:bg-primary/[0.02] transition-all group cursor-pointer relative overflow-hidden">
+                  <input
+                    type="file"
+                    accept=".pdf,.doc,.docx"
+                    onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
+                    className="absolute inset-0 opacity-0 cursor-pointer z-10"
+                  />
+                  {isUploading ? (
+                    <div className="space-y-4">
+                      <Loader2 className="h-10 w-10 animate-spin mx-auto text-primary" />
+                      <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary animate-pulse">
+                        Syncing Node...
+                      </p>
                     </div>
                   ) : (
-                    <label className="cursor-pointer block">
-                      <input
-                        type="file"
-                        accept=".pdf,.doc,.docx"
-                        onChange={(e) => e.target.files?.[0] && handleFileUpload(e.target.files[0])}
-                        className="hidden"
-                      />
-                      <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-2" />
-                      <p className="text-sm font-medium">Click to upload PDF or DOC</p>
-                      <p className="text-xs text-muted-foreground mt-1">Max 10MB</p>
-                    </label>
+                    <div className="space-y-4">
+                      <div className="h-16 w-16 bg-muted/50 rounded-2xl flex items-center justify-center mx-auto group-hover:scale-110 transition-transform shadow-inner">
+                        <Upload className="h-7 w-7 text-muted-foreground/40" />
+                      </div>
+                      <div>
+                        <p className="text-sm font-black uppercase tracking-tighter italic">
+                          {cvFile ? cvFile.name : "Upload Registry Artifact"}
+                        </p>
+                        <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-[0.2em] mt-1">
+                          PDF or DOC • 10MB Limit
+                        </p>
+                      </div>
+                    </div>
                   )}
-                  {isUploading && <Loader2 className="h-5 w-5 animate-spin mx-auto mt-2 text-primary" />}
                 </div>
               </TabsContent>
             </Tabs>
           </div>
 
-          <Button className="w-full" size="lg" onClick={handleSubmit} disabled={isSubmitting}>
+          <Button
+            className="w-full h-16 rounded-[24px] text-[12px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 group overflow-hidden"
+            onClick={handleSubmit}
+            disabled={isSubmitting}
+          >
             {isSubmitting ? (
-              <>
-                <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                Processing...
-              </>
+              <span className="flex items-center gap-3">
+                <Loader2 className="h-5 w-5 animate-spin" /> Analyzing Logic...
+              </span>
             ) : (
-              <>Start Analysis ({SALARY_ANALYSIS_COST} Credits)</>
+              <span className="flex items-center gap-3">
+                <Zap className="h-5 w-5 fill-current" /> Finalize Handshake
+              </span>
             )}
+            <div className="absolute inset-0 bg-gradient-to-r from-primary/0 via-white/10 to-primary/0 -translate-x-full group-hover:translate-x-full transition-transform duration-1000" />
           </Button>
         </CardContent>
       </Card>
 
-      {/* Credit Gate Modal */}
       <CreditGateModal
         isOpen={showCreditGate}
         onClose={() => setShowCreditGate(false)}
-        onConfirm={() => setShowCreditGate(false)} // User clicks submit again after verifying
+        onConfirm={() => setShowCreditGate(false)}
         onBuyCredits={() => {
           setShowCreditGate(false);
           setShowCreditSheet(true);
         }}
-        serviceName="AI Salary Analysis"
+        serviceName="Salary Synthesis"
         cost={SALARY_ANALYSIS_COST}
         currentBalance={balance}
       />
-
       <CreditPurchaseSheet
         isOpen={showCreditSheet}
         onClose={() => setShowCreditSheet(false)}
