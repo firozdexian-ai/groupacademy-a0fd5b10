@@ -47,6 +47,7 @@ import {
   Activity,
   Zap,
   Loader2,
+  AlertCircle,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
