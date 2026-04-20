@@ -13,7 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import {
   Plus,
   Search,
@@ -21,23 +21,23 @@ import {
   Trash2,
   Trophy,
   Calendar,
-  Users,
-  ExternalLink,
   ChevronLeft,
   ChevronRight,
+  ShieldCheck,
+  Activity,
+  Zap,
+  Layers,
+  Loader2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
 
-// --- Internal Hook for Debounce ---
-function useDebounce<T>(value: T, delay: number): T {
-  const [debouncedValue, setDebouncedValue] = useState<T>(value);
-  useEffect(() => {
-    const timer = setTimeout(() => setDebouncedValue(value), delay);
-    return () => clearTimeout(timer);
-  }, [value, delay]);
-  return debouncedValue;
-}
+/**
+ * Platform Logic: Arena Orchestrator (Competitions)
+ * High-fidelity manager for competitive talent artifacts and prize telemetry.
+ * 2026 Standard: Executive Logic geometry with reinforced lifecycle guards.
+ */
 
 interface Competition {
   id: string;
@@ -50,63 +50,51 @@ interface Competition {
   end_date: string | null;
   submission_deadline: string | null;
   max_participants: number | null;
-  prizes: { place: string; prize: string }[]; // Fixed type
+  prizes: { place: string; prize: string }[];
   rules: string | null;
   status: string;
   is_featured: boolean;
   created_at: string;
 }
 
-const STATUSES = [
-  { value: "draft", label: "Draft" },
-  { value: "upcoming", label: "Upcoming" },
-  { value: "active", label: "Active" },
-  { value: "judging", label: "Judging" },
-  { value: "completed", label: "Completed" },
-];
-
-const CATEGORIES = ["Design", "Development", "Data Science", "Marketing", "Business", "Writing", "Other"];
-
-const emptyCompetition = {
-  title: "",
-  slug: "",
-  description: "",
-  category: "",
-  featured_image: "",
-  start_date: "",
-  end_date: "",
-  submission_deadline: "",
-  max_participants: null as number | null,
-  prizes: [] as { place: string; prize: string }[],
-  rules: "",
-  status: "draft",
-  is_featured: false,
+const STATUS_CONFIG: Record<string, { label: string; color: string }> = {
+  draft: { label: "Draft Protocol", color: "bg-muted text-muted-foreground" },
+  upcoming: { label: "Upcoming Sequence", color: "bg-blue-500/10 text-blue-500" },
+  active: { label: "Live Arena", color: "bg-emerald-500/10 text-emerald-500" },
+  judging: { label: "Judging Logic", color: "bg-amber-500/10 text-amber-500" },
+  completed: { label: "Finalized Node", color: "bg-purple-500/10 text-purple-500" },
 };
 
+const CATEGORIES = ["Design", "Development", "Data Science", "Marketing", "Business", "Writing"];
 const ITEMS_PER_PAGE = 10;
 
+// --- Internal Hook for Debounce ---
+function useDebounce<T>(value: T, delay: number): T {
+  const [debouncedValue, setDebouncedValue] = useState<T>(value);
+  useEffect(() => {
+    const timer = setTimeout(() => setDebouncedValue(value), delay);
+    return () => clearTimeout(timer);
+  }, [value, delay]);
+  return debouncedValue;
+}
+
 export function CompetitionsManager() {
-  // Data State
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-
-  // Pagination & Search
   const [page, setPage] = useState(1);
   const [totalCount, setTotalCount] = useState(0);
   const [searchQuery, setSearchQuery] = useState("");
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [statusFilter, setStatusFilter] = useState<string>("all");
 
-  // UI State
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingCompetition, setEditingCompetition] = useState<Competition | null>(null);
-  const [formData, setFormData] = useState(emptyCompetition);
   const [saving, setSaving] = useState(false);
   const [prizeInput, setPrizeInput] = useState({ place: "", prize: "" });
+  const [formData, setFormData] = useState<Partial<Competition>>({});
 
-  // Fetch Data (Paginated)
-  const loadCompetitions = useCallback(async () => {
+  const loadRegistry = useCallback(async () => {
     setLoading(true);
     setError(null);
     try {
@@ -115,568 +103,443 @@ export function CompetitionsManager() {
         .select("*", { count: "exact" })
         .order("created_at", { ascending: false });
 
-      // Search Logic
       if (debouncedSearch) {
         const safe = sanitizeIlike(debouncedSearch);
         if (safe) query = query.ilike("title", `%${safe}%`);
       }
+      if (statusFilter !== "all") query = query.eq("status", statusFilter);
 
-      // Filter Logic
-      if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
-      }
-
-      // Pagination
       const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
       query = query.range(from, to);
 
-      const result = await withTimeout(Promise.resolve(query), TIMEOUTS.DEFAULT, "Loading competitions timed out");
-
+      const result = await withTimeout(Promise.resolve(query), TIMEOUTS.DEFAULT, "Registry Sync Timeout");
       if (result.error) throw result.error;
-      setCompetitions((result.data as unknown as Competition[]) || []);
+
+      setCompetitions((result.data as any) || []);
       setTotalCount(result.count || 0);
     } catch (err: any) {
-      console.error("Error loading competitions:", err);
-      setError(err.message || "Failed to load competitions");
-      toast.error("Failed to load competitions");
+      setError(err.message);
+      toast.error("Transmission Error: Failed to sync arena registry");
     } finally {
       setLoading(false);
     }
   }, [page, debouncedSearch, statusFilter]);
 
   useEffect(() => {
-    loadCompetitions();
-  }, [loadCompetitions]);
-
-  // Reset page on filter change
+    loadRegistry();
+  }, [loadRegistry]);
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, statusFilter]);
 
-  const generateSlug = (title: string) => {
-    return title
+  const generateLogicSlug = (title: string) =>
+    title
       .toLowerCase()
       .replace(/[^a-z0-9]+/g, "-")
       .replace(/(^-|-$)/g, "");
-  };
 
-  const handleOpenDialog = (competition?: Competition) => {
-    if (competition) {
-      setEditingCompetition(competition);
+  const handleOpenDialog = (comp?: Competition) => {
+    if (comp) {
+      setEditingCompetition(comp);
       setFormData({
-        title: competition.title,
-        slug: competition.slug,
-        description: competition.description || "",
-        category: competition.category || "",
-        featured_image: competition.featured_image || "",
-        start_date: competition.start_date ? competition.start_date.split("T")[0] : "",
-        end_date: competition.end_date ? competition.end_date.split("T")[0] : "",
-        submission_deadline: competition.submission_deadline ? competition.submission_deadline.split("T")[0] : "",
-        max_participants: competition.max_participants,
-        prizes: Array.isArray(competition.prizes) ? competition.prizes : [],
-        rules: competition.rules || "",
-        status: competition.status,
-        is_featured: competition.is_featured,
+        ...comp,
+        start_date: comp.start_date?.split("T")[0],
+        end_date: comp.end_date?.split("T")[0],
+        submission_deadline: comp.submission_deadline?.split("T")[0],
       });
     } else {
       setEditingCompetition(null);
-      setFormData(emptyCompetition);
+      setFormData({ status: "draft", is_featured: false, prizes: [] });
     }
     setIsDialogOpen(true);
   };
 
-  const handleTitleChange = (title: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      title,
-      slug: editingCompetition ? prev.slug : generateSlug(title),
-    }));
-  };
-
-  const handleAddPrize = () => {
-    if (prizeInput.place.trim() && prizeInput.prize.trim()) {
-      setFormData((prev) => ({
-        ...prev,
-        prizes: [...prev.prizes, { place: prizeInput.place.trim(), prize: prizeInput.prize.trim() }],
-      }));
-      setPrizeInput({ place: "", prize: "" });
-    }
-  };
-
-  const handleRemovePrize = (index: number) => {
-    setFormData((prev) => ({
-      ...prev,
-      prizes: prev.prizes.filter((_, i) => i !== index),
-    }));
-  };
-
-  const handleSave = async () => {
-    if (!formData.title.trim() || !formData.slug.trim()) {
-      toast.error("Please fill in all required fields");
-      return;
-    }
-
+  const handleSaveArtifact = async () => {
+    if (!formData.title?.trim()) return toast.error("Logic Fault: Title required");
     setSaving(true);
     try {
-      const competitionData = {
-        title: formData.title.trim(),
-        slug: formData.slug.trim(),
-        description: formData.description?.trim() || null,
-        category: formData.category || null,
-        featured_image: formData.featured_image?.trim() || null,
-        start_date: formData.start_date || null,
-        end_date: formData.end_date || null,
-        submission_deadline: formData.submission_deadline || null,
-        max_participants: formData.max_participants,
-        prizes: formData.prizes.length > 0 ? formData.prizes : null,
-        rules: formData.rules?.trim() || null,
-        status: formData.status,
-        is_featured: formData.is_featured,
-      };
+      const payload = { ...formData, slug: editingCompetition ? formData.slug : generateLogicSlug(formData.title) };
+      const { error } = editingCompetition
+        ? await supabase.from("competitions").update(payload).eq("id", editingCompetition.id)
+        : await supabase.from("competitions").insert(payload);
 
-      if (editingCompetition) {
-        const { error } = await supabase.from("competitions").update(competitionData).eq("id", editingCompetition.id);
-        if (error) throw error;
-        toast.success("Competition updated successfully");
-      } else {
-        const { error } = await supabase.from("competitions").insert(competitionData);
-        if (error) throw error;
-        toast.success("Competition created successfully");
-      }
-
+      if (error) throw error;
+      toast.success("Registry Synchronized");
       setIsDialogOpen(false);
-      loadCompetitions();
-    } catch (error: any) {
-      console.error("Error saving competition:", error);
-      toast.error(error.message?.includes("duplicate") ? "Slug already exists" : "Failed to save competition");
+      loadRegistry();
+    } catch (err) {
+      toast.error("Handshake Failed: Registry entry rejected");
     } finally {
       setSaving(false);
     }
   };
 
-  const handleDelete = async (id: string) => {
-    if (!confirm("Are you sure you want to delete this competition?")) return;
+  const handlePurge = async (id: string) => {
+    if (!confirm("Authorize permanent arena purge?")) return;
     try {
       const { error } = await supabase.from("competitions").delete().eq("id", id);
       if (error) throw error;
-      toast.success("Competition deleted successfully");
-      loadCompetitions();
-    } catch (error) {
-      toast.error("Failed to delete competition");
+      toast.success("Artifact Purged");
+      loadRegistry();
+    } catch (err) {
+      toast.error("Purge Error: Active dependencies detected");
     }
   };
-
-  const handleStatusChange = async (competition: Competition, newStatus: string) => {
-    try {
-      const { error } = await supabase.from("competitions").update({ status: newStatus }).eq("id", competition.id);
-      if (error) throw error;
-      toast.success(`Status changed to ${newStatus}`);
-      loadCompetitions(); // Ideally optimistic update
-    } catch (error) {
-      toast.error("Failed to update status");
-    }
-  };
-
-  const getStatusColor = (status: string) => {
-    switch (status) {
-      case "active":
-        return "default";
-      case "upcoming":
-        return "secondary";
-      case "judging":
-        return "outline";
-      case "completed":
-        return "secondary";
-      default:
-        return "secondary";
-    }
-  };
-
-  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex flex-col md:flex-row md:items-center justify-between gap-4">
-          <div>
-            <CardTitle className="flex items-center gap-2">
-              <Trophy className="h-5 w-5" />
-              Competitions
-            </CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">Total {totalCount} competitions found</p>
-          </div>
-          <Button onClick={() => handleOpenDialog()} size="sm">
-            <Plus className="h-4 w-4 sm:mr-2" /> <span className="hidden sm:inline">Add Competition</span>
-          </Button>
+    <div className="space-y-8 animate-in fade-in duration-1000">
+      {/* Executive Header */}
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
+        <div className="space-y-2">
+          <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Arena Registry</h2>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+            Authorized Tournaments: {totalCount} Nodes Detected
+          </p>
         </div>
-      </CardHeader>
-      <CardContent>
-        {/* Filters */}
-        <div className="flex flex-col md:flex-row gap-4 mb-6">
-          <div className="relative flex-1">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search competitions..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-10"
-            />
-          </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-full sm:w-[180px]">
-              <SelectValue placeholder="Filter by status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Statuses</SelectItem>
-              {STATUSES.map((status) => (
-                <SelectItem key={status.value} value={status.value}>
-                  {status.label}
+        <Button
+          onClick={() => handleOpenDialog()}
+          className="rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+        >
+          <Plus className="h-4 w-4 mr-2" /> Initialize Arena
+        </Button>
+      </div>
+
+      <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+        <CardHeader className="p-8 border-b-2 border-border/10 bg-muted/20">
+          <div className="flex flex-col md:flex-row gap-4">
+            <div className="relative flex-1 group">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
+              <Input
+                placeholder="Query arena by title..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="pl-12 h-14 rounded-2xl border-2 bg-card/50 font-bold"
+              />
+            </div>
+            <Select value={statusFilter} onValueChange={setStatusFilter}>
+              <SelectTrigger className="w-full md:w-[220px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest bg-card/50">
+                <SelectValue placeholder="Lifecycle Status" />
+              </SelectTrigger>
+              <SelectContent className="rounded-2xl border-2">
+                <SelectItem value="all" className="font-bold">
+                  GLOBAL VIEW
                 </SelectItem>
-              ))}
-            </SelectContent>
-          </Select>
-        </div>
+                {Object.entries(STATUS_CONFIG).map(([k, v]) => (
+                  <SelectItem key={k} value={k} className="font-bold">
+                    {v.label.toUpperCase()}
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </CardHeader>
 
-        {/* Table */}
-        {loading ? (
-          <DashboardTableSkeleton rows={5} columns={6} />
-        ) : error ? (
-          <DashboardErrorState title="Error" message={error} onRetry={loadCompetitions} />
-        ) : (
-          <>
-            {/* Desktop Table */}
-            <div className="hidden sm:block rounded-md border">
-              <Table>
-                <TableHeader>
-                  <TableRow>
-                    <TableHead>Competition</TableHead>
-                    <TableHead>Category</TableHead>
-                    <TableHead>Dates</TableHead>
-                    <TableHead>Status</TableHead>
-                    <TableHead className="text-right">Actions</TableHead>
-                  </TableRow>
-                </TableHeader>
-                <TableBody>
-                  {competitions.length === 0 ? (
-                    <TableRow>
-                      <TableCell colSpan={5} className="text-center text-muted-foreground py-8">
-                        No competitions found
-                      </TableCell>
-                    </TableRow>
-                  ) : (
-                    competitions.map((comp) => (
-                      <TableRow key={comp.id}>
-                        <TableCell>
-                          <div>
-                            <p className="font-medium">{comp.title}</p>
-                            <p className="text-sm text-muted-foreground">{comp.slug}</p>
-                          </div>
-                        </TableCell>
-                        <TableCell>{comp.category ? <Badge variant="outline">{comp.category}</Badge> : "-"}</TableCell>
-                        <TableCell>
-                          <div className="text-sm">
-                            {comp.start_date && (
-                              <p className="flex items-center gap-1">
-                                <Calendar className="h-3 w-3" />
-                                {format(new Date(comp.start_date), "MMM d, yyyy")}
-                              </p>
-                            )}
-                            {comp.submission_deadline && (
-                              <p className="text-muted-foreground text-xs mt-1">
-                                Deadline: {format(new Date(comp.submission_deadline), "MMM d")}
-                              </p>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell>
-                          <div className="flex flex-col gap-1 items-start">
-                            <Select value={comp.status} onValueChange={(v) => handleStatusChange(comp, v)}>
-                              <SelectTrigger className="w-[120px] h-8 text-xs">
-                                <Badge
-                                  variant={getStatusColor(comp.status)}
-                                  className="capitalize w-full justify-center"
-                                >
-                                  {comp.status}
-                                </Badge>
-                              </SelectTrigger>
-                              <SelectContent>
-                                {STATUSES.map((status) => (
-                                  <SelectItem key={status.value} value={status.value}>
-                                    {status.label}
-                                  </SelectItem>
-                                ))}
-                              </SelectContent>
-                            </Select>
-                            {comp.is_featured && (
-                              <Badge variant="outline" className="text-[10px]">
-                                Featured
-                              </Badge>
-                            )}
-                          </div>
-                        </TableCell>
-                        <TableCell className="text-right">
-                          <div className="flex items-center justify-end gap-2">
-                            <Button variant="ghost" size="icon" onClick={() => handleOpenDialog(comp)}>
-                              <Edit className="h-4 w-4" />
-                            </Button>
-                            <Button variant="ghost" size="icon" onClick={() => handleDelete(comp.id)}>
-                              <Trash2 className="h-4 w-4 text-destructive" />
-                            </Button>
-                          </div>
-                        </TableCell>
-                      </TableRow>
-                    ))
-                  )}
-                </TableBody>
-              </Table>
-            </div>
-
-            {/* Mobile Cards */}
-            <div className="sm:hidden space-y-2">
-              {competitions.length === 0 ? (
-                <p className="text-center py-8 text-muted-foreground">No competitions found</p>
-              ) : (
-                competitions.map((comp) => (
-                  <div key={comp.id} className="p-3 border rounded-lg space-y-2">
-                    <div className="flex items-start justify-between gap-2">
-                      <div className="min-w-0 flex-1">
-                        <p className="font-medium text-sm line-clamp-1">{comp.title}</p>
-                        {comp.start_date && (
-                          <p className="text-xs text-muted-foreground flex items-center gap-1 mt-0.5">
-                            <Calendar className="h-3 w-3" />
-                            {format(new Date(comp.start_date), "MMM d, yyyy")}
-                          </p>
+        <CardContent className="p-0">
+          {loading ? (
+            <DashboardTableSkeleton rows={5} columns={6} />
+          ) : error ? (
+            <DashboardErrorState title="Registry Fault" message={error} onRetry={loadRegistry} />
+          ) : (
+            <Table>
+              <TableHeader className="bg-muted/30">
+                <TableRow className="hover:bg-transparent border-b-2">
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8">
+                    Arena Spec
+                  </TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Logic Class</TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Temporal Frame</TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Lifecycle</TableHead>
+                  <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                    Interrogate
+                  </TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {competitions.map((comp) => (
+                  <TableRow key={comp.id} className="group transition-all hover:bg-primary/[0.02]">
+                    <TableCell className="px-8 py-6">
+                      <div className="space-y-1">
+                        <p className="font-black text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors">
+                          {comp.title}
+                        </p>
+                        <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                          SLUG: {comp.slug}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        variant="outline"
+                        className="rounded-lg border-2 font-black text-[9px] uppercase tracking-widest bg-background"
+                      >
+                        {comp.category || "UNCLASSED"}
+                      </Badge>
+                    </TableCell>
+                    <TableCell>
+                      <div className="space-y-1 text-[10px] font-bold uppercase tracking-widest italic text-muted-foreground/60">
+                        <p className="flex items-center gap-2">
+                          <Calendar className="h-3 w-3" />{" "}
+                          {comp.start_date ? format(new Date(comp.start_date), "MMM d, yyyy") : "TBD"}
+                        </p>
+                        <p className="flex items-center gap-2 text-primary/40">
+                          <Zap className="h-3 w-3" /> Deadline:{" "}
+                          {comp.submission_deadline ? format(new Date(comp.submission_deadline), "MMM d") : "None"}
+                        </p>
+                      </div>
+                    </TableCell>
+                    <TableCell>
+                      <Badge
+                        className={cn(
+                          "rounded-lg font-black text-[8px] uppercase tracking-[0.2em] border-none px-3 py-1",
+                          STATUS_CONFIG[comp.status].color,
                         )}
-                      </div>
-                      <div className="flex items-center gap-1 flex-shrink-0">
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleOpenDialog(comp)}>
-                          <Edit className="h-3.5 w-3.5" />
+                      >
+                        {STATUS_CONFIG[comp.status].label}
+                      </Badge>
+                    </TableCell>
+                    <TableCell className="text-right pr-8">
+                      <div className="flex justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-10 rounded-xl hover:bg-primary group-hover:text-white transition-all shadow-inner"
+                          onClick={() => handleOpenDialog(comp)}
+                        >
+                          <Edit className="h-4 w-4" />
                         </Button>
-                        <Button variant="ghost" size="icon" className="h-7 w-7" onClick={() => handleDelete(comp.id)}>
-                          <Trash2 className="h-3.5 w-3.5 text-destructive" />
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive transition-all"
+                          onClick={() => handlePurge(comp.id)}
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </div>
-                    <div className="flex items-center gap-2 flex-wrap">
-                      {comp.category && <Badge variant="outline" className="text-xs">{comp.category}</Badge>}
-                      <Badge variant={getStatusColor(comp.status)} className="text-xs capitalize">{comp.status}</Badge>
-                      {comp.is_featured && <Badge variant="outline" className="text-[10px]">Featured</Badge>}
-                    </div>
-                  </div>
-                ))
-              )}
-            </div>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
+          )}
 
-            {/* Pagination Controls */}
-            {totalPages > 1 && (
-              <div className="flex items-center justify-end space-x-2 py-4">
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => setPage((p) => Math.max(1, p - 1))}
-                  disabled={page === 1}
-                >
-                  <ChevronLeft className="h-4 w-4" />
-                </Button>
-                <span className="text-sm text-muted-foreground">
-                  {page} / {totalPages}
-                </span>
-                <Button
-                  variant="outline"
-                  size="icon"
-                  className="h-8 w-8"
-                  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
-                  disabled={page === totalPages}
-                >
-                  <ChevronRight className="h-4 w-4" />
-                </Button>
-              </div>
-            )}
-          </>
-        )}
-      </CardContent>
+          {totalPages > 1 && (
+            <div className="flex items-center justify-center gap-6 p-8 border-t-2 border-border/10">
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-xl border-2"
+                onClick={() => setPage((p) => Math.max(1, p - 1))}
+                disabled={page === 1}
+              >
+                <ChevronLeft />
+              </Button>
+              <span className="text-[10px] font-black uppercase tracking-[0.3em] italic">
+                Cycle {page} / {totalPages}
+              </span>
+              <Button
+                variant="outline"
+                size="icon"
+                className="h-11 w-11 rounded-xl border-2"
+                onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
+                disabled={page === totalPages}
+              >
+                <ChevronRight />
+              </Button>
+            </div>
+          )}
+        </CardContent>
+      </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingCompetition ? "Edit Competition" : "Add New Competition"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4 py-4">
-            <div className="space-y-2">
-              <Label>Title *</Label>
-              <Input
-                value={formData.title}
-                onChange={(e) => handleTitleChange(e.target.value)}
-                placeholder="e.g., UI/UX Design Challenge 2025"
-              />
-            </div>
+        <DialogContent className="max-w-4xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+          <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+          <div className="p-10 max-h-[85vh] overflow-y-auto no-scrollbar">
+            <DialogHeader className="mb-10">
+              <div className="flex items-center gap-4">
+                <ShieldCheck className="h-8 w-8 text-primary" />
+                <div className="space-y-1">
+                  <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+                    Arena Calibration
+                  </DialogTitle>
+                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+                    Interfacing with tournament logic sub-routines
+                  </DialogDescription>
+                </div>
+              </div>
+            </DialogHeader>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+            <div className="space-y-8">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      Arena Designation *
+                    </Label>
+                    <Input
+                      value={formData.title || ""}
+                      onChange={(e) => {
+                        setFormData({ ...formData, title: e.target.value });
+                        if (!editingCompetition)
+                          setFormData((p) => ({ ...p, slug: generateLogicSlug(e.target.value) }));
+                      }}
+                      className="h-12 rounded-xl border-2 font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      Logic Class
+                    </Label>
+                    <Select
+                      value={formData.category || ""}
+                      onValueChange={(v) => setFormData({ ...formData, category: v })}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-2">
+                        {CATEGORIES.map((c) => (
+                          <SelectItem key={c} value={c} className="font-bold uppercase text-[9px]">
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+                <div className="space-y-4">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      Logic Status
+                    </Label>
+                    <Select
+                      value={formData.status || "draft"}
+                      onValueChange={(v) => setFormData({ ...formData, status: v })}
+                    >
+                      <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-2">
+                        {Object.entries(STATUS_CONFIG).map(([k, v]) => (
+                          <SelectItem key={k} value={k} className="font-bold uppercase text-[9px]">
+                            {v.label}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                  <div className="flex items-center gap-3 p-4 rounded-xl bg-muted/30 border-2 border-border/10 mt-6">
+                    <Switch
+                      checked={formData.is_featured}
+                      onCheckedChange={(v) => setFormData({ ...formData, is_featured: v })}
+                    />
+                    <Label className="text-[10px] font-black uppercase tracking-widest">Promoted Arena</Label>
+                  </div>
+                </div>
+              </div>
+
               <div className="space-y-2">
-                <Label>Slug *</Label>
-                <Input
-                  value={formData.slug}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, slug: e.target.value }))}
-                  placeholder="ui-ux-design-challenge-2025"
+                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  Prize Registry Matrix
+                </Label>
+                <div className="flex gap-2 p-4 bg-muted/20 rounded-2xl border-2 border-dashed border-border/40">
+                  <Input
+                    value={prizeInput.place}
+                    onChange={(e) => setPrizeInput({ ...prizeInput, place: e.target.value })}
+                    placeholder="e.g., Apex Tier"
+                    className="h-11 rounded-xl border-2"
+                  />
+                  <Input
+                    value={prizeInput.prize}
+                    onChange={(e) => setPrizeInput({ ...prizeInput, prize: e.target.value })}
+                    placeholder="e.g., $2500"
+                    className="h-11 rounded-xl border-2 font-bold"
+                  />
+                  <Button
+                    variant="outline"
+                    onClick={() => {
+                      if (prizeInput.place && prizeInput.prize) {
+                        setFormData((p) => ({ ...p, prizes: [...(p.prizes || []), prizeInput] }));
+                        setPrizeInput({ place: "", prize: "" });
+                      }
+                    }}
+                    className="h-11 rounded-xl border-2 px-6 font-black uppercase text-[10px]"
+                  >
+                    Inject
+                  </Button>
+                </div>
+                <div className="flex flex-wrap gap-2 mt-3">
+                  {formData.prizes?.map((p, i) => (
+                    <Badge key={i} variant="secondary" className="px-4 py-2 rounded-lg font-bold group">
+                      {p.place}: {p.prize}
+                      <XCircle
+                        className="ml-2 h-3.5 w-3.5 cursor-pointer opacity-30 group-hover:opacity-100"
+                        onClick={() => setFormData((f) => ({ ...f, prizes: f.prizes?.filter((_, idx) => idx !== i) }))}
+                      />
+                    </Badge>
+                  ))}
+                </div>
+              </div>
+
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  Internal Logic (Rules)
+                </Label>
+                <Textarea
+                  value={formData.rules || ""}
+                  onChange={(e) => setFormData({ ...formData, rules: e.target.value })}
+                  rows={5}
+                  className="rounded-2xl border-2 p-6 italic font-medium leading-relaxed"
                 />
               </div>
-              <div className="space-y-2">
-                <Label>Category</Label>
-                <Select
-                  value={formData.category}
-                  onValueChange={(v) => setFormData((prev) => ({ ...prev, category: v }))}
+
+              <div className="flex justify-end gap-4 pt-8 border-t border-border/10">
+                <Button
+                  variant="ghost"
+                  onClick={() => setIsDialogOpen(false)}
+                  className="h-14 px-8 font-black uppercase text-[10px] tracking-widest"
                 >
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select category" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {CATEGORIES.map((cat) => (
-                      <SelectItem key={cat} value={cat}>
-                        {cat}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea
-                value={formData.description}
-                onChange={(e) => setFormData((prev) => ({ ...prev, description: e.target.value }))}
-                placeholder="Competition description"
-                rows={3}
-              />
-            </div>
-
-            <div className="space-y-2">
-              <Label>Featured Image URL</Label>
-              <Input
-                value={formData.featured_image}
-                onChange={(e) => setFormData((prev) => ({ ...prev, featured_image: e.target.value }))}
-                placeholder="https://..."
-              />
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
-              <div className="space-y-2">
-                <Label>Start Date</Label>
-                <Input
-                  type="date"
-                  value={formData.start_date}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, start_date: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>End Date</Label>
-                <Input
-                  type="date"
-                  value={formData.end_date}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, end_date: e.target.value }))}
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Submission Deadline</Label>
-                <Input
-                  type="date"
-                  value={formData.submission_deadline}
-                  onChange={(e) => setFormData((prev) => ({ ...prev, submission_deadline: e.target.value }))}
-                />
-              </div>
-            </div>
-
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Max Participants</Label>
-                <Input
-                  type="number"
-                  value={formData.max_participants || ""}
-                  onChange={(e) =>
-                    setFormData((prev) => ({
-                      ...prev,
-                      max_participants: e.target.value ? parseInt(e.target.value) : null,
-                    }))
-                  }
-                  placeholder="Leave empty for unlimited"
-                />
-              </div>
-              <div className="space-y-2">
-                <Label>Status</Label>
-                <Select value={formData.status} onValueChange={(v) => setFormData((prev) => ({ ...prev, status: v }))}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select status" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {STATUSES.map((status) => (
-                      <SelectItem key={status.value} value={status.value}>
-                        {status.label}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Prizes</Label>
-              <div className="flex gap-2">
-                <Input
-                  value={prizeInput.place}
-                  onChange={(e) => setPrizeInput((prev) => ({ ...prev, place: e.target.value }))}
-                  placeholder="e.g., 1st Place"
-                  className="flex-1"
-                />
-                <Input
-                  value={prizeInput.prize}
-                  onChange={(e) => setPrizeInput((prev) => ({ ...prev, prize: e.target.value }))}
-                  placeholder="e.g., $500"
-                  className="flex-1"
-                />
-                <Button type="button" variant="outline" onClick={handleAddPrize}>
-                  Add
+                  Abort
+                </Button>
+                <Button
+                  onClick={handleSaveArtifact}
+                  disabled={saving}
+                  className="h-14 px-12 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-primary/30"
+                >
+                  {saving ? (
+                    <Loader2 className="animate-spin mr-2 h-4 w-4" />
+                  ) : (
+                    <ShieldCheck className="mr-2 h-4 w-4" />
+                  )}
+                  {editingCompetition ? "Commit Update" : "Authorize Creation"}
                 </Button>
               </div>
-              <div className="flex flex-wrap gap-2 mt-2">
-                {formData.prizes.map((prize, i) => (
-                  <Badge key={i} variant="secondary" className="cursor-pointer" onClick={() => handleRemovePrize(i)}>
-                    {prize.place}: {prize.prize} ✕
-                  </Badge>
-                ))}
-              </div>
-            </div>
-
-            <div className="space-y-2">
-              <Label>Rules</Label>
-              <Textarea
-                value={formData.rules}
-                onChange={(e) => setFormData((prev) => ({ ...prev, rules: e.target.value }))}
-                placeholder="Competition rules and guidelines"
-                rows={4}
-              />
-            </div>
-
-            <div className="flex items-center space-x-2">
-              <Switch
-                checked={formData.is_featured}
-                onCheckedChange={(v) => setFormData((prev) => ({ ...prev, is_featured: v }))}
-              />
-              <Label>Featured Competition</Label>
-            </div>
-
-            <div className="flex justify-end gap-2 pt-4">
-              <Button variant="outline" onClick={() => setIsDialogOpen(false)}>
-                Cancel
-              </Button>
-              <Button onClick={handleSave} disabled={saving}>
-                {saving ? "Saving..." : editingCompetition ? "Update" : "Create"}
-              </Button>
             </div>
           </div>
         </DialogContent>
       </Dialog>
-    </Card>
+    </div>
   );
 }
+
+// Missing component from Lucide import in original
+const XCircle = ({ className, onClick }: { className?: string; onClick?: () => void }) => (
+  <svg
+    xmlns="http://www.w3.org/2000/svg"
+    width="24"
+    height="24"
+    viewBox="0 0 24 24"
+    fill="none"
+    stroke="currentColor"
+    strokeWidth="2"
+    strokeLinecap="round"
+    strokeLinejoin="round"
+    className={className}
+    onClick={onClick}
+  >
+    <circle cx="12" cy="12" r="10" />
+    <path d="m15 9-6 6" />
+    <path d="m9 9 6 6" />
+  </svg>
+);
