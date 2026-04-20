@@ -30,10 +30,8 @@ import {
   ChevronRight,
   Plus,
   ShieldCheck,
-  Activity,
   Layers,
-  Terminal,
-  Zap, // CTO FIX: Restored Zap icon
+  Zap,
 } from "lucide-react";
 import { toast } from "sonner";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
@@ -47,8 +45,10 @@ import { cn } from "@/lib/utils";
 /**
  * Platform Logic: Academic Artifact Registry (Content List)
  * High-fidelity orchestrator for multi-modal educational assets.
- * 2026 Standard: Executive Logic geometry with reinforced readiness telemetry.
+ * 2026 Standard: Executive Logic geometry with reinforced type-safe ingestion.
  */
+
+type ContentType = "batch_class" | "free_video" | "live_webinar" | "offline_seminar" | "recorded_course";
 
 interface Content {
   id: string;
@@ -63,6 +63,10 @@ interface Content {
   current_enrollment: number;
   profession_line_id: string | null;
   profession_level_id: string | null;
+}
+
+interface ContentListProps {
+  filter?: ContentType;
 }
 
 const TYPE_CONFIG: Record<string, { icon: any; label: string; color: string; bg: string }> = {
@@ -84,7 +88,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-const ContentList = ({ filter }: { filter?: string }) => {
+const ContentList = ({ filter }: ContentListProps) => {
   const navigate = useNavigate();
   const [content, setContent] = useState<Content[]>([]);
   const [moduleStatsMap, setModuleStatsMap] = useState<Record<string, ModuleStats>>({});
@@ -103,7 +107,7 @@ const ContentList = ({ filter }: { filter?: string }) => {
     sortBy: "newest",
   });
 
-  // CTO FIX: Defined totalPages within functional scope
+  // Telemetry Calculation
   const totalPages = Math.max(1, Math.ceil(totalCount / ITEMS_PER_PAGE));
 
   const fetchModuleStats = useCallback(async (contentIds: string[]) => {
@@ -135,7 +139,10 @@ const ContentList = ({ filter }: { filter?: string }) => {
       const sortAsc = filters.sortBy === "oldest" || filters.sortBy === "title_asc";
 
       let query = supabase.from("content").select("*", { count: "exact" }).order(sortCol, { ascending: sortAsc });
-      if (filter) query = query.eq("content_type", filter);
+
+      // CTO FIX: Asserted filter as ContentType to resolve TS2345
+      if (filter) query = query.eq("content_type", filter as ContentType);
+
       if (filters.programId !== "all") query = query.eq("profession_line_id", filters.programId);
       if (filters.levelId !== "all") query = query.eq("profession_level_id", filters.levelId);
 
@@ -145,9 +152,12 @@ const ContentList = ({ filter }: { filter?: string }) => {
       }
 
       const from = (page - 1) * ITEMS_PER_PAGE;
-      const to = from + ITEMS_PER_PAGE - 1;
+      const result = await withTimeout(
+        Promise.resolve(query.range(from, from + ITEMS_PER_PAGE - 1)),
+        TIMEOUTS.DEFAULT,
+        "Registry Sync Timeout",
+      );
 
-      const result = await withTimeout(Promise.resolve(query.range(from, to)), TIMEOUTS.DEFAULT, "Registry Timeout");
       if (result.error) throw result.error;
 
       const data = (result.data || []) as Content[];
@@ -155,7 +165,7 @@ const ContentList = ({ filter }: { filter?: string }) => {
       setTotalCount(result.count || 0);
       await fetchModuleStats(data.map((c) => c.id));
     } catch (err: any) {
-      setLoadError("Transmission Error: Registry Sync Failed");
+      setLoadError("Transmission Error: Failed to synchronize registry nodes.");
     } finally {
       setIsLoading(false);
     }
@@ -173,10 +183,10 @@ const ContentList = ({ filter }: { filter?: string }) => {
     try {
       const { error } = await supabase.from("content").delete().eq("id", deleteId);
       if (error) throw error;
-      toast.success("Artifact Purged");
+      toast.success("Artifact purged from registry.");
       loadRegistry();
-    } catch (err) {
-      toast.error("Handshake Failed");
+    } catch (err: any) {
+      toast.error("Handshake Failed: Logic termination aborted.");
     } finally {
       setDeleteId(null);
     }
@@ -186,14 +196,15 @@ const ContentList = ({ filter }: { filter?: string }) => {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000">
+      {/* Executive Query Console */}
       <div className="flex flex-col lg:flex-row justify-between items-start lg:items-center gap-6 bg-muted/20 p-6 rounded-[32px] border-2 border-border/40 backdrop-blur-md">
         <div className="relative flex-1 group w-full max-w-md">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
           <Input
-            placeholder="Query artifact..."
+            placeholder="Query artifact by title or logic..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="pl-12 h-14 bg-card/50 border-2 border-border/10 rounded-2xl font-bold"
+            className="pl-12 h-14 bg-card/50 border-2 border-border/10 rounded-2xl font-bold tracking-tight text-base"
           />
         </div>
         <div className="flex items-center gap-6 w-full lg:w-auto justify-between lg:justify-end">
@@ -218,7 +229,7 @@ const ContentList = ({ filter }: { filter?: string }) => {
         <Card className="rounded-[40px] border-2 border-dashed border-border/40 bg-card/10 py-24 text-center">
           <Layers className="h-16 w-16 text-muted-foreground/20 mx-auto mb-6" />
           <p className="text-[11px] font-black uppercase tracking-[0.4em] text-muted-foreground/40 italic">
-            Registry Node Null
+            Registry Node Null: No logic paths detected.
           </p>
         </Card>
       ) : (
@@ -226,16 +237,17 @@ const ContentList = ({ filter }: { filter?: string }) => {
           {content.map((item) => {
             const config = TYPE_CONFIG[item.content_type] || TYPE_CONFIG.free_video;
             const Icon = config.icon;
+
             return (
               <Card
                 key={item.id}
-                className="group rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl transition-all duration-500 hover:border-primary/40 flex flex-col"
+                className="group rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl transition-all duration-500 hover:border-primary/40 flex flex-col overflow-hidden"
               >
                 <CardHeader className="p-8 pb-4">
                   <div className="flex items-center justify-between mb-4">
                     <div
                       className={cn(
-                        "h-12 w-12 rounded-2xl flex items-center justify-center border-2 border-white/5",
+                        "h-12 w-12 rounded-2xl flex items-center justify-center border-2 border-white/5 shadow-inner transition-transform duration-500 group-hover:rotate-6",
                         config.bg,
                       )}
                     >
@@ -250,17 +262,19 @@ const ContentList = ({ filter }: { filter?: string }) => {
                       {item.is_published ? "LIVE_NODE" : "IDLE_DRAFT"}
                     </Badge>
                   </div>
-                  <CardTitle className="text-2xl font-black uppercase tracking-tighter italic line-clamp-2 min-h-[56px]">
+                  <CardTitle className="text-2xl font-black uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors line-clamp-2 min-h-[56px]">
                     {item.title}
                   </CardTitle>
                 </CardHeader>
+
                 <CardContent className="p-8 pt-0 space-y-6 flex-1 flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="p-4 rounded-2xl bg-muted/10 border border-border/10">
                       <ContentReadinessBadge stats={moduleStatsMap[item.id]} />
                     </div>
+
                     <div className="flex items-center justify-between">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">
+                      <p className="text-[10px] font-black uppercase tracking-widest text-primary italic leading-none">
                         {config.label}
                       </p>
                       {item.price > 0 ? (
@@ -274,17 +288,18 @@ const ContentList = ({ filter }: { filter?: string }) => {
                       )}
                     </div>
                   </div>
+
                   <div className="pt-6 border-t border-border/10 flex gap-3">
                     <Button
                       variant="outline"
-                      className="flex-1 rounded-xl h-11 border-2 font-black uppercase text-[10px]"
+                      className="flex-1 rounded-xl h-11 border-2 font-black uppercase text-[10px] tracking-widest hover:bg-primary hover:text-white transition-all"
                       onClick={() => navigate(`/content/${item.id}/edit`)}
                     >
-                      Edit
+                      Recalibrate
                     </Button>
                     <Button
                       variant="ghost"
-                      className="rounded-xl h-11 w-11 text-destructive/20 hover:text-destructive hover:bg-destructive/10 transition-all"
+                      className="rounded-xl h-11 w-11 text-destructive/20 hover:text-destructive hover:bg-destructive/10 transition-all border-none"
                       onClick={() => setDeleteId(item.id)}
                     >
                       <Trash2 className="w-4 h-4" />
@@ -297,11 +312,14 @@ const ContentList = ({ filter }: { filter?: string }) => {
         </div>
       )}
 
+      {/* Logic Pagination Terminal */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between p-8 bg-muted/20 rounded-[32px] border-2 border-border/40">
+        <div className="flex items-center justify-between p-8 bg-muted/20 rounded-[32px] border-2 border-border/40 backdrop-blur-md">
           <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/40 italic">Frame</p>
-            <p className="text-xl font-black italic tracking-tighter">
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/40 italic leading-none">
+              Registry Frame
+            </p>
+            <p className="text-xl font-black italic tracking-tighter leading-none">
               {page} <span className="text-xs opacity-20">of</span> {totalPages}
             </p>
           </div>
@@ -309,20 +327,20 @@ const ContentList = ({ filter }: { filter?: string }) => {
             <Button
               variant="outline"
               size="icon"
-              className="h-14 w-14 rounded-2xl border-2"
+              className="h-14 w-14 rounded-2xl border-2 hover:bg-primary hover:text-white transition-all"
               onClick={() => setPage((p) => Math.max(1, p - 1))}
               disabled={page === 1}
             >
-              <ChevronLeft />
+              <ChevronLeft className="h-6 w-6" />
             </Button>
             <Button
               variant="outline"
               size="icon"
-              className="h-14 w-14 rounded-2xl border-2"
+              className="h-14 w-14 rounded-2xl border-2 hover:bg-primary hover:text-white transition-all"
               onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
               disabled={page === totalPages}
             >
-              <ChevronRight />
+              <ChevronRight className="h-6 w-6" />
             </Button>
           </div>
         </div>
@@ -331,14 +349,15 @@ const ContentList = ({ filter }: { filter?: string }) => {
       <AlertDialog open={!!deleteId} onOpenChange={() => setDeleteId(null)}>
         <AlertDialogContent className="rounded-[32px] border-4 border-destructive/20 bg-background/95 p-10 shadow-2xl backdrop-blur-xl">
           <AlertDialogHeader>
-            <div className="h-14 w-14 rounded-2xl bg-destructive/10 flex items-center justify-center mb-6">
+            <div className="h-14 w-14 rounded-2xl bg-destructive/10 flex items-center justify-center mb-6 border-2 border-destructive/20">
               <AlertCircle className="h-8 w-8 text-destructive" />
             </div>
-            <AlertDialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+            <AlertDialogTitle className="text-3xl font-black uppercase tracking-tighter italic text-left">
               Terminate Node?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-sm font-medium text-muted-foreground italic leading-relaxed">
-              System warning: This logic cycle cannot be reversed.
+            <AlertDialogDescription className="text-sm font-medium text-muted-foreground italic leading-relaxed text-left">
+              System warning: This logic cycle cannot be reversed. Artifact and all associated logic chains will be
+              terminated.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-10 gap-4">
