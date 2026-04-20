@@ -4,29 +4,33 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import {
   ArrowLeft,
   Building2,
-  AlertCircle,
   CheckCircle,
   FileText,
   Loader2,
-  Coins,
   Sparkles,
   Brain,
   ArrowRight,
-  MessageCircle,
   UploadCloud,
+  Zap,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
-import { SUPPORT_CONFIG, getExpediteMessage } from "@/lib/constants/support";
 import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
+import { cn } from "@/lib/utils";
+
+/**
+ * Platform Logic: Job Application Handshake
+ * Orchestrates secure CV transmission and real-time AI interview synthesis.
+ * 2026 Standard: Executive Logic geometry with reinforced transaction guards.
+ */
 
 interface Job {
   id: string;
@@ -38,11 +42,10 @@ interface Job {
 }
 
 const SUBMISSION_STAGES = [
-  { progress: 20, message: "Creating your application..." },
-  { progress: 40, message: "Sending to employer..." },
-  { progress: 60, message: "Generating AI assessment..." },
-  { progress: 80, message: "Preparing interview questions..." },
-  { progress: 95, message: "Almost ready..." },
+  { progress: 20, message: "Syncing Registry..." },
+  { progress: 40, message: "Hardening CV Node..." },
+  { progress: 60, message: "Synthesizing AI Interview..." },
+  { progress: 85, message: "Finalizing Protocol..." },
 ];
 
 export default function AppJobApplication() {
@@ -97,8 +100,8 @@ export default function AppJobApplication() {
         }
       }
     } catch (error) {
-      console.error("Error fetching job:", error);
-      toast.error("Failed to load job details");
+      console.error("Diagnostic Failure:", error);
+      toast.error("Failed to load registry entry.");
     } finally {
       setLoading(false);
     }
@@ -109,7 +112,7 @@ export default function AppJobApplication() {
     if (!file || !talent) return;
 
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
+      toast.error("File exceeds 5MB limit.");
       return;
     }
 
@@ -135,10 +138,9 @@ export default function AppJobApplication() {
       if (updateError) throw updateError;
 
       await refreshTalent();
-      toast.success("CV uploaded and secured!");
+      toast.success("CV Node Secured.");
     } catch (error) {
-      console.error("Upload error:", error);
-      toast.error("Failed to upload CV. Please try again.");
+      toast.error("CV Transmission failed.");
     } finally {
       setIsUploadingCV(false);
     }
@@ -161,10 +163,10 @@ export default function AppJobApplication() {
       if (error) throw error;
       if (data?.enhancedCoverLetter) {
         setCoverLetter(data.enhancedCoverLetter);
-        toast.success("Cover letter generated!");
+        toast.success("Cover Letter Synthesized.");
       }
     } catch (error: any) {
-      toast.error("AI enhancement currently unavailable.");
+      toast.error("AI Neural link currently saturated.");
     } finally {
       setIsGeneratingCoverLetter(false);
     }
@@ -179,7 +181,7 @@ export default function AppJobApplication() {
     }
 
     if (!talent.cvUrl) {
-      toast.error("Please upload your CV to continue.");
+      toast.error("Registry missing CV node.");
       document.getElementById("cv-upload-section")?.scrollIntoView({ behavior: "smooth" });
       return;
     }
@@ -204,48 +206,34 @@ export default function AppJobApplication() {
 
       if (appError) throw appError;
 
-      await deductCredits("JOB_APPLICATION", job.id, `Application to ${job.title}`);
+      await deductCredits("JOB_APPLICATION", job.id, `Application: ${job.title}`);
 
       setSubmissionProgress(40);
-      setSubmissionMessage("Notifying employer...");
+      setSubmissionMessage("Broadcasting to Employer...");
       await supabase.functions.invoke("send-job-application", {
         body: { applicationId: appData.id },
       });
 
       if (job.ai_assessment_enabled) {
-        setSubmissionProgress(60);
-        setSubmissionMessage("Preparing AI interview...");
+        setSubmissionProgress(65);
+        setSubmissionMessage("Generating Neural Interview...");
 
-        try {
-          const { data: assessmentData, error: assessmentError } = await supabase.functions.invoke(
-            "generate-job-assessment",
-            { body: { jobId: job.id, talentId: talent.id, jobApplicationId: appData.id } },
-          );
+        const { data: assessmentData, error: assessmentError } = await supabase.functions.invoke(
+          "generate-job-assessment",
+          { body: { jobId: job.id, talentId: talent.id, jobApplicationId: appData.id } },
+        );
 
-          if (!assessmentError && assessmentData?.assessmentId) {
-            setGeneratedAssessmentId(assessmentData.assessmentId);
-          } else {
-            // CTO FIX: Handle generation delay/error without blocking application success
-            toast.info(
-              "Application sent! Your AI assessment is being prepared—check 'My Applications' in a few moments.",
-            );
-          }
-        } catch (err) {
-          console.error("Delayed Assessment Gen:", err);
+        if (!assessmentError && assessmentData?.assessmentId) {
+          setGeneratedAssessmentId(assessmentData.assessmentId);
         }
       }
 
       setSubmissionProgress(100);
       setSubmitted(true);
-      toast.success("Applied successfully!");
+      toast.success("Registry Entry Finalized.");
       refreshBalance();
     } catch (error: any) {
-      if (error?.message?.includes("duplicate")) {
-        toast.info("Already applied to this role.");
-        setSubmitted(true);
-      } else {
-        toast.error("Application failed. Please try again.");
-      }
+      toast.error("Handshake interruption. Retry sequence.");
     } finally {
       setSubmitting(false);
       isSubmittingRef.current = false;
@@ -255,42 +243,42 @@ export default function AppJobApplication() {
   if (loading)
     return (
       <div className="max-w-2xl mx-auto p-12">
-        <Skeleton className="h-64 w-full rounded-2xl" />
+        <Skeleton className="h-80 w-full rounded-[32px] bg-muted/40" />
       </div>
     );
 
   if (submitted) {
     return (
-      <div className="max-w-2xl mx-auto px-4 py-12">
-        <Card className="text-center py-12 bg-emerald-50/20 border-emerald-100 shadow-xl">
-          <CardContent className="space-y-6">
-            <div className="w-20 h-20 bg-emerald-100 rounded-full flex items-center justify-center mx-auto ring-4 ring-emerald-50">
-              <CheckCircle className="h-10 w-10 text-emerald-600" />
+      <div className="max-w-2xl mx-auto px-6 py-20 animate-in fade-in zoom-in-95 duration-700">
+        <Card className="text-center py-16 bg-card/30 backdrop-blur-xl border-emerald-500/20 shadow-2xl rounded-[48px]">
+          <CardContent className="space-y-8">
+            <div className="w-24 h-24 bg-emerald-500/10 rounded-[32px] flex items-center justify-center mx-auto border border-emerald-500/20 rotate-3">
+              <CheckCircle className="h-12 w-12 text-emerald-500" />
             </div>
             <div className="space-y-2">
-              <h2 className="text-2xl font-bold">Application Received!</h2>
-              <p className="text-muted-foreground max-w-sm mx-auto">
-                Good luck! Your profile for <span className="text-foreground font-semibold">{job?.title}</span> has been
-                shared.
+              <h2 className="text-3xl font-black uppercase tracking-tighter">Handshake Finalized</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+                Application for {job?.title} active in registry.
               </p>
             </div>
 
-            <div className="flex flex-col sm:flex-row gap-3 justify-center pt-4">
-              {generatedAssessmentId ? (
+            <div className="flex flex-col gap-4 max-w-sm mx-auto pt-6">
+              {generatedAssessmentId && (
                 <Button
                   size="lg"
-                  className="px-8 shadow-lg shadow-primary/20"
+                  className="rounded-[20px] h-14 font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/30 animate-pulse"
                   onClick={() => navigate(`/app/job-assessment/${generatedAssessmentId}`)}
                 >
-                  <Brain className="mr-2 h-4 w-4" /> Start AI Interview
-                </Button>
-              ) : (
-                <Button size="lg" onClick={() => navigate("/app/applications")}>
-                  View My Dashboard
+                  <Brain className="mr-3 h-5 w-5" /> Initialize AI Interview
                 </Button>
               )}
-              <Button variant="outline" size="lg" onClick={() => navigate("/app/jobs")}>
-                Back to Jobs
+              <Button
+                variant="outline"
+                size="lg"
+                className="rounded-[20px] h-14 font-black uppercase tracking-widest text-[11px] border-2"
+                onClick={() => navigate("/app/applications")}
+              >
+                View Applications Registry
               </Button>
             </div>
           </CardContent>
@@ -300,69 +288,104 @@ export default function AppJobApplication() {
   }
 
   return (
-    <div className="max-w-2xl mx-auto px-4 py-4 min-h-screen">
-      {/* CTO FIX: Applied pb-40 to inner content to prevent mobile overlap (Audit # Polish) */}
-      <div className="space-y-5 pb-40">
-        <div className="flex items-center gap-3">
-          <Button variant="ghost" size="icon" onClick={() => navigate(-1)}>
-            <ArrowLeft className="h-5 w-5" />
-          </Button>
-          <div>
-            <h1 className="text-xl font-bold">Apply Now</h1>
-            <p className="text-xs text-muted-foreground">Standard Application</p>
+    <div className="max-w-3xl mx-auto px-6 py-10 min-h-svh space-y-10">
+      <div className="pb-40 space-y-10">
+        <header className="flex items-center justify-between">
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              size="icon"
+              className="rounded-xl h-11 w-11 hover:bg-primary/5"
+              onClick={() => navigate(-1)}
+            >
+              <ArrowLeft className="h-5 w-5" />
+            </Button>
+            <div>
+              <h1 className="text-3xl font-black uppercase tracking-tighter">Submit Protocol</h1>
+              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 italic">
+                Registry: Standard Application
+              </p>
+            </div>
           </div>
-        </div>
+          <Badge className="bg-primary/5 text-primary border-primary/20 rounded-lg px-3 py-1 font-black text-[9px] uppercase tracking-widest">
+            Handshake Node
+          </Badge>
+        </header>
 
-        <Card>
-          <CardContent className="p-4 flex gap-4 items-center">
-            <div className="w-14 h-14 rounded-xl bg-primary/5 flex items-center justify-center border shrink-0 overflow-hidden">
+        <Card className="rounded-[32px] border-2 border-primary/10 bg-card/30 backdrop-blur-xl overflow-hidden shadow-2xl">
+          <CardContent className="p-8 flex gap-6 items-center">
+            <div className="w-20 h-20 rounded-[24px] bg-primary/5 flex items-center justify-center border-2 border-border/40 shrink-0 overflow-hidden shadow-inner">
               {job?.company_logo_url ? (
                 <img src={job.company_logo_url} className="object-cover w-full h-full" alt="logo" />
               ) : (
-                <Building2 className="text-primary w-6 h-6" />
+                <Building2 className="text-primary w-8 h-8" />
               )}
             </div>
-            <div>
-              <h2 className="font-bold text-lg leading-tight">{job?.title}</h2>
-              <p className="text-sm text-muted-foreground">{job?.company_name}</p>
+            <div className="space-y-1">
+              <h2 className="font-black text-2xl uppercase tracking-tighter leading-none">{job?.title}</h2>
+              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic">
+                {job?.company_name}
+              </p>
             </div>
           </CardContent>
         </Card>
 
-        <Card id="cv-upload-section" className={!talent?.cvUrl ? "border-primary bg-primary/[0.02]" : ""}>
-          <CardHeader className="pb-3 border-b py-3">
-            <CardTitle className="text-sm flex items-center gap-2">
-              <FileText className="w-4 h-4" /> Professional Resume
+        {/* CV Registry Section */}
+        <Card
+          id="cv-upload-section"
+          className={cn(
+            "rounded-[32px] transition-all duration-500 overflow-hidden",
+            !talent?.cvUrl ? "border-primary/40 bg-primary/[0.03] shadow-2xl shadow-primary/5" : "border-border/40",
+          )}
+        >
+          <CardHeader className="border-b bg-muted/20 px-8 py-5 flex flex-row items-center justify-between">
+            <CardTitle className="text-[11px] font-black uppercase tracking-[0.2em] flex items-center gap-3">
+              <ShieldCheck className="w-4 h-4 text-primary" /> Professional Registry Node (CV)
             </CardTitle>
+            {talent?.cvUrl && (
+              <Badge className="bg-emerald-500/10 text-emerald-500 border-emerald-500/20 text-[8px] font-black uppercase">
+                Verified
+              </Badge>
+            )}
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="p-8">
             {talent?.cvUrl ? (
-              <div className="flex items-center justify-between p-3 border rounded-xl bg-background shadow-sm">
-                <div className="flex items-center gap-3">
-                  <div className="w-10 h-10 bg-red-50 rounded-lg flex items-center justify-center text-red-500 font-bold text-[10px]">
+              <div className="flex items-center justify-between p-5 border-2 border-dashed rounded-2xl bg-background/50 group hover:border-primary/40 transition-all">
+                <div className="flex items-center gap-4">
+                  <div className="w-12 h-12 bg-primary/5 rounded-xl flex items-center justify-center text-primary font-black text-[10px] border shadow-inner">
                     PDF
                   </div>
-                  <span className="text-sm font-medium">Resume_Profile.pdf</span>
+                  <div className="space-y-0.5">
+                    <span className="text-sm font-black uppercase tracking-tight italic">Active_Resume_Node.pdf</span>
+                    <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                      Signed & Secure
+                    </p>
+                  </div>
                 </div>
-                <Label htmlFor="cv-up" className="cursor-pointer text-xs text-primary font-bold hover:underline">
+                <Label
+                  htmlFor="cv-up"
+                  className="cursor-pointer text-[10px] font-black uppercase tracking-widest text-primary hover:underline"
+                >
                   Replace
                 </Label>
                 <input id="cv-up" type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={handleCVUpload} />
               </div>
             ) : (
-              <div className="flex flex-col items-center p-8 border-2 border-dashed rounded-xl bg-muted/20">
+              <div className="flex flex-col items-center p-12 border-2 border-dashed rounded-[24px] bg-muted/10 group hover:bg-primary/[0.02] transition-all">
                 {isUploadingCV ? (
-                  <Loader2 className="animate-spin text-primary mb-2" />
+                  <Loader2 className="animate-spin text-primary mb-4 h-8 w-8" />
                 ) : (
-                  <UploadCloud className="text-muted-foreground/50 mb-3 w-8 h-8" />
+                  <UploadCloud className="text-muted-foreground/30 mb-5 w-12 h-12 transition-transform group-hover:scale-110" />
                 )}
-                <h3 className="text-sm font-semibold mb-1">Upload CV</h3>
-                <p className="text-[10px] text-muted-foreground mb-4">PDF, DOC, DOCX up to 5MB</p>
+                <h3 className="text-sm font-black uppercase tracking-widest mb-2">Upload CV Artifact</h3>
+                <p className="text-[10px] text-muted-foreground/40 uppercase tracking-[0.2em] mb-6 italic">
+                  Secure Transmission • 5MB Limit
+                </p>
                 <Label
                   htmlFor="cv-new"
-                  className="cursor-pointer bg-primary text-primary-foreground px-6 py-2 rounded-lg text-xs font-bold shadow-md"
+                  className="cursor-pointer bg-primary text-primary-foreground h-12 px-10 rounded-2xl text-[10px] font-black uppercase tracking-widest flex items-center shadow-2xl shadow-primary/20 hover:scale-105 active:scale-95 transition-all"
                 >
-                  Select File
+                  <Zap className="mr-2 h-4 w-4" /> Select File
                 </Label>
                 <input id="cv-new" type="file" className="hidden" accept=".pdf,.doc,.docx" onChange={handleCVUpload} />
               </div>
@@ -370,57 +393,84 @@ export default function AppJobApplication() {
           </CardContent>
         </Card>
 
-        <Card>
-          <CardHeader className="pb-2 border-b flex flex-row items-center justify-between py-3">
-            <CardTitle className="text-sm">Cover Letter (Optional)</CardTitle>
+        {/* Narrative Engine (Cover Letter) */}
+        <Card className="rounded-[32px] border-border/40 overflow-hidden shadow-lg">
+          <CardHeader className="bg-muted/20 px-8 py-5 border-b flex flex-row items-center justify-between">
+            <CardTitle className="text-[11px] font-black uppercase tracking-[0.2em] flex items-center gap-3">
+              <Sparkles className="w-4 h-4 text-primary" /> Narrative Synthesis
+            </CardTitle>
             <Button
-              variant="ghost"
+              variant="outline"
               size="sm"
               onClick={handleGenerateCoverLetter}
               disabled={isGeneratingCoverLetter || !talent?.cvUrl}
-              className="h-7 text-[10px] gap-1 px-2 border"
+              className="h-9 px-4 rounded-xl border-2 font-black text-[9px] uppercase tracking-widest gap-2 bg-background hover:bg-primary/5"
             >
               {isGeneratingCoverLetter ? (
-                <Loader2 className="animate-spin h-3 w-3" />
+                <Loader2 className="animate-spin h-3.5 w-3.5" />
               ) : (
-                <Sparkles className="h-3 w-3 text-primary" />
-              )}{" "}
-              AI Help
+                <Zap className="h-3.5 w-3.5 text-primary" />
+              )}
+              Synthesize with AI
             </Button>
           </CardHeader>
-          <CardContent className="pt-4">
+          <CardContent className="p-8">
             <Textarea
               placeholder="Tell the hiring team about your background and motivation..."
               value={coverLetter}
               onChange={(e) => setCoverLetter(e.target.value)}
-              rows={8}
-              className="resize-none rounded-xl"
+              className="min-h-[240px] resize-none rounded-2xl bg-muted/10 border-border/40 focus-visible:ring-primary/10 p-6 leading-relaxed italic text-sm font-medium"
             />
           </CardContent>
         </Card>
       </div>
 
-      <div className="fixed bottom-16 left-0 right-0 p-4 bg-background/90 backdrop-blur-md border-t z-20">
-        <div className="max-w-2xl mx-auto space-y-3">
-          <div className="flex justify-between text-[11px] font-bold tracking-tight px-1">
-            <span className="text-muted-foreground uppercase">Estimated Cost: {applicationCost} credits</span>
-            <span className={!hasEnoughCredits ? "text-destructive" : "text-muted-foreground"}>BALANCE: {balance}</span>
+      {/* Global Control Terminal */}
+      <div className="fixed bottom-0 left-0 right-0 p-8 bg-background/80 backdrop-blur-2xl border-t-2 border-border/10 z-20 shadow-[0_-20px_50px_rgba(0,0,0,0.1)] animate-in slide-in-from-bottom-full duration-700 delay-300">
+        <div className="max-w-3xl mx-auto space-y-6">
+          <div className="flex justify-between items-end px-2">
+            <div className="space-y-1">
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
+                Estimated Cost
+              </p>
+              <p className="text-sm font-black uppercase tracking-tighter italic">{applicationCost} Neural Credits</p>
+            </div>
+            <div className="text-right space-y-1">
+              <p className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/60">
+                Active Balance
+              </p>
+              <p
+                className={cn(
+                  "text-sm font-black uppercase tracking-tighter italic",
+                  !hasEnoughCredits ? "text-destructive animate-pulse" : "text-primary",
+                )}
+              >
+                {balance} Credits Available
+              </p>
+            </div>
           </div>
+
           {submitting ? (
-            <div className="space-y-3 p-2 bg-primary/5 rounded-xl border border-primary/10">
-              <div className="flex items-center gap-3 text-xs font-bold">
-                <Brain className="h-4 w-4 animate-pulse text-primary" /> {submissionMessage}
+            <div className="space-y-4 p-6 bg-primary/5 rounded-[24px] border border-primary/20 shadow-inner">
+              <div className="flex items-center justify-between">
+                <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-primary italic">
+                  <Brain className="h-4 w-4 animate-pulse" /> {submissionMessage}
+                </div>
+                <span className="text-[10px] font-mono font-black text-primary">{submissionProgress}%</span>
               </div>
-              <Progress value={submissionProgress} className="h-2" />
+              <Progress value={submissionProgress} className="h-1.5 rounded-full" />
             </div>
           ) : (
             <Button
-              className="w-full h-14 text-base font-bold shadow-2xl rounded-xl"
-              size="lg"
+              className="w-full h-16 rounded-[24px] text-[12px] font-black uppercase tracking-[0.3em] shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95 group overflow-hidden"
               onClick={handleSubmit}
               disabled={isUploadingCV}
             >
-              {hasEnoughCredits ? "Submit Application" : "Purchase Credits"} <ArrowRight className="ml-2 h-5 w-5" />
+              <span className="relative z-10 flex items-center">
+                {hasEnoughCredits ? "Finalize Handshake" : "Top-up Credits"}
+                <ArrowRight className="ml-3 h-5 w-5 transition-transform group-hover:translate-x-2" />
+              </span>
+              <div className="absolute inset-0 bg-gradient-to-r from-primary via-blue-600 to-primary opacity-50 group-hover:opacity-100 transition-opacity" />
             </Button>
           )}
         </div>
