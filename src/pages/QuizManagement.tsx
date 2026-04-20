@@ -7,13 +7,34 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger, DialogFooter, DialogDescription } from "@/components/ui/dialog";
-import { ArrowLeft, Plus, Trash2, Wand2, AlertCircle, CheckCircle2 } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogTrigger,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Badge } from "@/components/ui/badge";
+import {
+  ArrowLeft,
+  Plus,
+  Trash2,
+  Wand2,
+  AlertCircle,
+  CheckCircle2,
+  Save,
+  GraduationCap,
+  Sparkles,
+  Loader2,
+} from "lucide-react";
 import { toast } from "sonner";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { ErrorState } from "@/components/ui/error-state";
 import { parseAIQuiz, validateParsedQuestions, type ParsedQuestion } from "@/lib/quizParser";
+import { cn } from "@/lib/utils";
 
 interface Question {
   id?: string;
@@ -44,8 +65,7 @@ export default function QuizManagement() {
   const [selectedModuleId, setSelectedModuleId] = useState<string | null>(null);
   const [questions, setQuestions] = useState<Question[]>([]);
   const [passThreshold, setPassThreshold] = useState(70);
-  
-  // AI Import dialog state
+
   const [importDialogOpen, setImportDialogOpen] = useState(false);
   const [aiQuizText, setAiQuizText] = useState("");
   const [parsedPreview, setParsedPreview] = useState<ParsedQuestion[]>([]);
@@ -54,87 +74,51 @@ export default function QuizManagement() {
   useEffect(() => {
     loadQuizData();
   }, [contentId]);
-
   useEffect(() => {
-    if (selectedModuleId) {
-      loadModuleQuestions(selectedModuleId);
-    }
+    if (selectedModuleId) loadModuleQuestions(selectedModuleId);
   }, [selectedModuleId]);
 
   const loadQuizData = async () => {
     setLoading(true);
-    setLoadError(null);
     try {
-      // Get course details
-      const courseResult = await withTimeout(
-        Promise.resolve(supabase.from("content").select("*").eq("id", contentId).single()),
-        TIMEOUTS.DEFAULT,
-        "Loading course timed out"
-      );
-      if (courseResult.error || !courseResult.data) {
-        toast.error("Course not found");
-        navigate("/dashboard");
-        return;
-      }
-      setCourse(courseResult.data);
-      setPassThreshold(courseResult.data.pass_threshold || 70);
+      const { data: c } = await supabase.from("content").select("*").eq("id", contentId).single();
+      if (!c) throw new Error("Blueprint Missing");
+      setCourse(c);
+      setPassThreshold(c.pass_threshold || 70);
 
-      // Get course modules
-      const modulesResult = await withTimeout(
-        Promise.resolve(supabase.from("course_modules").select("id, title, display_order").eq("content_id", contentId).order("display_order")),
-        TIMEOUTS.DEFAULT,
-        "Loading modules timed out"
-      );
-      
-      if (modulesResult.data && modulesResult.data.length > 0) {
-        setModules(modulesResult.data);
-        setSelectedModuleId(modulesResult.data[0].id);
+      const { data: mods } = await supabase
+        .from("course_modules")
+        .select("id, title, display_order")
+        .eq("content_id", contentId)
+        .order("display_order");
+
+      if (mods && mods.length > 0) {
+        setModules(mods);
+        setSelectedModuleId(mods[0].id);
       }
-    } catch (error: any) {
-      console.error("Error loading quiz:", error);
-      setLoadError(error.message || "Failed to load quiz data");
-      toast.error("Failed to load quiz data");
+    } catch (err: any) {
+      setLoadError(err.message);
     } finally {
       setLoading(false);
     }
   };
 
   const loadModuleQuestions = async (moduleId: string) => {
-    try {
-      const questionsResult = await withTimeout(
-        Promise.resolve(supabase.from("quiz_questions").select("*").eq("module_id", moduleId).order("display_order")),
-        TIMEOUTS.DEFAULT,
-        "Loading questions timed out"
-      );
-      if (questionsResult.data && questionsResult.data.length > 0) {
-        setQuestions(questionsResult.data);
-      } else {
-        setQuestions([]);
-        addQuestion();
-      }
-    } catch (error) {
-      console.error("Error loading module questions:", error);
-      setQuestions([]);
-      addQuestion();
-    }
-  };
-
-  const addQuestion = () => {
-    const newQuestion: Question = {
-      question_text: "",
-      option_a: "",
-      option_b: "",
-      option_c: "",
-      option_d: "",
-      correct_answer: "A",
-      explanation: "",
-      display_order: questions.length,
-    };
-    setQuestions([...questions, newQuestion]);
-  };
-
-  const removeQuestion = (index: number) => {
-    setQuestions(questions.filter((_, i) => i !== index));
+    const { data } = await supabase.from("quiz_questions").select("*").eq("module_id", moduleId).order("display_order");
+    if (data && data.length > 0) setQuestions(data);
+    else
+      setQuestions([
+        {
+          question_text: "",
+          option_a: "",
+          option_b: "",
+          option_c: "",
+          option_d: "",
+          correct_answer: "A",
+          explanation: "",
+          display_order: 0,
+        },
+      ]);
   };
 
   const updateQuestion = (index: number, field: keyof Question, value: string | number) => {
@@ -143,87 +127,34 @@ export default function QuizManagement() {
     setQuestions(updated);
   };
 
-  // AI Quiz Import handlers
   const handleParseAIQuiz = () => {
     const parsed = parseAIQuiz(aiQuizText);
     const validation = validateParsedQuestions(parsed);
-    
     setParsedPreview(parsed);
     setParseErrors(validation.errors);
   };
 
   const handleImportParsed = () => {
-    if (parsedPreview.length === 0) return;
-    
-    const newQuestions: Question[] = parsedPreview.map((q, index) => ({
-      question_text: q.question_text,
-      option_a: q.option_a,
-      option_b: q.option_b,
-      option_c: q.option_c,
-      option_d: q.option_d,
-      correct_answer: q.correct_answer,
-      explanation: q.explanation,
-      display_order: questions.length + index,
+    const newQs: Question[] = parsedPreview.map((q, i) => ({
+      ...q,
+      explanation: q.explanation || "",
+      display_order: questions.length + i,
     }));
-    
-    setQuestions([...questions, ...newQuestions]);
+    setQuestions([...questions, ...newQs]);
     setImportDialogOpen(false);
     setAiQuizText("");
-    setParsedPreview([]);
-    setParseErrors([]);
-    toast.success(`Imported ${newQuestions.length} questions`);
+    toast.success(`Synthetic Logic Imported: ${newQs.length} Nodes added.`);
   };
 
   const handleSave = async () => {
-    if (!selectedModuleId) {
-      toast.error("Please select a module first");
-      return;
-    }
-    
-    // Validate questions
-    if (questions.length === 0) {
-      toast.error("Please add at least one question");
-      return;
-    }
-
-    const incomplete = questions.some(q => 
-      !q.question_text || !q.option_a || !q.option_b || !q.option_c || !q.option_d
-    );
-
-    if (incomplete) {
-      toast.error("Please complete all question fields");
-      return;
-    }
-
+    if (!selectedModuleId) return;
     setSaving(true);
     try {
-      // Update pass threshold and enable quiz
-      const { error: updateError } = await withTimeout(
-        Promise.resolve(supabase
-          .from("content")
-          .update({ 
-            pass_threshold: passThreshold,
-            quiz_enabled: true
-          })
-          .eq("id", contentId)),
-        TIMEOUTS.DEFAULT,
-        "Updating quiz settings timed out"
-      );
+      // Logic Transactional Cycle
+      await supabase.from("content").update({ pass_threshold: passThreshold, quiz_enabled: true }).eq("id", contentId);
+      await supabase.from("quiz_questions").delete().eq("module_id", selectedModuleId);
 
-      if (updateError) throw updateError;
-
-      // Delete existing questions for this module
-      await withTimeout(
-        Promise.resolve(supabase
-          .from("quiz_questions")
-          .delete()
-          .eq("module_id", selectedModuleId)),
-        TIMEOUTS.DEFAULT,
-        "Deleting existing questions timed out"
-      );
-
-      // Insert new questions with module_id
-      const questionsToInsert = questions.map((q, index) => ({
+      const payload = questions.map((q, i) => ({
         content_id: contentId,
         module_id: selectedModuleId,
         question_text: q.question_text,
@@ -233,281 +164,292 @@ export default function QuizManagement() {
         option_d: q.option_d,
         correct_answer: q.correct_answer,
         explanation: q.explanation || null,
-        display_order: index,
+        display_order: i,
       }));
 
-      const { error: insertError } = await withTimeout(
-        Promise.resolve(supabase
-          .from("quiz_questions")
-          .insert(questionsToInsert)),
-        TIMEOUTS.DEFAULT,
-        "Saving quiz questions timed out"
-      );
-
-      if (insertError) throw insertError;
-
-      toast.success("Quiz saved successfully!");
-    } catch (error: any) {
-      console.error("Error saving quiz:", error);
-      toast.error("Failed to save quiz");
+      const { error } = await supabase.from("quiz_questions").insert(payload);
+      if (error) throw error;
+      toast.success("Logic Nodes Synchronized.");
+    } catch (err) {
+      toast.error("Database Committal Failed.");
     } finally {
       setSaving(false);
     }
   };
 
-  if (loading) {
+  if (loading)
     return (
-      <div className="min-h-screen bg-background flex items-center justify-center">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-primary"></div>
+      <div className="h-screen flex flex-col items-center justify-center animate-pulse space-y-4">
+        <Loader2 className="h-10 w-10 animate-spin text-primary" />
+        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+          Initializing Assessment Terminal
+        </p>
       </div>
     );
-  }
-
-  if (loadError) {
-    return (
-      <div className="min-h-screen bg-background flex items-center justify-center p-4">
-        <ErrorState
-          type="server"
-          title="Failed to load quiz"
-          description={loadError}
-          onRetry={loadQuizData}
-        />
-      </div>
-    );
-  }
 
   return (
-    <div className="min-h-screen bg-background py-12">
-      <div className="container max-w-4xl mx-auto px-4">
-        <div className="mb-6">
-          <Button variant="ghost" onClick={() => navigate(`/content/${contentId}/edit`)}>
-            <ArrowLeft className="h-4 w-4 mr-2" />
-            Back to Content
+    <div className="min-h-screen bg-muted/20 pb-20 selection:bg-primary/10">
+      <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+        <div className="container mx-auto px-6 h-16 flex items-center justify-between">
+          <Button
+            variant="ghost"
+            onClick={() => navigate(`/content/${contentId}/edit`)}
+            className="rounded-xl font-bold uppercase text-[10px] tracking-widest pl-0"
+          >
+            <ArrowLeft className="mr-2 h-4 w-4" /> Curriculum Blueprint
           </Button>
+          <Badge
+            variant="outline"
+            className="font-black uppercase text-[10px] border-primary/20 text-primary bg-primary/5"
+          >
+            Verification Protocol Active
+          </Badge>
         </div>
+      </header>
 
-        <div className="space-y-6">
-          <Card>
-            <CardHeader>
-              <CardTitle>Quiz Settings</CardTitle>
-              <CardDescription>Configure quiz for {course?.title}</CardDescription>
-            </CardHeader>
-            <CardContent className="space-y-4">
-              {/* Module Selector */}
-              <div className="space-y-2">
-                <Label>Select Module</Label>
-                <Select value={selectedModuleId || ""} onValueChange={setSelectedModuleId}>
-                  <SelectTrigger>
-                    <SelectValue placeholder="Select a module" />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {modules.map((module, index) => (
-                      <SelectItem key={module.id} value={module.id}>
-                        Module {index + 1}: {module.title}
-                      </SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-                <p className="text-sm text-muted-foreground">
-                  Each module has its own quiz. Select a module to manage its questions.
-                </p>
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="threshold">Pass Threshold (%)</Label>
-                <Input
-                  id="threshold"
-                  type="number"
-                  min="0"
-                  max="100"
-                  value={passThreshold}
-                  onChange={(e) => setPassThreshold(parseInt(e.target.value))}
-                />
-                <p className="text-sm text-muted-foreground">
-                  Students must score at least {passThreshold}% to pass
-                </p>
-              </div>
-            </CardContent>
-          </Card>
-
-          {/* AI Import Button */}
-          {selectedModuleId && (
-            <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
-              <DialogTrigger asChild>
-                <Button variant="outline" className="w-full gap-2">
-                  <Wand2 className="h-4 w-4" />
-                  Import from AI
-                </Button>
-              </DialogTrigger>
-              <DialogContent className="max-w-2xl max-h-[80vh] overflow-y-auto">
-                <DialogHeader>
-                  <DialogTitle>Import Quiz from AI</DialogTitle>
-                  <DialogDescription>
-                    Paste AI-generated quiz questions in numbered format or JSON
-                  </DialogDescription>
-                </DialogHeader>
-                
-                <div className="space-y-4">
-                  <div className="space-y-2">
-                    <Label>Paste AI-generated quiz</Label>
-                    <Textarea
-                      value={aiQuizText}
-                      onChange={(e) => setAiQuizText(e.target.value)}
-                      placeholder={`Example format:\n\n1. What is the capital of France?\nA) London\nB) Paris\nC) Berlin\nD) Madrid\nCorrect: B\nExplanation: Paris is the capital city of France.\n\n2. Which planet is closest to the Sun?\n...`}
-                      rows={10}
-                      className="font-mono text-sm"
-                    />
-                  </div>
-                  
-                  <Button onClick={handleParseAIQuiz} variant="secondary" className="w-full">
-                    Parse Quiz
-                  </Button>
-                  
-                  {parseErrors.length > 0 && (
-                    <div className="p-3 bg-destructive/10 border border-destructive/20 rounded-lg">
-                      <div className="flex items-center gap-2 text-destructive mb-2">
-                        <AlertCircle className="h-4 w-4" />
-                        <span className="font-medium">Parsing Issues</span>
-                      </div>
-                      <ul className="text-sm text-destructive space-y-1">
-                        {parseErrors.map((err, i) => (
-                          <li key={i}>• {err}</li>
-                        ))}
-                      </ul>
-                    </div>
-                  )}
-                  
-                  {parsedPreview.length > 0 && (
-                    <div className="space-y-2">
-                      <div className="flex items-center gap-2 text-green-600">
-                        <CheckCircle2 className="h-4 w-4" />
-                        <span className="font-medium">Parsed {parsedPreview.length} questions</span>
-                      </div>
-                      <div className="max-h-48 overflow-y-auto space-y-2">
-                        {parsedPreview.map((q, i) => (
-                          <div key={i} className="p-2 bg-muted rounded text-sm">
-                            <p className="font-medium truncate">Q{i + 1}: {q.question_text}</p>
-                            <p className="text-muted-foreground text-xs">
-                              Correct: {q.correct_answer} • Options: {[q.option_a, q.option_b, q.option_c, q.option_d].filter(Boolean).length}
-                            </p>
-                          </div>
-                        ))}
-                      </div>
-                    </div>
-                  )}
-                </div>
-                
-                <DialogFooter>
-                  <Button variant="outline" onClick={() => setImportDialogOpen(false)}>
-                    Cancel
-                  </Button>
-                  <Button 
-                    onClick={handleImportParsed} 
-                    disabled={parsedPreview.length === 0}
-                  >
-                    Import {parsedPreview.length} Questions
-                  </Button>
-                </DialogFooter>
-              </DialogContent>
-            </Dialog>
-          )}
-
-          {selectedModuleId && questions.map((question, index) => (
-            <Card key={index}>
-              <CardHeader>
-                <div className="flex items-center justify-between">
-                  <CardTitle className="text-lg">Question {index + 1}</CardTitle>
-                  {questions.length > 1 && (
-                    <Button
-                      variant="ghost"
-                      size="sm"
-                      onClick={() => removeQuestion(index)}
-                    >
-                      <Trash2 className="h-4 w-4 text-destructive" />
-                    </Button>
-                  )}
-                </div>
+      <main className="container max-w-4xl mx-auto px-6 py-12 space-y-8 animate-in fade-in duration-700">
+        <div className="grid md:grid-cols-[1fr,300px] gap-8">
+          <div className="space-y-6">
+            <Card className="rounded-[32px] border-border/40 shadow-2xl bg-card/50 backdrop-blur-sm">
+              <CardHeader className="pb-4">
+                <CardTitle className="text-xl font-black tracking-tighter uppercase flex items-center gap-2">
+                  <GraduationCap className="h-5 w-5 text-primary" /> Global Logic Config
+                </CardTitle>
               </CardHeader>
-              <CardContent className="space-y-4">
+              <CardContent className="space-y-6">
                 <div className="space-y-2">
-                  <Label>Question</Label>
-                  <Textarea
-                    value={question.question_text}
-                    onChange={(e) => updateQuestion(index, "question_text", e.target.value)}
-                    placeholder="Enter your question"
-                    rows={3}
-                  />
-                </div>
-
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-                  {["A", "B", "C", "D"].map((option) => (
-                    <div key={option} className="space-y-2">
-                      <Label>Option {option}</Label>
-                      <Input
-                        value={question[`option_${option.toLowerCase()}` as keyof Question] as string}
-                        onChange={(e) => updateQuestion(index, `option_${option.toLowerCase()}` as keyof Question, e.target.value)}
-                        placeholder={`Enter option ${option}`}
-                      />
-                    </div>
-                  ))}
-                </div>
-
-                <div className="space-y-2">
-                  <Label>Correct Answer</Label>
-                  <Select
-                    value={question.correct_answer}
-                    onValueChange={(value) => updateQuestion(index, "correct_answer", value)}
-                  >
-                    <SelectTrigger>
-                      <SelectValue />
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                    Active Target Module
+                  </Label>
+                  <Select value={selectedModuleId || ""} onValueChange={setSelectedModuleId}>
+                    <SelectTrigger className="h-12 rounded-xl border-border/40 font-bold bg-background/50">
+                      <SelectValue placeholder="Select Module Node" />
                     </SelectTrigger>
-                    <SelectContent>
-                      {["A", "B", "C", "D"].map((option) => (
-                        <SelectItem key={option} value={option}>
-                          Option {option}
+                    <SelectContent className="rounded-xl">
+                      {modules.map((m, i) => (
+                        <SelectItem key={m.id} value={m.id} className="text-[10px] font-bold uppercase">
+                          Node 0{i + 1}: {m.title}
                         </SelectItem>
                       ))}
                     </SelectContent>
                   </Select>
                 </div>
-
                 <div className="space-y-2">
-                  <Label>Explanation (Optional)</Label>
-                  <Textarea
-                    value={question.explanation}
-                    onChange={(e) => updateQuestion(index, "explanation", e.target.value)}
-                    placeholder="Explain why this is the correct answer"
-                    rows={2}
+                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                    Pass Index Threshold (%)
+                  </Label>
+                  <Input
+                    type="number"
+                    value={passThreshold}
+                    onChange={(e) => setPassThreshold(parseInt(e.target.value))}
+                    className="h-12 rounded-xl font-bold"
                   />
                 </div>
               </CardContent>
             </Card>
-          ))}
 
-          {selectedModuleId && (
-            <div className="flex gap-3">
-              {questions.length < 10 && (
-                <Button variant="outline" onClick={addQuestion} className="flex-1">
-                  <Plus className="h-4 w-4 mr-2" />
-                  Add Question ({questions.length}/10)
-                </Button>
-              )}
-              <Button onClick={handleSave} disabled={saving || !selectedModuleId} className="flex-1">
-                {saving ? "Saving..." : "Save Quiz"}
-              </Button>
-            </div>
-          )}
+            {selectedModuleId && (
+              <div className="space-y-4">
+                <div className="flex items-center justify-between px-2">
+                  <h3 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground">Logic Nodes</h3>
+                  <Dialog open={importDialogOpen} onOpenChange={setImportDialogOpen}>
+                    <DialogTrigger asChild>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        className="h-8 rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] tracking-widest bg-primary/5"
+                      >
+                        <Wand2 className="h-3 w-3 mr-1.5" /> Synthetic Import
+                      </Button>
+                    </DialogTrigger>
+                    <DialogContent className="rounded-[32px] max-w-2xl border-border/40 shadow-2xl">
+                      <DialogHeader>
+                        <DialogTitle className="text-2xl font-black tracking-tighter uppercase">
+                          AI Ingestion
+                        </DialogTitle>
+                        <DialogDescription className="text-xs font-medium uppercase tracking-wider">
+                          Paste raw AI-generated assessment artifacts for neural parsing.
+                        </DialogDescription>
+                      </DialogHeader>
+                      <div className="space-y-6 py-4">
+                        <Textarea
+                          value={aiQuizText}
+                          onChange={(e) => setAiQuizText(e.target.value)}
+                          placeholder="1. Logic Query... Correct: A..."
+                          className="min-h-[300px] rounded-2xl font-mono text-xs bg-muted/20"
+                        />
+                        <Button
+                          onClick={handleParseAIQuiz}
+                          className="w-full h-12 rounded-xl font-black uppercase text-[10px] tracking-widest"
+                        >
+                          Execute Parsing
+                        </Button>
+                        {parseErrors.length > 0 && (
+                          <div className="p-4 rounded-xl bg-rose-500/10 border border-rose-500/20 text-[10px] font-bold text-rose-600 uppercase">
+                            Errors Detected in String. Check Syntax.
+                          </div>
+                        )}
+                        {parsedPreview.length > 0 && (
+                          <div className="p-4 rounded-xl bg-emerald-500/10 border border-emerald-500/20 text-[10px] font-bold text-emerald-600 uppercase">
+                            {parsedPreview.length} Logic Nodes Deciphered. Ready for Ingestion.
+                          </div>
+                        )}
+                      </div>
+                      <DialogFooter>
+                        <Button
+                          variant="outline"
+                          onClick={() => setImportDialogOpen(false)}
+                          className="rounded-xl font-black uppercase text-[10px]"
+                        >
+                          Abort
+                        </Button>
+                        <Button
+                          onClick={handleImportParsed}
+                          disabled={parsedPreview.length === 0}
+                          className="rounded-xl font-black uppercase text-[10px]"
+                        >
+                          Commit Ingestion
+                        </Button>
+                      </DialogFooter>
+                    </DialogContent>
+                  </Dialog>
+                </div>
 
-          {!selectedModuleId && modules.length === 0 && (
-            <Card>
-              <CardContent className="p-8 text-center">
-                <AlertCircle className="h-8 w-8 text-muted-foreground mx-auto mb-2" />
-                <p className="text-muted-foreground">No modules found. Create modules first before adding quizzes.</p>
-              </CardContent>
+                {questions.map((q, i) => (
+                  <Card key={i} className="rounded-[32px] border-border/40 shadow-xl overflow-hidden group">
+                    <CardHeader className="bg-muted/30 border-b border-border/20 py-4 px-8 flex flex-row items-center justify-between">
+                      <CardTitle className="text-[10px] font-black uppercase tracking-widest">
+                        Module Assessment Node <span className="text-primary">0{i + 1}</span>
+                      </CardTitle>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setQuestions(questions.filter((_, idx) => idx !== i))}
+                        className="h-8 w-8 text-rose-500 hover:bg-rose-500/10 rounded-lg"
+                      >
+                        <Trash2 className="h-4 w-4" />
+                      </Button>
+                    </CardHeader>
+                    <CardContent className="p-8 space-y-6">
+                      <div className="space-y-2">
+                        <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                          Logic Query (Question)
+                        </Label>
+                        <Textarea
+                          value={q.question_text}
+                          onChange={(e) => updateQuestion(i, "question_text", e.target.value)}
+                          className="rounded-2xl border-border/40 resize-none font-medium text-sm h-24"
+                        />
+                      </div>
+                      <div className="grid grid-cols-2 gap-4">
+                        {["a", "b", "c", "d"].map((opt) => (
+                          <div key={opt} className="space-y-2">
+                            <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                              Option {opt.toUpperCase()}
+                            </Label>
+                            <Input
+                              value={(q as any)[`option_${opt}`]}
+                              onChange={(e) => updateQuestion(i, `option_${opt}` as any, e.target.value)}
+                              className="h-10 rounded-xl bg-muted/20"
+                            />
+                          </div>
+                        ))}
+                      </div>
+                      <div className="grid grid-cols-2 gap-6 pt-4 border-t border-border/20">
+                        <div className="space-y-2">
+                          <Label className="text-[9px] font-black uppercase tracking-widest text-primary ml-1">
+                            Correct Identity
+                          </Label>
+                          <Select
+                            value={q.correct_answer}
+                            onValueChange={(v) => updateQuestion(i, "correct_answer", v)}
+                          >
+                            <SelectTrigger className="h-10 rounded-xl font-black uppercase text-[10px]">
+                              <SelectValue />
+                            </SelectTrigger>
+                            <SelectContent className="rounded-xl">
+                              {["A", "B", "C", "D"].map((v) => (
+                                <SelectItem key={v} value={v} className="font-black">
+                                  {v}
+                                </SelectItem>
+                              ))}
+                            </SelectContent>
+                          </Select>
+                        </div>
+                        <div className="space-y-2">
+                          <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                            Logic Rationale (Explanation)
+                          </Label>
+                          <Input
+                            value={q.explanation}
+                            onChange={(e) => updateQuestion(i, "explanation", e.target.value)}
+                            className="h-10 rounded-xl italic text-xs"
+                          />
+                        </div>
+                      </div>
+                    </CardContent>
+                  </Card>
+                ))}
+
+                <div className="grid grid-cols-2 gap-4 pt-4">
+                  <Button
+                    variant="outline"
+                    onClick={() =>
+                      setQuestions([
+                        ...questions,
+                        {
+                          question_text: "",
+                          option_a: "",
+                          option_b: "",
+                          option_c: "",
+                          option_d: "",
+                          correct_answer: "A",
+                          explanation: "",
+                          display_order: questions.length,
+                        },
+                      ])
+                    }
+                    className="h-14 rounded-2xl border-dashed border-2 border-primary/20 text-primary font-black uppercase tracking-widest text-[10px]"
+                  >
+                    <Plus className="h-4 w-4 mr-2" /> Add Logic Node
+                  </Button>
+                  <Button
+                    onClick={handleSave}
+                    disabled={saving}
+                    className="h-14 rounded-2xl shadow-2xl shadow-primary/20 font-black uppercase tracking-widest text-[10px]"
+                  >
+                    {saving ? <Loader2 className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4 mr-2" />}{" "}
+                    Synchronize Nodes
+                  </Button>
+                </div>
+              </div>
+            )}
+          </div>
+
+          <aside className="space-y-6 hidden lg:block">
+            <Card className="rounded-3xl border-primary/10 bg-primary/[0.02] p-6 sticky top-24">
+              <div className="space-y-4">
+                <div className="flex items-center gap-2 text-primary font-black uppercase text-[9px] tracking-widest">
+                  <Sparkles className="h-3 w-3" /> System Guidelines
+                </div>
+                <p className="text-[10px] font-medium text-muted-foreground leading-relaxed italic">
+                  "Ensure assessment queries challenge candidate logical reasoning. Use synthetic import for rapid
+                  expansion."
+                </p>
+                <div className="h-px bg-primary/10 w-full" />
+                <div className="space-y-3">
+                  <div className="flex items-center gap-2 text-[9px] font-bold text-foreground uppercase tracking-widest">
+                    <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Auto-Enable Active
+                  </div>
+                  <div className="flex items-center gap-2 text-[9px] font-bold text-foreground uppercase tracking-widest">
+                    <CheckCircle2 className="h-3 w-3 text-emerald-500" /> Module Isolation Active
+                  </div>
+                </div>
+              </div>
             </Card>
-          )}
+          </aside>
         </div>
-      </div>
+      </main>
     </div>
   );
 }
