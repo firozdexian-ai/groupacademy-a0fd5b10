@@ -6,12 +6,41 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogDescription,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Progress } from "@/components/ui/progress";
-import { CheckCircle2, XCircle, Eye, FileText, Trophy, Target, Clock, User } from "lucide-react";
+import {
+  CheckCircle2,
+  XCircle,
+  Eye,
+  FileText,
+  Trophy,
+  Target,
+  Clock,
+  User,
+  ShieldCheck,
+  Activity,
+  Zap,
+  Layers,
+  ChevronRight,
+  Search,
+} from "lucide-react";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
+/**
+ * Platform Logic: Pedagogical Assessment Terminal (Quiz Results)
+ * High-fidelity orchestrator for learner performance telemetry and result forensics.
+ * 2026 Standard: Executive Logic geometry with reinforced question-level auditing.
+ */
 
 interface QuizAnswer {
   questionId: string;
@@ -41,7 +70,7 @@ export function QuizResultsViewer() {
   const [selectedAttempt, setSelectedAttempt] = useState<QuizAttempt | null>(null);
   const [detailDialogOpen, setDetailDialogOpen] = useState(false);
 
-  // Fetch courses with quizzes
+  // Registry Ingestion: Courses
   const { data: courses, isLoading: coursesLoading } = useQuery({
     queryKey: ["admin-quiz-courses"],
     queryFn: async () => {
@@ -51,239 +80,248 @@ export function QuizResultsViewer() {
         .eq("quiz_enabled", true)
         .eq("is_published", true)
         .order("title");
-
       if (error) throw error;
       return data;
     },
   });
 
-  // Fetch quiz attempts from quiz_attempts table
+  // Telemetry Ingestion: Attempts
   const { data: quizAttempts, isLoading: attemptsLoading } = useQuery({
     queryKey: ["admin-quiz-attempts", selectedCourse],
     queryFn: async (): Promise<QuizAttempt[]> => {
       let query = supabase
         .from("quiz_attempts")
-        .select(`
-          id,
-          student_id,
-          content_id,
-          score,
-          total_questions,
-          passed,
-          answers,
-          created_at,
+        .select(
+          `
+          id, student_id, content_id, score, total_questions,
+          passed, answers, created_at,
           content:content_id (id, title),
           students:student_id (id, full_name, email)
-        `)
+        `,
+        )
         .order("created_at", { ascending: false })
         .limit(100);
 
-      if (selectedCourse !== "all") {
-        query = query.eq("content_id", selectedCourse);
-      }
+      if (selectedCourse !== "all") query = query.eq("content_id", selectedCourse);
 
       const { data, error } = await query;
-      
-      if (error) {
-        console.error("Error fetching quiz attempts:", error);
-        return [];
-      }
+      if (error) return [];
 
-      return (data || []).map((attempt: any): QuizAttempt => ({
-        id: attempt.id,
-        studentId: attempt.student_id,
-        studentName: attempt.students?.full_name || "Unknown",
-        studentEmail: attempt.students?.email || "",
-        contentId: attempt.content_id,
-        contentTitle: attempt.content?.title || "Unknown Course",
-        score: attempt.score || 0,
-        totalQuestions: attempt.total_questions || 0,
-        passed: attempt.passed || false,
-        attemptedAt: attempt.created_at,
-        answers: Array.isArray(attempt.answers) ? attempt.answers : [],
-      }));
+      return (data || []).map(
+        (attempt: any): QuizAttempt => ({
+          id: attempt.id,
+          studentId: attempt.student_id,
+          studentName: attempt.students?.full_name || "NULL_ENTITY",
+          studentEmail: attempt.students?.email || "N/A",
+          contentId: attempt.content_id,
+          contentTitle: attempt.content?.title || "UNCLASSED_NODE",
+          score: attempt.score || 0,
+          totalQuestions: attempt.total_questions || 0,
+          passed: attempt.passed || false,
+          attemptedAt: attempt.created_at,
+          answers: Array.isArray(attempt.answers) ? attempt.answers : [],
+        }),
+      );
     },
   });
 
-  // Calculate summary stats
   const summaryStats = {
-    totalAttempts: quizAttempts?.length || 0,
-    passedAttempts: quizAttempts?.filter((a) => a.passed).length || 0,
-    averageScore: quizAttempts?.length
+    total: quizAttempts?.length || 0,
+    passed: quizAttempts?.filter((a) => a.passed).length || 0,
+    avg: quizAttempts?.length
       ? Math.round(
           quizAttempts.reduce((sum, a) => sum + (a.totalQuestions > 0 ? (a.score / a.totalQuestions) * 100 : 0), 0) /
-            quizAttempts.length
+            quizAttempts.length,
         )
       : 0,
-    passRate: quizAttempts?.length
+    rate: quizAttempts?.length
       ? Math.round((quizAttempts.filter((a) => a.passed).length / quizAttempts.length) * 100)
       : 0,
   };
 
-  const viewAttemptDetails = (attempt: QuizAttempt) => {
-    setSelectedAttempt(attempt);
-    setDetailDialogOpen(true);
-  };
-
-  if (coursesLoading) {
-    return (
-      <div className="space-y-6">
-        <Skeleton className="h-8 w-48" />
-        <div className="grid gap-4 md:grid-cols-4">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-24" />
-          ))}
-        </div>
-        <Skeleton className="h-96" />
-      </div>
-    );
-  }
+  if (coursesLoading) return <DashboardLoadingSkeleton />;
 
   return (
-    <div className="space-y-6">
-      <div className="flex items-center justify-between">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Quiz Results</h2>
-          <p className="text-muted-foreground">
-            View and analyze quiz attempts across all courses
+    <div className="space-y-10 animate-in fade-in duration-1000">
+      {/* Executive Header */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-3 text-primary">
+            <Activity className="h-8 w-8" />
+            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Assessment HUD</h2>
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+            Pedagogical Integrity & Learner Performance Registry
           </p>
         </div>
         <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-          <SelectTrigger className="w-[280px]">
-            <SelectValue placeholder="Select a course" />
+          <SelectTrigger className="w-full md:w-[320px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest bg-card/50 shadow-inner">
+            <Layers className="w-4 h-4 mr-2 text-primary" />
+            <SelectValue placeholder="Logic Context" />
           </SelectTrigger>
-          <SelectContent>
-            <SelectItem value="all">All Courses</SelectItem>
-            {courses?.map((course) => (
-              <SelectItem key={course.id} value={course.id}>
-                {course.title}
+          <SelectContent className="rounded-2xl border-2 shadow-2xl">
+            <SelectItem value="all" className="font-bold">
+              GLOBAL_REGISTRY
+            </SelectItem>
+            {courses?.map((c) => (
+              <SelectItem key={c.id} value={c.id} className="font-bold truncate">
+                {c.title}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
       </div>
 
-      {/* Summary Stats */}
-      <div className="grid gap-4 md:grid-cols-4">
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Total Attempts</CardTitle>
-            <FileText className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summaryStats.totalAttempts}</div>
-            <p className="text-xs text-muted-foreground">Quiz submissions</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Passed</CardTitle>
-            <Trophy className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold text-green-600">{summaryStats.passedAttempts}</div>
-            <p className="text-xs text-muted-foreground">Successful attempts</p>
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Average Score</CardTitle>
-            <Target className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summaryStats.averageScore}%</div>
-            <Progress value={summaryStats.averageScore} className="mt-2 h-2" />
-          </CardContent>
-        </Card>
-
-        <Card>
-          <CardHeader className="flex flex-row items-center justify-between space-y-0 pb-2">
-            <CardTitle className="text-sm font-medium">Pass Rate</CardTitle>
-            <CheckCircle2 className="h-4 w-4 text-muted-foreground" />
-          </CardHeader>
-          <CardContent>
-            <div className="text-2xl font-bold">{summaryStats.passRate}%</div>
-            <Progress value={summaryStats.passRate} className="mt-2 h-2" />
-          </CardContent>
-        </Card>
+      {/* Summary Telemetry Artifacts */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
+        {[
+          {
+            label: "Registry Nodes",
+            val: summaryStats.total,
+            icon: FileText,
+            color: "text-blue-500",
+            bg: "bg-blue-500/10",
+          },
+          {
+            label: "Verified Pass",
+            val: summaryStats.passed,
+            icon: Trophy,
+            color: "text-emerald-500",
+            bg: "bg-emerald-500/10",
+          },
+          {
+            label: "Global Median",
+            val: `${summaryStats.avg}%`,
+            icon: Target,
+            color: "text-amber-500",
+            bg: "bg-amber-500/10",
+            progress: true,
+          },
+          {
+            label: "Success Rate",
+            val: `${summaryStats.rate}%`,
+            icon: CheckCircle2,
+            color: "text-purple-500",
+            bg: "bg-purple-500/10",
+            progress: true,
+          },
+        ].map((kpi, i) => (
+          <Card
+            key={i}
+            className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all duration-500"
+          >
+            <CardContent className="p-6 space-y-4">
+              <div
+                className={cn(
+                  "h-12 w-12 rounded-2xl flex items-center justify-center border-2 shadow-inner group-hover:rotate-6 transition-transform",
+                  kpi.bg,
+                  "border-white/5",
+                )}
+              >
+                <kpi.icon className={cn("h-6 w-6", kpi.color)} />
+              </div>
+              <div>
+                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                  {kpi.label}
+                </p>
+                <p className="text-3xl font-black tracking-tighter italic leading-none">{kpi.val}</p>
+                {kpi.progress && <Progress value={parseInt(kpi.val)} className="h-1 mt-3" />}
+              </div>
+            </CardContent>
+          </Card>
+        ))}
       </div>
 
-      {/* Quiz Attempts Table */}
-      <Card>
-        <CardHeader>
-          <CardTitle>Quiz Attempts</CardTitle>
-          <CardDescription>Individual quiz submissions with scores and pass status</CardDescription>
+      {/* Main Attempts Registry */}
+      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
+        <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+        <CardHeader className="p-8 border-b border-border/10">
+          <CardTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-3">
+            <ShieldCheck className="h-5 w-5 text-primary" /> Performance Log
+          </CardTitle>
+          <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+            Authorized audit trail for quiz logic cycles
+          </CardDescription>
         </CardHeader>
-        <CardContent>
+        <CardContent className="p-0">
           {attemptsLoading ? (
-            <div className="space-y-2">
-              {[1, 2, 3, 4, 5].map((i) => (
-                <Skeleton key={i} className="h-12 w-full" />
-              ))}
+            <div className="p-12 space-y-4">
+              <Skeleton className="h-14 w-full rounded-2xl" />
+              <Skeleton className="h-14 w-full rounded-2xl" />
             </div>
-          ) : quizAttempts && quizAttempts.length > 0 ? (
+          ) : quizAttempts?.length ? (
             <Table>
-              <TableHeader>
-                <TableRow>
-                  <TableHead>Student</TableHead>
-                  <TableHead>Course</TableHead>
-                  <TableHead className="text-center">Score</TableHead>
-                  <TableHead className="text-center">Status</TableHead>
-                  <TableHead>Attempted</TableHead>
-                  <TableHead className="text-right">Actions</TableHead>
+              <TableHeader className="bg-muted/30">
+                <TableRow className="hover:bg-transparent border-b-2 border-border/10">
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8">
+                    Learner Artifact
+                  </TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                    Logic Node (Course)
+                  </TableHead>
+                  <TableHead className="text-center text-[10px] font-black uppercase tracking-widest">
+                    Yield (Score)
+                  </TableHead>
+                  <TableHead className="text-center text-[10px] font-black uppercase tracking-widest">
+                    Registry Status
+                  </TableHead>
+                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Temporal Log</TableHead>
+                  <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                    Audit
+                  </TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
                 {quizAttempts.map((attempt) => (
-                  <TableRow key={attempt.id}>
-                    <TableCell>
-                      <div>
-                        <div className="font-medium">{attempt.studentName}</div>
-                        <div className="text-sm text-muted-foreground">{attempt.studentEmail}</div>
+                  <TableRow
+                    key={attempt.id}
+                    className="group transition-all hover:bg-primary/[0.02] border-b border-border/5 last:border-0"
+                  >
+                    <TableCell className="px-8 py-6">
+                      <div className="space-y-1 text-left">
+                        <p className="font-black text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
+                          {attempt.studentName}
+                        </p>
+                        <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                          {attempt.studentEmail}
+                        </p>
                       </div>
                     </TableCell>
-                    <TableCell className="max-w-[200px] truncate">{attempt.contentTitle}</TableCell>
+                    <TableCell className="text-left font-black text-xs uppercase tracking-tighter italic opacity-80 max-w-[200px] truncate">
+                      {attempt.contentTitle}
+                    </TableCell>
                     <TableCell className="text-center">
-                      <div className="flex items-center gap-2 justify-center">
-                        <span className="font-medium">
+                      <div className="inline-flex flex-col items-center">
+                        <span className="font-black text-lg italic tracking-tighter text-primary leading-none">
                           {attempt.score}/{attempt.totalQuestions}
                         </span>
-                        <span className="text-sm text-muted-foreground">
-                          ({attempt.totalQuestions > 0
-                            ? Math.round((attempt.score / attempt.totalQuestions) * 100)
-                            : 0}%)
-                        </span>
+                        <span className="text-[9px] font-bold opacity-30 mt-1 uppercase">Matched</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-center">
-                      {attempt.passed ? (
-                        <Badge className="bg-green-500/10 text-green-600 border-green-500/20">
-                          <CheckCircle2 className="h-3 w-3 mr-1" />
-                          Passed
-                        </Badge>
-                      ) : (
-                        <Badge className="bg-red-500/10 text-red-600 border-red-500/20">
-                          <XCircle className="h-3 w-3 mr-1" />
-                          Failed
-                        </Badge>
-                      )}
+                      <Badge
+                        className={cn(
+                          "rounded-lg font-black text-[8px] uppercase tracking-[0.2em] px-3 py-1 border-none",
+                          attempt.passed ? "bg-emerald-500 text-white" : "bg-destructive text-white",
+                        )}
+                      >
+                        {attempt.passed ? "SUCCESS_SYNC" : "LOGIC_FAULT"}
+                      </Badge>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-1 text-sm text-muted-foreground">
-                        <Clock className="h-3 w-3" />
-                        {format(new Date(attempt.attemptedAt), "MMM d, yyyy h:mm a")}
-                      </div>
+                    <TableCell className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                      {format(new Date(attempt.attemptedAt), "MMM d, yyyy")}
                     </TableCell>
-                    <TableCell className="text-right">
+                    <TableCell className="text-right pr-8">
                       <Button
                         variant="ghost"
-                        size="sm"
-                        onClick={() => viewAttemptDetails(attempt)}
+                        size="icon"
+                        className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all shadow-inner"
+                        onClick={() => {
+                          setSelectedAttempt(attempt);
+                          setDetailDialogOpen(true);
+                        }}
                       >
-                        <Eye className="h-4 w-4 mr-1" />
-                        View
+                        <Eye className="h-5 w-5" />
                       </Button>
                     </TableCell>
                   </TableRow>
@@ -291,127 +329,154 @@ export function QuizResultsViewer() {
               </TableBody>
             </Table>
           ) : (
-            <div className="text-center py-8 text-muted-foreground">
-              <FileText className="h-12 w-12 mx-auto mb-4 opacity-50" />
-              <p>No quiz attempts yet</p>
-              <p className="text-sm">Quiz results will appear here once students take quizzes</p>
+            <div className="py-32 text-center opacity-20">
+              <Layers className="h-16 w-16 mx-auto mb-4" />
+              <p className="font-black uppercase tracking-widest text-xs">Registry Empty: Awaiting Data Ingestion</p>
             </div>
           )}
         </CardContent>
       </Card>
 
-      {/* Attempt Detail Dialog */}
+      {/* Audit Forensics (Detail Dialog) */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="max-w-2xl max-h-[80vh]">
-          <DialogHeader>
-            <DialogTitle>Quiz Attempt Details</DialogTitle>
-            <DialogDescription>
-              {selectedAttempt && (
-                <div className="flex items-center gap-4 mt-2">
-                  <div className="flex items-center gap-1">
-                    <User className="h-4 w-4" />
-                    {selectedAttempt.studentName}
-                  </div>
-                  <div className="flex items-center gap-1">
-                    <Clock className="h-4 w-4" />
-                    {format(new Date(selectedAttempt.attemptedAt), "MMM d, yyyy h:mm a")}
-                  </div>
-                  {selectedAttempt.passed ? (
-                    <Badge className="bg-green-500/10 text-green-600">Passed</Badge>
-                  ) : (
-                    <Badge className="bg-red-500/10 text-red-600">Failed</Badge>
-                  )}
+        <DialogContent className="max-w-3xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+          <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+          <div className="p-10 max-h-[85vh] overflow-y-auto no-scrollbar">
+            <DialogHeader className="mb-10 text-left">
+              <div className="flex items-center gap-5">
+                <Target className="h-10 w-10 text-primary" />
+                <div className="space-y-1">
+                  <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+                    Attempt Forensics
+                  </DialogTitle>
+                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic flex items-center gap-3">
+                    {selectedAttempt?.studentName} <span className="h-1 w-1 bg-border rounded-full" />{" "}
+                    {selectedAttempt && format(new Date(selectedAttempt.attemptedAt), "MMM d, yyyy HH:mm")}
+                  </DialogDescription>
                 </div>
-              )}
-            </DialogDescription>
-          </DialogHeader>
+              </div>
+            </DialogHeader>
 
-          {selectedAttempt && (
-            <ScrollArea className="max-h-[60vh] pr-4">
-              <div className="space-y-4">
-                {/* Score Summary */}
-                <Card>
-                  <CardContent className="pt-4">
-                    <div className="flex items-center justify-between">
-                      <div>
-                        <div className="text-sm text-muted-foreground">Final Score</div>
-                        <div className="text-2xl font-bold">
-                          {selectedAttempt.score}/{selectedAttempt.totalQuestions}
-                          <span className="text-lg text-muted-foreground ml-2">
-                            ({selectedAttempt.totalQuestions > 0
-                              ? Math.round((selectedAttempt.score / selectedAttempt.totalQuestions) * 100)
-                              : 0}%)
-                          </span>
-                        </div>
-                      </div>
-                      <Progress
-                        value={
-                          selectedAttempt.totalQuestions > 0
-                            ? (selectedAttempt.score / selectedAttempt.totalQuestions) * 100
-                            : 0
-                        }
-                        className="w-32 h-3"
-                      />
-                    </div>
-                  </CardContent>
-                </Card>
+            {selectedAttempt && (
+              <div className="space-y-8">
+                {/* Result Artifact */}
+                <div className="flex items-center justify-between p-8 bg-muted/20 rounded-[32px] border-2 border-border/10 shadow-inner">
+                  <div className="space-y-1">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 leading-none">
+                      Logic Match Yield
+                    </p>
+                    <p
+                      className={cn(
+                        "text-6xl font-black italic tracking-tighter leading-none",
+                        selectedAttempt.passed ? "text-emerald-500" : "text-destructive",
+                      )}
+                    >
+                      {Math.round((selectedAttempt.score / selectedAttempt.totalQuestions) * 100)}%
+                    </p>
+                  </div>
+                  <div className="text-right">
+                    <Badge
+                      className={cn(
+                        "rounded-lg font-black text-[10px] px-5 py-1.5 border-none",
+                        selectedAttempt.passed ? "bg-emerald-500 text-white" : "bg-destructive text-white",
+                      )}
+                    >
+                      {selectedAttempt.passed ? "AUTHORIZED" : "REJECTED"}
+                    </Badge>
+                    <p className="text-[10px] font-bold text-muted-foreground/30 mt-3 uppercase tracking-widest italic">
+                      {selectedAttempt.score} Correct Artifacts
+                    </p>
+                  </div>
+                </div>
 
-                {/* Question Breakdown */}
-                <div className="space-y-3">
-                  <h4 className="font-medium">Question Breakdown</h4>
-                  {selectedAttempt.answers.length > 0 ? (
-                    selectedAttempt.answers.map((answer, index) => (
+                <div className="space-y-4">
+                  <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic border-b border-border/10 pb-4">
+                    Logic Breakdown Analysis
+                  </p>
+                  <div className="space-y-4">
+                    {selectedAttempt.answers.map((answer, index) => (
                       <Card
-                        key={answer.questionId || index}
-                        className={`border-l-4 ${
-                          answer.isCorrect ? "border-l-green-500" : "border-l-red-500"
-                        }`}
+                        key={index}
+                        className={cn(
+                          "rounded-[24px] border-2 bg-muted/5 overflow-hidden transition-all",
+                          answer.isCorrect ? "border-emerald-500/20" : "border-destructive/20",
+                        )}
                       >
-                        <CardContent className="pt-4">
-                          <div className="flex items-start gap-3">
-                            {answer.isCorrect ? (
-                              <CheckCircle2 className="h-5 w-5 text-green-500 flex-shrink-0 mt-0.5" />
-                            ) : (
-                              <XCircle className="h-5 w-5 text-red-500 flex-shrink-0 mt-0.5" />
+                        <CardContent className="p-6 flex gap-5 text-left">
+                          <div
+                            className={cn(
+                              "h-10 w-10 rounded-xl flex items-center justify-center border shadow-inner shrink-0",
+                              answer.isCorrect
+                                ? "bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                                : "bg-destructive/10 text-destructive border-destructive/20",
                             )}
-                            <div className="space-y-2 flex-1">
-                              <p className="font-medium">Q{index + 1}: {answer.questionText}</p>
-                              <div className="text-sm space-y-1">
-                                <div>
-                                  <span className="text-muted-foreground">Selected: </span>
-                                  <span className={answer.isCorrect ? "text-green-600" : "text-red-600"}>
-                                    {answer.selectedAnswer}
-                                  </span>
-                                </div>
-                                {!answer.isCorrect && (
-                                  <div>
-                                    <span className="text-muted-foreground">Correct: </span>
-                                    <span className="text-green-600">{answer.correctAnswer}</span>
-                                  </div>
-                                )}
-                                {answer.explanation && (
-                                  <div className="mt-2 p-2 bg-muted rounded-md text-sm">
-                                    <span className="font-medium">Explanation: </span>
-                                    {answer.explanation}
-                                  </div>
-                                )}
+                          >
+                            {answer.isCorrect ? <CheckCircle2 className="h-5 w-5" /> : <XCircle className="h-5 w-5" />}
+                          </div>
+                          <div className="space-y-3">
+                            <p className="text-xs font-black uppercase tracking-tight italic opacity-60 leading-none">
+                              Artifact Logic {index + 1}
+                            </p>
+                            <p className="font-bold text-sm leading-relaxed">{answer.questionText}</p>
+                            <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
+                              <div className="p-3 rounded-xl bg-background border-2 border-border/5 space-y-1">
+                                <p className="text-[8px] font-black uppercase opacity-30">Input_Node</p>
+                                <p
+                                  className={cn(
+                                    "text-xs font-bold",
+                                    answer.isCorrect ? "text-emerald-600" : "text-destructive",
+                                  )}
+                                >
+                                  {answer.selectedAnswer}
+                                </p>
                               </div>
+                              {!answer.isCorrect && (
+                                <div className="p-3 rounded-xl bg-emerald-500/5 border-2 border-emerald-500/10 space-y-1">
+                                  <p className="text-[8px] font-black uppercase text-emerald-600/40">Verified_Target</p>
+                                  <p className="text-xs font-bold text-emerald-700">{answer.correctAnswer}</p>
+                                </div>
+                              )}
                             </div>
+                            {answer.explanation && (
+                              <div className="p-4 bg-muted/50 rounded-2xl border border-border/10 italic text-[11px] text-muted-foreground leading-relaxed">
+                                <span className="font-black uppercase not-italic text-[9px] mr-2">Recalibration:</span>{" "}
+                                {answer.explanation}
+                              </div>
+                            )}
                           </div>
                         </CardContent>
                       </Card>
-                    ))
-                  ) : (
-                    <p className="text-muted-foreground text-sm">
-                      Detailed answer breakdown not available for this attempt.
-                    </p>
-                  )}
+                    ))}
+                  </div>
                 </div>
+
+                <DialogFooter className="pt-8 border-t border-border/10">
+                  <Button
+                    onClick={() => setDetailDialogOpen(false)}
+                    className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-primary/30"
+                  >
+                    Close Audit
+                  </Button>
+                </DialogFooter>
               </div>
-            </ScrollArea>
-          )}
+            )}
+          </div>
         </DialogContent>
       </Dialog>
+    </div>
+  );
+}
+
+function DashboardLoadingSkeleton() {
+  return (
+    <div className="space-y-10 animate-pulse">
+      <Skeleton className="h-32 w-full rounded-[40px]" />
+      <div className="grid grid-cols-4 gap-6">
+        {[...Array(4)].map((_, i) => (
+          <Skeleton key={i} className="h-32 w-full rounded-[32px]" />
+        ))}
+      </div>
+      <Skeleton className="h-96 w-full rounded-[40px]" />
     </div>
   );
 }
