@@ -38,7 +38,14 @@ import {
   Layers,
   Terminal,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription, // CTO FIX: Restored missing UI identifier
+} from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import {
   DropdownMenu,
@@ -226,10 +233,12 @@ export function LeadHunterManager() {
           <Table>
             <TableHeader className="bg-muted/30">
               <TableRow className="hover:bg-transparent border-b-2">
-                <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8">
+                <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8 text-left">
                   Candidate Artifact
                 </TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest">Logic Match Yield</TableHead>
+                <TableHead className="text-[10px] font-black uppercase tracking-widest text-left">
+                  Logic Match Yield
+                </TableHead>
                 <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
                   Outreach Hub
                 </TableHead>
@@ -249,7 +258,7 @@ export function LeadHunterManager() {
                     className="group transition-all hover:bg-primary/[0.02] border-b border-border/5 last:border-0"
                   >
                     <TableCell className="px-8 py-6">
-                      <div className="space-y-1">
+                      <div className="space-y-1 text-left">
                         <p className="font-black text-base uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
                           {m.talent.full_name}
                         </p>
@@ -258,7 +267,7 @@ export function LeadHunterManager() {
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell>
+                    <TableCell className="text-left">
                       <div className="flex items-center gap-3">
                         <div
                           className={cn(
@@ -308,7 +317,10 @@ export function LeadHunterManager() {
                               <MoreHorizontal className="h-5 w-5" />
                             </Button>
                           </DropdownMenuTrigger>
-                          <DropdownMenuContent align="end" className="w-56 rounded-2xl border-2 shadow-2xl p-2">
+                          <DropdownMenuContent
+                            align="end"
+                            className="w-56 rounded-2xl border-2 shadow-2xl p-2 bg-background/95 backdrop-blur-xl"
+                          >
                             <DropdownMenuItem
                               className="rounded-xl font-bold p-3 gap-3"
                               onClick={() => handleInvite(m, "whatsapp")}
@@ -371,7 +383,7 @@ export function LeadHunterManager() {
             onClick={() => loadSessionMatches(s)}
           >
             <div className="h-1 w-full bg-primary/20 group-hover:bg-primary transition-colors" />
-            <CardContent className="p-6 space-y-6">
+            <CardContent className="p-6 space-y-6 text-left">
               <div className="space-y-1">
                 <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
                   Inquiry Subject
@@ -421,7 +433,9 @@ export function LeadHunterManager() {
                   variant={huntMode === "select" ? "default" : "outline"}
                   className={cn(
                     "h-20 rounded-[24px] border-2 flex flex-col gap-2 font-black uppercase text-[10px] tracking-widest",
-                    huntMode === "select" ? "shadow-xl" : "opacity-40",
+                    huntMode === "select"
+                      ? "shadow-xl bg-primary text-white border-primary"
+                      : "opacity-40 hover:opacity-100",
                   )}
                   onClick={() => setHuntMode("select")}
                 >
@@ -431,7 +445,9 @@ export function LeadHunterManager() {
                   variant={huntMode === "paste" ? "default" : "outline"}
                   className={cn(
                     "h-20 rounded-[24px] border-2 flex flex-col gap-2 font-black uppercase text-[10px] tracking-widest",
-                    huntMode === "paste" ? "shadow-xl" : "opacity-40",
+                    huntMode === "paste"
+                      ? "shadow-xl bg-primary text-white border-primary"
+                      : "opacity-40 hover:opacity-100",
                   )}
                   onClick={() => setHuntMode("paste")}
                 >
