@@ -19,7 +19,7 @@ import { KeyRound, Copy, Check, Zap, Mail, ShieldCheck } from "lucide-react";
 
 /**
  * GroUp Academy: Access Code Deployment Protocol
- * CTO Reference: Resolved TS2739 by explicitly casting PostgrestFilterBuilder to Promise.
+ * CTO Reference: Final fix for TS2739 using an async wrapper to ensure native Promise return.
  */
 
 interface MockInterviewCodeGeneratorProps {
@@ -45,7 +45,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      // 1. Verify Session Identity
+      // 1. Authenticated Session Audit
       const authResponse = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "Authentication check timed out");
 
       const user = authResponse?.data?.user;
@@ -56,21 +56,20 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
 
       const code = generateCode();
 
-      // 2. Execute Deployment with Forced Promise Casting
-      // We call .then() to ensure the return type is a Promise, satisfying the timeout wrapper.
-      const { error } = (await withTimeout(
-        supabase
-          .from("mock_interview_access_codes")
-          .insert({
-            code,
-            email: leadEmail.toLowerCase().trim(),
-            created_by: user.id,
-            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          })
-          .then((res) => res),
-        TIMEOUTS.DEFAULT,
-        "Code insertion timed out",
-      )) as { error: any };
+      // 2. Wrap PostgrestBuilder in a native async function to return a full Promise
+      const executeInsertion = async () => {
+        return await supabase.from("mock_interview_access_codes").insert({
+          code,
+          email: leadEmail.toLowerCase().trim(),
+          created_by: user.id,
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        });
+      };
+
+      // 3. Monitor Execution via Platform Timeout Protocol
+      const { error } = (await withTimeout(executeInsertion(), TIMEOUTS.DEFAULT, "Code insertion timed out")) as {
+        error: any;
+      };
 
       if (error) throw error;
 
@@ -124,7 +123,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
               <ShieldCheck className="h-6 w-6 text-primary" /> Access Deployment
             </DialogTitle>
             <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
-              Authorized key generation for {leadName} [cite: 19, 43]
+              Authorized key generation for {leadName} [cite: 455]
             </DialogDescription>
           </DialogHeader>
 
@@ -161,13 +160,13 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
                   </Button>
                 </div>
                 <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest text-center italic">
-                  Key valid for 30 days. Copy for outreach template. [cite: 43]
+                  Key valid for 30 days. Copy for outreach template.
                 </p>
               </div>
             ) : (
               <div className="py-4 text-center">
                 <p className="text-[11px] font-medium text-muted-foreground mb-6 leading-relaxed">
-                  This protocol generates an 8-character single-use key that bypasses the **75-credit cost** for mock
+                  This protocol generates an 8-character single-use key that bypasses the 75-credit cost for mock
                   interview retakes[cite: 223].
                 </p>
                 <Button
