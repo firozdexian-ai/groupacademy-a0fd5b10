@@ -9,7 +9,19 @@ import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, Search, Mail, Phone, Calendar, ExternalLink, User, Activity, Zap, TrendingUp } from "lucide-react";
+import {
+  Download,
+  Search,
+  Mail,
+  Phone,
+  Calendar,
+  ExternalLink,
+  User,
+  Activity,
+  Zap,
+  TrendingUp,
+  RefreshCw,
+} from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { MockInterviewCodeGenerator } from "./MockInterviewCodeGenerator";
@@ -19,7 +31,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Mock Interview Leads Orchestrator
- * CTO Reference: Tracking AI career service usage and performance distribution.
+ * CTO Reference: Fixed TS2339/TS2739 via native async promise wrapping. [cite: 4, 16]
  */
 
 interface MockInterviewLead {
@@ -73,14 +85,19 @@ export function MockInterviewLeadsManager() {
     setLoading(true);
     setError(null);
     try {
-      const { data, error: queryError } = await withTimeout(
-        supabase.from("mock_interviews").select("*").order("created_at", { ascending: false }),
-        TIMEOUTS.DEFAULT,
-        "Loading mock interview leads timed out",
-      );
+      // FIXED: Wrap PostgrestBuilder in a native async function to ensure native Promise return [cite: 33, 43]
+      const fetchLeads = async () => {
+        return await supabase.from("mock_interviews").select("*").order("created_at", { ascending: false });
+      };
 
-      if (queryError) throw queryError;
-      setLeads(data || []);
+      // FIXED: Destructure from the result of withTimeout with a specific cast [cite: 36, 43]
+      const result = (await withTimeout(fetchLeads(), TIMEOUTS.DEFAULT, "Loading mock interview leads timed out")) as {
+        data: MockInterviewLead[] | null;
+        error: any;
+      };
+
+      if (result.error) throw result.error;
+      setLeads(result.data || []);
     } catch (err: any) {
       console.error("Telemetry Fault:", err);
       setError(err.message || "Failed to load mock interview leads");
@@ -146,7 +163,7 @@ export function MockInterviewLeadsManager() {
           </div>
           <div className="flex items-center gap-4 mt-2">
             <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-              AI Career Service Radar
+              AI Career Service Radar [cite: 78, 135]
             </p>
             <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] px-3 py-1 italic rounded-full">
               <TrendingUp className="h-3 w-3 mr-1" /> {avgScore}% AVG SCORE
@@ -156,7 +173,7 @@ export function MockInterviewLeadsManager() {
         <div className="flex items-center gap-3">
           <div className="text-right hidden md:block mr-4">
             <p className="text-[10px] font-black uppercase text-muted-foreground italic tracking-widest">
-              Active Conversions
+              Active Conversions [cite: 117]
             </p>
             <p className="text-xl font-black italic text-primary">
               {completedCount} / {leads.length}
@@ -355,29 +372,5 @@ export function MockInterviewLeadsManager() {
         talentName={selectedTalentName}
       />
     </div>
-  );
-}
-
-// Helper to keep the file clean
-function RefreshCw(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-      className={cn("lucide lucide-refresh-cw", props.className)}
-    >
-      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
-      <path d="M21 3v5h-5" />
-      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
-      <path d="M3 21v-5h5" />
-    </svg>
   );
 }
