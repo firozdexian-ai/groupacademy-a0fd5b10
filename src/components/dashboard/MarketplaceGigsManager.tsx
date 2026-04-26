@@ -7,13 +7,35 @@ import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
-import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
-import { Plus, Pencil, Coins, Eye, Check, X, FileText, CheckCircle2, Loader2 } from "lucide-react";
+import {
+  Plus,
+  Pencil,
+  Coins,
+  Eye,
+  Check,
+  X,
+  FileText,
+  CheckCircle2,
+  Loader2,
+  Briefcase,
+  Zap,
+  Activity,
+  ExternalLink,
+  Clock,
+  TrendingUp,
+} from "lucide-react";
 import { MARKETPLACE_SCHOOLS } from "@/lib/constants/marketplaceCategories";
 import { format } from "date-fns";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Marketplace Gigs Management System
+ * CTO Reference: High-fidelity orchestrator for freelance contracts and credit distribution.
+ */
 
 interface GigForm {
   title: string;
@@ -53,6 +75,7 @@ export function MarketplaceGigsManager() {
   const [viewBidsId, setViewBidsId] = useState<string | null>(null);
   const [viewContractId, setViewContractId] = useState<string | null>(null);
 
+  // DATA ACQUISITION
   const { data: gigs, isLoading } = useQuery({
     queryKey: ["admin-marketplace-gigs"],
     queryFn: async () => {
@@ -89,34 +112,31 @@ export function MarketplaceGigsManager() {
         .select("*, talents(full_name, email)")
         .eq("gig_id", viewContractId)
         .maybeSingle();
+
       if (!contract) return null;
+
       const { data: deliverables } = await supabase
         .from("marketplace_deliverables")
         .select("*")
         .eq("contract_id", contract.id)
         .order("created_at", { ascending: false });
+
       return { contract, deliverables: deliverables || [] };
     },
     enabled: !!viewContractId,
   });
 
+  // MUTATION LOGIC
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const payload = {
-        ...form,
-        budget_amount: form.budget_amount || null,
-        deadline: form.deadline || null,
-      };
-      if (editingId) {
-        const { error } = await supabase.from("marketplace_gigs").update(payload).eq("id", editingId);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("marketplace_gigs").insert(payload);
-        if (error) throw error;
-      }
+      const payload = { ...form, budget_amount: form.budget_amount || null, deadline: form.deadline || null };
+      const { error } = editingId
+        ? await supabase.from("marketplace_gigs").update(payload).eq("id", editingId)
+        : await supabase.from("marketplace_gigs").insert(payload);
+      if (error) throw error;
     },
     onSuccess: () => {
-      toast.success(editingId ? "Gig updated" : "Gig created");
+      toast.success(editingId ? "Gig optimized" : "Gig deployed");
       queryClient.invalidateQueries({ queryKey: ["admin-marketplace-gigs"] });
       setDialogOpen(false);
       setEditingId(null);
@@ -127,7 +147,6 @@ export function MarketplaceGigsManager() {
 
   const acceptBidMutation = useMutation({
     mutationFn: async (bid: any) => {
-      // Create contract
       const { error: contractErr } = await supabase.from("marketplace_contracts").insert({
         gig_id: bid.gig_id,
         bid_id: bid.id,
@@ -137,123 +156,66 @@ export function MarketplaceGigsManager() {
       });
       if (contractErr) throw contractErr;
 
-      // Update accepted bid
-      const { error: bidErr } = await supabase
-        .from("marketplace_bids")
-        .update({ status: "accepted" })
-        .eq("id", bid.id);
-      if (bidErr) throw bidErr;
-
-      // Reject other bids
+      await supabase.from("marketplace_bids").update({ status: "accepted" }).eq("id", bid.id);
+      await supabase.from("marketplace_bids").update({ status: "rejected" }).eq("gig_id", bid.gig_id).neq("id", bid.id);
       await supabase
-        .from("marketplace_bids")
-        .update({ status: "rejected" })
-        .eq("gig_id", bid.gig_id)
-        .neq("id", bid.id);
-
-      // Update gig
-      const { error: gigErr } = await supabase
         .from("marketplace_gigs")
         .update({ selected_bid_id: bid.id, status: "in_progress" })
         .eq("id", bid.gig_id);
-      if (gigErr) throw gigErr;
     },
     onSuccess: () => {
-      toast.success("Bid accepted & contract created!");
+      toast.success("Contract activated. Credits locked.");
       queryClient.invalidateQueries({ queryKey: ["admin-marketplace-bids"] });
       queryClient.invalidateQueries({ queryKey: ["admin-marketplace-gigs"] });
       setViewBidsId(null);
     },
-    onError: (err: any) => toast.error(err.message),
-  });
-
-  const updateDeliverableMutation = useMutation({
-    mutationFn: async ({ id, status, notes }: { id: string; status: string; notes?: string }) => {
-      const { error } = await supabase
-        .from("marketplace_deliverables")
-        .update({ status, admin_notes: notes || null, reviewed_at: new Date().toISOString() })
-        .eq("id", id);
-      if (error) throw error;
-    },
-    onSuccess: () => {
-      toast.success("Deliverable updated");
-      queryClient.invalidateQueries({ queryKey: ["admin-marketplace-contract"] });
-    },
-    onError: (err: any) => toast.error(err.message),
   });
 
   const completeContractMutation = useMutation({
     mutationFn: async (contract: any) => {
-      // Mark contract complete
-      const { error: cErr } = await supabase
+      await supabase
         .from("marketplace_contracts")
         .update({ status: "completed", completed_at: new Date().toISOString() })
         .eq("id", contract.id);
-      if (cErr) throw cErr;
+      await supabase.from("marketplace_gigs").update({ status: "completed" }).eq("id", contract.gig_id);
 
-      // Mark gig completed
-      await supabase
-        .from("marketplace_gigs")
-        .update({ status: "completed" })
-        .eq("id", contract.gig_id);
-
-      // Award credits to freelancer (earned)
       if (contract.agreed_amount > 0) {
-        const { data: result, error: credErr } = await supabase.rpc("add_credits", {
+        const { error: credErr } = await supabase.rpc("add_credits", {
           p_talent_id: contract.freelancer_id,
           p_amount: contract.agreed_amount,
           p_transaction_type: "marketplace_earning",
-          p_description: `Marketplace gig payment - ${contract.agreed_amount} credits`,
+          p_description: `Marketplace payout: ${contract.agreed_amount} credits`,
         });
         if (credErr) throw credErr;
 
-        // Also update earned_balance
-        await supabase.rpc("add_credits", { // We'll handle earned separately below
-          p_talent_id: contract.freelancer_id,
-          p_amount: 0,
-          p_transaction_type: "marketplace_earning",
-          p_description: "earned_balance_update",
-        }).then(() => {
-          // Update earned_balance directly
-          supabase
+        // Sync earned_balance [cite: 138, 469]
+        const { data: balanceData } = await supabase
+          .from("talent_credits")
+          .select("earned_balance")
+          .eq("talent_id", contract.freelancer_id)
+          .single();
+        if (balanceData) {
+          await supabase
             .from("talent_credits")
-            .select("earned_balance")
-            .eq("talent_id", contract.freelancer_id)
-            .single()
-            .then(({ data }) => {
-              if (data) {
-                supabase
-                  .from("talent_credits")
-                  .update({ earned_balance: (data.earned_balance || 0) + contract.agreed_amount })
-                  .eq("talent_id", contract.freelancer_id);
-              }
-            });
-        });
+            .update({ earned_balance: (balanceData.earned_balance || 0) + contract.agreed_amount })
+            .eq("talent_id", contract.freelancer_id);
+        }
       }
     },
     onSuccess: () => {
-      toast.success("Contract completed & credits awarded!");
+      toast.success("Contract Finalized. Credits Disbursed.");
       queryClient.invalidateQueries({ queryKey: ["admin-marketplace-contract"] });
       queryClient.invalidateQueries({ queryKey: ["admin-marketplace-gigs"] });
       setViewContractId(null);
     },
-    onError: (err: any) => toast.error(err.message),
   });
 
   const openEdit = (gig: any) => {
     setEditingId(gig.id);
     setForm({
-      title: gig.title,
-      description: gig.description,
-      skill_category: gig.skill_category,
-      skill_subcategory: gig.skill_subcategory || "",
-      pricing_type: gig.pricing_type,
-      budget_amount: gig.budget_amount,
+      ...gig,
       deadline: gig.deadline ? gig.deadline.split("T")[0] : "",
-      requirements: gig.requirements || "",
-      employer_name: gig.employer_name || "",
-      employer_email: gig.employer_email || "",
-      status: gig.status,
+      skill_subcategory: gig.skill_subcategory || "",
       is_featured: gig.is_featured || false,
     });
     setDialogOpen(true);
@@ -261,70 +223,132 @@ export function MarketplaceGigsManager() {
 
   const selectedSchool = MARKETPLACE_SCHOOLS.find((s) => s.value === form.skill_category);
 
-  const statusColor = (s: string) => {
-    if (s === "active" || s === "approved") return "default" as const;
-    if (s === "completed") return "secondary" as const;
-    if (s === "in_progress") return "default" as const;
-    return "outline" as const;
-  };
-
-  const gigHasContract = (gig: any) => ["in_progress", "completed"].includes(gig.status);
-
   return (
-    <div className="space-y-4">
-      <div className="flex items-center justify-between">
-        <h2 className="text-lg font-bold">Marketplace Gigs</h2>
-        <Button onClick={() => { setEditingId(null); setForm(defaultForm); setDialogOpen(true); }} size="sm" className="gap-1">
-          <Plus className="h-4 w-4" /> New Gig
+    <div className="space-y-6 animate-in fade-in duration-700">
+      {/* EXECUTIVE HEADER */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-3 text-primary">
+            <Briefcase className="h-8 w-8" />
+            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Marketplace Ops</h2>
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+            Seed Listings & Contract Governance
+          </p>
+        </div>
+        <Button
+          onClick={() => {
+            setEditingId(null);
+            setForm(defaultForm);
+            setDialogOpen(true);
+          }}
+          className="h-14 px-8 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest shadow-lg gap-3"
+        >
+          <Plus className="h-5 w-5" /> Deploy New Gig
         </Button>
       </div>
 
-      <div className="border rounded-lg overflow-x-auto">
+      {/* GIGS TABLE */}
+      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+        <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-primary to-amber-500" />
         <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Title</TableHead>
-              <TableHead>Category</TableHead>
-              <TableHead>Type</TableHead>
-              <TableHead>Budget</TableHead>
-              <TableHead>Bids</TableHead>
-              <TableHead>Status</TableHead>
-              <TableHead></TableHead>
+          <TableHeader className="bg-muted/10">
+            <TableRow className="hover:bg-transparent border-b-2">
+              <TableHead className="font-black uppercase text-[10px] tracking-widest py-6">Gig Node</TableHead>
+              <TableHead className="font-black uppercase text-[10px] tracking-widest">Structural Class</TableHead>
+              <TableHead className="font-black uppercase text-[10px] tracking-widest text-center">Protocol</TableHead>
+              <TableHead className="font-black uppercase text-[10px] tracking-widest">Allocated Credits</TableHead>
+              <TableHead className="font-black uppercase text-[10px] tracking-widest text-center">Bids</TableHead>
+              <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+              <TableHead className="text-right py-6"></TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
             {isLoading ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">Loading...</TableCell>
+                <TableCell colSpan={7} className="text-center py-20 italic font-bold opacity-50">
+                  Synchronizing Market Data...
+                </TableCell>
               </TableRow>
             ) : !gigs?.length ? (
               <TableRow>
-                <TableCell colSpan={7} className="text-center py-8 text-muted-foreground">No marketplace gigs yet</TableCell>
+                <TableCell colSpan={7} className="text-center py-20 italic font-bold opacity-50">
+                  Marketplace Inactive. Seeding Required.
+                </TableCell>
               </TableRow>
             ) : (
               gigs.map((gig: any) => (
-                <TableRow key={gig.id}>
-                  <TableCell className="font-medium max-w-[200px] truncate">{gig.title}</TableCell>
-                  <TableCell><Badge variant="outline" className="text-xs">{gig.skill_category}</Badge></TableCell>
-                  <TableCell className="text-xs">{gig.pricing_type}</TableCell>
-                  <TableCell>
-                    {gig.budget_amount ? (
-                      <span className="flex items-center gap-1"><Coins className="h-3.5 w-3.5 text-amber-500" />{gig.budget_amount}</span>
-                    ) : "—"}
+                <TableRow key={gig.id} className="group border-b border-border/5 hover:bg-muted/10 transition-colors">
+                  <TableCell className="py-6">
+                    <p className="font-black text-sm uppercase italic tracking-tight">{gig.title}</p>
+                    <p className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest mt-0.5 italic">
+                      {gig.employer_name}
+                    </p>
                   </TableCell>
-                  <TableCell>{gig.total_bids}</TableCell>
-                  <TableCell><Badge variant={statusColor(gig.status)}>{gig.status}</Badge></TableCell>
                   <TableCell>
-                    <div className="flex gap-1">
-                      {gigHasContract(gig) && (
-                        <Button variant="ghost" size="icon" onClick={() => setViewContractId(gig.id)} title="View Contract">
+                    <Badge variant="outline" className="font-black text-[9px] uppercase tracking-tighter border-2">
+                      {gig.skill_category?.replace("_", " ")}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-center">
+                    <Badge
+                      className={cn(
+                        "font-black text-[9px] uppercase italic",
+                        gig.pricing_type === "bidding"
+                          ? "bg-amber-500/10 text-amber-600"
+                          : "bg-blue-500/10 text-blue-600",
+                      )}
+                    >
+                      {gig.pricing_type}
+                    </Badge>
+                  </TableCell>
+                  <TableCell>
+                    <div className="flex items-center gap-2 font-black italic text-sm">
+                      <Coins className="h-4 w-4 text-amber-500" />
+                      {gig.budget_amount?.toLocaleString() || "UNSET"}
+                    </div>
+                  </TableCell>
+                  <TableCell className="text-center font-black italic">{gig.total_bids || 0}</TableCell>
+                  <TableCell>
+                    <Badge
+                      className={cn(
+                        "font-black text-[9px] uppercase tracking-widest italic rounded-full px-4",
+                        gig.status === "completed"
+                          ? "bg-green-500/10 text-green-600"
+                          : gig.status === "in_progress"
+                            ? "bg-primary/10 text-primary animate-pulse"
+                            : "bg-muted text-muted-foreground",
+                      )}
+                    >
+                      {gig.status?.replace("_", " ")}
+                    </Badge>
+                  </TableCell>
+                  <TableCell className="text-right py-6">
+                    <div className="flex justify-end gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
+                      {["in_progress", "completed"].includes(gig.status) && (
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setViewContractId(gig.id)}
+                          className="hover:bg-primary/10 hover:text-primary"
+                        >
                           <FileText className="h-4 w-4" />
                         </Button>
                       )}
-                      <Button variant="ghost" size="icon" onClick={() => setViewBidsId(gig.id)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => setViewBidsId(gig.id)}
+                        className="hover:bg-primary/10 hover:text-primary"
+                      >
                         <Eye className="h-4 w-4" />
                       </Button>
-                      <Button variant="ghost" size="icon" onClick={() => openEdit(gig)}>
+                      <Button
+                        variant="ghost"
+                        size="icon"
+                        onClick={() => openEdit(gig)}
+                        className="hover:bg-primary/10 hover:text-primary"
+                      >
                         <Pencil className="h-4 w-4" />
                       </Button>
                     </div>
@@ -334,244 +358,345 @@ export function MarketplaceGigsManager() {
             )}
           </TableBody>
         </Table>
-      </div>
+      </Card>
 
-      {/* Create/Edit Dialog */}
+      {/* FORM DIALOG */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>{editingId ? "Edit Marketplace Gig" : "Create Marketplace Gig"}</DialogTitle>
-          </DialogHeader>
-          <div className="space-y-4">
-            <div className="space-y-2">
-              <Label>Title</Label>
-              <Input value={form.title} onChange={(e) => setForm({ ...form, title: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label>Description</Label>
-              <Textarea value={form.description} onChange={(e) => setForm({ ...form, description: e.target.value })} rows={4} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
+        <DialogContent className="max-w-2xl rounded-[40px] border-4 p-0 overflow-hidden">
+          <div className="h-2 w-full bg-primary" />
+          <div className="p-8 space-y-6">
+            <DialogHeader className="text-left">
+              <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter">
+                Gig Deployment Protocol
+              </DialogTitle>
+              <DialogDescription className="text-[10px] font-bold uppercase tracking-widest">
+                Define marketplace node parameters and credit allocation
+              </DialogDescription>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-6">
+              <div className="col-span-2 space-y-2">
+                <Label className="font-black uppercase text-[10px] tracking-widest text-primary italic">
+                  Gig Title
+                </Label>
+                <Input
+                  className="h-14 rounded-2xl border-2 font-bold uppercase text-xs"
+                  value={form.title}
+                  onChange={(e) => setForm({ ...form, title: e.target.value })}
+                />
+              </div>
+              <div className="col-span-2 space-y-2">
+                <Label className="font-black uppercase text-[10px] tracking-widest text-primary italic">
+                  Description & Scope
+                </Label>
+                <Textarea
+                  className="rounded-2xl border-2 font-medium min-h-[120px]"
+                  value={form.description}
+                  onChange={(e) => setForm({ ...form, description: e.target.value })}
+                />
+              </div>
               <div className="space-y-2">
-                <Label>Skill Category (School)</Label>
-                <Select value={form.skill_category} onValueChange={(v) => setForm({ ...form, skill_category: v, skill_subcategory: "" })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
+                <Label className="font-black uppercase text-[10px] tracking-widest text-primary italic">
+                  School (Category)
+                </Label>
+                <Select
+                  value={form.skill_category}
+                  onValueChange={(v) => setForm({ ...form, skill_category: v, skill_subcategory: "" })}
+                >
+                  <SelectTrigger className="h-14 rounded-2xl border-2 font-bold uppercase text-[10px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-2">
                     {MARKETPLACE_SCHOOLS.map((s) => (
-                      <SelectItem key={s.value} value={s.value}>{s.label}</SelectItem>
+                      <SelectItem key={s.value} value={s.value} className="font-bold uppercase text-[10px]">
+                        {s.label}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Subcategory (Program)</Label>
-                <Select value={form.skill_subcategory} onValueChange={(v) => setForm({ ...form, skill_subcategory: v })}>
-                  <SelectTrigger><SelectValue placeholder="Optional" /></SelectTrigger>
-                  <SelectContent>
+                <Label className="font-black uppercase text-[10px] tracking-widest text-primary italic">
+                  Program (Subcategory)
+                </Label>
+                <Select
+                  value={form.skill_subcategory}
+                  onValueChange={(v) => setForm({ ...form, skill_subcategory: v })}
+                >
+                  <SelectTrigger className="h-14 rounded-2xl border-2 font-bold uppercase text-[10px]">
+                    <SelectValue placeholder="AUTO-DETECT" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-2">
                     {selectedSchool?.programs.map((p) => (
-                      <SelectItem key={p} value={p}>{p}</SelectItem>
+                      <SelectItem key={p} value={p} className="font-bold uppercase text-[10px]">
+                        {p}
+                      </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label>Pricing Type</Label>
+                <Label className="font-black uppercase text-[10px] tracking-widest text-primary italic">
+                  Pricing Protocol
+                </Label>
                 <Select value={form.pricing_type} onValueChange={(v) => setForm({ ...form, pricing_type: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="fixed">Fixed Price</SelectItem>
-                    <SelectItem value="bidding">Open to Bids</SelectItem>
+                  <SelectTrigger className="h-14 rounded-2xl border-2 font-bold uppercase text-[10px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-2">
+                    <SelectItem value="fixed" className="font-bold uppercase text-[10px]">
+                      FIXED CREDIT RATE
+                    </SelectItem>
+                    <SelectItem value="bidding" className="font-bold uppercase text-[10px]">
+                      OPEN BIDDING
+                    </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label>Budget (credits)</Label>
-                <Input type="number" value={form.budget_amount || ""} onChange={(e) => setForm({ ...form, budget_amount: parseInt(e.target.value) || null })} />
+                <Label className="font-black uppercase text-[10px] tracking-widest text-primary italic">
+                  Budget (Credits)
+                </Label>
+                <div className="relative">
+                  <Coins className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-amber-500" />
+                  <Input
+                    type="number"
+                    className="h-14 rounded-2xl border-2 pl-12 font-black italic text-lg"
+                    value={form.budget_amount || ""}
+                    onChange={(e) => setForm({ ...form, budget_amount: parseInt(e.target.value) || null })}
+                  />
+                </div>
               </div>
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Employer Name</Label>
-                <Input value={form.employer_name} onChange={(e) => setForm({ ...form, employer_name: e.target.value })} />
-              </div>
-              <div className="space-y-2">
-                <Label>Employer Email</Label>
-                <Input value={form.employer_email} onChange={(e) => setForm({ ...form, employer_email: e.target.value })} />
-              </div>
-            </div>
-            <div className="space-y-2">
-              <Label>Deadline</Label>
-              <Input type="date" value={form.deadline} onChange={(e) => setForm({ ...form, deadline: e.target.value })} />
-            </div>
-            <div className="space-y-2">
-              <Label>Requirements</Label>
-              <Textarea value={form.requirements} onChange={(e) => setForm({ ...form, requirements: e.target.value })} rows={2} />
-            </div>
-            <div className="grid grid-cols-2 gap-4">
-              <div className="space-y-2">
-                <Label>Status</Label>
-                <Select value={form.status} onValueChange={(v) => setForm({ ...form, status: v })}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>
-                    <SelectItem value="pending">Pending</SelectItem>
-                    <SelectItem value="approved">Approved</SelectItem>
-                    <SelectItem value="active">Active</SelectItem>
-                    <SelectItem value="in_progress">In Progress</SelectItem>
-                    <SelectItem value="completed">Completed</SelectItem>
-                    <SelectItem value="cancelled">Cancelled</SelectItem>
-                  </SelectContent>
-                </Select>
-              </div>
-              <div className="flex items-center gap-2 pt-6">
+              <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-2xl border-2">
                 <Switch checked={form.is_featured} onCheckedChange={(v) => setForm({ ...form, is_featured: v })} />
-                <Label>Featured</Label>
+                <div className="text-left">
+                  <Label className="font-black uppercase text-[10px] tracking-widest italic">High Visibility</Label>
+                  <p className="text-[8px] font-bold text-muted-foreground uppercase italic">
+                    Feature on main marketplace hub
+                  </p>
+                </div>
               </div>
             </div>
-            <Button className="w-full" onClick={() => saveMutation.mutate()} disabled={!form.title || !form.description || saveMutation.isPending}>
-              {editingId ? "Update Gig" : "Create Gig"}
+            <Button
+              className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl"
+              onClick={() => saveMutation.mutate()}
+              disabled={!form.title || saveMutation.isPending}
+            >
+              {saveMutation.isPending ? <Loader2 className="animate-spin" /> : <Zap className="fill-current" />}
+              {editingId ? "Update Node" : "Deploy Gig"}
             </Button>
           </div>
         </DialogContent>
       </Dialog>
 
-      {/* View Bids Dialog */}
+      {/* BIDS OVERLAY [cite: 240] */}
       <Dialog open={!!viewBidsId} onOpenChange={(o) => !o && setViewBidsId(null)}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Bids ({bids?.length || 0})</DialogTitle>
-          </DialogHeader>
-          {!bids?.length ? (
-            <p className="text-sm text-muted-foreground text-center py-8">No bids yet</p>
-          ) : (
-            <div className="space-y-3">
-              {bids.map((bid: any) => (
-                <div key={bid.id} className="border rounded-lg p-3 space-y-2">
-                  <div className="flex items-center justify-between">
-                    <div>
-                      <p className="font-medium text-sm">{bid.talents?.full_name || "Unknown"}</p>
-                      <p className="text-xs text-muted-foreground">{bid.talents?.email}</p>
+        <DialogContent className="max-w-2xl rounded-[40px] border-4 p-8 overflow-hidden">
+          <div className="space-y-6">
+            <div className="flex justify-between items-center">
+              <h3 className="text-2xl font-black uppercase italic tracking-tighter">
+                Proposal Pulse ({bids?.length || 0})
+              </h3>
+              <Activity className="text-primary h-6 w-6 animate-pulse" />
+            </div>
+            <div className="space-y-4 max-h-[60vh] overflow-y-auto pr-2 custom-scrollbar">
+              {!bids?.length ? (
+                <div className="py-20 text-center font-black uppercase text-xs italic opacity-20">
+                  Zero Incoming Proposals
+                </div>
+              ) : (
+                bids.map((bid: any) => (
+                  <div
+                    key={bid.id}
+                    className="group relative border-2 border-border/40 rounded-3xl p-6 bg-muted/10 hover:border-primary/40 transition-all text-left"
+                  >
+                    <div className="flex justify-between items-start mb-4">
+                      <div className="flex items-center gap-4">
+                        <div className="h-12 w-12 rounded-2xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center font-black text-primary">
+                          {bid.talents?.full_name?.charAt(0)}
+                        </div>
+                        <div>
+                          <p className="font-black uppercase italic text-sm">{bid.talents?.full_name}</p>
+                          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
+                            {bid.talents?.email}
+                          </p>
+                        </div>
+                      </div>
+                      <div className="text-right">
+                        <div className="flex items-center gap-2 font-black italic text-lg text-amber-600">
+                          <Coins className="h-5 w-5" /> {bid.bid_amount}
+                        </div>
+                        <Badge variant="outline" className="text-[9px] font-black uppercase italic mt-1">
+                          {bid.status}
+                        </Badge>
+                      </div>
                     </div>
-                    <div className="text-right">
-                      <span className="flex items-center gap-1 font-semibold text-sm">
-                        <Coins className="h-3.5 w-3.5 text-amber-500" />{bid.bid_amount}
-                      </span>
-                      <Badge variant="outline" className="text-[10px]">{bid.status}</Badge>
+                    <p className="text-xs font-medium bg-background/50 p-4 rounded-xl mb-4 italic leading-relaxed border-l-4 border-primary">
+                      "{bid.cover_letter}"
+                    </p>
+                    <div className="flex justify-between items-center">
+                      <div className="flex gap-4 text-[9px] font-black uppercase text-muted-foreground italic">
+                        <span className="flex items-center gap-1">
+                          <Clock className="h-3 w-3" /> {bid.estimated_days} Days Delivery
+                        </span>
+                        <span>Applied {format(new Date(bid.created_at), "MMM d")}</span>
+                      </div>
+                      {bid.status === "pending" && (
+                        <Button
+                          size="sm"
+                          className="rounded-xl font-black uppercase italic text-[10px] px-6"
+                          onClick={() => acceptBidMutation.mutate(bid)}
+                          disabled={acceptBidMutation.isPending}
+                        >
+                          {acceptBidMutation.isPending ? (
+                            <Loader2 className="h-3 w-3 animate-spin" />
+                          ) : (
+                            "Activate Contract"
+                          )}
+                        </Button>
+                      )}
                     </div>
                   </div>
-                  <p className="text-xs">{bid.cover_letter}</p>
-                  {bid.estimated_days && (
-                    <p className="text-xs text-muted-foreground">Est. delivery: {bid.estimated_days} days</p>
-                  )}
-                  <p className="text-xs text-muted-foreground">{format(new Date(bid.created_at), "MMM d, yyyy")}</p>
-                  {bid.status === "pending" && (
-                    <Button
-                      size="sm"
-                      className="gap-1"
-                      onClick={() => acceptBidMutation.mutate(bid)}
-                      disabled={acceptBidMutation.isPending}
-                    >
-                      {acceptBidMutation.isPending ? <Loader2 className="h-3 w-3 animate-spin" /> : <Check className="h-3 w-3" />}
-                      Accept Bid
-                    </Button>
-                  )}
-                </div>
-              ))}
+                ))
+              )}
             </div>
-          )}
+          </div>
         </DialogContent>
       </Dialog>
 
-      {/* View Contract Dialog */}
+      {/* CONTRACTS OVERLAY [cite: 240, 410] */}
       <Dialog open={!!viewContractId} onOpenChange={(o) => !o && setViewContractId(null)}>
-        <DialogContent className="max-w-lg max-h-[85vh] overflow-y-auto">
-          <DialogHeader>
-            <DialogTitle>Contract Details</DialogTitle>
-          </DialogHeader>
+        <DialogContent className="max-w-2xl rounded-[40px] border-4 p-8 overflow-hidden">
           {!contractData?.contract ? (
-            <p className="text-sm text-muted-foreground text-center py-8">No contract found</p>
+            <div className="py-20 text-center font-black italic opacity-20">NO ACTIVE CONTRACT DATA</div>
           ) : (
-            <div className="space-y-4">
-              <div className="grid grid-cols-2 gap-3 text-sm">
-                <div>
-                  <p className="text-muted-foreground text-xs">Freelancer</p>
-                  <p className="font-medium">{(contractData.contract as any).talents?.full_name}</p>
-                </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">Amount</p>
-                  <p className="font-medium flex items-center gap-1">
-                    <Coins className="h-3.5 w-3.5 text-amber-500" />{contractData.contract.agreed_amount}
+            <div className="space-y-8">
+              <div className="flex justify-between items-center border-b-2 pb-6">
+                <div className="text-left">
+                  <h3 className="text-3xl font-black uppercase italic tracking-tighter">
+                    Contract ID: {contractData.contract.id.slice(0, 8)}
+                  </h3>
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground italic">
+                    Active Marketplace Engagement
                   </p>
                 </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">Status</p>
-                  <Badge variant={contractData.contract.status === "completed" ? "secondary" : "default"}>
-                    {contractData.contract.status}
-                  </Badge>
+                <Badge className="h-10 px-6 rounded-full font-black uppercase italic bg-green-500/10 text-green-600 border-2 border-green-500/20">
+                  {contractData.contract.status}
+                </Badge>
+              </div>
+
+              <div className="grid grid-cols-3 gap-6 bg-muted/20 p-6 rounded-[32px] border-2 border-border/40">
+                <div className="text-left">
+                  <p className="text-[9px] font-black uppercase text-muted-foreground italic mb-1">Freelancer Node</p>
+                  <p className="font-black uppercase italic text-sm">
+                    {(contractData.contract as any).talents?.full_name}
+                  </p>
                 </div>
-                <div>
-                  <p className="text-muted-foreground text-xs">Started</p>
-                  <p>{format(new Date(contractData.contract.started_at!), "MMM d, yyyy")}</p>
+                <div className="text-left">
+                  <p className="text-[9px] font-black uppercase text-muted-foreground italic mb-1">Agreement Total</p>
+                  <p className="font-black italic text-sm flex items-center gap-1 text-amber-600">
+                    <Coins className="h-4 w-4" /> {contractData.contract.agreed_amount}
+                  </p>
+                </div>
+                <div className="text-left">
+                  <p className="text-[9px] font-black uppercase text-muted-foreground italic mb-1">Deployment Date</p>
+                  <p className="font-black uppercase italic text-sm">
+                    {format(new Date(contractData.contract.started_at!), "MMM d, yyyy")}
+                  </p>
                 </div>
               </div>
 
-              <div>
-                <h4 className="font-medium text-sm mb-2">Deliverables ({contractData.deliverables.length})</h4>
-                {!contractData.deliverables.length ? (
-                  <p className="text-xs text-muted-foreground">No deliverables submitted yet</p>
-                ) : (
-                  <div className="space-y-2">
-                    {contractData.deliverables.map((d: any) => (
-                      <div key={d.id} className="border rounded-lg p-2.5 space-y-1.5">
-                        <div className="flex items-center justify-between">
-                          <p className="font-medium text-sm">{d.title}</p>
-                          <Badge variant="outline" className="text-[10px]">{d.status}</Badge>
+              <div className="space-y-4">
+                <div className="flex justify-between items-center px-2">
+                  <h4 className="font-black uppercase italic text-sm flex items-center gap-2">
+                    <TrendingUp className="h-4 w-4 text-primary" /> Deliverable Tracking
+                  </h4>
+                  <Badge variant="outline" className="font-black italic text-[9px]">
+                    {contractData.deliverables.length} NODES
+                  </Badge>
+                </div>
+                <div className="space-y-3 max-h-[40vh] overflow-y-auto pr-2 custom-scrollbar">
+                  {!contractData.deliverables.length ? (
+                    <div className="bg-muted/10 border-2 border-dashed rounded-3xl py-12 text-center text-[10px] font-black uppercase italic opacity-30">
+                      Waiting for Freelancer Submission
+                    </div>
+                  ) : (
+                    contractData.deliverables.map((d: any) => (
+                      <div
+                        key={d.id}
+                        className="bg-background border-2 border-border/40 rounded-2xl p-5 group hover:border-primary/40 transition-all text-left"
+                      >
+                        <div className="flex justify-between items-center mb-2">
+                          <p className="font-black uppercase italic text-xs leading-none">{d.title}</p>
+                          <Badge
+                            className={cn(
+                              "font-black text-[8px] uppercase",
+                              d.status === "approved"
+                                ? "bg-green-500/10 text-green-600"
+                                : "bg-amber-500/10 text-amber-600",
+                            )}
+                          >
+                            {d.status}
+                          </Badge>
                         </div>
-                        {d.description && <p className="text-xs text-muted-foreground">{d.description}</p>}
-                        {d.file_url && (
-                          <a href={d.file_url} target="_blank" rel="noopener noreferrer" className="text-xs text-primary underline">
-                            View File
-                          </a>
+                        {d.description && (
+                          <p className="text-[10px] font-medium text-muted-foreground mb-3 leading-relaxed italic">
+                            "{d.description}"
+                          </p>
                         )}
-                        {d.status === "submitted" && (
-                          <div className="flex gap-2 pt-1">
-                            <Button
-                              size="sm"
-                              variant="default"
-                              className="gap-1 h-7 text-xs"
-                              onClick={() => updateDeliverableMutation.mutate({ id: d.id, status: "approved" })}
+                        <div className="flex justify-between items-center">
+                          {d.file_url ? (
+                            <a
+                              href={d.file_url}
+                              target="_blank"
+                              rel="noopener noreferrer"
+                              className="flex items-center gap-1.5 text-[9px] font-black uppercase text-primary underline italic"
                             >
-                              <Check className="h-3 w-3" /> Approve
-                            </Button>
-                            <Button
-                              size="sm"
-                              variant="outline"
-                              className="gap-1 h-7 text-xs"
-                              onClick={() => updateDeliverableMutation.mutate({ id: d.id, status: "revision_requested", notes: "Please revise" })}
-                            >
-                              <X className="h-3 w-3" /> Request Revision
-                            </Button>
-                          </div>
-                        )}
+                              <ExternalLink className="h-3 w-3" /> Audit Artifact
+                            </a>
+                          ) : (
+                            <span />
+                          )}
+                          {d.status === "submitted" && (
+                            <div className="flex gap-2">
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 rounded-xl font-black text-[9px] border-green-500/50 hover:bg-green-500/10 text-green-600"
+                                onClick={() => updateDeliverableMutation.mutate({ id: d.id, status: "approved" })}
+                              >
+                                <Check className="h-3 w-3" />
+                              </Button>
+                              <Button
+                                size="sm"
+                                variant="outline"
+                                className="h-8 rounded-xl font-black text-[9px] border-red-500/50 hover:bg-red-500/10 text-red-600"
+                                onClick={() =>
+                                  updateDeliverableMutation.mutate({ id: d.id, status: "revision_requested" })
+                                }
+                              >
+                                <X className="h-3 w-3" />
+                              </Button>
+                            </div>
+                          )}
+                        </div>
                       </div>
-                    ))}
-                  </div>
-                )}
+                    ))
+                  )}
+                </div>
               </div>
 
               {contractData.contract.status === "active" && (
                 <Button
-                  className="w-full gap-2"
+                  className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl bg-green-600 hover:bg-green-700"
                   onClick={() => completeContractMutation.mutate(contractData.contract)}
                   disabled={completeContractMutation.isPending}
                 >
                   {completeContractMutation.isPending ? (
-                    <Loader2 className="h-4 w-4 animate-spin" />
+                    <Loader2 className="animate-spin" />
                   ) : (
-                    <CheckCircle2 className="h-4 w-4" />
+                    <CheckCircle2 className="fill-current" />
                   )}
-                  Mark Complete & Award {contractData.contract.agreed_amount} Credits
+                  Finalize & Disburse {contractData.contract.agreed_amount} Credits
                 </Button>
               )}
             </div>
