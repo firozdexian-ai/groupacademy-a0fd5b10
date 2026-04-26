@@ -15,7 +15,12 @@ import {
   DialogTrigger,
 } from "@/components/ui/dialog";
 import { toast } from "sonner";
-import { KeyRound, Copy, Check } from "lucide-react";
+import { KeyRound, Copy, Check, Zap, Mail, ShieldCheck } from "lucide-react";
+
+/**
+ * GroUp Academy: Access Code Deployment Protocol
+ * CTO Reference: Manages single-use authorization keys for premium AI services.
+ */
 
 interface MockInterviewCodeGeneratorProps {
   leadEmail: string;
@@ -40,39 +45,35 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
   const handleGenerate = async () => {
     setGenerating(true);
     try {
-      const { data: { user } } = await withTimeout(
-        supabase.auth.getUser(),
-        TIMEOUTS.AUTH,
-        "Authentication check timed out"
-      );
+      const {
+        data: { user },
+      } = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "Authentication check timed out");
       if (!user) {
-        toast.error("You must be logged in to generate codes");
+        toast.error("Security Fault: Unauthorized access attempt.");
         return;
       }
 
       const code = generateCode();
-      
+
       const { error } = await withTimeout(
-        Promise.resolve(supabase
-          .from("mock_interview_access_codes")
-          .insert({
-            code,
-            email: leadEmail.toLowerCase().trim(),
-            created_by: user.id,
-            expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
-          })),
+        supabase.from("mock_interview_access_codes").insert({
+          code,
+          email: leadEmail.toLowerCase().trim(),
+          created_by: user.id,
+          expires_at: new Date(Date.now() + 30 * 24 * 60 * 60 * 1000).toISOString(),
+        }),
         TIMEOUTS.DEFAULT,
-        "Code generation timed out"
+        "Code insertion timed out",
       );
 
       if (error) throw error;
 
       setGeneratedCode(code);
-      toast.success("Access code generated successfully!");
+      toast.success("Deployment Successful: Access code generated.");
     } catch (error: any) {
-      console.error("Error generating code:", error);
+      console.error("Access Code Fault:", error);
       const isTimeout = error.message?.includes("timed out");
-      toast.error(isTimeout ? "Operation timed out. Please try again." : "Failed to generate access code");
+      toast.error(isTimeout ? "Network Latency Detected. Retrying..." : "System Error: Code generation failed.");
     } finally {
       setGenerating(false);
     }
@@ -80,70 +81,105 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
 
   const handleCopy = () => {
     if (generatedCode) {
-      const message = `Hi ${leadName},\n\nYour Mock Interview retake access code is: ${generatedCode}\n\nThis code is valid for 30 days.\n\nVisit: ${window.location.origin}/mock-interview/setup\n\nThank you,\nGroUp Academy`;
+      const message = `Hi ${leadName},\n\nYour GroUp Academy Mock Interview retake access code is: ${generatedCode}\n\nThis key is valid for 30 days.\n\nVisit: ${window.location.origin}/mock-interview/setup\n\nBest regards,\nGroUp Academy Admin`;
       navigator.clipboard.writeText(message);
       setCopied(true);
-      toast.success("Code and message copied to clipboard!");
+      toast.success("Protocol: Outreach template copied to clipboard.");
       setTimeout(() => setCopied(false), 2000);
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={(o) => { setOpen(o); if (!o) { setGeneratedCode(null); setCopied(false); } }}>
+    <Dialog
+      open={open}
+      onOpenChange={(o) => {
+        setOpen(o);
+        if (!o) {
+          setGeneratedCode(null);
+          setCopied(false);
+        }
+      }}
+    >
       <DialogTrigger asChild>
-        <Button variant="outline" size="sm">
-          <KeyRound className="h-4 w-4 mr-1" />
+        <Button
+          variant="outline"
+          size="sm"
+          className="font-black uppercase text-[10px] tracking-widest gap-2 rounded-xl border-2"
+        >
+          <KeyRound className="h-3 w-3" />
           Generate Code
         </Button>
       </DialogTrigger>
-      <DialogContent>
-        <DialogHeader>
-          <DialogTitle>Generate Mock Interview Access Code</DialogTitle>
-          <DialogDescription>
-            Generate a paid access code for {leadName} ({leadEmail}) to take another mock interview.
-          </DialogDescription>
-        </DialogHeader>
-        
-        <div className="space-y-4 py-4">
-          <div className="space-y-2">
-            <Label>Email</Label>
-            <Input value={leadEmail} disabled />
-          </div>
-          
-          {generatedCode ? (
+      <DialogContent className="max-w-md rounded-[32px] border-4 overflow-hidden p-0">
+        <div className="h-2 w-full bg-primary" />
+        <div className="p-8 space-y-6">
+          <DialogHeader className="text-left">
+            <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+              <ShieldCheck className="h-6 w-6 text-primary" /> Access Deployment
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+              Generate a premium authorization key for {leadName}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="space-y-4">
             <div className="space-y-2">
-              <Label>Generated Code</Label>
-              <div className="flex items-center gap-2">
-                <Input 
-                  value={generatedCode} 
-                  readOnly 
-                  className="font-mono text-lg tracking-widest text-center"
-                />
-                <Button variant="outline" size="icon" onClick={handleCopy}>
-                  {copied ? <Check className="h-4 w-4 text-green-500" /> : <Copy className="h-4 w-4" />}
+              <Label className="text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2">
+                <Mail className="h-3 w-3" /> Target Email
+              </Label>
+              <Input value={leadEmail} disabled className="h-12 rounded-xl border-2 font-bold bg-muted/30" />
+            </div>
+
+            {generatedCode ? (
+              <div className="space-y-3 animate-in zoom-in-95 duration-300">
+                <Label className="text-[10px] font-black uppercase italic tracking-widest text-primary flex items-center gap-2">
+                  <Zap className="h-3 w-3 fill-current" /> Generated Key
+                </Label>
+                <div className="flex items-center gap-2">
+                  <Input
+                    value={generatedCode}
+                    readOnly
+                    className="h-16 font-mono text-2xl font-black tracking-[0.4em] text-center rounded-2xl border-2 border-primary/20 bg-primary/5"
+                  />
+                  <Button
+                    variant="outline"
+                    size="icon"
+                    onClick={handleCopy}
+                    className="h-16 w-16 rounded-2xl border-2 hover:bg-primary hover:text-white transition-all"
+                  >
+                    {copied ? <Check className="h-6 w-6 text-green-500" /> : <Copy className="h-6 w-6" />}
+                  </Button>
+                </div>
+                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest text-center italic">
+                  Key valid for 30 days. Copy for outreach template.
+                </p>
+              </div>
+            ) : (
+              <div className="py-4 text-center">
+                <p className="text-[11px] font-medium text-muted-foreground mb-6 leading-relaxed">
+                  This protocol generates an 8-character single-use key that bypasses the 75-credit cost for retakes.
+                </p>
+                <Button
+                  onClick={handleGenerate}
+                  disabled={generating}
+                  className="w-full h-14 rounded-2xl font-black uppercase italic tracking-tighter text-lg shadow-xl"
+                >
+                  {generating ? "Synchronizing..." : "Initialize Generation"}
                 </Button>
               </div>
-              <p className="text-xs text-muted-foreground">
-                Click copy to get the full message with code to send to the user.
-              </p>
-            </div>
-          ) : (
-            <div className="text-center py-4">
-              <p className="text-sm text-muted-foreground mb-4">
-                This will generate an 8-character access code valid for 30 days.
-              </p>
-              <Button onClick={handleGenerate} disabled={generating}>
-                {generating ? "Generating..." : "Generate Access Code"}
-              </Button>
-            </div>
-          )}
-        </div>
+            )}
+          </div>
 
-        <DialogFooter>
-          <Button variant="outline" onClick={() => setOpen(false)}>
-            Close
-          </Button>
-        </DialogFooter>
+          <DialogFooter className="sm:justify-start">
+            <Button
+              variant="ghost"
+              onClick={() => setOpen(false)}
+              className="font-black uppercase text-[10px] tracking-widest italic opacity-50"
+            >
+              Close Console
+            </Button>
+          </DialogFooter>
+        </div>
       </DialogContent>
     </Dialog>
   );
