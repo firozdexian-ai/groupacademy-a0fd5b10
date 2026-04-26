@@ -15,7 +15,7 @@ import {
   BookOpen,
   Activity,
   ShieldCheck,
-  Globe,
+  Zap,
 } from "lucide-react";
 import { subDays, startOfDay, endOfDay } from "date-fns";
 import {
@@ -33,8 +33,8 @@ import {
 } from "recharts";
 
 /**
- * GroUp Academy: Marketing Performance Intelligence
- * CTO Reference: Unified telemetry for Recruitment and Academy content.
+ * GroUp Academy: Marketing Performance Intelligence (Full Executive Suite)
+ * CTO Reference: Unified telemetry orchestrator tracking cross-channel engagement.
  */
 
 interface AnalyticsRecord {
@@ -42,11 +42,19 @@ interface AnalyticsRecord {
   count: number;
 }
 
+interface TopJobRecord {
+  id: string;
+  title: string;
+  company_name: string;
+  clicks: number;
+}
+
 interface AnalyticsData {
   jobClicks: AnalyticsRecord[];
   jobShares: AnalyticsRecord[];
   contentClicks: AnalyticsRecord[];
   contentShares: AnalyticsRecord[];
+  topJobs: TopJobRecord[];
   totals: {
     jobClicks: number;
     jobShares: number;
@@ -79,7 +87,8 @@ export function MarketingAnalytics() {
       const startDate = startOfDay(subDays(new Date(), parseInt(dateRange)));
       const endDate = endOfDay(new Date());
 
-      const [jobClicksRes, jobSharesRes, contentClicksRes, contentSharesRes] = await Promise.all([
+      // Fetch base analytics and joined job data
+      const [jobClicksRes, jobSharesRes, contentClicksRes, contentSharesRes, topJobsDataRes] = await Promise.all([
         supabase
           .from("job_analytics")
           .select("source")
@@ -100,6 +109,12 @@ export function MarketingAnalytics() {
           .select("channel")
           .gte("shared_at", startDate.toISOString())
           .lte("shared_at", endDate.toISOString()),
+        // RESTORED: Job-wise click tracking via relation
+        supabase
+          .from("job_analytics")
+          .select("job_id, jobs(id, title, company_name)")
+          .gte("clicked_at", startDate.toISOString())
+          .lte("clicked_at", endDate.toISOString()),
       ]);
 
       const aggregate = (arr: any[], field: string): AnalyticsRecord[] => {
@@ -117,11 +132,28 @@ export function MarketingAnalytics() {
           .sort((a, b) => b.count - a.count);
       };
 
+      // RESTORED: Process Job-wise performance mapping
+      const jobPulseMap = (topJobsDataRes.data || []).reduce((acc: Record<string, TopJobRecord>, item: any) => {
+        if (item.jobs) {
+          const id = item.jobs.id;
+          if (!acc[id]) {
+            acc[id] = { id, title: item.jobs.title, company_name: item.jobs.company_name, clicks: 0 };
+          }
+          acc[id].clicks++;
+        }
+        return acc;
+      }, {});
+
+      const sortedTopJobs = Object.values(jobPulseMap)
+        .sort((a, b) => b.clicks - a.clicks)
+        .slice(0, 5);
+
       setData({
         jobClicks: aggregate(jobClicksRes.data || [], "source"),
         jobShares: aggregate(jobSharesRes.data || [], "channel"),
         contentClicks: aggregate(contentClicksRes.data || [], "source"),
         contentShares: aggregate(contentSharesRes.data || [], "channel"),
+        topJobs: sortedTopJobs,
         totals: {
           jobClicks: jobClicksRes.data?.length || 0,
           jobShares: jobSharesRes.data?.length || 0,
@@ -148,7 +180,7 @@ export function MarketingAnalytics() {
             <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Market Intel</h2>
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            Cross-Channel Conversion Radar
+            Strategic Attribution Radar
           </p>
         </div>
         <div className="flex items-center gap-3">
@@ -194,23 +226,57 @@ export function MarketingAnalytics() {
         {/* RECRUITMENT TAB */}
         <TabsContent value="jobs" className="space-y-8 animate-in slide-in-from-bottom-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <ChartCard title="Recruitment Traffic" sub="Origin source of candidate clicks">
+            <ChartCard title="Traffic Source" sub="Origin of job seeker engagement">
               <SourceBarChart data={data?.jobClicks || []} color="#0062ff" />
             </ChartCard>
-            <ChartCard title="Job Distribution" sub="Multi-platform sharing telemetry">
+            <ChartCard title="Social Distribution" sub="Distribution by channel">
               <SourcePieChart data={data?.jobShares.map((s) => ({ name: s.source, value: s.count })) || []} />
             </ChartCard>
           </div>
+
           <SummaryBadgeRow totalClicks={data?.totals.jobClicks || 0} totalShares={data?.totals.jobShares || 0} />
+
+          {/* RESTORED: Top Performing Individual Jobs */}
+          <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30">
+            <CardHeader className="p-8 border-b border-border/10">
+              <CardTitle className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-3 text-left">
+                <Zap className="h-5 w-5 text-primary" /> High-Intensity Roles
+              </CardTitle>
+              <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-left">
+                Individual Job Pulse Distribution
+              </CardDescription>
+            </CardHeader>
+            <CardContent className="p-8">
+              <div className="space-y-4">
+                {data?.topJobs.length === 0 && (
+                  <p className="text-muted-foreground text-xs italic">No job-specific data for this period.</p>
+                )}
+                {data?.topJobs.map((job) => (
+                  <div
+                    key={job.id}
+                    className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/5"
+                  >
+                    <div className="text-left">
+                      <p className="font-black uppercase text-sm italic">{job.title}</p>
+                      <p className="text-[9px] font-bold text-muted-foreground/50 tracking-widest">
+                        {job.company_name}
+                      </p>
+                    </div>
+                    <Badge className="bg-primary/20 text-primary font-black italic">{job.clicks} CLICKS</Badge>
+                  </div>
+                ))}
+              </div>
+            </CardContent>
+          </Card>
         </TabsContent>
 
-        {/* ACADEMY TAB - NOW FULLY IMPLEMENTED */}
+        {/* ACADEMY TAB */}
         <TabsContent value="content" className="space-y-8 animate-in slide-in-from-bottom-2">
           <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-            <ChartCard title="Course Discovery" sub="How learners find our curriculum">
+            <ChartCard title="Course Discovery" sub="Content discovery sources">
               <SourceBarChart data={data?.contentClicks || []} color="#10b981" />
             </ChartCard>
-            <ChartCard title="Academy Vitality" sub="Social sharing of course content">
+            <ChartCard title="Social Vitality" sub="Academy content distribution">
               <SourcePieChart data={data?.contentShares.map((s) => ({ name: s.source, value: s.count })) || []} />
             </ChartCard>
           </div>
