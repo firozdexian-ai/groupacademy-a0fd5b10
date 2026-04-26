@@ -9,6 +9,7 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { Switch } from "@/components/ui/switch";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import {
@@ -34,7 +35,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Marketplace Gigs Management System
- * CTO Reference: High-fidelity orchestrator for freelance contracts and credit distribution.
+ * CTO Reference: Fixed import dependencies and scoped deliverable mutations.
  */
 
 interface GigForm {
@@ -75,7 +76,7 @@ export function MarketplaceGigsManager() {
   const [viewBidsId, setViewBidsId] = useState<string | null>(null);
   const [viewContractId, setViewContractId] = useState<string | null>(null);
 
-  // DATA ACQUISITION
+  // --- DATA FETCHING ---
   const { data: gigs, isLoading } = useQuery({
     queryKey: ["admin-marketplace-gigs"],
     queryFn: async () => {
@@ -126,7 +127,7 @@ export function MarketplaceGigsManager() {
     enabled: !!viewContractId,
   });
 
-  // MUTATION LOGIC
+  // --- MUTATIONS ---
   const saveMutation = useMutation({
     mutationFn: async () => {
       const payload = { ...form, budget_amount: form.budget_amount || null, deadline: form.deadline || null };
@@ -171,6 +172,21 @@ export function MarketplaceGigsManager() {
     },
   });
 
+  const updateDeliverableMutation = useMutation({
+    mutationFn: async ({ id, status, notes }: { id: string; status: string; notes?: string }) => {
+      const { error } = await supabase
+        .from("marketplace_deliverables")
+        .update({ status, admin_notes: notes || null, reviewed_at: new Date().toISOString() })
+        .eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Deliverable status synchronized");
+      queryClient.invalidateQueries({ queryKey: ["admin-marketplace-contract"] });
+    },
+    onError: (err: any) => toast.error(err.message),
+  });
+
   const completeContractMutation = useMutation({
     mutationFn: async (contract: any) => {
       await supabase
@@ -188,7 +204,7 @@ export function MarketplaceGigsManager() {
         });
         if (credErr) throw credErr;
 
-        // Sync earned_balance [cite: 138, 469]
+        // Earned balance sync
         const { data: balanceData } = await supabase
           .from("talent_credits")
           .select("earned_balance")
@@ -213,9 +229,17 @@ export function MarketplaceGigsManager() {
   const openEdit = (gig: any) => {
     setEditingId(gig.id);
     setForm({
-      ...gig,
-      deadline: gig.deadline ? gig.deadline.split("T")[0] : "",
+      title: gig.title,
+      description: gig.description,
+      skill_category: gig.skill_category,
       skill_subcategory: gig.skill_subcategory || "",
+      pricing_type: gig.pricing_type,
+      budget_amount: gig.budget_amount,
+      deadline: gig.deadline ? gig.deadline.split("T")[0] : "",
+      requirements: gig.requirements || "",
+      employer_name: gig.employer_name || "GroUp Academy",
+      employer_email: gig.employer_email || "",
+      status: gig.status,
       is_featured: gig.is_featured || false,
     });
     setDialogOpen(true);
@@ -225,7 +249,6 @@ export function MarketplaceGigsManager() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
-      {/* EXECUTIVE HEADER */}
       <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
@@ -248,7 +271,6 @@ export function MarketplaceGigsManager() {
         </Button>
       </div>
 
-      {/* GIGS TABLE */}
       <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-amber-500 via-primary to-amber-500" />
         <Table>
@@ -488,7 +510,7 @@ export function MarketplaceGigsManager() {
         </DialogContent>
       </Dialog>
 
-      {/* BIDS OVERLAY [cite: 240] */}
+      {/* BIDS OVERLAY */}
       <Dialog open={!!viewBidsId} onOpenChange={(o) => !o && setViewBidsId(null)}>
         <DialogContent className="max-w-2xl rounded-[40px] border-4 p-8 overflow-hidden">
           <div className="space-y-6">
@@ -563,7 +585,7 @@ export function MarketplaceGigsManager() {
         </DialogContent>
       </Dialog>
 
-      {/* CONTRACTS OVERLAY [cite: 240, 410] */}
+      {/* CONTRACTS OVERLAY */}
       <Dialog open={!!viewContractId} onOpenChange={(o) => !o && setViewContractId(null)}>
         <DialogContent className="max-w-2xl rounded-[40px] border-4 p-8 overflow-hidden">
           {!contractData?.contract ? (
@@ -671,7 +693,11 @@ export function MarketplaceGigsManager() {
                                 variant="outline"
                                 className="h-8 rounded-xl font-black text-[9px] border-red-500/50 hover:bg-red-500/10 text-red-600"
                                 onClick={() =>
-                                  updateDeliverableMutation.mutate({ id: d.id, status: "revision_requested" })
+                                  updateDeliverableMutation.mutate({
+                                    id: d.id,
+                                    status: "revision_requested",
+                                    notes: "Please revise",
+                                  })
                                 }
                               >
                                 <X className="h-3 w-3" />
