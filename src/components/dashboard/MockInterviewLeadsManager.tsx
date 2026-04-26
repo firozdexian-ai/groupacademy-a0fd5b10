@@ -3,18 +3,24 @@ import { supabase } from "@/integrations/supabase/client";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Download, Search, Mail, Phone, Calendar, ExternalLink, User } from "lucide-react";
+import { Download, Search, Mail, Phone, Calendar, ExternalLink, User, Activity, Zap, TrendingUp } from "lucide-react";
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { MockInterviewCodeGenerator } from "./MockInterviewCodeGenerator";
 import { TalentDetailDialog } from "./TalentDetailDialog";
 import { useNavigate } from "react-router-dom";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Mock Interview Leads Orchestrator
+ * CTO Reference: Tracking AI career service usage and performance distribution.
+ */
 
 interface MockInterviewLead {
   id: string;
@@ -33,11 +39,11 @@ interface MockInterviewLead {
 }
 
 const performanceColors: Record<string, string> = {
-  needs_work: "bg-red-100 text-red-800 dark:bg-red-900 dark:text-red-300",
-  developing: "bg-orange-100 text-orange-800 dark:bg-orange-900 dark:text-orange-300",
-  competent: "bg-yellow-100 text-yellow-800 dark:bg-yellow-900 dark:text-yellow-300",
-  strong: "bg-blue-100 text-blue-800 dark:bg-blue-900 dark:text-blue-300",
-  excellent: "bg-green-100 text-green-800 dark:bg-green-900 dark:text-green-300",
+  needs_work: "bg-red-500/10 text-red-600 border-red-500/20",
+  developing: "bg-orange-500/10 text-orange-600 border-orange-500/20",
+  competent: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
+  strong: "bg-blue-500/10 text-blue-600 border-blue-500/20",
+  excellent: "bg-green-500/10 text-green-600 border-green-500/20",
 };
 
 const performanceLabels: Record<string, string> = {
@@ -68,22 +74,17 @@ export function MockInterviewLeadsManager() {
     setError(null);
     try {
       const { data, error: queryError } = await withTimeout(
-        Promise.resolve(
-          supabase
-            .from("mock_interviews")
-            .select("*")
-            .order("created_at", { ascending: false })
-        ).then(q => q),
+        supabase.from("mock_interviews").select("*").order("created_at", { ascending: false }),
         TIMEOUTS.DEFAULT,
-        "Loading mock interview leads timed out"
+        "Loading mock interview leads timed out",
       );
 
       if (queryError) throw queryError;
       setLeads(data || []);
     } catch (err: any) {
-      console.error("Error loading leads:", err);
+      console.error("Telemetry Fault:", err);
       setError(err.message || "Failed to load mock interview leads");
-      toast.error("Failed to load mock interview leads");
+      toast.error("System Error: Failed to synchronize lead data.");
     } finally {
       setLoading(false);
     }
@@ -95,15 +96,13 @@ export function MockInterviewLeadsManager() {
       lead.email.toLowerCase().includes(searchQuery.toLowerCase()) ||
       (lead.phone && lead.phone.includes(searchQuery)) ||
       (lead.job_title && lead.job_title.toLowerCase().includes(searchQuery.toLowerCase()));
-    const matchesStatus =
-      statusFilter === "all" || lead.status === statusFilter;
-    const matchesPerformance =
-      performanceFilter === "all" || lead.performance_level === performanceFilter;
+    const matchesStatus = statusFilter === "all" || lead.status === statusFilter;
+    const matchesPerformance = performanceFilter === "all" || lead.performance_level === performanceFilter;
     return matchesSearch && matchesStatus && matchesPerformance;
   });
 
   const exportToCSV = () => {
-    const headers = ["Name", "Email", "Phone", "Job Title", "Company", "Score %", "Performance", "Status", "Difficulty", "Questions", "Date"];
+    const headers = ["Name", "Email", "Phone", "Job Title", "Company", "Score %", "Performance", "Status", "Date"];
     const rows = filteredLeads.map((lead) => [
       lead.full_name,
       lead.email,
@@ -113,9 +112,7 @@ export function MockInterviewLeadsManager() {
       lead.selection_percentage?.toString() || "",
       lead.performance_level || "",
       lead.status || "",
-      lead.difficulty || "",
-      lead.question_count?.toString() || "",
-      format(new Date(lead.created_at), "yyyy-MM-dd HH:mm"),
+      format(new Date(lead.created_at), "yyyy-MM-dd"),
     ]);
 
     const csvContent = [headers, ...rows].map((row) => row.map((cell) => `"${cell}"`).join(",")).join("\n");
@@ -126,160 +123,211 @@ export function MockInterviewLeadsManager() {
     link.download = `mock_interview_leads_${format(new Date(), "yyyy-MM-dd")}.csv`;
     link.click();
     URL.revokeObjectURL(url);
-    toast.success("Leads exported successfully");
+    toast.success("Protocol: Leads exported to CSV.");
   };
 
-  const completedCount = leads.filter(l => l.status === "completed").length;
-  const inProgressCount = leads.filter(l => l.status === "in_progress").length;
+  const completedCount = leads.filter((l) => l.status === "completed").length;
+  const avgScore =
+    leads.length > 0
+      ? Math.round(leads.reduce((acc, curr) => acc + (curr.selection_percentage || 0), 0) / leads.length)
+      : 0;
 
-  if (loading) {
-    return <DashboardTableSkeleton rows={5} columns={7} />;
-  }
-
-  if (error) {
-    return <DashboardErrorState title="Failed to load leads" message={error} onRetry={loadLeads} />;
-  }
+  if (loading) return <DashboardTableSkeleton rows={8} columns={8} />;
+  if (error) return <DashboardErrorState title="Telemetry Failure" message={error} onRetry={loadLeads} />;
 
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between flex-wrap gap-4">
-          <div>
-            <CardTitle className="text-lg">Mock Interview Leads ({filteredLeads.length})</CardTitle>
-            <p className="text-sm text-muted-foreground mt-1">
-              {completedCount} completed • {inProgressCount} in progress
+    <div className="space-y-6 animate-in fade-in duration-700">
+      {/* EXECUTIVE TELEMETRY HEADER */}
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-3 text-primary">
+            <Activity className="h-8 w-8" />
+            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Interview Pulse</h2>
+          </div>
+          <div className="flex items-center gap-4 mt-2">
+            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+              AI Career Service Radar
+            </p>
+            <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] px-3 py-1 italic rounded-full">
+              <TrendingUp className="h-3 w-3 mr-1" /> {avgScore}% AVG SCORE
+            </Badge>
+          </div>
+        </div>
+        <div className="flex items-center gap-3">
+          <div className="text-right hidden md:block mr-4">
+            <p className="text-[10px] font-black uppercase text-muted-foreground italic tracking-widest">
+              Active Conversions
+            </p>
+            <p className="text-xl font-black italic text-primary">
+              {completedCount} / {leads.length}
             </p>
           </div>
-          <Button onClick={exportToCSV} variant="outline" size="sm">
-            <Download className="w-4 h-4 mr-2" />
-            Export CSV
+          <Button
+            onClick={exportToCSV}
+            variant="outline"
+            className="h-14 px-8 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-3"
+          >
+            <Download className="h-4 w-4" /> Export Leads
           </Button>
         </div>
-        <div className="flex gap-4 mt-4 flex-wrap">
-          <div className="relative flex-1 min-w-[200px]">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search by name, email, phone, or job title..."
-              value={searchQuery}
-              onChange={(e) => setSearchQuery(e.target.value)}
-              className="pl-9"
-            />
+      </div>
+
+      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+        <CardHeader className="p-8 border-b border-border/10 bg-muted/10">
+          <div className="flex flex-col lg:flex-row gap-6">
+            <div className="relative flex-1">
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
+              <Input
+                placeholder="Search leads by name, email, or role..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+                className="h-14 rounded-2xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest"
+              />
+            </div>
+            <div className="flex gap-3">
+              <Select value={statusFilter} onValueChange={setStatusFilter}>
+                <SelectTrigger className="w-[180px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest">
+                  <SelectValue placeholder="STATUS" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-2">
+                  <SelectItem value="all" className="font-bold uppercase text-[10px]">
+                    ALL STATUS
+                  </SelectItem>
+                  <SelectItem value="completed" className="font-bold uppercase text-[10px]">
+                    COMPLETED
+                  </SelectItem>
+                  <SelectItem value="in_progress" className="font-bold uppercase text-[10px]">
+                    IN PROGRESS
+                  </SelectItem>
+                  <SelectItem value="abandoned" className="font-bold uppercase text-[10px]">
+                    ABANDONED
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+              <Select value={performanceFilter} onValueChange={setPerformanceFilter}>
+                <SelectTrigger className="w-[180px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest">
+                  <SelectValue placeholder="PERFORMANCE" />
+                </SelectTrigger>
+                <SelectContent className="rounded-xl border-2">
+                  <SelectItem value="all" className="font-bold uppercase text-[10px]">
+                    ALL LEVELS
+                  </SelectItem>
+                  {Object.entries(performanceLabels).map(([val, label]) => (
+                    <SelectItem key={val} value={val} className="font-bold uppercase text-[10px]">
+                      {label.toUpperCase()}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+              <Button variant="ghost" size="icon" onClick={loadLeads} className="h-14 w-14 rounded-2xl border-2">
+                <RefreshCw className="h-5 w-5" />
+              </Button>
+            </div>
           </div>
-          <Select value={statusFilter} onValueChange={setStatusFilter}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Status" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Status</SelectItem>
-              <SelectItem value="completed">Completed</SelectItem>
-              <SelectItem value="in_progress">In Progress</SelectItem>
-              <SelectItem value="abandoned">Abandoned</SelectItem>
-            </SelectContent>
-          </Select>
-          <Select value={performanceFilter} onValueChange={setPerformanceFilter}>
-            <SelectTrigger className="w-[150px]">
-              <SelectValue placeholder="Performance" />
-            </SelectTrigger>
-            <SelectContent>
-              <SelectItem value="all">All Levels</SelectItem>
-              <SelectItem value="needs_work">Needs Work</SelectItem>
-              <SelectItem value="developing">Developing</SelectItem>
-              <SelectItem value="competent">Competent</SelectItem>
-              <SelectItem value="strong">Strong</SelectItem>
-              <SelectItem value="excellent">Excellent</SelectItem>
-            </SelectContent>
-          </Select>
-        </div>
-      </CardHeader>
-      <CardContent>
-        {filteredLeads.length === 0 ? (
-          <p className="text-center text-muted-foreground py-8">No mock interview leads found.</p>
-        ) : (
-          <div className="overflow-x-auto">
-            <Table>
-              <TableHeader>
+        </CardHeader>
+        <CardContent className="p-0">
+          <Table>
+            <TableHeader className="bg-muted/10">
+              <TableRow className="hover:bg-transparent border-b-2">
+                <TableHead className="font-black uppercase text-[10px] tracking-widest py-6 pl-8">Lead Node</TableHead>
+                <TableHead className="font-black uppercase text-[10px] tracking-widest">Target Role</TableHead>
+                <TableHead className="font-black uppercase text-[10px] tracking-widest">Pulse Score</TableHead>
+                <TableHead className="font-black uppercase text-[10px] tracking-widest">Performance</TableHead>
+                <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+                <TableHead className="font-black uppercase text-[10px] tracking-widest">Deployment</TableHead>
+                <TableHead className="text-right py-6 pr-8"></TableHead>
+              </TableRow>
+            </TableHeader>
+            <TableBody>
+              {filteredLeads.length === 0 ? (
                 <TableRow>
-                  <TableHead>Name</TableHead>
-                  <TableHead>Contact</TableHead>
-                  <TableHead>Position</TableHead>
-                  <TableHead>Score</TableHead>
-                  <TableHead>Performance</TableHead>
-                  <TableHead>Status</TableHead>
-                  <TableHead>Date</TableHead>
-                  <TableHead>Actions</TableHead>
+                  <TableCell colSpan={7} className="text-center py-20 italic font-bold opacity-50">
+                    No lead synchronization found.
+                  </TableCell>
                 </TableRow>
-              </TableHeader>
-              <TableBody>
-                {filteredLeads.map((lead) => (
-                  <TableRow key={lead.id}>
-                    <TableCell className="font-medium">{lead.full_name || "-"}</TableCell>
-                    <TableCell>
-                      <div className="flex flex-col gap-1 text-sm">
-                        <span className="flex items-center gap-1">
-                          <Mail className="h-3 w-3" /> {lead.email}
-                        </span>
-                        {lead.phone && (
-                          <span className="flex items-center gap-1 text-muted-foreground">
-                            <Phone className="h-3 w-3" /> {lead.phone}
-                          </span>
-                        )}
-                      </div>
+              ) : (
+                filteredLeads.map((lead) => (
+                  <TableRow
+                    key={lead.id}
+                    className="group border-b border-border/5 hover:bg-muted/10 transition-colors"
+                  >
+                    <TableCell className="py-6 pl-8">
+                      <p className="font-black text-sm uppercase italic tracking-tight">{lead.full_name || "-"}</p>
+                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 italic flex items-center gap-1">
+                        <Mail className="h-2 w-2" /> {lead.email}
+                      </p>
                     </TableCell>
                     <TableCell>
-                      <div className="text-sm">
-                        {lead.job_title || "-"}
-                        {lead.company_name && (
-                          <span className="text-muted-foreground block text-xs">
-                            at {lead.company_name}
-                          </span>
-                        )}
-                      </div>
+                      <p className="font-black uppercase italic text-xs leading-none">{lead.job_title || "-"}</p>
+                      {lead.company_name && (
+                        <p className="text-[8px] font-bold text-muted-foreground/50 uppercase tracking-widest mt-1">
+                          at {lead.company_name}
+                        </p>
+                      )}
                     </TableCell>
                     <TableCell>
                       {lead.selection_percentage !== null ? (
-                        <span className="font-semibold">{lead.selection_percentage}%</span>
+                        <div className="flex items-center gap-2">
+                          <Zap className="h-3 w-3 text-primary fill-current" />
+                          <span className="font-black italic text-sm">{lead.selection_percentage}%</span>
+                        </div>
                       ) : (
-                        <span className="text-muted-foreground">-</span>
+                        <span className="text-muted-foreground text-xs italic">N/A</span>
                       )}
                     </TableCell>
                     <TableCell>
                       {lead.performance_level ? (
-                        <Badge className={performanceColors[lead.performance_level] || ""}>
-                          {performanceLabels[lead.performance_level] || lead.performance_level}
+                        <Badge
+                          className={cn(
+                            "font-black text-[9px] uppercase tracking-widest italic border-2 px-3 py-1",
+                            performanceColors[lead.performance_level],
+                          )}
+                        >
+                          {performanceLabels[lead.performance_level]}
                         </Badge>
                       ) : (
-                        <span className="text-muted-foreground">-</span>
+                        <span className="text-muted-foreground text-xs italic">PENDING</span>
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant={lead.status === "completed" ? "default" : "secondary"}>
-                        {lead.status || "unknown"}
+                      <Badge
+                        className={cn(
+                          "font-black text-[9px] uppercase tracking-widest italic rounded-full px-4",
+                          lead.status === "completed"
+                            ? "bg-green-500/10 text-green-600"
+                            : "bg-muted text-muted-foreground",
+                        )}
+                      >
+                        {lead.status || "UNKNOWN"}
                       </Badge>
                     </TableCell>
                     <TableCell>
-                      <span className="flex items-center gap-1 text-sm text-muted-foreground">
+                      <div className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        {format(new Date(lead.created_at), "MMM d, yyyy")}
-                      </span>
+                        <span className="text-[10px] font-black italic">
+                          {format(new Date(lead.created_at), "MMM d, yyyy")}
+                        </span>
+                      </div>
                     </TableCell>
-                    <TableCell>
-                      <div className="flex items-center gap-2">
+                    <TableCell className="text-right py-6 pr-8">
+                      <div className="flex justify-end gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
                         <Button
                           variant="ghost"
-                          size="sm"
+                          size="icon"
                           onClick={() => {
                             setSelectedTalentEmail(lead.email);
                             setSelectedTalentName(lead.full_name);
                           }}
-                          title="View Talent Profile"
+                          className="hover:bg-primary/10 hover:text-primary"
                         >
                           <User className="h-4 w-4" />
                         </Button>
                         {lead.status === "completed" && (
                           <Button
                             variant="ghost"
-                            size="sm"
+                            size="icon"
                             onClick={() => navigate(`/mock-interview/results/${lead.id}`)}
+                            className="hover:bg-primary/10 hover:text-primary"
                           >
                             <ExternalLink className="h-4 w-4" />
                           </Button>
@@ -288,12 +336,12 @@ export function MockInterviewLeadsManager() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ))}
-              </TableBody>
-            </Table>
-          </div>
-        )}
-      </CardContent>
+                ))
+              )}
+            </TableBody>
+          </Table>
+        </CardContent>
+      </Card>
 
       <TalentDetailDialog
         open={!!selectedTalentEmail}
@@ -306,6 +354,30 @@ export function MockInterviewLeadsManager() {
         talentEmail={selectedTalentEmail || ""}
         talentName={selectedTalentName}
       />
-    </Card>
+    </div>
+  );
+}
+
+// Helper to keep the file clean
+function RefreshCw(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+      className={cn("lucide lucide-refresh-cw", props.className)}
+    >
+      <path d="M3 12a9 9 0 0 1 9-9 9.75 9.75 0 0 1 6.74 2.74L21 8" />
+      <path d="M21 3v5h-5" />
+      <path d="M21 12a9 9 0 0 1-9 9 9.75 9.75 0 0 1-6.74-2.74L3 16" />
+      <path d="M3 21v-5h5" />
+    </svg>
   );
 }
