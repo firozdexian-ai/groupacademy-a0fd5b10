@@ -206,6 +206,7 @@ const TAB_TITLES: Record<string, string> = {
   banners: "Display Layer",
   team: "Human Capital",
   payments: "Gateway Logic",
+  invoices: "Invoice Manager",
 };
 
 const Dashboard = () => {
