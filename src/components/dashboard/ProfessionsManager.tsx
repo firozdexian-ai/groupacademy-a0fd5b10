@@ -4,44 +4,45 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Card, CardContent } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Switch } from "@/components/ui/switch";
 import { Badge } from "@/components/ui/badge";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from "@/components/ui/dialog";
 import {
-  AlertDialog,
-  AlertDialogAction,
-  AlertDialogCancel,
-  AlertDialogContent,
-  AlertDialogDescription,
-  AlertDialogFooter,
-  AlertDialogHeader,
-  AlertDialogTitle,
-  AlertDialogTrigger,
-} from "@/components/ui/alert-dialog";
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { toast } from "sonner";
 import {
   Plus,
   Pencil,
-  Trash2,
   Building2,
   GraduationCap,
   Briefcase,
-  ChevronRight,
   Bot,
-  User,
   Search,
   AlertTriangle,
-  MessageSquare,
   Coins,
   ShieldCheck,
+  Globe,
+  Zap,
+  Activity,
 } from "lucide-react";
 import { getIcon } from "@/lib/iconMap";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
-import { DashboardCardSkeleton, DashboardErrorState } from "./DashboardSkeleton";
+import { DashboardCardSkeleton } from "./DashboardSkeleton";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Academic Infrastructure Orchestrator
+ * CTO Reference: Manages the 3-tier hierarchy: Academy > School > Program.
+ */
 
 interface Academy {
   id: string;
@@ -92,40 +93,6 @@ interface AIInstructor {
   is_active: boolean | null;
 }
 
-const ICON_OPTIONS = [
-  "briefcase",
-  "landmark",
-  "laptop",
-  "megaphone",
-  "truck",
-  "heart-pulse",
-  "calculator",
-  "trending-up",
-  "users",
-  "code",
-  "palette",
-  "building-2",
-  "graduation-cap",
-  "book-open",
-  "target",
-  "store",
-  "factory",
-  "stethoscope",
-  "wrench",
-  "lightbulb",
-  "globe",
-  "shield",
-  "award",
-  "rocket",
-];
-
-function autoSlug(name: string) {
-  return name
-    .toLowerCase()
-    .replace(/[^a-z0-9]+/g, "-")
-    .replace(/^-|-$/g, "");
-}
-
 export function ProfessionsManager() {
   const [academies, setAcademies] = useState<Academy[]>([]);
   const [schools, setSchools] = useState<School[]>([]);
@@ -133,23 +100,13 @@ export function ProfessionsManager() {
   const [aiInstructors, setAiInstructors] = useState<AIInstructor[]>([]);
   const [contentCounts, setContentCounts] = useState<Record<string, { count: number; totalCredits: number }>>({});
   const [isLoading, setIsLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
   const [searchQuery, setSearchQuery] = useState("");
 
-  const [selectedAcademyFilter, setSelectedAcademyFilter] = useState<string>("all");
-  const [selectedSchoolFilter, setSelectedSchoolFilter] = useState<string>("all");
-
+  const [activeTab, setActiveTab] = useState("academies");
   const [academyDialog, setAcademyDialog] = useState(false);
-  const [schoolDialog, setSchoolDialog] = useState(false);
   const [professionDialog, setProfessionDialog] = useState(false);
-  const [instructorDialog, setInstructorDialog] = useState(false);
-
   const [editingAcademy, setEditingAcademy] = useState<Academy | null>(null);
-  const [editingSchool, setEditingSchool] = useState<School | null>(null);
   const [editingProfession, setEditingProfession] = useState<ProfessionLine | null>(null);
-  const [editingInstructor, setEditingInstructor] = useState<AIInstructor | null>(null);
-
-  const [autoSlugValue, setAutoSlugValue] = useState("");
 
   useEffect(() => {
     loadData();
@@ -157,7 +114,6 @@ export function ProfessionsManager() {
 
   const loadData = async () => {
     setIsLoading(true);
-    setLoadError(null);
     try {
       const results = (await withTimeout(
         Promise.all([
@@ -168,18 +124,17 @@ export function ProfessionsManager() {
           supabase.from("content").select("id, profession_line_id, credit_cost").eq("is_published", true),
         ]),
         TIMEOUTS.DEFAULT,
-        "Loading structural metadata timed out",
+        "Structural sync timed out",
       )) as any;
 
-      const [academiesRes, schoolsRes, professionsRes, instructorsRes, contentRes] = results;
-      if (academiesRes.data) setAcademies(academiesRes.data);
-      if (schoolsRes.data) setSchools(schoolsRes.data);
-      if (professionsRes.data) setProfessionLines(professionsRes.data);
-      if (instructorsRes.data) setAiInstructors(instructorsRes.data);
+      setAcademies(results[0].data || []);
+      setSchools(results[1].data || []);
+      setProfessionLines(results[2].data || []);
+      setAiInstructors(results[3].data || []);
 
-      if (contentRes.data) {
+      if (results[4].data) {
         const cc: Record<string, { count: number; totalCredits: number }> = {};
-        contentRes.data.forEach((c: any) => {
+        results[4].data.forEach((c: any) => {
           if (c.profession_line_id) {
             if (!cc[c.profession_line_id]) cc[c.profession_line_id] = { count: 0, totalCredits: 0 };
             cc[c.profession_line_id].count += 1;
@@ -189,131 +144,33 @@ export function ProfessionsManager() {
         setContentCounts(cc);
       }
     } catch (error: any) {
-      setLoadError(error.message);
-      toast.error("Structural sync failed");
+      toast.error("Telemetry Fault: Structural sync failed");
     } finally {
       setIsLoading(false);
     }
   };
 
-  const handleSaveAcademy = async (formData: FormData) => {
+  const handleSaveAcademy = async (e: React.FormEvent<HTMLFormElement>) => {
+    e.preventDefault();
+    const formData = new FormData(e.currentTarget);
     const data = {
       name: formData.get("name") as string,
       slug: formData.get("slug") as string,
-      description: (formData.get("description") as string) || null,
-      academy_type: formData.get("academy_type") as Academy["academy_type"],
-      icon: (formData.get("icon") as string) || "graduation-cap",
+      academy_type: formData.get("academy_type") as any,
       primary_language: formData.get("primary_language") as string,
-      is_active: formData.get("is_active") === "true",
-      display_order: parseInt(formData.get("display_order") as string) || 0,
+      is_active: formData.get("is_active") === "on",
     };
-    try {
-      const query = editingAcademy
-        ? supabase.from("academies").update(data).eq("id", editingAcademy.id)
-        : supabase.from("academies").insert(data);
 
-      const { error } = (await withTimeout(query as any, TIMEOUTS.DEFAULT, "Database timeout")) as { error: any };
-      if (error) throw error;
+    const query = editingAcademy
+      ? supabase.from("academies").update(data).eq("id", editingAcademy.id)
+      : supabase.from("academies").insert(data);
 
-      toast.success(editingAcademy ? "Academy updated" : "Academy deployed");
+    const { error } = await query;
+    if (error) toast.error(error.message);
+    else {
+      toast.success("Academy configuration synchronized");
       setAcademyDialog(false);
-      setEditingAcademy(null);
       loadData();
-    } catch (err: any) {
-      toast.error(err.message);
-    }
-  };
-
-  const handleSaveSchool = async (formData: FormData) => {
-    const data = {
-      name: formData.get("name") as string,
-      slug: formData.get("slug") as string,
-      description: (formData.get("description") as string) || null,
-      academy_id: formData.get("academy_id") as string,
-      icon: (formData.get("icon") as string) || "book-open",
-      executive_capability_goal: (formData.get("executive_capability_goal") as string) || null,
-      is_active: formData.get("is_active") === "true",
-      display_order: parseInt(formData.get("display_order") as string) || 0,
-    };
-    try {
-      const query = editingSchool
-        ? supabase.from("schools").update(data).eq("id", editingSchool.id)
-        : supabase.from("schools").insert(data);
-
-      const { error } = (await withTimeout(query as any, TIMEOUTS.DEFAULT, "Database timeout")) as { error: any };
-      if (error) throw error;
-
-      toast.success("School configuration saved");
-      setSchoolDialog(false);
-      setEditingSchool(null);
-      loadData();
-    } catch (err: any) {
-      toast.error(err.message);
-    }
-  };
-
-  const handleSaveProfession = async (formData: FormData) => {
-    const schoolId = formData.get("school_id") as string;
-    const data = {
-      name: formData.get("name") as string,
-      slug: formData.get("slug") as string,
-      description: (formData.get("description") as string) || null,
-      school_id: schoolId === "none" ? null : schoolId,
-      icon: (formData.get("icon") as string) || "briefcase",
-      career_outcome: (formData.get("career_outcome") as string) || null,
-      target_audience: (formData.get("target_audience") as string) || null,
-      credit_cost: parseInt(formData.get("credit_cost") as string) || 0,
-      is_active: formData.get("is_active") === "true",
-      display_order: parseInt(formData.get("display_order") as string) || 0,
-    };
-    try {
-      const query = editingProfession
-        ? supabase.from("profession_categories").update(data).eq("id", editingProfession.id)
-        : supabase.from("profession_categories").insert(data);
-
-      const { error } = (await withTimeout(query as any, TIMEOUTS.DEFAULT, "Database timeout")) as { error: any };
-      if (error) throw error;
-
-      toast.success("Profession line synchronized");
-      setProfessionDialog(false);
-      setEditingProfession(null);
-      loadData();
-    } catch (err: any) {
-      toast.error(err.message);
-    }
-  };
-
-  const handleSaveInstructor = async (formData: FormData) => {
-    const expertiseRaw = formData.get("expertise_areas") as string;
-    const expertise = expertiseRaw
-      ? expertiseRaw
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean)
-      : null;
-    const data = {
-      name: formData.get("name") as string,
-      persona: formData.get("persona") as string,
-      system_prompt: formData.get("system_prompt") as string,
-      avatar_url: (formData.get("avatar_url") as string) || null,
-      expertise_areas: expertise,
-      profession_line_id: formData.get("profession_line_id") as string,
-      is_active: formData.get("is_active") === "true",
-    };
-    try {
-      const query = editingInstructor
-        ? supabase.from("ai_instructors").update(data).eq("id", editingInstructor.id)
-        : supabase.from("ai_instructors").insert(data);
-
-      const { error } = (await withTimeout(query as any, TIMEOUTS.DEFAULT, "Database timeout")) as { error: any };
-      if (error) throw error;
-
-      toast.success("AI Instructor persona updated");
-      setInstructorDialog(false);
-      setEditingInstructor(null);
-      loadData();
-    } catch (err: any) {
-      toast.error(err.message);
     }
   };
 
@@ -323,244 +180,222 @@ export function ProfessionsManager() {
   );
   const noInstructorCount = professionLines.filter((p) => !professionLinesWithInstructor.has(p.id)).length;
 
-  const filterBySearch = <T extends { name: string }>(items: T[]) =>
-    searchQuery ? items.filter((i) => i.name.toLowerCase().includes(searchQuery.toLowerCase())) : items;
-
-  const filteredSchools = filterBySearch(
-    selectedAcademyFilter === "all" ? schools : schools.filter((s) => s.academy_id === selectedAcademyFilter),
-  );
-
-  const filteredProfessions = filterBySearch(
-    selectedSchoolFilter === "all"
-      ? professionLines
-      : professionLines.filter((p) => p.school_id === selectedSchoolFilter),
-  );
-
   if (isLoading)
     return (
-      <div className="space-y-6">
+      <div className="p-8 space-y-6">
         <DashboardCardSkeleton />
         <DashboardCardSkeleton />
       </div>
     );
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      <header className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4">
-        <div>
-          <h2 className="text-2xl font-bold tracking-tight">Academic Infrastructure</h2>
-          <p className="text-sm text-muted-foreground">
-            Manage academies, schools, and AI instructors[cite: 175, 183].
+    <div className="space-y-10 animate-in fade-in duration-700">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-3 text-primary">
+            <Activity className="h-8 w-8" />
+            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Academic Ops</h2>
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+            Global Hierarchy & Persona Governance
           </p>
         </div>
-      </header>
+        <div className="flex gap-3">
+          <Button
+            onClick={() => {
+              setEditingAcademy(null);
+              setAcademyDialog(true);
+            }}
+            className="h-14 px-8 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-3 shadow-lg"
+          >
+            <Plus className="h-4 w-4" /> New Academy
+          </Button>
+        </div>
+      </div>
 
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
-        <KPIStatCard
-          icon={Building2}
-          label="Academies"
-          value={academies.length}
-          subtext={`${academies.filter((a) => a.is_active).length} active [cite: 88]`}
-        />
-        <KPIStatCard
-          icon={GraduationCap}
-          label="Schools"
-          value={schools.length}
-          subtext={`${schools.filter((s) => s.is_active).length} active [cite: 175]`}
-        />
+      <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
+        <KPIStatCard icon={Building2} label="Academies" value={academies.length} color="blue" />
+        <KPIStatCard icon={GraduationCap} label="Schools" value={schools.length} color="green" />
         <KPIStatCard
           icon={Briefcase}
-          label="Professions"
+          label="Programs"
           value={professionLines.length}
-          alertCount={noInstructorCount}
-          subtext="Total programs [cite: 123]"
+          alert={noInstructorCount > 0}
+          color="orange"
         />
-        <KPIStatCard
-          icon={Bot}
-          label="AI Instructors"
-          value={aiInstructors.length}
-          subtext="Active personas [cite: 124]"
-        />
+        <KPIStatCard icon={Bot} label="AI Instructors" value={aiInstructors.length} color="purple" />
       </div>
 
-      <div className="relative">
-        <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-        <Input
-          placeholder="Search hierarchy by name..."
-          value={searchQuery}
-          onChange={(e) => setSearchQuery(e.target.value)}
-          className="pl-9"
-        />
-      </div>
-
-      <Tabs defaultValue="academies" className="w-full">
-        <TabsList className="bg-muted/50 p-1 mb-4 h-auto flex-wrap">
-          <TabsTrigger value="academies" className="font-bold">
-            Academies ({academies.length})
+      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
+        <TabsList className="bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1.5 mb-8 w-full max-w-lg">
+          <TabsTrigger
+            value="academies"
+            className="flex-1 rounded-xl font-black uppercase text-[10px] tracking-widest py-3"
+          >
+            Academies
           </TabsTrigger>
-          <TabsTrigger value="schools" className="font-bold">
-            Schools ({schools.length})
-          </TabsTrigger>
-          <TabsTrigger value="professions" className="font-bold">
-            Profession Lines ({professionLines.length})
-          </TabsTrigger>
-          <TabsTrigger value="instructors" className="font-bold">
-            AI Personas ({aiInstructors.length})
+          <TabsTrigger
+            value="professions"
+            className="flex-1 rounded-xl font-black uppercase text-[10px] tracking-widest py-3"
+          >
+            Professions
           </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="academies" className="space-y-4">
-          <div className="flex justify-between items-center">
-            <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
-              Global Academies [cite: 120]
-            </p>
-            <Button
-              onClick={() => {
-                setEditingAcademy(null);
+        <TabsContent value="academies" className="grid gap-6">
+          {academies.map((a) => (
+            <AcademyCard
+              key={a.id}
+              academy={a}
+              schoolCount={schools.filter((s) => s.academy_id === a.id).length}
+              onEdit={() => {
+                setEditingAcademy(a);
                 setAcademyDialog(true);
               }}
-              className="shadow-md"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Academy
-            </Button>
-          </div>
-          <div className="grid gap-3">
-            {academies.map((a) => (
-              <AcademyItem
-                key={a.id}
-                academy={a}
-                schoolCount={schools.filter((s) => s.academy_id === a.id).length}
-                onEdit={(a: Academy) => {
-                  setEditingAcademy(a);
-                  setAcademyDialog(true);
-                }}
-              />
-            ))}
-          </div>
+            />
+          ))}
         </TabsContent>
 
-        <TabsContent value="professions" className="space-y-4">
-          <div className="flex justify-between items-center">
-            <p className="text-sm font-medium text-muted-foreground uppercase tracking-widest">
-              Career Tracks [cite: 123]
-            </p>
-            <Button
-              onClick={() => {
-                setEditingProfession(null);
+        <TabsContent value="professions" className="grid gap-6">
+          {professionLines.map((p) => (
+            <ProfessionCard
+              key={p.id}
+              profession={p}
+              hasAI={professionLinesWithInstructor.has(p.id)}
+              stats={contentCounts[p.id]}
+              onEdit={() => {
+                setEditingProfession(p);
                 setProfessionDialog(true);
               }}
-              className="shadow-md"
-            >
-              <Plus className="h-4 w-4 mr-2" />
-              Add Profession
-            </Button>
-          </div>
-          <div className="grid gap-3">
-            {filteredProfessions.map((p) => {
-              const instructor = aiInstructors.find((i) => i.profession_line_id === p.id);
-              return (
-                <ProfessionItem
-                  key={p.id}
-                  profession={p}
-                  hasAI={!!instructor}
-                  schoolName={schools.find((s) => s.id === p.school_id)?.name}
-                  stats={contentCounts[p.id]}
-                  onEdit={(p: ProfessionLine) => {
-                    setEditingProfession(p);
-                    setProfessionDialog(true);
-                  }}
-                />
-              );
-            })}
-          </div>
+            />
+          ))}
         </TabsContent>
       </Tabs>
+
+      {/* Academy Dialog */}
+      <Dialog open={academyDialog} onOpenChange={setAcademyDialog}>
+        <DialogContent className="max-w-xl rounded-[40px] border-4">
+          <form onSubmit={handleSaveAcademy} className="p-6 space-y-6">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
+                Academy Configuration
+              </DialogTitle>
+            </DialogHeader>
+            <div className="grid grid-cols-2 gap-4">
+              <div className="col-span-2 space-y-2">
+                <Label className="font-black uppercase text-[10px] tracking-widest">Academy Name</Label>
+                <Input name="name" defaultValue={editingAcademy?.name} className="h-12 rounded-xl" />
+              </div>
+              <div className="space-y-2">
+                <Label className="font-black uppercase text-[10px] tracking-widest">Type</Label>
+                <Select name="academy_type" defaultValue={editingAcademy?.academy_type || "executive"}>
+                  <SelectTrigger className="h-12 rounded-xl">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="executive">Executive</SelectItem>
+                    <SelectItem value="technical">Technical</SelectItem>
+                    <SelectItem value="freelancing">Freelancing</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <div className="space-y-2">
+                <Label className="font-black uppercase text-[10px] tracking-widest">Slug</Label>
+                <Input name="slug" defaultValue={editingAcademy?.slug} className="h-12 rounded-xl font-mono" />
+              </div>
+            </div>
+            <Button type="submit" className="w-full h-14 rounded-2xl font-black uppercase italic">
+              Deploy Academy Node
+            </Button>
+          </form>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
 
-function KPIStatCard({ icon: Icon, label, value, subtext, alertCount }: any) {
+function KPIStatCard({ icon: Icon, label, value, alert, color }: any) {
   return (
-    <Card className="shadow-sm">
-      <CardContent className="p-4 text-center">
-        <Icon className="h-5 w-5 mx-auto mb-1 text-primary" />
-        <p className="text-2xl font-black">{value}</p>
-        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider">{label}</p>
-        {alertCount ? (
-          <p className="text-[10px] text-destructive font-bold mt-1 flex items-center justify-center gap-1">
-            <AlertTriangle className="h-3 w-3" /> {alertCount} MISSING AI [cite: 171]
-          </p>
-        ) : (
-          <p className="text-[10px] text-muted-foreground mt-1">{subtext}</p>
-        )}
+    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden group">
+      <CardContent className="p-6 flex items-center gap-5">
+        <div
+          className={cn(
+            "p-4 rounded-2xl border-2 group-hover:scale-110 transition-transform",
+            alert ? "bg-red-500/10 border-red-500/20" : "bg-primary/10 border-primary/20",
+          )}
+        >
+          <Icon className={cn("h-6 w-6", alert ? "text-red-500" : "text-primary")} />
+        </div>
+        <div className="text-left">
+          <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground italic">{label}</p>
+          <p className="text-3xl font-black italic tracking-tighter leading-none">{value}</p>
+          {alert && <p className="text-[8px] font-bold text-red-500 uppercase mt-1">Gaps Detected</p>}
+        </div>
       </CardContent>
     </Card>
   );
 }
 
-function AcademyItem({ academy, schoolCount, onEdit }: any) {
-  const Icon = getIcon(academy.icon);
+function AcademyCard({ academy, schoolCount, onEdit }: any) {
+  const Icon = getIcon(academy.icon || "graduation-cap");
   return (
-    <Card className={`border-l-4 ${academy.is_active ? "border-l-primary" : "border-l-muted opacity-60"}`}>
-      <CardContent className="p-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="h-10 w-10 rounded bg-primary/10 flex items-center justify-center">
-            <Icon className="h-5 w-5 text-primary" />
+    <Card className="rounded-[32px] border-2 border-border/40 overflow-hidden group hover:border-primary/40 transition-all">
+      <CardContent className="p-6 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <div className="h-16 w-16 rounded-2xl bg-muted/50 flex items-center justify-center">
+            <Icon className="h-8 w-8 text-primary" />
           </div>
-          <div>
-            <h4 className="font-bold flex items-center gap-2">
-              {academy.name}{" "}
-              <Badge variant="secondary" className="text-[10px] uppercase">
+          <div className="text-left">
+            <h4 className="text-xl font-black uppercase italic tracking-tight">{academy.name}</h4>
+            <div className="flex gap-2 mt-1">
+              <Badge variant="outline" className="text-[9px] font-black uppercase italic">
                 {academy.academy_type}
               </Badge>
-            </h4>
-            <p className="text-xs text-muted-foreground">
-              {schoolCount} Schools • {academy.primary_language === "english" ? "English" : "Bangla"} [cite: 120]
-            </p>
+              <Badge variant="outline" className="text-[9px] font-black uppercase italic">
+                {schoolCount} Schools
+              </Badge>
+            </div>
           </div>
         </div>
-        <Button variant="ghost" size="icon" onClick={() => onEdit(academy)}>
-          <Pencil className="h-4 w-4" />
+        <Button variant="ghost" size="icon" onClick={onEdit} className="rounded-xl h-12 w-12 hover:bg-primary/10">
+          <Pencil className="h-5 w-5" />
         </Button>
       </CardContent>
     </Card>
   );
 }
 
-function ProfessionItem({ profession, hasAI, schoolName, stats, onEdit }: any) {
-  const Icon = getIcon(profession.icon);
+function ProfessionCard({ profession, hasAI, stats, onEdit }: any) {
+  const Icon = getIcon(profession.icon || "briefcase");
   return (
-    <Card className={`border-l-4 ${profession.is_active ? "border-l-accent" : "border-l-muted opacity-60"}`}>
-      <CardContent className="p-4 flex items-center justify-between">
-        <div className="flex items-center gap-4">
-          <div className="h-10 w-10 rounded bg-accent/10 flex items-center justify-center">
-            <Icon className="h-5 w-5 text-accent-foreground" />
+    <Card
+      className={cn(
+        "rounded-[32px] border-2 border-border/40 overflow-hidden",
+        !hasAI && "border-red-500/20 bg-red-500/5",
+      )}
+    >
+      <CardContent className="p-6 flex items-center justify-between">
+        <div className="flex items-center gap-6">
+          <div className="h-16 w-16 rounded-2xl bg-muted/50 flex items-center justify-center">
+            <Icon className="h-8 w-8 text-accent-foreground" />
           </div>
-          <div>
-            <h4 className="font-bold flex items-center gap-2">
-              {profession.name}{" "}
+          <div className="text-left">
+            <h4 className="text-xl font-black uppercase italic tracking-tight flex items-center gap-3">
+              {profession.name}
               {!hasAI && (
-                <Badge variant="destructive" className="text-[10px]">
-                  MISSING AI
+                <Badge variant="destructive" className="text-[8px] animate-pulse">
+                  MISSING PERSONA
                 </Badge>
               )}
             </h4>
-            <p className="text-xs text-muted-foreground">
-              {schoolName || "Unassigned"} • {stats?.count || 0} Courses • {profession.credit_cost || 0} credits{" "}
+            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+              {stats?.count || 0} Courses • {profession.credit_cost || 0} Credits
             </p>
           </div>
         </div>
-        <div className="flex gap-2">
-          {profession.career_outcome && (
-            <Badge variant="outline" className="hidden md:flex text-[10px] items-center gap-1">
-              <ShieldCheck className="h-3 w-3" /> {profession.career_outcome}
-            </Badge>
-          )}
-          <Button variant="ghost" size="icon" onClick={() => onEdit(profession)}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-        </div>
+        <Button variant="ghost" size="icon" onClick={onEdit} className="rounded-xl h-12 w-12">
+          <Pencil className="h-5 w-5" />
+        </Button>
       </CardContent>
     </Card>
   );
