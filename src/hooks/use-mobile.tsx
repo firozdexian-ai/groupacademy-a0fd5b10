@@ -2,34 +2,30 @@ import * as React from "react";
 
 /**
  * GroUp Academy: Viewport Intelligence Hook
- * CTO Reference: Governs UI degradation and component scaling for mobile nodes.
- * Prevents hydration mismatches by defaulting to safe false-state during SSR.
+ * CTO Reference: Corrected TS2339 by fixing the matchMedia typo.
  */
 
 const MOBILE_BREAKPOINT = 768;
 
 export function useIsMobile() {
-  // Initialize as undefined or false to maintain SSR/Hydration parity
+  // Initialize as undefined to prevent SSR hydration mismatches
   const [isMobile, setIsMobile] = React.useState<boolean | undefined>(undefined);
 
   React.useEffect(() => {
-    // 1. Establish Media Query Listener Node
-    const mql = window.matchMatch(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
+    // FIXED: matchMedia is the correct native method
+    const mql = window.matchMedia(`(max-width: ${MOBILE_BREAKPOINT - 1}px)`);
 
-    // 2. Optimized Event Handler
     const onChange = () => {
       setIsMobile(window.innerWidth < MOBILE_BREAKPOINT);
     };
 
-    // 3. Initial Pulse Check
+    // Initial check
     setIsMobile(mql.matches);
 
-    // 4. Lifecycle Authority
-    // Modern "change" listener with fallback support for legacy environments
+    // Modern event listener logic with legacy fallbacks
     try {
       mql.addEventListener("change", onChange);
     } catch (e) {
-      // Fallback for older Safari logic
       mql.addListener(onChange);
     }
 
@@ -42,6 +38,6 @@ export function useIsMobile() {
     };
   }, []);
 
-  // Return logic: Default to false if state is still initializing to prevent UI flickering
+  // Ensure boolean return; defaults to false during hydration
   return !!isMobile;
 }
