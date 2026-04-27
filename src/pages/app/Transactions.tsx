@@ -370,7 +370,15 @@ export default function Transactions() {
           )}
         </TabsContent>
 
-        {/* ========== TAB 2: MONTHLY STATEMENT ========== */}
+        {/* ========== TAB: INVOICES ========== */}
+        <TabsContent
+          value="invoices"
+          className="mt-10 space-y-4 animate-in slide-in-from-bottom-4 duration-700 outline-none"
+        >
+          <MyInvoicesList />
+        </TabsContent>
+
+        {/* ========== TAB: MONTHLY STATEMENT ========== */}
         <TabsContent
           value="statement"
           className="mt-10 space-y-10 animate-in slide-in-from-bottom-4 duration-700 outline-none"
