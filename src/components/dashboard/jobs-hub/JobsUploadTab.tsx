@@ -10,7 +10,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { JobFormDialog, type JobFormState } from "./JobFormDialog";
 import { PendingJobSubmissions } from "./PendingJobSubmissions";
 import { BatchLinkedInJobUpload } from "@/components/dashboard/BatchLinkedInJobUpload";
-import { LinkedInJsonUpload } from "@/components/dashboard/LinkedInJsonUpload";
+import { useQueryClient } from "@tanstack/react-query";
 
 /**
  * Tab 4 — Upload & Verify
