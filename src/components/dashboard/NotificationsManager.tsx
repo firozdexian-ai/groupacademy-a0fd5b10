@@ -21,7 +21,6 @@ import {
   Clock,
   ChevronLeft,
   ChevronRight,
-  User,
   Loader2,
 } from "lucide-react";
 import { format } from "date-fns";
@@ -106,20 +105,16 @@ export function NotificationsManager() {
     link: "",
   });
 
-  // Fetch Data
   const loadData = useCallback(async () => {
     setIsLoading(true);
     setError(null);
     try {
-      // 1. Fetch Notifications (Paginated)
       let query = supabase
         .from("notifications")
         .select(`*, talent:talents(full_name, email)`, { count: "exact" })
         .order("created_at", { ascending: false });
 
       if (debouncedSearch) {
-        // Note: Searching relations deeply isn't supported in simple client query,
-        // falling back to title search only for server-side
         const safe = sanitizeIlike(debouncedSearch);
         if (safe) query = query.ilike("title", `%${safe}%`);
       }
@@ -138,8 +133,6 @@ export function NotificationsManager() {
       setNotifications(notificationsData || []);
       setTotalCount(count || 0);
 
-      // 2. Fetch Talents (Lightweight list for targeting)
-      // Only fetch if not already loaded (to save bandwidth)
       if (talents.length === 0) {
         const { data: talentsData } = await supabase
           .from("talents")
@@ -148,15 +141,11 @@ export function NotificationsManager() {
         setTalents(talentsData || []);
       }
 
-      // 3. Fetch Categories
       if (categories.length === 0) {
         const { data: catData } = await supabase.from("profession_categories").select("id, name").eq("is_active", true);
         setCategories(catData || []);
       }
 
-      // 4. Quick Stats (Approximate)
-      // Ideally this should be an RPC, but separate lightweight counts work for now
-      // We skip this if just changing pages to avoid spamming counts
       if (page === 1) {
         const { count: unreadCount } = await supabase
           .from("notifications")
@@ -176,20 +165,19 @@ export function NotificationsManager() {
           today: todayCount || 0,
         });
       }
-    } catch (error: any) {
-      console.error("Error loading data:", error);
+    } catch (err: any) {
+      console.error("Error loading data:", err);
       setError("Failed to load notifications");
       toast.error("Failed to load notifications");
     } finally {
       setIsLoading(false);
     }
-  }, [page, debouncedSearch]);
+  }, [page, debouncedSearch, talents.length, categories.length]);
 
   useEffect(() => {
     loadData();
   }, [loadData]);
 
-  // Reset page on search
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch]);
@@ -229,10 +217,8 @@ export function NotificationsManager() {
         return;
       }
 
-      // Batch Insert Logic (Chunking to prevent payload too large errors)
       const CHUNK_SIZE = 500;
       const chunks = [];
-
       for (let i = 0; i < targetTalents.length; i += CHUNK_SIZE) {
         chunks.push(targetTalents.slice(i, i + CHUNK_SIZE));
       }
@@ -247,8 +233,8 @@ export function NotificationsManager() {
           icon: "bell",
         }));
 
-        const { error } = await supabase.from("notifications").insert(notificationsToInsert);
-        if (error) throw error;
+        const { error: insertError } = await supabase.from("notifications").insert(notificationsToInsert);
+        if (insertError) throw insertError;
       }
 
       toast.success(`Notification sent to ${targetTalents.length} talents`);
@@ -263,8 +249,8 @@ export function NotificationsManager() {
         link: "",
       });
       loadData();
-    } catch (error: any) {
-      console.error("Error sending notification:", error);
+    } catch (err: any) {
+      console.error("Error sending notification:", err);
       toast.error("Failed to send notification");
     } finally {
       setIsSending(false);
@@ -304,7 +290,6 @@ export function NotificationsManager() {
         </div>
       </div>
 
-      {/* Summary Stats */}
       <div className="grid gap-4 md:grid-cols-4">
         <Card>
           <CardContent className="p-4 flex items-center gap-4">
@@ -352,7 +337,6 @@ export function NotificationsManager() {
         </Card>
       </div>
 
-      {/* List Section */}
       <Card>
         <CardHeader>
           <div className="flex items-center justify-between">
@@ -420,7 +404,6 @@ export function NotificationsManager() {
             </TableBody>
           </Table>
 
-          {/* Pagination */}
           {totalPages > 1 && (
             <div className="flex items-center justify-end p-4 border-t gap-2">
               <Button
@@ -447,7 +430,6 @@ export function NotificationsManager() {
         </CardContent>
       </Card>
 
-      {/* Send Dialog */}
       <Dialog open={sendDialog} onOpenChange={setSendDialog}>
         <DialogContent className="max-w-lg">
           <DialogHeader>
