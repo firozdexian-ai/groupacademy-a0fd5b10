@@ -187,18 +187,24 @@ export default function Transactions() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 p-1.5 h-16 bg-muted/30 backdrop-blur-md rounded-[32px] border border-border/40 max-w-xl mx-auto">
+        <TabsList className="grid w-full grid-cols-3 p-1.5 h-16 bg-muted/30 backdrop-blur-md rounded-[32px] border border-border/40 max-w-xl mx-auto">
           <TabsTrigger
             value="history"
             className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
           >
-            <History className="h-3.5 w-3.5" /> Registry History
+            <History className="h-3.5 w-3.5" /> History
+          </TabsTrigger>
+          <TabsTrigger
+            value="invoices"
+            className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+          >
+            <CreditCard className="h-3.5 w-3.5" /> Invoices
           </TabsTrigger>
           <TabsTrigger
             value="statement"
             className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
           >
-            <FileText className="h-3.5 w-3.5" /> Monthly Statement
+            <FileText className="h-3.5 w-3.5" /> Statement
           </TabsTrigger>
         </TabsList>
 
