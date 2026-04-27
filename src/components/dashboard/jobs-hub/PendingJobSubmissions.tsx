@@ -123,7 +123,7 @@ export function PendingJobSubmissions() {
         <JobFormDialog
           open={!!editing}
           onOpenChange={(o) => !o && setEditing(null)}
-          initialValues={editing.initial}
+          initialForm={editing.initial}
           onSaved={handlePublished}
         />
       )}
