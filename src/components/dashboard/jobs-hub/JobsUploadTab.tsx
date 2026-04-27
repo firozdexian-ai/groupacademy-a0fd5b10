@@ -18,7 +18,9 @@ import { useQueryClient } from "@tanstack/react-query";
  * batch / JSON uploads, and pending gig submissions for verification.
  */
 export function JobsUploadTab() {
+  const qc = useQueryClient();
   const [showForm, setShowForm] = useState(false);
+  const [showBatch, setShowBatch] = useState(false);
   const [prefill, setPrefill] = useState<Partial<JobFormState> | undefined>(undefined);
   const [rawText, setRawText] = useState("");
   const [parsing, setParsing] = useState(false);
@@ -73,7 +75,6 @@ export function JobsUploadTab() {
         <TabsList className="w-full justify-start flex-wrap h-auto">
           <TabsTrigger value="ai-parse">AI Parser</TabsTrigger>
           <TabsTrigger value="batch">Batch Upload</TabsTrigger>
-          <TabsTrigger value="json">LinkedIn JSON</TabsTrigger>
           <TabsTrigger value="pending">Pending Submissions</TabsTrigger>
         </TabsList>
 
@@ -107,11 +108,27 @@ export function JobsUploadTab() {
         </TabsContent>
 
         <TabsContent value="batch">
-          <BatchLinkedInJobUpload />
-        </TabsContent>
-
-        <TabsContent value="json">
-          <LinkedInJsonUpload />
+          <Card className="rounded-2xl border-border/40">
+            <CardHeader>
+              <CardTitle className="text-base">Batch LinkedIn Job Upload</CardTitle>
+            </CardHeader>
+            <CardContent>
+              <p className="text-sm text-muted-foreground mb-3">
+                Upload a JSON export of LinkedIn jobs. Companies are auto-created/matched.
+              </p>
+              <Button onClick={() => setShowBatch(true)} className="gap-2">
+                <Plus className="h-4 w-4" /> Open Batch Importer
+              </Button>
+            </CardContent>
+          </Card>
+          <BatchLinkedInJobUpload
+            isOpen={showBatch}
+            onClose={() => setShowBatch(false)}
+            onComplete={() => {
+              setShowBatch(false);
+              qc.invalidateQueries({ queryKey: ["jobs-hub-manage"] });
+            }}
+          />
         </TabsContent>
 
         <TabsContent value="pending">
