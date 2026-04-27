@@ -3,6 +3,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } f
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Card, CardContent } from "@/components/ui/card"; // FIXED: Restored missing Card imports
 import { toast } from "sonner";
 import { emailNotifications } from "@/lib/emailNotifications";
 import {
@@ -29,6 +30,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Talent Detail Dialog (Profile Inspector)
  * CTO Reference: High-fidelity terminal for lead auditing and activation management.
+ * Resolved TS2304 by restoring Card and CardContent imports.
  */
 
 interface TalentDetailDialogProps {
@@ -73,7 +75,6 @@ export const TalentDetailDialog = ({
 
   const handleAwardCredits = () => {
     toast.info("Initializing Credit Adjustment Console...");
-    // Future integration point for talent_credits table interaction
   };
 
   return (
@@ -81,9 +82,9 @@ export const TalentDetailDialog = ({
       <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-2xl rounded-[40px]">
         <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
 
-        <DialogHeader className="p-8 bg-muted/20 border-b border-border/10">
+        <DialogHeader className="p-8 bg-muted/20 border-b border-border/10 text-left">
           <div className="flex justify-between items-start">
-            <div className="space-y-1 text-left">
+            <div className="space-y-1">
               <div className="flex items-center gap-4">
                 <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter text-foreground">
                   {displayTalent.full_name || "Unidentified Node"}
@@ -93,7 +94,7 @@ export const TalentDetailDialog = ({
                     REGISTERED_NODE
                   </Badge>
                 ) : (
-                  <Badge className="bg-amber-500/10 text-amber-600 border-2 border-amber-500/20 font-black italic px-4 animate-pulse">
+                  <Badge className="bg-amber-500/10 text-amber-600 border-2 border-amber-200 font-black italic px-4 animate-pulse">
                     PIPELINE_LEAD
                   </Badge>
                 )}
@@ -121,7 +122,6 @@ export const TalentDetailDialog = ({
         </DialogHeader>
 
         <div className="flex-1 overflow-y-auto p-8 space-y-8 bg-background">
-          {/* Action Grid */}
           <div className="flex flex-wrap gap-4">
             <Button
               onClick={handlePlatformInvite}
@@ -281,16 +281,17 @@ export const TalentDetailDialog = ({
                 />
               </div>
 
+              {/* FIXED: Components below are now supported by restored imports */}
               <Card className="rounded-[40px] border-2 border-primary/20 bg-primary/5 shadow-2xl overflow-hidden">
                 <CardContent className="p-8">
-                  <div className="flex items-center gap-4 mb-4">
+                  <div className="flex items-center gap-4 mb-4 text-left">
                     <TrendingUp className="h-6 w-6 text-primary" />
                     <h4 className="text-xl font-black uppercase italic tracking-tighter">
                       Executive Commission Potential
                     </h4>
                   </div>
                   <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest max-w-xl leading-loose italic">
+                    <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest max-w-xl leading-loose italic text-left">
                       This talent node is currently in{" "}
                       <span className="text-primary">
                         {displayTalent.onboarding_completed_at ? "Active Learner" : "Raw Lead"}
@@ -328,7 +329,7 @@ export const TalentDetailDialog = ({
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-muted/20 p-5 rounded-[24px] border-2 border-border/5 group hover:border-primary/20 transition-all">
+    <div className="bg-muted/20 p-5 rounded-[24px] border-2 border-border/5 group hover:border-primary/20 transition-all text-left">
       <p className="text-[9px] text-muted-foreground/40 uppercase font-black tracking-widest">{label}</p>
       <p className="text-sm font-black text-foreground uppercase italic tracking-tight mt-1">{value}</p>
     </div>
