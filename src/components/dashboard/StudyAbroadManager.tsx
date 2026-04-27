@@ -35,17 +35,14 @@ import {
   Search,
   Pencil,
   Trash2,
-  GraduationCap,
   ChevronLeft,
   ChevronRight,
-  Check,
   Star,
   Award,
   Globe,
   RefreshCw,
   Activity,
   Zap,
-  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { COUNTRIES } from "@/lib/constants/countries";
@@ -53,10 +50,9 @@ import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Study Abroad Program Orchestrator
- * CTO Reference: High-fidelity management of international academic opportunities.
+ * CTO Reference: Fixed TS2304 by restoring totalPages scoping and footer logic.
  */
 
-// --- Internal Hook for Debounce ---
 function useDebounce<T>(value: T, delay: number): T {
   const [debouncedValue, setDebouncedValue] = useState<T>(value);
   useEffect(() => {
@@ -127,7 +123,6 @@ export function StudyAbroadManager() {
     setLoading(true);
     setError(null);
     try {
-      // Wrap query in native async for standard Promise behavior within withTimeout
       const fetchPrograms = async () => {
         let query = supabase
           .from("study_abroad_programs")
@@ -171,6 +166,11 @@ export function StudyAbroadManager() {
   useEffect(() => {
     loadPrograms();
   }, [loadPrograms]);
+
+  // RESET PAGE ON SEARCH/FILTER
+  useEffect(() => {
+    setPage(1);
+  }, [debouncedSearch, countryFilter]);
 
   const handleOpenDialog = (program?: StudyAbroadProgram) => {
     if (program) {
@@ -241,6 +241,8 @@ export function StudyAbroadManager() {
       toast.error("Deletion Fault");
     }
   };
+
+  const totalPages = Math.ceil(totalCount / ITEMS_PER_PAGE);
 
   if (loading && page === 1) return <DashboardTableSkeleton rows={8} columns={6} />;
 
@@ -379,7 +381,7 @@ export function StudyAbroadManager() {
             </TableBody>
           </Table>
 
-          {/* PAGINATION */}
+          {/* PAGINATION FOOTER - FIXED TS2304 */}
           {totalPages > 1 && (
             <div className="flex items-center justify-between p-6 border-t border-border/10 bg-muted/5">
               <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 italic">
@@ -424,7 +426,7 @@ export function StudyAbroadManager() {
               </DialogDescription>
             </DialogHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-border/10 pt-8">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-8 border-t border-border/10 pt-8 text-left">
               <div className="space-y-6">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black uppercase text-primary italic">Global Sector</Label>
