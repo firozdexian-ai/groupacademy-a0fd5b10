@@ -32,6 +32,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { CreditBalance } from "@/components/credits/CreditBalance";
+import { MyInvoicesList } from "@/components/credits/MyInvoicesList";
 import { cn } from "@/lib/utils";
 
 /**
@@ -187,18 +188,24 @@ export default function Transactions() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 p-1.5 h-16 bg-muted/30 backdrop-blur-md rounded-[32px] border border-border/40 max-w-xl mx-auto">
+        <TabsList className="grid w-full grid-cols-3 p-1.5 h-16 bg-muted/30 backdrop-blur-md rounded-[32px] border border-border/40 max-w-xl mx-auto">
           <TabsTrigger
             value="history"
             className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
           >
-            <History className="h-3.5 w-3.5" /> Registry History
+            <History className="h-3.5 w-3.5" /> History
+          </TabsTrigger>
+          <TabsTrigger
+            value="invoices"
+            className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+          >
+            <CreditCard className="h-3.5 w-3.5" /> Invoices
           </TabsTrigger>
           <TabsTrigger
             value="statement"
             className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
           >
-            <FileText className="h-3.5 w-3.5" /> Monthly Statement
+            <FileText className="h-3.5 w-3.5" /> Statement
           </TabsTrigger>
         </TabsList>
 
@@ -364,7 +371,15 @@ export default function Transactions() {
           )}
         </TabsContent>
 
-        {/* ========== TAB 2: MONTHLY STATEMENT ========== */}
+        {/* ========== TAB: INVOICES ========== */}
+        <TabsContent
+          value="invoices"
+          className="mt-10 space-y-4 animate-in slide-in-from-bottom-4 duration-700 outline-none"
+        >
+          <MyInvoicesList />
+        </TabsContent>
+
+        {/* ========== TAB: MONTHLY STATEMENT ========== */}
         <TabsContent
           value="statement"
           className="mt-10 space-y-10 animate-in slide-in-from-bottom-4 duration-700 outline-none"

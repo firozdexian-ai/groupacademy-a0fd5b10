@@ -149,6 +149,9 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   payments: React.lazy(() =>
     import("@/components/dashboard/PaymentSettingsManager").then((m) => ({ default: m.PaymentSettingsManager })),
   ),
+  invoices: React.lazy(() =>
+    import("@/components/dashboard/payments/InvoiceManager").then((m) => ({ default: m.InvoiceManager })),
+  ),
 };
 
 const TAB_TITLES: Record<string, string> = {
@@ -203,6 +206,7 @@ const TAB_TITLES: Record<string, string> = {
   banners: "Display Layer",
   team: "Human Capital",
   payments: "Gateway Logic",
+  invoices: "Invoice Manager",
 };
 
 const Dashboard = () => {
