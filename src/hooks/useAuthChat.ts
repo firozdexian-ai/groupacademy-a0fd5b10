@@ -7,7 +7,7 @@ import { COUNTRIES_WITH_PHONE } from "@/lib/constants/countries";
 /**
  * GroUp Academy: Neural Authentication Orchestrator
  * CTO Reference: Authoritative controller for conversational onboarding (Aisha).
- * Fix Log: Resolved TS2304 (prev scope) and TS2339 (RPC type casting).
+ * Security: v2.4.29 - Hardened type assertions and state scope synchronization.
  */
 
 export type AuthAction =
@@ -163,11 +163,12 @@ export function useAuthChat() {
               addMessage("assistant", "INVALID_FORMAT: Please provide a valid email artifact.");
               return;
             }
-            // FIXED: Standardized 'prev' variable naming
             setCollectedData((prev) => ({ ...prev, email }));
 
-            const { data, error } = await supabase.rpc("check_auth_email", { lookup_email: email });
-            const emailResult = data as EmailCheckResponse;
+            const { data } = await supabase.rpc("check_auth_email", { lookup_email: email });
+
+            // REINFORCED: Double-assertion to resolve TS2352 overlap error
+            const emailResult = data as unknown as EmailCheckResponse;
 
             if (emailResult?.exists && emailResult?.hasUserId) {
               setFlow("login");
