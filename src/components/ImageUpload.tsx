@@ -1,192 +1,205 @@
-import { useState, useCallback } from 'react';
-import { Upload, X, Loader2 } from 'lucide-react';
-import { supabase } from '@/integrations/supabase/client';
-import { Button } from './ui/button';
-import { useToast } from '@/hooks/use-toast';
+import { useState, useCallback } from "react";
+import { Upload, X, Loader2, ImagePlus, ShieldCheck, Zap } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
+import { Button } from "./ui/button";
+import { useToast } from "@/hooks/use-toast";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Visual Asset Ingress Node
+ * CTO Reference: Authoritative interface for curriculum imagery and registry storage.
+ */
 
 interface ImageUploadProps {
   value?: string;
   onUpload: (url: string) => void;
   onRemove?: () => void;
   bucket?: string;
+  className?: string;
 }
 
-export function ImageUpload({ 
-  value, 
-  onUpload, 
-  onRemove,
-  bucket = 'course-covers'
-}: ImageUploadProps) {
-  const [uploading, setUploading] = useState(false);
-  const [dragActive, setDragActive] = useState(false);
+export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers", className }: ImageUploadProps) {
+  const [isUploading, setIsUploading] = useState(false);
+  const [isDragging, setIsDragging] = useState(false);
   const { toast } = useToast();
 
-  const uploadImage = async (file: File) => {
+  const executeArtifactIngress = async (file: File) => {
     try {
-      setUploading(true);
+      setIsUploading(true);
 
-      // Validate file type
-      if (!file.type.startsWith('image/')) {
+      // Academy Protocol: Format Validation
+      if (!file.type.startsWith("image/")) {
         toast({
-          variant: 'destructive',
-          title: 'Invalid file type',
-          description: 'Please upload an image file (PNG, JPG, WebP)',
+          variant: "destructive",
+          title: "SYNC_FAULT: Invalid Format",
+          description: "Deploy PNG, JPG, or WebP artifacts only.",
         });
         return;
       }
 
-      // Validate file size (max 5MB)
+      // Academy Protocol: Volume Validation
       if (file.size > 5 * 1024 * 1024) {
         toast({
-          variant: 'destructive',
-          title: 'File too large',
-          description: 'Please upload an image smaller than 5MB',
+          variant: "destructive",
+          title: "SYNC_FAULT: Data Overflow",
+          description: "Artifact volume must not exceed 5MB.",
         });
         return;
       }
 
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${Math.random().toString(36).substring(2)}-${Date.now()}.${fileExt}`;
-      const filePath = fileName;
+      const fileExt = file.name.split(".").pop();
+      const fileName = `ARTIFACT_${Math.random().toString(36).substring(2, 9)}_${Date.now()}.${fileExt}`;
 
-      const { error: uploadError, data } = await supabase.storage
-        .from(bucket)
-        .upload(filePath, file);
+      const { error: uploadError } = await supabase.storage.from(bucket).upload(fileName, file);
 
       if (uploadError) throw uploadError;
 
-      const { data: { publicUrl } } = supabase.storage
-        .from(bucket)
-        .getPublicUrl(filePath);
+      const {
+        data: { publicUrl },
+      } = supabase.storage.from(bucket).getPublicUrl(fileName);
 
       onUpload(publicUrl);
-      
+
       toast({
-        title: 'Success',
-        description: 'Image uploaded successfully',
+        title: "INGRESS_COMPLETE",
+        description: "Visual artifact synchronized with registry.",
       });
-    } catch (error: any) {
-      console.error('Upload error:', error);
+    } catch (err: any) {
+      console.error("INGRESS_FAULT:", err);
       toast({
-        variant: 'destructive',
-        title: 'Upload failed',
-        description: error.message,
+        variant: "destructive",
+        title: "SYNC_FAILED",
+        description: err.message,
       });
     } finally {
-      setUploading(false);
+      setIsUploading(false);
     }
   };
 
-  const handleDrag = useCallback((e: React.DragEvent) => {
+  const handleDragState = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    if (e.type === 'dragenter' || e.type === 'dragover') {
-      setDragActive(true);
-    } else if (e.type === 'dragleave') {
-      setDragActive(false);
-    }
+    if (e.type === "dragenter" || e.type === "dragover") setIsDragging(true);
+    else if (e.type === "dragleave") setIsDragging(false);
   }, []);
 
-  const handleDrop = useCallback((e: React.DragEvent) => {
+  const handleDropEvent = useCallback((e: React.DragEvent) => {
     e.preventDefault();
     e.stopPropagation();
-    setDragActive(false);
-    
-    if (e.dataTransfer.files && e.dataTransfer.files[0]) {
-      uploadImage(e.dataTransfer.files[0]);
-    }
+    setIsDragging(false);
+    if (e.dataTransfer.files?.[0]) executeArtifactIngress(e.dataTransfer.files[0]);
   }, []);
 
-  const handleChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    if (e.target.files && e.target.files[0]) {
-      uploadImage(e.target.files[0]);
-    }
-  };
-
-  const handleRemove = async () => {
+  const executeArtifactPruning = async () => {
     if (value && onRemove) {
-      // Extract file path from URL
-      const urlParts = value.split('/');
-      const filePath = urlParts[urlParts.length - 1];
-      
+      const filePath = value.split("/").pop();
+      if (!filePath) return;
+
       try {
         await supabase.storage.from(bucket).remove([filePath]);
         onRemove();
         toast({
-          title: 'Success',
-          description: 'Image removed successfully',
+          title: "PRUNING_COMPLETE",
+          description: "Artifact purged from registry.",
         });
-      } catch (error: any) {
-        console.error('Remove error:', error);
+      } catch (err: any) {
         toast({
-          variant: 'destructive',
-          title: 'Failed to remove image',
-          description: error.message,
+          variant: "destructive",
+          title: "PRUNING_FAULT",
+          description: err.message,
         });
       }
     }
   };
 
   return (
-    <div className="space-y-2">
-      <label className="text-sm font-medium">Cover Image (16:9)</label>
-      
+    <div className={cn("space-y-3", className)}>
+      <div className="flex items-center justify-between px-1">
+        <label className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">
+          Institutional_Cover_Asset (16:9)
+        </label>
+        <div className="flex items-center gap-1 opacity-20">
+          <ShieldCheck className="h-3 w-3" />
+          <span className="text-[8px] font-bold uppercase tracking-widest italic">Registry_Secure</span>
+        </div>
+      </div>
+
       {value ? (
-        <div className="relative rounded-lg overflow-hidden bg-muted aspect-video">
-          <img 
-            src={value} 
-            alt="Cover" 
-            className="w-full h-full object-cover"
+        <div className="group relative rounded-[24px] overflow-hidden bg-muted border-2 border-border/10 aspect-video shadow-2xl transition-all duration-500 hover:border-primary/40">
+          <img
+            src={value}
+            alt="Registry_Artifact"
+            className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
           />
-          <Button
-            type="button"
-            variant="destructive"
-            size="icon"
-            className="absolute top-2 right-2"
-            onClick={handleRemove}
-          >
-            <X className="h-4 w-4" />
-          </Button>
+          <div className="absolute inset-0 bg-black/40 opacity-0 group-hover:opacity-100 transition-opacity duration-300 backdrop-blur-sm flex items-center justify-center">
+            <Button
+              type="button"
+              variant="destructive"
+              size="icon"
+              className="h-12 w-12 rounded-2xl shadow-xl active:scale-90 transition-all"
+              onClick={executeArtifactPruning}
+            >
+              <X className="h-6 w-6" />
+            </Button>
+          </div>
         </div>
       ) : (
         <div
-          className={`
-            border-2 border-dashed rounded-lg p-8 text-center cursor-pointer
-            transition-colors aspect-video flex flex-col items-center justify-center
-            ${dragActive ? 'border-primary bg-primary/5' : 'border-border hover:border-primary/50'}
-          `}
-          onDragEnter={handleDrag}
-          onDragLeave={handleDrag}
-          onDragOver={handleDrag}
-          onDrop={handleDrop}
-          onClick={() => document.getElementById('image-upload')?.click()}
+          className={cn(
+            "relative border-2 border-dashed rounded-[24px] p-10 text-center cursor-pointer transition-all duration-500 aspect-video flex flex-col items-center justify-center overflow-hidden",
+            isDragging
+              ? "border-primary bg-primary/5 scale-[1.01] shadow-2xl"
+              : "border-border/40 hover:border-primary/40 hover:bg-muted/5 shadow-inner",
+          )}
+          onDragEnter={handleDragState}
+          onDragLeave={handleDragState}
+          onDragOver={handleDragState}
+          onDrop={handleDropEvent}
+          onClick={() => document.getElementById("image-upload")?.click()}
         >
-          {uploading ? (
-            <>
-              <Loader2 className="h-12 w-12 text-muted-foreground animate-spin mb-3" />
-              <p className="text-sm text-muted-foreground">Uploading...</p>
-            </>
+          {isUploading ? (
+            <div className="space-y-4 animate-in fade-in duration-500">
+              <div className="relative mx-auto w-16 h-16 flex items-center justify-center">
+                <Loader2 className="h-10 w-10 text-primary animate-spin" />
+                <Zap className="absolute h-4 w-4 text-primary animate-pulse fill-current" />
+              </div>
+              <p className="text-[10px] font-black uppercase italic tracking-widest text-primary">
+                Synchronizing_Registry...
+              </p>
+            </div>
           ) : (
-            <>
-              <Upload className="h-12 w-12 text-muted-foreground mb-3" />
-              <p className="text-sm font-medium mb-1">
-                Drag & drop or click to upload
-              </p>
-              <p className="text-xs text-muted-foreground">
-                PNG, JPG or WebP (max 5MB, 16:9 ratio recommended)
-              </p>
-            </>
+            <div className="space-y-4 group-hover:scale-105 transition-transform duration-500">
+              <div className="h-16 w-16 rounded-[22px] bg-background border-2 border-border/10 flex items-center justify-center mx-auto shadow-xl">
+                <ImagePlus className="h-8 w-8 text-primary/40 group-hover:text-primary transition-colors" />
+              </div>
+              <div className="space-y-1">
+                <p className="text-sm font-black uppercase italic tracking-tighter">Initialize_Asset_Ingress</p>
+                <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                  PNG | JPG | WebP • Max 5MB
+                </p>
+              </div>
+              <Button
+                variant="secondary"
+                size="sm"
+                className="h-8 rounded-xl px-6 font-black uppercase italic text-[9px] tracking-widest mt-2"
+              >
+                SELECT_ARTIFACT
+              </Button>
+            </div>
           )}
           <input
             id="image-upload"
             type="file"
             className="hidden"
             accept="image/*"
-            onChange={handleChange}
-            disabled={uploading}
+            onChange={(e) => e.target.files?.[0] && executeArtifactIngress(e.target.files[0])}
+            disabled={isUploading}
           />
         </div>
       )}
+      <p className="text-[8px] font-black uppercase tracking-[0.4em] text-muted-foreground/20 mt-4 text-center">
+        Neural_Ingress_v4.2 // Encrypted_Storage
+      </p>
     </div>
   );
 }
