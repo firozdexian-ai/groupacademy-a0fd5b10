@@ -1,3 +1,11 @@
+import { format } from "date-fns";
+
+/**
+ * GroUp Academy: Neural Fiscal Intelligence Artifact
+ * CTO Reference: Authoritative report template for market salary and skill parity analysis.
+ */
+
+// Interface definitions remain consistent with the registry data model
 interface SalaryRange {
   min_monthly: number;
   median_monthly: number;
@@ -5,25 +13,21 @@ interface SalaryRange {
   experience_level: string;
   market_context: string;
 }
-
 interface SkillsAnalysis {
   matching_skills: string[];
   missing_skills: string[];
   skills_gap_score: number;
   recommendations: string[];
 }
-
 interface NegotiationTip {
   tip: string;
   rationale: string;
 }
-
 interface MarketInsights {
   demand_level: string;
   growth_trajectory: string;
   industry_trends: string[];
 }
-
 interface AIAnalysis {
   summary: string;
   market_salary_range: SalaryRange;
@@ -34,7 +38,6 @@ interface AIAnalysis {
   overall_readiness_score: number;
   salary_positioning: string;
 }
-
 interface Analysis {
   id: string;
   full_name: string;
@@ -51,240 +54,413 @@ interface Props {
   analysis: Analysis;
 }
 
-// Brand colors
 const BRAND = {
   primary: "#2A7DDE",
   secondary: "#33E1E4",
   accent: "#10D576",
-  dark: "#333333",
-  muted: "#6b7280",
-  background: "#F4F7F9",
+  warning: "#EA580C",
+  error: "#F43F5E",
+  dark: "#0F172A",
+  muted: "#64748B",
+  background: "#F8FAFC",
 };
 
-const formatSalary = (amount: number) => {
-  return new Intl.NumberFormat('en-US').format(amount);
-};
+const formatCurrency = (amt: number) => new Intl.NumberFormat("en-US").format(amt);
 
-const getPositionLabel = (positioning: string) => {
-  switch (positioning) {
-    case "above_market": return "Above Market";
-    case "below_market": return "Below Market";
-    default: return "At Market Rate";
-  }
-};
-
-const getPositionColor = (positioning: string) => {
-  switch (positioning) {
-    case "above_market": return BRAND.accent;
-    case "below_market": return "#ef4444";
-    default: return BRAND.muted;
-  }
+const POSITION_REGISTRY: Record<string, { label: string; color: string }> = {
+  above_market: { label: "ABOVE_MARKET_NODE", color: BRAND.accent },
+  below_market: { label: "BELOW_MARKET_DEFICIT", color: BRAND.error },
+  at_market: { label: "MARKET_EQUILIBRIUM", color: BRAND.muted },
 };
 
 export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
   const ai = analysis.ai_analysis;
-  const salaryRange = ai.market_salary_range;
-  const skills = ai.skills_analysis;
-  const tips = ai.negotiation_tips;
-  const insights = ai.market_insights;
+  const salary = ai.market_salary_range;
+  const position = POSITION_REGISTRY[ai.salary_positioning] || POSITION_REGISTRY.at_market;
 
   return (
     <div
       id="salary-analysis-pdf-content"
       style={{
-        width: "794px",
-        padding: "40px",
-        fontFamily: "'Inter', system-ui, sans-serif",
+        width: "794px", // Standard A4 Resolution
+        padding: "50px",
+        fontFamily: "Inter, system-ui, -apple-system, sans-serif",
         backgroundColor: "#ffffff",
-        color: BRAND.dark
+        color: BRAND.dark,
+        boxSizing: "border-box",
       }}
     >
-      {/* Header */}
-      <div style={{ textAlign: "center", marginBottom: "30px", borderBottom: `3px solid ${BRAND.secondary}`, paddingBottom: "20px" }}>
-        <h1 style={{ fontSize: "28px", fontWeight: "bold", margin: "0 0 8px 0", color: BRAND.secondary, fontFamily: "'Poppins', sans-serif" }}>
-          Salary Analysis Report
-        </h1>
-        <p style={{ fontSize: "14px", color: BRAND.muted, margin: 0 }}>
-          GroUp Academy - AI-Powered Career Intelligence
-        </p>
-      </div>
-
-      {/* Candidate Info */}
-      <div style={{ display: "flex", justifyContent: "space-between", marginBottom: "30px", backgroundColor: BRAND.background, padding: "20px", borderRadius: "12px" }}>
+      {/* HUD: REPORT_HEADER */}
+      <div
+        style={{
+          display: "flex",
+          justifyContent: "space-between",
+          alignItems: "flex-end",
+          marginBottom: "40px",
+          paddingBottom: "25px",
+          borderBottom: `4px solid ${BRAND.secondary}`,
+        }}
+      >
         <div>
-          <h2 style={{ fontSize: "20px", fontWeight: "bold", margin: "0 0 8px 0", fontFamily: "'Poppins', sans-serif" }}>
-            {analysis.full_name}
-          </h2>
-          <p style={{ fontSize: "14px", color: BRAND.muted, margin: "0 0 4px 0" }}>
-            {analysis.email}
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "32px",
+              fontWeight: 900,
+              color: BRAND.primary,
+              textTransform: "uppercase",
+              fontStyle: "italic",
+              letterSpacing: "-1px",
+            }}
+          >
+            Salary_Analysis_Report
+          </h1>
+          <p
+            style={{
+              margin: "5px 0 0",
+              fontSize: "12px",
+              fontWeight: 700,
+              color: BRAND.muted,
+              letterSpacing: "2px",
+              textTransform: "uppercase",
+            }}
+          >
+            GroUp_Academy Neural_Intelligence_v4
           </p>
-          {analysis.job_title && (
-            <p style={{ fontSize: "14px", color: BRAND.dark, margin: 0 }}>
-              Target: {analysis.job_title}
-              {analysis.company_name && ` at ${analysis.company_name}`}
-            </p>
-          )}
         </div>
-        <div style={{ textAlign: "right" }}>
-          <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>
-            Date: {new Date(analysis.completed_at || analysis.created_at).toLocaleDateString()}
-          </p>
-          {analysis.profession_categories && (
-            <p style={{ fontSize: "12px", color: BRAND.muted, margin: 0 }}>
-              Field: {analysis.profession_categories.name}
-            </p>
-          )}
+        <div
+          style={{
+            textAlign: "right",
+            fontSize: "10px",
+            color: BRAND.muted,
+            fontWeight: 700,
+            textTransform: "uppercase",
+          }}
+        >
+          Registry_Sync: {format(new Date(analysis.completed_at || analysis.created_at), "dd_MMM_yyyy").toUpperCase()}
         </div>
       </div>
 
-      {/* Readiness Score */}
-      <div style={{ textAlign: "center", marginBottom: "30px", background: `linear-gradient(135deg, ${BRAND.secondary}, ${BRAND.primary})`, color: "white", padding: "30px", borderRadius: "16px" }}>
-        <div style={{ fontSize: "72px", fontWeight: "bold", margin: "0 0 8px 0", fontFamily: "'Poppins', sans-serif" }}>
+      {/* COMPONENT: CANDIDATE_METADATA */}
+      <div style={{ display: "flex", gap: "20px", marginBottom: "30px" }}>
+        <div
+          style={{
+            flex: 1,
+            backgroundColor: BRAND.background,
+            padding: "25px",
+            borderRadius: "24px",
+            border: "1px solid #e2e8f0",
+          }}
+        >
+          <p style={{ margin: 0, fontSize: "10px", fontWeight: 800, color: BRAND.muted, textTransform: "uppercase" }}>
+            Identity_Artifact
+          </p>
+          <h2 style={{ fontSize: "22px", fontWeight: 800, margin: "4px 0 12px 0" }}>{analysis.full_name}</h2>
+          <div style={{ display: "flex", gap: "15px" }}>
+            <div>
+              <p
+                style={{ margin: 0, fontSize: "9px", fontWeight: 800, color: BRAND.muted, textTransform: "uppercase" }}
+              >
+                Target_Role
+              </p>
+              <p style={{ fontSize: "13px", fontWeight: 600, margin: 0 }}>{analysis.job_title || "GENERAL_NODE"}</p>
+            </div>
+            {analysis.company_name && (
+              <div>
+                <p
+                  style={{
+                    margin: 0,
+                    fontSize: "9px",
+                    fontWeight: 800,
+                    color: BRAND.muted,
+                    textTransform: "uppercase",
+                  }}
+                >
+                  Institution
+                </p>
+                <p style={{ fontSize: "13px", fontWeight: 600, margin: 0 }}>{analysis.company_name}</p>
+              </div>
+            )}
+          </div>
+        </div>
+        <div
+          style={{
+            width: "220px",
+            textAlign: "center",
+            backgroundColor: BRAND.dark,
+            color: "#fff",
+            padding: "20px",
+            borderRadius: "24px",
+          }}
+        >
+          <p
+            style={{ margin: 0, fontSize: "9px", fontWeight: 800, color: BRAND.secondary, textTransform: "uppercase" }}
+          >
+            Field_Sector
+          </p>
+          <p style={{ fontSize: "15px", fontWeight: 800, margin: "5px 0" }}>
+            {analysis.profession_categories?.name.toUpperCase() || "CORE_TRAJECTORY"}
+          </p>
+          <p style={{ margin: "10px 0 0 0", fontSize: "9px", opacity: 0.6 }}>
+            ID: {analysis.id.slice(0, 8).toUpperCase()}
+          </p>
+        </div>
+      </div>
+
+      {/* HUD: READINESS_INDEX */}
+      <div
+        style={{
+          textAlign: "center",
+          marginBottom: "40px",
+          background: `linear-gradient(135deg, ${BRAND.secondary}, ${BRAND.primary})`,
+          color: "white",
+          padding: "40px",
+          borderRadius: "32px",
+          boxShadow: "0 20px 40px rgba(42, 125, 222, 0.2)",
+        }}
+      >
+        <div
+          style={{ fontSize: "12px", fontWeight: 800, textTransform: "uppercase", letterSpacing: "3px", opacity: 0.9 }}
+        >
+          Overall_Readiness_Index
+        </div>
+        <div
+          style={{
+            fontSize: "92px",
+            fontWeight: 900,
+            margin: "10px 0",
+            fontStyle: "italic",
+            letterSpacing: "-4px",
+            lineHeight: 1,
+          }}
+        >
           {ai.overall_readiness_score}%
         </div>
-        <div style={{ fontSize: "18px", marginBottom: "8px" }}>Overall Readiness Score</div>
-        <div style={{ 
-          display: "inline-block", 
-          backgroundColor: getPositionColor(ai.salary_positioning), 
-          padding: "8px 20px", 
+        <div
+          style={{
+            display: "inline-block",
+            backgroundColor: position.color,
+            color: "#fff",
+            padding: "10px 30px",
+            borderRadius: "15px",
+            fontSize: "14px",
+            fontWeight: 800,
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+            boxShadow: "0 4px 12px rgba(0,0,0,0.1)",
+          }}
+        >
+          {position.label}
+        </div>
+      </div>
+
+      {/* COMPONENT: SUMMARY_VIEWPORT */}
+      <div
+        style={{
+          marginBottom: "40px",
+          background: "#F0F9FF",
+          padding: "25px",
           borderRadius: "24px",
-          fontSize: "14px",
-          fontWeight: 600
-        }}>
-          {getPositionLabel(ai.salary_positioning)}
-        </div>
+          borderLeft: `6px solid ${BRAND.primary}`,
+          fontStyle: "italic",
+        }}
+      >
+        <p style={{ fontSize: "14px", lineHeight: "1.8", color: BRAND.dark, margin: 0 }}>{ai.summary}</p>
       </div>
 
-      {/* Summary */}
-      <div style={{ marginBottom: "30px", background: `linear-gradient(135deg, ${BRAND.secondary}15, ${BRAND.accent}15)`, padding: "16px", borderRadius: "12px", borderLeft: `4px solid ${BRAND.secondary}` }}>
-        <p style={{ fontSize: "14px", lineHeight: "1.7", color: BRAND.dark, margin: 0 }}>
-          {ai.summary}
-        </p>
-      </div>
-
-      {/* Salary Range */}
-      <div style={{ marginBottom: "30px" }}>
-        <h3 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "12px", color: BRAND.primary, fontFamily: "'Poppins', sans-serif" }}>
-          Market Salary Range
+      {/* HUD: FISCAL_TELEMETRY */}
+      <div style={{ marginBottom: "40px" }}>
+        <h3
+          style={{
+            fontSize: "14px",
+            fontWeight: 800,
+            marginBottom: "20px",
+            color: BRAND.primary,
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+          }}
+        >
+          Market_Salary_Parity_Node
         </h3>
-        <div style={{ display: "flex", gap: "16px", marginBottom: "12px" }}>
-          <div style={{ flex: 1, backgroundColor: BRAND.background, padding: "16px", borderRadius: "12px", textAlign: "center" }}>
-            <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>Minimum</p>
-            <p style={{ fontSize: "20px", fontWeight: "bold", margin: 0 }}>${formatSalary(salaryRange.min_monthly)}</p>
-            <p style={{ fontSize: "11px", color: BRAND.muted, margin: 0 }}>/month</p>
-          </div>
-          <div style={{ flex: 1, background: `linear-gradient(135deg, ${BRAND.secondary}20, ${BRAND.primary}20)`, padding: "16px", borderRadius: "12px", textAlign: "center", border: `2px solid ${BRAND.secondary}` }}>
-            <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>Median</p>
-            <p style={{ fontSize: "20px", fontWeight: "bold", color: BRAND.primary, margin: 0 }}>${formatSalary(salaryRange.median_monthly)}</p>
-            <p style={{ fontSize: "11px", color: BRAND.muted, margin: 0 }}>/month</p>
-          </div>
-          <div style={{ flex: 1, backgroundColor: BRAND.background, padding: "16px", borderRadius: "12px", textAlign: "center" }}>
-            <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>Maximum</p>
-            <p style={{ fontSize: "20px", fontWeight: "bold", margin: 0 }}>${formatSalary(salaryRange.max_monthly)}</p>
-            <p style={{ fontSize: "11px", color: BRAND.muted, margin: 0 }}>/month</p>
-          </div>
-        </div>
-        <p style={{ fontSize: "12px", color: BRAND.muted, textAlign: "center", margin: 0 }}>
-          Experience Level: {salaryRange.experience_level} • {salaryRange.market_context}
-        </p>
-      </div>
-
-      {/* Skills Analysis */}
-      <div style={{ marginBottom: "30px" }}>
-        <h3 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "12px", color: BRAND.primary, fontFamily: "'Poppins', sans-serif" }}>
-          Skills Gap Analysis ({skills.skills_gap_score}% match)
-        </h3>
-        <div style={{ display: "flex", gap: "16px", marginBottom: "16px" }}>
-          <div style={{ flex: 1, backgroundColor: "#ecfdf5", padding: "16px", borderRadius: "12px" }}>
-            <h4 style={{ fontSize: "13px", fontWeight: "bold", color: BRAND.accent, marginBottom: "8px", fontFamily: "'Poppins', sans-serif" }}>
-              ✓ Matching Skills
-            </h4>
-            {skills.matching_skills && skills.matching_skills.length > 0 ? (
-              <p style={{ fontSize: "12px", margin: 0, lineHeight: "1.7" }}>
-                {skills.matching_skills.join(" • ")}
+        <div style={{ display: "flex", gap: "20px" }}>
+          {[
+            { label: "MIN_VECTOR", val: salary.min_monthly, accent: false },
+            { label: "MEDIAN_SYNC", val: salary.median_monthly, accent: true },
+            { label: "MAX_VECTOR", val: salary.max_monthly, accent: false },
+          ].map((node, i) => (
+            <div
+              key={i}
+              style={{
+                flex: 1,
+                backgroundColor: node.accent ? "#fff" : BRAND.background,
+                padding: "25px 15px",
+                borderRadius: "20px",
+                textAlign: "center",
+                border: node.accent ? `3px solid ${BRAND.secondary}` : "1px solid #e2e8f0",
+              }}
+            >
+              <p
+                style={{
+                  fontSize: "10px",
+                  fontWeight: 800,
+                  color: BRAND.muted,
+                  margin: "0 0 8px 0",
+                  textTransform: "uppercase",
+                }}
+              >
+                {node.label}
               </p>
-            ) : (
-              <p style={{ fontSize: "12px", color: BRAND.muted, margin: 0 }}>None identified</p>
-            )}
-          </div>
-          <div style={{ flex: 1, backgroundColor: "#fff7ed", padding: "16px", borderRadius: "12px" }}>
-            <h4 style={{ fontSize: "13px", fontWeight: "bold", color: "#ea580c", marginBottom: "8px", fontFamily: "'Poppins', sans-serif" }}>
-              ↑ Skills to Develop
-            </h4>
-            {skills.missing_skills && skills.missing_skills.length > 0 ? (
-              <p style={{ fontSize: "12px", margin: 0, lineHeight: "1.7" }}>
-                {skills.missing_skills.join(" • ")}
+              <p
+                style={{
+                  fontSize: "24px",
+                  fontWeight: 900,
+                  color: node.accent ? BRAND.primary : BRAND.dark,
+                  margin: 0,
+                }}
+              >
+                ${formatCurrency(node.val)}
               </p>
-            ) : (
-              <p style={{ fontSize: "12px", color: BRAND.muted, margin: 0 }}>None identified</p>
-            )}
-          </div>
-        </div>
-        {skills.recommendations && skills.recommendations.length > 0 && (
-          <div>
-            <h4 style={{ fontSize: "13px", fontWeight: "bold", marginBottom: "8px", fontFamily: "'Poppins', sans-serif" }}>Skill Recommendations:</h4>
-            <ul style={{ margin: 0, paddingLeft: "20px", fontSize: "12px", lineHeight: "1.7" }}>
-              {skills.recommendations.slice(0, 3).map((rec, idx) => (
-                <li key={idx} style={{ marginBottom: "4px" }}>{rec}</li>
-              ))}
-            </ul>
-          </div>
-        )}
-      </div>
-
-      {/* Negotiation Tips */}
-      {tips && tips.length > 0 && (
-        <div style={{ marginBottom: "30px" }}>
-          <h3 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "12px", color: BRAND.primary, fontFamily: "'Poppins', sans-serif" }}>
-            💡 Negotiation Tips
-          </h3>
-          {tips.slice(0, 3).map((tip, idx) => (
-            <div key={idx} style={{ marginBottom: "12px", backgroundColor: "#fefce8", padding: "12px", borderRadius: "12px" }}>
-              <p style={{ fontSize: "13px", fontWeight: "500", margin: "0 0 4px 0" }}>{tip.tip}</p>
-              <p style={{ fontSize: "11px", color: BRAND.muted, margin: 0 }}>{tip.rationale}</p>
+              <p style={{ fontSize: "10px", fontWeight: 700, color: BRAND.muted, margin: "5px 0 0" }}>USD / MONTHLY</p>
             </div>
           ))}
         </div>
-      )}
-
-      {/* Action Plan */}
-      {ai.action_plan && ai.action_plan.length > 0 && (
-        <div style={{ marginBottom: "30px" }}>
-          <h3 style={{ fontSize: "16px", fontWeight: "bold", marginBottom: "12px", color: BRAND.primary, fontFamily: "'Poppins', sans-serif" }}>
-            Your Action Plan
-          </h3>
-          <ol style={{ margin: 0, paddingLeft: "20px", fontSize: "13px", lineHeight: "1.8" }}>
-            {ai.action_plan.slice(0, 5).map((action, idx) => (
-              <li key={idx} style={{ marginBottom: "4px" }}>{action}</li>
-            ))}
-          </ol>
-        </div>
-      )}
-
-      {/* Market Insights */}
-      {insights && (
-        <div style={{ marginBottom: "30px", background: `linear-gradient(135deg, ${BRAND.primary}15, ${BRAND.secondary}15)`, padding: "16px", borderRadius: "12px" }}>
-          <h4 style={{ fontSize: "13px", fontWeight: "bold", color: BRAND.primary, marginBottom: "8px", fontFamily: "'Poppins', sans-serif" }}>
-            Market Insights
-          </h4>
-          <p style={{ fontSize: "12px", margin: "0 0 8px 0" }}>
-            <strong>Demand:</strong> {insights.demand_level} • <strong>Growth:</strong> {insights.growth_trajectory}
-          </p>
-          {insights.industry_trends && insights.industry_trends.length > 0 && (
-            <p style={{ fontSize: "11px", color: BRAND.dark, margin: 0 }}>
-              Trends: {insights.industry_trends.slice(0, 2).join(" | ")}
-            </p>
-          )}
-        </div>
-      )}
-
-      {/* Footer */}
-      <div style={{ textAlign: "center", paddingTop: "20px", borderTop: "2px solid #e5e7eb" }}>
-        <p style={{ fontSize: "12px", color: BRAND.muted, margin: "0 0 4px 0" }}>
-          Report ID: {analysis.id.slice(0, 8).toUpperCase()}
+        <p
+          style={{
+            fontSize: "10px",
+            fontWeight: 700,
+            color: BRAND.muted,
+            textAlign: "center",
+            marginTop: "15px",
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+          }}
+        >
+          Context: {salary.experience_level} • {salary.market_context}
         </p>
-        <p style={{ fontSize: "12px", color: BRAND.muted, margin: 0 }}>
-          Generated by GroUp Academy • www.groupacademy.com
+      </div>
+
+      {/* VIEWPORT: SKILL_VECTORS */}
+      <div style={{ display: "flex", gap: "25px", marginBottom: "40px" }}>
+        <div
+          style={{
+            flex: 1,
+            backgroundColor: "#F0FDF4",
+            padding: "25px",
+            borderRadius: "24px",
+            border: "1px solid rgba(16, 213, 118, 0.2)",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: "12px",
+              fontWeight: 800,
+              color: BRAND.accent,
+              marginBottom: "15px",
+              textTransform: "uppercase",
+            }}
+          >
+            [+] Matching_Skills
+          </h3>
+          <p style={{ fontSize: "12px", fontWeight: 600, lineHeight: "2", color: BRAND.dark }}>
+            {ai.skills_analysis.matching_skills.join(" • ")}
+          </p>
+        </div>
+        <div
+          style={{
+            flex: 1,
+            backgroundColor: "#FFF1F2",
+            padding: "25px",
+            borderRadius: "24px",
+            border: "1px solid rgba(244, 63, 94, 0.2)",
+          }}
+        >
+          <h3
+            style={{
+              fontSize: "12px",
+              fontWeight: 800,
+              color: BRAND.error,
+              marginBottom: "15px",
+              textTransform: "uppercase",
+            }}
+          >
+            [△] Optimization_Gaps
+          </h3>
+          <p style={{ fontSize: "12px", fontWeight: 600, lineHeight: "2", color: BRAND.dark }}>
+            {ai.skills_analysis.missing_skills.join(" • ")}
+          </p>
+        </div>
+      </div>
+
+      {/* HUD: STRATEGY_NODES */}
+      <div style={{ display: "flex", gap: "25px", marginBottom: "40px" }}>
+        <div style={{ flex: 1 }}>
+          <h3
+            style={{
+              fontSize: "14px",
+              fontWeight: 800,
+              marginBottom: "15px",
+              color: BRAND.primary,
+              textTransform: "uppercase",
+            }}
+          >
+            Negotiation_Protocol
+          </h3>
+          {ai.negotiation_tips.slice(0, 3).map((tip, i) => (
+            <div
+              key={i}
+              style={{
+                marginBottom: "15px",
+                backgroundColor: "#FEFCE8",
+                padding: "15px",
+                borderRadius: "16px",
+                border: "1px solid #FEF08A",
+              }}
+            >
+              <p style={{ fontSize: "13px", fontWeight: 800, margin: "0 0 5px 0" }}>{tip.tip}</p>
+              <p style={{ fontSize: "11px", fontWeight: 500, color: BRAND.muted, margin: 0, lineHeight: 1.4 }}>
+                {tip.rationale}
+              </p>
+            </div>
+          ))}
+        </div>
+        <div style={{ flex: 1 }}>
+          <h3
+            style={{
+              fontSize: "14px",
+              fontWeight: 800,
+              marginBottom: "15px",
+              color: BRAND.primary,
+              textTransform: "uppercase",
+            }}
+          >
+            Strategic_Action_Plan
+          </h3>
+          <div style={{ paddingLeft: "10px" }}>
+            {ai.action_plan.slice(0, 5).map((action, i) => (
+              <div
+                key={i}
+                style={{ display: "flex", gap: "10px", marginBottom: "12px", fontSize: "12px", fontWeight: 600 }}
+              >
+                <span style={{ color: BRAND.secondary, fontWeight: 900 }}>0{i + 1}.</span>
+                <span>{action}</span>
+              </div>
+            ))}
+          </div>
+        </div>
+      </div>
+
+      {/* FOOTER: SYSTEM_VERIFICATION */}
+      <div style={{ borderTop: "2px solid #f1f5f9", paddingTop: "25px", textAlign: "center" }}>
+        <p
+          style={{
+            fontSize: "10px",
+            color: BRAND.muted,
+            fontWeight: 700,
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+          }}
+        >
+          Verification_Hash: {analysis.id.toUpperCase()} • Issued_by_GroUp_Academy_Neural_Registry
         </p>
       </div>
     </div>
