@@ -1,5 +1,11 @@
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * GroUp Academy: Institutional Notification Dispatcher
+ * CTO Reference: Authoritative controller for transactional email synchronization.
+ * Logic: Implements idempotency-guaranteed Edge Function invocations.
+ */
+
 export type TemplateKey =
   | "welcome"
   | "service-complete"
@@ -17,6 +23,10 @@ interface SendEmailParams {
   data?: Record<string, any>;
 }
 
+/**
+ * PHASE: Edge_Function_Handshake
+ * Invokes the dedicated 'send-transactional-email' function with a dynamic payload.
+ */
 export async function sendTransactionalEmail({
   template,
   recipientEmail,
@@ -34,20 +44,20 @@ export async function sendTransactionalEmail({
     });
 
     if (error) {
-      console.warn(`[Email] Queue failed for ${template}:`, error.message);
+      console.warn(`[Sentinel] Queue fault for ${template}:`, error.message);
       return false;
     }
 
     return result?.success === true;
   } catch (err) {
-    console.warn(`[Email] Unexpected error in helper:`, err);
+    console.warn(`[Sentinel] Unexpected error in notification helper:`, err);
     return false;
   }
 }
 
 /**
- * Helper to look up a talent's email by ID, then send.
- * Used when we only have a talent_id (e.g., from gig approval).
+ * HUD: Talent_Identity_Resolver
+ * Resolves a talent_id to a verified email artifact before dispatching.
  */
 async function sendToTalent(
   talentId: string,
@@ -55,14 +65,10 @@ async function sendToTalent(
   idempotencyKeySuffix: string,
   data?: Record<string, any>,
 ): Promise<boolean> {
-  const { data: talent, error } = await supabase
-    .from("talents")
-    .select("email, full_name")
-    .eq("id", talentId)
-    .single();
+  const { data: talent, error } = await supabase.from("talents").select("email, full_name").eq("id", talentId).single();
 
   if (error || !talent?.email) {
-    console.warn(`[Email] Could not find talent ${talentId}`);
+    console.warn(`[Sentinel] ID_RESOLUTION_FAULT: Could not find talent ${talentId}`);
     return false;
   }
 
@@ -74,6 +80,9 @@ async function sendToTalent(
   });
 }
 
+/**
+ * PHASE: Institutional_Notification_API
+ */
 export const emailNotifications = {
   welcome: (talentId: string) => sendToTalent(talentId, "welcome", talentId),
 
