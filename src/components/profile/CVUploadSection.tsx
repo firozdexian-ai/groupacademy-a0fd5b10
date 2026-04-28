@@ -5,17 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
-import { 
-  Upload, 
-  FileText, 
-  CheckCircle2, 
-  Loader2, 
+import {
+  Upload,
+  FileText,
+  CheckCircle2,
+  Loader2,
   AlertCircle,
   RefreshCw,
-  Download
+  Download,
+  Zap,
+  ShieldCheck,
 } from "lucide-react";
 import { toast } from "sonner";
 import { downloadFile } from "@/lib/downloadFile";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Neural Artifact Ingress (CVUploadSection)
+ * CTO Reference: Authoritative node for CV ingestion and automated profile hydration.
+ */
 
 interface ParsedCVData {
   fullName?: string;
@@ -37,12 +45,12 @@ interface ParsedCVData {
 }
 
 const PARSING_STAGES = [
-  { progress: 0, message: "Uploading CV..." },
-  { progress: 20, message: "Reading document..." },
-  { progress: 40, message: "Extracting information..." },
-  { progress: 60, message: "Analyzing experience and skills..." },
-  { progress: 80, message: "Matching profession category..." },
-  { progress: 95, message: "Updating your profile..." },
+  { progress: 0, message: "INITIALIZING_UPLOAD..." },
+  { progress: 20, message: "READING_ARTIFACT_NODE..." },
+  { progress: 40, message: "EXTRACTING_NEURAL_DATA..." },
+  { progress: 60, message: "ANALYZING_SKILL_MATRIX..." },
+  { progress: 80, message: "MAPPING_PROFESSIONAL_NODES..." },
+  { progress: 95, message: "HYDRATING_PROFILE_LEDGER..." },
 ];
 
 export function CVUploadSection() {
@@ -55,7 +63,7 @@ export function CVUploadSection() {
 
   const hasCV = !!talent?.cvUrl;
 
-  const simulateProgress = () => {
+  const simulateHandshake = () => {
     let stage = 0;
     const interval = setInterval(() => {
       if (stage < PARSING_STAGES.length - 1) {
@@ -69,25 +77,24 @@ export function CVUploadSection() {
     return interval;
   };
 
-  const handleFileSelect = async (event: React.ChangeEvent<HTMLInputElement>) => {
+  const handleArtifactIngestion = async (event: React.ChangeEvent<HTMLInputElement>) => {
     const file = event.target.files?.[0];
     if (!file) return;
 
-    // Validate file type
-    const allowedTypes = [
-      'application/pdf',
-      'application/vnd.openxmlformats-officedocument.wordprocessingml.document',
-      'application/msword'
+    // PROTOCOL: Payload Validation
+    const allowedMime = [
+      "application/pdf",
+      "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
+      "application/msword",
     ];
-    
-    if (!allowedTypes.includes(file.type)) {
-      toast.error("Please upload a PDF or Word document");
+
+    if (!allowedMime.includes(file.type)) {
+      toast.error("Format Rejected: Ingest PDF or Word artifacts only.");
       return;
     }
 
-    // Validate file size (max 5MB)
     if (file.size > 5 * 1024 * 1024) {
-      toast.error("File size must be less than 5MB");
+      toast.error("Payload Threshold Exceeded: Max 5MB per ingestion.");
       return;
     }
 
@@ -96,210 +103,203 @@ export function CVUploadSection() {
     setUploadProgress(0);
     setCurrentStage(0);
 
-    const progressInterval = simulateProgress();
+    const syncInterval = simulateHandshake();
 
     try {
-      // Upload to Supabase Storage
-      const fileExt = file.name.split('.').pop();
-      const fileName = `${talent?.id || 'temp'}-${Date.now()}.${fileExt}`;
+      // REGISTRY: Supabase Storage Synchronisation
+      const fileExt = file.name.split(".").pop();
+      const fileName = `${talent?.id || "node"}-${Date.now()}.${fileExt}`;
       const filePath = `cvs/${fileName}`;
 
-      const { data: uploadData, error: uploadError } = await supabase.storage
-        .from('portfolio-uploads')
-        .upload(filePath, file, {
-          cacheControl: '3600',
-          upsert: true
-        });
+      const { error: uploadError } = await supabase.storage
+        .from("portfolio-uploads")
+        .upload(filePath, file, { cacheControl: "3600", upsert: true });
 
-      if (uploadError) {
-        console.error("CV upload error:", uploadError);
-        throw new Error(`Failed to upload CV: ${uploadError.message}`);
-      }
+      if (uploadError) throw new Error(`Transmission Fault: ${uploadError.message}`);
 
-      // Get public URL
-      const { data: urlData } = supabase.storage
-        .from('portfolio-uploads')
-        .getPublicUrl(filePath);
+      const { data: urlData } = supabase.storage.from("portfolio-uploads").getPublicUrl(filePath);
 
       const cvUrl = urlData?.publicUrl;
 
-      // Call parse-cv edge function
+      // INTELLIGENCE: Execute Neural Extraction Edge Function
       setCurrentStage(2);
       setUploadProgress(40);
 
-      const { data: parseData, error: parseError } = await supabase.functions
-        .invoke('parse-cv', {
-          body: { cvUrl }
-        });
+      const { data: parseData, error: parseError } = await supabase.functions.invoke("parse-cv", { body: { cvUrl } });
 
       if (parseError) throw parseError;
 
-      clearInterval(progressInterval);
+      clearInterval(syncInterval);
       setCurrentStage(5);
       setUploadProgress(95);
 
-      // Update talent profile with parsed data
+      // HYDRATION: Update Talent Registry
       if (parseData?.success && parseData?.parsedData) {
         const parsed: ParsedCVData = parseData.parsedData;
-        
-        const updateData: any = {
-          cvUrl,
-          cvParsedAt: new Date().toISOString(),
-        };
+        const syncPayload: any = { cvUrl, cvParsedAt: new Date().toISOString() };
 
-        // Only update fields that were parsed and are not empty
-        if (parsed.fullName) updateData.fullName = parsed.fullName;
-        if (parsed.phone) updateData.phone = parsed.phone;
-        if (parsed.education && parsed.education.length > 0) updateData.education = parsed.education;
-        if (parsed.experience && parsed.experience.length > 0) updateData.experience = parsed.experience;
-        if (parsed.skills && parsed.skills.length > 0) updateData.skills = parsed.skills;
-        if (parsed.linkedinUrl) updateData.linkedinUrl = parsed.linkedinUrl;
-        if (parsed.customProfession) updateData.customProfession = parsed.customProfession;
-        if (parsed.professionCategoryId) updateData.professionCategoryId = parsed.professionCategoryId;
-        if (parsed.achievements && parsed.achievements.length > 0) updateData.achievements = parsed.achievements;
+        if (parsed.fullName) syncPayload.fullName = parsed.fullName;
+        if (parsed.phone) syncPayload.phone = parsed.phone;
+        if (parsed.education?.length) syncPayload.education = parsed.education;
+        if (parsed.experience?.length) syncPayload.experience = parsed.experience;
+        if (parsed.skills?.length) syncPayload.skills = parsed.skills;
+        if (parsed.linkedinUrl) syncPayload.linkedinUrl = parsed.linkedinUrl;
+        if (parsed.customProfession) syncPayload.customProfession = parsed.customProfession;
+        if (parsed.professionCategoryId) syncPayload.professionCategoryId = parsed.professionCategoryId;
 
-        await updateTalent(updateData);
+        await updateTalent(syncPayload);
         await refreshTalent();
 
         setUploadProgress(100);
-        toast.success("CV uploaded and profile updated!", {
-          description: "Your information has been extracted and saved."
-        });
+        toast.success("Identity Matrix Synced: Profile hydrated from CV.");
       } else {
-        // Even if parsing failed partially, save the CV URL
         await updateTalent({ cvUrl, cvParsedAt: new Date().toISOString() });
         await refreshTalent();
-        
-        toast.success("CV uploaded!", {
-          description: "We couldn't extract all details, but your CV is saved."
-        });
+        toast.success("Artifact Stored: Full extraction incomplete, node saved.");
       }
     } catch (err: any) {
-      clearInterval(progressInterval);
-      console.error("CV upload error:", err);
-      setError(err.message || "Failed to process CV. Please try again.");
-      toast.error("Failed to process CV", {
-        description: err.message || "Please try again or contact support."
-      });
+      clearInterval(syncInterval);
+      console.error("[Ingress Node Error]:", err);
+      setError(err.message || "Encryption/Processing Error. Protocol Aborted.");
+      toast.error("Handshake Failed", { description: err.message });
     } finally {
       setIsUploading(false);
-      // Reset file input
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      if (fileInputRef.current) fileInputRef.current.value = "";
     }
   };
 
-  const handleRetry = () => {
-    setError(null);
-    fileInputRef.current?.click();
-  };
-
   return (
-    <Card>
-      <CardHeader>
-        <div className="flex items-center justify-between">
-          <div>
-            <CardTitle className="text-lg flex items-center gap-2">
-              <FileText className="h-5 w-5" />
-              Upload CV
+    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-md shadow-2xl overflow-hidden transition-all duration-500 hover:border-primary/20">
+      <CardHeader className="p-8 border-b border-border/10 bg-muted/5">
+        <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
+          <div className="space-y-1">
+            <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+              <Zap className="h-7 w-7 text-primary fill-current" /> Neural_Artifact_Sync
             </CardTitle>
-            <CardDescription>
-              Upload your CV to auto-fill your profile information
+            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+              Automated profile hydration via AI-orchestrated artifact parsing
             </CardDescription>
           </div>
           {hasCV && (
-            <Badge variant="secondary" className="gap-1">
-              <CheckCircle2 className="h-3 w-3" />
-              CV on file
+            <Badge
+              variant="outline"
+              className="h-10 px-5 rounded-xl border-2 font-black italic gap-2 bg-background/50 uppercase text-emerald-500 border-emerald-500/20"
+            >
+              <ShieldCheck className="h-4 w-4" /> Node_Verified
             </Badge>
           )}
         </div>
       </CardHeader>
-      <CardContent>
+
+      <CardContent className="p-8">
         <input
           ref={fileInputRef}
           type="file"
-          accept=".pdf,.doc,.docx,application/pdf,application/vnd.openxmlformats-officedocument.wordprocessingml.document,application/msword"
+          accept=".pdf,.doc,.docx"
           className="hidden"
-          onChange={handleFileSelect}
+          onChange={handleArtifactIngestion}
           disabled={isUploading}
         />
 
         {isUploading ? (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3">
-              <Loader2 className="h-5 w-5 animate-spin text-primary" />
-              <span className="font-medium">{PARSING_STAGES[currentStage]?.message}</span>
+          <div className="space-y-6 py-4 animate-in fade-in duration-500">
+            <div className="flex items-center justify-between">
+              <div className="flex items-center gap-4">
+                <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                <span className="text-sm font-black uppercase italic tracking-widest">
+                  {PARSING_STAGES[currentStage]?.message}
+                </span>
+              </div>
+              <span className="text-xs font-black tabular-nums text-primary">{uploadProgress}%</span>
             </div>
-            <Progress value={uploadProgress} className="h-2" />
-            <p className="text-xs text-muted-foreground text-center">
-              This may take up to 30 seconds...
+            <Progress value={uploadProgress} className="h-3 rounded-full bg-primary/10 shadow-inner" />
+            <p className="text-[10px] text-muted-foreground uppercase font-black text-center tracking-[0.3em] opacity-50 animate-pulse">
+              EXTRACTING_IDENTITY_NODES...
             </p>
           </div>
         ) : error ? (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-4 bg-destructive/10 border border-destructive/20 rounded-lg">
-              <AlertCircle className="h-5 w-5 text-destructive" />
+          <div className="space-y-6 animate-in slide-in-from-top-2 duration-500">
+            <div className="flex items-center gap-4 p-6 bg-destructive/5 border-2 border-destructive/20 rounded-[24px]">
+              <AlertCircle className="h-8 w-8 text-destructive shrink-0" />
               <div className="flex-1">
-                <p className="font-medium text-destructive">Upload failed</p>
-                <p className="text-sm text-muted-foreground">{error}</p>
+                <p className="font-black text-sm uppercase italic text-destructive">PROTOCOL_FAULT</p>
+                <p className="text-xs font-bold text-muted-foreground/70 uppercase leading-relaxed mt-1">{error}</p>
               </div>
             </div>
-            <Button onClick={handleRetry} variant="outline" className="w-full">
-              <RefreshCw className="h-4 w-4 mr-2" />
-              Try Again
+            <Button
+              onClick={() => fileInputRef.current?.click()}
+              variant="outline"
+              className="w-full h-14 rounded-2xl border-2 font-black uppercase text-xs tracking-widest gap-2 hover:bg-destructive/5 hover:text-destructive"
+            >
+              <RefreshCw className="h-4 w-4" /> RE_INITIALIZE_SYNC
             </Button>
           </div>
         ) : hasCV ? (
-          <div className="space-y-4">
-            <div className="flex items-center gap-3 p-4 bg-success/10 border border-success/20 rounded-lg">
-              <CheckCircle2 className="h-5 w-5 text-success" />
+          <div className="space-y-6 animate-in zoom-in-95 duration-500">
+            <div className="flex items-center gap-5 p-6 bg-emerald-500/5 border-2 border-emerald-500/20 rounded-[24px]">
+              <div className="p-3 bg-emerald-500/10 rounded-2xl">
+                <CheckCircle2 className="h-8 w-8 text-emerald-500" />
+              </div>
               <div className="flex-1">
-                <p className="font-medium">CV uploaded</p>
-                <p className="text-sm text-muted-foreground">
-                  Your profile has been populated from your CV
+                <p className="font-black text-sm uppercase italic text-emerald-600">ARTIFACT_SYNCED</p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase mt-1 tracking-widest">
+                  Identity ledger updated via neural extraction
                 </p>
               </div>
             </div>
-            <div className="flex gap-2">
-              <Button 
-                variant="outline" 
-                className="flex-1"
+            <div className="flex gap-4">
+              <Button
+                variant="outline"
+                className="flex-1 h-14 rounded-2xl border-2 font-black uppercase text-xs tracking-widest gap-3 shadow-lg active:scale-95 transition-all"
                 onClick={() => fileInputRef.current?.click()}
               >
-                <Upload className="h-4 w-4 mr-2" />
-                Upload New CV
+                <Upload className="h-5 w-5" /> Protocol_Update
               </Button>
               {talent?.cvUrl && (
-                <Button 
+                <Button
                   variant="outline"
-                  onClick={() => downloadFile(talent.cvUrl!, `${talent.fullName || 'CV'}.pdf`)}
+                  className="h-14 w-14 rounded-2xl border-2 shadow-lg active:scale-95 transition-all"
+                  onClick={() => downloadFile(talent.cvUrl!, `${talent.fullName || "ARTIFACT"}.pdf`)}
                 >
-                  <Download className="h-4 w-4" />
+                  <Download className="h-5 w-5" />
                 </Button>
               )}
             </div>
           </div>
         ) : (
-          <div 
-            className="border-2 border-dashed rounded-lg p-8 text-center cursor-pointer hover:border-primary/50 hover:bg-muted/50 transition-colors"
+          <div
+            className="group relative border-2 border-dashed rounded-[32px] p-16 text-center cursor-pointer hover:border-primary/40 hover:bg-primary/5 transition-all duration-500 overflow-hidden"
             onClick={() => fileInputRef.current?.click()}
           >
-            <Upload className="h-10 w-10 mx-auto mb-3 text-muted-foreground" />
-            <p className="font-medium mb-1">Click to upload your CV</p>
-            <p className="text-sm text-muted-foreground mb-3">
-              PDF or Word document, max 5MB
-            </p>
-            <Button variant="secondary" size="sm">
-              Select File
-            </Button>
+            <div className="absolute inset-0 bg-gradient-to-br from-primary/5 via-transparent to-transparent opacity-0 group-hover:opacity-100 transition-opacity" />
+            <div className="relative z-10 space-y-5">
+              <div className="h-20 w-20 bg-muted/20 border-2 border-border/10 rounded-[28px] flex items-center justify-center mx-auto transition-all duration-700 group-hover:rotate-6 group-hover:scale-110 shadow-xl group-hover:shadow-primary/10">
+                <Upload className="h-10 w-10 text-primary" />
+              </div>
+              <div>
+                <p className="font-black text-lg uppercase italic tracking-tighter text-foreground">
+                  Deploy_CV_Artifact
+                </p>
+                <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2 opacity-60">
+                  PDF_DOC_DOCX | MAX_PAYLOAD_5MB
+                </p>
+              </div>
+              <Button
+                variant="secondary"
+                className="h-10 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-md"
+              >
+                Select_Source_Node
+              </Button>
+            </div>
           </div>
         )}
 
-        <p className="text-xs text-muted-foreground mt-4 text-center">
-          Your CV will be parsed to auto-fill your education, experience, and skills
-        </p>
+        <div className="mt-8 flex items-center justify-center gap-3 py-3 border-t border-border/10">
+          <Zap className="h-3.5 w-3.5 text-amber-500 fill-current animate-pulse" />
+          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 italic">
+            Neural Engine: Professional Data Ingress Protocol v2.6
+          </p>
+        </div>
       </CardContent>
     </Card>
   );
