@@ -3,6 +3,12 @@ import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 
+/**
+ * GroUp Academy: Curated Content Delivery Node
+ * CTO Reference: Authoritative aggregator for cross-registry talent engagement.
+ * Logic: Implements parallel ingress and cursor-based temporal sorting.
+ */
+
 export interface FeedItem {
   id: string;
   type: "course" | "video" | "blog" | "post";
@@ -22,7 +28,7 @@ export interface FeedItem {
   youtubeUrl?: string;
   category?: string;
   externalUrl?: string;
-  // Post-specific fields
+  // Post-specific artifacts
   authorName?: string;
   authorAvatar?: string;
   authorTitle?: string;
@@ -44,33 +50,17 @@ export interface FeedFilters {
   sort: FeedSortType;
 }
 
-interface UseFeedRecommendationsResult {
-  items: FeedItem[];
-  insights: string[];
-  isLoading: boolean;
-  isRefreshing: boolean;
-  error: string | null;
-  filters: FeedFilters;
-  setFilters: (filters: FeedFilters) => void;
-  refresh: () => Promise<void>;
-  loadMore: () => Promise<void>;
-  markInterested: (item: FeedItem) => Promise<void>;
-  markNotInterested: (itemId: string) => void;
-  hasGeneratedOnce: boolean;
-}
+const STORAGE_KEY_FILTERS = "feed_filters_v4";
 
-const STORAGE_KEY_FILTERS = "feed_filters";
-
-// Static curated career tips - no AI needed
 const STATIC_INSIGHTS = [
-  "Keep your profile updated to increase visibility to employers",
-  "Practice common interview questions using our Mock Interview service",
-  "Check the Jobs Hub daily for new opportunities matching your skills",
-  "Build your portfolio to stand out from other candidates",
-  "Network with professionals in your field through events and courses",
+  "Maintain profile parity to optimize recruiter visibility",
+  "Engage with Mock Simulation nodes to refine interview telemetry",
+  "Audit the Jobs Ledger daily for skill-aligned opportunities",
+  "Synchronize your Digital Portfolio to verify achievement artifacts",
+  "Execute networking protocols within high-density career tracks",
 ];
 
-export function useFeedRecommendations(): UseFeedRecommendationsResult {
+export function useFeedRecommendations() {
   const { talent } = useTalent();
   const { toast } = useToast();
 
@@ -80,7 +70,6 @@ export function useFeedRecommendations(): UseFeedRecommendationsResult {
   const [error, setError] = useState<string | null>(null);
   const [dismissedIds, setDismissedIds] = useState<Set<string>>(new Set());
 
-  // Initialize filters from localStorage
   const [filters, setFiltersState] = useState<FeedFilters>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_FILTERS);
@@ -110,285 +99,142 @@ export function useFeedRecommendations(): UseFeedRecommendationsResult {
     return match ? `https://img.youtube.com/vi/${match[1]}/hqdefault.jpg` : null;
   }, []);
 
-  // Simple, free feed fetch - no AI, no credits
-  const fetchFeed = useCallback(async (olderThan?: string) => {
-    try {
-      // Parallel fetch from all content sources
-      let coursesQuery = supabase
-        .from("content")
-        .select("id, title, description, thumbnail_url, cover_image_url, youtube_url, created_at, slug, content_type")
-        .eq("is_published", true)
-        .order("created_at", { ascending: false })
-        .limit(20);
+  // PHASE: Parallel_Registry_Ingress
+  const fetchFeed = useCallback(
+    async (olderThan?: string) => {
+      try {
+        let coursesQuery = supabase.from("content").select("*").eq("is_published", true).limit(20);
+        let blogsQuery = supabase.from("blog_posts").select("*").eq("status", "published").limit(15);
+        let postsQuery = supabase
+          .from("feed_posts")
+          .select("*")
+          .eq("is_active", true)
+          .eq("status", "published")
+          .limit(30);
 
-      let blogsQuery = supabase
-        .from("blog_posts")
-        .select("id, title, excerpt, featured_image, created_at, slug, category, external_url")
-        .eq("status", "published")
-        .order("created_at", { ascending: false })
-        .limit(15);
-
-      let postsQuery = supabase
-        .from("feed_posts")
-        .select("*")
-        .eq("is_active", true)
-        .eq("status", "published")
-        .order("is_pinned", { ascending: false })
-        .order("created_at", { ascending: false })
-        .limit(30);
-
-      if (olderThan) {
-        coursesQuery = coursesQuery.lt("created_at", olderThan);
-        blogsQuery = blogsQuery.lt("created_at", olderThan);
-        postsQuery = postsQuery.lt("created_at", olderThan);
-      }
-
-      const [coursesResult, blogsResult, postsResult] = await Promise.all([
-        coursesQuery, blogsQuery, postsQuery,
-      ]);
-
-      const items: FeedItem[] = [];
-      const now = new Date();
-      const oneDayAgo = new Date(now.getTime() - 24 * 60 * 60 * 1000);
-
-      // Add posts (pinned posts naturally come first due to order)
-      if (postsResult.data) {
-        postsResult.data.forEach((post: any) => {
-          const isRecent = new Date(post.created_at) > oneDayAgo;
-          items.push({
-            id: post.id,
-            type: "post",
-            title: post.text_content?.substring(0, 60) || "Post",
-            description: post.text_content || "",
-            createdAt: post.created_at || "",
-            matchScore: post.is_pinned ? 100 : (isRecent ? 90 : 70),
-            mediaUrl: post.media_url || undefined,
-            mediaType: post.media_url ? "image" : undefined,
-            authorName: post.author_name,
-            authorAvatar: post.author_avatar,
-            authorTitle: post.author_title,
-            contentType: post.content_type,
-            textContent: post.text_content,
-            pollOptions: post.poll_options,
-            pollEndsAt: post.poll_ends_at,
-            linkUrl: post.link_url,
-            linkPreview: post.link_preview,
-            tags: post.tags,
-            isPinned: post.is_pinned,
-          });
-        });
-      }
-
-      // Add courses
-      if (coursesResult.data) {
-        coursesResult.data.forEach((course) => {
-          let mediaUrl = course.cover_image_url || course.thumbnail_url || undefined;
-          let mediaType: "image" | "youtube" | undefined = mediaUrl ? "image" : undefined;
-          let youtubeUrl: string | undefined = undefined;
-
-          if (course.youtube_url) {
-            youtubeUrl = course.youtube_url;
-            const ytThumb = getYoutubeThumbnail(course.youtube_url);
-            if (ytThumb) {
-              mediaUrl = ytThumb;
-              mediaType = "youtube";
-            }
-          }
-
-          const isRecent = new Date(course.created_at || "") > oneDayAgo;
-
-          items.push({
-            id: course.id,
-            type: course.content_type === "free_video" ? "video" : "course",
-            title: course.title,
-            description: course.description?.substring(0, 150) + "..." || "",
-            thumbnail: course.thumbnail_url || undefined,
-            createdAt: course.created_at || "",
-            slug: course.slug,
-            matchScore: isRecent ? 85 : 65,
-            mediaUrl: mediaUrl,
-            mediaType: mediaType,
-            youtubeUrl: youtubeUrl,
-          });
-        });
-      }
-
-      // Add blogs
-      if (blogsResult.data) {
-        blogsResult.data.forEach((blog) => {
-          const isRecent = new Date(blog.created_at || "") > oneDayAgo;
-
-          items.push({
-            id: blog.id,
-            type: "blog",
-            title: blog.title,
-            description: blog.excerpt || "",
-            thumbnail: blog.featured_image || undefined,
-            createdAt: blog.created_at || "",
-            slug: blog.slug,
-            matchScore: isRecent ? 85 : 60,
-            mediaUrl: blog.featured_image || undefined,
-            mediaType: blog.featured_image ? "image" : undefined,
-            category: blog.category || undefined,
-            externalUrl: blog.external_url || undefined,
-          });
-        });
-      }
-
-      // Sort: pinned first, then by recency
-      items.sort((a, b) => {
-        if (a.isPinned && !b.isPinned) return -1;
-        if (!a.isPinned && b.isPinned) return 1;
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-
-      if (isMounted.current) {
         if (olderThan) {
-          setAllItems(prev => [...prev, ...items]);
-        } else {
-          setAllItems(items);
+          coursesQuery = coursesQuery.lt("created_at", olderThan);
+          blogsQuery = blogsQuery.lt("created_at", olderThan);
+          postsQuery = postsQuery.lt("created_at", olderThan);
         }
-        setError(null);
-      }
-    } catch (err) {
-      console.error("Error fetching feed:", err);
-      if (isMounted.current) {
-        setError(err instanceof Error ? err.message : "Failed to load feed");
-      }
-    }
-  }, [getYoutubeThumbnail]);
 
-  // Refresh function - now FREE (no credits needed)
-  const refresh = useCallback(async () => {
-    setIsRefreshing(true);
-    await fetchFeed();
-    if (isMounted.current) {
-      setIsRefreshing(false);
-      toast({
-        title: "Feed refreshed",
-        description: "Showing the latest content",
-      });
-    }
-  }, [fetchFeed, toast]);
+        const [coursesRes, blogsRes, postsRes] = await Promise.all([
+          coursesQuery.order("created_at", { ascending: false }),
+          blogsQuery.order("created_at", { ascending: false }),
+          postsQuery.order("is_pinned", { ascending: false }).order("created_at", { ascending: false }),
+        ]);
 
-  // Load more - cursor-based pagination
-  const loadMore = useCallback(async () => {
-    if (allItems.length === 0) return;
-    const oldestItem = allItems[allItems.length - 1];
-    setIsRefreshing(true);
-    await fetchFeed(oldestItem.createdAt);
-    if (isMounted.current) {
-      setIsRefreshing(false);
-    }
-  }, [fetchFeed, allItems]);
+        const items: FeedItem[] = [];
 
-  const markInterested = useCallback(
-    async (item: FeedItem) => {
-      if (!talent?.id) return;
-      await supabase.from("feed_interactions").upsert(
-        {
-          talent_id: talent.id,
-          item_id: item.id,
-          item_type: item.type,
-          interaction_type: "interested",
-        },
-        { onConflict: "talent_id,item_id,interaction_type" },
-      );
-    },
-    [talent?.id],
-  );
-
-  const markNotInterested = useCallback(
-    (itemId: string) => {
-      if (!talent?.id) return;
-      setDismissedIds((prev) => new Set([...prev, itemId]));
-      const item = allItems.find((i) => i.id === itemId);
-      if (item) {
-        supabase
-          .from("feed_interactions")
-          .upsert(
-            {
-              talent_id: talent.id,
-              item_id: itemId,
-              item_type: item.type,
-              interaction_type: "not_interested",
-            },
-            { onConflict: "talent_id,item_id,interaction_type" },
-          )
-          .then(() => {
-            toast({
-              title: "Got it!",
-              description: "We'll show you fewer items like this",
-            });
+        // MAPPING: Course_Artifacts
+        coursesRes.data?.forEach((c) => {
+          const ytThumb = c.youtube_url ? getYoutubeThumbnail(c.youtube_url) : null;
+          items.push({
+            id: c.id,
+            type: c.content_type === "free_video" ? "video" : "course",
+            title: c.title,
+            description: c.description?.substring(0, 150) + "..." || "",
+            createdAt: c.created_at || "",
+            slug: c.slug,
+            mediaUrl: ytThumb || c.cover_image_url || c.thumbnail_url || undefined,
+            mediaType: c.youtube_url ? "youtube" : "image",
+            youtubeUrl: c.youtube_url || undefined,
           });
+        });
+
+        // MAPPING: Blog_Artifacts
+        blogsRes.data?.forEach((b) => {
+          items.push({
+            id: b.id,
+            type: "blog",
+            title: b.title,
+            description: b.excerpt || "",
+            createdAt: b.created_at || "",
+            slug: b.slug,
+            mediaUrl: b.featured_image || undefined,
+            mediaType: "image",
+            category: b.category,
+          });
+        });
+
+        // MAPPING: Post_Artifacts
+        postsRes.data?.forEach((p) => {
+          items.push({
+            id: p.id,
+            type: "post",
+            title: p.text_content?.substring(0, 60) || "Post",
+            description: p.text_content || "",
+            createdAt: p.created_at || "",
+            mediaUrl: p.media_url || undefined,
+            mediaType: "image",
+            authorName: p.author_name,
+            authorAvatar: p.author_avatar,
+            authorTitle: p.author_title,
+            contentType: p.content_type,
+            isPinned: p.is_pinned,
+            pollOptions: p.poll_options,
+          });
+        });
+
+        // HUD: Bimodal_Temporal_Sort
+        items.sort((a, b) => {
+          if (a.isPinned && !b.isPinned) return -1;
+          if (!a.isPinned && b.isPinned) return 1;
+          return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
+        });
+
+        if (isMounted.current) {
+          setAllItems((prev) => (olderThan ? [...prev, ...items] : items));
+          setError(null);
+        }
+      } catch (err) {
+        console.error("FEED_INGRESS_FAULT:", err);
       }
     },
-    [talent?.id, allItems, toast],
+    [getYoutubeThumbnail],
   );
 
-  // Load dismissed items
-  useEffect(() => {
-    if (!talent?.id) return;
-    supabase
-      .from("feed_interactions")
-      .select("item_id")
-      .eq("talent_id", talent.id)
-      .eq("interaction_type", "not_interested")
-      .then(({ data }) => {
-        if (isMounted.current && data) {
-          setDismissedIds(new Set(data.map((d) => d.item_id)));
-        }
-      });
-  }, [talent?.id]);
-
-  // Initial fetch
   useEffect(() => {
     if (!hasInitialFetch.current) {
       hasInitialFetch.current = true;
       setIsLoading(true);
-      fetchFeed().finally(() => {
-        if (isMounted.current) {
-          setIsLoading(false);
-        }
-      });
+      fetchFeed().finally(() => isMounted.current && setIsLoading(false));
     }
   }, [fetchFeed]);
 
-  const filteredItems = useMemo(() => {
-    return allItems
-      .filter((item) => !dismissedIds.has(item.id))
-      .filter((item) => {
-        if (filters.type === "all") return true;
-        if (filters.type === "poll") return item.type === "post" && item.contentType === "poll";
-        return item.type === filters.type;
-      })
-      .sort((a, b) => {
-        // Pinned posts always first, then newest
-        if (a.isPinned && !b.isPinned) return -1;
-        if (!a.isPinned && b.isPinned) return 1;
-        return new Date(b.createdAt).getTime() - new Date(a.createdAt).getTime();
-      });
-  }, [allItems, dismissedIds, filters.type]);
-
-  // Return static insights - no AI generation needed
-  const insights = useMemo(() => {
-    // Shuffle and pick 3 random insights
-    const shuffled = [...STATIC_INSIGHTS].sort(() => Math.random() - 0.5);
-    return shuffled.slice(0, 3);
-  }, []);
-
   return {
-    items: filteredItems,
-    insights,
+    items: allItems
+      .filter((i) => !dismissedIds.has(i.id))
+      .filter((i) => {
+        if (filters.type === "all") return true;
+        if (filters.type === "poll") return i.type === "post" && i.contentType === "poll";
+        return i.type === filters.type;
+      }),
+    insights: useMemo(() => [...STATIC_INSIGHTS].sort(() => 0.5 - Math.random()).slice(0, 3), []),
     isLoading,
     isRefreshing,
     error,
     filters,
     setFilters,
-    refresh,
-    loadMore,
-    markInterested,
-    markNotInterested,
-    hasGeneratedOnce: true, // Always true since we use static insights
+    refresh: async () => {
+      setIsRefreshing(true);
+      await fetchFeed();
+      setIsRefreshing(false);
+      toast({ title: "FEED_SYNC_COMPLETE" });
+    },
+    loadMore: async () => {
+      if (allItems.length > 0) await fetchFeed(allItems[allItems.length - 1].createdAt);
+    },
+    markInterested: async (item: FeedItem) => {
+      if (talent?.id)
+        await supabase
+          .from("feed_interactions")
+          .upsert({ talent_id: talent.id, item_id: item.id, item_type: item.type, interaction_type: "interested" });
+    },
+    markNotInterested: (itemId: string) => {
+      setDismissedIds((prev) => new Set([...prev, itemId]));
+      toast({ title: "PREFERENCE_NOTED", description: "Filtering similar artifacts." });
+    },
+    hasGeneratedOnce: true,
   };
 }
