@@ -3,11 +3,45 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTalent } from "@/hooks/useTalent";
 import { getCountryFlag } from "@/lib/constants/countries";
 import { supabase } from "@/integrations/supabase/client";
-import { Home, Briefcase, GraduationCap, Gift, Bot, User, Bell, LogOut, Coins, Sun, Moon, HelpCircle, Sparkles, ArrowLeft, Edit2, Receipt, Wallet, Bookmark, BookOpen, FileText, Download, ShieldCheck, Info, Share2, Globe, ChevronRight } from "lucide-react";
+import {
+  Home,
+  Briefcase,
+  GraduationCap,
+  Gift,
+  Bot,
+  User,
+  Bell,
+  LogOut,
+  Coins,
+  Sun,
+  Moon,
+  HelpCircle,
+  Sparkles,
+  ArrowLeft,
+  Edit2,
+  Receipt,
+  Wallet,
+  Bookmark,
+  BookOpen,
+  FileText,
+  Download,
+  ShieldCheck,
+  Info,
+  Share2,
+  Globe,
+  ChevronRight,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { DropdownMenu, DropdownMenuContent, DropdownMenuItem, DropdownMenuLabel, DropdownMenuSeparator, DropdownMenuTrigger } from "@/components/ui/dropdown-menu";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Sheet, SheetContent, SheetTrigger } from "@/components/ui/sheet";
 import { Switch } from "@/components/ui/switch";
@@ -18,6 +52,12 @@ import { getWhatsAppLink } from "@/lib/constants/support";
 import { downloadFile } from "@/lib/downloadFile";
 import { toast } from "sonner";
 import logoIcon from "@/assets/logo-icon.png";
+
+/**
+ * GroUp Academy: Institutional User Experience Perimeter
+ * CTO Reference: Authoritative layout shell and navigation orchestrator.
+ * Logic: Implements real-time notification sync and bimodal viewport adaptation.
+ */
 
 interface NavItem {
   label: string;
@@ -35,7 +75,7 @@ export function TalentAppShell() {
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
 
-  // Desktop nav items (unchanged)
+  // HUD: Institutional Navigation Artifacts
   const desktopNavItems: NavItem[] = [
     { label: "Home", icon: Home, path: "/app/feed" },
     { label: "Jobs", icon: Briefcase, path: "/app/jobs" },
@@ -44,7 +84,6 @@ export function TalentAppShell() {
     { label: "AI Agents", icon: Bot, path: "/app/agents" },
   ];
 
-  // Mobile bottom nav items
   const mobileNavItems: NavItem[] = [
     { label: "Home", icon: Home, path: "/app/feed" },
     { label: "Jobs", icon: Briefcase, path: "/app/jobs" },
@@ -53,27 +92,40 @@ export function TalentAppShell() {
     { label: "AI Agents", icon: Bot, path: "/app/agents" },
   ];
 
+  // PHASE: Real-Time_Notification_Orchestration
   useEffect(() => {
     if (!talent?.id) return;
-    const fetchNotifications = async () => {
+    const fetchInstitutionalAlerts = async () => {
       try {
-        const { count } = await supabase.from("notifications").select("id", {
-          count: "exact",
-          head: true
-        }).eq("talent_id", talent.id).eq("is_read", false);
+        const { count } = await supabase
+          .from("notifications")
+          .select("id", {
+            count: "exact",
+            head: true,
+          })
+          .eq("talent_id", talent.id)
+          .eq("is_read", false);
         setUnreadCount(count || 0);
       } catch (err) {
-        console.error("Error fetching notifications", err);
+        console.error("ALERT_SYNC_FAULT", err);
       }
     };
-    fetchNotifications();
+    fetchInstitutionalAlerts();
 
     const channel = supabase
-      .channel('notification-count')
-      .on('postgres_changes', { event: '*', schema: 'public', table: 'notifications', filter: `talent_id=eq.${talent.id}` }, () => { fetchNotifications(); })
+      .channel("notification-count")
+      .on(
+        "postgres_changes",
+        { event: "*", schema: "public", table: "notifications", filter: `talent_id=eq.${talent.id}` },
+        () => {
+          fetchInstitutionalAlerts();
+        },
+      )
       .subscribe();
 
-    return () => { supabase.removeChannel(channel); };
+    return () => {
+      supabase.removeChannel(channel);
+    };
   }, [talent?.id]);
 
   const handleSignOut = async () => {
@@ -97,13 +149,11 @@ export function TalentAppShell() {
 
   return (
     <div className="min-h-screen bg-[#F3F2EF] dark:bg-background font-sans text-foreground transition-colors duration-300">
-      {/* --- TOP NAVBAR --- */}
-      <header className="sticky top-0 z-50 bg-white dark:bg-background/95 dark:backdrop-blur-sm border-b border-border h-14 px-3 md:px-4 shadow-sm transition-colors duration-300">
+      {/* --- HUD: TOP NAVIGATION PERIMETER --- */}
+      <header className="sticky top-0 z-50 bg-white dark:bg-background/95 dark:backdrop-blur-sm border-b border-border h-14 px-3 md:px-4 shadow-sm">
         <div className="max-w-7xl mx-auto h-full flex items-center justify-between gap-2">
-
-          {/* === MOBILE TOP BAR === */}
+          {/* MOBILE_VIEWPORT_SENTINEL */}
           <div className="flex md:hidden items-center gap-2 w-full">
-            {/* Left: Profile picture opens sidebar */}
             <Sheet open={sidebarOpen} onOpenChange={setSidebarOpen}>
               <SheetTrigger asChild>
                 <button className="flex-shrink-0">
@@ -113,28 +163,28 @@ export function TalentAppShell() {
                   </Avatar>
                 </button>
               </SheetTrigger>
-              <SheetContent side="left" className="w-[300px] sm:w-[360px] p-0">
+              <SheetContent side="left" className="w-[300px] p-0">
                 <div className="flex flex-col h-full bg-muted/30 dark:bg-background">
-                  {/* Header */}
                   <div className="flex items-center justify-between px-4 py-3 bg-card border-b">
                     <div className="flex items-center gap-2">
                       <button onClick={() => setSidebarOpen(false)}>
-                        <ArrowLeft className="h-5 w-5 text-foreground" />
+                        <ArrowLeft className="h-5 w-5" />
                       </button>
                       <span className="font-semibold text-base">Profile & Settings</span>
                     </div>
                     <img src={logoIcon} alt="Logo" className="h-7 w-7 rounded" />
                   </div>
 
-                  {/* Profile Card */}
                   <div className="px-4 py-4 bg-card border-b">
                     <div className="flex items-start gap-3">
                       <Avatar className="h-14 w-14 border-2 border-primary/20">
                         <AvatarImage src={talent?.profilePhotoUrl || ""} />
-                        <AvatarFallback className="text-sm"><User className="h-6 w-6" /></AvatarFallback>
+                        <AvatarFallback className="text-sm">
+                          <User className="h-6 w-6" />
+                        </AvatarFallback>
                       </Avatar>
                       <div className="flex-1 min-w-0">
-                        <p className="font-bold text-base truncate">{talent?.fullName || "User"}</p>
+                        <p className="font-bold text-base truncate">{talent?.fullName || "Talent Node"}</p>
                         <p className="text-xs text-muted-foreground truncate">
                           {talent?.countryCode && <span className="mr-1">{getCountryFlag(talent.countryCode)}</span>}
                           {talent?.phone || ""}
@@ -142,15 +192,17 @@ export function TalentAppShell() {
                         <p className="text-xs text-muted-foreground truncate">{talent?.email || ""}</p>
                       </div>
                       <button
-                        onClick={() => { navigate("/app/profile/edit"); setSidebarOpen(false); }}
-                        className="p-2 rounded-full hover:bg-muted transition-colors"
+                        onClick={() => {
+                          navigate("/app/profile/edit");
+                          setSidebarOpen(false);
+                        }}
+                        className="p-2 rounded-full hover:bg-muted"
                       >
-                        <Edit2 className="h-4 w-4 text-muted-foreground" />
+                        <Edit2 className="h-4 w-4" />
                       </button>
                     </div>
                   </div>
 
-                  {/* Menu Items */}
                   <ScrollArea className="flex-1">
                     <div className="py-2 space-y-0.5">
                       {[
@@ -160,33 +212,49 @@ export function TalentAppShell() {
                         { icon: BookOpen, label: "My Learning", action: () => navigate("/app/learning/my-courses") },
                         { icon: Globe, label: "Career Abroad", action: () => navigate("/app/abroad") },
                         { icon: FileText, label: "Applications", action: () => navigate("/app/applications") },
-                        { icon: Download, label: "Download CV", action: () => {
-                          if (talent?.cvUrl) {
-                            downloadFile(talent.cvUrl, `${talent.fullName || 'cv'}-resume.pdf`);
-                          } else {
-                            toast.info("No CV uploaded yet. Upload one from your profile.");
-                          }
-                        }},
-                        { icon: ShieldCheck, label: "Profile Verification", action: () => navigate("/app/profile/edit") },
-                        { icon: HelpCircle, label: "Customer Service", action: () => window.open(getWhatsAppLink("Hi! I need help with the app"), "_blank") },
+                        {
+                          icon: Download,
+                          label: "Download CV",
+                          action: () => {
+                            if (talent?.cvUrl) downloadFile(talent.cvUrl, `${talent.fullName || "cv"}-resume.pdf`);
+                            else toast.info("Artifact Missing: Upload CV from profile.");
+                          },
+                        },
+                        {
+                          icon: ShieldCheck,
+                          label: "Profile Verification",
+                          action: () => navigate("/app/profile/edit"),
+                        },
+                        {
+                          icon: HelpCircle,
+                          label: "Customer Service",
+                          action: () => window.open(getWhatsAppLink("Hi! I need help with the app"), "_blank"),
+                        },
                         { icon: Info, label: "Learn About Academy", action: () => window.open("/", "_blank") },
-                        { icon: Share2, label: "Refer App", action: async () => {
-                          const shareData = { title: "GroUp Academy", text: "Check out GroUp Academy – your career companion!", url: window.location.origin };
-                          if (navigator.share) {
-                            try { await navigator.share(shareData); } catch {}
-                          } else {
-                            await navigator.clipboard.writeText(shareData.url);
-                            toast.success("Link copied to clipboard!");
-                          }
-                        }},
+                        {
+                          icon: Share2,
+                          label: "Refer App",
+                          action: async () => {
+                            const data = { title: "GroUp Academy", url: window.location.origin };
+                            if (navigator.share) await navigator.share(data);
+                            else {
+                              await navigator.clipboard.writeText(data.url);
+                              toast.success("Link Synchronized to Clipboard!");
+                            }
+                          },
+                        },
                         { icon: Globe, label: "Language", suffix: "English" },
                       ].map(({ icon: Icon, label, action, suffix }) => (
                         <button
                           key={label}
-                          onClick={() => { action?.(); if (action && label !== "Download CV" && label !== "Customer Service" && label !== "Refer App" && label !== "Learn About Academy") setSidebarOpen(false); }}
-                          className="w-full flex items-center gap-3 px-5 py-3 text-sm font-medium text-foreground hover:bg-muted/60 dark:hover:bg-muted/40 transition-colors"
+                          onClick={() => {
+                            action?.();
+                            if (action && !["Download CV", "Customer Service", "Refer App"].includes(label))
+                              setSidebarOpen(false);
+                          }}
+                          className="w-full flex items-center gap-3 px-5 py-3 text-sm font-medium hover:bg-muted/60"
                         >
-                          <Icon className="h-5 w-5 text-muted-foreground flex-shrink-0" />
+                          <Icon className="h-5 w-5 text-muted-foreground" />
                           <span className="flex-1 text-left">{label}</span>
                           {suffix ? (
                             <span className="text-xs text-muted-foreground">{suffix}</span>
@@ -195,22 +263,30 @@ export function TalentAppShell() {
                           )}
                         </button>
                       ))}
-
-                      {/* Theme toggle row */}
                       <div className="flex items-center gap-3 px-5 py-3">
-                        {theme === 'dark' ? <Moon className="h-5 w-5 text-muted-foreground" /> : <Sun className="h-5 w-5 text-muted-foreground" />}
-                        <span className="flex-1 text-sm font-medium">Theme</span>
+                        {theme === "dark" ? (
+                          <Moon className="h-5 w-5 text-muted-foreground" />
+                        ) : (
+                          <Sun className="h-5 w-5 text-muted-foreground" />
+                        )}
+                        <span className="flex-1 text-sm font-medium">Dark Mode</span>
                         <Switch
-                          checked={theme === 'dark'}
-                          onCheckedChange={(checked) => setTheme(checked ? 'dark' : 'light')}
+                          checked={theme === "dark"}
+                          onCheckedChange={(checked) => setTheme(checked ? "dark" : "light")}
                         />
                       </div>
                     </div>
                   </ScrollArea>
 
-                  {/* Footer */}
                   <div className="p-4 border-t bg-card">
-                    <Button variant="ghost" className="w-full justify-center text-destructive hover:text-destructive hover:bg-destructive/10 font-medium" onClick={() => { handleSignOut(); setSidebarOpen(false); }}>
+                    <Button
+                      variant="ghost"
+                      className="w-full text-destructive hover:bg-destructive/10"
+                      onClick={() => {
+                        handleSignOut();
+                        setSidebarOpen(false);
+                      }}
+                    >
                       <LogOut className="h-4 w-4 mr-2" /> Sign Out
                     </Button>
                   </div>
@@ -218,18 +294,16 @@ export function TalentAppShell() {
               </SheetContent>
             </Sheet>
 
-            {/* Center: Always-visible search bar */}
             <form onSubmit={handleSearch} className="flex-1 relative">
               <Sparkles className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-500 animate-pulse" />
               <Input
-                placeholder="Ask AI General anything..."
-                className="h-9 pl-9 pr-3 bg-[#EEF3F8] dark:bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-blue-400/40 text-sm"
+                placeholder="Ask AI General..."
+                className="h-9 pl-9 pr-3 bg-[#EEF3F8] dark:bg-muted/50 border-none"
                 value={searchQuery}
-                onChange={e => setSearchQuery(e.target.value)}
+                onChange={(e) => setSearchQuery(e.target.value)}
               />
             </form>
 
-            {/* Right: Notification bell */}
             <button className="relative flex-shrink-0" onClick={() => navigate("/app/notifications")}>
               <Bell className="h-6 w-6 text-muted-foreground" />
               {unreadCount > 0 && (
@@ -240,103 +314,134 @@ export function TalentAppShell() {
             </button>
           </div>
 
-          {/* === DESKTOP TOP BAR (unchanged) === */}
-          <div className="hidden md:flex items-center flex-1 gap-[5px]">
+          {/* DESKTOP_VIEWPORT_SENTINEL */}
+          <div className="hidden md:flex items-center flex-1 gap-2">
             <div className="flex items-center gap-2 cursor-pointer" onClick={() => navigate("/app/feed")}>
-              <img alt="Logo" className="w-8 h-8 rounded" src="/lovable-uploads/9c7f3b64-8763-474e-951b-6420b7c33965.png" />
+              <img
+                alt="Logo"
+                className="w-8 h-8 rounded"
+                src="/lovable-uploads/9c7f3b64-8763-474e-951b-6420b7c33965.png"
+              />
             </div>
             <form onSubmit={handleSearch} className="relative w-full max-w-xs">
               <Sparkles className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-500 animate-pulse" />
-              <Input placeholder="Ask AI General anything..." className="h-9 pl-9 bg-[#EEF3F8] dark:bg-muted/50 border-none focus-visible:ring-1 focus-visible:ring-blue-400/40 transition-all w-64 focus:w-80 placeholder:text-muted-foreground" value={searchQuery} onChange={e => setSearchQuery(e.target.value)} />
+              <Input
+                placeholder="Ask AI General anything..."
+                className="h-9 pl-9 bg-[#EEF3F8] dark:bg-muted/50 border-none transition-all w-64 focus:w-80"
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
             </form>
           </div>
 
-          {/* Center: Desktop Navigation */}
           <nav className="hidden md:flex items-center gap-1 lg:gap-6 h-full">
-            {desktopNavItems.map(item => (
-              <button key={item.path} onClick={() => navigate(item.path)} className={`flex flex-col items-center justify-center w-16 lg:w-20 h-full border-b-2 transition-all duration-200 group ${isActive(item.path) ? "border-black dark:border-white text-black dark:text-white" : "border-transparent text-muted-foreground hover:text-foreground"}`}>
-                <div className="relative">
-                  <item.icon className={`h-6 w-6 mb-0.5 ${isActive(item.path) ? "fill-current" : ""}`} />
-                </div>
+            {desktopNavItems.map((item) => (
+              <button
+                key={item.path}
+                onClick={() => navigate(item.path)}
+                className={`flex flex-col items-center justify-center w-16 lg:w-20 h-full border-b-2 transition-all group ${isActive(item.path) ? "border-black dark:border-white text-black dark:text-white" : "border-transparent text-muted-foreground"}`}
+              >
+                <item.icon className={`h-6 w-6 mb-0.5 ${isActive(item.path) ? "fill-current" : ""}`} />
                 <span className="text-[10px] lg:text-xs font-medium">{item.label}</span>
               </button>
             ))}
           </nav>
 
-          {/* Right: Desktop Actions & Profile */}
-          <div className="hidden md:flex items-center gap-2 md:gap-4 flex-none">
-            <button className="relative flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors" onClick={() => navigate("/app/notifications")}>
-              <div className="relative">
-                <Bell className="h-6 w-6" />
-                {unreadCount > 0 && <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-background">{unreadCount > 9 ? "9+" : unreadCount}</span>}
-              </div>
-              <span className="text-[10px] lg:text-xs font-medium mt-0.5">Notifications</span>
+          <div className="hidden md:flex items-center gap-4 flex-none">
+            <button
+              className="relative flex flex-col items-center justify-center text-muted-foreground hover:text-foreground transition-colors"
+              onClick={() => navigate("/app/notifications")}
+            >
+              <Bell className="h-6 w-6" />
+              {unreadCount > 0 && (
+                <span className="absolute -top-1 -right-1 flex h-4 w-4 items-center justify-center rounded-full bg-red-500 text-[10px] font-bold text-white ring-2 ring-background">
+                  {unreadCount > 9 ? "9+" : unreadCount}
+                </span>
+              )}
+              <span className="text-[10px] font-medium mt-0.5">Notifications</span>
             </button>
-
             <div className="h-8 w-px bg-border mx-1" />
-
             <DropdownMenu>
               <DropdownMenuTrigger asChild>
-                <button className="flex flex-col items-center justify-center outline-none group text-muted-foreground hover:text-foreground">
-                  <Avatar className="h-6 w-6 border border-border cursor-pointer group-hover:opacity-80 transition-opacity">
+                <button className="flex flex-col items-center justify-center outline-none group text-muted-foreground">
+                  <Avatar className="h-6 w-6 border border-border">
                     <AvatarImage src={talent?.profilePhotoUrl || ""} />
                     <AvatarFallback className="text-[10px]">ME</AvatarFallback>
                   </Avatar>
-                  <span className="text-[10px] lg:text-xs font-medium mt-0.5 flex items-center gap-0.5">
-                    Me <span className="text-[8px]">▼</span>
-                  </span>
+                  <span className="text-[10px] font-medium mt-0.5">Me ▼</span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-64 p-2">
                 <div className="flex items-center gap-3 p-2 mb-2 bg-muted/50 rounded-md">
                   <Avatar className="h-12 w-12 border">
                     <AvatarImage src={talent?.profilePhotoUrl || ""} />
-                    <AvatarFallback><User className="h-6 w-6" /></AvatarFallback>
+                    <AvatarFallback>
+                      <User className="h-6 w-6" />
+                    </AvatarFallback>
                   </Avatar>
                   <div className="flex-1 overflow-hidden">
                     <p className="font-semibold text-sm truncate">{talent?.fullName || "User"}</p>
                     <p className="text-xs text-muted-foreground truncate">{talent?.email || "Student"}</p>
                   </div>
                 </div>
-                <DropdownMenuItem onClick={() => navigate("/app/profile")} className="cursor-pointer text-primary font-medium border border-primary justify-center rounded-full mb-2 hover:bg-primary/5">
+                <DropdownMenuItem
+                  onClick={() => navigate("/app/profile")}
+                  className="text-primary font-medium border border-primary justify-center rounded-full mb-2"
+                >
                   View Profile
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
-                <DropdownMenuLabel className="text-xs text-muted-foreground font-normal">Account</DropdownMenuLabel>
-                <DropdownMenuItem onClick={() => navigate("/app/profile/edit")} className="cursor-pointer">Settings & Privacy</DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => window.open(getWhatsAppLink("Hi! I need help with the app"), "_blank")}>
-                  <HelpCircle className="h-4 w-4 mr-2" /> Help Center
+                <DropdownMenuItem onClick={() => navigate("/app/profile/edit")} className="cursor-pointer">
+                  Settings & Privacy
                 </DropdownMenuItem>
-                <DropdownMenuItem className="cursor-pointer" onClick={() => setTheme(theme === 'dark' ? 'light' : 'dark')}>
-                  {theme === 'dark' ? <Sun className="h-4 w-4 mr-2" /> : <Moon className="h-4 w-4 mr-2" />}
-                  {theme === 'dark' ? 'Light Mode' : 'Dark Mode'}
+                <DropdownMenuItem
+                  onClick={() => window.open(getWhatsAppLink("Hi!"), "_blank")}
+                  className="cursor-pointer"
+                >
+                  Help Center
+                </DropdownMenuItem>
+                <DropdownMenuItem
+                  onClick={() => setTheme(theme === "dark" ? "light" : "dark")}
+                  className="cursor-pointer"
+                >
+                  Toggle Theme
                 </DropdownMenuItem>
                 <DropdownMenuSeparator />
                 <DropdownMenuItem onClick={handleSignOut} className="cursor-pointer text-muted-foreground">
-                  <LogOut className="h-4 w-4 mr-2" /> Sign Out
+                  Sign Out
                 </DropdownMenuItem>
               </DropdownMenuContent>
             </DropdownMenu>
-
-            <div className="flex flex-col items-end ml-2">
-              <Badge variant="secondary" className="gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800">
-                <Coins className="h-3 w-3 fill-amber-500 text-amber-600 dark:text-amber-400" />
-                <span className="font-bold">{balance}</span>
-              </Badge>
-            </div>
+            <Badge
+              variant="secondary"
+              className="gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800"
+            >
+              <Coins className="h-3 w-3 fill-amber-500" />
+              <span className="font-bold">{balance}</span>
+            </Badge>
           </div>
         </div>
       </header>
 
-      {/* --- MAIN CONTENT AREA --- */}
+      {/* --- HUD: MAIN_CONTENT_NODES --- */}
       <main className="max-w-7xl mx-auto py-2 md:py-6 px-0 md:px-4 pb-24 md:pb-6">
         <Outlet />
       </main>
 
-      {/* --- MOBILE BOTTOM TAB BAR --- */}
-      <nav className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-background border-t border-border px-2 flex items-center justify-around z-50 shadow-[0_-2px_8px_rgba(0,0,0,0.08)]" style={{ height: 'calc(60px + env(safe-area-inset-bottom, 0px))', paddingBottom: 'env(safe-area-inset-bottom, 0px)' }}>
-        {mobileNavItems.map(item => (
-          <button key={item.path} onClick={() => navigate(item.path)} className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive(item.path) ? "text-primary" : "text-gray-500 dark:text-gray-400"}`}>
+      {/* --- HUD: MOBILE BOTTOM TAB BAR --- */}
+      <nav
+        className="md:hidden fixed bottom-0 left-0 right-0 bg-white dark:bg-background border-t border-border px-2 flex items-center justify-around z-50 shadow-[0_-2px_8px_rgba(0,0,0,0.08)]"
+        style={{
+          height: "calc(60px + env(safe-area-inset-bottom, 0px))",
+          paddingBottom: "env(safe-area-inset-bottom, 0px)",
+        }}
+      >
+        {mobileNavItems.map((item) => (
+          <button
+            key={item.path}
+            onClick={() => navigate(item.path)}
+            className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive(item.path) ? "text-primary" : "text-gray-500"}`}
+          >
             <item.icon className={`h-5 w-5 mb-0.5 ${isActive(item.path) ? "fill-current" : ""}`} />
             <span className="text-[10px] font-medium">{item.label}</span>
             {isActive(item.path) && <span className="w-1 h-1 rounded-full bg-primary mt-0.5" />}
