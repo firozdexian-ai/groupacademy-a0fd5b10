@@ -1,6 +1,7 @@
 /**
- * Centralized AI error handling utility
- * Provides consistent, user-friendly error messages for AI service failures
+ * GroUp Academy: Neural Exception Sentinel
+ * CTO Reference: Authoritative utility for graceful AI service degradation.
+ * Logic: Implements bimodal diagnostic mapping and talent-friendly suggestions.
  */
 
 export interface AIErrorResult {
@@ -10,76 +11,82 @@ export interface AIErrorResult {
 }
 
 /**
- * Parse AI-related errors and return user-friendly messages
+ * PHASE: Semantic_Error_Translation
+ * Transforms raw service faults into pedagogical suggestions.
  */
 export function handleAIError(error: any, statusCode?: number): AIErrorResult {
-  const errorMessage = error?.message?.toLowerCase() || '';
-  
-  // AI quota/balance issues (402 Payment Required)
-  if (statusCode === 402 || errorMessage.includes('quota') || errorMessage.includes('payment_required') || errorMessage.includes('not enough credits')) {
+  const errorMessage = error?.message?.toLowerCase() || "";
+
+  // HUD: Fiscal_Quota_Audit (402 Payment Required)
+  if (
+    statusCode === 402 ||
+    errorMessage.includes("quota") ||
+    errorMessage.includes("payment_required") ||
+    errorMessage.includes("not enough credits")
+  ) {
     return {
-      message: "AI features are temporarily unavailable.",
-      suggestion: "Please try the manual process or check back later.",
-      isAIUnavailable: true
+      message: "AI trajectory optimization is temporarily unavailable.",
+      suggestion: "Please proceed with manual entry or check your credit ledger.",
+      isAIUnavailable: true,
     };
   }
-  
-  // Rate limiting (429 Too Many Requests)
-  if (statusCode === 429 || errorMessage.includes('rate limit')) {
+
+  // HUD: Concurrency_Backoff (429 Too Many Requests)
+  if (statusCode === 429 || errorMessage.includes("rate limit")) {
     return {
-      message: "Too many requests. Please wait a moment.",
-      suggestion: "Try again in a few seconds.",
-      isAIUnavailable: false
+      message: "High neural traffic detected.",
+      suggestion: "Please re-attempt the handshake in a few seconds.",
+      isAIUnavailable: false,
     };
   }
-  
-  // Timeout errors
-  if (errorMessage.includes('timeout') || error?.name === 'AbortError') {
+
+  // HUD: Latency_Threshold_Fault
+  if (errorMessage.includes("timeout") || error?.name === "AbortError") {
     return {
-      message: "Request timed out.",
-      suggestion: "Please try again or use manual entry.",
-      isAIUnavailable: false
+      message: "Neural handshake timed out.",
+      suggestion: "Please try again or utilize the manual curriculum process.",
+      isAIUnavailable: false,
     };
   }
-  
-  // Server errors (5xx)
-  if (statusCode === 500 || statusCode === 502 || statusCode === 503 || statusCode === 504) {
+
+  // HUD: Institutional_Infrastructure_Fault (5xx)
+  if (statusCode && statusCode >= 500 && statusCode <= 504) {
     return {
-      message: "AI service is currently unavailable.",
-      suggestion: "Please try the manual process or check back later.",
-      isAIUnavailable: true
+      message: "AI services are currently undergoing maintenance.",
+      suggestion: "Manual workflows remain active. Please check back later.",
+      isAIUnavailable: true,
     };
   }
-  
-  // Network errors
-  if (errorMessage.includes('network') || errorMessage.includes('failed to fetch')) {
+
+  // HUD: Network_Ingress_Issue
+  if (errorMessage.includes("network") || errorMessage.includes("failed to fetch")) {
     return {
-      message: "Network connection issue.",
-      suggestion: "Please check your internet connection and try again.",
-      isAIUnavailable: false
+      message: "Network transmission fault.",
+      suggestion: "Verify your connection artifacts and re-sync.",
+      isAIUnavailable: false,
     };
   }
-  
-  // Default fallback
+
+  // HUD: Default_Fallback_Protocol
   return {
-    message: error?.message || "Something went wrong.",
-    suggestion: "Please try again.",
-    isAIUnavailable: false
+    message: error?.message || "An unexpected neural fault occurred.",
+    suggestion: "System suggests a manual retry.",
+    isAIUnavailable: false,
   };
 }
 
 /**
- * Standard toast content for AI unavailable scenarios
+ * Diagnostic: Semantic toast artifacts for AI-hard-stops.
  */
 export function getAIUnavailableToast(): { title: string; description: string } {
   return {
-    title: "AI Features Unavailable",
-    description: "Sorry, AI features are not available right now. Please try the manual process or check back later."
+    title: "AI Node Offline",
+    description: "Neural services are currently unreachable. Please proceed with manual curriculum tasks.",
   };
 }
 
 /**
- * Check if an error response indicates AI is unavailable
+ * Logic: Verify if status artifact indicates service unavailability.
  */
 export function isAIServiceError(response: Response | null): boolean {
   if (!response) return false;
