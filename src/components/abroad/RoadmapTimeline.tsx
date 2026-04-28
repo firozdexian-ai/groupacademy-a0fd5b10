@@ -1,6 +1,12 @@
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Circle, Calendar } from "lucide-react";
+import { CheckCircle2, Circle, Calendar, Zap, ArrowRight } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Admissions Trajectory Timeline
+ * CTO Reference: Authoritative node for temporal process mapping.
+ */
 
 interface TimelineItem {
   month: number;
@@ -16,73 +22,117 @@ interface RoadmapTimelineProps {
 
 export function RoadmapTimeline({ timeline, currentMonth = 1 }: RoadmapTimelineProps) {
   return (
-    <div className="space-y-4">
+    <div className="space-y-6 relative animate-in fade-in duration-1000">
       {timeline.map((item, index) => {
         const isCompleted = item.month < currentMonth;
         const isCurrent = item.month === currentMonth;
+        const isFuture = item.month > currentMonth;
 
         return (
-          <div key={index} className="relative">
-            {/* Connector Line */}
+          <div key={index} className="relative pl-2">
+            {/* HUD: NEURAL_PATH_CONNECTOR */}
             {index < timeline.length - 1 && (
               <div
-                className={`absolute left-4 top-10 w-0.5 h-full -mb-4 ${
-                  isCompleted ? "bg-primary" : "bg-border"
-                }`}
+                className={cn(
+                  "absolute left-6 top-12 w-[2px] h-full -mb-6 z-0 transition-colors duration-1000",
+                  isCompleted ? "bg-primary" : "bg-border/30 border-dashed border-l-2",
+                )}
               />
             )}
 
             <Card
-              className={`relative transition-all ${
-                isCurrent ? "border-primary shadow-md" : ""
-              } ${isCompleted ? "bg-muted/30" : ""}`}
+              className={cn(
+                "relative z-10 transition-all duration-500 rounded-[28px] border-2 overflow-hidden",
+                isCurrent
+                  ? "border-primary bg-card/60 backdrop-blur-xl shadow-[0_20px_50px_rgba(var(--primary),0.1)] scale-[1.02]"
+                  : "border-border/40 bg-card/30",
+                isCompleted && "bg-muted/10 opacity-80 grayscale-[0.5]",
+              )}
             >
-              <CardContent className="p-4">
-                <div className="flex items-start gap-4">
-                  {/* Status Icon */}
+              <CardContent className="p-6">
+                <div className="flex items-start gap-6">
+                  {/* COMPONENT: NODE_STATUS_INDICATOR */}
                   <div
-                    className={`flex-shrink-0 w-8 h-8 rounded-full flex items-center justify-center ${
+                    className={cn(
+                      "flex-shrink-0 w-10 h-10 rounded-2xl flex items-center justify-center transition-all duration-700 shadow-lg",
                       isCompleted
-                        ? "bg-primary text-primary-foreground"
+                        ? "bg-emerald-500 text-white rotate-6"
                         : isCurrent
-                        ? "bg-primary/20 text-primary border-2 border-primary"
-                        : "bg-muted text-muted-foreground"
-                    }`}
+                          ? "bg-primary text-white animate-pulse"
+                          : "bg-muted text-muted-foreground border-2 border-border/10",
+                    )}
                   >
                     {isCompleted ? (
-                      <CheckCircle2 className="h-4 w-4" />
+                      <CheckCircle2 className="h-6 w-6" />
+                    ) : isCurrent ? (
+                      <Zap className="h-5 w-5 fill-current" />
                     ) : (
-                      <span className="text-xs font-bold">{item.month}</span>
+                      <span className="text-xs font-black italic tracking-tighter">
+                        {String(item.month).padStart(2, "0")}
+                      </span>
                     )}
                   </div>
 
-                  {/* Content */}
-                  <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap mb-2">
-                      <h4 className="font-semibold text-sm">
-                        Month {item.month}: {item.title}
-                      </h4>
-                      {isCurrent && (
-                        <Badge variant="default" className="text-xs">
-                          Current
-                        </Badge>
-                      )}
-                      {item.deadline && (
-                        <Badge variant="outline" className="text-xs gap-1">
-                          <Calendar className="h-3 w-3" />
-                          {item.deadline}
-                        </Badge>
-                      )}
+                  {/* HUD: NODE_CONTENT_ARAY */}
+                  <div className="flex-1 min-w-0 space-y-4">
+                    <div className="flex items-center justify-between gap-4 flex-wrap">
+                      <div className="space-y-1">
+                        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic leading-none">
+                          PHASE_MONTH_{item.month}
+                        </p>
+                        <h4 className="font-black text-lg uppercase italic tracking-tighter text-foreground leading-none">
+                          {item.title.replace(" ", "_")}
+                        </h4>
+                      </div>
+
+                      <div className="flex gap-2">
+                        {isCurrent && (
+                          <Badge className="bg-primary text-white font-black italic text-[9px] uppercase tracking-widest px-3 h-6 rounded-lg">
+                            ACTIVE_SYNC
+                          </Badge>
+                        )}
+                        {item.deadline && (
+                          <Badge
+                            variant="outline"
+                            className="h-6 rounded-lg border-2 border-border/40 text-[9px] font-black uppercase italic tracking-widest gap-2 bg-background/50"
+                          >
+                            <Calendar className="h-3 w-3 text-primary" /> {item.deadline}
+                          </Badge>
+                        )}
+                      </div>
                     </div>
 
-                    <ul className="space-y-1.5">
+                    {/* TASK_REGISTRY_MATRIX */}
+                    <div className="grid grid-cols-1 gap-2 pt-2 border-t border-border/10">
                       {item.tasks.map((task, taskIndex) => (
-                        <li key={taskIndex} className="flex items-start gap-2 text-sm text-muted-foreground">
-                          <Circle className="h-1.5 w-1.5 mt-2 flex-shrink-0 fill-current" />
-                          <span>{task}</span>
-                        </li>
+                        <div key={taskIndex} className="flex items-start gap-3 group">
+                          <div
+                            className={cn(
+                              "mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 transition-all group-hover:scale-150",
+                              isCompleted ? "bg-emerald-500" : isCurrent ? "bg-primary" : "bg-muted-foreground/30",
+                            )}
+                          />
+                          <span
+                            className={cn(
+                              "text-xs font-medium italic leading-relaxed transition-colors",
+                              isCompleted
+                                ? "text-muted-foreground line-through opacity-50"
+                                : "text-foreground/80 group-hover:text-primary",
+                            )}
+                          >
+                            {task}
+                          </span>
+                        </div>
                       ))}
-                    </ul>
+                    </div>
+
+                    {isCurrent && (
+                      <div className="pt-2 flex justify-end">
+                        <div className="flex items-center gap-2 text-[9px] font-black uppercase italic tracking-widest text-primary hover:translate-x-1 transition-transform cursor-pointer">
+                          EXECUTE_PHASE_TASKS <ArrowRight className="h-3 w-3" />
+                        </div>
+                      </div>
+                    )}
                   </div>
                 </div>
               </CardContent>
