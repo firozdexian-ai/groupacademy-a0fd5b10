@@ -1,9 +1,14 @@
 import { formatDistanceToNow, isValid } from "date-fns";
-import { Coins, ArrowRight, MessageCircle } from "lucide-react";
+import { Coins, ArrowRight, MessageCircle, Zap, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AgentAvatar } from "./AgentAvatar";
 import { Badge } from "@/components/ui/badge";
 import { LucideIcon } from "lucide-react";
+
+/**
+ * GroUp Academy: Agent Messaging Ledger Node
+ * CTO Reference: High-density interaction node for active threads and discovery.
+ */
 
 interface AgentListItemProps {
   id: string;
@@ -25,7 +30,7 @@ interface AgentListItemProps {
 }
 
 export function AgentListItem({
-  name,
+  name = "AGENT_NODE",
   description,
   icon,
   bgColor,
@@ -40,31 +45,30 @@ export function AgentListItem({
   expertise = [],
   onClick,
 }: AgentListItemProps) {
-  // CTO Fix: Safe date resolution to prevent runtime crashes
-  const getTimeAgo = () => {
+  // PROTOCOL: Safe Temporal Resolution
+  const getTimeSync = () => {
     if (!lastMessageTime) return null;
     const date = new Date(lastMessageTime);
-    if (!isValid(date)) return null;
-    return formatDistanceToNow(date, { addSuffix: false });
+    return isValid(date) ? formatDistanceToNow(date, { addSuffix: false }) : null;
   };
 
-  const timeAgo = getTimeAgo();
+  const timeSyncLabel = getTimeSync();
 
   return (
     <button
       onClick={onClick}
       className={cn(
-        "w-full flex items-start gap-4 p-4 transition-all duration-300 border-b border-border/40",
-        "hover:bg-muted/50 active:scale-[0.98] group relative overflow-hidden",
-        isActive && "bg-primary/[0.03] dark:bg-primary/[0.01]",
+        "w-full flex items-start gap-4 p-5 transition-all duration-500 border-b border-border/10",
+        "hover:bg-muted/30 active:scale-[0.99] group relative overflow-hidden text-left",
+        isActive && "bg-primary/[0.02]",
       )}
     >
-      {/* Active Indicator Bar */}
+      {/* HUD: ACTIVE_SYNC_SIDEBAR */}
       {isActive && (
-        <div className="absolute left-0 top-0 bottom-0 w-1 bg-primary animate-in slide-in-from-left duration-500" />
+        <div className="absolute left-0 top-2 bottom-2 w-1 rounded-r-full bg-primary shadow-[0_0_15px_rgba(var(--primary),0.5)] animate-in slide-in-from-left duration-700" />
       )}
 
-      {/* Avatar Layer */}
+      {/* COMPONENT: IDENTITY_INGRESS */}
       <AgentAvatar
         name={name}
         avatarUrl={avatarUrl}
@@ -75,56 +79,58 @@ export function AgentListItem({
         isOnline={isActive}
         isCompanyAgent={isCompanyAgent}
         companyName={companyName}
-        className="shrink-0"
+        className="shrink-0 transition-transform duration-500 group-hover:scale-105"
       />
 
-      {/* Information Layer */}
+      {/* VIEWPORT: METADATA_LEDGER */}
       <div className="flex-1 min-w-0 py-0.5">
-        <div className="flex items-center justify-between gap-2 mb-1">
+        <div className="flex items-center justify-between gap-3 mb-1.5">
           <div className="flex items-center gap-2 min-w-0">
-            <h3 className="font-bold text-sm truncate tracking-tight group-hover:text-primary transition-colors">
-              {name}
+            <h3 className="font-black text-[13px] uppercase italic tracking-tight truncate leading-none group-hover:text-primary transition-colors">
+              {name.replace(" ", "_")}
             </h3>
             {isActive && (
-              <Badge className="bg-emerald-500/10 text-emerald-600 border-none text-[9px] font-black uppercase tracking-widest h-4 px-1.5">
-                Active
+              <Badge className="bg-emerald-500/10 text-emerald-500 border-none text-[8px] font-black uppercase tracking-widest h-4 px-1.5 animate-pulse">
+                SYNC_LIVE
               </Badge>
             )}
           </div>
 
           <div className="flex items-center gap-2 shrink-0">
-            {timeAgo ? (
-              <span className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-tighter">
-                {timeAgo}
+            {timeSyncLabel ? (
+              <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic tabular-nums">
+                {timeSyncLabel}_AGO
               </span>
             ) : (
               !lastMessage && (
-                <div className="flex items-center gap-1 text-primary/80">
-                  <Coins className="h-3 w-3" />
-                  <span className="text-[10px] font-black">{creditCost}</span>
+                <div className="flex items-center gap-1.5 px-2 py-0.5 rounded-full bg-primary/5 border border-primary/10">
+                  <Coins className="h-2.5 w-2.5 text-primary opacity-60" />
+                  <span className="text-[9px] font-black text-primary/80">{creditCost} CR</span>
                 </div>
               )
             )}
           </div>
         </div>
 
-        {/* Dynamic Context: Show conversation snippet or expertise */}
+        {/* DYNAMIC_CONTENT: Thread vs Discovery */}
         {lastMessage ? (
-          <div className="flex items-center gap-2 text-xs text-muted-foreground/80 font-medium italic">
-            <MessageCircle className="h-3 w-3 shrink-0 text-primary/40" />
-            <p className="truncate leading-none">{lastMessage}</p>
+          <div className="flex items-center gap-2 animate-in fade-in slide-in-from-left-1 duration-500">
+            <MessageCircle className="h-3 w-3 shrink-0 text-primary/40 fill-current" />
+            <p className="text-xs font-medium text-muted-foreground/70 truncate italic leading-none">{lastMessage}</p>
           </div>
         ) : (
-          <div className="space-y-2">
-            <p className="text-xs text-muted-foreground line-clamp-1 leading-none font-medium">{description}</p>
+          <div className="space-y-2.5">
+            <p className="text-[11px] text-muted-foreground/60 line-clamp-1 leading-none font-bold uppercase tracking-wide">
+              {description}
+            </p>
             {expertise.length > 0 && (
               <div className="flex flex-wrap gap-1.5">
-                {expertise.slice(0, 2).map((skill) => (
+                {expertise.slice(0, 3).map((node) => (
                   <span
-                    key={skill}
-                    className="text-[9px] px-2 py-0.5 rounded-md font-bold uppercase tracking-tighter bg-muted text-muted-foreground/70 border border-border/50"
+                    key={node}
+                    className="text-[8px] px-1.5 py-0.5 rounded-sm font-black uppercase tracking-tighter bg-muted/50 text-muted-foreground/40 border border-border/20 group-hover:border-primary/20 group-hover:text-primary/60 transition-colors"
                   >
-                    {skill}
+                    {node}
                   </span>
                 ))}
               </div>
@@ -133,9 +139,11 @@ export function AgentListItem({
         )}
       </div>
 
-      {/* Affordance Arrow */}
+      {/* HUD: TRANSACTION_AFFORDANCE */}
       <div className="flex items-center self-stretch pl-2">
-        <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-1 transition-all duration-300" />
+        <div className="p-2 rounded-xl bg-muted/0 group-hover:bg-primary/5 transition-colors">
+          <ArrowRight className="h-4 w-4 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-1.5 transition-all duration-500 ease-out" />
+        </div>
       </div>
     </button>
   );
