@@ -200,7 +200,7 @@ export function InvoiceManager() {
       </Card>
 
       {/* LEDGER TABLE */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden text-left">
         <CardContent className="p-0">
           {isLoading ? (
             <div className="p-8">
@@ -497,10 +497,10 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md rounded-[32px] border-4">
         <DialogHeader className="text-left">
-          <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
+          <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-left">
             Finalize Settlement
           </DialogTitle>
-          <DialogDescription className="text-xs font-medium italic">
+          <DialogDescription className="text-xs font-medium italic text-left">
             Disburse {invoice.bundle_credits} credits to node {invoice.talents?.full_name}.
           </DialogDescription>
         </DialogHeader>
@@ -512,22 +512,22 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
                 <SelectValue />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-2">
-                <SelectItem value="bkash" className="font-bold text-xs">
+                <SelectItem value="bkash" className="font-bold text-xs uppercase">
                   BKASH
                 </SelectItem>
-                <SelectItem value="nagad" className="font-bold text-xs">
+                <SelectItem value="nagad" className="font-bold text-xs uppercase">
                   NAGAD
                 </SelectItem>
-                <SelectItem value="bank" className="font-bold text-xs">
+                <SelectItem value="bank" className="font-bold text-xs uppercase">
                   BANK_TRANSFER
                 </SelectItem>
-                <SelectItem value="other" className="font-bold text-xs">
+                <SelectItem value="other" className="font-bold text-xs uppercase">
                   OTHER_LOG
                 </SelectItem>
               </SelectContent>
             </Select>
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-left">
             <Label className="text-[10px] font-black uppercase italic text-primary ml-1">
               Capital Reference (TXN_ID)
             </Label>
@@ -538,7 +538,7 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
               placeholder="E.G. TRXN992..."
             />
           </div>
-          <div className="space-y-1.5">
+          <div className="space-y-1.5 text-left">
             <Label className="text-[10px] font-black uppercase italic text-primary ml-1">
               Artifact Upload (PDF/IMG)
             </Label>
@@ -596,20 +596,22 @@ function CancelDialog({ open, onOpenChange, invoice, onDone }: any) {
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-w-md rounded-[32px] border-4">
         <DialogHeader className="text-left">
-          <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-destructive">
+          <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-destructive text-left">
             Terminate Node?
           </DialogTitle>
-          <DialogDescription className="text-xs font-medium italic">
+          <DialogDescription className="text-xs font-medium italic text-left">
             Archive invoice {invoice.invoice_number} and cancel yield disbursement.
           </DialogDescription>
         </DialogHeader>
-        <Textarea
-          value={reason}
-          onChange={(e) => setReason(e.target.value)}
-          placeholder="TERMINATION REASONING (INTERNAL_AUDIT)..."
-          className="rounded-2xl border-2 bg-muted/10 italic text-sm p-4"
-          rows={3}
-        />
+        <div className="py-4">
+          <Textarea
+            value={reason}
+            onChange={(e) => setReason(e.target.value)}
+            placeholder="TERMINATION REASONING (INTERNAL_AUDIT)..."
+            className="rounded-2xl border-2 bg-muted/10 italic text-sm p-4"
+            rows={3}
+          />
+        </div>
         <DialogFooter className="pt-4">
           <Button
             variant="ghost"
