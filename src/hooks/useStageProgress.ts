@@ -1,6 +1,12 @@
 import { useState, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * GroUp Academy: Monotonic Progress Guard
+ * CTO Reference: Authoritative controller for curriculum stage transitions and resource tracking.
+ * Performance: Optimized for optimistic UI updates with background persistence.
+ */
+
 interface UseStageProgressOptions {
   enrollmentId: string | undefined;
   moduleId: string | undefined;
@@ -14,9 +20,9 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
   const [isLoading, setIsLoading] = useState(true);
   const [isSaving, setIsSaving] = useState(false);
 
-  // Load persisted progress from database
+  // PHASE: Registry_Ingress
   useEffect(() => {
-    async function loadProgress() {
+    async function loadInstitutionalProgress() {
       if (!enrollmentId || !moduleId) {
         setIsLoading(false);
         return;
@@ -31,29 +37,22 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
           .maybeSingle();
 
         if (error) {
-          console.error("Error loading stage progress:", error);
+          console.error("REGISTRY_FETCH_FAULT:", error);
         } else if (data) {
           setCompletedStages(data.completed_stages || []);
           setCurrentStage(data.current_stage || 1);
           setResourceViewStates((data.resource_view_states as Record<string, boolean>) || {});
-        } else {
-          // No progress record yet, start fresh
-          setCompletedStages([]);
-          setCurrentStage(1);
-          setResourceViewStates({});
         }
-      } catch (err) {
-        console.error("Error loading stage progress:", err);
       } finally {
         setIsLoading(false);
       }
     }
 
-    loadProgress();
+    loadInstitutionalProgress();
   }, [enrollmentId, moduleId]);
 
-  // Update enrollment progress and last_accessed_at
-  const updateEnrollmentProgress = useCallback(
+  // PHASE: Aggregate_Progress_Sync
+  const updateEnrollmentMetrics = useCallback(
     async (completedStagesCount: number) => {
       if (!enrollmentId) return;
 
@@ -67,48 +66,40 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
           })
           .eq("id", enrollmentId);
       } catch (err) {
-        console.error("Error updating enrollment progress:", err);
+        console.error("METRIC_SYNC_FAULT:", err);
       }
     },
-    [enrollmentId, totalStages]
+    [enrollmentId, totalStages],
   );
 
-  // Persist progress to database
-  const persistProgress = useCallback(
+  // PHASE: Persistence_Handshake
+  const persistProgressArtifacts = useCallback(
     async (newCompletedStages: number[], newCurrentStage: number, newResourceViewStates?: Record<string, boolean>) => {
       if (!enrollmentId || !moduleId) return;
 
       setIsSaving(true);
       try {
-        const { error } = await supabase
-          .from("enrollment_stage_progress")
-          .upsert(
-            {
-              enrollment_id: enrollmentId,
-              module_id: moduleId,
-              completed_stages: newCompletedStages,
-              current_stage: newCurrentStage,
-              resource_view_states: newResourceViewStates || resourceViewStates,
-              updated_at: new Date().toISOString(),
-            },
-            {
-              onConflict: "enrollment_id,module_id",
-            }
-          );
+        const { error } = await supabase.from("enrollment_stage_progress").upsert(
+          {
+            enrollment_id: enrollmentId,
+            module_id: moduleId,
+            completed_stages: newCompletedStages,
+            current_stage: newCurrentStage,
+            resource_view_states: newResourceViewStates || resourceViewStates,
+            updated_at: new Date().toISOString(),
+          },
+          { onConflict: "enrollment_id,module_id" },
+        );
 
-        if (error) {
-          console.error("Error saving stage progress:", error);
-        }
-
-        // Also update the parent enrollment progress
-        await updateEnrollmentProgress(newCompletedStages.length);
+        if (error) throw error;
+        await updateEnrollmentMetrics(newCompletedStages.length);
       } catch (err) {
-        console.error("Error persisting stage progress:", err);
+        console.error("PERSISTENCE_FAULT:", err);
       } finally {
         setIsSaving(false);
       }
     },
-    [enrollmentId, moduleId, resourceViewStates, updateEnrollmentProgress]
+    [enrollmentId, moduleId, resourceViewStates, updateEnrollmentMetrics],
   );
 
   const markStageComplete = useCallback(
@@ -117,82 +108,49 @@ export function useStageProgress({ enrollmentId, moduleId, totalStages = 6 }: Us
         ? completedStages
         : [...completedStages, stageNumber];
 
-      const newCurrentStage = stageNumber < 6 && currentStage === stageNumber 
-        ? stageNumber + 1 
-        : currentStage;
+      // HUD: Auto-advance to the next node if applicable
+      const newCurrentStage = stageNumber < 6 && currentStage === stageNumber ? stageNumber + 1 : currentStage;
 
-      // Update local state immediately for responsiveness
+      // Optimistic state update
       setCompletedStages(newCompletedStages);
       setCurrentStage(newCurrentStage);
 
-      // Persist to database
-      await persistProgress(newCompletedStages, newCurrentStage);
+      await persistProgressArtifacts(newCompletedStages, newCurrentStage);
     },
-    [completedStages, currentStage, persistProgress]
+    [completedStages, currentStage, persistProgressArtifacts],
   );
-
-  const goToStage = useCallback(
-    (stageNumber: number) => {
-      // Allow navigation to stage 1 or any stage where previous is completed
-      if (stageNumber === 1 || completedStages.includes(stageNumber - 1)) {
-        setCurrentStage(stageNumber);
-        // Persist the navigation
-        persistProgress(completedStages, stageNumber);
-      }
-    },
-    [completedStages, persistProgress]
-  );
-
-  const isStageUnlocked = useCallback(
-    (stageNumber: number) => {
-      if (stageNumber === 1) return true;
-      return completedStages.includes(stageNumber - 1);
-    },
-    [completedStages]
-  );
-
-  // Mark a specific resource as viewed (persisted)
-  const markResourceViewed = useCallback(
-    async (resourceId: string) => {
-      const newStates = { ...resourceViewStates, [resourceId]: true };
-      setResourceViewStates(newStates);
-      
-      // Persist to database
-      await persistProgress(completedStages, currentStage, newStates);
-    },
-    [resourceViewStates, completedStages, currentStage, persistProgress]
-  );
-
-  // Check if a resource has been viewed
-  const isResourceViewed = useCallback(
-    (resourceId: string) => {
-      return resourceViewStates[resourceId] === true;
-    },
-    [resourceViewStates]
-  );
-
-  // Reset progress for a new module
-  const resetForModule = useCallback((newModuleId: string) => {
-    setCompletedStages([]);
-    setCurrentStage(1);
-    setResourceViewStates({});
-    setIsLoading(true);
-  }, []);
 
   return {
     completedStages,
-    setCompletedStages,
     currentStage,
-    setCurrentStage,
     markStageComplete,
-    goToStage,
-    isStageUnlocked,
+    goToStage: useCallback(
+      (stageNumber: number) => {
+        if (stageNumber === 1 || completedStages.includes(stageNumber - 1)) {
+          setCurrentStage(stageNumber);
+          persistProgressArtifacts(completedStages, stageNumber);
+        }
+      },
+      [completedStages, persistProgressArtifacts],
+    ),
+    isStageUnlocked: useCallback(
+      (stageNumber: number) => stageNumber === 1 || completedStages.includes(stageNumber - 1),
+      [completedStages],
+    ),
     isLoading,
     isSaving,
-    resetForModule,
-    // Resource view tracking
-    resourceViewStates,
-    markResourceViewed,
-    isResourceViewed,
+    // Artifact View HUD
+    markResourceViewed: useCallback(
+      async (resourceId: string) => {
+        const newStates = { ...resourceViewStates, [resourceId]: true };
+        setResourceViewStates(newStates);
+        await persistProgressArtifacts(completedStages, currentStage, newStates);
+      },
+      [resourceViewStates, completedStages, currentStage, persistProgressArtifacts],
+    ),
+    isResourceViewed: useCallback(
+      (resourceId: string) => resourceViewStates[resourceId] === true,
+      [resourceViewStates],
+    ),
   };
 }
