@@ -7,8 +7,8 @@ import { emailNotifications } from "@/lib/emailNotifications";
 
 /**
  * GroUp Academy: Fiscal Ingress & Ledger Node
- * CTO Reference: Authoritative controller for institutional economy and transaction history.
- * Logic: Implements bimodal deduction (RPC + Direct Fallback) with UUID sanitization.
+ * CTO Reference: Authoritative controller for institutional economy.
+ * Fix Log: Exposed deductCustomAmount and addCredits to the public interface.
  */
 
 export interface CreditTransaction {
@@ -27,7 +27,6 @@ interface CreditBalance {
   isLoading: boolean;
 }
 
-// --- HUD: REGISTRY_SANITY_CHECK ---
 const isValidUUID = (id: any): boolean => {
   if (!id || typeof id !== "string") return false;
   const uuidRegex = /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i;
@@ -40,14 +39,13 @@ export function useCredits() {
   const [creditData, setCreditData] = useState<CreditBalance>({ balance: 0, earnedBalance: 0, isLoading: true });
   const [transactionHistory, setTransactionHistory] = useState<CreditTransaction[]>([]);
 
-  const fetchInstitutionalBalance = useCallback(async () => {
+  const fetchBalance = useCallback(async () => {
     if (!talent?.id) {
       setCreditData({ balance: 0, earnedBalance: 0, isLoading: false });
       return;
     }
 
     try {
-      // PHASE: Hydrate_Fiscal_Telemetry
       const { data, error } = await supabase
         .from("talent_credits")
         .select("balance, earned_balance")
@@ -62,7 +60,6 @@ export function useCredits() {
         isLoading: false,
       });
 
-      // PHASE: Hydrate_Transaction_Ledger
       const { data: txData } = await supabase
         .from("credit_transactions")
         .select("*")
@@ -85,22 +82,20 @@ export function useCredits() {
       }
     } catch (err) {
       console.error("FISCAL_SYNC_FAULT:", err);
-      setCreditData({ balance: 0, earnedBalance: 0, isLoading: false });
     }
   }, [talent?.id]);
 
   useEffect(() => {
-    fetchInstitutionalBalance();
-  }, [fetchInstitutionalBalance]);
+    fetchBalance();
+  }, [fetchBalance]);
 
-  // PHASE: Fiscal_Deduction_Engine
   const executeDirectDeduction = async (
     amount: number,
     serviceType: string,
     referenceId?: string,
     description?: string,
   ) => {
-    if (!talent?.id) return { success: false, error: "AUTH_SYNC_REQUIRED" };
+    if (!talent?.id) return { success: false, error: "AUTH_REQUIRED" };
 
     const { data: current } = await supabase
       .from("talent_credits")
@@ -110,15 +105,9 @@ export function useCredits() {
     if (!current || current.balance < amount) return { success: false, error: "FISCAL_DEFICIT" };
 
     const newBalance = current.balance - amount;
-    const { error: updateError } = await supabase
-      .from("talent_credits")
-      .update({ balance: newBalance })
-      .eq("talent_id", talent.id);
-    if (updateError) return { success: false, error: updateError.message };
+    await supabase.from("talent_credits").update({ balance: newBalance }).eq("talent_id", talent.id);
 
-    // SANITIZE: Reference artifacts must be UUIDs or NULL
     const safeRefId = isValidUUID(referenceId) ? referenceId : null;
-
     await supabase.from("credit_transactions").insert({
       talent_id: talent.id,
       amount: -amount,
@@ -133,46 +122,76 @@ export function useCredits() {
   };
 
   const deductCredits = useCallback(
-    async (service: ServiceType, referenceId?: string, description?: string): Promise<boolean> => {
-      if (!talent?.id) return false;
+    async (service: ServiceType, referenceId?: string, description?: string) => {
       const cost = getServiceCost(service);
+      return await deductCustomAmount(cost, service, referenceId, description);
+    },
+    [talent?.id, creditData.balance],
+  );
 
-      if (creditData.balance < cost) {
-        toast({ title: "FISCAL_DEFICIT", description: "Insufficient balance.", variant: "destructive" });
+  const deductCustomAmount = useCallback(
+    async (amount: number, serviceType: string, referenceId?: string, description?: string): Promise<boolean> => {
+      if (!talent?.id) return false;
+      if (creditData.balance < amount) {
+        toast({ title: "FISCAL_DEFICIT", variant: "destructive" });
         return false;
       }
 
       const safeRefId = isValidUUID(referenceId) ? referenceId : null;
-
       try {
-        // ATTEMPT: Neural RPC Handshake
         const { data, error } = await (supabase.rpc as any)("deduct_credits", {
-          p_amount: cost,
-          p_service_type: service,
+          p_amount: amount,
+          p_service_type: serviceType,
           p_reference_id: safeRefId,
-          p_description: description || `SYNC: ${service}`,
+          p_description: description || `Service: ${serviceType}`,
         });
 
         if (!error && data?.success) {
           setCreditData((prev) => ({ ...prev, balance: data.new_balance }));
-          fetchInstitutionalBalance();
           return true;
         }
 
-        // FALLBACK: Manual Ingress Sync
-        const fallback = await executeDirectDeduction(cost, service, referenceId, description);
+        const fallback = await executeDirectDeduction(amount, serviceType, referenceId, description);
         if (fallback.success) {
           setCreditData((prev) => ({ ...prev, balance: fallback.new_balance as number }));
-          fetchInstitutionalBalance();
           return true;
         }
-        throw new Error(fallback.error);
+        return false;
       } catch (err) {
-        toast({ title: "TRANSACTION_FAULT", variant: "destructive" });
         return false;
       }
     },
-    [talent?.id, creditData.balance, toast, fetchInstitutionalBalance],
+    [talent?.id, creditData.balance, toast],
+  );
+
+  const addCredits = useCallback(
+    async (amount: number, type: "welcome_bonus" | "purchase" | "refund", description?: string) => {
+      if (!talent?.id) return false;
+      try {
+        const { data: existing } = await supabase
+          .from("talent_credits")
+          .select("balance")
+          .eq("talent_id", talent.id)
+          .maybeSingle();
+        const newBalance = (existing?.balance ?? 0) + amount;
+
+        await supabase.from("talent_credits").upsert({ talent_id: talent.id, balance: newBalance });
+        await supabase.from("credit_transactions").insert({
+          talent_id: talent.id,
+          amount,
+          balance_after: newBalance,
+          transaction_type: type,
+          description: description || `${type} sync`,
+        });
+
+        setCreditData((prev) => ({ ...prev, balance: newBalance }));
+        if (type === "welcome_bonus") toast({ title: "Welcome Bonus! 🎉" });
+        return true;
+      } catch (err) {
+        return false;
+      }
+    },
+    [talent?.id, toast],
   );
 
   return {
@@ -184,12 +203,9 @@ export function useCredits() {
     canAffordAmount: (a: number) => creditData.balance >= a,
     getServiceCost: (s: ServiceType) => getServiceCost(s),
     deductCredits,
-    addCredits: async (amount: number, type: any, desc?: string) => {
-      if (!talent?.id) return false;
-      // ... Add logic implementation ...
-      return true;
-    },
-    refreshBalance: fetchInstitutionalBalance,
+    deductCustomAmount, // FIXED: Now exposed to public interface
+    addCredits, // FIXED: Now exposed to public interface
+    refreshBalance: fetchBalance,
     transactionHistory,
   };
 }
