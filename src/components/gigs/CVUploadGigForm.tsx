@@ -8,7 +8,6 @@ import { toast } from "sonner";
 import {
   Upload,
   Loader2,
-  MessageSquare,
   User,
   Phone,
   Briefcase,
@@ -16,8 +15,15 @@ import {
   FileText,
   Sparkles,
   Share2,
+  Zap,
+  ShieldCheck,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: CV Intelligence & Outreach Node
+ * CTO Reference: Authoritative interface for document parsing and automated lead engagement.
+ */
 
 interface CVUploadGigFormProps {
   gig: { id: string; title: string };
@@ -33,20 +39,20 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
   const [outreachMessage, setOutreachMessage] = useState("");
   const [cvUrl, setCvUrl] = useState("");
 
-  const handleFileChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+  const handleFileIngress = (e: React.ChangeEvent<HTMLInputElement>) => {
     const file = e.target.files?.[0];
     if (file) setCvFile(file);
   };
 
-  const processCVChain = async () => {
+  const executeIntelligenceChain = async () => {
     if (!cvFile) {
-      toast.error("Upload a document to begin");
+      toast.error("PROTOCOL_ERROR: Document Required");
       return;
     }
 
     setIsProcessing(true);
     try {
-      // 1. Storage Upload
+      // PHASE 1: Storage Node Ingress
       const fileName = `gig-cvs/${talentId}/${Date.now()}-${cvFile.name}`;
       const { error: uploadError } = await supabase.storage.from("portfolio-uploads").upload(fileName, cvFile);
       if (uploadError) throw uploadError;
@@ -56,48 +62,44 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
       } = supabase.storage.from("portfolio-uploads").getPublicUrl(fileName);
       setCvUrl(publicUrl);
 
-      // 2. AI Parsing
-      toast.info("AI is analyzing the professional profile...");
+      // PHASE 2: AI Synapse Analysis
+      toast.info("AI_SYNAPSE: Analyzing professional profile nodes...");
       const { data: parseRes, error: parseErr } = await supabase.functions.invoke("parse-cv", {
         body: { cvUrl: publicUrl, serviceType: "cv_outreach" },
       });
-      if (parseErr || !parseRes?.success) throw new Error("Parsing failed");
+      if (parseErr || !parseRes?.success) throw new Error("INGESTION_FAULT: Parsing failed");
       setParsedData(parseRes.parsed);
 
-      // 3. Message Generation
+      // PHASE 3: Outreach Strategy Synthesis
       const { data: msgRes, error: msgErr } = await supabase.functions.invoke("generate-outreach-message", {
         body: {
           parsedCV: parseRes.parsed,
           product: "digital-portfolio",
-          professionCategory: parseRes.parsed?.profession_category || "Professional",
-          senderName: "Academy Support",
+          professionCategory: parseRes.parsed?.profession_category || "Executive",
+          senderName: "Academy_Systems",
           language: "auto",
         },
       });
-      if (msgErr || !msgRes?.success) throw new Error("Message generation failed");
+      if (msgErr || !msgRes?.success) throw new Error("SYNTHESIS_FAULT: Generation failed");
       setOutreachMessage(msgRes.message);
 
-      toast.success("Profile Analyzed & Message Generated");
+      toast.success("PROFILE_SYNC_COMPLETE");
     } catch (err: any) {
-      toast.error(err.message || "Pipeline error");
+      toast.error("SYNC_ERROR: " + err.message);
     } finally {
       setIsProcessing(false);
     }
   };
 
-  const getWhatsAppLink = () => {
-    // Global-friendly: keep raw international digits as-is.
-    // If the parsed phone already has a +country code, use it; else just strip non-digits.
+  const getWhatsAppProtocol = () => {
     const rawPhone = parsedData?.phone || parsedData?.contact?.phone || "";
-    const trimmed = String(rawPhone).trim();
-    // Preserve leading + if present, otherwise pass digits straight through (no country guessing).
-    const clean = trimmed.startsWith("+")
-      ? trimmed.replace(/[^\d]/g, "")
-      : trimmed.replace(/\D/g, "");
+    const clean = String(rawPhone).trim().startsWith("+")
+      ? String(rawPhone).replace(/[^\d]/g, "")
+      : String(rawPhone).replace(/\D/g, "");
     return `https://wa.me/${clean}?text=${encodeURIComponent(outreachMessage)}`;
   };
 
-  const handleSubmit = async () => {
+  const finalizeGigSubmission = async () => {
     setIsSubmitting(true);
     try {
       const { error } = await supabase.from("gig_submissions").insert({
@@ -113,48 +115,65 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
             profession: parsedData?.profession_category,
           },
           generated_outreach: outreachMessage,
-          meta: { engine: "gemini-1.5-pro", timestamp: new Date().toISOString() },
+          meta: { engine: "gemini-2.0-flash-exp", timestamp: new Date().toISOString() },
         },
       });
       if (error) throw error;
-      toast.success("Gig submitted for review!");
+      toast.success("ARTIFACT_COMMITTED");
       onSubmitted();
     } catch (err: any) {
-      toast.error("Submission failed");
+      toast.error("SUBMISSION_FAULT");
     } finally {
       setIsSubmitting(false);
     }
   };
 
   return (
-    <div className="space-y-6 animate-in fade-in duration-500">
-      {/* File Upload Zone */}
-      <div className="space-y-3">
-        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-          Candidate Document
+    <div className="space-y-8 animate-in fade-in duration-700 text-left">
+      {/* NODE: FILE_INGRESS */}
+      <div className="space-y-4">
+        <Label className="text-[10px] font-black uppercase italic tracking-[0.2em] text-muted-foreground ml-1">
+          Document_Ingress
         </Label>
         <div className="relative group">
-          <Input type="file" accept=".pdf,.doc,.docx" onChange={handleFileChange} className="hidden" id="cv-upload" />
+          <Input
+            type="file"
+            accept=".pdf,.doc,.docx"
+            onChange={handleFileIngress}
+            className="hidden"
+            id="cv-node-upload"
+          />
           <label
-            htmlFor="cv-upload"
+            htmlFor="cv-node-upload"
             className={cn(
-              "flex flex-col items-center justify-center py-10 border-2 border-dashed rounded-[24px] cursor-pointer transition-all",
-              cvFile ? "border-primary bg-primary/5" : "border-border/40 hover:border-primary/20 bg-card",
+              "flex flex-col items-center justify-center py-12 border-2 border-dashed rounded-[32px] cursor-pointer transition-all duration-500",
+              cvFile
+                ? "border-primary bg-primary/5 shadow-inner"
+                : "border-border/40 hover:border-primary/20 bg-card/50",
             )}
           >
             {cvFile ? (
-              <div className="text-center space-y-2">
-                <FileText className="h-8 w-8 text-primary mx-auto" />
-                <p className="text-xs font-bold truncate max-w-[200px]">{cvFile.name}</p>
-                <Badge variant="secondary" className="text-[9px] font-black uppercase">
-                  Selected
+              <div className="text-center space-y-3 animate-in zoom-in-95">
+                <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
+                  <FileText className="h-8 w-8 text-primary" />
+                </div>
+                <p className="text-sm font-black italic tracking-tighter truncate max-w-[250px] uppercase">
+                  {cvFile.name.replace(" ", "_")}
+                </p>
+                <Badge
+                  variant="outline"
+                  className="text-[9px] font-black uppercase border-primary/20 bg-primary/5 text-primary italic"
+                >
+                  SYNC_READY
                 </Badge>
               </div>
             ) : (
               <>
-                <Upload className="h-8 w-8 text-muted-foreground mb-3 group-hover:scale-110 transition-transform" />
-                <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                  Upload PDF/DOCX
+                <div className="h-14 w-14 rounded-full bg-muted/20 flex items-center justify-center mb-4 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+                  <Upload className="h-6 w-6 text-muted-foreground" />
+                </div>
+                <span className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground italic">
+                  UPLOAD_PROFESSIONAL_NODES
                 </span>
               </>
             )}
@@ -164,72 +183,88 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
 
       {!parsedData ? (
         <Button
-          onClick={processCVChain}
+          onClick={executeIntelligenceChain}
           disabled={!cvFile || isProcessing}
-          className="w-full rounded-2xl h-12 font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+          className="w-full rounded-2xl h-16 font-black uppercase italic tracking-[0.2em] shadow-[0_20px_50px_rgba(var(--primary),0.2)] hover:shadow-primary/40 transition-all active:scale-95 gap-3"
         >
-          {isProcessing ? <Loader2 className="h-4 w-4 animate-spin mr-2" /> : <Sparkles className="h-4 w-4 mr-2" />}
-          {isProcessing ? "AI Analyzing..." : "Process with Intelligence"}
+          {isProcessing ? <Loader2 className="h-5 w-5 animate-spin" /> : <Zap className="h-5 w-5 fill-current" />}
+          {isProcessing ? "SYNAPSE_ANALYZING..." : "INITIALIZE_AI_MAPPING"}
         </Button>
       ) : (
-        <div className="space-y-6 animate-in slide-in-from-top-2">
-          {/* Profile Preview */}
-          <div className="bg-card border border-border/40 rounded-[24px] p-5 space-y-4">
+        <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-1000">
+          {/* HUD: IDENTITY_MAPPING */}
+          <div className="bg-card/40 backdrop-blur-xl border-2 border-border/40 rounded-[32px] p-6 space-y-6 shadow-2xl relative overflow-hidden">
+            <div className="absolute -top-10 -right-10 w-32 h-32 bg-primary/5 blur-3xl" />
             <div className="flex items-center justify-between">
-              <span className="text-[10px] font-black uppercase tracking-widest text-primary">Identity Mapping</span>
-              <CheckCircle className="h-4 w-4 text-emerald-500" />
+              <div className="flex items-center gap-2">
+                <div className="h-1.5 w-1.5 rounded-full bg-primary animate-pulse" />
+                <span className="text-[10px] font-black uppercase tracking-[0.2em] text-primary italic">
+                  Identity_Ledger
+                </span>
+              </div>
+              <ShieldCheck className="h-5 w-5 text-emerald-500" />
             </div>
-            <div className="grid grid-cols-1 gap-3">
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center">
-                  <User className="h-4 w-4" />
+
+            <div className="grid gap-5">
+              <div className="flex items-center gap-4 group">
+                <div className="h-10 w-10 rounded-xl bg-muted/30 flex items-center justify-center border border-border/10 group-hover:bg-primary/10 transition-colors">
+                  <User className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
                 </div>
-                <p className="text-sm font-black tracking-tight">
-                  {parsedData.full_name || parsedData.name || "Unknown"}
+                <p className="text-base font-black italic tracking-tighter uppercase">
+                  {parsedData.full_name || "UNIDENTIFIED"}
                 </p>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center">
-                  <Phone className="h-4 w-4" />
+
+              <div className="flex items-center gap-4 group">
+                <div className="h-10 w-10 rounded-xl bg-muted/30 flex items-center justify-center border border-border/10 group-hover:bg-emerald-500/10 transition-colors">
+                  <Phone className="h-5 w-5 text-muted-foreground group-hover:text-emerald-500" />
                 </div>
-                <p className="text-sm font-bold">{parsedData.phone || parsedData.contact?.phone || "No Contact"}</p>
+                <p className="text-sm font-bold tabular-nums italic opacity-80">
+                  {parsedData.phone || "NODE_DISCONNECTED"}
+                </p>
               </div>
-              <div className="flex items-center gap-3">
-                <div className="h-8 w-8 rounded-lg bg-muted flex items-center justify-center">
-                  <Briefcase className="h-4 w-4" />
+
+              <div className="flex items-center gap-4 group">
+                <div className="h-10 w-10 rounded-xl bg-muted/30 flex items-center justify-center border border-border/10 group-hover:bg-primary/10 transition-colors">
+                  <Briefcase className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
                 </div>
-                <Badge className="bg-primary/10 text-primary border-none text-[9px] font-black uppercase">
-                  {parsedData.profession_category || "General"}
+                <Badge className="bg-primary border-none text-[9px] font-black uppercase italic px-3 py-1">
+                  {parsedData.profession_category || "GENERAL_NODE"}
                 </Badge>
               </div>
             </div>
           </div>
 
-          {/* Outreach Action */}
-          <div className="space-y-3">
-            <div className="bg-emerald-500/[0.03] border border-emerald-500/20 rounded-[24px] p-5">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-emerald-600 mb-3 block">
-                Strategy: WhatsApp Outreach
+          {/* HUD: OUTREACH_SYNTHESIS */}
+          <div className="space-y-4">
+            <div className="bg-emerald-500/5 border-2 border-emerald-500/20 rounded-[28px] p-6 shadow-inner relative overflow-hidden">
+              <div className="absolute top-0 right-0 p-4 opacity-10">
+                <MessageSquare className="h-12 w-12 text-emerald-500" />
+              </div>
+              <Label className="text-[9px] font-black uppercase tracking-[0.3em] text-emerald-600 mb-4 block italic">
+                STRATEGY: WHATSAPP_SYNCHRONIZATION
               </Label>
-              <p className="text-xs font-medium leading-relaxed italic text-muted-foreground">"{outreachMessage}"</p>
+              <p className="text-xs font-medium leading-relaxed italic text-foreground/80 bg-background/30 p-5 rounded-2xl border border-emerald-500/10">
+                "{outreachMessage}"
+              </p>
             </div>
 
-            <div className="flex flex-col gap-3">
+            <div className="grid gap-4">
               <Button
                 variant="outline"
-                className="w-full h-12 rounded-2xl gap-2 border-emerald-500/30 text-emerald-600 hover:bg-emerald-50 font-black uppercase tracking-widest text-[10px]"
-                onClick={() => window.open(getWhatsAppLink(), "_blank")}
+                className="w-full h-14 rounded-2xl gap-3 border-emerald-500/30 text-emerald-600 hover:bg-emerald-500/10 font-black uppercase italic tracking-widest text-[10px] transition-all shadow-lg active:scale-95"
+                onClick={() => window.open(getWhatsAppProtocol(), "_blank")}
               >
-                <Share2 className="h-4 w-4" /> Share on WhatsApp
+                <Share2 className="h-5 w-5 fill-current" /> EXECUTE_WHATSAPP_DISTRIBUTION
               </Button>
 
               <Button
-                onClick={handleSubmit}
+                onClick={finalizeGigSubmission}
                 disabled={isSubmitting}
-                className="w-full rounded-2xl h-12 font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+                className="w-full rounded-[24px] h-16 font-black uppercase italic tracking-[0.2em] shadow-2xl transition-all active:scale-95 gap-3"
               >
-                {isSubmitting && <Loader2 className="h-4 w-4 animate-spin mr-2" />}
-                Confirm Submission
+                {isSubmitting ? <Loader2 className="h-5 w-5 animate-spin" /> : <CheckCircle className="h-5 w-5" />}
+                CONFIRM_ARTIFACT_SUBMISSION
               </Button>
             </div>
           </div>
