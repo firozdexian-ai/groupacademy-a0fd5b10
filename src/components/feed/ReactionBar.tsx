@@ -1,7 +1,12 @@
 import { useState } from "react";
-import { ThumbsUp, Lightbulb, PartyPopper, Heart } from "lucide-react";
+import { ThumbsUp, Lightbulb, PartyPopper, Heart, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Sentiment Ingress Node (ReactionBar)
+ * CTO Reference: Authoritative tactical module for community engagement telemetry.
+ */
 
 export type ReactionType = "like" | "insightful" | "celebrate" | "support";
 
@@ -23,10 +28,10 @@ const REACTION_CONFIG: Record<
     activeBg: string;
   }
 > = {
-  like: { icon: ThumbsUp, label: "Like", color: "text-blue-600", activeBg: "bg-blue-50" },
-  insightful: { icon: Lightbulb, label: "Insight", color: "text-amber-500", activeBg: "bg-amber-50" },
-  celebrate: { icon: PartyPopper, label: "Clap", color: "text-emerald-500", activeBg: "bg-emerald-50" },
-  support: { icon: Heart, label: "Love", color: "text-rose-500", activeBg: "bg-rose-50" },
+  like: { icon: ThumbsUp, label: "AGREE", color: "text-blue-500", activeBg: "bg-blue-500/10" },
+  insightful: { icon: Lightbulb, label: "STRATEGIC", color: "text-amber-500", activeBg: "bg-amber-500/10" },
+  celebrate: { icon: PartyPopper, label: "BULLISH", color: "text-emerald-500", activeBg: "bg-emerald-500/10" },
+  support: { icon: Heart, label: "EMPATHY", color: "text-rose-500", activeBg: "bg-rose-500/10" },
 };
 
 export function ReactionBar({ reactions, userReaction, onReact, disabled, inline = false }: ReactionBarProps) {
@@ -43,10 +48,11 @@ export function ReactionBar({ reactions, userReaction, onReact, disabled, inline
           variant="ghost"
           size="sm"
           disabled={disabled}
-          aria-label={`${config.label} post`}
           className={cn(
-            "flex-1 h-9 text-[11px] font-bold gap-1.5 transition-all duration-200 rounded-xl px-2",
-            isActive ? cn(config.color, config.activeBg, "scale-105") : "text-muted-foreground hover:bg-muted/50",
+            "flex-1 h-10 text-[10px] font-black italic gap-2 transition-all duration-300 rounded-[14px] px-3",
+            isActive
+              ? cn(config.color, config.activeBg, "scale-105 border border-current/20 shadow-sm")
+              : "text-muted-foreground/60 hover:bg-muted/40 hover:text-foreground",
             !isActive && hoveredReaction === type && "scale-105",
           )}
           onClick={(e) => {
@@ -56,18 +62,20 @@ export function ReactionBar({ reactions, userReaction, onReact, disabled, inline
           onMouseEnter={() => setHoveredReaction(type)}
           onMouseLeave={() => setHoveredReaction(null)}
         >
-          <Icon className={cn("h-4 w-4 transition-transform", isActive && "fill-current scale-110")} />
-          <span className={cn("hidden lg:inline uppercase tracking-tighter")}>{config.label}</span>
+          <Icon
+            className={cn("h-4 w-4 transition-all duration-500", isActive && "fill-current scale-110 drop-shadow-sm")}
+          />
+          <span className={cn("hidden md:inline uppercase tracking-widest")}>{config.label}</span>
         </Button>
       );
     },
   );
 
   if (inline) {
-    return <div className="flex items-center gap-1 w-full">{reactionButtons}</div>;
+    return <div className="flex items-center gap-2 w-full">{reactionButtons}</div>;
   }
 
-  // Standalone mode for detailed views or summaries
+  // STANDALONE TELEMETRY MODE
   const totalReactions = Object.values(reactions).reduce((sum, count) => sum + count, 0);
   const topReactions = Object.entries(reactions)
     .filter(([_, count]) => count > 0)
@@ -76,10 +84,10 @@ export function ReactionBar({ reactions, userReaction, onReact, disabled, inline
     .map(([type]) => type as ReactionType);
 
   return (
-    <div className="space-y-3 w-full">
+    <div className="space-y-4 w-full animate-in fade-in duration-500">
       {totalReactions > 0 && (
-        <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 px-1">
-          <div className="flex -space-x-1.5">
+        <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/50 px-2">
+          <div className="flex -space-x-2">
             {topReactions.map((type) => {
               const config = REACTION_CONFIG[type];
               const Icon = config.icon;
@@ -87,19 +95,19 @@ export function ReactionBar({ reactions, userReaction, onReact, disabled, inline
                 <div
                   key={type}
                   className={cn(
-                    "h-5 w-5 rounded-full flex items-center justify-center bg-card border-2 border-background shadow-sm",
+                    "h-6 w-6 rounded-full flex items-center justify-center bg-background border-2 border-muted shadow-lg",
                     config.color,
                   )}
                 >
-                  <Icon className="h-2.5 w-2.5 fill-current" />
+                  <Icon className="h-3 w-3 fill-current" />
                 </div>
               );
             })}
           </div>
-          <span>{totalReactions.toLocaleString()} total interactions</span>
+          <span className="italic">{totalReactions.toLocaleString()} ENGAGEMENT_UNITS</span>
         </div>
       )}
-      <div className="flex items-center gap-1 border-t border-border/40 pt-3">{reactionButtons}</div>
+      <div className="flex items-center gap-2 border-t-2 border-border/10 pt-4">{reactionButtons}</div>
     </div>
   );
 }
