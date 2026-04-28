@@ -4,11 +4,24 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
-import { Loader2, Sparkles, Upload, UserPlus, CheckCircle2, AlertCircle } from "lucide-react";
+import { Loader2, Sparkles, Upload, UserPlus, CheckCircle2, AlertCircle, Zap, ShieldCheck } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: External Application Ingress Terminal
+ * CTO Reference: Neural-driven node for bridging external leads into the unified talent pipeline.
+ */
 
 interface Props {
   open: boolean;
@@ -28,7 +41,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
   const [parsing, setParsing] = useState(false);
   const [saving, setSaving] = useState(false);
 
-  // parsed/edit fields
+  // Parsed Intelligence Nodes
   const [name, setName] = useState("");
   const [email, setEmail] = useState("");
   const [phone, setPhone] = useState("");
@@ -43,9 +56,15 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
     setStep("input");
     setCvFile(null);
     setCvText("");
-    setName(""); setEmail(""); setPhone(""); setProfession(""); setSkills("");
-    setCoverLetter(""); setExternalNotes("");
-    setCvUrl(""); setTalentExists(null);
+    setName("");
+    setEmail("");
+    setPhone("");
+    setProfession("");
+    setSkills("");
+    setCoverLetter("");
+    setExternalNotes("");
+    setCvUrl("");
+    setTalentExists(null);
     if (!defaultJobId) setJobId("");
   };
 
@@ -55,9 +74,12 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
   };
 
   const handleParse = async () => {
-    if (!jobId) return toast.error("Select a job first");
-    if (!cvFile && cvText.trim().length < 30) return toast.error("Upload a CV or paste at least 30 characters");
+    if (!jobId) return toast.error("Protocol Fault: Select job target first.");
+    if (!cvFile && cvText.trim().length < 30) return toast.error("Payload Fault: Insufficient CV data provided.");
+
     setParsing(true);
+    const toastId = toast.loading("Neural Ingestion in progress...");
+
     try {
       let publicUrl = "";
       if (cvFile) {
@@ -68,9 +90,14 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
         publicUrl = data.publicUrl;
         setCvUrl(publicUrl);
       }
-      const body: any = cvFile ? { cvUrl: publicUrl, serviceType: "external_application" } : { cvText, serviceType: "external_application" };
+
+      const body: any = cvFile
+        ? { cvUrl: publicUrl, serviceType: "external_application" }
+        : { cvText, serviceType: "external_application" };
       const { data, error } = await supabase.functions.invoke("parse-cv", { body });
+
       if (error) throw error;
+
       const parsed = data?.parsed || data?.cv_data || data;
       setName(parsed?.name || parsed?.full_name || "");
       setEmail(parsed?.email || "");
@@ -78,27 +105,32 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
       setProfession(parsed?.profession || parsed?.current_role || "");
       const sk = parsed?.skills || parsed?.parsed_skills || [];
       setSkills(Array.isArray(sk) ? sk.join(", ") : String(sk || ""));
-      toast.success("CV parsed — review and save");
+
+      toast.success("Intelligence Extracted: Review artifacts", { id: toastId });
       setStep("review");
+      if (parsed?.email) checkTalentExists(parsed.email);
     } catch (err: any) {
-      toast.error("Parse failed: " + (err.message || "Unknown"));
+      toast.error("Extraction Fault: " + (err.message || "Unknown error"), { id: toastId });
     } finally {
       setParsing(false);
     }
   };
 
   const checkTalentExists = async (em: string) => {
-    if (!em.includes("@")) { setTalentExists(null); return; }
+    if (!em.includes("@")) {
+      setTalentExists(null);
+      return;
+    }
     const { data } = await supabase.from("talents").select("id").ilike("email", em.trim()).maybeSingle();
     setTalentExists(!!data);
   };
 
   const handleSave = async () => {
-    if (!email.trim() && !phone.trim()) return toast.error("Email or phone is required");
-    if (!name.trim()) return toast.error("Candidate name is required");
+    if (!email.trim() && !phone.trim()) return toast.error("Protocol Fault: Contact string required.");
+    if (!name.trim()) return toast.error("Protocol Fault: Identity name required.");
+
     setSaving(true);
     try {
-      // 1. Get or create talent
       const { data: talentId, error: tErr } = await supabase.rpc("get_or_create_talent", {
         p_email: email.trim() || `${Date.now()}@external.local`,
         p_full_name: name.trim(),
@@ -106,8 +138,9 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
       });
       if (tErr) throw tErr;
 
-      // 2. Insert job_application as external
-      const { data: { user } } = await supabase.auth.getUser();
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
       const { error: appErr } = await supabase.from("job_applications").insert({
         job_id: jobId,
         talent_id: talentId as string,
@@ -120,13 +153,14 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
         external_notes: externalNotes || null,
         added_by: user?.id || null,
       } as any);
+
       if (appErr) throw appErr;
 
-      toast.success("External application added");
+      toast.success("Node Synchronized: External application active.");
       handleClose(false);
       onCreated?.();
     } catch (err: any) {
-      toast.error(err.message || "Save failed");
+      toast.error("Save Fault: " + err.message);
     } finally {
       setSaving(false);
     }
@@ -134,108 +168,208 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle className="flex items-center gap-2">
-            <UserPlus className="h-5 w-5" /> Add External Application
-          </DialogTitle>
-          <DialogDescription>
-            Log a candidate that came in through LinkedIn, email, walk-in, or any channel outside the platform. Their CV is parsed by AI, a talent record is created, and the application appears in the unified pipeline.
-          </DialogDescription>
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-2xl rounded-[40px]">
+        <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+
+        <DialogHeader className="p-8 pb-4 text-left">
+          <div className="flex justify-between items-center">
+            <div className="space-y-1">
+              <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+                <Zap className="h-8 w-8 text-primary fill-current" /> Bridge Terminal
+              </DialogTitle>
+              <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+                External lead ingestion and AI artifact parsing
+              </DialogDescription>
+            </div>
+            <Badge variant="outline" className="font-black text-[9px] border-2 uppercase italic px-3 py-1">
+              {step === "input" ? "Ingestion_Phase" : "Review_Phase"}
+            </Badge>
+          </div>
         </DialogHeader>
 
-        {step === "input" ? (
-          <div className="space-y-4 py-2">
-            <div className="space-y-1.5">
-              <Label>Apply to job *</Label>
-              <Select value={jobId} onValueChange={setJobId}>
-                <SelectTrigger><SelectValue placeholder="Select a job posting" /></SelectTrigger>
-                <SelectContent>
-                  {jobs.map((j) => (
-                    <SelectItem key={j.id} value={j.id}>{j.title} — {j.company_name}</SelectItem>
-                  ))}
-                </SelectContent>
-              </Select>
-            </div>
-
-            <div className="space-y-1.5">
-              <Label>Upload CV (PDF / DOCX)</Label>
-              <div className="flex items-center gap-2">
-                <Input type="file" accept=".pdf,.doc,.docx" onChange={(e) => setCvFile(e.target.files?.[0] || null)} />
-                {cvFile && <Badge variant="secondary" className="text-xs">{cvFile.name.slice(0, 24)}</Badge>}
+        <ScrollArea className="flex-1 p-8 pt-0">
+          {step === "input" ? (
+            <div className="space-y-8 py-4 text-left animate-in fade-in duration-500">
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black uppercase text-primary italic ml-2 flex items-center gap-2">
+                  <ShieldCheck className="h-3.5 w-3.5" /> Target Post Selection *
+                </Label>
+                <Select value={jobId} onValueChange={setJobId}>
+                  <SelectTrigger className="h-14 rounded-2xl border-2 font-bold uppercase text-xs">
+                    <SelectValue placeholder="SELECT TARGET INFRASTRUCTURE" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border-2">
+                    {jobs.map((j) => (
+                      <SelectItem key={j.id} value={j.id} className="font-bold text-[10px] uppercase">
+                        {j.title} — {j.company_name}
+                      </SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
               </div>
-            </div>
 
-            <div className="text-center text-xs text-muted-foreground">— or paste CV text —</div>
+              <div className="grid gap-6">
+                <div className="space-y-3">
+                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    Artifact Upload (PDF/DOCX)
+                  </Label>
+                  <div className="relative group">
+                    <Input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => setCvFile(e.target.files?.[0] || null)}
+                      className="h-14 rounded-2xl border-2 border-dashed bg-muted/10 cursor-pointer file:hidden pr-12 font-bold"
+                    />
+                    <Upload className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
+                    {cvFile && (
+                      <Badge className="absolute left-3 top-1/2 -translate-y-1/2 bg-primary/10 text-primary border-none font-black italic text-[9px]">
+                        {cvFile.name.toUpperCase()}
+                      </Badge>
+                    )}
+                  </div>
+                </div>
 
-            <div className="space-y-1.5">
-              <Label>Paste CV text</Label>
-              <Textarea rows={6} value={cvText} onChange={(e) => setCvText(e.target.value)} placeholder="Paste resume text here..." />
-            </div>
+                <div className="relative">
+                  <div className="absolute inset-0 flex items-center">
+                    <span className="w-full border-t border-border/40" />
+                  </div>
+                  <div className="relative flex justify-center text-[9px] font-black uppercase tracking-widest bg-background px-4 text-muted-foreground italic">
+                    OR_RAW_TEXT_INJECTION
+                  </div>
+                </div>
 
-            <Button onClick={handleParse} disabled={parsing || !jobId} className="w-full">
-              {parsing ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Sparkles className="h-4 w-4 mr-2" />}
-              Parse with AI &amp; Continue
-            </Button>
-          </div>
-        ) : (
-          <div className="space-y-4 py-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label>Full Name *</Label>
-                <Input value={name} onChange={(e) => setName(e.target.value)} />
+                <div className="space-y-3">
+                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    Raw Payload Ingress
+                  </Label>
+                  <Textarea
+                    rows={6}
+                    value={cvText}
+                    onChange={(e) => setCvText(e.target.value)}
+                    placeholder="PASTE UNSYNCED RESUME DATA..."
+                    className="rounded-3xl border-2 font-medium italic bg-muted/5 p-6"
+                  />
+                </div>
               </div>
-              <div className="space-y-1.5">
-                <Label>Profession</Label>
-                <Input value={profession} onChange={(e) => setProfession(e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Email</Label>
-                <Input type="email" value={email} onChange={(e) => { setEmail(e.target.value); checkTalentExists(e.target.value); }} />
-                {talentExists === true && (
-                  <p className="text-xs text-emerald-600 flex items-center gap-1"><CheckCircle2 className="h-3 w-3" /> Existing talent — will link</p>
-                )}
-                {talentExists === false && (
-                  <p className="text-xs text-amber-600 flex items-center gap-1"><AlertCircle className="h-3 w-3" /> New talent record will be created</p>
-                )}
-              </div>
-              <div className="space-y-1.5">
-                <Label>Phone</Label>
-                <Input value={phone} onChange={(e) => setPhone(e.target.value)} />
-              </div>
-            </div>
 
-            <div className="space-y-1.5">
-              <Label>Skills</Label>
-              <Textarea rows={2} value={skills} onChange={(e) => setSkills(e.target.value)} placeholder="React, TypeScript, ..." />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label>Cover letter / pitch (optional)</Label>
-              <Textarea rows={3} value={coverLetter} onChange={(e) => setCoverLetter(e.target.value)} />
-            </div>
-
-            <div className="space-y-1.5">
-              <Label>Internal notes (admin only)</Label>
-              <Textarea rows={2} value={externalNotes} onChange={(e) => setExternalNotes(e.target.value)} placeholder="Channel: LinkedIn DM · Referral by ..." />
-            </div>
-
-            <div className="flex justify-between pt-2">
-              <Button variant="ghost" onClick={() => setStep("input")}>← Back</Button>
-              <Button onClick={handleSave} disabled={saving}>
-                {saving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-                Save Application
+              <Button
+                onClick={handleParse}
+                disabled={parsing || !jobId}
+                className="w-full h-20 rounded-[32px] font-black uppercase italic tracking-tighter text-2xl gap-4 shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-transform"
+              >
+                {parsing ? <Loader2 className="h-8 w-8 animate-spin" /> : <Sparkles className="h-8 w-8 fill-current" />}
+                Initialize Neural Extraction
               </Button>
             </div>
-          </div>
-        )}
+          ) : (
+            <div className="space-y-8 py-4 text-left animate-in slide-in-from-right-10 duration-500">
+              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                <FieldNode label="Identity Name *" value={name} onChange={setName} />
+                <FieldNode label="Authority Profession" value={profession} onChange={setProfession} />
+                <div className="space-y-2">
+                  <FieldNode
+                    label="Transmission Email"
+                    value={email}
+                    onChange={(v) => {
+                      setEmail(v);
+                      checkTalentExists(v);
+                    }}
+                    type="email"
+                  />
+                  {talentExists === true && (
+                    <Badge className="bg-green-500/10 text-green-600 border-green-500/20 font-black italic text-[9px] px-3 py-1">
+                      REGISTERED_TALENT_DETECTED
+                    </Badge>
+                  )}
+                  {talentExists === false && (
+                    <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 font-black italic text-[9px] px-3 py-1">
+                      NEW_NODE_PROVISIONING
+                    </Badge>
+                  )}
+                </div>
+                <FieldNode label="Mobile Link" value={phone} onChange={setPhone} />
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Skill Matrix</Label>
+                <Textarea
+                  rows={2}
+                  value={skills}
+                  onChange={(e) => setSkills(e.target.value)}
+                  className="rounded-2xl border-2 font-black italic text-xs bg-muted/10"
+                />
+              </div>
+
+              <div className="space-y-3">
+                <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Contextual Pitch</Label>
+                <Textarea
+                  rows={3}
+                  value={coverLetter}
+                  onChange={(e) => setCoverLetter(e.target.value)}
+                  className="rounded-2xl border-2 font-medium italic text-sm bg-muted/10"
+                />
+              </div>
+
+              <div className="space-y-3 bg-primary/5 p-6 rounded-[32px] border-2 border-primary/20">
+                <Label className="text-[10px] font-black uppercase text-primary italic flex items-center gap-2">
+                  <FileText className="h-3.5 w-3.5" /> Registry Notes (Private)
+                </Label>
+                <Textarea
+                  rows={2}
+                  value={externalNotes}
+                  onChange={(e) => setExternalNotes(e.target.value)}
+                  placeholder="LOG SOURCE CHANNEL..."
+                  className="border-none bg-transparent font-black uppercase italic text-[10px] p-0 focus-visible:ring-0"
+                />
+              </div>
+
+              <div className="flex justify-between items-center pt-4 border-t border-border/10">
+                <Button
+                  variant="ghost"
+                  onClick={() => setStep("input")}
+                  className="font-black uppercase text-[10px] tracking-widest italic opacity-50"
+                >
+                  Back to Ingress
+                </Button>
+                <Button
+                  onClick={handleSave}
+                  disabled={saving}
+                  className="h-16 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl"
+                >
+                  {saving ? <Loader2 className="animate-spin" /> : <ShieldCheck className="fill-current" />}
+                  Deploy Application
+                </Button>
+              </div>
+            </div>
+          )}
+        </ScrollArea>
 
         {step === "input" && (
-          <DialogFooter>
-            <Button variant="outline" onClick={() => handleClose(false)}>Cancel</Button>
-          </DialogFooter>
+          <div className="p-6 bg-muted/10 border-t border-border/10 flex justify-end">
+            <Button
+              variant="ghost"
+              className="font-black uppercase text-[10px] tracking-widest italic opacity-50"
+              onClick={() => handleClose(false)}
+            >
+              Abort Sync
+            </Button>
+          </div>
         )}
       </DialogContent>
     </Dialog>
+  );
+}
+
+function FieldNode({ label, value, onChange, type = "text" }: any) {
+  return (
+    <div className="space-y-2">
+      <Label className="text-[10px] font-black uppercase text-primary italic ml-2">{label}</Label>
+      <Input
+        type={type}
+        value={value}
+        onChange={(e) => onChange(e.target.value)}
+        className="h-12 rounded-xl border-2 font-bold bg-muted/10"
+      />
+    </div>
   );
 }
