@@ -1,5 +1,10 @@
 import { format } from "date-fns";
 
+/**
+ * GroUp Academy: Institutional Completion Artifact
+ * CTO Reference: Authoritative landscape template for high-fidelity certificate generation.
+ */
+
 interface CertificateData {
   holder_name: string;
   course_title: string;
@@ -18,8 +23,9 @@ const BRAND = {
   primary: "#2A7DDE",
   secondary: "#33E1E4",
   accent: "#10D576",
-  dark: "#1a1a1a",
-  muted: "#6b7280",
+  dark: "#0F172A",
+  muted: "#64748B",
+  border: "rgba(42, 125, 222, 0.2)",
 };
 
 export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
@@ -29,194 +35,250 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
     <div
       id="certificate-pdf-content"
       style={{
-        width: "1122px",
+        width: "1122px", // A4 Landscape Resolution Node
         height: "794px",
         padding: "0",
         backgroundColor: "#ffffff",
-        fontFamily: "system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif",
+        fontFamily: "Inter, system-ui, -apple-system, sans-serif",
         color: BRAND.dark,
         position: "absolute",
         left: "-9999px",
         top: 0,
         overflow: "hidden",
+        boxSizing: "border-box",
       }}
     >
-      {/* Decorative border */}
-      <div style={{
-        position: "absolute",
-        inset: "12px",
-        border: `3px solid ${BRAND.primary}`,
-        borderRadius: "8px",
-        pointerEvents: "none",
-      }} />
-
-      {/* Corner accents */}
-      {[
-        { top: 0, left: 0 },
-        { top: 0, right: 0 },
-        { bottom: 0, left: 0 },
-        { bottom: 0, right: 0 },
-      ].map((pos, i) => (
-        <div key={i} style={{
+      {/* HUD: EXTERNAL_DECORATIVE_FRAME */}
+      <div
+        style={{
           position: "absolute",
-          width: "60px",
-          height: "60px",
-          background: `linear-gradient(135deg, ${BRAND.primary}, ${BRAND.secondary})`,
-          opacity: 0.15,
-          borderRadius: i === 0 ? "0 0 60px 0" : i === 1 ? "0 0 0 60px" : i === 2 ? "0 60px 0 0" : "60px 0 0 0",
-          ...pos,
-        } as any} />
+          inset: "20px",
+          border: `2px solid ${BRAND.primary}`,
+          borderRadius: "4px",
+          pointerEvents: "none",
+        }}
+      />
+
+      <div
+        style={{
+          position: "absolute",
+          inset: "30px",
+          border: `1px solid ${BRAND.border}`,
+          borderRadius: "2px",
+          pointerEvents: "none",
+        }}
+      />
+
+      {/* COMPONENT: CORNER_SYNC_NODES */}
+      {[
+        { top: 0, left: 0, borderRadius: "0 0 100px 0" },
+        { top: 0, right: 0, borderRadius: "0 0 0 100px" },
+        { bottom: 0, left: 0, borderRadius: "0 100px 0 0" },
+        { bottom: 0, right: 0, borderRadius: "100px 0 0 0" },
+      ].map((style, i) => (
+        <div
+          key={i}
+          style={
+            {
+              position: "absolute",
+              width: "120px",
+              height: "120px",
+              background: `linear-gradient(135deg, ${BRAND.primary}10, ${BRAND.secondary}15)`,
+              ...style,
+            } as any
+          }
+        />
       ))}
 
-      {/* Content */}
-      <div style={{
-        display: "flex",
-        flexDirection: "column",
-        alignItems: "center",
-        justifyContent: "center",
-        height: "100%",
-        padding: "50px 80px",
-        textAlign: "center",
-      }}>
-        {/* Header */}
-        <div style={{ marginBottom: "8px" }}>
-          <h1 style={{
-            margin: 0,
-            fontSize: "32px",
-            fontWeight: 700,
-            color: BRAND.primary,
-            letterSpacing: "1px",
-          }}>
-            GroUp Academy
+      {/* VIEWPORT: ARTIFACT_CONTENT */}
+      <div
+        style={{
+          display: "flex",
+          flexDirection: "column",
+          alignItems: "center",
+          justifyContent: "center",
+          height: "100%",
+          padding: "60px 100px",
+          textAlign: "center",
+          position: "relative",
+          zIndex: 10,
+        }}
+      >
+        {/* HUD: INSTITUTIONAL_HEADER */}
+        <div style={{ marginBottom: "12px" }}>
+          <h1
+            style={{
+              margin: 0,
+              fontSize: "36px",
+              fontWeight: 900,
+              color: BRAND.primary,
+              letterSpacing: "-1px",
+              textTransform: "uppercase",
+              fontStyle: "italic",
+            }}
+          >
+            GroUp_Academy
           </h1>
         </div>
 
-        {/* Divider */}
-        <div style={{
-          width: "120px",
-          height: "3px",
-          background: `linear-gradient(90deg, ${BRAND.primary}, ${BRAND.secondary})`,
-          borderRadius: "2px",
-          marginBottom: "16px",
-        }} />
+        <div
+          style={{
+            width: "160px",
+            height: "4px",
+            background: `linear-gradient(90deg, ${BRAND.primary}, ${BRAND.secondary})`,
+            borderRadius: "2px",
+            marginBottom: "24px",
+          }}
+        />
 
-        <p style={{
-          margin: "0 0 24px",
-          fontSize: "13px",
-          textTransform: "uppercase",
-          letterSpacing: "4px",
-          color: BRAND.muted,
-          fontWeight: 600,
-        }}>
-          Certificate of Completion
+        <p
+          style={{
+            margin: "0 0 40px",
+            fontSize: "14px",
+            textTransform: "uppercase",
+            letterSpacing: "6px",
+            color: BRAND.muted,
+            fontWeight: 800,
+          }}
+        >
+          Credential_of_Completion
         </p>
 
-        <p style={{
-          margin: "0 0 8px",
-          fontSize: "14px",
-          color: BRAND.muted,
-        }}>
-          This is to certify that
+        <p style={{ margin: "0 0 12px", fontSize: "16px", fontStyle: "italic", color: BRAND.muted }}>
+          This system verifies that
         </p>
 
-        {/* Name */}
-        <h2 style={{
-          margin: "0 0 20px",
-          fontSize: "42px",
-          fontWeight: 700,
-          color: BRAND.dark,
-          borderBottom: `2px solid ${BRAND.secondary}`,
-          paddingBottom: "8px",
-          display: "inline-block",
-        }}>
-          {data.holder_name}
+        {/* IDENTITY: HOLDER_NAME */}
+        <h2
+          style={{
+            margin: "0 0 24px",
+            fontSize: "52px",
+            fontWeight: 900,
+            color: BRAND.dark,
+            borderBottom: `4px solid ${BRAND.secondary}`,
+            paddingBottom: "10px",
+            display: "inline-block",
+            letterSpacing: "-2px",
+          }}
+        >
+          {data.holder_name.toUpperCase()}
         </h2>
 
-        <p style={{
-          margin: "0 0 12px",
-          fontSize: "14px",
-          color: BRAND.muted,
-        }}>
-          has successfully completed the course
+        <p style={{ margin: "0 0 16px", fontSize: "16px", color: BRAND.muted }}>
+          has synchronized mastery in the curriculum of
         </p>
 
-        {/* Course Title */}
-        <h3 style={{
-          margin: "0 0 24px",
-          fontSize: "24px",
-          fontWeight: 600,
-          color: BRAND.primary,
-          maxWidth: "700px",
-        }}>
+        {/* ARTIFACT: COURSE_TITLE */}
+        <h3
+          style={{
+            margin: "0 0 32px",
+            fontSize: "28px",
+            fontWeight: 800,
+            color: BRAND.primary,
+            maxWidth: "800px",
+            textTransform: "uppercase",
+            letterSpacing: "-0.5px",
+          }}
+        >
           {data.course_title}
         </h3>
 
-        {/* Score badge */}
+        {/* HUD: METRIC_SYNC */}
         {data.percentage !== null && (
-          <div style={{
-            display: "inline-flex",
-            alignItems: "center",
-            gap: "12px",
-            backgroundColor: "#ecfdf5",
-            padding: "10px 28px",
-            borderRadius: "30px",
-            marginBottom: "24px",
-          }}>
-            <span style={{ fontSize: "14px", color: BRAND.accent, fontWeight: 600 }}>
-              ✓ Assessment Score: {data.score}/{data.total_questions} ({data.percentage}%)
+          <div
+            style={{
+              display: "inline-flex",
+              alignItems: "center",
+              gap: "15px",
+              backgroundColor: "#F0FDF4",
+              border: "1px solid rgba(16, 213, 118, 0.2)",
+              padding: "12px 32px",
+              borderRadius: "16px",
+              marginBottom: "32px",
+            }}
+          >
+            <span
+              style={{
+                fontSize: "14px",
+                color: BRAND.accent,
+                fontWeight: 800,
+                textTransform: "uppercase",
+                letterSpacing: "1px",
+              }}
+            >
+              ✓ Diagnostic_Yield: {data.score}/{data.total_questions} ({data.percentage}%)
             </span>
           </div>
         )}
 
-        {/* Date */}
-        <p style={{
-          margin: "0 0 32px",
-          fontSize: "13px",
-          color: BRAND.muted,
-        }}>
-          Issued on {format(new Date(data.issued_at), "MMMM d, yyyy")}
-        </p>
-
-        {/* Signature line */}
-        <div style={{
-          display: "flex",
-          justifyContent: "center",
-          gap: "120px",
-          width: "100%",
-          maxWidth: "600px",
-        }}>
+        {/* HUD: SIGNATURE_AUTHORITY */}
+        <div
+          style={{
+            display: "flex",
+            justifyContent: "center",
+            width: "100%",
+            marginTop: "20px",
+          }}
+        >
           <div style={{ textAlign: "center" }}>
-            <div style={{
-              width: "180px",
-              borderBottom: "1px solid #d1d5db",
-              marginBottom: "6px",
-              paddingBottom: "4px",
-              fontSize: "14px",
-              fontWeight: 600,
-              fontStyle: "italic",
-              color: BRAND.dark,
-            }}>
-              GroUp Academy
+            <div
+              style={{
+                width: "220px",
+                borderBottom: `1px solid ${BRAND.muted}40`,
+                marginBottom: "8px",
+                paddingBottom: "8px",
+                fontSize: "18px",
+                fontWeight: 800,
+                fontStyle: "italic",
+                color: BRAND.dark,
+                letterSpacing: "-0.5px",
+              }}
+            >
+              GroUp_Registry
             </div>
-            <p style={{ margin: 0, fontSize: "11px", color: BRAND.muted }}>Issuing Authority</p>
+            <p
+              style={{
+                margin: 0,
+                fontSize: "10px",
+                fontWeight: 700,
+                color: BRAND.muted,
+                textTransform: "uppercase",
+                letterSpacing: "2px",
+              }}
+            >
+              Issuing_Authority
+            </p>
+            <p style={{ margin: "4px 0 0", fontSize: "11px", fontWeight: 600, color: BRAND.primary }}>
+              {format(new Date(data.issued_at), "dd_MMM_yyyy").toUpperCase()}
+            </p>
           </div>
         </div>
 
-        {/* Footer verification */}
-        <div style={{
-          position: "absolute",
-          bottom: "24px",
-          left: "80px",
-          right: "80px",
-          display: "flex",
-          justifyContent: "space-between",
-          alignItems: "center",
-          fontSize: "10px",
-          color: BRAND.muted,
-        }}>
-          <span>Verify: {verifyUrl}</span>
-          <span>Code: {data.verify_code}</span>
-          <span>© {new Date().getFullYear()} GroUp Academy</span>
+        {/* FOOTER: VERIFICATION_LEDGER */}
+        <div
+          style={{
+            position: "absolute",
+            bottom: "35px",
+            left: "80px",
+            right: "80px",
+            display: "flex",
+            justifyContent: "space-between",
+            alignItems: "flex-end",
+            fontSize: "9px",
+            fontWeight: 700,
+            color: BRAND.muted,
+            textTransform: "uppercase",
+            letterSpacing: "1px",
+          }}
+        >
+          <div style={{ textAlign: "left" }}>
+            <span style={{ display: "block", marginBottom: "4px" }}>System_Verify: {verifyUrl}</span>
+            <span>Artifact_ID: {data.verify_code}</span>
+          </div>
+          <div style={{ textAlign: "right" }}>
+            <span style={{ display: "block", marginBottom: "4px" }}>Verification_Status: LEVEL_1_VERIFIED</span>
+            <span>© {new Date().getFullYear()} GroUp_Academy_Neural_Registry</span>
+          </div>
         </div>
       </div>
     </div>
