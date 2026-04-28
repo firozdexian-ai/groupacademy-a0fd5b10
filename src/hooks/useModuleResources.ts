@@ -3,6 +3,12 @@ import { useQueryWithTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import type { Database } from "@/integrations/supabase/types";
 
+/**
+ * GroUp Academy: Curriculum Resource Sentinel
+ * CTO Reference: Authoritative controller for 6-Stage pedagogical content delivery.
+ * Logic: Implements phase-based partitioning and student progress auditing.
+ */
+
 type ModuleResource = Database["public"]["Tables"]["module_resources"]["Row"];
 
 export interface StageResources {
@@ -11,6 +17,7 @@ export interface StageResources {
   resources: ModuleResource[];
 }
 
+// HUD: Institutional Stage Definitions
 const stageNames: Record<number, string> = {
   1: "Orientation",
   2: "Learn",
@@ -20,6 +27,10 @@ const stageNames: Record<number, string> = {
   6: "Progress",
 };
 
+/**
+ * PHASE: Resource_Ingress
+ * Retrieves all curriculum artifacts for a specific module node.
+ */
 export function useModuleResources(moduleId: string | undefined) {
   return useQueryWithTimeout({
     queryKey: ["module-resources", moduleId],
@@ -30,8 +41,8 @@ export function useModuleResources(moduleId: string | undefined) {
         .from("module_resources")
         .select("*")
         .eq("module_id", moduleId)
-        .order("stage_number")
-        .order("display_order");
+        .order("stage_number", { ascending: true })
+        .order("display_order", { ascending: true });
 
       if (error) throw error;
       return data || [];
@@ -41,6 +52,10 @@ export function useModuleResources(moduleId: string | undefined) {
   });
 }
 
+/**
+ * PHASE: Stage_Partitioning
+ * Reconfigures raw resources into the 6-Stage executive model.
+ */
 export function useModuleResourcesByStage(moduleId: string | undefined) {
   const { data: resources, ...rest } = useModuleResources(moduleId);
 
@@ -57,21 +72,24 @@ export function useModuleResourcesByStage(moduleId: string | undefined) {
   };
 }
 
+/**
+ * PHASE: Progress_Audit
+ * Verifies which specific resource artifacts have been completed by the talent.
+ */
 export function useStudentResourceProgress(studentId: string | undefined, moduleId: string | undefined) {
   return useQueryWithTimeout({
     queryKey: ["student-resource-progress", studentId, moduleId],
     queryFn: async () => {
       if (!studentId || !moduleId) return [];
 
-      const { data: resources } = await supabase
-        .from("module_resources")
-        .select("id")
-        .eq("module_id", moduleId);
+      // Step 1: Discover module resource artifacts
+      const { data: resources } = await supabase.from("module_resources").select("id").eq("module_id", moduleId);
 
       if (!resources?.length) return [];
 
       const resourceIds = resources.map((r) => r.id);
 
+      // Step 2: Audit interaction ledger
       const { data, error } = await supabase
         .from("student_resource_progress")
         .select("*")
