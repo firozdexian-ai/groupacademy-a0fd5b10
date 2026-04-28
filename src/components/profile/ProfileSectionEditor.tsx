@@ -1,15 +1,20 @@
-import { useState, useCallback } from "react";
-import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
+import { useState, useCallback, useMemo } from "react";
+import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Badge } from "@/components/ui/badge";
 import { ExperienceEditor, ExperienceEntry } from "@/components/profile/ExperienceEditor";
 import { EducationEditor, EducationEntry } from "@/components/profile/EducationEditor";
 import { SkillsEditor } from "@/components/profile/SkillsEditor";
-import { Save, Loader2, Plus, X } from "lucide-react";
+import { Save, Loader2, Plus, X, Zap, ShieldCheck } from "lucide-react";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Profile Section Orchestrator
+ * CTO Reference: Unified ingress node for targeted section synchronization.
+ */
 
 type SectionType = "about" | "experience" | "education" | "skills" | "achievements" | "languages" | null;
 
@@ -34,169 +39,209 @@ interface ProfileSectionEditorProps {
 export function ProfileSectionEditor({ section, onClose, onSave, talent }: ProfileSectionEditorProps) {
   const [saving, setSaving] = useState(false);
 
-  // About
+  // SECTION_REGISTRY: About Protocol
   const [about, setAbout] = useState(talent?.currentStatus || "");
 
-  // Experience
-  const safeExp = (talent?.experience || []).map((exp: any) => ({
-    company: exp.company || "",
-    position: exp.position || exp.title || "",
-    startDate: exp.startDate || exp.start_date || "",
-    endDate: exp.endDate || exp.end_date || "",
-    description: exp.description || "",
-  }));
+  // SECTION_REGISTRY: Professional Experience Sync
+  const safeExp = useMemo(
+    () =>
+      (talent?.experience || []).map((exp: any) => ({
+        company: exp.company || "",
+        position: exp.position || exp.title || "",
+        startDate: exp.startDate || exp.start_date || "",
+        endDate: exp.endDate || exp.end_date || "",
+        description: exp.description || "",
+      })),
+    [talent],
+  );
   const [experience, setExperience] = useState<ExperienceEntry[]>(safeExp);
 
-  // Education
-  const safeEdu = (talent?.education || []).map((edu: any) => ({
-    institution: edu.institution || "",
-    degree: edu.degree || "",
-    fieldOfStudy: edu.fieldOfStudy || edu.field || "",
-    startYear: edu.startYear || edu.start_year || "",
-    endYear: edu.endYear || edu.end_year || "",
-  }));
+  // SECTION_REGISTRY: Academic Registry Sync
+  const safeEdu = useMemo(
+    () =>
+      (talent?.education || []).map((edu: any) => ({
+        institution: edu.institution || "",
+        degree: edu.degree || "",
+        fieldOfStudy: edu.fieldOfStudy || edu.field || "",
+        startYear: edu.startYear || edu.start_year || "",
+        endYear: edu.endYear || edu.end_year || "",
+      })),
+    [talent],
+  );
   const [education, setEducation] = useState<EducationEntry[]>(safeEdu);
 
-  // Skills
-  const safeSkills = Array.isArray(talent?.skills)
-    ? talent.skills.map((s: any) => (typeof s === "string" ? s : s?.name || String(s)))
-    : [];
+  // SECTION_REGISTRY: Skill Matrix Sync
+  const safeSkills = useMemo(
+    () =>
+      Array.isArray(talent?.skills)
+        ? talent.skills.map((s: any) => (typeof s === "string" ? s : s?.name || String(s)))
+        : [],
+    [talent],
+  );
   const [skills, setSkills] = useState<string[]>(safeSkills);
 
-  // Achievements
-  const safeAchievements = (talent?.achievements || []).map((a: any) => ({
-    title: a.title || a.name || "",
-    issuer: a.issuer || "",
-    date: a.date || "",
-  }));
+  // SECTION_REGISTRY: Achievement Artifacts
+  const safeAchievements = useMemo(
+    () =>
+      (talent?.achievements || []).map((a: any) => ({
+        title: a.title || a.name || "",
+        issuer: a.issuer || "",
+        date: a.date || "",
+      })),
+    [talent],
+  );
   const [achievements, setAchievements] = useState<AchievementEntry[]>(safeAchievements);
 
-  // Languages
-  const safeLangs = (talent?.languages || []).map((l: any) => ({
-    language: l.language || "",
-    proficiency: l.proficiency || "Intermediate",
-  }));
+  // SECTION_REGISTRY: Language Nodes
+  const safeLangs = useMemo(
+    () =>
+      (talent?.languages || []).map((l: any) => ({
+        language: l.language || "",
+        proficiency: l.proficiency || "Intermediate",
+      })),
+    [talent],
+  );
   const [languages, setLanguages] = useState<LanguageEntry[]>(safeLangs);
 
-  const handleSave = useCallback(async () => {
+  const handleExecutiveSave = useCallback(async () => {
     setSaving(true);
     try {
-      let data: any;
+      let syncPayload: any;
       switch (section) {
         case "about":
-          data = { currentStatus: about };
+          syncPayload = { currentStatus: about };
           break;
         case "experience":
-          data = { experience };
+          syncPayload = { experience };
           break;
         case "education":
-          data = { education };
+          syncPayload = { education };
           break;
         case "skills":
-          data = { skills };
+          syncPayload = { skills };
           break;
         case "achievements":
-          data = { achievements };
+          syncPayload = { achievements };
           break;
         case "languages":
-          data = { languages };
+          syncPayload = { languages };
           break;
       }
-      await onSave(section, data);
+      await onSave(section, syncPayload);
       onClose();
+    } catch (err) {
+      console.error("[Registry Sync Fault]:", err);
     } finally {
       setSaving(false);
     }
   }, [section, about, experience, education, skills, achievements, languages, onSave, onClose]);
 
-  const sectionTitles: Record<string, string> = {
-    about: "About",
-    experience: "Experience",
-    education: "Education",
-    skills: "Skills",
-    achievements: "Honors & Awards",
-    languages: "Languages",
+  const sectionMeta: Record<string, { title: string; icon: any }> = {
+    about: { title: "ABOUT_SYNC", icon: ShieldCheck },
+    experience: { title: "EXPERIENCE_REGISTRY", icon: Zap },
+    education: { title: "ACADEMIC_LEDGER", icon: Zap },
+    skills: { title: "SKILL_MATRIX", icon: Zap },
+    achievements: { title: "ACHIEVEMENT_ARTIFACTS", icon: ShieldCheck },
+    languages: { title: "COMMUNICATION_NODES", icon: ShieldCheck },
   };
-
-  // Language helpers
-  const addLanguage = () => setLanguages((p) => [...p, { language: "", proficiency: "Intermediate" }]);
-  const removeLanguage = (i: number) => setLanguages((p) => p.filter((_, idx) => idx !== i));
-  const updateLanguage = (i: number, field: keyof LanguageEntry, value: string) =>
-    setLanguages((p) => p.map((l, idx) => (idx === i ? { ...l, [field]: value } : l)));
-
-  // Achievement helpers
-  const addAchievement = () => setAchievements((p) => [...p, { title: "", issuer: "", date: "" }]);
-  const removeAchievement = (i: number) => setAchievements((p) => p.filter((_, idx) => idx !== i));
-  const updateAchievement = (i: number, field: keyof AchievementEntry, value: string) =>
-    setAchievements((p) => p.map((a, idx) => (idx === i ? { ...a, [field]: value } : a)));
 
   return (
     <Sheet open={!!section} onOpenChange={(open) => !open && onClose()}>
-      <SheetContent side="bottom" className="h-[85vh] rounded-t-2xl overflow-hidden flex flex-col">
-        <SheetHeader className="shrink-0">
-          <SheetTitle>{section ? sectionTitles[section] || "Edit" : "Edit"}</SheetTitle>
+      <SheetContent
+        side="bottom"
+        className="h-[90vh] rounded-t-[32px] border-t-4 border-primary/20 bg-background/95 backdrop-blur-xl flex flex-col p-8"
+      >
+        <SheetHeader className="mb-6">
+          <SheetTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+            {section && sectionMeta[section]?.icon && (
+              <div className="p-2 rounded-xl bg-primary/10 text-primary">
+                {/* Dynamically rendered icon node */}
+                {(() => {
+                  const IconNode = sectionMeta[section].icon;
+                  return <IconNode className="h-5 w-5" />;
+                })()}
+              </div>
+            )}
+            {section ? sectionMeta[section]?.title : "INITIALIZING_NODE"}
+          </SheetTitle>
+          <SheetDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+            Synchronizing identity node with global talent registry
+          </SheetDescription>
         </SheetHeader>
 
-        <div className="flex-1 overflow-y-auto py-4 space-y-4">
+        <div className="flex-1 overflow-y-auto pr-2 scrollbar-hide space-y-6">
           {section === "about" && (
-            <div className="space-y-2">
-              <Label>About / Bio</Label>
+            <div className="space-y-3 animate-in fade-in duration-500">
+              <Label className="text-[10px] font-black uppercase italic text-primary ml-1">Professional_Bio</Label>
               <Textarea
                 value={about}
                 onChange={(e) => setAbout(e.target.value)}
-                placeholder="Tell us about your professional background..."
-                rows={6}
-                className="resize-y"
+                placeholder="Synchronize your professional narrative..."
+                className="min-h-[200px] rounded-2xl border-2 font-medium italic bg-muted/5 resize-none p-5"
               />
             </div>
           )}
 
-          {section === "experience" && (
-            <ExperienceEditor experience={experience} onChange={setExperience} />
-          )}
-
-          {section === "education" && (
-            <EducationEditor education={education} onChange={setEducation} />
-          )}
-
-          {section === "skills" && (
-            <SkillsEditor skills={skills} onChange={setSkills} />
-          )}
+          {section === "experience" && <ExperienceEditor experience={experience} onChange={setExperience} />}
+          {section === "education" && <EducationEditor education={education} onChange={setEducation} />}
+          {section === "skills" && <SkillsEditor skills={skills} onChange={setSkills} />}
 
           {section === "achievements" && (
-            <div className="space-y-4">
+            <div className="space-y-6 animate-in fade-in duration-500">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Honors & Awards</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addAchievement}>
-                  <Plus className="h-4 w-4 mr-1" /> Add
+                <Label className="text-[10px] font-black uppercase italic text-primary">Honors_&_Certificates</Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setAchievements((p) => [...p, { title: "", issuer: "", date: "" }])}
+                  className="rounded-xl border-2 font-black italic text-[9px] gap-2"
+                >
+                  <Plus className="h-3 w-3" /> ADD_NODE
                 </Button>
               </div>
-              {achievements.length === 0 && (
-                <p className="text-sm text-muted-foreground italic text-center py-4">No awards added yet.</p>
-              )}
               {achievements.map((award, i) => (
-                <div key={i} className="border rounded-xl p-4 space-y-3 relative">
+                <div
+                  key={i}
+                  className="group relative border-2 border-border/40 bg-card/30 rounded-[24px] p-6 space-y-4 hover:border-primary/20 transition-all"
+                >
                   <Button
-                    type="button"
                     variant="ghost"
                     size="icon"
-                    className="absolute top-2 right-2 h-7 w-7 text-destructive"
-                    onClick={() => removeAchievement(i)}
+                    className="absolute top-4 right-4 h-8 w-8 rounded-lg text-destructive hover:bg-destructive/10"
+                    onClick={() => setAchievements((p) => p.filter((_, idx) => idx !== i))}
                   >
                     <X className="h-4 w-4" />
                   </Button>
                   <div className="space-y-2">
-                    <Label className="text-xs">Title</Label>
-                    <Input value={award.title} onChange={(e) => updateAchievement(i, "title", e.target.value)} placeholder="e.g., Dean's List" />
+                    <Label className="text-[9px] font-black uppercase opacity-40">Artifact_Title</Label>
+                    <Input
+                      value={award.title}
+                      onChange={(e) =>
+                        setAchievements((p) => p.map((a, idx) => (idx === i ? { ...a, title: e.target.value } : a)))
+                      }
+                      className="h-11 rounded-xl border-2 font-bold"
+                    />
                   </div>
-                  <div className="grid grid-cols-2 gap-3">
+                  <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-xs">Issuer</Label>
-                      <Input value={award.issuer} onChange={(e) => updateAchievement(i, "issuer", e.target.value)} placeholder="e.g., MIT" />
+                      <Label className="text-[9px] font-black uppercase opacity-40">Issuer</Label>
+                      <Input
+                        value={award.issuer}
+                        onChange={(e) =>
+                          setAchievements((p) => p.map((a, idx) => (idx === i ? { ...a, issuer: e.target.value } : a)))
+                        }
+                        className="h-11 rounded-xl border-2 font-bold"
+                      />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-xs">Date</Label>
-                      <Input value={award.date} onChange={(e) => updateAchievement(i, "date", e.target.value)} placeholder="e.g., 2023" />
+                      <Label className="text-[9px] font-black uppercase opacity-40">Sync_Date</Label>
+                      <Input
+                        value={award.date}
+                        onChange={(e) =>
+                          setAchievements((p) => p.map((a, idx) => (idx === i ? { ...a, date: e.target.value } : a)))
+                        }
+                        className="h-11 rounded-xl border-2 font-bold"
+                      />
                     </div>
                   </div>
                 </div>
@@ -205,37 +250,51 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
           )}
 
           {section === "languages" && (
-            <div className="space-y-4">
+            <div className="space-y-6 animate-in fade-in duration-500">
               <div className="flex items-center justify-between">
-                <Label className="text-base font-medium">Languages</Label>
-                <Button type="button" variant="outline" size="sm" onClick={addLanguage}>
-                  <Plus className="h-4 w-4 mr-1" /> Add
+                <Label className="text-[10px] font-black uppercase italic text-primary">Communication_Protocols</Label>
+                <Button
+                  variant="outline"
+                  size="sm"
+                  onClick={() => setLanguages((p) => [...p, { language: "", proficiency: "Intermediate" }])}
+                  className="rounded-xl border-2 font-black italic text-[9px] gap-2"
+                >
+                  <Plus className="h-3 w-3" /> ADD_PROTO
                 </Button>
               </div>
-              {languages.length === 0 && (
-                <p className="text-sm text-muted-foreground italic text-center py-4">No languages added yet.</p>
-              )}
               {languages.map((lang, i) => (
-                <div key={i} className="flex items-center gap-3">
+                <div key={i} className="flex items-center gap-3 animate-in slide-in-from-left-2">
                   <Input
-                    className="flex-1"
+                    className="h-12 rounded-xl border-2 font-bold flex-1"
                     value={lang.language}
-                    onChange={(e) => updateLanguage(i, "language", e.target.value)}
-                    placeholder="e.g., English"
+                    onChange={(e) =>
+                      setLanguages((p) => p.map((l, idx) => (idx === i ? { ...l, language: e.target.value } : l)))
+                    }
+                    placeholder="Protocol Type (e.g. English)"
                   />
-                  <Select value={lang.proficiency} onValueChange={(val) => updateLanguage(i, "proficiency", val)}>
-                    <SelectTrigger className="w-36">
+                  <Select
+                    value={lang.proficiency}
+                    onValueChange={(val) =>
+                      setLanguages((p) => p.map((l, idx) => (idx === i ? { ...l, proficiency: val } : l)))
+                    }
+                  >
+                    <SelectTrigger className="h-12 w-40 rounded-xl border-2 font-black text-[10px] uppercase">
                       <SelectValue />
                     </SelectTrigger>
-                    <SelectContent>
+                    <SelectContent className="rounded-xl font-black text-[10px] uppercase">
                       <SelectItem value="Native">Native</SelectItem>
                       <SelectItem value="Fluent">Fluent</SelectItem>
                       <SelectItem value="Intermediate">Intermediate</SelectItem>
                       <SelectItem value="Basic">Basic</SelectItem>
                     </SelectContent>
                   </Select>
-                  <Button type="button" variant="ghost" size="icon" className="h-9 w-9 text-destructive" onClick={() => removeLanguage(i)}>
-                    <X className="h-4 w-4" />
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    className="h-12 w-12 rounded-xl text-destructive"
+                    onClick={() => setLanguages((p) => p.filter((_, idx) => idx !== i))}
+                  >
+                    <X className="h-5 w-5" />
                   </Button>
                 </div>
               ))}
@@ -243,23 +302,25 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
           )}
         </div>
 
-        {/* Save bar */}
-        <div className="shrink-0 pt-3 pb-2 border-t flex gap-3">
-          <Button variant="outline" className="flex-1 rounded-xl" onClick={onClose} disabled={saving}>
-            Cancel
+        {/* EXECUTIVE_SAVE_BAR */}
+        <div className="shrink-0 pt-6 mt-4 border-t-2 border-border/10 flex gap-4">
+          <Button
+            variant="ghost"
+            className="flex-1 h-14 rounded-2xl font-black uppercase italic text-[11px] tracking-widest text-muted-foreground hover:bg-muted/10"
+            onClick={onClose}
+            disabled={saving}
+          >
+            Abort_Changes
           </Button>
-          <Button className="flex-[2] rounded-xl" onClick={handleSave} disabled={saving}>
-            {saving ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              <>
-                <Save className="h-4 w-4 mr-2" />
-                Save
-              </>
+          <Button
+            className={cn(
+              "flex-[2] h-14 rounded-2xl font-black uppercase italic text-[11px] tracking-widest gap-3 shadow-2xl transition-all active:scale-95",
             )}
+            onClick={handleExecutiveSave}
+            disabled={saving}
+          >
+            {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <Save className="h-5 w-5" />}
+            {saving ? "SYNCING_LEDGER..." : "AUTHORIZE_SYNC"}
           </Button>
         </div>
       </SheetContent>
