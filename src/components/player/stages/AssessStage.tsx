@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
@@ -14,6 +14,28 @@ import { cn } from "@/lib/utils";
  * GroUp Academy: Knowledge Validation Node (AssessStage)
  * CTO Reference: Authoritative gatekeeper for skill-node mastery.
  */
+
+// REGISTRY_INTERFACES: Explicitly defined to resolve TS2304
+export interface QuizQuestion {
+  id: string;
+  question_text: string;
+  option_a: string;
+  option_b: string;
+  option_c: string;
+  option_d: string;
+  correct_answer: string;
+  explanation: string | null;
+}
+
+export interface AssessStageProps {
+  contentId: string;
+  moduleId: string;
+  studentId: string | undefined;
+  enrollmentId: string | undefined;
+  passThreshold: number;
+  onComplete: (passed: boolean, score: number) => void;
+  isCompleted: boolean;
+}
 
 export function AssessStage({
   contentId,
@@ -69,6 +91,14 @@ export function AssessStage({
   const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
   const passed = percentage >= passThreshold;
 
+  // PROTOCOL: Attempt Reset Handler
+  const handleRetry = () => {
+    setAnswers({});
+    setSubmitted(false);
+    setScore(0);
+    setShowExplanations(false);
+  };
+
   const handleExecutiveSubmit = async () => {
     if (!allAnswered) return;
 
@@ -81,16 +111,20 @@ export function AssessStage({
       const attemptPassed = Math.round((correctCount / totalQuestions) * 100) >= passThreshold;
 
       try {
+        // FIX: Await the Supabase call inside withTimeout to satisfy TS2739
         await withTimeout(
-          supabase.from("quiz_attempts").insert({
-            student_id: studentId,
-            content_id: contentId,
-            enrollment_id: enrollmentId,
-            answers,
-            score: correctCount,
-            total_questions: totalQuestions,
-            passed: attemptPassed,
-          }),
+          (async () => {
+            const { error } = await supabase.from("quiz_attempts").insert({
+              student_id: studentId,
+              content_id: contentId,
+              enrollment_id: enrollmentId,
+              answers,
+              score: correctCount,
+              total_questions: totalQuestions,
+              passed: attemptPassed,
+            });
+            if (error) throw error;
+          })(),
           TIMEOUTS.DEFAULT,
           "REGISTRY_SYNC_TIMEOUT",
         );
@@ -115,11 +149,31 @@ export function AssessStage({
     );
   }
 
+  if (loadError) {
+    return (
+      <Card className="rounded-[32px] border-2 border-dashed border-destructive/20 bg-destructive/5">
+        <CardContent className="p-12 text-center space-y-4">
+          <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
+          <p className="text-[10px] font-black uppercase text-destructive tracking-widest italic">
+            SYNC_FAULT: REGISTRY_OFFLINE
+          </p>
+          <Button
+            onClick={() => refetch()}
+            variant="outline"
+            className="rounded-xl font-black uppercase text-[10px] border-destructive/20"
+          >
+            Re_Initialize_Node
+          </Button>
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* HUD: ASSESSMENT_HEADER */}
       <div className="flex items-center justify-between px-1">
-        <div className="space-y-1">
+        <div className="space-y-1 text-left">
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
             <Target className="h-6 w-6 text-primary" /> Stage_05: Knowledge_Validation
           </h2>
@@ -207,7 +261,7 @@ export function AssessStage({
                   <Card
                     key={q.id}
                     className={cn(
-                      "rounded-2xl border-l-8 transition-all",
+                      "rounded-2xl border-l-8 transition-all text-left",
                       isCorrect ? "border-l-emerald-500 bg-emerald-500/5" : "border-l-red-500 bg-red-500/5",
                     )}
                   >
@@ -224,7 +278,7 @@ export function AssessStage({
                           {isCorrect ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
                         </div>
                         <div className="space-y-3">
-                          <p className="font-black text-sm uppercase italic tracking-tight">
+                          <p className="font-black text-sm uppercase italic tracking-tight text-foreground">
                             NODE_{index + 1}: {q.question_text}
                           </p>
                           <div className="flex flex-wrap gap-4 text-[10px] font-bold uppercase tracking-widest opacity-60 italic">
@@ -258,11 +312,11 @@ export function AssessStage({
         /* COMPONENT: QUIZ_INTERFACE */
         <div className="space-y-8">
           <div className="p-6 rounded-[28px] bg-muted/20 border-2 border-border/10 flex items-center justify-between">
-            <div className="space-y-1">
+            <div className="space-y-1 text-left">
               <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
                 Synchronized_Questions
               </p>
-              <p className="text-xl font-black italic tracking-tighter">
+              <p className="text-xl font-black italic tracking-tighter text-foreground">
                 {answeredCount}
                 <span className="text-muted-foreground/30 mx-2">/</span>
                 {totalQuestions}
@@ -280,14 +334,14 @@ export function AssessStage({
             {questions.map((q, index) => (
               <Card
                 key={q.id}
-                className="rounded-[32px] border-2 border-border/40 overflow-hidden hover:border-primary/20 transition-colors"
+                className="rounded-[32px] border-2 border-border/40 overflow-hidden hover:border-primary/20 transition-colors text-left"
               >
                 <CardHeader className="bg-muted/5 border-b border-border/10 p-6">
                   <div className="flex items-center gap-3">
                     <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-xs font-black">
                       {String(index + 1).padStart(2, "0")}
                     </div>
-                    <CardTitle className="text-base font-black uppercase italic tracking-tighter">
+                    <CardTitle className="text-base font-black uppercase italic tracking-tighter text-foreground">
                       DATA_NODE_REQUEST
                     </CardTitle>
                   </div>
@@ -325,7 +379,9 @@ export function AssessStage({
                             >
                               {option}
                             </span>
-                            <span className="text-sm font-bold uppercase tracking-tight">{q[optionKey] as string}</span>
+                            <span className="text-sm font-bold uppercase tracking-tight text-foreground">
+                              {q[optionKey] as string}
+                            </span>
                           </Label>
                         </div>
                       );
