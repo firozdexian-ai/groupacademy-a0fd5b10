@@ -1,9 +1,14 @@
-import React, { useState, useRef } from 'react';
-import { Upload, X, FileText, Link, AlertCircle, CheckCircle, Loader2 } from 'lucide-react';
-import { Button } from '@/components/ui/button';
-import { Input } from '@/components/ui/input';
-import { Progress } from '@/components/ui/progress';
-import { cn } from '@/lib/utils';
+import React, { useState, useRef } from "react";
+import { Upload, X, FileText, Link, AlertCircle, CheckCircle, Loader2, Zap, ShieldCheck } from "lucide-react";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
+import { Progress } from "@/components/ui/progress";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Lightweight Artifact Ingress Node
+ * CTO Reference: Authoritative component for singleton CV deployment and URL mapping.
+ */
 
 interface SimpleFileUploadProps {
   onFileUploaded: (url: string) => void;
@@ -13,7 +18,7 @@ interface SimpleFileUploadProps {
   maxSizeMB?: number;
 }
 
-type UploadMode = 'choose' | 'uploading' | 'url-input' | 'success' | 'error';
+type UploadMode = "choose" | "uploading" | "url-input" | "success" | "error";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
@@ -22,309 +27,272 @@ export const SimpleFileUpload: React.FC<SimpleFileUploadProps> = ({
   onFileUploaded,
   onUrlProvided,
   currentValue,
-  accept = '.pdf,.doc,.docx',
-  maxSizeMB = 10
+  accept = ".pdf,.doc,.docx",
+  maxSizeMB = 10,
 }) => {
-  const [mode, setMode] = useState<UploadMode>(currentValue ? 'success' : 'choose');
+  const [mode, setMode] = useState<UploadMode>(currentValue ? "success" : "choose");
   const [progress, setProgress] = useState(0);
-  const [statusMessage, setStatusMessage] = useState('');
-  const [urlInput, setUrlInput] = useState('');
-  const [errorMessage, setErrorMessage] = useState('');
-  const [uploadedUrl, setUploadedUrl] = useState(currentValue || '');
-  
+  const [statusMessage, setStatusMessage] = useState("");
+  const [urlInput, setUrlInput] = useState("");
+  const [errorMessage, setErrorMessage] = useState("");
+  const [uploadedUrl, setUploadedUrl] = useState(currentValue || "");
+
   const fileInputRef = useRef<HTMLInputElement>(null);
   const xhrRef = useRef<XMLHttpRequest | null>(null);
 
-  const uploadFile = async (file: File) => {
-    // Validate file size
+  const executeDataIngress = async (file: File) => {
+    // PROTOCOL: Data Volume Verification
     if (file.size > maxSizeMB * 1024 * 1024) {
-      setMode('error');
-      setErrorMessage(`File too large. Maximum size is ${maxSizeMB}MB.`);
+      setMode("error");
+      setErrorMessage(`DATA_OVERFLOW: Limit is ${maxSizeMB}MB.`);
       return;
     }
 
-    setMode('uploading');
+    setMode("uploading");
     setProgress(0);
-    setStatusMessage('Starting upload...');
-    setErrorMessage('');
+    setStatusMessage("Syncing_Registry...");
 
-    const fileName = `cv_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, '_')}`;
-    const uploadUrl = `${SUPABASE_URL}/storage/v1/object/portfolio-uploads/${fileName}`;
-
-    console.log('[SimpleFileUpload] Starting XHR upload:', { fileName, size: file.size, type: file.type });
+    // PROTOCOL: Deterministic ID Mapping
+    const sanitizedName = `NODE_CV_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+    const targetEndpoint = `${SUPABASE_URL}/storage/v1/object/portfolio-uploads/${sanitizedName}`;
 
     const xhr = new XMLHttpRequest();
     xhrRef.current = xhr;
 
-    // Track upload progress
     xhr.upload.onprogress = (e) => {
       if (e.lengthComputable) {
         const percent = Math.round((e.loaded / e.total) * 100);
         setProgress(percent);
-        setStatusMessage(`Uploading... ${percent}%`);
-        console.log('[SimpleFileUpload] Progress:', percent + '%');
+        setStatusMessage(`INGRESS_SYNC: ${percent}%`);
       }
     };
 
     xhr.onload = () => {
-      console.log('[SimpleFileUpload] XHR onload, status:', xhr.status);
-      
       if (xhr.status >= 200 && xhr.status < 300) {
-        const publicUrl = `${SUPABASE_URL}/storage/v1/object/public/portfolio-uploads/${fileName}`;
-        console.log('[SimpleFileUpload] Upload success:', publicUrl);
-        setUploadedUrl(publicUrl);
-        setMode('success');
-        setStatusMessage('Upload complete!');
-        onFileUploaded(publicUrl);
+        const publicArtifactUrl = `${SUPABASE_URL}/storage/v1/object/public/portfolio-uploads/${sanitizedName}`;
+        setUploadedUrl(publicArtifactUrl);
+        setMode("success");
+        setStatusMessage("SYNC_VERIFIED");
+        onFileUploaded(publicArtifactUrl);
       } else {
-        console.error('[SimpleFileUpload] Upload failed:', xhr.status, xhr.responseText);
-        setMode('error');
-        setErrorMessage(`Upload failed (${xhr.status}). Try pasting a link instead.`);
+        setMode("error");
+        setErrorMessage(`INGRESS_FAULT_CODE: ${xhr.status}`);
       }
     };
 
     xhr.onerror = () => {
-      console.error('[SimpleFileUpload] XHR error');
-      setMode('error');
-      setErrorMessage('Network error. Try pasting a Google Drive or Dropbox link instead.');
+      setMode("error");
+      setErrorMessage("UPLINK_TERMINATED: Possible proxy interference.");
     };
 
+    xhr.timeout = 120000; // 120s Synapse Timeout
     xhr.ontimeout = () => {
-      console.error('[SimpleFileUpload] XHR timeout');
-      setMode('error');
-      setErrorMessage('Upload timed out. Try pasting a link instead.');
+      setMode("error");
+      setErrorMessage("SYNC_TIMEOUT: Recommend URL_MAPPING fallback.");
     };
 
-    xhr.timeout = 120000; // 2 minutes timeout
+    xhr.open("POST", targetEndpoint);
+    xhr.setRequestHeader("Authorization", `Bearer ${SUPABASE_ANON_KEY}`);
+    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+    xhr.send(file);
+  };
+
+  const executeUrlSync = () => {
+    const rawUrl = urlInput.trim();
+    if (!rawUrl) return setErrorMessage("SYNC_ID_REQUIRED");
 
     try {
-      xhr.open('POST', uploadUrl);
-      xhr.setRequestHeader('Authorization', `Bearer ${SUPABASE_ANON_KEY}`);
-      xhr.setRequestHeader('Content-Type', file.type || 'application/octet-stream');
-      xhr.setRequestHeader('x-upsert', 'false');
-      xhr.send(file);
-    } catch (err) {
-      console.error('[SimpleFileUpload] XHR send error:', err);
-      setMode('error');
-      setErrorMessage('Failed to start upload. Try pasting a link instead.');
-    }
-  };
-
-  const handleFileSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const file = e.target.files?.[0];
-    if (file) {
-      uploadFile(file);
-    }
-  };
-
-  const handleDrop = (e: React.DragEvent) => {
-    e.preventDefault();
-    const file = e.dataTransfer.files?.[0];
-    if (file) {
-      uploadFile(file);
-    }
-  };
-
-  const handleCancel = () => {
-    if (xhrRef.current) {
-      xhrRef.current.abort();
-      console.log('[SimpleFileUpload] Upload cancelled');
-    }
-    setMode('choose');
-    setProgress(0);
-    setStatusMessage('');
-  };
-
-  const handleUrlSubmit = () => {
-    const url = urlInput.trim();
-    if (!url) {
-      setErrorMessage('Please enter a valid URL');
-      return;
-    }
-    
-    // Basic URL validation
-    try {
-      new URL(url);
-      setUploadedUrl(url);
-      setMode('success');
-      onUrlProvided(url);
+      new URL(rawUrl); // Protocol validation
+      setUploadedUrl(rawUrl);
+      setMode("success");
+      onUrlProvided(rawUrl);
     } catch {
-      setErrorMessage('Please enter a valid URL (e.g., https://drive.google.com/...)');
+      setErrorMessage("MALFORMED_URL: Required: https://...");
     }
   };
 
-  const handleReset = () => {
-    setMode('choose');
-    setProgress(0);
-    setStatusMessage('');
-    setErrorMessage('');
-    setUrlInput('');
-    setUploadedUrl('');
-    onFileUploaded('');
-  };
-
-  // Choose mode - show upload and paste link options
-  if (mode === 'choose') {
+  // VIEW: CHOOSE_INGRESS_PROTOCOL
+  if (mode === "choose") {
     return (
-      <div className="space-y-4">
+      <div className="space-y-4 animate-in fade-in duration-500">
         <div
-          className="border-2 border-dashed border-border rounded-lg p-6 text-center cursor-pointer hover:border-primary/50 transition-colors"
+          className={cn(
+            "group relative border-2 border-dashed border-border/40 rounded-[20px] p-10 text-center cursor-pointer",
+            "bg-muted/5 transition-all duration-500 hover:border-primary/40 hover:bg-primary/5 active:scale-95 shadow-inner",
+          )}
           onClick={() => fileInputRef.current?.click()}
-          onDrop={handleDrop}
+          onDrop={(e) => {
+            e.preventDefault();
+            e.dataTransfer.files[0] && executeDataIngress(e.dataTransfer.files[0]);
+          }}
           onDragOver={(e) => e.preventDefault()}
         >
           <input
             ref={fileInputRef}
             type="file"
             accept={accept}
-            onChange={handleFileSelect}
+            onChange={(e) => e.target.files?.[0] && executeDataIngress(e.target.files[0])}
             className="hidden"
           />
-          <Upload className="h-8 w-8 mx-auto mb-2 text-muted-foreground" />
-          <p className="text-sm font-medium">Click to upload or drag & drop</p>
-          <p className="text-xs text-muted-foreground mt-1">PDF, DOC, DOCX (max {maxSizeMB}MB)</p>
-        </div>
-        
-        <div className="flex items-center gap-2">
-          <div className="flex-1 h-px bg-border" />
-          <span className="text-xs text-muted-foreground">OR</span>
-          <div className="flex-1 h-px bg-border" />
-        </div>
-        
-        <Button
-          type="button"
-          variant="outline"
-          className="w-full"
-          onClick={() => setMode('url-input')}
-        >
-          <Link className="h-4 w-4 mr-2" />
-          Paste Google Drive / Dropbox Link
-        </Button>
-      </div>
-    );
-  }
-
-  // Uploading mode - show progress
-  if (mode === 'uploading') {
-    return (
-      <div className="border rounded-lg p-4 space-y-3">
-        <div className="flex items-center gap-3">
-          <Loader2 className="h-5 w-5 animate-spin text-primary" />
-          <div className="flex-1">
-            <p className="text-sm font-medium">{statusMessage}</p>
-            <Progress value={progress} className="h-2 mt-2" />
+          <div className="h-16 w-16 bg-background rounded-2xl border-2 border-border/10 flex items-center justify-center mx-auto mb-4 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
+            <Upload className="h-6 w-6 text-primary/40 group-hover:text-primary transition-colors" />
           </div>
+          <p className="text-sm font-black uppercase italic tracking-tighter">Initialize_Binary_Ingress</p>
+          <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.3em] mt-2">
+            PDF | DOCX | MAX {maxSizeMB}MB
+          </p>
         </div>
+
+        <div className="flex items-center gap-4 px-2">
+          <div className="flex-1 h-[1px] bg-border/20" />
+          <span className="text-[8px] font-black text-muted-foreground/30 uppercase tracking-[0.5em]">OR_FALLBACK</span>
+          <div className="flex-1 h-[1px] bg-border/20" />
+        </div>
+
         <Button
-          type="button"
           variant="outline"
-          size="sm"
-          onClick={handleCancel}
-          className="w-full"
+          className="w-full h-12 rounded-xl border-2 font-black uppercase italic text-[10px] tracking-widest gap-2 hover:bg-muted/10 transition-all"
+          onClick={() => setMode("url-input")}
         >
-          <X className="h-4 w-4 mr-2" />
-          Cancel Upload
+          <Link className="h-4 w-4" /> MAP_EXTERNAL_STORAGE_URL
         </Button>
       </div>
     );
   }
 
-  // URL input mode
-  if (mode === 'url-input') {
+  // VIEW: INGRESS_SYNC_ACTIVE
+  if (mode === "uploading") {
     return (
-      <div className="space-y-3">
-        <div className="flex gap-2">
-          <Input
-            type="url"
-            placeholder="https://drive.google.com/file/..."
-            value={urlInput}
-            onChange={(e) => {
-              setUrlInput(e.target.value);
-              setErrorMessage('');
-            }}
-            className={cn(errorMessage && "border-destructive")}
-          />
-          <Button type="button" onClick={handleUrlSubmit}>
-            <CheckCircle className="h-4 w-4 mr-2" />
-            Use
-          </Button>
-        </div>
-        {errorMessage && (
-          <p className="text-xs text-destructive">{errorMessage}</p>
-        )}
-        <p className="text-xs text-muted-foreground">
-          Paste a public link to your CV from Google Drive, Dropbox, or OneDrive
-        </p>
-        <Button
-          type="button"
-          variant="ghost"
-          size="sm"
-          onClick={() => setMode('choose')}
-        >
-          ← Back to upload
-        </Button>
-      </div>
-    );
-  }
-
-  // Error mode - show error with options
-  if (mode === 'error') {
-    return (
-      <div className="space-y-3">
-        <div className="border border-destructive/50 bg-destructive/10 rounded-lg p-4">
-          <div className="flex items-start gap-3">
-            <AlertCircle className="h-5 w-5 text-destructive shrink-0 mt-0.5" />
-            <div>
-              <p className="text-sm font-medium text-destructive">Upload Failed</p>
-              <p className="text-xs text-muted-foreground mt-1">{errorMessage}</p>
+      <div className="border-2 border-primary/20 bg-primary/5 rounded-[24px] p-8 space-y-6 animate-in zoom-in-95 duration-500">
+        <div className="flex items-center gap-4">
+          <Loader2 className="h-8 w-8 animate-spin text-primary" />
+          <div className="flex-1 space-y-3">
+            <div className="flex justify-between items-end">
+              <p className="text-[10px] font-black uppercase italic text-primary tracking-widest">{statusMessage}</p>
+              <span className="text-[10px] font-mono font-bold text-primary/60">{progress}%</span>
+            </div>
+            <div className="h-1.5 bg-primary/10 rounded-full overflow-hidden shadow-inner">
+              <div
+                className="h-full bg-primary transition-all duration-500 ease-out"
+                style={{ width: `${progress}%` }}
+              />
             </div>
           </div>
         </div>
-        
-        <div className="flex gap-2">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => {
+            xhrRef.current?.abort();
+            setMode("choose");
+          }}
+          className="w-full h-8 text-[9px] font-black uppercase italic tracking-widest text-muted-foreground/60 hover:text-rose-500"
+        >
+          <X className="h-3 w-3 mr-2" /> ABORT_SYNC
+        </Button>
+      </div>
+    );
+  }
+
+  // VIEW: URL_MAPPING_PROTOCOL
+  if (mode === "url-input") {
+    return (
+      <div className="space-y-4 animate-in slide-in-from-bottom-2 duration-500 text-left">
+        <div className="space-y-2">
+          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic ml-1">
+            Registry_Link_Mapping
+          </p>
+          <div className="flex gap-2">
+            <Input
+              type="url"
+              placeholder="https://drive.google.com/..."
+              value={urlInput}
+              onChange={(e) => {
+                setUrlInput(e.target.value);
+                setErrorMessage("");
+              }}
+              className="h-12 bg-muted/20 border-2 rounded-xl font-bold italic focus:ring-primary/20"
+            />
+            <Button className="h-12 px-6 rounded-xl font-black uppercase italic" onClick={executeUrlSync}>
+              <ShieldCheck className="h-4 w-4" />
+            </Button>
+          </div>
+        </div>
+        {errorMessage && (
+          <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest ml-1">{errorMessage}</p>
+        )}
+        <p className="text-[9px] font-medium leading-relaxed italic text-muted-foreground/40 px-1">
+          Authorized domains: Google Drive, Dropbox, OneDrive. Artifact must be public.
+        </p>
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => setMode("choose")}
+          className="text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 h-8"
+        >
+          ← REVERT_TO_BINARY
+        </Button>
+      </div>
+    );
+  }
+
+  // VIEW: INGRESS_FAULT
+  if (mode === "error") {
+    return (
+      <div className="space-y-4 animate-in shake-2 duration-500">
+        <div className="border-2 border-rose-500/20 bg-rose-500/5 rounded-[20px] p-6">
+          <div className="flex items-start gap-4">
+            <AlertCircle className="h-6 w-6 text-rose-500 shrink-0" />
+            <div className="space-y-1">
+              <p className="text-xs font-black uppercase italic text-rose-500 tracking-tight">Ingress_Registry_Fault</p>
+              <p className="text-[10px] font-medium text-muted-foreground italic">{errorMessage}</p>
+            </div>
+          </div>
+        </div>
+        <div className="flex gap-3">
           <Button
-            type="button"
             variant="outline"
-            size="sm"
-            onClick={() => setMode('choose')}
-            className="flex-1"
+            className="flex-1 h-12 rounded-xl border-2 font-black uppercase text-[10px] italic"
+            onClick={() => setMode("choose")}
           >
-            Try Again
+            RETRY_SYNC
           </Button>
           <Button
-            type="button"
-            variant="default"
-            size="sm"
-            onClick={() => setMode('url-input')}
-            className="flex-1"
+            className="flex-1 h-12 rounded-xl font-black uppercase text-[10px] italic gap-2"
+            onClick={() => setMode("url-input")}
           >
-            <Link className="h-4 w-4 mr-2" />
-            Paste Link Instead
+            <Link className="h-4 w-4" /> USE_URL
           </Button>
         </div>
       </div>
     );
   }
 
-  // Success mode - show uploaded file
-  if (mode === 'success') {
+  // VIEW: SYNC_VERIFIED
+  if (mode === "success") {
     return (
-      <div className="border border-green-500/30 bg-green-500/10 rounded-lg p-4">
+      <div className="border-2 border-emerald-500/20 bg-emerald-500/5 rounded-[24px] p-6 animate-in zoom-in-95 duration-700">
         <div className="flex items-center justify-between">
-          <div className="flex items-center gap-3">
-            <FileText className="h-5 w-5 text-green-600" />
-            <div>
-              <p className="text-sm font-medium text-green-700">CV Added Successfully</p>
-              <p className="text-xs text-muted-foreground truncate max-w-[200px]">
-                {uploadedUrl.includes('storage') ? 'Uploaded file' : 'External link'}
+          <div className="flex items-center gap-4">
+            <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shadow-lg">
+              <ShieldCheck className="h-6 w-6 text-emerald-600" />
+            </div>
+            <div className="text-left">
+              <p className="text-[11px] font-black uppercase italic text-emerald-700 leading-none">Artifact_Synced</p>
+              <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 truncate max-w-[180px]">
+                {uploadedUrl.includes("storage") ? "REGISTRY_BINARY_NODE" : "EXTERNAL_MAPPED_URL"}
               </p>
             </div>
           </div>
           <Button
-            type="button"
             variant="ghost"
-            size="sm"
-            onClick={handleReset}
+            size="icon"
+            onClick={() => {
+              setMode("choose");
+              setUploadedUrl("");
+              onFileUploaded("");
+            }}
+            className="h-9 w-9 rounded-xl hover:bg-rose-500/10 hover:text-rose-500 transition-all"
           >
             <X className="h-4 w-4" />
           </Button>
