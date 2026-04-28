@@ -1,67 +1,43 @@
 import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent, CardDescription, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
-  BookOpen,
   Building2,
   Laptop,
   Rocket,
   Megaphone,
-  ArrowRight,
-  RefreshCw,
-  AlertCircle,
   GraduationCap,
   ChevronRight,
   Sparkles,
+  Zap,
+  Target,
+  ShieldCheck,
+  Search,
 } from "lucide-react";
 import { Progress } from "@/components/ui/progress";
 import { getIcon } from "@/lib/iconMap";
 import { cn } from "@/lib/utils";
 
-interface Academy {
-  id: string;
-  name: string;
-  slug: string;
-  academy_type: string;
-  description: string;
-}
-interface School {
-  id: string;
-  name: string;
-  slug: string;
-  description: string;
-  academy_id: string;
-  icon: string | null;
-}
-interface Enrollment {
-  id: string;
-  progress: number;
-  status: string;
-  content: { title: string; profession_line_id: string | null } | null;
-}
+/**
+ * GroUp Academy: Career Trajectory Hub (TracksTab)
+ * CTO Reference: Unified ingress node for talent development and academy silos.
+ */
 
 type Category = "my-program" | "executive" | "freelancing" | "entrepreneurship" | "influencing";
 
-const categories: { key: Category; icon: any; label: string }[] = [
-  { key: "my-program", icon: GraduationCap, label: "My Tracks" },
-  { key: "executive", icon: Building2, label: "Executive" },
-  { key: "freelancing", icon: Laptop, label: "Freelance" },
-  { key: "entrepreneurship", icon: Rocket, label: "Startup" },
-  { key: "influencing", icon: Megaphone, label: "Influence" },
+const CATEGORY_CONFIG: { key: Category; icon: any; label: string }[] = [
+  { key: "my-program", icon: Target, label: "MY_TRAJECTORY" },
+  { key: "executive", icon: Building2, label: "EXECUTIVE" },
+  { key: "freelancing", icon: Laptop, label: "FREELANCE" },
+  { key: "entrepreneurship", icon: Rocket, label: "STARTUP" },
+  { key: "influencing", icon: Megaphone, label: "INFLUENCE" },
 ];
 
-const academyTypeMap: Record<string, Category> = {
-  executive: "executive",
-  freelancing: "freelancing",
-  entrepreneurship: "entrepreneurship",
-  influencing: "influencing",
-};
-
-const academyColors: Record<Category, { bg: string; icon: string; border: string; accent: string }> = {
+const ACADEMY_THEMES: Record<Category, { bg: string; icon: string; border: string; accent: string }> = {
   "my-program": {
     bg: "bg-primary/10",
     icon: "text-primary",
@@ -70,25 +46,25 @@ const academyColors: Record<Category, { bg: string; icon: string; border: string
   },
   executive: {
     bg: "bg-blue-500/10",
-    icon: "text-blue-600",
+    icon: "text-blue-500",
     border: "group-hover:border-blue-500/40",
     accent: "bg-blue-500",
   },
   freelancing: {
     bg: "bg-emerald-500/10",
-    icon: "text-emerald-600",
+    icon: "text-emerald-500",
     border: "group-hover:border-emerald-500/40",
     accent: "bg-emerald-500",
   },
   entrepreneurship: {
     bg: "bg-orange-500/10",
-    icon: "text-orange-600",
+    icon: "text-orange-500",
     border: "group-hover:border-orange-500/40",
     accent: "bg-orange-500",
   },
   influencing: {
     bg: "bg-pink-500/10",
-    icon: "text-pink-600",
+    icon: "text-pink-500",
     border: "group-hover:border-pink-500/40",
     accent: "bg-pink-500",
   },
@@ -97,50 +73,42 @@ const academyColors: Record<Category, { bg: string; icon: string; border: string
 export function TracksTab() {
   const navigate = useNavigate();
   const [selectedCategory, setSelectedCategory] = useState<Category>("my-program");
-  const [academies, setAcademies] = useState<Academy[]>([]);
-  const [schools, setSchools] = useState<School[]>([]);
-  const [enrollments, setEnrollments] = useState<Enrollment[]>([]);
+  const [academies, setAcademies] = useState<any[]>([]);
+  const [schools, setSchools] = useState<any[]>([]);
+  const [enrollments, setEnrollments] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
-  const [loadingError, setLoadingError] = useState<string | null>(null);
 
   useEffect(() => {
-    loadData();
+    loadRegistryNodes();
   }, []);
 
-  const loadData = async () => {
-    setLoadingError(null);
+  const loadRegistryNodes = async () => {
     setIsLoading(true);
     try {
       const {
         data: { user },
       } = await supabase.auth.getUser();
-
-      const [academiesResult, schoolsResult] = await Promise.all([
+      const [acadResult, schoolResult] = await Promise.all([
         supabase.from("academies").select("*").eq("is_active", true).order("display_order"),
         supabase.from("schools").select("*").eq("is_active", true).order("display_order"),
       ]);
 
-      if (academiesResult.error) throw academiesResult.error;
-      if (schoolsResult.error) throw schoolsResult.error;
-
-      setAcademies(academiesResult.data || []);
-      setSchools(schoolsResult.data || []);
+      setAcademies(acadResult.data || []);
+      setSchools(schoolResult.data || []);
 
       if (user) {
         const { data: talent } = await supabase.from("talents").select("id").eq("user_id", user.id).maybeSingle();
         if (talent) {
-          const { data: enrollmentData } = await supabase
+          const { data: enrData } = await supabase
             .from("enrollments")
-            .select("id, progress, status, content:content_id(title, profession_line_id)")
+            .select("id, progress, status, content:content_id(title)")
             .eq("talent_id", talent.id)
             .order("created_at", { ascending: false });
-
-          setEnrollments((enrollmentData as any) || []);
+          setEnrollments(enrData || []);
         }
       }
-    } catch (error: any) {
-      console.error("Data Load Error:", error);
-      setLoadingError("Could not sync career tracks.");
+    } catch (err) {
+      console.error("[Registry Fault]:", err);
     } finally {
       setIsLoading(false);
     }
@@ -151,34 +119,39 @@ export function TracksTab() {
     const completed = enrollments.filter((e) => e.status === "completed");
 
     return (
-      <div className="space-y-8 animate-in fade-in duration-700">
+      <div className="space-y-10 animate-in fade-in duration-700 text-left">
         {active.length > 0 && (
-          <section className="space-y-4">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground flex items-center gap-2">
-              <Sparkles className="h-3 w-3 text-primary" /> Active Development
-            </h3>
-            <div className="grid gap-4 sm:grid-cols-2">
+          <section className="space-y-6">
+            <div className="flex items-center gap-3 px-1">
+              <Zap className="h-4 w-4 text-primary fill-current" />
+              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-foreground italic">
+                Active_Development
+              </h3>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
               {active.map((enr) => (
                 <Card
                   key={enr.id}
-                  className="group cursor-pointer hover:border-primary/40 transition-all rounded-[24px] bg-card/50 overflow-hidden"
+                  className="group cursor-pointer hover:border-primary/40 transition-all duration-500 rounded-[32px] bg-card/30 backdrop-blur-md overflow-hidden border-2 border-border/40 shadow-xl"
                   onClick={() => navigate(`/app/learning/tracks`)}
                 >
-                  <CardContent className="p-5">
-                    <div className="flex items-start gap-4">
-                      <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 transition-transform">
-                        <GraduationCap className="h-6 w-6 text-primary" />
+                  <CardContent className="p-6">
+                    <div className="flex items-start gap-5">
+                      <div className="h-14 w-14 rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center shrink-0 group-hover:scale-110 group-hover:rotate-3 transition-all duration-500 shadow-inner">
+                        <GraduationCap className="h-7 w-7 text-primary" />
                       </div>
-                      <div className="flex-1 min-w-0 space-y-3">
-                        <CardTitle className="text-sm font-black tracking-tight leading-tight line-clamp-1">
-                          {enr.content?.title || "Career Track"}
+                      <div className="flex-1 min-w-0 space-y-4">
+                        <CardTitle className="text-base font-black tracking-tighter uppercase italic line-clamp-1">
+                          {enr.content?.title || "UNNAMED_TRACK"}
                         </CardTitle>
-                        <div className="space-y-1.5">
-                          <div className="flex justify-between text-[10px] font-bold text-muted-foreground uppercase">
-                            <span>Progression</span>
-                            <span className="text-primary">{enr.progress}%</span>
+                        <div className="space-y-2">
+                          <div className="flex justify-between items-end">
+                            <span className="text-[9px] font-black text-muted-foreground uppercase tracking-widest italic">
+                              Sync_Status
+                            </span>
+                            <span className="text-xs font-black text-primary tabular-nums">{enr.progress}%</span>
                           </div>
-                          <Progress value={enr.progress} className="h-1.5" />
+                          <Progress value={enr.progress} className="h-2 rounded-full bg-primary/10 shadow-inner" />
                         </div>
                       </div>
                     </div>
@@ -190,23 +163,32 @@ export function TracksTab() {
         )}
 
         {completed.length > 0 && (
-          <section className="space-y-4">
-            <h3 className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-              Certified Achievements
-            </h3>
-            <div className="grid gap-4 sm:grid-cols-2">
+          <section className="space-y-6">
+            <div className="flex items-center gap-3 px-1">
+              <ShieldCheck className="h-4 w-4 text-emerald-500" />
+              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-emerald-600/60 italic">
+                Certified_Achievements
+              </h3>
+            </div>
+            <div className="grid gap-6 sm:grid-cols-2">
               {completed.map((enr) => (
-                <Card key={enr.id} className="rounded-[24px] border-emerald-500/20 bg-emerald-500/[0.02]">
-                  <CardContent className="p-5 flex items-center gap-4">
-                    <div className="h-12 w-12 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0">
-                      <GraduationCap className="h-6 w-6 text-emerald-600" />
+                <Card
+                  key={enr.id}
+                  className="rounded-[28px] border-2 border-emerald-500/20 bg-emerald-500/5 backdrop-blur-sm overflow-hidden group hover:border-emerald-500/40 transition-all shadow-lg"
+                >
+                  <CardContent className="p-6 flex items-center gap-5">
+                    <div className="h-14 w-14 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0 border border-emerald-500/20">
+                      <GraduationCap className="h-7 w-7 text-emerald-600" />
                     </div>
-                    <div className="min-w-0">
-                      <CardTitle className="text-sm font-black tracking-tight">{enr.content?.title}</CardTitle>
-                      <Badge className="bg-emerald-500 text-white border-none text-[9px] font-black uppercase tracking-widest mt-1">
-                        ✓ Credentialed
+                    <div className="min-w-0 flex-1">
+                      <CardTitle className="text-sm font-black tracking-tight uppercase italic">
+                        {enr.content?.title}
+                      </CardTitle>
+                      <Badge className="bg-emerald-500/10 text-emerald-600 border-none text-[8px] font-black uppercase tracking-widest mt-2 px-3 py-1">
+                        Verified_Credential
                       </Badge>
                     </div>
+                    <ChevronRight className="h-5 w-5 text-emerald-500/20 group-hover:text-emerald-500 transition-all" />
                   </CardContent>
                 </Card>
               ))}
@@ -215,16 +197,18 @@ export function TracksTab() {
         )}
 
         {enrollments.length === 0 && (
-          <div className="py-20 text-center border-2 border-dashed rounded-[32px] border-border/40">
-            <GraduationCap className="h-12 w-12 text-muted-foreground/20 mx-auto mb-4" />
-            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60 mb-6">
-              No track enrollments found
+          <div className="py-24 text-center border-2 border-dashed rounded-[40px] border-border/20 bg-muted/5 flex flex-col items-center">
+            <div className="h-20 w-20 bg-muted/10 rounded-full flex items-center justify-center mb-6">
+              <GraduationCap className="h-10 w-10 text-muted-foreground/20" />
+            </div>
+            <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/40 mb-10 italic">
+              NO_ACTIVE_TRAJECTORY_NODES
             </p>
             <Button
               onClick={() => setSelectedCategory("executive")}
-              className="rounded-xl font-black uppercase tracking-widest h-10 px-6"
+              className="h-12 px-10 rounded-2xl font-black uppercase italic tracking-[0.2em] shadow-2xl active:scale-95 transition-all gap-3"
             >
-              Explore Academies
+              <Search className="h-4 w-4" /> BROWSE_ACADEMY
             </Button>
           </div>
         )}
@@ -232,54 +216,63 @@ export function TracksTab() {
     );
   };
 
-  const renderAcademy = (cat: Category) => {
-    const academy = academies.find((a) => academyTypeMap[a.academy_type] === cat);
+  const renderAcademySilo = (cat: Category) => {
+    const academy = academies.find((a) => a.academy_type === cat);
     if (!academy)
       return (
-        <div className="py-20 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
-          Academy Node Offline
+        <div className="py-24 text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/30 italic">
+          ACADEMY_NODE_OFFLINE
         </div>
       );
 
     const academySchools = schools.filter((s) => s.academy_id === academy.id);
-    const theme = academyColors[cat];
+    const theme = ACADEMY_THEMES[cat];
 
     return (
-      <div className="space-y-6 animate-in fade-in slide-in-from-bottom-2 duration-500">
-        <div className="px-1">
-          <h2 className="text-lg font-black tracking-tight">{academy.name}</h2>
-          <p className="text-xs font-medium text-muted-foreground mt-1 leading-relaxed">{academy.description}</p>
+      <div className="space-y-8 animate-in fade-in slide-in-from-bottom-4 duration-700 text-left">
+        <div className="px-1 space-y-2">
+          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+            <div className={cn("h-2 w-2 rounded-full animate-pulse", theme.accent)} />
+            {academy.name}
+          </h2>
+          <p className="text-[11px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed italic opacity-60 max-w-lg">
+            {academy.description}
+          </p>
         </div>
 
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2">
           {academySchools.map((school) => {
             const SchoolIcon = getIcon(school.icon);
             return (
               <Card
                 key={school.id}
                 className={cn(
-                  "group cursor-pointer transition-all duration-300 rounded-[24px] border-border/40 bg-card/50 backdrop-blur-sm overflow-hidden",
+                  "group cursor-pointer transition-all duration-500 rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl overflow-hidden hover:shadow-2xl hover:-translate-y-1.5",
                   theme.border,
                 )}
                 onClick={() => navigate(`/app/learning/tracks/school/${school.slug}`)}
               >
-                <CardContent className="p-5">
-                  <div className="flex items-center gap-4">
+                <CardContent className="p-6">
+                  <div className="flex items-center gap-5">
                     <div
                       className={cn(
-                        "h-12 w-12 rounded-2xl flex items-center justify-center shrink-0 transition-transform group-hover:scale-110",
+                        "h-16 w-16 rounded-2xl flex items-center justify-center shrink-0 shadow-lg border border-white/5 transition-all duration-700 group-hover:rotate-6",
                         theme.bg,
                       )}
                     >
-                      <SchoolIcon className={cn("h-6 w-6", theme.icon)} />
+                      <SchoolIcon className={cn("h-8 w-8", theme.icon)} />
                     </div>
-                    <div className="flex-1 min-w-0">
-                      <h4 className="font-black text-sm tracking-tight leading-tight truncate">{school.name}</h4>
-                      <p className="text-[11px] font-medium text-muted-foreground line-clamp-1 mt-0.5">
+                    <div className="flex-1 min-w-0 space-y-1">
+                      <h4 className="font-black text-base uppercase italic tracking-tighter leading-none">
+                        {school.name}
+                      </h4>
+                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest line-clamp-1 italic opacity-60">
                         {school.description}
                       </p>
                     </div>
-                    <ChevronRight className="h-5 w-5 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+                    <div className="h-10 w-10 rounded-full flex items-center justify-center bg-muted/20 group-hover:bg-primary/10 transition-colors">
+                      <ChevronRight className="h-5 w-5 text-muted-foreground/20 group-hover:text-primary transition-all group-hover:translate-x-1" />
+                    </div>
                   </div>
                 </CardContent>
               </Card>
@@ -292,15 +285,15 @@ export function TracksTab() {
 
   if (isLoading) {
     return (
-      <div className="space-y-8">
+      <div className="space-y-10">
         <div className="grid grid-cols-5 gap-3">
           {[...Array(5)].map((_, i) => (
-            <Skeleton key={i} className="h-16 rounded-2xl" />
+            <Skeleton key={i} className="h-20 rounded-[22px] opacity-40" />
           ))}
         </div>
-        <div className="grid gap-4 sm:grid-cols-2">
+        <div className="grid gap-6 sm:grid-cols-2">
           {[...Array(4)].map((_, i) => (
-            <Skeleton key={i} className="h-32 rounded-[24px]" />
+            <Skeleton key={i} className="h-36 rounded-[32px] opacity-20" />
           ))}
         </div>
       </div>
@@ -308,32 +301,39 @@ export function TracksTab() {
   }
 
   return (
-    <div className="space-y-8">
-      {/* Dynamic Nav Strip */}
-      <div className="grid grid-cols-5 gap-2">
-        {categories.map(({ key, icon: Icon, label }) => (
+    <div className="space-y-10">
+      {/* HUD: CATEGORY NAVIGATION */}
+      <div className="grid grid-cols-5 gap-3 p-2 bg-muted/20 backdrop-blur-md rounded-[28px] border-2 border-border/40 shadow-inner">
+        {CATEGORY_CONFIG.map(({ key, icon: Icon, label }) => (
           <button
             key={key}
             onClick={() => setSelectedCategory(key)}
             className={cn(
-              "flex flex-col items-center gap-2 p-3 rounded-2xl transition-all duration-300 group outline-none",
+              "flex flex-col items-center gap-3 p-4 rounded-[20px] transition-all duration-500 group outline-none relative overflow-hidden",
               selectedCategory === key
-                ? "bg-primary text-primary-foreground shadow-lg shadow-primary/20 scale-105"
-                : "bg-muted/50 text-muted-foreground hover:bg-muted",
+                ? "bg-primary text-white shadow-2xl scale-105"
+                : "bg-background/50 text-muted-foreground/60 hover:bg-muted",
             )}
           >
+            {selectedCategory === key && (
+              <div className="absolute inset-0 bg-gradient-to-br from-white/10 to-transparent pointer-events-none" />
+            )}
             <Icon
               className={cn(
-                "h-5 w-5 transition-transform group-hover:scale-110",
-                selectedCategory === key ? "text-white" : "text-primary/60",
+                "h-6 w-6 transition-all duration-700 group-hover:rotate-6",
+                selectedCategory === key ? "text-white scale-110" : "text-primary/40",
               )}
             />
-            <span className="text-[9px] font-black uppercase tracking-widest text-center leading-none">{label}</span>
+            <span className="text-[9px] font-black uppercase tracking-[0.2em] text-center leading-none italic">
+              {label}
+            </span>
           </button>
         ))}
       </div>
 
-      {selectedCategory === "my-program" ? renderMyProgram() : renderAcademy(selectedCategory)}
+      <div className="relative min-h-[400px]">
+        {selectedCategory === "my-program" ? renderMyProgram() : renderAcademySilo(selectedCategory)}
+      </div>
     </div>
   );
 }
