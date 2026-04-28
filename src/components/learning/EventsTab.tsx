@@ -2,19 +2,7 @@ import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import {
-  Calendar,
-  MapPin,
-  Clock,
-  Users,
-  Video,
-  ExternalLink,
-  LayoutGrid,
-  Trophy,
-  Gift,
-  Zap,
-  ShieldCheck,
-} from "lucide-react";
+import { Calendar, MapPin, Clock, Users, Video, LayoutGrid, Trophy, Gift, Zap } from "lucide-react";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -26,6 +14,10 @@ import { cn } from "@/lib/utils";
  * GroUp Academy: Event & Competition Ingress (EventsTab)
  * CTO Reference: Authoritative node for institutional engagement scheduling.
  */
+
+export interface EventsTabProps {
+  onOpenCompetition?: (slug: string) => void;
+}
 
 type EventFilter = "all" | "live_webinar" | "offline_seminar" | "competitions";
 
@@ -214,7 +206,6 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
       </div>
 
       <div className="space-y-12">
-        {/* TEMPORAL_SIGNAL: Happening Today */}
         {todayEvents.length > 0 && eventType !== "competitions" && (
           <section className="space-y-6">
             <div className="flex items-center gap-3 px-1">
@@ -229,7 +220,6 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
           </section>
         )}
 
-        {/* COMPETITION_HUB: High-Yield Engagements */}
         {(eventType === "all" || eventType === "competitions") && competitions.length > 0 && (
           <section className="space-y-6">
             <div className="flex items-center gap-4 px-1">
@@ -287,7 +277,6 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
           </section>
         )}
 
-        {/* SCHEDULE_NODE: Upcoming Trajectory */}
         {upcomingEvents.length > 0 && eventType !== "competitions" && (
           <section className="space-y-6">
             <h2 className="text-xs font-black uppercase tracking-[0.3em] px-1 italic opacity-40">UPCOMING_SCHEDULE</h2>
