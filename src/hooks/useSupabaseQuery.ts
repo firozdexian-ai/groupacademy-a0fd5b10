@@ -1,4 +1,10 @@
-import { useState, useCallback, useRef, useEffect } from 'react';
+import { useState, useCallback, useRef, useEffect } from "react";
+
+/**
+ * GroUp Academy: Neural Database Sentinel
+ * CTO Reference: Authoritative controller for aborted and timed-out database ingress.
+ * Performance: Implements native AbortSignal propagation to severance network connections.
+ */
 
 interface UseSupabaseQueryOptions<T> {
   timeout?: number;
@@ -15,24 +21,21 @@ interface UseSupabaseQueryResult<T> {
   abort: () => void;
 }
 
-/**
- * Hook for Supabase queries with proper AbortController support.
- * Unlike Promise.race, this actually cancels the request when timeout occurs.
- */
 export function useSupabaseQuery<T>(
   queryFn: (signal: AbortSignal) => Promise<T>,
-  options: UseSupabaseQueryOptions<T> = {}
+  options: UseSupabaseQueryOptions<T> = {},
 ): UseSupabaseQueryResult<T> {
   const { timeout = 15000, onError, onTimeout } = options;
-  
+
   const [data, setData] = useState<T | null>(null);
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState<Error | null>(null);
   const [isTimeout, setIsTimeout] = useState(false);
-  
+
   const abortControllerRef = useRef<AbortController | null>(null);
   const timeoutIdRef = useRef<ReturnType<typeof setTimeout> | null>(null);
 
+  // PHASE: Transmission_Severance_Protocol
   const abort = useCallback(() => {
     if (abortControllerRef.current) {
       abortControllerRef.current.abort();
@@ -44,70 +47,64 @@ export function useSupabaseQuery<T>(
     }
   }, []);
 
+  // PHASE: Neural_Execute_Node
   const execute = useCallback(async (): Promise<T | null> => {
-    // Abort any existing request
+    // ABORT: Clear previous transmission artifacts
     abort();
-    
-    // Create new abort controller
+
     const controller = new AbortController();
     abortControllerRef.current = controller;
-    
+
     setLoading(true);
     setError(null);
     setIsTimeout(false);
-    
-    // Set up timeout
+
+    // HUD: LATENCY_THRESHOLD_TIMER
     timeoutIdRef.current = setTimeout(() => {
       controller.abort();
       setIsTimeout(true);
       setLoading(false);
-      setError(new Error(`Request timed out after ${timeout / 1000} seconds`));
+      const tErr = new Error(`THRESHOLD_ERROR: Request timed out after ${timeout / 1000}s`);
+      setError(tErr);
       onTimeout?.();
     }, timeout);
-    
+
     try {
       const result = await queryFn(controller.signal);
-      
-      // Clear timeout on success
+
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
         timeoutIdRef.current = null;
       }
-      
-      // Only update state if not aborted
+
+      // IDENTITY_CHECK: Ensure artifact still belongs to active controller
       if (!controller.signal.aborted) {
         setData(result);
         setLoading(false);
         return result;
       }
     } catch (err) {
-      // Clear timeout on error
       if (timeoutIdRef.current) {
         clearTimeout(timeoutIdRef.current);
         timeoutIdRef.current = null;
       }
-      
-      // Handle abort separately
-      if (err instanceof Error && err.name === 'AbortError') {
-        if (!isTimeout) {
-          setIsTimeout(true);
-        }
+
+      if (err instanceof Error && err.name === "AbortError") {
+        // Handle as timeout or manual cancel
         return null;
       }
-      
-      // Only update state if not aborted
+
       if (!controller.signal.aborted) {
-        const error = err instanceof Error ? err : new Error('Unknown error');
-        setError(error);
+        const errorArtifact = err instanceof Error ? err : new Error("UNKNOWN_REGISTRY_FAULT");
+        setError(errorArtifact);
         setLoading(false);
-        onError?.(error);
+        onError?.(errorArtifact);
       }
     }
-    
-    return null;
-  }, [queryFn, timeout, abort, onError, onTimeout, isTimeout]);
 
-  // Cleanup on unmount
+    return null;
+  }, [queryFn, timeout, abort, onError, onTimeout]);
+
   useEffect(() => {
     return () => abort();
   }, [abort]);
@@ -116,36 +113,34 @@ export function useSupabaseQuery<T>(
 }
 
 /**
- * Execute a Supabase query with timeout and abort support.
- * Returns a promise that rejects on timeout and actually cancels the request.
+ * Utility: Procedural execution with hard-stop timeout.
  */
 export async function executeWithAbort<T>(
   queryFn: (signal: AbortSignal) => Promise<T>,
-  timeoutMs: number = 15000
+  timeoutMs: number = 15000,
 ): Promise<T> {
   const controller = new AbortController();
   const timeoutId = setTimeout(() => controller.abort(), timeoutMs);
-  
+
   try {
     const result = await queryFn(controller.signal);
     clearTimeout(timeoutId);
     return result;
   } catch (err) {
     clearTimeout(timeoutId);
-    
-    if (err instanceof Error && err.name === 'AbortError') {
-      throw new Error(`Request timed out after ${timeoutMs / 1000} seconds`);
+    if (err instanceof Error && err.name === "AbortError") {
+      throw new Error(`RACE_TIMEOUT: Threshold reached (${timeoutMs / 1000}s)`);
     }
     throw err;
   }
 }
 
 /**
- * Check if an error is an abort/timeout error
+ * Diagnostic: Verify if artifact is a latency/abort event.
  */
 export function isAbortError(error: unknown): boolean {
   if (error instanceof Error) {
-    return error.name === 'AbortError' || error.message.includes('timed out');
+    return error.name === "AbortError" || error.message.includes("timed out");
   }
   return false;
 }
