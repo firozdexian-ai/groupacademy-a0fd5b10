@@ -1,6 +1,11 @@
-import { useState, useEffect } from 'react';
-import { supabase } from '@/integrations/supabase/client';
-import { useTalent } from '@/hooks/useTalent';
+import { useState, useEffect } from "react";
+import { supabase } from "@/integrations/supabase/client";
+import { useTalent } from "@/hooks/useTalent";
+
+/**
+ * GroUp Academy: Institutional Application Ledger
+ * CTO Reference: Authoritative hook for market engagement tracking and history.
+ */
 
 export interface ApplicationHistoryItem {
   id: string;
@@ -20,7 +25,8 @@ export function useApplicationHistory() {
   const [error, setError] = useState<string | null>(null);
 
   useEffect(() => {
-    async function fetchApplications() {
+    async function executeLedgerSync() {
+      // Identity Verify: Ensure talent node is hydrated
       if (!talent?.id) {
         setIsLoading(false);
         return;
@@ -28,10 +34,12 @@ export function useApplicationHistory() {
 
       try {
         setIsLoading(true);
-        
+
+        // HUD: NEURAL_RELATIONAL_SYNC
         const { data, error: fetchError } = await supabase
-          .from('job_applications')
-          .select(`
+          .from("job_applications")
+          .select(
+            `
             id,
             job_id,
             application_status,
@@ -42,20 +50,22 @@ export function useApplicationHistory() {
               title,
               company_name
             )
-          `)
-          .eq('talent_id', talent.id)
-          .order('created_at', { ascending: false })
+          `,
+          )
+          .eq("talent_id", talent.id)
+          .order("created_at", { ascending: false })
           .limit(10);
 
         if (fetchError) throw fetchError;
 
+        // HUD: REGISTRY_MAPPING_PROTOCOL
         const formattedApplications: ApplicationHistoryItem[] = (data || []).map((app: any) => ({
           id: app.id,
           jobId: app.job_id,
-          jobTitle: app.jobs?.title || 'Unknown Job',
-          companyName: app.jobs?.company_name || 'Unknown Company',
-          applicationStatus: app.application_status || 'submitted',
-          deliveryStatus: app.delivery_status || 'pending',
+          jobTitle: app.jobs?.title || "Unknown_Node",
+          companyName: app.jobs?.company_name || "Unknown_Institution",
+          applicationStatus: app.application_status || "submitted",
+          deliveryStatus: app.delivery_status || "pending",
           appliedAt: app.created_at,
           isPaid: app.is_paid || false,
         }));
@@ -63,14 +73,14 @@ export function useApplicationHistory() {
         setApplications(formattedApplications);
         setError(null);
       } catch (err) {
-        console.error('Error fetching application history:', err);
-        setError('Failed to load applications');
+        console.error("LEDGER_SYNC_FAULT:", err);
+        setError("REGISTRY_FAULT: Failed to load application history.");
       } finally {
         setIsLoading(false);
       }
     }
 
-    fetchApplications();
+    executeLedgerSync();
   }, [talent?.id]);
 
   return { applications, isLoading, error };
