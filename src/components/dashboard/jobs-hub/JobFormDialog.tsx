@@ -6,9 +6,23 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Switch } from "@/components/ui/switch";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
-import { Loader2, Sparkles, Upload, X } from "lucide-react";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogFooter,
+  DialogDescription,
+} from "@/components/ui/dialog";
+import { Loader2, Sparkles, Upload, X, ShieldCheck, Zap, Globe, Briefcase } from "lucide-react";
 import { toast } from "sonner";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Job Infrastructure Provisioner
+ * CTO Reference: Authoritative form for job registry management and AI content enhancement.
+ */
 
 const JOB_TYPES = ["full_time", "part_time", "contract", "internship", "freelance"] as const;
 const EXPERIENCE_LEVELS = ["entry", "junior", "mid", "senior", "lead", "executive"] as const;
@@ -21,16 +35,16 @@ export type JobFormState = {
   company_name: string;
   company_logo_url: string;
   location: string;
-  job_type: typeof JOB_TYPES[number];
-  experience_level: typeof EXPERIENCE_LEVELS[number];
+  job_type: (typeof JOB_TYPES)[number];
+  experience_level: (typeof EXPERIENCE_LEVELS)[number];
   salary_range_min: string;
   salary_range_max: string;
   salary_currency: string;
   description: string;
-  application_type: typeof APPLICATION_TYPES[number];
+  application_type: (typeof APPLICATION_TYPES)[number];
   application_email: string;
   application_url: string;
-  source_platform: typeof SOURCE_PLATFORMS[number];
+  source_platform: (typeof SOURCE_PLATFORMS)[number];
   source_image_url: string;
   is_active: boolean;
   is_featured: boolean;
@@ -80,7 +94,6 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
   const updateField = <K extends keyof JobFormState>(key: K, value: JobFormState[K]) =>
     setForm((f) => ({ ...f, [key]: value }));
 
-  // Load when opened
   useEffect(() => {
     if (!open) return;
     if (jobId) {
@@ -92,7 +105,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
         .single()
         .then(({ data, error }) => {
           if (error || !data) {
-            toast.error("Failed to load job");
+            toast.error("Registry Ingestion Fault: Failed to load job node.");
             return;
           }
           setForm({
@@ -118,7 +131,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
             deadline: data.deadline ? new Date(data.deadline).toISOString().slice(0, 10) : "",
           });
         })
-        .then(() => setLoading(false));
+        .finally(() => setLoading(false));
     } else {
       setForm({ ...EMPTY_JOB_FORM, ...(initialForm || {}) });
     }
@@ -126,6 +139,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
   const handleLogoUpload = async (file: File) => {
     setIsUploadingLogo(true);
+    const toastId = toast.loading("Uploading institutional artifact...");
     try {
       const fileName = `job-logos/${Date.now()}-${file.name}`;
       const { error } = await supabase.storage.from("job-assets").upload(fileName, file);
@@ -134,9 +148,9 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
         data: { publicUrl },
       } = supabase.storage.from("job-assets").getPublicUrl(fileName);
       updateField("company_logo_url", publicUrl);
-      toast.success("Logo uploaded");
+      toast.success("Artifact Secured", { id: toastId });
     } catch (err: any) {
-      toast.error("Upload failed: " + err.message);
+      toast.error("Upload Fault: " + err.message, { id: toastId });
     } finally {
       setIsUploadingLogo(false);
     }
@@ -144,10 +158,11 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
   const handleEnhanceDescription = async () => {
     if (form.description.length < 30) {
-      toast.error("Add at least 30 characters before enhancing");
+      toast.error("Protocol Fault: Min 30 characters required for neural enhancement.");
       return;
     }
     setIsEnhancing(true);
+    const toastId = toast.loading("Initializing neural optimization...");
     try {
       const { data, error } = await supabase.functions.invoke("enhance-job-description", {
         body: { title: form.title, company: form.company_name, description: form.description },
@@ -156,32 +171,18 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
       const enhanced = data?.enhanced || data?.description;
       if (enhanced) {
         updateField("description", enhanced);
-        toast.success("Description enhanced");
-      } else {
-        toast.info("No enhancement returned");
+        toast.success("Description Optimized", { id: toastId });
       }
     } catch (err: any) {
-      toast.error("AI enhance failed: " + err.message);
+      toast.error("Neural Fault: " + err.message, { id: toastId });
     } finally {
       setIsEnhancing(false);
     }
   };
 
   const handleSave = async () => {
-    if (!form.title.trim() || !form.company_name.trim()) {
-      toast.error("Title and company are required");
-      return;
-    }
-    if (!form.description.trim()) {
-      toast.error("Description is required");
-      return;
-    }
-    if (form.application_type === "email" && !form.application_email) {
-      toast.error("Email is required for email applications");
-      return;
-    }
-    if (form.application_type === "link" && !form.application_url) {
-      toast.error("URL is required for link applications");
+    if (!form.title.trim() || !form.company_name.trim() || !form.description.trim()) {
+      toast.error("Protocol Fault: Mandatory fields missing.");
       return;
     }
 
@@ -210,20 +211,16 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
         deadline: form.deadline ? new Date(form.deadline).toISOString() : null,
       };
 
-      if (jobId) {
-        const { error } = await supabase.from("jobs").update(payload).eq("id", jobId);
-        if (error) throw error;
-        toast.success("Job updated");
-      } else {
-        const { error } = await supabase.from("jobs").insert(payload);
-        if (error) throw error;
-        toast.success("Job created");
-      }
+      const { error } = jobId
+        ? await supabase.from("jobs").update(payload).eq("id", jobId)
+        : await supabase.from("jobs").insert(payload);
 
+      if (error) throw error;
+      toast.success(jobId ? "Infrastructure Updated" : "Deployment Successful");
       onOpenChange(false);
       onSaved?.();
     } catch (err: any) {
-      toast.error(err.message || "Save failed");
+      toast.error("Registry Fault: " + err.message);
     } finally {
       setIsSaving(false);
     }
@@ -231,174 +228,362 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
-        <DialogHeader>
-          <DialogTitle>{jobId ? "Edit Job Posting" : "New Job Posting"}</DialogTitle>
+      <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-2xl rounded-[40px]">
+        <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+
+        <DialogHeader className="p-8 pb-4 text-left">
+          <div className="flex justify-between items-center">
+            <div className="space-y-1">
+              <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+                <Briefcase className="h-8 w-8 text-primary" />
+                {jobId ? "Recalibrate Infrastructure" : "Deploy Job Node"}
+              </DialogTitle>
+              <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+                Strategic marketplace placement and AI content drafting
+              </DialogDescription>
+            </div>
+            <Badge variant="outline" className="font-black text-[9px] border-2 uppercase italic px-3 py-1">
+              {jobId ? "NODE_EDIT_MODE" : "NODE_PROVISIONING"}
+            </Badge>
+          </div>
         </DialogHeader>
 
-        {loading ? (
-          <div className="flex justify-center py-12"><Loader2 className="h-6 w-6 animate-spin" /></div>
-        ) : (
-          <div className="space-y-5 py-2">
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5 md:col-span-2">
-                <Label>Title *</Label>
-                <Input value={form.title} onChange={(e) => updateField("title", e.target.value)} placeholder="Senior Frontend Developer" />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Company Name *</Label>
-                <Input value={form.company_name} onChange={(e) => updateField("company_name", e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Location</Label>
-                <Input value={form.location} onChange={(e) => updateField("location", e.target.value)} placeholder="Dhaka, Bangladesh" />
-              </div>
+        <div className="flex-1 overflow-y-auto p-8 pt-0 custom-scrollbar">
+          {loading ? (
+            <div className="flex flex-col items-center justify-center py-24 gap-4">
+              <Loader2 className="h-12 w-12 animate-spin text-primary" />
+              <p className="text-[10px] font-black uppercase tracking-widest animate-pulse">
+                Ingesting Registry Data...
+              </p>
             </div>
-
-            <div className="space-y-1.5">
-              <Label>Company Logo</Label>
-              <div className="flex items-center gap-3">
-                {form.company_logo_url ? (
-                  <div className="relative">
-                    <img src={form.company_logo_url} alt="Logo" className="h-14 w-14 rounded-lg object-cover border" />
-                    <button
-                      onClick={() => updateField("company_logo_url", "")}
-                      className="absolute -top-1.5 -right-1.5 bg-destructive text-destructive-foreground rounded-full p-0.5"
-                    >
-                      <X className="h-3 w-3" />
-                    </button>
+          ) : (
+            <div className="space-y-10 py-4 text-left">
+              {/* CORE IDENTITY */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-2 mb-4 border-b border-border/10 pb-2">
+                  <ShieldCheck className="h-4 w-4 text-primary" />
+                  <h4 className="text-[11px] font-black uppercase tracking-[0.2em] italic">Core Identity</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+                  <div className="space-y-2 md:col-span-2">
+                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                      Job Architecture Title *
+                    </Label>
+                    <Input
+                      value={form.title}
+                      onChange={(e) => updateField("title", e.target.value)}
+                      placeholder="E.G. LEAD NEURAL ARCHITECT"
+                      className="h-14 rounded-2xl border-2 font-black uppercase italic text-xs tracking-widest bg-muted/10"
+                    />
                   </div>
-                ) : (
-                  <label className="h-14 w-14 border-2 border-dashed border-border rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
-                    {isUploadingLogo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 text-muted-foreground" />}
-                    <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleLogoUpload(e.target.files[0])} />
-                  </label>
-                )}
-                <Input
-                  value={form.company_logo_url}
-                  onChange={(e) => updateField("company_logo_url", e.target.value)}
-                  placeholder="…or paste logo URL"
-                  className="flex-1"
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                      Institutional Name *
+                    </Label>
+                    <Input
+                      value={form.company_name}
+                      onChange={(e) => updateField("company_name", e.target.value)}
+                      className="h-14 rounded-2xl border-2 font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2 flex items-center gap-2">
+                      <Globe className="h-3 w-3" /> Geographical Node
+                    </Label>
+                    <Input
+                      value={form.location}
+                      onChange={(e) => updateField("location", e.target.value)}
+                      placeholder="DHAKA, BANGLADESH / REMOTE"
+                      className="h-14 rounded-2xl border-2 font-bold"
+                    />
+                  </div>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    Institutional Artifact (Logo)
+                  </Label>
+                  <div className="flex items-center gap-4 p-4 rounded-3xl border-2 bg-muted/5 border-dashed">
+                    {form.company_logo_url ? (
+                      <div className="relative shrink-0">
+                        <img
+                          src={form.company_logo_url}
+                          alt="Logo"
+                          className="h-16 w-16 rounded-2xl object-cover border-2 shadow-xl"
+                        />
+                        <button
+                          onClick={() => updateField("company_logo_url", "")}
+                          className="absolute -top-2 -right-2 bg-destructive text-white rounded-full p-1 shadow-lg hover:scale-110 transition-transform"
+                        >
+                          <X className="h-3 w-3" />
+                        </button>
+                      </div>
+                    ) : (
+                      <label className="h-16 w-16 border-2 border-dashed border-primary/20 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-primary/5 transition-all group shrink-0">
+                        {isUploadingLogo ? (
+                          <Loader2 className="h-6 w-6 animate-spin text-primary" />
+                        ) : (
+                          <Upload className="h-6 w-6 text-muted-foreground group-hover:text-primary" />
+                        )}
+                        <input
+                          type="file"
+                          accept="image/*"
+                          className="hidden"
+                          onChange={(e) => e.target.files?.[0] && handleLogoUpload(e.target.files[0])}
+                        />
+                      </label>
+                    )}
+                    <Input
+                      value={form.company_logo_url}
+                      onChange={(e) => updateField("company_logo_url", e.target.value)}
+                      placeholder="PASTE REMOTE ASSET URL..."
+                      className="flex-1 h-12 rounded-xl border-2 font-mono text-[10px] uppercase"
+                    />
+                  </div>
+                </div>
+              </section>
+
+              {/* SPECIFICATIONS */}
+              <section className="space-y-6">
+                <div className="flex items-center gap-2 mb-4 border-b border-border/10 pb-2">
+                  <Zap className="h-4 w-4 text-primary" />
+                  <h4 className="text-[11px] font-black uppercase tracking-[0.2em] italic">Technical Specs</h4>
+                </div>
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
+                  <SelectNode
+                    label="Engagement Type"
+                    value={form.job_type}
+                    options={JOB_TYPES}
+                    onChange={(v) => updateField("job_type", v as any)}
+                  />
+                  <SelectNode
+                    label="Authority Level"
+                    value={form.experience_level}
+                    options={EXPERIENCE_LEVELS}
+                    onChange={(v) => updateField("experience_level", v as any)}
+                  />
+                  <SelectNode
+                    label="Source Logic"
+                    value={form.source_platform}
+                    options={SOURCE_PLATFORMS}
+                    onChange={(v) => updateField("source_platform", v as any)}
+                  />
+                </div>
+
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                      Yield Floor (Min)
+                    </Label>
+                    <Input
+                      type="number"
+                      value={form.salary_range_min}
+                      onChange={(e) => updateField("salary_range_min", e.target.value)}
+                      className="h-14 rounded-2xl border-2 font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                      Yield Ceiling (Max)
+                    </Label>
+                    <Input
+                      type="number"
+                      value={form.salary_range_max}
+                      onChange={(e) => updateField("salary_range_max", e.target.value)}
+                      className="h-14 rounded-2xl border-2 font-bold"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Currency Node</Label>
+                    <Select value={form.salary_currency} onValueChange={(v) => updateField("salary_currency", v)}>
+                      <SelectTrigger className="h-14 rounded-2xl border-2 font-bold">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent className="rounded-xl border-2">
+                        {CURRENCIES.map((c) => (
+                          <SelectItem key={c} value={c} className="font-bold">
+                            {c}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  </div>
+                </div>
+              </section>
+
+              {/* CORE PAYLOAD */}
+              <section className="space-y-4">
+                <div className="flex items-center justify-between px-2">
+                  <Label className="text-[10px] font-black uppercase text-primary italic">Narrative Payload *</Label>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="sm"
+                    onClick={handleEnhanceDescription}
+                    disabled={isEnhancing}
+                    className="h-8 rounded-xl border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 transition-all font-black text-[9px] uppercase italic tracking-widest gap-2"
+                  >
+                    {isEnhancing ? (
+                      <Loader2 className="h-3 w-3 animate-spin" />
+                    ) : (
+                      <Sparkles className="h-3 w-3 fill-primary/20" />
+                    )}
+                    Neural Optimization
+                  </Button>
+                </div>
+                <Textarea
+                  value={form.description}
+                  onChange={(e) => updateField("description", e.target.value)}
+                  rows={10}
+                  placeholder="INPUT ROLE RESPONSIBILITIES, ARCHITECTURAL REQUIREMENTS, AND YIELD BENEFITS..."
+                  className="rounded-[32px] border-2 font-medium italic text-sm leading-relaxed bg-muted/5 p-8 focus-visible:ring-primary shadow-inner"
                 />
-              </div>
-            </div>
+              </section>
 
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <Label>Job Type</Label>
-                <Select value={form.job_type} onValueChange={(v) => updateField("job_type", v as any)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{JOB_TYPES.map((t) => <SelectItem key={t} value={t}>{t.replace("_", " ")}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label>Experience</Label>
-                <Select value={form.experience_level} onValueChange={(v) => updateField("experience_level", v as any)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{EXPERIENCE_LEVELS.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              <div className="space-y-1.5">
-                <Label>Source Platform</Label>
-                <Select value={form.source_platform} onValueChange={(v) => updateField("source_platform", v as any)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{SOURCE_PLATFORMS.map((t) => <SelectItem key={t} value={t}>{t.replace("_", " ")}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="grid grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <Label>Salary Min</Label>
-                <Input type="number" value={form.salary_range_min} onChange={(e) => updateField("salary_range_min", e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Salary Max</Label>
-                <Input type="number" value={form.salary_range_max} onChange={(e) => updateField("salary_range_max", e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Currency</Label>
-                <Select value={form.salary_currency} onValueChange={(v) => updateField("salary_currency", v)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{CURRENCIES.map((c) => <SelectItem key={c} value={c}>{c}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-            </div>
-
-            <div className="space-y-1.5">
-              <div className="flex items-center justify-between">
-                <Label>Description *</Label>
-                <Button type="button" variant="ghost" size="sm" onClick={handleEnhanceDescription} disabled={isEnhancing}>
-                  {isEnhancing ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : <Sparkles className="h-3 w-3 mr-1" />}
-                  AI Enhance
-                </Button>
-              </div>
-              <Textarea
-                value={form.description}
-                onChange={(e) => updateField("description", e.target.value)}
-                rows={8}
-                placeholder="Role responsibilities, requirements, benefits…"
-              />
-            </div>
-
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
-              <div className="space-y-1.5">
-                <Label>Application Type</Label>
-                <Select value={form.application_type} onValueChange={(v) => updateField("application_type", v as any)}>
-                  <SelectTrigger><SelectValue /></SelectTrigger>
-                  <SelectContent>{APPLICATION_TYPES.map((t) => <SelectItem key={t} value={t}>{t}</SelectItem>)}</SelectContent>
-                </Select>
-              </div>
-              {form.application_type === "email" && (
-                <div className="space-y-1.5">
-                  <Label>Application Email *</Label>
-                  <Input type="email" value={form.application_email} onChange={(e) => updateField("application_email", e.target.value)} />
+              {/* TRANSMISSION LOGIC */}
+              <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-[40px] border-2 border-primary/10 bg-primary/5">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    Application Ingress Type
+                  </Label>
+                  <Select
+                    value={form.application_type}
+                    onValueChange={(v) => updateField("application_type", v as any)}
+                  >
+                    <SelectTrigger className="h-14 rounded-2xl border-2 font-bold uppercase text-[10px] bg-background">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-2">
+                      {APPLICATION_TYPES.map((t) => (
+                        <SelectItem key={t} value={t} className="font-bold uppercase text-[10px]">
+                          {t}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
                 </div>
-              )}
-              {form.application_type === "link" && (
-                <div className="space-y-1.5">
-                  <Label>Application URL *</Label>
-                  <Input type="url" placeholder="https://…" value={form.application_url} onChange={(e) => updateField("application_url", e.target.value)} />
+                {form.application_type === "email" && (
+                  <div className="space-y-2 animate-in slide-in-from-right-2">
+                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                      Transmission Email *
+                    </Label>
+                    <Input
+                      type="email"
+                      value={form.application_email}
+                      onChange={(e) => updateField("application_email", e.target.value)}
+                      className="h-14 rounded-2xl border-2 font-bold bg-background"
+                    />
+                  </div>
+                )}
+                {form.application_type === "link" && (
+                  <div className="space-y-2 animate-in slide-in-from-right-2">
+                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                      External Redirect URL *
+                    </Label>
+                    <Input
+                      type="url"
+                      placeholder="HTTPS://..."
+                      value={form.application_url}
+                      onChange={(e) => updateField("application_url", e.target.value)}
+                      className="h-14 rounded-2xl border-2 font-bold bg-background"
+                    />
+                  </div>
+                )}
+              </section>
+
+              {/* LIFECYCLE CONTROLS */}
+              <section className="grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Vacancies</Label>
+                  <Input
+                    type="number"
+                    min="1"
+                    value={form.vacancies}
+                    onChange={(e) => updateField("vacancies", e.target.value)}
+                    className="h-14 rounded-2xl border-2 font-bold"
+                  />
                 </div>
-              )}
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Expiry Deadline</Label>
+                  <Input
+                    type="date"
+                    value={form.deadline}
+                    onChange={(e) => updateField("deadline", e.target.value)}
+                    className="h-14 rounded-2xl border-2 font-bold"
+                  />
+                </div>
+                <div className="md:col-span-2 flex flex-wrap gap-8 pt-4 justify-end">
+                  <SwitchNode
+                    label="Active_Node"
+                    checked={form.is_active}
+                    onChange={(v) => updateField("is_active", v)}
+                  />
+                  <SwitchNode
+                    label="Featured_Auth"
+                    checked={form.is_featured}
+                    onChange={(v) => updateField("is_featured", v)}
+                  />
+                  <SwitchNode
+                    label="AI_Assessment"
+                    checked={form.ai_assessment_enabled}
+                    onChange={(v) => updateField("ai_assessment_enabled", v)}
+                  />
+                </div>
+              </section>
             </div>
+          )}
+        </div>
 
-            <div className="grid grid-cols-2 md:grid-cols-3 gap-4">
-              <div className="space-y-1.5">
-                <Label>Vacancies</Label>
-                <Input type="number" min="1" value={form.vacancies} onChange={(e) => updateField("vacancies", e.target.value)} />
-              </div>
-              <div className="space-y-1.5">
-                <Label>Deadline</Label>
-                <Input type="date" value={form.deadline} onChange={(e) => updateField("deadline", e.target.value)} />
-              </div>
-            </div>
-
-            <div className="flex flex-wrap gap-6 pt-2">
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Switch checked={form.is_active} onCheckedChange={(v) => updateField("is_active", v)} />
-                <span className="text-sm">Active</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Switch checked={form.is_featured} onCheckedChange={(v) => updateField("is_featured", v)} />
-                <span className="text-sm">Featured</span>
-              </label>
-              <label className="flex items-center gap-2 cursor-pointer">
-                <Switch checked={form.ai_assessment_enabled} onCheckedChange={(v) => updateField("ai_assessment_enabled", v)} />
-                <span className="text-sm">AI Assessment</span>
-              </label>
-            </div>
-          </div>
-        )}
-
-        <DialogFooter>
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>Cancel</Button>
-          <Button onClick={handleSave} disabled={isSaving || loading}>
-            {isSaving && <Loader2 className="h-4 w-4 mr-2 animate-spin" />}
-            {jobId ? "Save Changes" : "Create Job"}
+        <DialogFooter className="p-8 bg-muted/10 border-t border-border/10">
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            disabled={isSaving}
+            className="font-black uppercase text-[10px] tracking-widest italic opacity-50"
+          >
+            Abort Sync
+          </Button>
+          <Button
+            onClick={handleSave}
+            disabled={isSaving || loading}
+            className="h-16 px-12 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl shadow-primary/20 active:scale-95 transition-all"
+          >
+            {isSaving ? <Loader2 className="h-6 w-6 animate-spin" /> : <ShieldCheck className="h-6 w-6 fill-current" />}
+            {jobId ? "Commit Updates" : "Initialize Deployment"}
           </Button>
         </DialogFooter>
       </DialogContent>
     </Dialog>
+  );
+}
+
+function SelectNode({ label, value, options, onChange }: any) {
+  return (
+    <div className="space-y-2">
+      <Label className="text-[10px] font-black uppercase text-primary italic ml-2">{label}</Label>
+      <Select value={value} onValueChange={onChange}>
+        <SelectTrigger className="h-14 rounded-2xl border-2 font-bold uppercase text-[10px]">
+          <SelectValue />
+        </SelectTrigger>
+        <SelectContent className="rounded-xl border-2">
+          {options.map((o: string) => (
+            <SelectItem key={o} value={o} className="font-bold uppercase text-[10px]">
+              {o.replace("_", " ")}
+            </SelectItem>
+          ))}
+        </SelectContent>
+      </Select>
+    </div>
+  );
+}
+
+function SwitchNode({ label, checked, onChange }: any) {
+  return (
+    <label className="flex items-center gap-3 cursor-pointer group">
+      <Switch checked={checked} onCheckedChange={onChange} className="data-[state=checked]:bg-primary" />
+      <span className="text-[10px] font-black uppercase italic tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
+        {label}
+      </span>
+    </label>
   );
 }
