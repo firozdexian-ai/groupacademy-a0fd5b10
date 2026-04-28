@@ -14,129 +14,112 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
-import { Loader2, User, GraduationCap, Briefcase, Sparkles, Camera } from "lucide-react";
+import { Loader2, User, GraduationCap, Briefcase, Sparkles, Camera, ShieldCheck, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { EducationEditor, EducationEntry } from "./EducationEditor";
 import { ExperienceEditor, ExperienceEntry } from "./ExperienceEditor";
 import { SkillsEditor } from "./SkillsEditor";
 import { ProfilePhotoUpload } from "./ProfilePhotoUpload";
+import { cn } from "@/lib/utils";
+
+/**
+ * GroUp Academy: Profile Management Node
+ * CTO Reference: Authoritative identity editor for talent professional nodes.
+ */
 
 interface ProfileEditDialogProps {
   open: boolean;
   onOpenChange: (open: boolean) => void;
   talent: TalentProfile;
-  onSave: (data: Partial<TalentProfile>) => Promise<boolean>;
 }
 
-export function ProfileEditDialog({
-  open,
-  onOpenChange,
-  talent,
-}: ProfileEditDialogProps) {
-  // Basic info state
+export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDialogProps) {
+  // IDENTITY_LEDGER: State Management
   const [fullName, setFullName] = useState(talent.fullName);
   const [phone, setPhone] = useState(talent.phone || "");
   const [linkedinUrl, setLinkedinUrl] = useState(talent.linkedinUrl || "");
   const [portfolioUrl, setPortfolioUrl] = useState(talent.portfolioUrl || "");
   const [customProfession, setCustomProfession] = useState(talent.customProfession || "");
   const [profilePhotoUrl, setProfilePhotoUrl] = useState(talent.profilePhotoUrl || "");
-  
-  // Education, experience, skills state
+
   const [education, setEducation] = useState<EducationEntry[]>([]);
   const [experience, setExperience] = useState<ExperienceEntry[]>([]);
   const [skills, setSkills] = useState<string[]>([]);
-  
+
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("basic");
 
-  // Initialize data from talent prop
+  // HYDRATION: Synchronize from talent prop
   useEffect(() => {
-    if (talent) {
+    if (talent && open) {
       setFullName(talent.fullName);
       setPhone(talent.phone || "");
       setLinkedinUrl(talent.linkedinUrl || "");
       setPortfolioUrl(talent.portfolioUrl || "");
       setCustomProfession(talent.customProfession || "");
       setProfilePhotoUrl(talent.profilePhotoUrl || "");
-      
-      // Parse education array
-      if (talent.education && Array.isArray(talent.education)) {
-        setEducation(talent.education.map((edu: any) => ({
+
+      const eduData = Array.isArray(talent.education) ? talent.education : [];
+      setEducation(
+        eduData.map((edu: any) => ({
           institution: edu.institution || "",
           degree: edu.degree || "",
           fieldOfStudy: edu.fieldOfStudy || edu.field_of_study || "",
           startYear: edu.startYear || edu.start_year || "",
           endYear: edu.endYear || edu.end_year || "",
-        })));
-      } else {
-        setEducation([]);
-      }
-      
-      // Parse experience array
-      if (talent.experience && Array.isArray(talent.experience)) {
-        setExperience(talent.experience.map((exp: any) => ({
+        })),
+      );
+
+      const expData = Array.isArray(talent.experience) ? talent.experience : [];
+      setExperience(
+        expData.map((exp: any) => ({
           company: exp.company || "",
           position: exp.position || exp.title || "",
           startDate: exp.startDate || exp.start_date || "",
           endDate: exp.endDate || exp.end_date || "",
           description: exp.description || "",
-        })));
-      } else {
-        setExperience([]);
-      }
-      
-      // Parse skills array
-      if (talent.skills && Array.isArray(talent.skills)) {
-        // Handle both string arrays and object arrays
-        setSkills(talent.skills.map((skill: any) => 
-          typeof skill === 'string' ? skill : (skill.name || skill.skill || String(skill))
-        ));
-      } else {
-        setSkills([]);
-      }
+        })),
+      );
+
+      const skillData = Array.isArray(talent.skills) ? talent.skills : [];
+      setSkills(
+        skillData.map((skill: any) => (typeof skill === "string" ? skill : skill.name || skill.skill || String(skill))),
+      );
     }
   }, [talent, open]);
 
-  const handleSave = async () => {
+  const handleExecutiveSave = async () => {
     if (!fullName.trim()) {
-      toast.error("Full name is required");
+      toast.error("Identity Fault: Full name is required.");
       return;
     }
 
     setIsSaving(true);
+    const toastId = toast.loading("Synchronizing identity with global ledger...");
+
     try {
-      
-      const updateData: any = {
+      const updateData = {
         full_name: fullName.trim(),
         phone: phone.trim() || null,
         linkedin_url: linkedinUrl.trim() || null,
         portfolio_url: portfolioUrl.trim() || null,
         custom_profession: customProfession.trim() || null,
         profile_photo_url: profilePhotoUrl || null,
-        education: education.filter(e => e.institution || e.degree),
-        experience: experience.filter(e => e.company || e.position),
-        skills: skills.filter(s => s.trim()),
+        education: education.filter((e) => e.institution.trim() || e.degree.trim()),
+        experience: experience.filter((e) => e.company.trim() || e.position.trim()),
+        skills: skills.filter((s) => s.trim()),
       };
 
-      const { error } = await supabase
-        .from("talents")
-        .update(updateData)
-        .eq("id", talent.id);
+      const { error } = await supabase.from("talents").update(updateData).eq("id", talent.id);
 
-      if (error) {
-        console.error("Error updating profile:", error);
-        toast.error("Failed to update profile");
-        return;
-      }
+      if (error) throw error;
 
-      toast.success("Profile updated successfully");
+      toast.success("Identity Synced: Profile updated.", { id: toastId });
       onOpenChange(false);
-      
-      // Trigger page refresh to show updated data
       window.location.reload();
-    } catch (error) {
-      console.error("Error saving profile:", error);
-      toast.error("Failed to update profile");
+    } catch (error: any) {
+      console.error("[Registry Fault]:", error);
+      toast.error("Transmission Error: Failed to sync identity.", { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -144,140 +127,137 @@ export function ProfileEditDialog({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-lg max-h-[90vh]">
-        <DialogHeader>
-          <DialogTitle>Edit Profile</DialogTitle>
-          <DialogDescription>
-            Update your personal and professional information
+      <DialogContent className="sm:max-w-xl rounded-[32px] border-2 border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-8">
+        <DialogHeader className="mb-6">
+          <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+            <Zap className="h-6 w-6 text-primary fill-current" /> Profile_Editor
+          </DialogTitle>
+          <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+            Authorized identity management and credential synchronization
           </DialogDescription>
         </DialogHeader>
 
         <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5">
-            <TabsTrigger value="photo" className="text-xs">
-              <Camera className="h-3 w-3 mr-1 hidden sm:inline" />
-              Photo
+          <TabsList className="grid w-full grid-cols-5 h-12 bg-muted/20 rounded-2xl p-1 gap-1 border border-border/10">
+            <TabsTrigger
+              value="photo"
+              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            >
+              <Camera className="h-3 w-3 mr-1" /> Photo
             </TabsTrigger>
-            <TabsTrigger value="basic" className="text-xs">
-              <User className="h-3 w-3 mr-1 hidden sm:inline" />
-              Basic
+            <TabsTrigger
+              value="basic"
+              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            >
+              <User className="h-3 w-3 mr-1" /> Basic
             </TabsTrigger>
-            <TabsTrigger value="education" className="text-xs">
-              <GraduationCap className="h-3 w-3 mr-1 hidden sm:inline" />
-              Education
+            <TabsTrigger
+              value="education"
+              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            >
+              <GraduationCap className="h-3 w-3 mr-1" /> EDU
             </TabsTrigger>
-            <TabsTrigger value="experience" className="text-xs">
-              <Briefcase className="h-3 w-3 mr-1 hidden sm:inline" />
-              Experience
+            <TabsTrigger
+              value="experience"
+              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            >
+              <Briefcase className="h-3 w-3 mr-1" /> EXP
             </TabsTrigger>
-            <TabsTrigger value="skills" className="text-xs">
-              <Sparkles className="h-3 w-3 mr-1 hidden sm:inline" />
-              Skills
+            <TabsTrigger
+              value="skills"
+              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            >
+              <Sparkles className="h-3 w-3 mr-1" /> Skills
             </TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="h-[400px] mt-4 pr-4">
-            <TabsContent value="photo" className="mt-0">
-              <div className="py-6">
+          <ScrollArea className="h-[450px] mt-6 pr-4 scrollbar-hide">
+            <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
+              <TabsContent value="photo" className="mt-0 pb-6">
                 <ProfilePhotoUpload
                   currentPhotoUrl={profilePhotoUrl}
                   fullName={fullName}
                   onPhotoChange={setProfilePhotoUrl}
                 />
-              </div>
-            </TabsContent>
+              </TabsContent>
 
-            <TabsContent value="basic" className="space-y-4 mt-0">
-              <div className="space-y-2">
-                <Label htmlFor="fullName">Full Name *</Label>
-                <Input
-                  id="fullName"
-                  value={fullName}
-                  onChange={(e) => setFullName(e.target.value)}
-                  placeholder="Enter your full name"
-                />
-              </div>
+              <TabsContent value="basic" className="space-y-6 mt-0">
+                <div className="grid gap-5">
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">Identity_Name *</Label>
+                    <Input
+                      value={fullName}
+                      onChange={(e) => setFullName(e.target.value)}
+                      placeholder="Full Node Name"
+                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">
+                      Communication_Line
+                    </Label>
+                    <Input
+                      type="tel"
+                      value={phone}
+                      onChange={(e) => setPhone(e.target.value)}
+                      placeholder="+880..."
+                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">Functional_Role</Label>
+                    <Input
+                      value={customProfession}
+                      onChange={(e) => setCustomProfession(e.target.value)}
+                      placeholder="E.G. SOFTWARE_ARCHITECT"
+                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">
+                      LinkedIn_Sync_Node
+                    </Label>
+                    <Input
+                      value={linkedinUrl}
+                      onChange={(e) => setLinkedinUrl(e.target.value)}
+                      placeholder="HTTPS://LINKEDIN.COM/IN/..."
+                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                    />
+                  </div>
+                </div>
+              </TabsContent>
 
-              <div className="space-y-2">
-                <Label htmlFor="phone">Phone Number</Label>
-                <Input
-                  id="phone"
-                  type="tel"
-                  value={phone}
-                  onChange={(e) => setPhone(e.target.value)}
-                  placeholder="+880..."
-                />
-              </div>
+              <TabsContent value="education" className="mt-0">
+                <EducationEditor education={education} onChange={setEducation} />
+              </TabsContent>
 
-              <div className="space-y-2">
-                <Label htmlFor="profession">Profession / Job Title</Label>
-                <Input
-                  id="profession"
-                  value={customProfession}
-                  onChange={(e) => setCustomProfession(e.target.value)}
-                  placeholder="e.g. Software Engineer"
-                />
-              </div>
+              <TabsContent value="experience" className="mt-0">
+                <ExperienceEditor experience={experience} onChange={setExperience} />
+              </TabsContent>
 
-              <div className="space-y-2">
-                <Label htmlFor="linkedin">LinkedIn URL</Label>
-                <Input
-                  id="linkedin"
-                  type="url"
-                  value={linkedinUrl}
-                  onChange={(e) => setLinkedinUrl(e.target.value)}
-                  placeholder="https://linkedin.com/in/..."
-                />
-              </div>
-
-              <div className="space-y-2">
-                <Label htmlFor="portfolio">Portfolio URL</Label>
-                <Input
-                  id="portfolio"
-                  type="url"
-                  value={portfolioUrl}
-                  onChange={(e) => setPortfolioUrl(e.target.value)}
-                  placeholder="https://..."
-                />
-              </div>
-            </TabsContent>
-
-            <TabsContent value="education" className="mt-0">
-              <EducationEditor 
-                education={education} 
-                onChange={setEducation} 
-              />
-            </TabsContent>
-
-            <TabsContent value="experience" className="mt-0">
-              <ExperienceEditor 
-                experience={experience} 
-                onChange={setExperience} 
-              />
-            </TabsContent>
-
-            <TabsContent value="skills" className="mt-0">
-              <SkillsEditor 
-                skills={skills} 
-                onChange={setSkills} 
-              />
-            </TabsContent>
+              <TabsContent value="skills" className="mt-0">
+                <SkillsEditor skills={skills} onChange={setSkills} />
+              </TabsContent>
+            </div>
           </ScrollArea>
         </Tabs>
 
-        <DialogFooter className="mt-4">
-          <Button variant="outline" onClick={() => onOpenChange(false)} disabled={isSaving}>
-            Cancel
+        <DialogFooter className="mt-8 gap-3 sm:gap-0">
+          <Button
+            variant="ghost"
+            onClick={() => onOpenChange(false)}
+            disabled={isSaving}
+            className="h-12 rounded-xl font-black uppercase italic text-[10px] tracking-widest text-muted-foreground hover:bg-muted/10"
+          >
+            Abort_Changes
           </Button>
-          <Button onClick={handleSave} disabled={isSaving}>
-            {isSaving ? (
-              <>
-                <Loader2 className="h-4 w-4 mr-2 animate-spin" />
-                Saving...
-              </>
-            ) : (
-              "Save Changes"
-            )}
+          <Button
+            onClick={handleExecutiveSave}
+            disabled={isSaving}
+            className="h-12 px-8 rounded-xl font-black uppercase italic text-[10px] tracking-widest gap-2 shadow-2xl active:scale-95 transition-all"
+          >
+            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
+            {isSaving ? "Syncing_Ledger..." : "Authorize_Sync"}
           </Button>
         </DialogFooter>
       </DialogContent>
