@@ -103,6 +103,66 @@ export type Database = {
           },
         ]
       }
+      agent_artifacts: {
+        Row: {
+          approved_at: string | null
+          approved_by: string | null
+          created_at: string
+          id: string
+          kind: string
+          message_id: string | null
+          payload: Json
+          status: string
+          storage_path: string | null
+          thread_id: string
+          title: string | null
+          updated_at: string
+        }
+        Insert: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          kind: string
+          message_id?: string | null
+          payload?: Json
+          status?: string
+          storage_path?: string | null
+          thread_id: string
+          title?: string | null
+          updated_at?: string
+        }
+        Update: {
+          approved_at?: string | null
+          approved_by?: string | null
+          created_at?: string
+          id?: string
+          kind?: string
+          message_id?: string | null
+          payload?: Json
+          status?: string
+          storage_path?: string | null
+          thread_id?: string
+          title?: string | null
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_artifacts_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "agent_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_artifacts_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "agent_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_chat_sessions: {
         Row: {
           agent_key: string
@@ -150,17 +210,497 @@ export type Database = {
           },
         ]
       }
+      agent_connections: {
+        Row: {
+          agent_id: string
+          connected_at: string
+          fee_paid: number
+          id: string
+          subject_id: string
+          subject_kind: string
+        }
+        Insert: {
+          agent_id: string
+          connected_at?: string
+          fee_paid?: number
+          id?: string
+          subject_id: string
+          subject_kind: string
+        }
+        Update: {
+          agent_id?: string
+          connected_at?: string
+          fee_paid?: number
+          id?: string
+          subject_id?: string
+          subject_kind?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_connections_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_credit_events: {
+        Row: {
+          agent_id: string
+          created_at: string
+          credits: number
+          event_kind: string
+          id: string
+          llm_cost_usd: number | null
+          message_id: string | null
+          metadata: Json | null
+          prompt_variant: string | null
+          subject_id: string
+          subject_kind: string
+          thread_id: string | null
+          tokens_in: number | null
+          tokens_out: number | null
+          tool_key: string | null
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          credits: number
+          event_kind: string
+          id?: string
+          llm_cost_usd?: number | null
+          message_id?: string | null
+          metadata?: Json | null
+          prompt_variant?: string | null
+          subject_id: string
+          subject_kind: string
+          thread_id?: string | null
+          tokens_in?: number | null
+          tokens_out?: number | null
+          tool_key?: string | null
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          credits?: number
+          event_kind?: string
+          id?: string
+          llm_cost_usd?: number | null
+          message_id?: string | null
+          metadata?: Json | null
+          prompt_variant?: string | null
+          subject_id?: string
+          subject_kind?: string
+          thread_id?: string | null
+          tokens_in?: number | null
+          tokens_out?: number | null
+          tool_key?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_credit_events_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_credit_events_message_id_fkey"
+            columns: ["message_id"]
+            isOneToOne: false
+            referencedRelation: "agent_messages"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_credit_events_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "agent_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_knowledge_chunks: {
+        Row: {
+          agent_id: string
+          chunk_index: number
+          content: string
+          created_at: string
+          embedding: string | null
+          id: string
+          source_id: string
+          token_count: number | null
+        }
+        Insert: {
+          agent_id: string
+          chunk_index: number
+          content: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source_id: string
+          token_count?: number | null
+        }
+        Update: {
+          agent_id?: string
+          chunk_index?: number
+          content?: string
+          created_at?: string
+          embedding?: string | null
+          id?: string
+          source_id?: string
+          token_count?: number | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_knowledge_chunks_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_knowledge_chunks_source_id_fkey"
+            columns: ["source_id"]
+            isOneToOne: false
+            referencedRelation: "agent_knowledge_sources"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_knowledge_sources: {
+        Row: {
+          agent_id: string
+          chunk_count: number
+          created_at: string
+          created_by: string | null
+          error: string | null
+          id: string
+          source_kind: string
+          source_ref: string | null
+          status: string
+          title: string
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          chunk_count?: number
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          source_kind: string
+          source_ref?: string | null
+          status?: string
+          title: string
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          chunk_count?: number
+          created_at?: string
+          created_by?: string | null
+          error?: string | null
+          id?: string
+          source_kind?: string
+          source_ref?: string | null
+          status?: string
+          title?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_knowledge_sources_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_marketplace_earnings: {
+        Row: {
+          agent_id: string
+          builder_id: string
+          builder_kind: string
+          builder_share: number
+          created_at: string
+          credit_event_id: string | null
+          gross_credits: number
+          id: string
+          platform_share: number
+        }
+        Insert: {
+          agent_id: string
+          builder_id: string
+          builder_kind: string
+          builder_share: number
+          created_at?: string
+          credit_event_id?: string | null
+          gross_credits: number
+          id?: string
+          platform_share: number
+        }
+        Update: {
+          agent_id?: string
+          builder_id?: string
+          builder_kind?: string
+          builder_share?: number
+          created_at?: string
+          credit_event_id?: string | null
+          gross_credits?: number
+          id?: string
+          platform_share?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_marketplace_earnings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_marketplace_earnings_credit_event_id_fkey"
+            columns: ["credit_event_id"]
+            isOneToOne: false
+            referencedRelation: "agent_credit_events"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_messages: {
+        Row: {
+          artifact_ids: string[] | null
+          content: string | null
+          created_at: string
+          credit_cost: number | null
+          id: string
+          llm_cost_usd: number | null
+          prompt_variant: string | null
+          role: string
+          thread_id: string
+          tokens_in: number | null
+          tokens_out: number | null
+          tool_calls: Json | null
+        }
+        Insert: {
+          artifact_ids?: string[] | null
+          content?: string | null
+          created_at?: string
+          credit_cost?: number | null
+          id?: string
+          llm_cost_usd?: number | null
+          prompt_variant?: string | null
+          role: string
+          thread_id: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+          tool_calls?: Json | null
+        }
+        Update: {
+          artifact_ids?: string[] | null
+          content?: string | null
+          created_at?: string
+          credit_cost?: number | null
+          id?: string
+          llm_cost_usd?: number | null
+          prompt_variant?: string | null
+          role?: string
+          thread_id?: string
+          tokens_in?: number | null
+          tokens_out?: number | null
+          tool_calls?: Json | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_messages_thread_id_fkey"
+            columns: ["thread_id"]
+            isOneToOne: false
+            referencedRelation: "agent_threads"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_threads: {
+        Row: {
+          agent_id: string
+          agent_key: string
+          company_id: string | null
+          created_at: string
+          id: string
+          is_archived: boolean
+          is_pinned: boolean
+          last_message_at: string
+          metadata: Json
+          subject_id: string
+          subject_kind: string
+          title: string | null
+          unread_count: number
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          agent_key: string
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          is_archived?: boolean
+          is_pinned?: boolean
+          last_message_at?: string
+          metadata?: Json
+          subject_id: string
+          subject_kind: string
+          title?: string | null
+          unread_count?: number
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          agent_key?: string
+          company_id?: string | null
+          created_at?: string
+          id?: string
+          is_archived?: boolean
+          is_pinned?: boolean
+          last_message_at?: string
+          metadata?: Json
+          subject_id?: string
+          subject_kind?: string
+          title?: string | null
+          unread_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_threads_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      agent_tools: {
+        Row: {
+          audience: string[]
+          category: string
+          created_at: string
+          default_credit_cost: number
+          description: string
+          handler_kind: string
+          handler_ref: string
+          id: string
+          input_schema: Json
+          is_active: boolean
+          min_level: number
+          name: string
+          tool_key: string
+          updated_at: string
+        }
+        Insert: {
+          audience?: string[]
+          category: string
+          created_at?: string
+          default_credit_cost?: number
+          description: string
+          handler_kind?: string
+          handler_ref: string
+          id?: string
+          input_schema?: Json
+          is_active?: boolean
+          min_level?: number
+          name: string
+          tool_key: string
+          updated_at?: string
+        }
+        Update: {
+          audience?: string[]
+          category?: string
+          created_at?: string
+          default_credit_cost?: number
+          description?: string
+          handler_kind?: string
+          handler_ref?: string
+          id?: string
+          input_schema?: Json
+          is_active?: boolean
+          min_level?: number
+          name?: string
+          tool_key?: string
+          updated_at?: string
+        }
+        Relationships: []
+      }
+      agent_triggers: {
+        Row: {
+          agent_id: string
+          created_at: string
+          cron_expression: string | null
+          event_kind: string
+          id: string
+          is_active: boolean
+          last_fired_at: string | null
+          recipient_filter: Json | null
+          recipient_strategy: string
+          template: string
+          updated_at: string
+        }
+        Insert: {
+          agent_id: string
+          created_at?: string
+          cron_expression?: string | null
+          event_kind: string
+          id?: string
+          is_active?: boolean
+          last_fired_at?: string | null
+          recipient_filter?: Json | null
+          recipient_strategy?: string
+          template: string
+          updated_at?: string
+        }
+        Update: {
+          agent_id?: string
+          created_at?: string
+          cron_expression?: string | null
+          event_kind?: string
+          id?: string
+          is_active?: boolean
+          last_fired_at?: string | null
+          recipient_filter?: Json | null
+          recipient_strategy?: string
+          template?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_triggers_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_agents: {
         Row: {
+          active_prompt_variant: string
           agent_key: string
+          agent_level: number
           agent_type: string | null
+          allowed_tools: string[]
+          audience: string
           avatar_url: string | null
           average_rating: number | null
           bg_color: string | null
+          builder_model: string
+          canvas_mode: string
           capabilities: string[] | null
           category: string | null
           color: string | null
           company_id: string | null
+          connection_fee: number
           created_at: string | null
           credit_cost: number | null
           delivery_credit_cost: number | null
@@ -171,25 +711,40 @@ export type Database = {
           id: string
           is_active: boolean | null
           is_featured: boolean | null
+          kill_switch: boolean
+          marketplace_status: string
+          message_credit_cost: number
+          model: string
           monthly_target: number | null
           name: string
+          owner_id: string | null
+          owner_kind: string
           personality_traits: Json | null
+          prompt_variants: Json
           sample_conversations: Json | null
           session_duration_minutes: number | null
           system_prompt: string
           total_conversations: number | null
           updated_at: string | null
+          visibility: string
         }
         Insert: {
+          active_prompt_variant?: string
           agent_key: string
+          agent_level?: number
           agent_type?: string | null
+          allowed_tools?: string[]
+          audience?: string
           avatar_url?: string | null
           average_rating?: number | null
           bg_color?: string | null
+          builder_model?: string
+          canvas_mode?: string
           capabilities?: string[] | null
           category?: string | null
           color?: string | null
           company_id?: string | null
+          connection_fee?: number
           created_at?: string | null
           credit_cost?: number | null
           delivery_credit_cost?: number | null
@@ -200,25 +755,40 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           is_featured?: boolean | null
+          kill_switch?: boolean
+          marketplace_status?: string
+          message_credit_cost?: number
+          model?: string
           monthly_target?: number | null
           name: string
+          owner_id?: string | null
+          owner_kind?: string
           personality_traits?: Json | null
+          prompt_variants?: Json
           sample_conversations?: Json | null
           session_duration_minutes?: number | null
           system_prompt: string
           total_conversations?: number | null
           updated_at?: string | null
+          visibility?: string
         }
         Update: {
+          active_prompt_variant?: string
           agent_key?: string
+          agent_level?: number
           agent_type?: string | null
+          allowed_tools?: string[]
+          audience?: string
           avatar_url?: string | null
           average_rating?: number | null
           bg_color?: string | null
+          builder_model?: string
+          canvas_mode?: string
           capabilities?: string[] | null
           category?: string | null
           color?: string | null
           company_id?: string | null
+          connection_fee?: number
           created_at?: string | null
           credit_cost?: number | null
           delivery_credit_cost?: number | null
@@ -229,14 +799,22 @@ export type Database = {
           id?: string
           is_active?: boolean | null
           is_featured?: boolean | null
+          kill_switch?: boolean
+          marketplace_status?: string
+          message_credit_cost?: number
+          model?: string
           monthly_target?: number | null
           name?: string
+          owner_id?: string | null
+          owner_kind?: string
           personality_traits?: Json | null
+          prompt_variants?: Json
           sample_conversations?: Json | null
           session_duration_minutes?: number | null
           system_prompt?: string
           total_conversations?: number | null
           updated_at?: string | null
+          visibility?: string
         }
         Relationships: [
           {
@@ -967,6 +1545,85 @@ export type Database = {
             foreignKeyName: "company_agents_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_credit_transactions: {
+        Row: {
+          amount: number
+          balance_after: number
+          company_id: string
+          created_at: string
+          description: string | null
+          id: string
+          reference_id: string | null
+          service_type: string | null
+          transaction_type: string
+        }
+        Insert: {
+          amount: number
+          balance_after: number
+          company_id: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          service_type?: string | null
+          transaction_type: string
+        }
+        Update: {
+          amount?: number
+          balance_after?: number
+          company_id?: string
+          created_at?: string
+          description?: string | null
+          id?: string
+          reference_id?: string | null
+          service_type?: string | null
+          transaction_type?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_credit_transactions_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_credits: {
+        Row: {
+          balance: number
+          company_id: string
+          created_at: string
+          earned_balance: number
+          id: string
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          company_id: string
+          created_at?: string
+          earned_balance?: number
+          id?: string
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          company_id?: string
+          created_at?: string
+          earned_balance?: number
+          id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_credits_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: true
             referencedRelation: "companies"
             referencedColumns: ["id"]
           },
@@ -2237,6 +2894,33 @@ export type Database = {
           total_budget?: number | null
           total_completed?: number | null
           updated_at?: string | null
+        }
+        Relationships: []
+      }
+      headless_pool: {
+        Row: {
+          balance: number
+          id: number
+          month_anchor: string
+          monthly_cap: number
+          spent_this_month: number
+          updated_at: string
+        }
+        Insert: {
+          balance?: number
+          id?: number
+          month_anchor?: string
+          monthly_cap?: number
+          spent_this_month?: number
+          updated_at?: string
+        }
+        Update: {
+          balance?: number
+          id?: number
+          month_anchor?: string
+          monthly_cap?: number
+          spent_this_month?: number
+          updated_at?: string
         }
         Relationships: []
       }
@@ -3971,6 +4655,36 @@ export type Database = {
           },
         ]
       }
+      platform_events: {
+        Row: {
+          created_at: string
+          event_kind: string
+          id: string
+          payload: Json
+          processed_at: string | null
+          subject_id: string | null
+          subject_kind: string | null
+        }
+        Insert: {
+          created_at?: string
+          event_kind: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          subject_id?: string | null
+          subject_kind?: string | null
+        }
+        Update: {
+          created_at?: string
+          event_kind?: string
+          id?: string
+          payload?: Json
+          processed_at?: string | null
+          subject_id?: string | null
+          subject_kind?: string | null
+        }
+        Relationships: []
+      }
       platform_settings: {
         Row: {
           description: string | null
@@ -5511,6 +6225,18 @@ export type Database = {
       increment_agent_conversations: {
         Args: { p_agent_key: string }
         Returns: undefined
+      }
+      match_agent_knowledge: {
+        Args: {
+          p_agent_id: string
+          p_match_count?: number
+          p_query_embedding: string
+        }
+        Returns: {
+          chunk_id: string
+          content: string
+          similarity: number
+        }[]
       }
       move_to_dlq: {
         Args: {
