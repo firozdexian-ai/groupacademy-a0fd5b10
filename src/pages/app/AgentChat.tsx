@@ -2,7 +2,7 @@ import { useState, useEffect, useMemo } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { Loader2, MessageSquare, ShieldAlert, Zap } from "lucide-react";
 import { AgentChatDialog } from "@/components/ai-agents/AgentChatDialog";
-import { useAgentChat } from "@/hooks/useAgentChat";
+import { useAgentRuntime } from "@/hooks/useAgentRuntime";
 import { useCredits } from "@/hooks/useCredits";
 import { toast } from "sonner";
 import { getAgentById } from "@/lib/constants/agents";
@@ -23,7 +23,7 @@ export default function AgentChat() {
   const [isInitializing, setIsInitializing] = useState(true);
 
   const {
-    session,
+    thread,
     messages,
     isStreaming,
     sendMessage,
@@ -31,7 +31,8 @@ export default function AgentChat() {
     endSession,
     isLoadingSessions,
     perResponseCost,
-  } = useAgentChat();
+  } = useAgentRuntime();
+  const session = thread; // alias for downstream guards
 
   const { balance } = useCredits();
 
