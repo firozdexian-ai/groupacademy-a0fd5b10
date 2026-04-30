@@ -147,6 +147,8 @@ export function useAgentRuntime(subjectOverride?: AgentRuntimeSubject): UseAgent
               agent_key: agentKeyRef.current,
               thread_id: thread?.id || undefined,
               message: userMsg.content,
+              subject_kind: subject?.kind,
+              subject_id: subject?.id,
             }),
           },
         );
@@ -170,8 +172,8 @@ export function useAgentRuntime(subjectOverride?: AgentRuntimeSubject): UseAgent
                   id: newThreadId,
                   agent_id: agentIdRef.current || "",
                   agent_key: agentKeyRef.current || "",
-                  subject_kind: "talent",
-                  subject_id: talent?.id || "",
+                  subject_kind: subject?.kind || "talent",
+                  subject_id: subject?.id || "",
                   title: userMsg.content.slice(0, 60),
                   last_message_at: new Date().toISOString(),
                   created_at: new Date().toISOString(),
@@ -225,7 +227,7 @@ export function useAgentRuntime(subjectOverride?: AgentRuntimeSubject): UseAgent
         setIsStreaming(false);
       }
     },
-    [isStreaming, thread, talent?.id],
+    [isStreaming, thread, subject?.id, subject?.kind],
   );
 
   const endSession = useCallback(async () => {
