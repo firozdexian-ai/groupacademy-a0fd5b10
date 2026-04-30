@@ -49,16 +49,32 @@ serve(async (req) => {
       return json({ error: "agent_key and message required" }, 400);
     }
 
-    // Resolve subject (talent for now; company/admin in later phases)
-    const { data: talent } = await admin
-      .from("talents")
-      .select("id, full_name, country")
-      .eq("user_id", user.id)
-      .maybeSingle();
-    if (!talent) return json({ error: "NO_TALENT_PROFILE" }, 403);
+    // Resolve subject — defaults to authenticated talent.
+    // Company subjects must be requested explicitly and verified via company_members.
+    let subjectKind = "talent";
+    let subjectId: string | null = null;
 
-    const subjectKind = "talent";
-    const subjectId = talent.id;
+    if ((body as any).subject_kind === "company" && (body as any).subject_id) {
+      const companyId = (body as any).subject_id as string;
+      const { data: membership } = await admin
+        .from("company_members")
+        .select("id")
+        .eq("user_id", user.id)
+        .eq("company_id", companyId)
+        .eq("status", "active")
+        .maybeSingle();
+      if (!membership) return json({ error: "NOT_COMPANY_MEMBER" }, 403);
+      subjectKind = "company";
+      subjectId = companyId;
+    } else {
+      const { data: talent } = await admin
+        .from("talents")
+        .select("id")
+        .eq("user_id", user.id)
+        .maybeSingle();
+      if (!talent) return json({ error: "NO_TALENT_PROFILE" }, 403);
+      subjectId = talent.id;
+    }
 
     // Load agent
     const { data: agent, error: agentErr } = await admin
