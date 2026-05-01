@@ -1,431 +1,474 @@
-import { useEffect, useState } from "react";
-import { useParams, useNavigate } from "react-router-dom";
+import { useEffect, useState, useCallback } from "react";
+import { useParams, useNavigate, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
-import { Switch } from "@/components/ui/switch";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { Switch } from "@/components/ui/switch";
+import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowLeft,
-  Plus,
+  Upload,
+  Video,
+  FileText,
+  Brain,
+  HelpCircle,
+  FileCheck,
   Trash2,
-  GripVertical,
-  Settings,
-  Sparkles,
-  Loader2,
-  BookOpen,
+  Plus,
   Save,
-  ChevronUp,
-  ChevronDown,
+  RefreshCw,
+  Loader2,
+  Zap,
 } from "lucide-react";
-import { Link } from "react-router-dom";
 import { toast } from "sonner";
-import ResearchPromptDialog from "@/components/modules/ResearchPromptDialog";
-import { withTimeout } from "@/hooks/useQueryWithTimeout";
-import { TIMEOUTS } from "@/lib/timeoutConfig";
-import { ErrorState } from "@/components/ui/error-state";
+import type { Database } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
 
-interface Module {
+type ResourceType = Database["public"]["Enums"]["resource_type"];
+
+interface ModuleResource {
   id?: string;
   title: string;
   description: string;
-  video_url: string;
-  duration_minutes: number | null;
-  is_preview: boolean;
+  resource_type: ResourceType;
+  resource_url: string | null;
+  resource_data: any;
+  stage_number: number;
   display_order: number;
+  is_required: boolean;
 }
 
-export default function ModuleManagement() {
-  const { contentId } = useParams();
+interface ResourceSaveState {
+  status: "saved" | "unsaved" | "saving" | "error";
+  error?: string;
+  lastSavedAt?: Date;
+}
+
+const stageConfig = [
+  { number: 1, name: "Orientation", icon: Video, resourceTypes: ["video", "infographic"] as ResourceType[] },
+  { number: 2, name: "Learn", icon: FileText, resourceTypes: ["slides", "mindmap", "infographic"] as ResourceType[] },
+  { number: 3, name: "Discuss", icon: MessageCircle, resourceTypes: ["audio_podcast"] as ResourceType[] },
+  { number: 4, name: "Practice", icon: Brain, resourceTypes: ["flashcards", "ai_scenario"] as ResourceType[] },
+  { number: 5, name: "Assess", icon: HelpCircle, resourceTypes: ["quiz"] as ResourceType[] },
+  { number: 6, name: "Progress", icon: FileCheck, resourceTypes: ["report"] as ResourceType[] },
+];
+
+const resourceTypeLabels: Record<ResourceType, string> = {
+  video: "Strategic Video",
+  slides: "Knowledge Deck",
+  infographic: "Visual Map",
+  mindmap: "Neural Map",
+  audio_podcast: "Audio Brief",
+  flashcards: "Recall Set",
+  ai_scenario: "Neural Scenario",
+  quiz: "Assessment",
+  report: "Progress Report",
+};
+
+function JsonDataEditor({ value, onChange, label = "Object Schema" }: any) {
+  const [rawText, setRawText] = useState(() => JSON.stringify(value || {}, null, 2));
+  const [parseError, setParseError] = useState<string | null>(null);
+
+  const handleTextChange = (text: string) => {
+    setRawText(text);
+    try {
+      const parsed = JSON.parse(text);
+      setParseError(null);
+      onChange(parsed);
+    } catch (e) {
+      setParseError("Invalid Logic: Check syntax.");
+    }
+  };
+
+  return (
+    <div className="space-y-2">
+      <div className="flex justify-between items-center">
+        <Label className="text-[10px] font-black uppercase tracking-widest text-primary">{label}</Label>
+        {parseError && (
+          <Badge variant="destructive" className="h-5 text-[8px] animate-pulse">
+            {parseError}
+          </Badge>
+        )}
+      </div>
+      <Textarea
+        value={rawText}
+        onChange={(e) => handleTextChange(e.target.value)}
+        className={cn(
+          "font-mono text-xs rounded-xl bg-muted/20 border-border/40 min-h-[200px] leading-relaxed",
+          parseError && "border-rose-500/50",
+        )}
+      />
+    </div>
+  );
+}
+
+export default function ModuleResourcesManager() {
+  const { contentId, moduleId } = useParams();
   const navigate = useNavigate();
   const [loading, setLoading] = useState(true);
-  const [loadError, setLoadError] = useState<string | null>(null);
-  const [saving, setSaving] = useState(false);
-  const [course, setCourse] = useState<any>(null);
-  const [modules, setModules] = useState<Module[]>([]);
-  const [generatingIndex, setGeneratingIndex] = useState<number | null>(null);
-  const [researchPromptIndex, setResearchPromptIndex] = useState<number | null>(null);
-
-  const [courseContext, setCourseContext] = useState({
-    levelName: "",
-    programName: "",
-    schoolName: "",
-    academyName: "GroUp Academy",
-    courseIndex: 1,
-    totalCourses: 1,
-  });
+  const [resources, setResources] = useState<ModuleResource[]>([]);
+  const [activeStage, setActiveStage] = useState("1");
+  const [module, setModule] = useState<any>(null);
+  const [saveStates, setSaveStates] = useState<Record<string, ResourceSaveState>>({});
 
   useEffect(() => {
-    if (contentId) loadModules();
-  }, [contentId]);
+    if (moduleId) loadData();
+  }, [moduleId]);
 
-  const loadModules = async () => {
+  const loadData = async () => {
     setLoading(true);
-    setLoadError(null);
     try {
-      const { data: c, error: courseError } = await supabase.from("content").select("*").eq("id", contentId).single();
-      if (courseError || !c) throw new Error("Blueprint inaccessible.");
-      setCourse(c);
-
-      // Recursive Context Fetching (CTO Strategy: Ensure AI has full taxonomy data)
-      let levelName = "",
-        programName = "",
-        schoolName = "";
-      if (c.profession_level_id) {
-        const { data: lvl } = await supabase
-          .from("profession_levels")
-          .select("name")
-          .eq("id", c.profession_level_id)
-          .single();
-        levelName = lvl?.name || "";
-      }
-      if (c.profession_line_id) {
-        const { data: prog } = await supabase
-          .from("profession_categories")
-          .select("name, school_id")
-          .eq("id", c.profession_line_id)
-          .single();
-        programName = prog?.name || "";
-        if (prog?.school_id) {
-          const { data: sch } = await supabase.from("schools").select("name").eq("id", prog.school_id).single();
-          schoolName = sch?.name || "";
-        }
-      }
-
-      setCourseContext((prev) => ({ ...prev, levelName, programName, schoolName }));
-
-      const { data: mods } = await supabase
-        .from("course_modules")
+      const { data: moduleData } = await supabase.from("course_modules").select("*").eq("id", moduleId).single();
+      const { data: resData } = await supabase
+        .from("module_resources")
         .select("*")
-        .eq("content_id", contentId)
+        .eq("module_id", moduleId)
         .order("display_order");
-      if (mods && mods.length > 0) setModules(mods);
-      else addModule();
-    } catch (err: any) {
-      setLoadError(err.message);
+
+      if (moduleData) setModule(moduleData);
+      if (resData) {
+        setResources(resData);
+        const states: Record<string, ResourceSaveState> = {};
+        resData.forEach((r) => {
+          states[r.id!] = { status: "saved" };
+        });
+        setSaveStates(states);
+      }
+    } catch (e) {
+      toast.error("Handshake failed.");
     } finally {
       setLoading(false);
     }
   };
 
-  const generateGuide = async (index: number) => {
-    const module = modules[index];
-    if (!module.title) return toast.error("Identity required: Enter module title first.");
+  const addResource = (stage: number, type: ResourceType) => {
+    const tempId = `temp-${Date.now()}`;
+    const newRes: ModuleResource = {
+      title: resourceTypeLabels[type],
+      description: "",
+      resource_type: type,
+      resource_url: "",
+      resource_data: {},
+      stage_number: stage,
+      display_order: resources.filter((r) => r.stage_number === stage).length,
+      is_required: true,
+    };
+    setResources([...resources, newRes]);
+    setSaveStates((prev) => ({ ...prev, [tempId]: { status: "unsaved" } }));
+  };
 
-    setGeneratingIndex(index);
+  const saveResource = async (resource: ModuleResource, index: number) => {
+    const key = resource.id || `temp-${index}`;
+    setSaveStates((prev) => ({ ...prev, [key]: { status: "saving" } }));
+
     try {
-      const { data, error } = await supabase.functions.invoke("generate-module-guide", {
-        body: {
-          courseTitle: course?.title,
-          moduleTitle: module.title,
-          programName: courseContext.programName,
-          levelName: courseContext.levelName,
-        },
-      });
-      if (error) throw error;
-      if (data?.guide) {
-        updateModule(index, "description", data.guide);
-        toast.success("Intelligence Synthesis Complete: Guide Generated.");
+      const payload = {
+        module_id: moduleId,
+        title: resource.title,
+        description: resource.description || null,
+        resource_type: resource.resource_type,
+        resource_url: resource.resource_url || null,
+        resource_data: resource.resource_data || {},
+        stage_number: resource.stage_number,
+        display_order: resource.display_order,
+        is_required: resource.is_required,
+      };
+
+      let result;
+      if (resource.id) {
+        result = await supabase.from("module_resources").update(payload).eq("id", resource.id).select().single();
+      } else {
+        result = await supabase.from("module_resources").insert([payload]).select().single();
       }
-    } catch (err) {
-      toast.error("AI Neural Link Failed.");
-    } finally {
-      setGeneratingIndex(null);
+
+      if (result.error) throw result.error;
+
+      const updatedResources = [...resources];
+      updatedResources[index] = result.data;
+      setResources(updatedResources);
+      setSaveStates((prev) => ({ ...prev, [result.data.id]: { status: "saved", lastSavedAt: new Date() } }));
+      toast.success("Artifact Synchronized.");
+    } catch (err: any) {
+      setSaveStates((prev) => ({ ...prev, [key]: { status: "error", error: err.message } }));
+      toast.error(`Sync Failed: ${err.message}`);
     }
   };
 
-  const addModule = () => {
-    const newModule: Module = {
-      title: "",
-      description: "",
-      video_url: "",
-      duration_minutes: null,
-      is_preview: false,
-      display_order: modules.length,
-    };
-    setModules([...modules, newModule]);
-  };
+  const deleteResource = async (id: string | undefined, index: number) => {
+    if (!id) {
+      setResources(resources.filter((_, i) => i !== index));
+      return;
+    }
 
-  const updateModule = (index: number, field: keyof Module, value: any) => {
-    const updated = [...modules];
-    updated[index] = { ...updated[index], [field]: value };
-    setModules(updated);
-  };
-
-  const removeModule = (index: number) => {
-    const updated = modules.filter((_, i) => i !== index);
-    setModules(updated.map((m, i) => ({ ...m, display_order: i })));
-  };
-
-  const moveModule = (index: number, direction: "up" | "down") => {
-    const newIndex = direction === "up" ? index - 1 : index + 1;
-    if (newIndex < 0 || newIndex >= modules.length) return;
-
-    const updated = [...modules];
-    [updated[index], updated[newIndex]] = [updated[newIndex], updated[index]];
-    setModules(updated.map((m, i) => ({ ...m, display_order: i })));
-  };
-
-  const handleSave = async () => {
-    if (modules.some((m) => !m.title)) return toast.error("Validation Error: All modules require titles.");
-    setSaving(true);
     try {
-      // CTO Logic: Transactional-style wipe and replace for order integrity
-      await supabase.from("course_modules").delete().eq("content_id", contentId);
-
-      const payload = modules.map((m, i) => ({
-        content_id: contentId,
-        title: m.title,
-        description: m.description,
-        video_url: m.video_url,
-        duration_minutes: m.duration_minutes,
-        is_preview: m.is_preview,
-        display_order: i,
-      }));
-
-      const { error } = await supabase.from("course_modules").insert(payload);
+      const { error } = await supabase.from("module_resources").delete().eq("id", id);
       if (error) throw error;
-
-      toast.success("Blueprint Synchronized.");
-      navigate(`/content/${contentId}/edit`);
-    } catch (err) {
-      toast.error("Database Write Failed.");
-    } finally {
-      setSaving(false);
+      setResources(resources.filter((_, i) => i !== index));
+      toast.success("Artifact Decommissioned.");
+    } catch (err: any) {
+      toast.error("Deletion failed.");
     }
   };
 
   if (loading)
     return (
-      <div className="h-screen flex items-center justify-center animate-pulse font-black text-muted-foreground uppercase tracking-widest">
-        Initialising Module Pipeline...
+      <div className="h-screen flex items-center justify-center animate-pulse font-black text-muted-foreground uppercase">
+        Booting Resource Terminal...
       </div>
     );
+
+  const unsavedTotal = Object.values(saveStates).filter((s) => s.status === "unsaved").length;
 
   return (
     <div className="min-h-screen bg-muted/20 pb-20 selection:bg-primary/10">
       <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
-          <Button
-            variant="ghost"
-            onClick={() => navigate(`/content/${contentId}/edit`)}
-            className="rounded-xl font-bold uppercase text-[10px] tracking-widest pl-0 hover:bg-transparent"
-          >
-            <ArrowLeft className="mr-2 h-4 w-4" /> Back to Blueprint
-          </Button>
-          <div className="flex items-center gap-2">
-            <Badge
-              variant="outline"
-              className="font-black uppercase text-[10px] tracking-tighter border-primary/20 text-primary"
+          <div className="flex items-center gap-4">
+            <Button
+              variant="ghost"
+              onClick={() => navigate(`/dashboard?tab=modules&id=${contentId}`)}
+              className="rounded-xl font-bold uppercase text-[10px] tracking-widest pl-0"
             >
-              Ordering Protocol Active
-            </Badge>
+              <ArrowLeft className="mr-2 h-4 w-4" /> Curriculum Manager
+            </Button>
+            <div className="h-4 w-px bg-border" />
+            <div>
+              <p className="text-[10px] font-black uppercase text-muted-foreground/60 tracking-widest">Resource Node</p>
+              <p className="text-sm font-black tracking-tight">{module?.title}</p>
+            </div>
+          </div>
+          <div className="flex items-center gap-3">
+            {unsavedTotal > 0 && (
+              <Badge
+                variant="secondary"
+                className="bg-amber-500/10 text-amber-600 border-none font-black text-[9px] uppercase animate-pulse"
+              >
+                {unsavedTotal} Changes Pending
+              </Badge>
+            )}
+            <Button
+              onClick={() => window.location.reload()}
+              variant="outline"
+              className="h-10 rounded-xl border-border/40 font-black uppercase text-[10px] tracking-widest"
+            >
+              <RefreshCw className="h-3 w-3 mr-2" /> Sync Terminal
+            </Button>
           </div>
         </div>
       </header>
 
-      <main className="container max-w-4xl mx-auto px-6 py-12 space-y-8">
-        <div className="space-y-2">
-          <h1 className="text-4xl font-black tracking-tighter">Curriculum Architecture</h1>
-          <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest italic">
-            Sequence for: {course?.title}
-          </p>
-        </div>
-
-        <div className="space-y-6">
-          {modules.map((module, index) => (
-            <Card
-              key={index}
-              className="rounded-[32px] border-border/40 shadow-xl overflow-hidden group bg-card/50 backdrop-blur-sm"
-            >
-              <CardHeader className="bg-muted/30 border-b border-border/20 py-4 px-8">
-                <div className="flex items-center justify-between">
-                  <div className="flex items-center gap-4">
-                    <GripVertical className="h-5 w-5 text-muted-foreground/30" />
-                    <CardTitle className="text-sm font-black uppercase tracking-widest">
-                      Module <span className="text-primary">{index + 1}</span>
-                    </CardTitle>
-                  </div>
-                  <div className="flex items-center gap-1 bg-background/50 rounded-xl p-1 border border-border/20">
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => moveModule(index, "up")}
-                      disabled={index === 0}
-                      className="h-8 w-8 rounded-lg"
-                    >
-                      <ChevronUp className="h-4 w-4" />
-                    </Button>
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => moveModule(index, "down")}
-                      disabled={index === modules.length - 1}
-                      className="h-8 w-8 rounded-lg"
-                    >
-                      <ChevronDown className="h-4 w-4" />
-                    </Button>
-                    <div className="w-px h-4 bg-border mx-1" />
-                    <Button
-                      variant="ghost"
-                      size="icon"
-                      onClick={() => removeModule(index)}
-                      className="h-8 w-8 rounded-lg text-rose-500 hover:bg-rose-500/10"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
-                </div>
-              </CardHeader>
-              <CardContent className="p-8 space-y-6">
-                <div className="grid md:grid-cols-[1fr,200px] gap-6">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                      Identity Title *
-                    </Label>
-                    <Input
-                      value={module.title}
-                      onChange={(e) => updateModule(index, "title", e.target.value)}
-                      placeholder="e.g. Fundamental Logic and Risk Ratios"
-                      className="h-12 rounded-xl border-border/40 font-bold"
-                    />
-                  </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                      Target Duration (Mins)
-                    </Label>
-                    <Input
-                      type="number"
-                      value={module.duration_minutes || ""}
-                      onChange={(e) =>
-                        updateModule(index, "duration_minutes", e.target.value ? parseInt(e.target.value) : null)
-                      }
-                      placeholder="45"
-                      className="h-12 rounded-xl border-border/40"
-                    />
-                  </div>
-                </div>
-
-                <div className="space-y-3">
-                  <div className="flex items-center justify-between">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                      Strategic Narrative (Description)
-                    </Label>
-                    <div className="flex gap-2">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => setResearchPromptIndex(index)}
-                        className="h-8 rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] tracking-widest"
-                      >
-                        <BookOpen className="h-3 w-3 mr-1.5" /> Research Prompt
-                      </Button>
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        onClick={() => generateGuide(index)}
-                        disabled={generatingIndex !== null}
-                        className="h-8 rounded-lg border-primary/20 bg-primary/5 text-primary font-black uppercase text-[9px] tracking-widest"
-                      >
-                        {generatingIndex === index ? (
-                          <Loader2 className="h-3 w-3 animate-spin mr-1.5" />
-                        ) : (
-                          <Sparkles className="h-3 w-3 mr-1.5" />
-                        )}{" "}
-                        AI Synthesizer
-                      </Button>
-                    </div>
-                  </div>
-                  <Textarea
-                    value={module.description}
-                    onChange={(e) => updateModule(index, "description", e.target.value)}
-                    rows={5}
-                    className="rounded-2xl border-border/40 resize-none leading-relaxed text-sm font-medium"
-                    placeholder="Describe the core outcomes or talking points..."
-                  />
-                </div>
-
-                <div className="grid md:grid-cols-[1fr,180px] gap-6 items-end pt-4 border-t border-border/20">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                      Stream Endpoint (YouTube)
-                    </Label>
-                    <Input
-                      value={module.video_url}
-                      onChange={(e) => updateModule(index, "video_url", e.target.value)}
-                      placeholder="https://youtube.com/..."
-                      className="h-11 rounded-xl border-border/40 font-mono text-xs"
-                    />
-                  </div>
-                  <div className="flex items-center justify-between bg-muted/30 h-11 px-4 rounded-xl border border-border/20">
-                    <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                      Free Preview
-                    </span>
-                    <Switch
-                      checked={module.is_preview}
-                      onCheckedChange={(val) => updateModule(index, "is_preview", val)}
-                    />
-                  </div>
-                </div>
-
-                {module.id && (
-                  <Button
-                    variant="ghost"
-                    asChild
-                    className="w-full h-10 rounded-xl font-black uppercase text-[9px] tracking-[0.2em] hover:bg-primary/5 text-primary/60 hover:text-primary"
-                  >
-                    <Link to={`/content/${contentId}/modules/${module.id}/resources`}>
-                      <Settings className="h-3 w-3 mr-2" /> Extended Resource Management
-                    </Link>
-                  </Button>
+      <main className="container max-w-5xl mx-auto px-6 py-12 space-y-8">
+        <Tabs value={activeStage} onValueChange={setActiveStage}>
+          <TabsList className="grid grid-cols-3 md:grid-cols-6 h-auto p-1.5 bg-card/50 backdrop-blur-md rounded-[24px] border border-border/40 mb-10 shadow-xl shadow-primary/5">
+            {stageConfig.map((stage) => (
+              <TabsTrigger
+                key={stage.number}
+                value={String(stage.number)}
+                className="flex flex-col gap-1.5 py-4 rounded-2xl transition-all"
+              >
+                <stage.icon className="h-4 w-4" />
+                <span className="text-[9px] font-black uppercase tracking-widest">{stage.name}</span>
+                {resources.filter((r) => r.stage_number === stage.number).length > 0 && (
+                  <div className="h-1 w-4 bg-current/30 rounded-full mt-1" />
                 )}
-              </CardContent>
-            </Card>
-          ))}
+              </TabsTrigger>
+            ))}
+          </TabsList>
 
-          <div className="grid grid-cols-2 gap-4 pt-6">
-            <Button
-              variant="outline"
-              onClick={addModule}
-              className="h-16 rounded-[24px] border-dashed border-2 border-primary/20 hover:border-primary/40 text-primary font-black uppercase tracking-widest"
-            >
-              <Plus className="h-5 w-5 mr-2" /> Add Sequence Node
-            </Button>
-            <Button
-              onClick={handleSave}
-              disabled={saving}
-              className="h-16 rounded-[24px] shadow-2xl shadow-primary/20 font-black uppercase tracking-widest text-sm"
-            >
-              {saving ? <Loader2 className="animate-spin" /> : <Save className="h-5 w-5 mr-2" />} Synchronize All
-              Modules
-            </Button>
-          </div>
-        </div>
+          {stageConfig.map((stage) => {
+            const stageResources = resources.filter((r) => r.stage_number === stage.number);
+            return (
+              <TabsContent key={stage.number} value={String(stage.number)} className="space-y-6">
+                <Card className="rounded-[32px] border-border/40 bg-card/30 overflow-hidden">
+                  <CardHeader className="bg-muted/30 border-b border-border/20 py-6 px-8 flex flex-row items-center justify-between flex-wrap gap-4">
+                    <div className="space-y-1">
+                      <CardTitle className="text-xl font-black tracking-tighter uppercase flex items-center gap-2">
+                        <stage.icon className="h-5 w-5 text-primary" /> Phase 0{stage.number}: {stage.name}
+                      </CardTitle>
+                      <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+                        Artifact Injection Layer
+                      </CardDescription>
+                    </div>
+                    <div className="flex gap-2">
+                      {stage.resourceTypes.map((type) => (
+                        <Button
+                          key={type}
+                          variant="outline"
+                          size="sm"
+                          onClick={() => addResource(stage.number, type)}
+                          className="h-9 rounded-xl border-primary/20 bg-primary/5 text-primary font-black uppercase text-[9px] tracking-widest"
+                        >
+                          <Plus className="h-3 w-3 mr-1.5" /> {type.replace("_", " ")}
+                        </Button>
+                      ))}
+                    </div>
+                  </CardHeader>
+                  <CardContent className="p-8">
+                    {stageResources.length === 0 ? (
+                      <div className="py-20 text-center border-2 border-dashed border-border/40 rounded-[28px] bg-muted/10">
+                        <Zap className="h-10 w-10 mx-auto mb-4 text-muted-foreground/30" />
+                        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
+                          Stage Incomplete: Initialize Artifacts
+                        </p>
+                      </div>
+                    ) : (
+                      <div className="space-y-6">
+                        {stageResources.map((resource, idx) => {
+                          const resKey = resource.id || `temp-${idx}`;
+                          const state = saveStates[resKey] || { status: "unsaved" };
+                          return (
+                            <Card
+                              key={resKey}
+                              className="rounded-[28px] border-border/40 bg-background shadow-lg overflow-hidden group hover:border-primary/20 transition-all"
+                            >
+                              <CardHeader className="py-4 px-6 border-b border-border/20 flex flex-row items-center justify-between bg-muted/20">
+                                <div className="flex items-center gap-3">
+                                  <Badge
+                                    variant="outline"
+                                    className="h-6 rounded-full border-primary/20 bg-primary/5 text-primary font-black text-[8px] uppercase"
+                                  >
+                                    {resource.resource_type}
+                                  </Badge>
+                                  {state.status === "saved" && (
+                                    <span className="text-[8px] font-black uppercase text-emerald-600">Locked</span>
+                                  )}
+                                </div>
+                                <div className="flex gap-2">
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => saveResource(resource, resources.indexOf(resource))}
+                                    className="h-8 w-8"
+                                  >
+                                    <Save
+                                      className={cn(
+                                        "h-4 w-4",
+                                        state.status === "unsaved" && "text-primary animate-bounce",
+                                      )}
+                                    />
+                                  </Button>
+                                  <Button
+                                    variant="ghost"
+                                    size="icon"
+                                    onClick={() => deleteResource(resource.id, resources.indexOf(resource))}
+                                    className="h-8 w-8 text-rose-500"
+                                  >
+                                    <Trash2 className="h-4 w-4" />
+                                  </Button>
+                                </div>
+                              </CardHeader>
+                              <CardContent className="p-6 space-y-6">
+                                <div className="grid grid-cols-1 md:grid-cols-[1fr,200px] gap-6">
+                                  <div className="space-y-2">
+                                    <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                                      Asset Identity
+                                    </Label>
+                                    <Input
+                                      value={resource.title}
+                                      onChange={(e) => {
+                                        const update = [...resources];
+                                        update[resources.indexOf(resource)].title = e.target.value;
+                                        setResources(update);
+                                        setSaveStates((prev) => ({ ...prev, [resKey]: { status: "unsaved" } }));
+                                      }}
+                                      className="h-10 rounded-xl font-bold text-sm"
+                                    />
+                                  </div>
+                                  <div className="flex items-center justify-between bg-muted/30 px-4 rounded-xl border mt-6">
+                                    <span className="text-[9px] font-black uppercase text-muted-foreground">
+                                      Required
+                                    </span>
+                                    <Switch
+                                      checked={resource.is_required}
+                                      onCheckedChange={(val) => {
+                                        const update = [...resources];
+                                        update[resources.indexOf(resource)].is_required = val;
+                                        setResources(update);
+                                        setSaveStates((prev) => ({ ...prev, [resKey]: { status: "unsaved" } }));
+                                      }}
+                                    />
+                                  </div>
+                                </div>
+                                {["flashcards", "ai_scenario"].includes(resource.resource_type) ? (
+                                  <JsonDataEditor
+                                    value={resource.resource_data}
+                                    onChange={(data: any) => {
+                                      const update = [...resources];
+                                      update[resources.indexOf(resource)].resource_data = data;
+                                      setResources(update);
+                                      setSaveStates((prev) => ({ ...prev, [resKey]: { status: "unsaved" } }));
+                                    }}
+                                  />
+                                ) : (
+                                  <Input
+                                    value={resource.resource_url || ""}
+                                    onChange={(e) => {
+                                      const update = [...resources];
+                                      update[resources.indexOf(resource)].resource_url = e.target.value;
+                                      setResources(update);
+                                      setSaveStates((prev) => ({ ...prev, [resKey]: { status: "unsaved" } }));
+                                    }}
+                                    className="h-10 rounded-xl font-mono text-xs text-primary"
+                                    placeholder="https://..."
+                                  />
+                                )}
+                              </CardContent>
+                            </Card>
+                          );
+                        })}
+                      </div>
+                    )}
+                  </CardContent>
+                </Card>
+              </TabsContent>
+            );
+          })}
+        </Tabs>
       </main>
-
-      {researchPromptIndex !== null && (
-        <ResearchPromptDialog
-          open={true}
-          onOpenChange={(o) => {
-            if (!o) setResearchPromptIndex(null);
-          }}
-          moduleTitle={modules[researchPromptIndex]?.title}
-          moduleDescription={modules[researchPromptIndex]?.description}
-          moduleIndex={researchPromptIndex + 1}
-          totalModules={modules.length}
-          courseTitle={course?.title}
-          courseIndex={courseContext.courseIndex}
-          totalCourses={courseContext.totalCourses}
-          levelName={courseContext.levelName}
-          programName={courseContext.programName}
-          schoolName={courseContext.schoolName}
-          academyName={courseContext.academyName}
-        />
-      )}
     </div>
+  );
+}
+
+function CircleDot(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <circle cx="12" cy="12" r="10" />
+      <circle cx="12" cy="12" r="1" />
+    </svg>
+  );
+}
+
+function MessageCircle(props: any) {
+  return (
+    <svg
+      {...props}
+      xmlns="http://www.w3.org/2000/svg"
+      width="24"
+      height="24"
+      viewBox="0 0 24 24"
+      fill="none"
+      stroke="currentColor"
+      strokeWidth="2"
+      strokeLinecap="round"
+      strokeLinejoin="round"
+    >
+      <path d="M21 11.5a8.38 8.38 0 0 1-.9 3.8 8.5 8.5 0 0 1-7.6 4.7 8.38 8.38 0 0 1-3.8-.9L3 21l1.9-5.7a8.38 8.38 0 0 1-.9-3.8 8.5 8.5 0 0 1 4.7-7.6 8.38 8.38 0 0 1 3.8-.9h.5a8.48 8.48 0 0 1 8 8v.5z" />
+    </svg>
   );
 }
