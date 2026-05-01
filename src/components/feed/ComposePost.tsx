@@ -88,7 +88,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
       setTags((prev) => [...prev, cleanTag]);
       setTagInput("");
     } else if (tags.length >= MAX_TAGS) {
-      toast.info("Registry Limit: Max 5 discovery tags.");
+      toast.info("You can add up to 5 tags.");
     }
   };
 
