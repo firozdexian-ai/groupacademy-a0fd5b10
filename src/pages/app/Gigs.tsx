@@ -323,56 +323,62 @@ export default function Gigs() {
                 <Skeleton className="h-[600px] rounded-[40px] bg-muted/40" />
               ) : (
                 projects
-                  ?.filter((p) => !projectSearch || p.title.toLowerCase().includes(projectSearch.toLowerCase()))
-                  .map((gig) => (
-                    <Card
-                      key={gig.id}
-                      className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden group shadow-sm hover:shadow-2xl"
-                      onClick={() => navigate(`/app/marketplace/${gig.id}`)}
-                    >
-                      <CardContent className="p-8">
-                        <div className="flex justify-between items-start gap-8">
-                          <div className="space-y-5">
-                            <div className="flex flex-wrap gap-3 items-center">
-                              <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">
-                                {MARKETPLACE_SCHOOL_MAP[gig.skill_category]?.label}
-                              </Badge>
-                              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/40 italic">
-                                <Zap className="h-3 w-3" /> {gig.pricing_type} Logic
+                  ?.filter((p: any) => !projectSearch || p.title.toLowerCase().includes(projectSearch.toLowerCase()))
+                  .map((gig: any) => {
+                    const cat = GIG_CATEGORY_MAP[gig.resource_category as GigCategory];
+                    const isAcademy = gig.kind === "academy";
+                    return (
+                      <Card
+                        key={gig.id}
+                        className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden group shadow-sm hover:shadow-2xl"
+                        onClick={() => navigate(isAcademy ? `/app/studio` : `/app/marketplace/${gig.id}`)}
+                      >
+                        <CardContent className="p-8">
+                          <div className="flex justify-between items-start gap-8">
+                            <div className="space-y-5">
+                              <div className="flex flex-wrap gap-3 items-center">
+                                <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">
+                                  {cat?.label || gig.resource_category}
+                                </Badge>
+                                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest">
+                                  {isAcademy ? "Academy" : "Marketplace"}
+                                </Badge>
+                              </div>
+                              <h3 className="text-3xl font-black tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">
+                                {gig.title}
+                              </h3>
+                              <p className="text-sm text-muted-foreground/80 font-medium leading-relaxed italic line-clamp-2">
+                                {gig.description}
+                              </p>
+                              <div className="flex items-center gap-6 pt-2">
+                                <div className="flex items-center gap-2.5">
+                                  <div className="p-2 bg-amber-500/10 rounded-lg">
+                                    <Coins className="h-4 w-4 text-amber-500" />
+                                  </div>
+                                  <span className="text-lg font-black tracking-tighter uppercase italic">
+                                    {gig.budget_amount} Credits
+                                  </span>
+                                </div>
+                                {!isAcademy && (
+                                  <div className="flex items-center gap-2.5">
+                                    <div className="p-2 bg-blue-500/10 rounded-lg">
+                                      <Send className="h-4 w-4 text-blue-500" />
+                                    </div>
+                                    <span className="text-sm font-black text-muted-foreground/60 uppercase italic">
+                                      {gig.total_bids || 0} Bids
+                                    </span>
+                                  </div>
+                                )}
                               </div>
                             </div>
-                            <h3 className="text-3xl font-black tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">
-                              {gig.title}
-                            </h3>
-                            <p className="text-sm text-muted-foreground/80 font-medium leading-relaxed italic line-clamp-2">
-                              {gig.description}
-                            </p>
-                            <div className="flex items-center gap-6 pt-2">
-                              <div className="flex items-center gap-2.5">
-                                <div className="p-2 bg-amber-500/10 rounded-lg">
-                                  <Coins className="h-4 w-4 text-amber-500" />
-                                </div>
-                                <span className="text-lg font-black tracking-tighter uppercase italic">
-                                  {gig.budget_amount} Credits
-                                </span>
-                              </div>
-                              <div className="flex items-center gap-2.5">
-                                <div className="p-2 bg-blue-500/10 rounded-lg">
-                                  <Send className="h-4 w-4 text-blue-500" />
-                                </div>
-                                <span className="text-sm font-black text-muted-foreground/60 uppercase italic">
-                                  {gig.total_bids} Handshakes
-                                </span>
-                              </div>
+                            <div className="h-14 w-14 rounded-2xl bg-muted/50 border border-border/20 flex items-center justify-center transition-all group-hover:rotate-6 group-hover:bg-primary/10">
+                              <ChevronRight className="h-6 w-6 text-muted-foreground/30 group-hover:text-primary" />
                             </div>
                           </div>
-                          <div className="h-14 w-14 rounded-2xl bg-muted/50 border border-border/20 flex items-center justify-center transition-all group-hover:rotate-6 group-hover:bg-primary/10">
-                            <ChevronRight className="h-6 w-6 text-muted-foreground/30 group-hover:text-primary" />
-                          </div>
-                        </div>
-                      </CardContent>
-                    </Card>
-                  ))
+                        </CardContent>
+                      </Card>
+                    );
+                  })
               )}
             </main>
           </div>
