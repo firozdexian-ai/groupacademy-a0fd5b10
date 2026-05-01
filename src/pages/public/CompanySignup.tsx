@@ -145,10 +145,15 @@ export default function CompanySignup() {
         title: "Welcome aboard!",
         description: "Your workspace is ready with 250 free credits.",
       });
-      navigate("/company");
+      navigate("/company", { replace: true });
     } catch (e: any) {
       const msg = e?.message ?? "Could not create account";
-      toast({ title: "Signup failed", description: msg, variant: "destructive" });
+      const detail = e?.context?.details || e?.details;
+      toast({
+        title: "Signup failed",
+        description: detail ? `${msg} — ${typeof detail === "string" ? detail : JSON.stringify(detail)}` : msg,
+        variant: "destructive",
+      });
     } finally {
       setSubmitting(false);
     }
