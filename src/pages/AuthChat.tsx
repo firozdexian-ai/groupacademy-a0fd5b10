@@ -202,9 +202,9 @@ const AuthChat = () => {
               <button
                 type="button"
                 onClick={handleForgotPassword}
-                className="text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-blue-600 transition-colors ml-2"
+                className="text-xs font-medium text-blue-600 hover:text-blue-700 transition-colors ml-2"
               >
-                Recovery Request?
+                Forgot password?
               </button>
             )}
 
