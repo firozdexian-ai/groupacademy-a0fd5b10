@@ -1,5 +1,5 @@
-import { useEffect, useState, useCallback } from "react";
-import { useParams, useNavigate, Link } from "react-router-dom";
+import { useEffect, useState } from "react";
+import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -9,10 +9,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
-import { Skeleton } from "@/components/ui/skeleton";
 import {
   ArrowLeft,
-  Upload,
   Video,
   FileText,
   Brain,
@@ -24,6 +22,7 @@ import {
   RefreshCw,
   Loader2,
   Zap,
+  CheckCircle2,
 } from "lucide-react";
 import { toast } from "sonner";
 import type { Database } from "@/integrations/supabase/types";
@@ -46,9 +45,9 @@ interface ModuleResource {
 interface ResourceSaveState {
   status: "saved" | "unsaved" | "saving" | "error";
   error?: string;
-  lastSavedAt?: Date;
 }
 
+// Stage Configuration aligned with the GroUp Academy 6-Stage Immersive Model
 const stageConfig = [
   { number: 1, name: "Orientation", icon: Video, resourceTypes: ["video", "infographic"] as ResourceType[] },
   { number: 2, name: "Learn", icon: FileText, resourceTypes: ["slides", "mindmap", "infographic"] as ResourceType[] },
@@ -135,12 +134,12 @@ export default function ModuleResourcesManager() {
         setResources(resData);
         const states: Record<string, ResourceSaveState> = {};
         resData.forEach((r) => {
-          states[r.id!] = { status: "saved" };
+          if (r.id) states[r.id] = { status: "saved" };
         });
         setSaveStates(states);
       }
     } catch (e) {
-      toast.error("Handshake failed.");
+      toast.error("Resource Handshake failed.");
     } finally {
       setLoading(false);
     }
@@ -149,6 +148,7 @@ export default function ModuleResourcesManager() {
   const addResource = (stage: number, type: ResourceType) => {
     const tempId = `temp-${Date.now()}`;
     const newRes: ModuleResource = {
+      id: tempId,
       title: resourceTypeLabels[type],
       description: "",
       resource_type: type,
@@ -162,56 +162,68 @@ export default function ModuleResourcesManager() {
     setSaveStates((prev) => ({ ...prev, [tempId]: { status: "unsaved" } }));
   };
 
-  const saveResource = async (resource: ModuleResource, index: number) => {
-    const key = resource.id || `temp-${index}`;
-    setSaveStates((prev) => ({ ...prev, [key]: { status: "saving" } }));
+  const updateResourceField = (id: string, field: keyof ModuleResource, value: any) => {
+    setResources((prev) => prev.map((r) => (r.id === id ? { ...r, [field]: value } : r)));
+    setSaveStates((prev) => ({ ...prev, [id]: { status: "unsaved" } }));
+  };
+
+  const saveResource = async (resource: ModuleResource) => {
+    const originalId = resource.id;
+    if (!originalId) return;
+
+    setSaveStates((prev) => ({ ...prev, [originalId]: { status: "saving" } }));
 
     try {
+      // Remove temp ID if it exists for the payload
+      const isNew = originalId.startsWith("temp-");
+      const { id, ...cleanPayload } = resource;
+
       const payload = {
+        ...cleanPayload,
         module_id: moduleId,
-        title: resource.title,
         description: resource.description || null,
-        resource_type: resource.resource_type,
-        resource_url: resource.resource_url || null,
-        resource_data: resource.resource_data || {},
-        stage_number: resource.stage_number,
-        display_order: resource.display_order,
-        is_required: resource.is_required,
       };
 
       let result;
-      if (resource.id) {
-        result = await supabase.from("module_resources").update(payload).eq("id", resource.id).select().single();
+      if (!isNew) {
+        result = await supabase.from("module_resources").update(payload).eq("id", originalId).select().single();
       } else {
         result = await supabase.from("module_resources").insert([payload]).select().single();
       }
 
       if (result.error) throw result.error;
 
-      const updatedResources = [...resources];
-      updatedResources[index] = result.data;
-      setResources(updatedResources);
-      setSaveStates((prev) => ({ ...prev, [result.data.id]: { status: "saved", lastSavedAt: new Date() } }));
+      // Update local state with the permanent database ID
+      setResources((prev) => prev.map((r) => (r.id === originalId ? result.data : r)));
+      setSaveStates((prev) => {
+        const newState = { ...prev };
+        delete newState[originalId];
+        newState[result.data.id] = { status: "saved" };
+        return newState;
+      });
+
       toast.success("Artifact Synchronized.");
     } catch (err: any) {
-      setSaveStates((prev) => ({ ...prev, [key]: { status: "error", error: err.message } }));
+      setSaveStates((prev) => ({ ...prev, [originalId]: { status: "error" } }));
       toast.error(`Sync Failed: ${err.message}`);
     }
   };
 
-  const deleteResource = async (id: string | undefined, index: number) => {
-    if (!id) {
-      setResources(resources.filter((_, i) => i !== index));
+  const deleteResource = async (id: string | undefined) => {
+    if (!id) return;
+
+    if (id.startsWith("temp-")) {
+      setResources(resources.filter((r) => r.id !== id));
       return;
     }
 
     try {
       const { error } = await supabase.from("module_resources").delete().eq("id", id);
       if (error) throw error;
-      setResources(resources.filter((_, i) => i !== index));
+      setResources(resources.filter((r) => r.id !== id));
       toast.success("Artifact Decommissioned.");
     } catch (err: any) {
-      toast.error("Deletion failed.");
+      toast.error("Decommissioning failed.");
     }
   };
 
@@ -318,8 +330,8 @@ export default function ModuleResourcesManager() {
                       </div>
                     ) : (
                       <div className="space-y-6">
-                        {stageResources.map((resource, idx) => {
-                          const resKey = resource.id || `temp-${idx}`;
+                        {stageResources.map((resource) => {
+                          const resKey = resource.id!;
                           const state = saveStates[resKey] || { status: "unsaved" };
                           return (
                             <Card
@@ -335,14 +347,17 @@ export default function ModuleResourcesManager() {
                                     {resource.resource_type}
                                   </Badge>
                                   {state.status === "saved" && (
-                                    <span className="text-[8px] font-black uppercase text-emerald-600">Locked</span>
+                                    <div className="flex items-center gap-1 text-emerald-600">
+                                      <CheckCircle2 className="h-3 w-3" />
+                                      <span className="text-[8px] font-black uppercase">Locked</span>
+                                    </div>
                                   )}
                                 </div>
                                 <div className="flex gap-2">
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => saveResource(resource, resources.indexOf(resource))}
+                                    onClick={() => saveResource(resource)}
                                     className="h-8 w-8"
                                   >
                                     <Save
@@ -355,7 +370,7 @@ export default function ModuleResourcesManager() {
                                   <Button
                                     variant="ghost"
                                     size="icon"
-                                    onClick={() => deleteResource(resource.id, resources.indexOf(resource))}
+                                    onClick={() => deleteResource(resource.id)}
                                     className="h-8 w-8 text-rose-500"
                                   >
                                     <Trash2 className="h-4 w-4" />
@@ -370,12 +385,7 @@ export default function ModuleResourcesManager() {
                                     </Label>
                                     <Input
                                       value={resource.title}
-                                      onChange={(e) => {
-                                        const update = [...resources];
-                                        update[resources.indexOf(resource)].title = e.target.value;
-                                        setResources(update);
-                                        setSaveStates((prev) => ({ ...prev, [resKey]: { status: "unsaved" } }));
-                                      }}
+                                      onChange={(e) => updateResourceField(resKey, "title", e.target.value)}
                                       className="h-10 rounded-xl font-bold text-sm"
                                     />
                                   </div>
@@ -385,37 +395,27 @@ export default function ModuleResourcesManager() {
                                     </span>
                                     <Switch
                                       checked={resource.is_required}
-                                      onCheckedChange={(val) => {
-                                        const update = [...resources];
-                                        update[resources.indexOf(resource)].is_required = val;
-                                        setResources(update);
-                                        setSaveStates((prev) => ({ ...prev, [resKey]: { status: "unsaved" } }));
-                                      }}
+                                      onCheckedChange={(val) => updateResourceField(resKey, "is_required", val)}
                                     />
                                   </div>
                                 </div>
                                 {["flashcards", "ai_scenario"].includes(resource.resource_type) ? (
                                   <JsonDataEditor
                                     value={resource.resource_data}
-                                    onChange={(data: any) => {
-                                      const update = [...resources];
-                                      update[resources.indexOf(resource)].resource_data = data;
-                                      setResources(update);
-                                      setSaveStates((prev) => ({ ...prev, [resKey]: { status: "unsaved" } }));
-                                    }}
+                                    onChange={(data: any) => updateResourceField(resKey, "resource_data", data)}
                                   />
                                 ) : (
-                                  <Input
-                                    value={resource.resource_url || ""}
-                                    onChange={(e) => {
-                                      const update = [...resources];
-                                      update[resources.indexOf(resource)].resource_url = e.target.value;
-                                      setResources(update);
-                                      setSaveStates((prev) => ({ ...prev, [resKey]: { status: "unsaved" } }));
-                                    }}
-                                    className="h-10 rounded-xl font-mono text-xs text-primary"
-                                    placeholder="https://..."
-                                  />
+                                  <div className="space-y-2">
+                                    <Label className="text-[9px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                                      Resource URL
+                                    </Label>
+                                    <Input
+                                      value={resource.resource_url || ""}
+                                      onChange={(e) => updateResourceField(resKey, "resource_url", e.target.value)}
+                                      className="h-10 rounded-xl font-mono text-xs text-primary"
+                                      placeholder="https://..."
+                                    />
+                                  </div>
                                 )}
                               </CardContent>
                             </Card>
@@ -434,26 +434,7 @@ export default function ModuleResourcesManager() {
   );
 }
 
-function CircleDot(props: any) {
-  return (
-    <svg
-      {...props}
-      xmlns="http://www.w3.org/2000/svg"
-      width="24"
-      height="24"
-      viewBox="0 0 24 24"
-      fill="none"
-      stroke="currentColor"
-      strokeWidth="2"
-      strokeLinecap="round"
-      strokeLinejoin="round"
-    >
-      <circle cx="12" cy="12" r="10" />
-      <circle cx="12" cy="12" r="1" />
-    </svg>
-  );
-}
-
+// Fixed Icon Component to prevent render crash
 function MessageCircle(props: any) {
   return (
     <svg
