@@ -8,8 +8,7 @@ import { useCredits } from "@/hooks/useCredits";
 import { cn } from "@/lib/utils";
 
 /**
- * GroUp Academy: Identity Ingress Node (FeedHeader)
- * CTO Reference: Authoritative visual anchor for talent profile and credit telemetry.
+ * FeedHeader — banner with talent avatar, name and credit balance.
  */
 
 interface FeedHeaderProps {
