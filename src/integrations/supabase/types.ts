@@ -1595,10 +1595,12 @@ export type Database = {
         Row: {
           about: string | null
           address: string | null
+          auto_join_domain: string | null
           banner_url: string | null
           country: string | null
           created_at: string | null
           facebook_url: string | null
+          goals: string[] | null
           id: string
           industry: string | null
           is_verified: boolean | null
@@ -1606,19 +1608,24 @@ export type Database = {
           logo_url: string | null
           name: string
           notes: string | null
+          onboarding_completed_at: string | null
           operating_hours: Json | null
           primary_email: string | null
           secondary_emails: Json | null
+          slug: string | null
+          tagline: string | null
           updated_at: string | null
           website: string | null
         }
         Insert: {
           about?: string | null
           address?: string | null
+          auto_join_domain?: string | null
           banner_url?: string | null
           country?: string | null
           created_at?: string | null
           facebook_url?: string | null
+          goals?: string[] | null
           id?: string
           industry?: string | null
           is_verified?: boolean | null
@@ -1626,19 +1633,24 @@ export type Database = {
           logo_url?: string | null
           name: string
           notes?: string | null
+          onboarding_completed_at?: string | null
           operating_hours?: Json | null
           primary_email?: string | null
           secondary_emails?: Json | null
+          slug?: string | null
+          tagline?: string | null
           updated_at?: string | null
           website?: string | null
         }
         Update: {
           about?: string | null
           address?: string | null
+          auto_join_domain?: string | null
           banner_url?: string | null
           country?: string | null
           created_at?: string | null
           facebook_url?: string | null
+          goals?: string[] | null
           id?: string
           industry?: string | null
           is_verified?: boolean | null
@@ -1646,9 +1658,12 @@ export type Database = {
           logo_url?: string | null
           name?: string
           notes?: string | null
+          onboarding_completed_at?: string | null
           operating_hours?: Json | null
           primary_email?: string | null
           secondary_emails?: Json | null
+          slug?: string | null
+          tagline?: string | null
           updated_at?: string | null
           website?: string | null
         }
@@ -1909,6 +1924,95 @@ export type Database = {
         Relationships: [
           {
             foreignKeyName: "company_members_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_post_drafts: {
+        Row: {
+          agent_key: string | null
+          author_user_id: string
+          company_id: string
+          created_at: string
+          id: string
+          link_preview: Json | null
+          link_url: string | null
+          media_url: string | null
+          published_post_id: string | null
+          status: string
+          tags: string[] | null
+          text_content: string
+          updated_at: string
+        }
+        Insert: {
+          agent_key?: string | null
+          author_user_id: string
+          company_id: string
+          created_at?: string
+          id?: string
+          link_preview?: Json | null
+          link_url?: string | null
+          media_url?: string | null
+          published_post_id?: string | null
+          status?: string
+          tags?: string[] | null
+          text_content: string
+          updated_at?: string
+        }
+        Update: {
+          agent_key?: string | null
+          author_user_id?: string
+          company_id?: string
+          created_at?: string
+          id?: string
+          link_preview?: Json | null
+          link_url?: string | null
+          media_url?: string | null
+          published_post_id?: string | null
+          status?: string
+          tags?: string[] | null
+          text_content?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_post_drafts_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_post_drafts_published_post_id_fkey"
+            columns: ["published_post_id"]
+            isOneToOne: false
+            referencedRelation: "feed_posts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      company_services: {
+        Row: {
+          company_id: string
+          created_at: string
+          service_key: string
+        }
+        Insert: {
+          company_id: string
+          created_at?: string
+          service_key: string
+        }
+        Update: {
+          company_id?: string
+          created_at?: string
+          service_key?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "company_services_company_id_fkey"
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
@@ -3230,8 +3334,11 @@ export type Database = {
       feed_posts: {
         Row: {
           author_avatar: string | null
+          author_company_id: string | null
           author_name: string
           author_title: string | null
+          author_type: string
+          author_user_id: string | null
           content_type: Database["public"]["Enums"]["post_content_type"]
           created_at: string | null
           id: string
@@ -3250,8 +3357,11 @@ export type Database = {
         }
         Insert: {
           author_avatar?: string | null
+          author_company_id?: string | null
           author_name: string
           author_title?: string | null
+          author_type?: string
+          author_user_id?: string | null
           content_type?: Database["public"]["Enums"]["post_content_type"]
           created_at?: string | null
           id?: string
@@ -3270,8 +3380,11 @@ export type Database = {
         }
         Update: {
           author_avatar?: string | null
+          author_company_id?: string | null
           author_name?: string
           author_title?: string | null
+          author_type?: string
+          author_user_id?: string | null
           content_type?: Database["public"]["Enums"]["post_content_type"]
           created_at?: string | null
           id?: string
@@ -3289,6 +3402,13 @@ export type Database = {
           updated_at?: string | null
         }
         Relationships: [
+          {
+            foreignKeyName: "feed_posts_author_company_id_fkey"
+            columns: ["author_company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "feed_posts_talent_id_fkey"
             columns: ["talent_id"]
