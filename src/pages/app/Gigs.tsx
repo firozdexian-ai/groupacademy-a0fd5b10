@@ -217,14 +217,31 @@ export default function Gigs() {
           </div>
         </div>
 
-        <Card className="rounded-[28px] border-2 border-primary/20 bg-primary/5 shadow-2xl overflow-hidden min-w-[280px]">
+        <Card
+          className={cn(
+            "rounded-[28px] border-2 shadow-2xl overflow-hidden min-w-[280px] cursor-pointer transition-all hover:shadow-xl",
+            verificationStatus === "verified"
+              ? "border-emerald-500/30 bg-emerald-500/5"
+              : "border-amber-400/30 bg-amber-50/50",
+          )}
+          onClick={() => navigate("/app/profile/verify")}
+        >
           <CardContent className="p-5 flex items-center gap-5">
-            <div className="h-12 w-12 rounded-[20px] bg-primary flex items-center justify-center rotate-3 shadow-primary/20 shadow-xl">
-              <Coins className="h-6 w-6 text-white" />
+            <div
+              className={cn(
+                "h-12 w-12 rounded-[20px] flex items-center justify-center rotate-3 shadow-xl",
+                verificationStatus === "verified" ? "bg-emerald-500" : "bg-amber-500",
+              )}
+            >
+              <ShieldCheck className="h-6 w-6 text-white" />
             </div>
             <div>
-              <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em] italic">Active Ledger</p>
-              <p className="text-lg font-black tracking-tighter leading-none mt-0.5">Verification Pending</p>
+              <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em] italic">
+                {verificationStatus === "verified" ? "Verified Talent" : "Verification " + verificationStatus}
+              </p>
+              <p className="text-lg font-black tracking-tighter leading-none mt-0.5">
+                {verificationStatus === "verified" ? "Withdrawals enabled" : "Tap to verify"}
+              </p>
             </div>
           </CardContent>
         </Card>
