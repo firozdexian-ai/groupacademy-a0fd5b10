@@ -279,35 +279,6 @@ export default function Gigs() {
               : gigs?.map((gig) => <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />)}
           </div>
         </TabsContent>
-            <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
-            >
-              <tab.icon className="h-4 w-4" /> {tab.label}
-            </TabsTrigger>
-          ))}
-        </TabsList>
-
-        <TabsContent value="tasks" className="mt-12 space-y-10 animate-in slide-in-from-bottom-4 duration-700">
-          <div className="flex gap-3 overflow-x-auto no-scrollbar pb-2 -mx-2 px-2">
-            {TASK_CATEGORIES.map((cat) => (
-              <button
-                key={cat.key}
-                onClick={() => setSelectedCategory(cat.key)}
-                className={cn(
-                  "flex items-center gap-3 px-6 py-3 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all shrink-0 border-2",
-                  selectedCategory === cat.key
-                    ? "bg-primary text-white border-primary shadow-2xl shadow-primary/30 scale-105"
-                    : "bg-card/50 border-border/40 text-muted-foreground hover:bg-muted",
-                )}
-              >
-                <cat.icon className="h-4 w-4" /> {cat.label}
-              </button>
-            ))}
-          </div>
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-2">
-            {gigsLoading
               ? [...Array(4)].map((_, i) => <Skeleton key={i} className="h-40 rounded-[32px] bg-muted/40" />)
               : gigs
                   ?.filter((g) => selectedCategory === "all" || g.category === selectedCategory)
