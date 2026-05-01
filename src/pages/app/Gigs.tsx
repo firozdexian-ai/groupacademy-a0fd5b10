@@ -279,12 +279,6 @@ export default function Gigs() {
               : gigs?.map((gig) => <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />)}
           </div>
         </TabsContent>
-              ? [...Array(4)].map((_, i) => <Skeleton key={i} className="h-40 rounded-[32px] bg-muted/40" />)
-              : gigs
-                  ?.filter((g) => selectedCategory === "all" || g.category === selectedCategory)
-                  .map((gig) => <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />)}
-          </div>
-        </TabsContent>
 
         <TabsContent value="projects" className="mt-12 space-y-10 animate-in slide-in-from-bottom-4 duration-700">
           <div className="grid md:grid-cols-[280px,1fr] gap-12">
