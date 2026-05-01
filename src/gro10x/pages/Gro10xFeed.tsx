@@ -1,17 +1,278 @@
-import { GRO10X_MUTED } from "../lib/tokens";
+import { useEffect, useState, useCallback } from "react";
+import { Link } from "react-router-dom";
+import { supabase } from "@/integrations/supabase/client";
+import { useAuth } from "@/hooks/useAuth";
+import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
+import { CheckCircle2, X, Sparkles, Loader2 } from "lucide-react";
+import { toast } from "sonner";
+
+interface FeedPost {
+  id: string;
+  author_name: string;
+  author_avatar: string | null;
+  author_title: string | null;
+  text_content: string;
+  tags: string[] | null;
+  created_at: string;
+  author_type: string;
+  author_company_id: string | null;
+}
+
+interface Draft {
+  id: string;
+  text_content: string;
+  tags: string[] | null;
+  agent_key: string | null;
+  created_at: string;
+}
 
 export default function Gro10xFeed() {
+  const { user } = useAuth();
+  const [posts, setPosts] = useState<FeedPost[]>([]);
+  const [drafts, setDrafts] = useState<Draft[]>([]);
+  const [companyId, setCompanyId] = useState<string | null>(null);
+  const [role, setRole] = useState<string | null>(null);
+  const [loading, setLoading] = useState(true);
+  const [composer, setComposer] = useState("");
+  const [posting, setPosting] = useState(false);
+  const [working, setWorking] = useState<string | null>(null);
+
+  const load = useCallback(async () => {
+    setLoading(true);
+
+    // Resolve company membership (gates drafts + composer)
+    let cid: string | null = null;
+    let r: string | null = null;
+    if (user?.id) {
+      const { data: m } = await supabase
+        .from("company_members")
+        .select("company_id, role")
+        .eq("user_id", user.id)
+        .eq("status", "active")
+        .order("created_at", { ascending: true })
+        .limit(1)
+        .maybeSingle();
+      cid = m?.company_id ?? null;
+      r = m?.role ?? null;
+    }
+    setCompanyId(cid);
+    setRole(r);
+
+    // Pending drafts (only company members see them via RLS)
+    if (cid) {
+      const { data: d } = await supabase
+        .from("company_post_drafts")
+        .select("id, text_content, tags, agent_key, created_at")
+        .eq("company_id", cid)
+        .eq("status", "pending")
+        .order("created_at", { ascending: false })
+        .limit(10);
+      setDrafts((d ?? []) as Draft[]);
+    } else {
+      setDrafts([]);
+    }
+
+    // Active feed posts
+    const { data: p } = await supabase
+      .from("feed_posts")
+      .select("id, author_name, author_avatar, author_title, text_content, tags, created_at, author_type, author_company_id")
+      .eq("is_active", true)
+      .eq("status", "published")
+      .order("created_at", { ascending: false })
+      .limit(30);
+    setPosts((p ?? []) as FeedPost[]);
+    setLoading(false);
+  }, [user?.id]);
+
+  useEffect(() => {
+    void load();
+  }, [load]);
+
+  const isOwner = role === "owner" || role === "admin";
+
+  const handlePublish = async (draftId: string) => {
+    setWorking(draftId);
+    try {
+      const { data, error } = await supabase.functions.invoke("company-agent-tools", {
+        body: { tool_key: "publish_company_post", args: { draft_id: draftId } },
+      });
+      if (error || !data?.ok) {
+        toast.error(data?.error ?? error?.message ?? "Could not publish");
+        return;
+      }
+      toast.success("Published to your company feed");
+      await load();
+    } finally {
+      setWorking(null);
+    }
+  };
+
+  const handleDiscard = async (draftId: string) => {
+    setWorking(draftId);
+    try {
+      const { data, error } = await supabase.functions.invoke("company-agent-tools", {
+        body: { tool_key: "discard_company_draft", args: { draft_id: draftId } },
+      });
+      if (error || !data?.ok) {
+        toast.error(data?.error ?? error?.message ?? "Could not discard");
+        return;
+      }
+      toast.success("Draft discarded");
+      await load();
+    } finally {
+      setWorking(null);
+    }
+  };
+
+  const handleComposerSubmit = async () => {
+    const text = composer.trim();
+    if (text.length < 20) {
+      toast.error("Post is a bit short — at least 20 characters please");
+      return;
+    }
+    if (!companyId) {
+      toast.error("You need a company workspace first");
+      return;
+    }
+    setPosting(true);
+    try {
+      // Members file a draft; owners can publish from the strip.
+      const { data, error } = await supabase.functions.invoke("company-agent-tools", {
+        body: { tool_key: "draft_company_post", args: { text_content: text, agent_key: null } },
+      });
+      if (error || !data?.ok) {
+        toast.error(data?.error ?? error?.message ?? "Could not save");
+        return;
+      }
+      setComposer("");
+      toast.success(isOwner ? "Draft saved — publish from the strip above" : "Submitted for owner approval");
+      await load();
+    } finally {
+      setPosting(false);
+    }
+  };
+
   return (
     <div className="max-w-md mx-auto">
       <header className="sticky top-0 z-10 bg-[#0B1220]/95 backdrop-blur-md border-b border-white/5 px-4 py-3">
         <h1 className="text-xl font-semibold tracking-tight">Feed</h1>
         <p className={`text-xs ${GRO10X_MUTED}`}>What your network is up to</p>
       </header>
-      <div className="p-6 text-center text-sm text-slate-400">
-        Posts from your company and connected workspaces will appear here.
-        <br />
-        <span className="text-[#33E1E4]">Tip: ask Growth Agent to post on your company's behalf.</span>
-      </div>
+
+      {/* Composer */}
+      {user && companyId && (
+        <div className="px-4 pt-3">
+          <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-3`}>
+            <textarea
+              value={composer}
+              onChange={(e) => setComposer(e.target.value)}
+              placeholder={isOwner ? "Share an update with your network…" : "Write something — owners review before publishing"}
+              className="w-full bg-transparent text-sm placeholder:text-slate-500 focus:outline-none resize-none"
+              rows={2}
+            />
+            <div className="mt-2 flex items-center justify-between">
+              <Link
+                to="/gro10x/c/growth"
+                className="text-[11px] text-[#33E1E4] inline-flex items-center gap-1 hover:underline"
+              >
+                <Sparkles className="h-3 w-3" /> Ask Growth Agent to draft this
+              </Link>
+              <button
+                onClick={() => void handleComposerSubmit()}
+                disabled={posting || composer.trim().length < 20}
+                className="rounded-full bg-[#33E1E4] text-[#06121A] px-4 py-1.5 text-xs font-semibold disabled:opacity-40"
+              >
+                {posting ? "Saving…" : isOwner ? "Save draft" : "Submit"}
+              </button>
+            </div>
+          </div>
+        </div>
+      )}
+
+      {/* Drafts awaiting approval (visible to all company members; only owners can publish) */}
+      {drafts.length > 0 && (
+        <section className="px-4 mt-4">
+          <p className={`text-[11px] uppercase tracking-wider ${GRO10X_MUTED} mb-2`}>
+            Drafts {isOwner ? "awaiting your approval" : "pending owner approval"}
+          </p>
+          <div className="space-y-2">
+            {drafts.map((d) => (
+              <div key={d.id} className={`${GRO10X_PANEL} border border-[#33E1E4]/20 rounded-2xl p-3`}>
+                <div className="flex items-start gap-2 mb-2">
+                  {d.agent_key && (
+                    <span className="text-[10px] text-slate-400 bg-white/5 px-2 py-0.5 rounded-full">
+                      drafted by {d.agent_key}
+                    </span>
+                  )}
+                </div>
+                <p className="text-sm whitespace-pre-wrap">{d.text_content}</p>
+                {isOwner && (
+                  <div className="mt-3 flex gap-2 justify-end">
+                    <button
+                      onClick={() => void handleDiscard(d.id)}
+                      disabled={working === d.id}
+                      className="rounded-full px-3 py-1.5 text-xs bg-white/5 border border-white/10 hover:bg-white/10 inline-flex items-center gap-1"
+                    >
+                      <X className="h-3 w-3" /> Discard
+                    </button>
+                    <button
+                      onClick={() => void handlePublish(d.id)}
+                      disabled={working === d.id}
+                      className="rounded-full px-3 py-1.5 text-xs bg-[#33E1E4] text-[#06121A] font-semibold hover:opacity-90 inline-flex items-center gap-1 disabled:opacity-50"
+                    >
+                      {working === d.id ? <Loader2 className="h-3 w-3 animate-spin" /> : <CheckCircle2 className="h-3 w-3" />}
+                      Publish
+                    </button>
+                  </div>
+                )}
+              </div>
+            ))}
+          </div>
+        </section>
+      )}
+
+      {/* Feed */}
+      <section className="px-4 mt-4 pb-6">
+        {loading && <p className="text-center text-sm text-slate-400 py-6">Loading feed…</p>}
+        {!loading && posts.length === 0 && (
+          <div className="text-center text-sm text-slate-400 py-8">
+            No posts yet.{" "}
+            <Link to="/gro10x/c/growth" className="text-[#33E1E4] hover:underline">
+              Ask Growth Agent to draft one →
+            </Link>
+          </div>
+        )}
+        {posts.map((p) => (
+          <article key={p.id} className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4 mb-3`}>
+            <div className="flex items-center gap-2 mb-2">
+              <div className="h-9 w-9 rounded-full bg-[#0B1220] border border-white/10 grid place-items-center text-sm font-semibold overflow-hidden">
+                {p.author_avatar ? (
+                  <img src={p.author_avatar} alt="" className="h-full w-full object-cover" />
+                ) : (
+                  p.author_name?.charAt(0)?.toUpperCase() ?? "?"
+                )}
+              </div>
+              <div className="min-w-0 flex-1">
+                <p className="text-sm font-medium truncate">{p.author_name}</p>
+                <p className="text-[11px] text-slate-400 truncate">
+                  {p.author_type === "company" ? "Company" : p.author_title ?? "Member"} ·{" "}
+                  {new Date(p.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
+                </p>
+              </div>
+            </div>
+            <p className="text-sm whitespace-pre-wrap">{p.text_content}</p>
+            {p.tags && p.tags.length > 0 && (
+              <div className="mt-2 flex flex-wrap gap-1">
+                {p.tags.slice(0, 4).map((t) => (
+                  <span key={t} className="text-[10px] text-[#33E1E4] bg-[#33E1E4]/10 px-2 py-0.5 rounded-full">
+                    #{t.replace(/^#/, "")}
+                  </span>
+                ))}
+              </div>
+            )}
+          </article>
+        ))}
+      </section>
     </div>
   );
 }
