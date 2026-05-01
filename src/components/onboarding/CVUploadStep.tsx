@@ -228,7 +228,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         onDrop={(e) => {
           e.preventDefault();
           setIsDragging(false);
-          const f = e.dataTransfer.files;
+          const f = e.dataTransfer.files?.;
           if (f) handleExecutiveUpload(f);
         }}
       >
