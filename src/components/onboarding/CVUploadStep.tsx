@@ -9,7 +9,7 @@ import {
   AlertCircle,
   ShieldCheck,
   FileText,
-  ArrowRight
+  ArrowRight,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -150,7 +150,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
 
   const renderArtifactAudit = () => {
     if (!parsedData && !parseComplete) return null;
-    
+
     if (parseError) {
       return (
         <div className="w-full mt-8 p-6 bg-rose-50 border border-rose-100 rounded-[24px] animate-in fade-in slide-in-from-top-2">
@@ -167,9 +167,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       <div className="w-full mt-8 p-6 bg-emerald-50 border border-emerald-100 rounded-[32px] animate-in slide-in-from-bottom-4 duration-700">
         <div className="flex items-center gap-3 mb-5">
           <ShieldCheck className="h-5 w-5 text-emerald-500" />
-          <span className="font-bold uppercase text-[10px] tracking-widest text-emerald-600">
-            Profile Synchronized
-          </span>
+          <span className="font-bold uppercase text-[10px] tracking-widest text-emerald-600">Profile Synchronized</span>
         </div>
 
         {parsedData?.full_name && (
@@ -218,7 +216,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
             ? "border-blue-500 bg-blue-50 scale-[1.02]"
             : "border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50",
           (isUploading || isParsing) && "pointer-events-none opacity-60",
-          parseComplete && "border-emerald-200 bg-emerald-50/50"
+          parseComplete && "border-emerald-200 bg-emerald-50/50",
         )}
         onDragOver={(e) => {
           e.preventDefault();
@@ -228,7 +226,8 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         onDrop={(e) => {
           e.preventDefault();
           setIsDragging(false);
-          const f = e.dataTransfer.files?.;
+          const files = e.dataTransfer.files;
+          const f = files && files.length > 0 ? files : null;
           if (f) handleExecutiveUpload(f);
         }}
       >
@@ -237,7 +236,8 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
           accept=".pdf,.doc,.docx"
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
           onChange={(e) => {
-            const f = e.target.files?.;
+            const files = e.target.files;
+            const f = files && files.length > 0 ? files : null;
             if (f) handleExecutiveUpload(f);
           }}
         />
@@ -268,9 +268,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
               <CheckCircle2 className="h-8 w-8" />
             </div>
             <p className="text-lg font-black tracking-tighter text-slate-900">Upload Complete</p>
-            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-              Click or drag to replace
-            </p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">Click or drag to replace</p>
           </div>
         ) : (
           <div className="flex flex-col items-center gap-5 group">
@@ -279,9 +277,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
             </div>
             <div className="space-y-2">
               <p className="text-xl font-black tracking-tighter text-slate-900">Upload Resume</p>
-              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
-                PDF or DOCX (Max 5MB)
-              </p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">PDF or DOCX (Max 5MB)</p>
             </div>
           </div>
         )}
