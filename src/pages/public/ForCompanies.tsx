@@ -24,7 +24,7 @@ const VALUE_PROPS = [
 ];
 
 const STEPS = [
-  { n: 1, title: "Request access", description: "Tell us about your company in 2 minutes." },
+  { n: 1, title: "Sign up free", description: "Create your workspace in 30 seconds with 250 free credits." },
   { n: 2, title: "Get approved", description: "We review and approve within 1 business day." },
   { n: 3, title: "Invite your team", description: "Add hiring managers and HR to your portal." },
   { n: 4, title: "Start hiring", description: "Post jobs, browse talent, deploy AI agents." },
@@ -158,7 +158,7 @@ export default function ForCompanies() {
         </p>
         <Link to="/for-companies/signup">
           <Button size="lg" className="gap-2">
-            Request access <ArrowRight className="w-4 h-4" />
+            Get started free <ArrowRight className="w-4 h-4" />
           </Button>
         </Link>
       </section>
