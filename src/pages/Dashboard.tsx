@@ -100,6 +100,9 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "agent-studio": React.lazy(() =>
     import("@/components/dashboard/AgentStudio").then((m) => ({ default: m.AgentStudio })),
   ),
+  "agent-triggers": React.lazy(() =>
+    import("@/components/dashboard/AgentTriggers").then((m) => ({ default: m.AgentTriggers })),
+  ),
   "agent-sessions": React.lazy(() =>
     import("@/components/dashboard/AgentSessionsManager").then((m) => ({ default: m.AgentSessionsManager })),
   ),
