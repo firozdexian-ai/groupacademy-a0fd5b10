@@ -1,9 +1,8 @@
 import { useState } from "react";
-import { Pin, ExternalLink, Play, MoreHorizontal, MessageSquare, Zap, Target, Share2 } from "lucide-react";
+import { Pin, ExternalLink, Play, MoreHorizontal, MessageSquare } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { PostAuthor } from "./PostAuthor";
 import { ReactionBar } from "./ReactionBar";
 import { PollWidget } from "./PollWidget";
@@ -13,8 +12,9 @@ import { usePollVoting } from "@/hooks/usePollVoting";
 import { cn } from "@/lib/utils";
 
 /**
- * GroUp Academy: Atomic Content Node (PostCard)
- * CTO Reference: Authoritative hub for social artifacts, polls, and media.
+ * PostCard — compact, plain-language social post.
+ * Densified per Phase 12B feedback: no UPPERCASE_TERMINAL labels,
+ * tighter padding, constrained media, simple type chips.
  */
 
 interface PollOption {
@@ -43,121 +43,81 @@ interface PostCardProps {
   post: FeedPost;
 }
 
+const TYPE_META: Record<string, { label: string; className: string } | null> = {
+  tip: { label: "Tip", className: "bg-amber-500/10 text-amber-600 border-amber-500/20" },
+  news: { label: "News", className: "bg-blue-500/10 text-blue-600 border-blue-500/20" },
+  announcement: { label: "Announcement", className: "bg-primary/10 text-primary border-primary/20" },
+  poll: { label: "Poll", className: "bg-purple-500/10 text-purple-600 border-purple-500/20" },
+  text: null,
+  media: null,
+};
+
 export function PostCard({ post }: PostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
   const { reactions, userReaction, toggleReaction, isLoading: reactionsLoading } = usePostReactions(post.id);
 
   const pollOptions = post.pollOptions || [];
-  const {
-    hasVoted,
-    userVote,
-    results,
-    totalVotes,
-    castVote,
-    isLoading: pollLoading,
-  } = usePollVoting(post.id, pollOptions);
+  const { hasVoted, userVote, results, totalVotes, castVote, isLoading: pollLoading } = usePollVoting(
+    post.id,
+    pollOptions,
+  );
 
   const isLongText = post.textContent.length > 280;
   const displayText = isLongText && !isExpanded ? post.textContent.slice(0, 280) + "..." : post.textContent;
   const totalReactions = Object.values(reactions).reduce((sum, count) => sum + count, 0);
-
-  const getContentTypeBadge = () => {
-    switch (post.contentType) {
-      case "tip":
-        return { label: "NEURAL_TIP", className: "bg-amber-500/10 text-amber-600 border-amber-500/20", icon: Zap };
-      case "news":
-        return {
-          label: "MARKET_INTELLIGENCE",
-          className: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-          icon: Target,
-        };
-      case "announcement":
-        return { label: "INSTITUTIONAL_LOG", className: "bg-primary/10 text-primary border-primary/20", icon: Pin };
-      case "poll":
-        return {
-          label: "COMMUNITY_CONSENSUS",
-          className: "bg-purple-500/10 text-purple-600 border-purple-500/20",
-          icon: Share2,
-        };
-      default:
-        return null;
-    }
-  };
-
-  const typeMeta = getContentTypeBadge();
+  const typeMeta = TYPE_META[post.contentType] ?? null;
   const isVideo = post.mediaUrl?.match(/(youtube\.com|youtu\.be)/);
 
   return (
-    <Card className="group relative overflow-hidden transition-all duration-500 border-2 border-border/40 hover:border-primary/40 bg-card/30 backdrop-blur-md rounded-[32px] shadow-xl animate-in fade-in duration-700">
-      {/* SECTION: PINNED_PROTOCOL */}
+    <Card className="overflow-hidden border border-border/40 hover:border-primary/40 bg-card rounded-2xl transition-colors">
       {post.isPinned && (
-        <div className="bg-primary/10 px-6 py-2.5 flex items-center gap-3 text-[10px] font-black uppercase tracking-[0.2em] text-primary border-b-2 border-primary/10 italic">
-          <Pin className="h-3.5 w-3.5 fill-current animate-pulse" />
-          <span>Priority_Artifact_Locked</span>
+        <div className="bg-primary/5 px-3 py-1.5 flex items-center gap-1.5 text-[10px] font-medium text-primary border-b border-primary/10">
+          <Pin className="h-3 w-3 fill-current" />
+          <span>Pinned</span>
         </div>
       )}
 
-      <CardContent className="p-6 space-y-5">
-        {/* IDENTITY: Author Header */}
-        <div className="flex items-start justify-between">
+      <CardContent className="p-3 space-y-3">
+        {/* Author */}
+        <div className="flex items-start justify-between gap-2">
           <PostAuthor
             name={post.authorName}
             title={post.authorTitle}
             avatar={post.authorAvatar}
             createdAt={post.createdAt}
           />
-          <div className="flex flex-col items-end gap-2">
-            <button className="text-muted-foreground/30 hover:text-primary transition-all p-1.5 rounded-lg hover:bg-primary/5 active:scale-90">
-              <MoreHorizontal className="h-5 w-5" />
-            </button>
-            {totalReactions > 0 && (
-              <Badge
-                variant="outline"
-                className="text-[9px] font-black italic border-primary/10 text-muted-foreground/60 uppercase px-2 py-0"
-              >
-                {totalReactions} ANALYTICS_HITS
-              </Badge>
-            )}
-          </div>
+          <button className="text-muted-foreground/50 hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted/40">
+            <MoreHorizontal className="h-4 w-4" />
+          </button>
         </div>
 
-        {/* CLASSIFICATION: Type Badge */}
+        {/* Type chip */}
         {typeMeta && (
-          <Badge
-            variant="outline"
-            className={cn(
-              "text-[9px] font-black uppercase italic tracking-widest py-1 px-3 gap-2 rounded-full border-2",
-              typeMeta.className,
-            )}
-          >
-            {typeMeta.icon && <typeMeta.icon className="h-3 w-3" />}
+          <Badge variant="outline" className={cn("text-[10px] font-medium px-2 py-0 rounded-full border", typeMeta.className)}>
             {typeMeta.label}
           </Badge>
         )}
 
-        {/* PAYLOAD: Body Text */}
-        <div className="relative text-left">
-          <p className="text-[15px] text-foreground/90 whitespace-pre-wrap leading-relaxed tracking-tight font-medium italic">
-            {displayText}
-          </p>
+        {/* Body */}
+        <div className="text-left">
+          <p className="text-sm text-foreground/90 whitespace-pre-wrap leading-relaxed">{displayText}</p>
           {isLongText && (
             <button
               onClick={() => setIsExpanded(!isExpanded)}
-              className="text-xs font-medium text-primary mt-3 hover:underline transition-opacity flex items-center gap-1.5"
+              className="text-xs font-medium text-primary mt-1.5 hover:underline"
             >
-              <Zap className="h-3 w-3 fill-current" />
               {isExpanded ? "Show less" : "Read more"}
             </button>
           )}
         </div>
 
-        {/* REGISTRY: Hashtags */}
+        {/* Tags */}
         {post.tags && post.tags.length > 0 && (
-          <div className="flex flex-wrap gap-2 pt-2">
+          <div className="flex flex-wrap gap-1.5">
             {post.tags.map((tag) => (
               <span
                 key={tag}
-                className="text-[10px] font-black italic text-primary hover:bg-primary hover:text-white cursor-pointer bg-primary/5 border border-primary/10 px-3 py-1 rounded-xl transition-all uppercase tracking-tighter"
+                className="text-[10px] font-medium text-primary bg-primary/5 hover:bg-primary/10 px-2 py-0.5 rounded-md cursor-pointer transition-colors"
               >
                 #{tag}
               </span>
@@ -165,63 +125,56 @@ export function PostCard({ post }: PostCardProps) {
           </div>
         )}
 
-        {/* ASSETS: Media Block */}
+        {/* Media — constrained, not full-bleed */}
         {post.mediaUrl && post.contentType !== "poll" && (
-          <div className="mt-4 -mx-6 relative group/media overflow-hidden border-y-2 border-border/10">
-            <AspectRatio ratio={16 / 9} className="bg-muted transition-all duration-700 group-hover/media:scale-105">
-              <img src={post.mediaUrl} alt="Payload Asset" className="w-full h-full object-cover" />
-              {isVideo && (
-                <div className="absolute inset-0 flex items-center justify-center bg-black/40 group-hover/media:bg-black/60 transition-all duration-500">
-                  <div className="w-20 h-20 rounded-full bg-white/95 flex items-center justify-center shadow-[0_0_50px_rgba(255,255,255,0.3)] transform transition-transform group-hover/media:scale-110">
-                    <Play className="h-8 w-8 text-rose-600 fill-current ml-1" />
-                  </div>
-                </div>
-              )}
-            </AspectRatio>
-          </div>
-        )}
-
-        {/* INTERACTIVE: Poll Node */}
-        {post.contentType === "poll" && pollOptions.length > 0 && (
-          <div className="pt-4 animate-in slide-in-from-bottom-2 duration-500">
-            <PollWidget
-              options={pollOptions}
-              results={results}
-              totalVotes={totalVotes}
-              hasVoted={hasVoted}
-              userVote={userVote}
-              pollEndsAt={post.pollEndsAt}
-              onVote={castVote}
-              disabled={pollLoading}
+          <div className="relative overflow-hidden rounded-xl border border-border/40 bg-muted">
+            <img
+              src={post.mediaUrl}
+              alt=""
+              className="w-full max-h-72 object-cover"
+              loading="lazy"
             />
+            {isVideo && (
+              <div className="absolute inset-0 flex items-center justify-center bg-black/30">
+                <div className="w-12 h-12 rounded-full bg-white/95 flex items-center justify-center shadow-lg">
+                  <Play className="h-5 w-5 text-rose-600 fill-current ml-0.5" />
+                </div>
+              </div>
+            )}
           </div>
         )}
 
-        {/* METADATA: External Link Preview */}
+        {/* Poll */}
+        {post.contentType === "poll" && pollOptions.length > 0 && (
+          <PollWidget
+            options={pollOptions}
+            results={results}
+            totalVotes={totalVotes}
+            hasVoted={hasVoted}
+            userVote={userVote}
+            pollEndsAt={post.pollEndsAt}
+            onVote={castVote}
+            disabled={pollLoading}
+          />
+        )}
+
+        {/* Link preview */}
         {post.linkUrl && post.linkPreview && (
           <a
             href={post.linkUrl}
             target="_blank"
             rel="noopener noreferrer"
-            className="block border-2 border-border/20 rounded-[24px] overflow-hidden hover:bg-primary/5 hover:border-primary/20 transition-all bg-muted/10 group/link"
+            className="block border border-border/40 rounded-xl overflow-hidden hover:border-primary/40 transition-colors"
           >
             {post.linkPreview.image && (
-              <img
-                src={post.linkPreview.image}
-                alt=""
-                className="w-full h-44 object-cover grayscale-[20%] group-hover/link:grayscale-0 transition-all"
-              />
+              <img src={post.linkPreview.image} alt="" className="w-full max-h-40 object-cover" />
             )}
-            <div className="p-5 space-y-2">
-              <h4 className="text-[15px] font-black uppercase italic leading-tight tracking-tight line-clamp-2">
-                {post.linkPreview.title}
-              </h4>
+            <div className="p-3 space-y-1">
+              <h4 className="text-sm font-semibold leading-tight line-clamp-2">{post.linkPreview.title}</h4>
               {post.linkPreview.description && (
-                <p className="text-[11px] text-muted-foreground font-bold italic line-clamp-2 leading-relaxed uppercase opacity-60">
-                  {post.linkPreview.description}
-                </p>
+                <p className="text-[11px] text-muted-foreground line-clamp-2">{post.linkPreview.description}</p>
               )}
-              <div className="flex items-center gap-2 text-[9px] font-black uppercase tracking-[0.2em] text-primary/60 pt-2 italic">
+              <div className="flex items-center gap-1 text-[10px] text-muted-foreground pt-0.5">
                 <ExternalLink className="h-3 w-3" />
                 <span>{new URL(post.linkUrl).hostname}</span>
               </div>
@@ -229,8 +182,8 @@ export function PostCard({ post }: PostCardProps) {
           </a>
         )}
 
-        {/* ENGAGEMENT: Social Command Strip */}
-        <div className="flex items-center justify-between gap-4 pt-6 mt-4 border-t-2 border-border/10">
+        {/* Footer */}
+        <div className="flex items-center justify-between gap-3 pt-2 border-t border-border/40">
           <div className="flex-1">
             <ReactionBar
               reactions={reactions}
@@ -240,13 +193,13 @@ export function PostCard({ post }: PostCardProps) {
               inline
             />
           </div>
-          <div className="flex items-center gap-3">
+          <div className="flex items-center gap-1">
             <Button
               variant="ghost"
               size="icon"
-              className="h-11 w-11 rounded-2xl text-muted-foreground/40 hover:text-primary hover:bg-primary/5 transition-all active:scale-90"
+              className="h-8 w-8 rounded-lg text-muted-foreground hover:text-primary"
             >
-              <MessageSquare className="h-5 w-5" />
+              <MessageSquare className="h-4 w-4" />
             </Button>
             <ShareSheet
               title={post.textContent.slice(0, 80)}
@@ -255,6 +208,10 @@ export function PostCard({ post }: PostCardProps) {
             />
           </div>
         </div>
+
+        {totalReactions > 0 && (
+          <p className="text-[10px] text-muted-foreground -mt-1">{totalReactions} reactions</p>
+        )}
       </CardContent>
     </Card>
   );
