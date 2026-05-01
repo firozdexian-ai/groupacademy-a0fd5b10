@@ -527,6 +527,11 @@ function AgentDetailPanel({
           <TabsContent value="knowledge" className="p-6">
             <KnowledgePanel agentId={agent.id} />
           </TabsContent>
+
+          {/* Brain tab — Phase 7 */}
+          <TabsContent value="brain" className="p-6">
+            <AgentBrainPanel agent={agent as any} onSaved={onSaved} />
+          </TabsContent>
         </Tabs>
       </CardContent>
     </Card>
