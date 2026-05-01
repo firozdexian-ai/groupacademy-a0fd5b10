@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { Camera, User, Loader2, Sparkles, Zap, ShieldCheck } from "lucide-react";
+import { Camera, User, Loader2, Sparkles, CheckCircle2, ShieldCheck, ArrowRight } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
@@ -9,21 +9,16 @@ import { useTalent } from "@/hooks/useTalent";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-/**
- * GroUp Academy: Identity Synthesis Node (ProfileQuickSetup)
- * CTO Reference: Authoritative node for profile initialization and photo sync.
- */
-
 interface ProfileQuickSetupProps {
   onContinue: () => void;
   onSkip: () => void;
 }
 
 const STATUS_NODES = [
-  { value: "student", label: "ACADEMIC_TRACK", sub: "Currently enrolled" },
-  { value: "fresh_graduate", label: "ENTRY_VECTOR", sub: "Recent grad" },
-  { value: "job_seeking", label: "ACTIVE_RECRUIT", sub: "Ready for deployment" },
-  { value: "working", label: "ESTABLISHED_OPS", sub: "Working professional" },
+  { value: "student", label: "Student", sub: "Currently enrolled in studies" },
+  { value: "fresh_graduate", label: "Fresh Graduate", sub: "Recently completed studies" },
+  { value: "job_seeking", label: "Actively Looking", sub: "Ready for immediate roles" },
+  { value: "working", label: "Employed", sub: "Currently working professional" },
 ];
 
 export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps) {
@@ -49,11 +44,11 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
   }
 
   async function handlePhotoIngress(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.[0];
+    const file = e.target.files?.;
     if (!file || !talent?.id) return;
 
-    if (!file.type.startsWith("image/")) return toast.error("PROTOCOL_ERROR: Invalid image format");
-    if (file.size > 5 * 1024 * 1024) return toast.error("DATA_LIMIT: File must be under 5MB");
+    if (!file.type.startsWith("image/")) return toast.error("Invalid format. Please upload an image file.");
+    if (file.size > 5 * 1024 * 1024) return toast.error("File is too large. Must be under 5MB.");
 
     setIsUploading(true);
     try {
@@ -71,9 +66,9 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
       } = supabase.storage.from("portfolio-uploads").getPublicUrl(filePath);
 
       setProfilePhoto(publicUrl);
-      toast.success("IDENTITY_IMAGE_SYNCED");
+      toast.success("Profile photo uploaded successfully.");
     } catch (error) {
-      toast.error("SYNC_FAULT");
+      toast.error("Upload failed. Please try again.");
     } finally {
       setIsUploading(false);
     }
@@ -92,48 +87,48 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
       }
       onContinue();
     } catch (error) {
-      toast.error("COMMIT_FAULT");
+      toast.error("Failed to save profile. Please try again.");
     } finally {
       setIsSaving(false);
     }
   }
 
   return (
-    <div className="flex flex-col items-center px-4 py-8 max-w-lg mx-auto text-left animate-in fade-in duration-700">
-      <div className="mb-10 space-y-2 text-center">
-        <h2 className="text-3xl font-black uppercase italic tracking-tighter text-foreground leading-none">
-          Initialize_Identity
+    <div className="flex flex-col items-center px-4 py-8 max-w-xl mx-auto text-left w-full animate-in fade-in duration-700">
+      <div className="mb-12 space-y-3 text-center">
+        <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 leading-tight">
+          Profile Details
         </h2>
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground italic opacity-60">
-          Sync professional artifacts for global matching
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          Set your career track and current status.
         </p>
       </div>
 
       {/* COMPONENT: VISUAL_ID_HANGER */}
-      <div className="mb-8 w-full">
-        <div className="flex flex-col items-center p-6 rounded-[32px] bg-primary/5 border-2 border-primary/20 shadow-inner relative overflow-hidden">
-          <Zap className="absolute -top-4 -right-4 h-24 w-24 text-primary opacity-5 rotate-12" />
+      <div className="mb-10 w-full">
+        <div className="flex flex-col items-center p-8 rounded-[32px] bg-white border border-slate-100 shadow-sm relative overflow-hidden">
+          <div className="absolute top-0 right-0 w-48 h-48 bg-blue-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50 pointer-events-none"></div>
 
-          <div className="flex items-center gap-2 mb-6">
-            <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-primary italic">
-              Recruiter_Signal_Priority
+          <div className="flex items-center gap-3 mb-8 relative z-10">
+            <Sparkles className="h-5 w-5 text-blue-500" />
+            <span className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+              Profile Photo
             </span>
           </div>
 
-          <div className="relative mb-4 group">
-            <div className="w-32 h-32 rounded-[40px] bg-muted flex items-center justify-center overflow-hidden border-4 border-background shadow-2xl transition-transform duration-500 group-hover:scale-105">
+          <div className="relative mb-6 group z-10">
+            <div className="w-36 h-36 rounded-full bg-slate-50 flex items-center justify-center overflow-hidden border-4 border-white shadow-md transition-transform duration-500 group-hover:scale-105">
               {profilePhoto ? (
-                <img src={profilePhoto} alt="SYNC_ID" className="w-full h-full object-cover" />
+                <img src={profilePhoto} alt="Profile" className="w-full h-full object-cover" />
               ) : (
-                <User className="h-14 w-14 text-muted-foreground/30" />
+                <User className="h-16 w-16 text-slate-300" />
               )}
             </div>
-            <label className="absolute -bottom-2 -right-2 w-12 h-12 bg-primary rounded-2xl flex items-center justify-center cursor-pointer hover:bg-primary/90 transition-all shadow-xl active:scale-90">
+            <label className="absolute -bottom-1 -right-1 w-12 h-12 bg-blue-500 rounded-full flex items-center justify-center cursor-pointer hover:bg-blue-600 transition-all shadow-lg active:scale-95 border-4 border-white">
               {isUploading ? (
-                <Loader2 className="h-6 w-6 text-white animate-spin" />
+                <Loader2 className="h-5 w-5 text-white animate-spin" />
               ) : (
-                <Camera className="h-6 w-6 text-white" />
+                <Camera className="h-5 w-5 text-white" />
               )}
               <input
                 type="file"
@@ -145,26 +140,28 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
             </label>
           </div>
 
-          <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground italic opacity-60">
-            {profilePhoto ? "NODE_VERIFIED" : "Awaiting_Visual_Ingress"}
+          <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400">
+            {profilePhoto ? (
+              <span className="text-emerald-500 flex items-center gap-1.5"><CheckCircle2 className="w-3 h-3"/> Photo Uploaded</span>
+            ) : "Upload a professional photo"}
           </p>
         </div>
       </div>
 
       {/* FORM: TRAJECTORY_MAPPING */}
-      <div className="w-full space-y-8">
-        <div className="space-y-3">
-          <Label className="text-[10px] font-black uppercase italic tracking-[0.2em] text-muted-foreground ml-1">
-            Primary_Trajectory
+      <div className="w-full space-y-10">
+        <div className="space-y-4">
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-2">
+            Career Track
           </Label>
           <Select value={selectedProfession} onValueChange={setSelectedProfession}>
-            <SelectTrigger className="h-14 bg-background/50 border-2 rounded-2xl font-bold italic shadow-sm focus:ring-primary/20">
-              <SelectValue placeholder="Initialize selection..." />
+            <SelectTrigger className="h-14 bg-white border-slate-200 rounded-2xl font-bold text-slate-900 shadow-sm focus:ring-blue-500/20">
+              <SelectValue placeholder="Select your primary focus..." />
             </SelectTrigger>
-            <SelectContent className="rounded-xl border-2">
+            <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
               {professions.map((p) => (
-                <SelectItem key={p.id} value={p.id} className="font-bold italic uppercase py-3">
-                  {p.name}
+                <SelectItem key={p.id} value={p.id} className="font-bold text-sm py-3 text-slate-700">
+                  {p.name.toUpperCase()}
                 </SelectItem>
               ))}
             </SelectContent>
@@ -172,8 +169,8 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
         </div>
 
         <div className="space-y-4">
-          <Label className="text-[10px] font-black uppercase italic tracking-[0.2em] text-muted-foreground ml-1">
-            Status_Registry
+          <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 ml-2">
+            Current Status
           </Label>
           <RadioGroup value={currentStatus} onValueChange={setCurrentStatus} className="grid grid-cols-1 gap-3">
             {STATUS_NODES.map((option) => (
@@ -181,15 +178,15 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
                 key={option.value}
                 onClick={() => setCurrentStatus(option.value)}
                 className={cn(
-                  "group flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-500 cursor-pointer",
+                  "group flex items-center justify-between p-5 rounded-[24px] border transition-all duration-300 cursor-pointer",
                   currentStatus === option.value
-                    ? "border-primary bg-primary/5 shadow-lg scale-[1.02]"
-                    : "border-border/40 hover:border-primary/20 bg-card/50",
+                    ? "border-blue-500 bg-blue-50 shadow-sm scale-[1.02]"
+                    : "border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50",
                 )}
               >
-                <div className="flex flex-col">
-                  <span className="text-[11px] font-black uppercase italic tracking-tighter">{option.label}</span>
-                  <span className="text-[9px] font-medium text-muted-foreground uppercase tracking-widest">
+                <div className="flex flex-col gap-1">
+                  <span className="text-sm font-black uppercase tracking-tight text-slate-900">{option.label}</span>
+                  <span className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
                     {option.sub}
                   </span>
                 </div>
@@ -197,8 +194,8 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
                   value={option.value}
                   id={option.value}
                   className={cn(
-                    "h-5 w-5 border-2",
-                    currentStatus === option.value ? "bg-primary border-primary text-white" : "border-muted",
+                    "h-6 w-6 border-2",
+                    currentStatus === option.value ? "bg-blue-500 border-blue-500 text-white" : "border-slate-300",
                   )}
                 />
               </div>
@@ -208,22 +205,23 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
       </div>
 
       {/* FOOTER: ACTION_BAR */}
-      <div className="flex flex-col w-full gap-4 mt-12 pt-6 border-t-2 border-border/10">
+      <div className="flex flex-col w-full gap-4 mt-12 pt-8 border-t border-slate-200">
         <Button
-          size="xl"
+          size="lg"
           onClick={finalizeSetup}
           disabled={isSaving}
-          className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-[0.2em] shadow-[0_20px_50px_rgba(var(--primary),0.2)] hover:shadow-primary/40 transition-all active:scale-95 gap-3"
+          className="w-full h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white font-bold uppercase tracking-widest text-[10px] shadow-sm gap-3"
         >
-          {isSaving ? <Loader2 className="h-6 w-6 animate-spin" /> : <ShieldCheck className="h-6 w-6" />}
-          VERIFY_AND_COMMENCE
+          {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          Complete Setup
+          {!isSaving && <ArrowRight className="h-4 w-4" />}
         </Button>
         <Button
           variant="ghost"
           onClick={onSkip}
-          className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 hover:text-foreground transition-colors"
+          className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors h-12 rounded-full"
         >
-          AUTHORIZE_SYNC_SKIP
+          Skip for now
         </Button>
       </div>
     </div>
