@@ -294,7 +294,7 @@ export default function Gigs() {
               </div>
               <div className="space-y-4">
                 <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary ml-1 italic">
-                  Academy Faculties
+                  Resource Categories
                 </p>
                 <div className="flex flex-col gap-2">
                   <Button
@@ -302,9 +302,9 @@ export default function Gigs() {
                     className="justify-between h-12 px-5 font-black uppercase text-[10px] tracking-widest rounded-xl transition-all"
                     onClick={() => setSelectedProjectCategory(null)}
                   >
-                    Global Registry <ChevronRight className="h-3.5 w-3.5 opacity-20" />
+                    All Projects <ChevronRight className="h-3.5 w-3.5 opacity-20" />
                   </Button>
-                  {MARKETPLACE_SCHOOLS.map((s) => (
+                  {GIG_CATEGORIES.map((s) => (
                     <Button
                       key={s.value}
                       variant={selectedProjectCategory === s.value ? "secondary" : "ghost"}
