@@ -3,26 +3,10 @@ import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import {
-  Headphones,
-  BookOpen,
-  PenTool,
-  Mic,
-  ArrowLeft,
-  Play,
-  FileText,
-  CheckCircle,
-  Clock,
-  Lock,
-  Coins,
-  Sparkles,
-  Trophy,
-  ArrowRight,
-  Zap,
-  Target,
-  ShieldCheck,
-  ChevronRight,
+  Headphones, BookOpen, PenTool, Mic, ArrowLeft, Play, FileText,
+  CheckCircle, Clock, Lock, Coins, Sparkles, Trophy, ChevronRight,
 } from "lucide-react";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -33,26 +17,18 @@ import { useTalent } from "@/hooks/useTalent";
 import { getServiceCost } from "@/lib/creditPricing";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-
-/**
- * Platform Logic: Language Calibration Hub (IELTS)
- * High-fidelity orchestrator for English proficiency resources and AI-led examiners.
- * 2026 Standard: Executive Logic geometry with real-time lead-gen telemetry.
- */
+import { EmptyState } from "@/components/common/EmptyState";
+import { PAGE_SHELL_WIDE, PAGE_TITLE, PAGE_SUBTITLE, CARD, META_TEXT } from "@/lib/uiTokens";
 
 const SECTIONS = [
-  { id: "listening", name: "Listening", icon: Headphones, color: "text-blue-500", bgColor: "bg-blue-500/10" },
-  { id: "reading", name: "Reading", icon: BookOpen, color: "text-emerald-500", bgColor: "bg-emerald-500/10" },
-  { id: "writing", name: "Writing", icon: PenTool, color: "text-purple-500", bgColor: "bg-purple-500/10" },
-  { id: "speaking", name: "Speaking", icon: Mic, color: "text-orange-500", bgColor: "bg-orange-500/10" },
+  { id: "listening", name: "Listening", icon: Headphones },
+  { id: "reading", name: "Reading", icon: BookOpen },
+  { id: "writing", name: "Writing", icon: PenTool },
+  { id: "speaking", name: "Speaking", icon: Mic },
 ];
 
 const CONTENT_TYPE_ICONS: Record<string, any> = {
-  video: Play,
-  article: FileText,
-  practice: CheckCircle,
-  mock_test: Clock,
-  tips: BookOpen,
+  video: Play, article: FileText, practice: CheckCircle, mock_test: Clock, tips: BookOpen,
 };
 
 interface IELTSResource {
@@ -107,11 +83,8 @@ export default function IELTSPrep() {
   const handleResourceClick = (resource: IELTSResource) => {
     const isUnlocked = resource.is_free || unlockedResources?.includes(resource.id);
     if (isUnlocked) {
-      if (resource.content_url) {
-        window.open(resource.content_url, "_blank");
-      } else {
-        toast.error("Artifact content node pending sync.");
-      }
+      if (resource.content_url) window.open(resource.content_url, "_blank");
+      else toast.error("This resource isn't ready yet.");
     } else {
       setSelectedResource(resource);
       setShowCreditGate(true);
@@ -127,72 +100,61 @@ export default function IELTSPrep() {
         .insert([{ talent_id: talent.id, resource_id: selectedResource.id }]);
       if (accessError) throw accessError;
 
-      // CTO Lead-Gen Protocol: Sync with contact registry
-      await supabase.from("contacts").insert([
-        {
-          full_name: talent.fullName,
-          email: talent.email,
-          subject: `IELTS Registry Unlock: ${selectedResource.title}`,
-          message: `Talent synthesized a premium ${selectedResource.section} node. Initializing high-intent prep sequence.`,
-        },
-      ]);
+      await supabase.from("contacts").insert([{
+        full_name: talent.fullName,
+        email: talent.email,
+        subject: `IELTS unlock: ${selectedResource.title}`,
+        message: `Talent unlocked a premium ${selectedResource.section} resource.`,
+      }]);
 
       await refetchAccess();
       await refreshBalance();
-      toast.success("Protocol Unlocked: Node Accessible");
+      toast.success("Unlocked.");
       setShowCreditGate(false);
       if (selectedResource.content_url) window.open(selectedResource.content_url, "_blank");
-    } catch (err) {
-      toast.error("Handshake failed. Check credit ledger.");
+    } catch {
+      toast.error("Couldn't unlock. Try again.");
     } finally {
       setIsUnlocking(false);
     }
   };
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 pb-40 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-1000">
-      {/* Executive Header: Proficiency Context */}
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-        <div className="flex items-center gap-5">
-          <Button
-            variant="ghost"
-            size="icon"
-            className="rounded-xl h-12 w-12 hover:bg-primary/10 transition-all active:scale-90"
-            onClick={() => navigate("/app/abroad")}
-          >
-            <ArrowLeft className="h-6 w-6 text-primary" />
-          </Button>
-          <div className="space-y-1">
-            <h1 className="text-3xl font-bold tracking-tight leading-none">IELTS Prep</h1>
-            <p className="text-sm text-muted-foreground">
-              Practice listening, reading, writing & speaking — with AI examiner feedback.
-            </p>
-          </div>
-        </div>
+    <div className={PAGE_SHELL_WIDE}>
+      <Button variant="ghost" size="sm" onClick={() => navigate("/app/learning")} className="gap-1.5 -ml-2">
+        <ArrowLeft className="h-4 w-4" /> Back
+      </Button>
 
-        <Card
-          className="rounded-[32px] border-2 border-primary/20 bg-primary/5 shadow-2xl overflow-hidden min-w-[320px] group cursor-pointer hover:border-primary/40 transition-all"
-          onClick={() => navigate("/app/agents/ielts-tutor")}
-        >
-          <CardContent className="p-6 flex items-center gap-5">
-            <div className="h-14 w-14 rounded-[24px] bg-primary flex items-center justify-center rotate-3 shadow-primary/20 shadow-xl group-hover:rotate-0 transition-transform">
-              <Trophy className="h-7 w-7 text-white" />
-            </div>
-            <div className="flex-1">
-              <p className="text-[10px] font-bold uppercase text-primary tracking-wider mb-1">Mock test</p>
-              <p className="text-sm font-semibold leading-none">Take a full mock test</p>
-              <div className="flex items-center gap-2 mt-2">
-                <Coins className="h-3 w-3 text-amber-500" />
-                <span className="text-xs text-muted-foreground">100 credits</span>
-              </div>
-            </div>
-            <ChevronRight className="h-5 w-5 text-primary/40" />
-          </CardContent>
-        </Card>
+      <header className="space-y-1">
+        <div className="flex items-center gap-2">
+          <Sparkles className="h-5 w-5 text-primary" />
+          <h1 className={PAGE_TITLE}>IELTS Prep</h1>
+        </div>
+        <p className={PAGE_SUBTITLE}>
+          Listening, reading, writing & speaking — with AI examiner feedback.
+        </p>
       </header>
 
-      {/* Logic Stepper: Section Selection */}
-      <div className="grid grid-cols-2 lg:grid-cols-4 gap-4">
+      <Card
+        className={cn(CARD, "cursor-pointer hover:border-primary/40 transition-colors")}
+        onClick={() => navigate("/app/agents/ielts-tutor")}
+      >
+        <CardContent className="p-3 flex items-center gap-3">
+          <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+            <Trophy className="h-5 w-5 text-primary" />
+          </div>
+          <div className="flex-1 min-w-0">
+            <p className="text-sm font-semibold">Take a full mock test</p>
+            <p className={cn(META_TEXT, "flex items-center gap-1 mt-0.5")}>
+              <Coins className="h-3 w-3 text-amber-500" /> 100 credits
+            </p>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground" />
+        </CardContent>
+      </Card>
+
+      {/* Section pills */}
+      <div className="grid grid-cols-4 gap-2">
         {SECTIONS.map((s) => {
           const isActive = activeSection === s.id;
           return (
@@ -200,180 +162,82 @@ export default function IELTSPrep() {
               key={s.id}
               onClick={() => setActiveSection(s.id)}
               className={cn(
-                "group relative flex flex-col p-6 rounded-[28px] border-2 transition-all duration-500 text-left overflow-hidden shadow-lg",
-                isActive
-                  ? "bg-primary border-primary text-primary-foreground shadow-primary/30 -translate-y-1"
-                  : "bg-card border-border/40 hover:border-primary/40 hover:bg-muted/30",
+                "flex flex-col items-center gap-1 p-2 rounded-xl border transition-colors",
+                isActive ? "border-primary bg-primary/5 text-primary" : "border-border/40 hover:border-border",
               )}
             >
-              <div
-                className={cn(
-                  "p-3 rounded-2xl w-fit mb-6 transition-transform group-hover:rotate-6 shadow-inner",
-                  isActive ? "bg-white/20" : s.bgColor,
-                )}
-              >
-                <s.icon className={cn("h-7 w-7", isActive ? "text-white" : s.color)} />
-              </div>
-              <div>
-                <p className="font-black uppercase tracking-tighter text-xl italic">{s.name}</p>
-                <p
-                  className={cn(
-                    "text-[9px] font-black uppercase tracking-[0.3em] mt-2",
-                    isActive ? "text-white/60" : "text-primary",
-                  )}
-                >
-                  {isActive ? "Active Logic" : "Initialize Module"}
-                </p>
-              </div>
-              {isActive && <Zap className="absolute top-4 right-4 h-5 w-5 text-white/20 fill-white" />}
+              <s.icon className="h-4 w-4" />
+              <span className="text-[11px] font-medium">{s.name}</span>
             </button>
           );
         })}
       </div>
 
-      {/* Registry Viewport: Skill Artifacts */}
-      <section className="space-y-8">
-        <div className="flex items-center justify-between border-b border-border/40 pb-4">
-          <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-3">
-            <Target className="h-4 w-4" /> {activeSection} Registry
-          </h2>
-          <Badge
-            variant="outline"
-            className="rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] tracking-widest px-3 py-1"
-          >
-            {resources?.length || 0} Modules Sync'd
-          </Badge>
+      {/* Resources */}
+      {isLoading ? (
+        <div className="space-y-2">
+          {[1, 2, 3].map((i) => <Skeleton key={i} className="h-20 rounded-2xl" />)}
         </div>
-
-        {isLoading ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {[1, 2, 3].map((i) => (
-              <Skeleton key={i} className="h-40 w-full rounded-[32px] bg-muted/40" />
-            ))}
-          </div>
-        ) : resources?.length ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
-            {resources.map((r) => {
-              const Icon = CONTENT_TYPE_ICONS[r.content_type] || FileText;
-              const isUnlocked = r.is_free || unlockedResources?.includes(r.id);
-              return (
-                <Card
-                  key={r.id}
-                  className="group rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm transition-all duration-500 hover:border-primary/40 hover:shadow-2xl cursor-pointer overflow-hidden"
-                  onClick={() => handleResourceClick(r)}
-                >
-                  <CardContent className="p-8 space-y-6">
-                    <div className="flex justify-between items-start">
-                      <div className="h-12 w-12 rounded-2xl bg-muted/50 border border-border/20 flex items-center justify-center group-hover:bg-primary/10 group-hover:scale-110 transition-all">
-                        <Icon className="h-6 w-6 text-muted-foreground/40 group-hover:text-primary transition-colors" />
-                      </div>
+      ) : resources?.length ? (
+        <div className="space-y-2">
+          {resources.map((r) => {
+            const Icon = CONTENT_TYPE_ICONS[r.content_type] || FileText;
+            const isUnlocked = r.is_free || unlockedResources?.includes(r.id);
+            return (
+              <Card
+                key={r.id}
+                className={cn(CARD, "cursor-pointer hover:border-primary/40 transition-colors")}
+                onClick={() => handleResourceClick(r)}
+              >
+                <CardContent className="p-3 flex gap-3">
+                  <div className="h-10 w-10 rounded-xl bg-muted/40 flex items-center justify-center shrink-0">
+                    <Icon className="h-4 w-4 text-muted-foreground" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-start justify-between gap-2">
+                      <h3 className="text-sm font-semibold line-clamp-1">{r.title}</h3>
                       {r.is_free ? (
-                        <Badge className="bg-emerald-500/10 text-emerald-500 border-none text-[8px] font-black uppercase italic tracking-widest">
-                          Protocol: Free
-                        </Badge>
+                        <Badge variant="outline" className="text-[10px] text-emerald-600 border-emerald-500/20 shrink-0">Free</Badge>
                       ) : isUnlocked ? (
-                        <Badge className="bg-primary/10 text-primary border-none text-[8px] font-black uppercase italic tracking-widest">
-                          Verified Access
-                        </Badge>
+                        <Badge variant="outline" className="text-[10px] text-primary border-primary/20 shrink-0">Unlocked</Badge>
                       ) : (
-                        <Badge
-                          variant="secondary"
-                          className="bg-muted/80 text-[8px] font-black uppercase tracking-widest gap-2"
-                        >
-                          <Lock className="h-3 w-3" /> {ieltsCost} Credits
+                        <Badge variant="outline" className="text-[10px] gap-1 shrink-0">
+                          <Lock className="h-3 w-3" /> {ieltsCost} cr
                         </Badge>
                       )}
                     </div>
-                    <div>
-                      <h3 className="text-lg font-black uppercase tracking-tight italic group-hover:text-primary transition-colors line-clamp-1">
-                        {r.title}
-                      </h3>
-                      <p className="text-[11px] text-muted-foreground/60 font-medium leading-relaxed mt-2 line-clamp-2 italic">
-                        {r.description}
-                      </p>
+                    {r.description && (
+                      <p className="text-xs text-muted-foreground line-clamp-1 mt-0.5">{r.description}</p>
+                    )}
+                    <div className="flex items-center gap-3 mt-1">
+                      {r.duration_mins && (
+                        <span className={cn(META_TEXT, "flex items-center gap-1")}>
+                          <Clock className="h-3 w-3" /> {r.duration_mins}m
+                        </span>
+                      )}
+                      {r.difficulty_level && (
+                        <span className={META_TEXT}>{r.difficulty_level}</span>
+                      )}
                     </div>
-                    <div className="flex items-center gap-4 pt-2 border-t border-border/10">
-                      <div className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
-                        <Clock className="h-3.5 w-3.5" /> {r.duration_mins}m Duration
-                      </div>
-                      <Badge
-                        variant="outline"
-                        className="text-[8px] font-black uppercase tracking-tighter border-muted-foreground/20 h-5"
-                      >
-                        Tier: {r.difficulty_level}
-                      </Badge>
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        ) : (
-          <div className="py-32 text-center rounded-[48px] border-2 border-dashed border-border/40 bg-muted/5 animate-in zoom-in-95 duration-700">
-            <Sparkles className="h-16 w-16 text-primary/10 mx-auto mb-8 rotate-12" />
-            <h3 className="text-3xl font-black uppercase tracking-tighter mb-2">Expansion Protocols Active</h3>
-            <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
-              Daily artifact ingestion for {activeSection} logic is in progress.
-            </p>
-          </div>
-        )}
-      </section>
-
-      {/* High-Fidelity Call-to-Action: AI Integration */}
-      <Card className="rounded-[40px] border-none bg-slate-950 shadow-[0_40px_80px_-20px_rgba(0,0,0,0.4)] overflow-hidden relative group">
-        <div className="absolute top-0 right-0 w-[500px] h-[500px] bg-primary/10 rounded-full blur-[120px] -mr-40 -mt-40 group-hover:bg-primary/20 transition-all duration-1000" />
-        <CardContent className="p-10 relative z-10">
-          <div className="flex flex-col lg:flex-row items-center justify-between gap-12">
-            <div className="flex items-center gap-8 text-center lg:text-left">
-              <div className="h-20 w-20 rounded-[32px] bg-primary flex items-center justify-center shadow-2xl shadow-primary/40 rotate-6 group-hover:rotate-0 transition-transform">
-                <Mic className="h-10 w-10 text-white" />
-              </div>
-              <div className="space-y-2">
-                <h3 className="text-3xl font-black uppercase tracking-tighter italic text-white leading-none">
-                  Neural Speaking Examiner
-                </h3>
-                <p className="text-sm text-slate-400 font-medium italic">
-                  Execute high-fidelity speaking simulations in real-time with verified scoring.
-                </p>
-              </div>
-            </div>
-            <Button
-              size="lg"
-              className="w-full lg:w-auto h-16 px-12 rounded-2xl bg-white text-black hover:bg-slate-200 font-black uppercase tracking-[0.25em] text-[11px] shadow-2xl transition-all hover:scale-105 active:scale-95"
-              onClick={() => navigate("/app/agents/ielts-tutor")}
-            >
-              Start Simulation <ArrowRight className="ml-3 h-5 w-5" />
-            </Button>
-          </div>
-        </CardContent>
-      </Card>
-
-      {/* Terminal Footer */}
-      <footer className="mt-20 pt-10 border-t border-border/40 flex items-center justify-between opacity-30">
-        <div className="space-y-1">
-          <p className="text-[9px] font-black uppercase tracking-[0.4em] italic">
-            Language Registry: Verified Logic v2.6
-          </p>
-          <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
-            Calibration Status: Optimized
-          </p>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
         </div>
-        <div className="flex gap-2">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-1 w-8 rounded-full bg-primary/20" />
-          ))}
-        </div>
-      </footer>
+      ) : (
+        <EmptyState
+          icon={Sparkles}
+          title="More resources coming soon"
+          description={`We're adding new ${activeSection} resources regularly.`}
+        />
+      )}
 
-      {/* Logic Overlays */}
       <CreditGateModal
         isOpen={showCreditGate}
         onClose={() => setShowCreditGate(false)}
         onConfirm={handleConfirmPurchase}
-        onBuyCredits={() => {
-          setShowCreditGate(false);
-          setShowPurchaseSheet(true);
-        }}
+        onBuyCredits={() => { setShowCreditGate(false); setShowPurchaseSheet(true); }}
         serviceName={selectedResource?.title || "IELTS Module"}
         cost={ieltsCost}
         currentBalance={balance}
