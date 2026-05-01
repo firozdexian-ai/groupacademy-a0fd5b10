@@ -274,7 +274,7 @@ export function TalentAppShell() {
                           },
                         },
                         
-                      ].map(({ icon: Icon, label, action, suffix }) => (
+                      ] as { icon: any; label: string; action: () => void; suffix?: string }[]).map(({ icon: Icon, label, action, suffix }) => (
                         <button
                           key={label}
                           onClick={() => {
