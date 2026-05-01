@@ -158,11 +158,15 @@ export default function AssessmentResults() {
     },
   });
 
+  // Destructure for cleaner useEffect dependencies
+  const { mutate, isPending: isAnalyzing, isSuccess: hasAnalyzed } = analyzeMutation;
+
   useEffect(() => {
-    if (assessment && !assessment.ai_analysis && !analyzeMutation.isPending && !analyzeMutation.hasMutated) {
-      analyzeMutation.mutate(assessment.id);
+    // Check if we have an assessment, it lacks AI analysis, and we aren't currently analyzing or haven't already succeeded
+    if (assessment && !assessment.ai_analysis && !isAnalyzing && !hasAnalyzed) {
+      mutate(assessment.id);
     }
-  }, [assessment, analyzeMutation]);
+  }, [assessment, isAnalyzing, hasAnalyzed, mutate]);
 
   const shareText = `I scored ${assessment?.percentage}% on the Career Readiness Scorecard! 🎯 Check yours at GroUp Academy.`;
   const shareUrl = window.location.href;
@@ -212,7 +216,6 @@ export default function AssessmentResults() {
   }
 
   const level = readinessConfig[assessment.readiness_level?.toLowerCase()] || readinessConfig.beginner;
-  const isAnalyzing = analyzeMutation.isPending;
 
   return (
     <div className="min-h-screen bg-slate-50 font-sans text-slate-900">
