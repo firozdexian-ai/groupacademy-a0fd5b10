@@ -65,7 +65,7 @@ export default function ForCompanies() {
           <Link to="/" className="font-semibold text-lg">Group Academy</Link>
           <div className="flex items-center gap-2">
             <Link to="/auth"><Button variant="ghost" size="sm">Sign in</Button></Link>
-            <Link to="/for-companies/apply"><Button size="sm">Request access</Button></Link>
+            <Link to="/for-companies/signup"><Button size="sm">Get started free</Button></Link>
           </div>
         </div>
       </header>
@@ -80,9 +80,9 @@ export default function ForCompanies() {
           Group Academy gives your company access to a global talent pipeline, AI Career Agents for every employee, and a managed gigs marketplace.
         </p>
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
-          <Link to="/for-companies/apply">
+          <Link to="/for-companies/signup">
             <Button size="lg" className="gap-2">
-              Request company access <ArrowRight className="w-4 h-4" />
+              Get started free <ArrowRight className="w-4 h-4" />
             </Button>
           </Link>
           <a href="mailto:partners@groupacademy.online?subject=Talk%20to%20sales">
@@ -156,7 +156,7 @@ export default function ForCompanies() {
         <p className="text-muted-foreground mb-8 max-w-xl mx-auto">
           Join companies using Group Academy to find talent, develop teams, and deliver projects faster.
         </p>
-        <Link to="/for-companies/apply">
+        <Link to="/for-companies/signup">
           <Button size="lg" className="gap-2">
             Request access <ArrowRight className="w-4 h-4" />
           </Button>

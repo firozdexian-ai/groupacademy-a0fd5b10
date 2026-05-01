@@ -109,24 +109,14 @@ export default function CompanyPortal() {
       <div className="h-screen flex items-center justify-center p-6">
         <div className="max-w-md text-center space-y-4">
           <Building2 className="h-12 w-12 mx-auto text-muted-foreground" />
-          <h1 className="text-2xl font-black">No company access</h1>
+          <h1 className="text-2xl font-bold">No company workspace yet</h1>
           <p className="text-sm text-muted-foreground">
-            Your account isn't linked to any company yet. If your admin has invited you,
-            sign in with the same email used for the invite. Otherwise, request access below.
+            Your account isn't linked to a company. Create your free workspace in 30 seconds —
+            you'll get 250 free credits and 2 starter AI agents instantly.
           </p>
           <div className="flex flex-col gap-2 pt-2">
-            <Button
-              onClick={() =>
-                window.open(
-                  `mailto:hello@groupacademy.online?subject=${encodeURIComponent(
-                    "Company Portal access request",
-                  )}&body=${encodeURIComponent(
-                    `Hi GroUp team,\n\nI'd like to onboard my company on the Company Portal.\n\nName: \nCompany: \nRole: \nWebsite: \n\nThanks.`,
-                  )}`,
-                )
-              }
-            >
-              Request company onboarding
+            <Button onClick={() => navigate("/for-companies/signup")}>
+              Create company workspace
             </Button>
             <Button variant="outline" onClick={() => navigate("/app/feed")}>
               Go to talent app
