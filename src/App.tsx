@@ -28,8 +28,7 @@ import PortfolioStatus from "./pages/PortfolioStatus";
 import CourseDetail from "./pages/CourseDetail";
 import PublicServiceLanding from "./pages/PublicServiceLanding";
 import PublicServices from "./pages/PublicServices";
-import ForCompanies from "./pages/public/ForCompanies";
-import CompanySignup from "./pages/public/CompanySignup";
+// Legacy B2B pages removed — all B2B traffic now flows through /gro10x
 import PublicCourses from "./pages/PublicCourses";
 import ServiceLanding from "./pages/ServiceLanding";
 import VerifyCertificate from "./pages/VerifyCertificate";
@@ -38,7 +37,7 @@ import { PWAUpdatePrompt } from "./components/PWAUpdatePrompt";
 
 // Admin Pages
 import Dashboard from "./pages/Dashboard";
-import CompanyPortal from "./pages/company/CompanyPortal";
+// CompanyPortal retired — /company now redirects to /gro10x
 import Students from "./pages/Students";
 import Enrollments from "./pages/Enrollments";
 import Instructors from "./pages/Instructors";
@@ -214,9 +213,10 @@ export default function App() {
                   <Route path="/courses" element={<PublicCourses />} />
                   <Route path="/services" element={<PublicServices />} />
                   <Route path="/career-services" element={<PublicServices />} />
-                  <Route path="/for-companies" element={<ForCompanies />} />
-                  <Route path="/for-companies/signup" element={<CompanySignup />} />
-                  <Route path="/for-companies/apply" element={<CompanySignup />} />
+                  {/* Legacy B2B routes — redirect to the unified Gro10x funnel */}
+                  <Route path="/for-companies" element={<Navigate to="/gro10x" replace />} />
+                  <Route path="/for-companies/signup" element={<Navigate to="/gro10x/auth" replace />} />
+                  <Route path="/for-companies/apply" element={<Navigate to="/gro10x/auth" replace />} />
 
                   {/* ================= GRO10X (B2B super-app) ================= */}
                   <Route path="/gro10x/*" element={<Gro10xRoutes />} />
@@ -264,9 +264,9 @@ export default function App() {
                       </ProtectedRoute>
                     }
                   />
-                  {/* ================= COMPANY PORTAL ================ */}
-                  <Route path="/company" element={<CompanyPortal />} />
-                  <Route path="/company/*" element={<CompanyPortal />} />
+                  {/* Legacy company portal — redirect to Gro10x */}
+                  <Route path="/company" element={<Navigate to="/gro10x" replace />} />
+                  <Route path="/company/*" element={<Navigate to="/gro10x" replace />} />
                   <Route
                     path="/students"
                     element={
