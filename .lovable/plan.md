@@ -1,90 +1,99 @@
-## Phase 11F — Gig Categorization, Platform Tasks & Verified Disbursement
+# Phase 11G — Compact Mobile Gig Hub + Autonomous Approval
 
-Three coordinated changes based on your feedback:
-
-1. **Recategorize gigs by resource type** (not by school) so academy build-out fits naturally inside Projects.
-2. **Rename "Quick" to "Platform Tasks"**, drop top filters, expand the catalog of incentivized actions.
-3. **Real verification** with primary/secondary disbursement accounts and ID/passport upload.
+Two intertwined goals:
+1. **Make the Gig Ecosystem screen actually mobile-friendly** (tabs no longer collide at 390px, cards become dense rows, header collapses).
+2. **Auto-approve and auto-credit most platform tasks** so the human reviewer is only needed for genuinely ambiguous cases.
 
 ---
 
-### 1. Resource-type categories (replaces school faculties as the gig taxonomy)
+## Part A — Mobile UI Compaction
 
-New canonical category set used everywhere a gig is filtered or tagged:
+### Screen header (`Gigs.tsx`)
+- Drop the 5xl italic title for mobile; show a compact header (`text-2xl`) with the verification chip inline (badge instead of full card on <md).
+- Remove "Neural Economy Protocol v2.6" tagline on mobile.
 
-| Category | Maps to academy resources | Maps to marketplace work |
-|---|---|---|
-| Creative Services | Course cover, banner, thumbnails, slide deck design | Logo, brand, social posts |
-| Video & Production | Lecture videos, intros, screencasts | Promo videos, reels |
-| Writing & Content | Reading material, articles, scripts, captions | Blog posts, copy |
-| Slides & Decks | Slide deck per module | Pitch decks |
-| Quizzes & Assessments | Stage 5 quizzes, flashcards | — |
-| Practice & Exercises | Stage 4 worksheets, labs | — |
-| Web & Tech | Embeds, code samples | Web dev, automation |
-| Audio & Podcast | Audio summaries | Podcast edits |
-| Translation & Localization | BN/EN versions of resources | Translation |
+### Tab strip (the one that "intercollides")
+- 4 tabs in a `grid-cols-4` at `h-16` with `text-[10px]` + 4-letter words + icon overflow at 390px.
+- Replace with a horizontally-scrollable pill row (`overflow-x-auto snap-x`) on mobile, icon-only with tooltip; full label appears at `md:`.
+- Height drops to `h-11`, padding `p-1`.
 
-- Add `resource_category` column to `content_gigs` and a derived mapper from existing `resource_type` → category, plus the same column on `marketplace_gigs` (replacing `skill_category` as the user-facing axis; keep the old column for back-compat).
-- The Projects sidebar is replaced by this list. Selecting a category shows BOTH academy-funded content gigs and marketplace projects in that category, so academy work feeds the same pipeline ("projects remain always active").
+### Platform Task cards (`GigCard.tsx`)
+- Current card is ~220px tall (icon 14×14, big title, requirements row, footer with badges + button). Convert to a **compact row** on mobile:
+  - 1 line title, 1 line description (`line-clamp-1`).
+  - Inline reward chip + max-completion progress.
+  - Right-aligned arrow; tap row anywhere to open the submission sheet.
+  - Drop the decorative Zap watermark and rotating icon hover effects.
+- Grid: `grid-cols-1` mobile, `md:grid-cols-2`. Card height target: ~88px.
+- Strip the `_` underscore and `CR_REWARD` jargon from labels.
 
-### 2. Quick → "Platform Tasks"
+### Projects tab
+- Sidebar (`grid-cols-[280px,1fr]`) hides on mobile; replace with a horizontal category chip strip above the list.
+- Project card: shrink to ~120px row with title, category chip, credits, bid count.
 
-- Rename tab and remove the horizontal filter chips (you confirmed they aren't needed).
-- Single scrollable list grouped by reward size.
-- Expand the seeded `gigs` catalog with new task types so people are rewarded for everything that grows the platform:
-  - Upload free educational video (with topic suggestion)
-  - Write & publish a feed post (min length, approved by mod)
-  - Create a poll for the community
-  - Share a course/job to socials with tracked link (already partly built — surface here)
-  - Refer a friend who completes onboarding
-  - Submit a verified company lead
-  - Write a short review of a course they completed
-  - Submit a salary data point
-  - Translate one resource to Bangla / English
-- Each is a row in the existing `gigs` table with reward, cooldown, max submissions; reuses `gig_submissions` + admin review.
-
-### 3. Profile verification + disbursement
-
-You correctly noticed Profile says "verified" but Gig header says "Verification Pending" — they're checking different things. Unify it:
-
-**Verification gates earning withdrawal**, not just visual badge.
-
-Required for verified status:
-- Photo, phone, country (already tracked)
-- Either National ID (both sides) **or** Passport scan uploaded to private `talent-id-docs` bucket (signed URLs only)
-- One **primary** disbursement account on file
-
-New tables:
-- `talent_id_documents` — `talent_id`, `doc_type` (`nid` | `passport`), `front_url`, `back_url`, `extracted_name`, `extracted_number`, `status` (`pending` | `verified` | `rejected`), `reviewed_by`, `review_notes`. Optional Lovable AI extraction (Gemini vision) of name/number for admin to confirm.
-- `talent_payout_accounts` — `talent_id`, `method` (bkash/bank/paypal/wise), `account_name`, `account_number`, `is_primary` (only one true per talent), `created_at`. Trigger enforces single primary.
-- `talents.verification_status` (`unverified` | `pending` | `verified`) with a server-side function `recompute_talent_verification(talent_id)` that flips it based on the rules above.
-
-UI changes:
-- New `/app/profile/verify` upgraded with two new sections: **Identity document** (NID/passport upload, both pages) and **Disbursement accounts** (list + add + set primary). Remove the existing one-shot account fields from the Withdrawal page; instead Withdrawals just picks from saved accounts (default = primary).
-- Gigs header "Verification Pending" pill becomes a real link to `/app/profile/verify` and reflects `verification_status`.
-- Admin: new "Identity Reviews" subsection under Talent Management for approving uploaded IDs.
+### Build Academy tab
+- Audit `BuildAcademyTab.tsx` for the same density rules (single-column on mobile, smaller hero).
 
 ---
 
-### Technical notes
+## Part B — Autonomous Approval & Credit Disbursement
 
-- DB migration: 3 new tables, 2 columns on existing tables, 1 storage bucket (`talent-id-docs`, private), RLS so a talent only sees their own docs/accounts and admins see all.
-- `recompute_talent_verification` runs on insert/update of `talent_id_documents` and `talent_payout_accounts` via triggers.
-- Withdrawal RLS: block insert when `verification_status != 'verified'`.
-- `BuildAcademyTab` Apply form survives but is also reachable from Profile.
-- No breaking change to `MARKETPLACE_SCHOOLS` — schools remain for course catalog; only the Projects tab switches its filter axis.
+Goal: when a talent submits a platform task, the system decides automatically whether to approve, reject, or escalate to a human, and credits are disbursed in the same transaction.
 
-### Files touched
+### New columns on `gigs`
+- `auto_approval_mode` text — one of `manual`, `link_check`, `ai_score`, `event_trigger`.
+- `auto_approval_config` jsonb — per-task tuning (min AI score, allowed domains, expected event name, score-to-credit curve).
 
-- New: `supabase/migrations/..._verification_disbursement_categories.sql`
-- New: `src/components/profile/IdentityDocsUpload.tsx`
-- New: `src/components/profile/PayoutAccountsManager.tsx`
-- New: `src/lib/constants/gigCategories.ts`
-- Edit: `src/pages/app/Gigs.tsx` (rename tab, drop filters, swap Projects taxonomy, real verification badge)
-- Edit: `src/pages/app/ProfileVerify.tsx` (add two sections + real status)
-- Edit: `src/pages/app/Withdrawals.tsx` (use saved accounts, gate on verified)
-- Edit: `src/pages/app/ContentStudio.tsx` and `BuildAcademyTab.tsx` (filter by `resource_category`)
-- Edit: `src/components/dashboard/AdminSidebar.tsx` + new `IdentityReviews.tsx` admin page
-- Data: insert ~8 new rows into `gigs` for the expanded Platform Tasks catalog
+### New columns on `gig_submissions`
+- `ai_score` numeric(4,2) — 0-10 quality score.
+- `ai_feedback` text — short reasoning shown to the talent.
+- `auto_decision` text — `approved`, `rejected`, `escalated`.
+- `processed_at` timestamptz.
 
-Approve to implement.
+### Edge function: `auto-review-gig-submission`
+Triggered immediately after a `gig_submissions` insert (via DB trigger calling `pg_net` to invoke the function, or via the client right after insert). Logic per task category:
+
+| Category | Auto check |
+|---|---|
+| `job_sharing` (Share a Job Lead, Spread the Word, Refer a friend) | Verify the URL is a `groupacademy.online` job/share link with a valid `ref=<talent_id>` query param. Cross-check `referral_logs` / `gig_share_logs` for clicks. Auto-approve when ≥1 verified visit. |
+| `content_creation` (Write & publish a feed post, Create a poll, Course review, Salary data point) | Read the linked `feed_posts` / `course_reviews` row owned by the talent. Send title + body to Lovable AI Gateway with `google/gemini-3-flash-preview` and a structured-output tool that returns `{score: 0-10, reasons, flags: [spam, low_effort, off_topic, ok]}`. Map score → credit multiplier (0.5×–1.25× of base reward). Auto-approve at score ≥ 6, auto-reject at < 3, escalate in between. |
+| `content_creation` (Upload a free educational video, Translate a resource) | Confirm the referenced asset exists in `course_resources` / `module_resources` and is published. Run a lightweight AI metadata check on title/description quality; same scoring band. |
+| `cv_upload` (Help a Friend Get Discovered) | Confirm a new talent row exists with the `referrer_id` matching, plus a parsed CV. Auto-approve. |
+| `job_posting` (Submit a verified company lead, Share a Job Lead) | Validate domain + dedupe against existing `companies`/`jobs`; auto-approve unique entries, escalate duplicates. |
+| `course_resell` (Recommend a Course) | Verify share log + at least one click; auto-approve. |
+| Any task with `auto_approval_mode = 'manual'` | Stays in admin queue (current behavior). |
+
+The function calls a SECURITY DEFINER RPC `finalize_gig_submission(submission_id, decision, score, feedback, credit_amount)` that:
+- Writes status, ai_score, feedback.
+- Inserts a `credit_transactions` row of type `earned` when approved (no double-credit guard via unique `(gig_submission_id)`).
+- Notifies the talent.
+
+### UI surfacing
+- Submission form (`GigSubmissionForm.tsx`) shows "Reviewed automatically — usually within a minute" for auto-eligible tasks.
+- `MySubmissions.tsx` displays AI score and feedback line when present.
+- Admin queue keeps only `escalated` + `manual` items.
+
+### Safety
+- Hard caps from `max_completions_per_user` enforced before scoring.
+- Same-talent rate limit: max 5 auto-approvals/hour per category to deter farming.
+- All AI calls are server-side via the edge function (LOVABLE_API_KEY).
+
+---
+
+## Files
+
+**Edit**
+- `src/pages/app/Gigs.tsx` — responsive header, scrollable tabs, mobile category chips.
+- `src/components/gigs/GigCard.tsx` — compact row layout, copy cleanup.
+- `src/components/gigs/BuildAcademyTab.tsx` — density pass.
+- `src/components/gigs/MySubmissions.tsx` — show AI score/feedback.
+- `src/components/gigs/GigSubmissionForm.tsx` — auto-review messaging.
+- `src/components/dashboard/GigSubmissionsManager.tsx` (admin queue) — filter to escalated/manual only by default.
+
+**Create**
+- `supabase/functions/auto-review-gig-submission/index.ts` — orchestrator described above.
+- `supabase/migrations/<ts>_gig_autonomous_approval.sql` — new columns, `finalize_gig_submission` RPC, seed `auto_approval_mode` per existing gig, after-insert trigger that calls `pg_net` to invoke the edge function.
+
+---
+
+## Open question
+None blocking. After approval I'll implement Part A first (visible immediately on `/app/gigs` at 390px), then Part B (database + edge function + admin queue refresh).

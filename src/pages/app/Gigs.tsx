@@ -205,193 +205,155 @@ export default function Gigs() {
   });
 
   return (
-    <div className="max-w-6xl mx-auto px-6 py-10 space-y-12 pb-40 animate-in fade-in duration-1000">
-      {/* Immersive Executive Header */}
-      <header className="flex flex-col md:flex-row md:items-end justify-between gap-8">
-        <div className="space-y-2">
-          <h1 className="text-5xl font-black tracking-tighter uppercase italic leading-[0.9]">Gig Ecosystem</h1>
-          <div className="flex items-center gap-3">
-            <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.3em] italic">
-              Neural Economy Protocol v2.6
-            </p>
+    <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-10 space-y-4 sm:space-y-8 pb-32 animate-in fade-in duration-500">
+      {/* Compact mobile-first header */}
+      <header className="space-y-3">
+        <div className="flex items-center justify-between gap-3">
+          <div className="min-w-0">
+            <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-none truncate">Gig Hub</h1>
+            <p className="text-[11px] text-muted-foreground mt-1">Earn credits, build the platform.</p>
           </div>
+          <button
+            type="button"
+            onClick={() => navigate("/app/profile/verify")}
+            className={cn(
+              "flex items-center gap-2 px-3 py-2 rounded-xl border text-[11px] font-semibold shrink-0 transition-all active:scale-95",
+              verificationStatus === "verified"
+                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700"
+                : "border-amber-500/30 bg-amber-500/10 text-amber-700",
+            )}
+          >
+            <ShieldCheck className="h-4 w-4" />
+            <span className="hidden sm:inline">
+              {verificationStatus === "verified" ? "Verified" : "Verify to withdraw"}
+            </span>
+            <span className="sm:hidden">{verificationStatus === "verified" ? "Verified" : "Verify"}</span>
+          </button>
         </div>
-
-        <Card
-          className={cn(
-            "rounded-[28px] border-2 shadow-2xl overflow-hidden min-w-[280px] cursor-pointer transition-all hover:shadow-xl",
-            verificationStatus === "verified"
-              ? "border-emerald-500/30 bg-emerald-500/5"
-              : "border-amber-400/30 bg-amber-50/50",
-          )}
-          onClick={() => navigate("/app/profile/verify")}
-        >
-          <CardContent className="p-5 flex items-center gap-5">
-            <div
-              className={cn(
-                "h-12 w-12 rounded-[20px] flex items-center justify-center rotate-3 shadow-xl",
-                verificationStatus === "verified" ? "bg-emerald-500" : "bg-amber-500",
-              )}
-            >
-              <ShieldCheck className="h-6 w-6 text-white" />
-            </div>
-            <div>
-              <p className="text-[10px] font-black uppercase text-primary tracking-[0.2em] italic">
-                {verificationStatus === "verified" ? "Verified Talent" : "Verification " + verificationStatus}
-              </p>
-              <p className="text-lg font-black tracking-tighter leading-none mt-0.5">
-                {verificationStatus === "verified" ? "Withdrawals enabled" : "Tap to verify"}
-              </p>
-            </div>
-          </CardContent>
-        </Card>
       </header>
 
-      {/* Primary Orchestration HUD */}
+      {/* Tab strip — scrollable on mobile, no collisions */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 p-1.5 h-16 bg-muted/30 backdrop-blur-md rounded-[32px] border border-border/40 max-w-3xl">
+        <TabsList className="flex w-full overflow-x-auto no-scrollbar h-11 sm:h-12 bg-muted/40 p-1 rounded-xl border border-border/40 max-w-3xl gap-1">
           {[
-            { id: "tasks", label: "Platform Tasks", icon: ClipboardList },
+            { id: "tasks", label: "Tasks", icon: ClipboardList },
             { id: "projects", label: "Projects", icon: Target },
-            { id: "build", label: "Build Academy", icon: Hammer },
-            { id: "activity", label: "My Activity", icon: Activity },
+            { id: "build", label: "Build", icon: Hammer },
+            { id: "activity", label: "Activity", icon: Activity },
           ].map((tab) => (
             <TabsTrigger
               key={tab.id}
               value={tab.id}
-              className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="flex-1 min-w-[72px] rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
             >
-              <tab.icon className="h-4 w-4" /> {tab.label}
+              <tab.icon className="h-3.5 w-3.5" /> {tab.label}
             </TabsTrigger>
           ))}
         </TabsList>
 
-        <TabsContent value="tasks" className="mt-12 space-y-6 animate-in slide-in-from-bottom-4 duration-700">
-          <div className="space-y-2">
-            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic">Platform Tasks</p>
-            <p className="text-sm text-muted-foreground max-w-2xl">
-              Earn credits by helping the platform grow — upload videos, share jobs, refer friends, post on the feed, translate resources, and more.
+        <TabsContent value="tasks" className="mt-4 sm:mt-6 space-y-3 animate-in fade-in duration-300">
+          <div>
+            <p className="text-xs font-bold uppercase tracking-wide text-primary">Platform Tasks</p>
+            <p className="text-[12px] text-muted-foreground mt-1">
+              Earn credits by helping the platform grow. Most tasks are reviewed automatically.
             </p>
           </div>
-          <div className="grid gap-6 md:grid-cols-2">
+          <div className="grid gap-2 sm:grid-cols-2 sm:gap-3">
             {gigsLoading
-              ? [...Array(4)].map((_, i) => <Skeleton key={i} className="h-40 rounded-[32px] bg-muted/40" />)
+              ? [...Array(6)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl bg-muted/40" />)
               : gigs?.map((gig) => <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />)}
           </div>
         </TabsContent>
 
-        <TabsContent value="projects" className="mt-12 space-y-10 animate-in slide-in-from-bottom-4 duration-700">
-          <div className="grid md:grid-cols-[280px,1fr] gap-12">
-            <aside className="space-y-10">
-              <div className="relative group">
-                <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
-                <Input
-                  placeholder="Query projects..."
-                  className="pl-12 h-14 bg-card/50 backdrop-blur-sm border-2 border-border/40 rounded-2xl font-bold tracking-tight"
-                  value={projectSearch}
-                  onChange={(e) => setProjectSearch(e.target.value)}
-                />
-              </div>
-              <div className="space-y-4">
-                <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary ml-1 italic">
-                  Resource Categories
-                </p>
-                <div className="flex flex-col gap-2">
-                  <Button
-                    variant={!selectedProjectCategory ? "secondary" : "ghost"}
-                    className="justify-between h-12 px-5 font-black uppercase text-[10px] tracking-widest rounded-xl transition-all"
-                    onClick={() => setSelectedProjectCategory(null)}
-                  >
-                    All Projects <ChevronRight className="h-3.5 w-3.5 opacity-20" />
-                  </Button>
-                  {GIG_CATEGORIES.map((s) => (
-                    <Button
-                      key={s.value}
-                      variant={selectedProjectCategory === s.value ? "secondary" : "ghost"}
-                      className="justify-between h-12 px-5 font-black uppercase text-[10px] tracking-widest rounded-xl transition-all"
-                      onClick={() => setSelectedProjectCategory(s.value)}
-                    >
-                      {s.label} <ChevronRight className="h-3.5 w-3.5 opacity-20" />
-                    </Button>
-                  ))}
-                </div>
-              </div>
-            </aside>
+        <TabsContent value="projects" className="mt-4 sm:mt-6 space-y-4 animate-in fade-in duration-300">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Input
+              placeholder="Search projects..."
+              className="pl-9 h-10 rounded-xl text-sm"
+              value={projectSearch}
+              onChange={(e) => setProjectSearch(e.target.value)}
+            />
+          </div>
 
-            <main className="space-y-6">
-              {projectsLoading ? (
-                <Skeleton className="h-[600px] rounded-[40px] bg-muted/40" />
-              ) : (
-                projects
-                  ?.filter((p: any) => !projectSearch || p.title.toLowerCase().includes(projectSearch.toLowerCase()))
-                  .map((gig: any) => {
-                    const cat = GIG_CATEGORY_MAP[gig.resource_category as GigCategory];
-                    const isAcademy = gig.kind === "academy";
-                    return (
-                      <Card
-                        key={gig.id}
-                        className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm hover:border-primary/40 transition-all duration-500 cursor-pointer overflow-hidden group shadow-sm hover:shadow-2xl"
-                        onClick={() => navigate(isAcademy ? `/app/studio` : `/app/marketplace/${gig.id}`)}
-                      >
-                        <CardContent className="p-8">
-                          <div className="flex justify-between items-start gap-8">
-                            <div className="space-y-5">
-                              <div className="flex flex-wrap gap-3 items-center">
-                                <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">
-                                  {cat?.label || gig.resource_category}
-                                </Badge>
-                                <Badge variant="outline" className="text-[9px] font-black uppercase tracking-widest">
-                                  {isAcademy ? "Academy" : "Marketplace"}
-                                </Badge>
-                              </div>
-                              <h3 className="text-3xl font-black tracking-tighter uppercase italic leading-none group-hover:text-primary transition-colors">
-                                {gig.title}
-                              </h3>
-                              <p className="text-sm text-muted-foreground/80 font-medium leading-relaxed italic line-clamp-2">
-                                {gig.description}
-                              </p>
-                              <div className="flex items-center gap-6 pt-2">
-                                <div className="flex items-center gap-2.5">
-                                  <div className="p-2 bg-amber-500/10 rounded-lg">
-                                    <Coins className="h-4 w-4 text-amber-500" />
-                                  </div>
-                                  <span className="text-lg font-black tracking-tighter uppercase italic">
-                                    {gig.budget_amount} Credits
-                                  </span>
-                                </div>
-                                {!isAcademy && (
-                                  <div className="flex items-center gap-2.5">
-                                    <div className="p-2 bg-blue-500/10 rounded-lg">
-                                      <Send className="h-4 w-4 text-blue-500" />
-                                    </div>
-                                    <span className="text-sm font-black text-muted-foreground/60 uppercase italic">
-                                      {gig.total_bids || 0} Bids
-                                    </span>
-                                  </div>
-                                )}
-                              </div>
-                            </div>
-                            <div className="h-14 w-14 rounded-2xl bg-muted/50 border border-border/20 flex items-center justify-center transition-all group-hover:rotate-6 group-hover:bg-primary/10">
-                              <ChevronRight className="h-6 w-6 text-muted-foreground/30 group-hover:text-primary" />
-                            </div>
+          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-3 px-3 pb-1">
+            <Button
+              variant={!selectedProjectCategory ? "default" : "outline"}
+              size="sm"
+              className="rounded-full h-8 text-xs font-semibold shrink-0"
+              onClick={() => setSelectedProjectCategory(null)}
+            >
+              All
+            </Button>
+            {GIG_CATEGORIES.map((s) => (
+              <Button
+                key={s.value}
+                variant={selectedProjectCategory === s.value ? "default" : "outline"}
+                size="sm"
+                className="rounded-full h-8 text-xs font-semibold shrink-0"
+                onClick={() => setSelectedProjectCategory(s.value)}
+              >
+                {s.label}
+              </Button>
+            ))}
+          </div>
+
+          <div className="space-y-2">
+            {projectsLoading ? (
+              [...Array(4)].map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl bg-muted/40" />)
+            ) : (
+              projects
+                ?.filter((p: any) => !projectSearch || p.title.toLowerCase().includes(projectSearch.toLowerCase()))
+                .map((gig: any) => {
+                  const cat = GIG_CATEGORY_MAP[gig.resource_category as GigCategory];
+                  const isAcademy = gig.kind === "academy";
+                  return (
+                    <button
+                      key={gig.id}
+                      type="button"
+                      onClick={() => navigate(isAcademy ? `/app/studio` : `/app/marketplace/${gig.id}`)}
+                      className="w-full text-left rounded-2xl border border-border/50 bg-card/60 hover:border-primary/40 hover:shadow-md transition-all px-3 py-3 sm:px-4 active:scale-[0.99]"
+                    >
+                      <div className="flex items-start gap-3">
+                        <div className="min-w-0 flex-1 space-y-1.5">
+                          <div className="flex flex-wrap items-center gap-1.5">
+                            <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold px-1.5 h-5">
+                              {cat?.label || gig.resource_category}
+                            </Badge>
+                            <Badge variant="outline" className="text-[10px] font-semibold px-1.5 h-5">
+                              {isAcademy ? "Academy" : "Marketplace"}
+                            </Badge>
                           </div>
-                        </CardContent>
-                      </Card>
-                    );
-                  })
-              )}
-            </main>
+                          <h3 className="text-sm font-bold leading-tight line-clamp-1">{gig.title}</h3>
+                          <p className="text-[11px] text-muted-foreground line-clamp-1">{gig.description}</p>
+                          <div className="flex items-center gap-3 pt-0.5">
+                            <span className="flex items-center gap-1 text-xs font-bold text-amber-700">
+                              <Coins className="h-3 w-3" /> {gig.budget_amount}
+                            </span>
+                            {!isAcademy && (
+                              <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                                <Send className="h-3 w-3" /> {gig.total_bids || 0} bids
+                              </span>
+                            )}
+                          </div>
+                        </div>
+                        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+                      </div>
+                    </button>
+                  );
+                })
+            )}
           </div>
         </TabsContent>
 
-        <TabsContent value="build" className="mt-12 animate-in slide-in-from-bottom-4 duration-700">
+        <TabsContent value="build" className="mt-4 sm:mt-6 animate-in fade-in duration-300">
           <BuildAcademyTab />
         </TabsContent>
 
-        <TabsContent value="activity" className="mt-12 space-y-16 animate-in slide-in-from-bottom-4 duration-700">
-          <section className="space-y-6">
-            <h3 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary flex items-center gap-4">
-              <ClipboardList className="h-5 w-5" /> Operational Mission Queue
+        <TabsContent value="activity" className="mt-4 sm:mt-6 space-y-6 animate-in fade-in duration-300">
+          <section className="space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wide text-primary flex items-center gap-2">
+              <ClipboardList className="h-4 w-4" /> My Submissions
             </h3>
             <MySubmissions talentId={talent?.id} />
           </section>
