@@ -231,13 +231,13 @@ export function TalentAppShell() {
 
                   <ScrollArea className="flex-1">
                     <div className="py-2 space-y-0.5">
-                      {[
+                      {([
                         { icon: Coins, label: "Buy Credits", action: () => credits.open() },
                         { icon: Receipt, label: "Transactions", action: () => navigate("/app/transactions") },
                         { icon: Wallet, label: "Withdraw earnings", action: () => navigate("/app/withdrawals") },
                         { icon: Bookmark, label: "Saved Jobs", action: () => navigate("/app/saved") },
                         { icon: BookOpen, label: "My Learning", action: () => navigate("/app/learning/my-courses") },
-                        { icon: Globe, label: "Career Abroad", action: () => navigate("/app/abroad") },
+                        { icon: Globe, label: "Study & Work Abroad", action: () => navigate("/app/abroad"), suffix: "New" },
                         { icon: FileText, label: "My Applications", action: () => navigate("/app/applications") },
                         ...(hasCompanyAccess
                           ? [{ icon: Sparkles, label: "Switch to Company Portal", action: () => window.open("/company", "_blank") }]
