@@ -101,48 +101,47 @@ const AuthChat = () => {
     return placeholders[action] || "Type a message...";
   };
 
-  if (authLoading)
+  if (authLoading) {
     return (
-      <div className="min-h-screen flex flex-col items-center justify-center bg-background">
-        <Loader2 className="w-10 h-10 animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] mt-4 text-muted-foreground">
-          Authenticating Node
-        </p>
+      <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50">
+        <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
+        <p className="text-[10px] font-bold uppercase tracking-widest mt-4 text-slate-500">Authenticating Node</p>
       </div>
     );
+  }
 
   const isPasswordAction = currentAction === "collect_password" || currentAction === "set_password";
   const isPhoneAction = currentAction === "collect_phone";
 
   return (
-    <div className="min-h-screen flex flex-col bg-background selection:bg-primary/10">
+    <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900 selection:bg-blue-500/10">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-border/40 bg-card/50 backdrop-blur-xl sticky top-0 z-10">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white/80 backdrop-blur-xl sticky top-0 z-10">
         <button onClick={() => navigate("/")} className="hover:opacity-80 transition-opacity">
           <img src={theme === "dark" ? logoLight : logoDark} alt="GroUp Academy" className="h-7" />
         </button>
-        <div className="flex items-center gap-2 px-3 py-1 rounded-full bg-primary/5 border border-primary/10">
-          <ShieldCheck className="w-3.5 h-3.5 text-primary" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-primary">AES-256 Verified</span>
+        <div className="flex items-center gap-2 px-4 py-1.5 rounded-full bg-emerald-50 border border-emerald-100">
+          <ShieldCheck className="w-3.5 h-3.5 text-emerald-600" />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-emerald-700">AES-256 Verified</span>
         </div>
       </header>
 
       {/* Agent Status */}
-      <div className="flex items-center gap-3 px-6 py-4 bg-primary/[0.02] border-b border-border/40">
+      <div className="flex items-center gap-4 px-6 py-4 bg-white border-b border-slate-100 shadow-sm z-0">
         <div className="relative">
-          <div className="w-10 h-10 rounded-2xl bg-primary flex items-center justify-center shadow-lg shadow-primary/20">
-            <Sparkles className="w-5 h-5 text-primary-foreground" />
+          <div className="w-12 h-12 rounded-[16px] bg-blue-50 flex items-center justify-center border border-blue-100">
+            <Sparkles className="w-6 h-6 text-blue-500" />
           </div>
-          <div className="absolute -bottom-1 -right-1 w-3.5 h-3.5 bg-emerald-500 border-2 border-background rounded-full" />
+          <div className="absolute -bottom-1 -right-1 w-4 h-4 bg-emerald-500 border-2 border-white rounded-full shadow-sm" />
         </div>
         <div>
-          <p className="text-sm font-black tracking-tight text-foreground uppercase">{agentName}</p>
-          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">Platform Gatekeeper</p>
+          <p className="text-lg font-black tracking-tighter text-slate-900 uppercase">{agentName}</p>
+          <p className="text-[10px] font-bold text-slate-500 uppercase tracking-widest">Platform Gatekeeper</p>
         </div>
       </div>
 
       {/* Message Stream */}
-      <div className="flex-1 overflow-y-auto px-6 py-6 space-y-6">
+      <div className="flex-1 overflow-y-auto px-4 md:px-6 py-8 space-y-6">
         {messages.map((msg) => (
           <div
             key={msg.id}
@@ -153,10 +152,10 @@ const AuthChat = () => {
           >
             <div
               className={cn(
-                "max-w-[85%] sm:max-w-[70%] rounded-[24px] px-5 py-3.5 text-sm leading-relaxed shadow-sm",
+                "max-w-[85%] sm:max-w-[70%] px-6 py-4 text-sm md:text-base leading-relaxed shadow-sm",
                 msg.role === "user"
-                  ? "bg-primary text-primary-foreground rounded-br-md"
-                  : "bg-card border border-border/40 text-foreground rounded-bl-md",
+                  ? "bg-blue-500 text-white rounded-[24px] rounded-br-sm font-medium"
+                  : "bg-white border border-slate-100 text-slate-700 rounded-[24px] rounded-bl-sm",
               )}
             >
               {msg.content}
@@ -165,13 +164,13 @@ const AuthChat = () => {
         ))}
 
         {isLoading && (
-          <div className="flex justify-start">
-            <div className="bg-card border border-border/40 rounded-[20px] rounded-bl-md px-5 py-4">
+          <div className="flex justify-start animate-in fade-in">
+            <div className="bg-white border border-slate-100 rounded-[24px] rounded-bl-sm px-6 py-5 shadow-sm">
               <div className="flex gap-1.5">
-                {[0, 150, 300].map((delay) => (
+                {[150, 300].map((delay) => (
                   <div
                     key={delay}
-                    className="w-1.5 h-1.5 rounded-full bg-primary/40 animate-bounce"
+                    className="w-2 h-2 rounded-full bg-blue-500/40 animate-bounce"
                     style={{ animationDelay: `${delay}ms` }}
                   />
                 ))}
@@ -185,10 +184,10 @@ const AuthChat = () => {
             <Button
               size="lg"
               onClick={() => navigate(searchParams.get("returnTo") || "/app/feed")}
-              className="rounded-2xl h-14 px-10 gap-3 text-sm font-black uppercase tracking-widest shadow-2xl shadow-primary/30 group"
+              className="rounded-full h-14 px-10 gap-3 text-[10px] font-black uppercase tracking-widest bg-slate-800 hover:bg-slate-900 text-white shadow-xl group"
             >
               Initialize Platform Access
-              <ArrowRight className="w-5 h-5 group-hover:translate-x-1 transition-transform" />
+              <ArrowRight className="w-4 h-4 group-hover:translate-x-1 transition-transform" />
             </Button>
           </div>
         )}
@@ -197,13 +196,13 @@ const AuthChat = () => {
 
       {/* Conversation Controller */}
       {!isComplete && (
-        <div className="border-t border-border/40 bg-card/80 backdrop-blur-2xl px-6 py-6 pb-10">
+        <div className="border-t border-slate-200 bg-white/95 backdrop-blur-2xl px-4 md:px-6 py-6 pb-8">
           <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-4">
             {currentAction === "collect_password" && flow === "login" && (
               <button
                 type="button"
                 onClick={handleForgotPassword}
-                className="text-[10px] font-black uppercase tracking-widest text-primary hover:text-primary/70 transition-colors ml-1"
+                className="text-[10px] font-bold uppercase tracking-widest text-blue-500 hover:text-blue-600 transition-colors ml-2"
               >
                 Recovery Request?
               </button>
@@ -217,6 +216,7 @@ const AuthChat = () => {
                     countryCode={collectedData.countryCode}
                     onValueChange={setPhoneValue}
                     onCountryCodeChange={(cc, c) => updatePhoneData(phoneValue, cc, c)}
+                    className="rounded-full"
                   />
                 </div>
               ) : (
@@ -229,16 +229,16 @@ const AuthChat = () => {
                       isPasswordAction ? setPasswordValue(e.target.value) : setInputValue(e.target.value)
                     }
                     placeholder={getInputPlaceholder(currentAction)}
-                    className="h-14 rounded-2xl border-border/40 bg-background/50 focus-visible:ring-primary/20 pr-12 text-sm font-medium"
+                    className="h-14 rounded-full border-slate-200 bg-slate-50 focus-visible:ring-blue-500/20 px-6 pr-12 text-base font-medium text-slate-900 placeholder:text-slate-400"
                     autoComplete={currentAction === "collect_email" ? "email" : "off"}
                   />
                   {isPasswordAction && (
                     <button
                       type="button"
                       onClick={() => setShowPassword(!showPassword)}
-                      className="absolute right-4 top-1/2 -translate-y-1/2 text-muted-foreground hover:text-primary transition-colors"
+                      className="absolute right-5 top-1/2 -translate-y-1/2 text-slate-400 hover:text-blue-500 transition-colors"
                     >
-                      {showPassword ? <EyeOff className="w-4 h-4" /> : <Eye className="w-4 h-4" />}
+                      {showPassword ? <EyeOff className="w-5 h-5" /> : <Eye className="w-5 h-5" />}
                     </button>
                   )}
                 </div>
@@ -248,15 +248,19 @@ const AuthChat = () => {
                 type="submit"
                 size="icon"
                 disabled={isLoading}
-                className="h-14 w-14 rounded-2xl shrink-0 shadow-lg shadow-primary/20"
+                className="h-14 w-14 rounded-full bg-blue-500 hover:bg-blue-600 shrink-0 shadow-sm"
               >
-                {isLoading ? <Loader2 className="w-5 h-5 animate-spin" /> : <Send className="w-5 h-5" />}
+                {isLoading ? (
+                  <Loader2 className="w-5 h-5 animate-spin text-white" />
+                ) : (
+                  <Send className="w-5 h-5 text-white" />
+                )}
               </Button>
             </div>
 
             {currentAction === "set_password" && passwordValue.length > 0 && (
-              <div className="px-1 animate-in slide-in-from-top-1">
-                <div className="flex gap-1.5 h-1">
+              <div className="px-4 animate-in slide-in-from-top-1">
+                <div className="flex gap-1.5 h-1.5">
                   {[1, 2, 3, 4].map((i) => {
                     const str = getPasswordStrength(passwordValue);
                     return (
@@ -264,14 +268,14 @@ const AuthChat = () => {
                         key={i}
                         className={cn(
                           "flex-1 rounded-full transition-all duration-500",
-                          i <= str.level ? str.color : "bg-muted",
+                          i <= str.level ? str.color : "bg-slate-200",
                         )}
                       />
                     );
                   })}
                 </div>
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground text-right mt-2">
-                  Entropy Level: <span className="text-foreground">{getPasswordStrength(passwordValue).label}</span>
+                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right mt-3">
+                  Entropy Level: <span className="text-slate-900">{getPasswordStrength(passwordValue).label}</span>
                 </p>
               </div>
             )}
@@ -280,7 +284,7 @@ const AuthChat = () => {
           <div className="mt-6 text-center">
             <button
               onClick={() => navigate(`/auth/classic?${searchParams.toString()}`)}
-              className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest hover:text-primary transition-colors"
+              className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-blue-500 transition-colors"
             >
               Legacy Authentication Fallback
             </button>
@@ -292,16 +296,17 @@ const AuthChat = () => {
 };
 
 function getPasswordStrength(password: string) {
-  if (password.length < 8) return { level: 1, label: "Insufficient", color: "bg-destructive" };
+  if (password.length < 8) return { level: 1, label: "Insufficient", color: "bg-rose-500" };
   let s = 1;
   if (password.length >= 12) s++;
   if (/[A-Z]/.test(password) && /[0-9]/.test(password)) s++;
   if (/[^A-Za-z0-9]/.test(password)) s++;
+
   const maps = [
-    { level: 1, label: "Weak", color: "bg-destructive" },
-    { level: 2, label: "Vulnerable", color: "bg-warning" },
-    { level: 3, label: "Secure", color: "bg-secondary" },
-    { level: 4, label: "High Entropy", color: "bg-accent" },
+    { level: 1, label: "Weak", color: "bg-rose-500" },
+    { level: 2, label: "Vulnerable", color: "bg-amber-500" },
+    { level: 3, label: "Secure", color: "bg-blue-500" },
+    { level: 4, label: "High Entropy", color: "bg-emerald-500" },
   ];
   return maps[s - 1];
 }
