@@ -531,7 +531,7 @@ function AgentDetailPanel({
 
           {/* Brain tab — Phase 7 */}
           <TabsContent value="brain" className="p-6">
-            <AgentBrainPanel agent={agent as any} onSaved={onSaved} />
+            <AgentBrainPanel agent={agent as any} onSaved={() => onSave({})} />
           </TabsContent>
         </Tabs>
       </CardContent>
