@@ -200,18 +200,18 @@ const Auth = () => {
             <button onClick={() => navigate("/")}>
               <img src={theme === "dark" ? logoLight : logoDark} alt="GroUp" className="h-8 mx-auto" />
             </button>
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-              Access Career Terminal
+            <p className="text-xs font-medium text-muted-foreground">
+              Welcome back
             </p>
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
             <TabsList className="grid w-full grid-cols-2 h-12 bg-muted/50 p-1 rounded-2xl border border-border/40">
-              <TabsTrigger value="login" className="rounded-xl font-black uppercase text-[10px] tracking-widest">
-                Sign In
+              <TabsTrigger value="login" className="rounded-xl font-semibold text-sm">
+                Sign in
               </TabsTrigger>
-              <TabsTrigger value="signup" className="rounded-xl font-black uppercase text-[10px] tracking-widest">
-                Register
+              <TabsTrigger value="signup" className="rounded-xl font-semibold text-sm">
+                Sign up
               </TabsTrigger>
             </TabsList>
 
