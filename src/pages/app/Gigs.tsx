@@ -251,11 +251,34 @@ export default function Gigs() {
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
         <TabsList className="grid w-full grid-cols-4 p-1.5 h-16 bg-muted/30 backdrop-blur-md rounded-[32px] border border-border/40 max-w-3xl">
           {[
-            { id: "tasks", label: "Quick", icon: ClipboardList },
+            { id: "tasks", label: "Platform Tasks", icon: ClipboardList },
             { id: "projects", label: "Projects", icon: Target },
             { id: "build", label: "Build Academy", icon: Hammer },
             { id: "activity", label: "My Activity", icon: Activity },
           ].map((tab) => (
+            <TabsTrigger
+              key={tab.id}
+              value={tab.id}
+              className="rounded-[24px] font-black uppercase text-[10px] tracking-widest gap-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            >
+              <tab.icon className="h-4 w-4" /> {tab.label}
+            </TabsTrigger>
+          ))}
+        </TabsList>
+
+        <TabsContent value="tasks" className="mt-12 space-y-6 animate-in slide-in-from-bottom-4 duration-700">
+          <div className="space-y-2">
+            <p className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic">Platform Tasks</p>
+            <p className="text-sm text-muted-foreground max-w-2xl">
+              Earn credits by helping the platform grow — upload videos, share jobs, refer friends, post on the feed, translate resources, and more.
+            </p>
+          </div>
+          <div className="grid gap-6 md:grid-cols-2">
+            {gigsLoading
+              ? [...Array(4)].map((_, i) => <Skeleton key={i} className="h-40 rounded-[32px] bg-muted/40" />)
+              : gigs?.map((gig) => <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />)}
+          </div>
+        </TabsContent>
             <TabsTrigger
               key={tab.id}
               value={tab.id}
