@@ -376,9 +376,9 @@ const Auth = () => {
           <div className="text-center">
             <button
               onClick={() => navigate(`/auth?${searchParams.toString()}`)}
-              className="text-[10px] font-black uppercase tracking-[0.2em] text-primary"
+              className="text-xs font-medium text-primary hover:underline"
             >
-              Initialize Chat Handshake
+              Try the chat experience instead
             </button>
           </div>
           </div>
@@ -386,9 +386,9 @@ const Auth = () => {
           <div className="text-center pt-2 border-t border-border/40">
             <button
               onClick={() => navigate("/for-companies")}
-              className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground hover:text-primary transition-colors"
+              className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
             >
-              Hiring? Apply for Company Access →
+              Hiring? Apply for company access →
             </button>
           </div>
         </div>
@@ -396,16 +396,19 @@ const Auth = () => {
       <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>
         <DialogContent className="rounded-[32px] border-border/40">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black tracking-tighter">Access Recovery</DialogTitle>
+            <DialogTitle className="text-xl font-bold tracking-tight">Reset password</DialogTitle>
+            <DialogDescription className="text-sm text-muted-foreground">
+              Enter your email and we'll send you a reset link.
+            </DialogDescription>
           </DialogHeader>
-          <form onSubmit={handleForgotPassword} className="space-y-4 pt-4">
+          <form onSubmit={handleForgotPassword} className="space-y-4 pt-2">
             <div className="space-y-1.5">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                Registered Email
+              <Label className="text-xs font-medium text-muted-foreground ml-1">
+                Email address
               </Label>
               <Input
                 type="email"
-                placeholder="name@example.com"
+                placeholder="you@example.com"
                 value={resetEmail}
                 onChange={(e) => setResetEmail(e.target.value)}
                 className="rounded-xl border-border/40 h-11"
@@ -416,9 +419,9 @@ const Auth = () => {
               <Button
                 type="submit"
                 disabled={isLoading}
-                className="flex-1 rounded-xl font-black uppercase text-xs h-11"
+                className="flex-1 rounded-xl font-semibold text-sm h-11"
               >
-                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Transmit Link"}
+                {isLoading ? <Loader2 className="w-4 h-4 animate-spin" /> : "Send reset link"}
               </Button>
             </div>
           </form>
