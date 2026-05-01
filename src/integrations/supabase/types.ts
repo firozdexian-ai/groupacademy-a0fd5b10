@@ -174,6 +174,7 @@ export type Database = {
           session_expires_at: string | null
           session_started_at: string | null
           talent_id: string
+          thread_id: string | null
           updated_at: string | null
         }
         Insert: {
@@ -186,6 +187,7 @@ export type Database = {
           session_expires_at?: string | null
           session_started_at?: string | null
           talent_id: string
+          thread_id?: string | null
           updated_at?: string | null
         }
         Update: {
@@ -198,6 +200,7 @@ export type Database = {
           session_expires_at?: string | null
           session_started_at?: string | null
           talent_id?: string
+          thread_id?: string | null
           updated_at?: string | null
         }
         Relationships: [
@@ -241,6 +244,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_connections_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
             referencedColumns: ["id"]
           },
         ]
@@ -306,6 +316,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "agent_credit_events_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "agent_credit_events_message_id_fkey"
             columns: ["message_id"]
             isOneToOne: false
@@ -358,6 +375,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_knowledge_chunks_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
             referencedColumns: ["id"]
           },
           {
@@ -417,6 +441,13 @@ export type Database = {
             referencedRelation: "ai_agents"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "agent_knowledge_sources_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
+            referencedColumns: ["id"]
+          },
         ]
       }
       agent_marketplace_earnings: {
@@ -459,6 +490,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_marketplace_earnings_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
             referencedColumns: ["id"]
           },
           {
@@ -581,6 +619,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "agent_outreach_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "agent_outreach_event_id_fkey"
             columns: ["event_id"]
             isOneToOne: false
@@ -646,6 +691,44 @@ export type Database = {
           },
         ]
       }
+      agent_reviews: {
+        Row: {
+          agent_key: string
+          created_at: string
+          id: string
+          rating: number
+          review_text: string | null
+          talent_id: string
+          updated_at: string
+        }
+        Insert: {
+          agent_key: string
+          created_at?: string
+          id?: string
+          rating: number
+          review_text?: string | null
+          talent_id: string
+          updated_at?: string
+        }
+        Update: {
+          agent_key?: string
+          created_at?: string
+          id?: string
+          rating?: number
+          review_text?: string | null
+          talent_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_reviews_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       agent_threads: {
         Row: {
           agent_id: string
@@ -701,6 +784,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_threads_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
             referencedColumns: ["id"]
           },
         ]
@@ -802,6 +892,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_triggers_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
             referencedColumns: ["id"]
           },
         ]
@@ -1597,6 +1694,13 @@ export type Database = {
             referencedColumns: ["id"]
           },
           {
+            foreignKeyName: "company_agent_leads_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
+            referencedColumns: ["id"]
+          },
+          {
             foreignKeyName: "company_agent_leads_company_agent_id_fkey"
             columns: ["company_agent_id"]
             isOneToOne: false
@@ -1662,6 +1766,13 @@ export type Database = {
             columns: ["agent_id"]
             isOneToOne: false
             referencedRelation: "ai_agents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "company_agents_agent_id_fkey"
+            columns: ["agent_id"]
+            isOneToOne: false
+            referencedRelation: "ai_agents_with_stats"
             referencedColumns: ["id"]
           },
           {
@@ -4782,6 +4893,59 @@ export type Database = {
           },
         ]
       }
+      message_threads: {
+        Row: {
+          agent_key: string | null
+          created_at: string
+          id: string
+          is_archived: boolean
+          is_pinned: boolean
+          last_message_at: string
+          last_message_preview: string | null
+          last_message_sender: string | null
+          talent_id: string
+          thread_type: string
+          unread_count: number
+          updated_at: string
+        }
+        Insert: {
+          agent_key?: string | null
+          created_at?: string
+          id?: string
+          is_archived?: boolean
+          is_pinned?: boolean
+          last_message_at?: string
+          last_message_preview?: string | null
+          last_message_sender?: string | null
+          talent_id: string
+          thread_type: string
+          unread_count?: number
+          updated_at?: string
+        }
+        Update: {
+          agent_key?: string | null
+          created_at?: string
+          id?: string
+          is_archived?: boolean
+          is_pinned?: boolean
+          last_message_at?: string
+          last_message_preview?: string | null
+          last_message_sender?: string | null
+          talent_id?: string
+          thread_type?: string
+          unread_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "message_threads_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       mock_interview_access_codes: {
         Row: {
           code: string
@@ -4974,6 +5138,7 @@ export type Database = {
           message: string
           read_at: string | null
           talent_id: string
+          thread_id: string | null
           title: string
           type: string
         }
@@ -4986,6 +5151,7 @@ export type Database = {
           message: string
           read_at?: string | null
           talent_id: string
+          thread_id?: string | null
           title: string
           type: string
         }
@@ -4998,6 +5164,7 @@ export type Database = {
           message?: string
           read_at?: string | null
           talent_id?: string
+          thread_id?: string | null
           title?: string
           type?: string
         }
@@ -6743,6 +6910,65 @@ export type Database = {
       }
     }
     Views: {
+      ai_agents_with_stats: {
+        Row: {
+          active_prompt_variant: string | null
+          agent_key: string | null
+          agent_level: number | null
+          agent_type: string | null
+          allowed_tools: string[] | null
+          audience: string | null
+          avatar_url: string | null
+          average_rating: number | null
+          avg_rating: number | null
+          bg_color: string | null
+          builder_model: string | null
+          canvas_mode: string | null
+          capabilities: string[] | null
+          category: string | null
+          color: string | null
+          company_id: string | null
+          connection_fee: number | null
+          created_at: string | null
+          credit_cost: number | null
+          delivery_credit_cost: number | null
+          description: string | null
+          display_order: number | null
+          expertise_areas: string[] | null
+          icon: string | null
+          id: string | null
+          is_active: boolean | null
+          is_featured: boolean | null
+          kill_switch: boolean | null
+          marketplace_status: string | null
+          message_credit_cost: number | null
+          model: string | null
+          monthly_target: number | null
+          name: string | null
+          owner_id: string | null
+          owner_kind: string | null
+          personality_traits: Json | null
+          prompt_variants: Json | null
+          review_count: number | null
+          sample_conversations: Json | null
+          session_duration_minutes: number | null
+          system_prompt: string | null
+          total_conversations: number | null
+          total_messages: number | null
+          total_users: number | null
+          updated_at: string | null
+          visibility: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "ai_agents_company_id_fkey"
+            columns: ["company_id"]
+            isOneToOne: false
+            referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       instructors_public: {
         Row: {
           bio: string | null
@@ -6907,6 +7133,11 @@ export type Database = {
         }
         Returns: string
       }
+      ensure_agent_thread: {
+        Args: { _agent_key: string; _talent_id: string }
+        Returns: string
+      }
+      ensure_system_thread: { Args: { _talent_id: string }; Returns: string }
       generate_content_gigs_for_all_unready: { Args: never; Returns: number }
       generate_content_gigs_for_course: {
         Args: { _content_id: string }
