@@ -122,8 +122,8 @@ export default function JobAssessment() {
           .eq("id", assessmentId);
       }
     } catch (error) {
-      console.error("Diagnostic Failure:", error);
-      toast.error("Handshake Failed: Registry inaccessible.");
+      console.error("Failed to load assessment:", error);
+      toast.error("Could not load assessment.");
     } finally {
       setLoading(false);
     }
@@ -158,7 +158,7 @@ export default function JobAssessment() {
         });
       }, 1000);
     } catch (error) {
-      toast.error("Protocol Error: Microphone node denied.");
+      toast.error("Microphone access denied.");
     }
   };
 
@@ -193,9 +193,9 @@ export default function JobAssessment() {
       setAnswers(updatedAnswers);
 
       await supabase.from("job_assessments").update({ answers: updatedAnswers }).eq("id", assessment.id);
-      toast.success("Voice Artifact Ingested.");
+      toast.success("Voice answer saved.");
     } catch (error) {
-      toast.error("Transmission Error: Audio node failure.");
+      toast.error("Could not upload audio.");
     } finally {
       setUploading(false);
     }
@@ -230,11 +230,11 @@ export default function JobAssessment() {
         })
         .eq("id", assessment.id);
 
-      toast.success("Synthesis Request Sent. Initializing AI Analysis.");
+      toast.success("Submitted. Analyzing your answers...");
       await supabase.functions.invoke("analyze-job-assessment", { body: { assessmentId: assessment.id } });
       navigate(`/app/job-assessment/${assessment.id}/results`);
     } catch (error) {
-      toast.error("Handshake Failed: Submission protocol aborted.");
+      toast.error("Submission failed.");
     } finally {
       setSubmitting(false);
     }
