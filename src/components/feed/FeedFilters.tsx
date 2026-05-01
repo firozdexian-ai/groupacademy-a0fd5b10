@@ -68,7 +68,7 @@ export function FeedFilters({ filters, onChange, counts }: FeedFiltersProps) {
 
               <span
                 className={cn(
-                  "text-[9px] font-black uppercase italic tracking-[0.1em] leading-none transition-colors",
+                  "text-[10px] font-semibold leading-none transition-colors",
                   isActive ? "text-white" : "text-muted-foreground group-hover:text-primary",
                 )}
               >
