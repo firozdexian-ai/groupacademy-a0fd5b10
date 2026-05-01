@@ -137,8 +137,8 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
                 onClick={() => setIsExpanded(true)}
                 className="w-full text-left bg-muted/20 hover:bg-muted/40 border-2 border-transparent hover:border-primary/10 rounded-[20px] px-6 py-4 transition-all flex items-center justify-between group"
               >
-                <span className="text-sm font-bold italic text-muted-foreground uppercase tracking-widest opacity-60">
-                  Initialize Feed Artifact...
+                <span className="text-sm font-medium text-muted-foreground">
+                  Share an update with the community…
                 </span>
                 <Sparkles className="h-5 w-5 opacity-0 group-hover:opacity-100 text-primary transition-all duration-500" />
               </button>
