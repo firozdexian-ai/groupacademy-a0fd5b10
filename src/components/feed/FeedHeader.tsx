@@ -26,7 +26,7 @@ export function FeedHeader({ talentName, talentPhoto, talentProfession, onRefres
   const [showCredits, setShowCredits] = useState(false);
   const [isBannerLoading, setIsBannerLoading] = useState(true);
 
-  // PROTOCOL: Neural Identity Initials
+  // Initials from name (fallback "?")
   const initials =
     talentName
       ?.split(" ")
@@ -34,7 +34,7 @@ export function FeedHeader({ talentName, talentPhoto, talentProfession, onRefres
       .map((n) => n[0])
       .join("")
       .slice(0, 2)
-      .toUpperCase() || "??";
+      .toUpperCase() || "?";
 
   useEffect(() => {
     const fetchHeroBanner = async () => {
