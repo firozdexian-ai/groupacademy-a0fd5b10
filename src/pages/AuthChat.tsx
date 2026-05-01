@@ -302,7 +302,7 @@ const AuthChat = () => {
 };
 
 function getPasswordStrength(password: string) {
-  if (password.length < 8) return { level: 1, label: "Insufficient", color: "bg-rose-500" };
+  if (password.length < 8) return { level: 1, label: "Too short", color: "bg-rose-500" };
   let s = 1;
   if (password.length >= 12) s++;
   if (/[A-Z]/.test(password) && /[0-9]/.test(password)) s++;
@@ -310,9 +310,9 @@ function getPasswordStrength(password: string) {
 
   const maps = [
     { level: 1, label: "Weak", color: "bg-rose-500" },
-    { level: 2, label: "Vulnerable", color: "bg-amber-500" },
-    { level: 3, label: "Secure", color: "bg-blue-500" },
-    { level: 4, label: "High Entropy", color: "bg-emerald-500" },
+    { level: 2, label: "Fair", color: "bg-amber-500" },
+    { level: 3, label: "Good", color: "bg-blue-500" },
+    { level: 4, label: "Strong", color: "bg-emerald-500" },
   ];
   return maps[s - 1];
 }
