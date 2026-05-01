@@ -44,7 +44,7 @@ export function ProfileQuickSetup({ onContinue, onSkip }: ProfileQuickSetupProps
   }
 
   async function handlePhotoIngress(e: React.ChangeEvent<HTMLInputElement>) {
-    const file = e.target.files?.;
+    const file = e.target.files?.[0];
     if (!file || !talent?.id) return;
 
     if (!file.type.startsWith("image/")) return toast.error("Invalid format. Please upload an image file.");
