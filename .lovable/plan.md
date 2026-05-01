@@ -1,222 +1,87 @@
-## Vision: **Gro10x** — the professional WhatsApp, powered by AI agents
+## Gro10x — Phase 2: Make the Shell Real
 
-Reframe of the whole B2B side. Not "company workspace" — a **professional super-app** where every business contact has a personal profile + a company page, and gets things done by chatting with agents.
+The foundation works but every screen except auth is a stub. This phase turns Gro10x into a functional B2B super-app by wiring real data into the 5 main surfaces and closing the agent → feed loop.
 
----
+### What you'll see when this ships
 
-## 1. Riya's signup script (revised — CV-first, role-aware)
-
-She still asks 7 things, but the order is tuned so we can recommend agents at the end:
-
-```text
-1.  Email                  (work email; block free providers)
-2.  Full name
-3.  Upload your CV         "Drop your CV — I'll read it so we don't waste your time on forms."
-                           → parse-cv edge fn fills role, seniority, skills, current company
-4.  Confirm role + company "Looks like you're Head of Talent at Acme. Right?"
-                           → user can correct one-tap; if no CV, Riya asks role + company manually
-5.  What brings you here?  multi-pick chips (drives Stage-2 agent suggestions):
-                             • Hire people
-                             • Find freelancers / gigs
-                             • Sell to companies (B2B outreach)
-                             • Train my team
-                             • Run ops / billing / admin
-                             • Just exploring
-6.  Country + phone        (one combined step, country-coded input)
-7.  Human check + password (Aisha-style quiz inline, then password)
-   ↓
-   signup-company → creates:
-     • auth user with account_type='company'
-     • talents row (yes — same table; a contact IS a person with a CV)
-     • companies row (find_or_create_company on confirmed name)
-     • company_members row (role='owner' if first member, else 'member')
-     • personalized agent shortlist based on step 5 answers
-```
-
-**Key insight you raised**: a company contact is also an individual professional. We **reuse `talents`** for their CV/profile and link via `company_members.user_id`. One person, two surfaces:
-- Their **personal profile** (CV, skills, posts) — visible to teammates and, optionally, the public
-- Their **company page** (org-level info) — shared by all employees
+1. **Inbox** — a WhatsApp-style list of agent threads with last message + unread badges, pinned by the goals Riya collected at signup.
+2. **Feed** — real posts from your company + connected workspaces, with a composer that lets agents draft on your behalf.
+3. **Company Page** — editable cover/logo/tagline, team grid (auto-pulled from members), open jobs, and services. Public mirror at `/c/:slug`.
+4. **Me** — personal profile (CV, role, skills) bridged from the existing `talents` row, plus role badge (Owner/Member).
+5. **Agent Marketplace** — curated B2B agents (Recruiter, Lead Hunter, Growth, Billing, etc.) with one-tap "Add to Inbox".
 
 ---
 
-## 2. First-contact = owner, rest = members
+### Step 1 — Inbox + Chat (real threads)
 
-```text
-company_members.role:
-  'owner'  → first signup at that company. Full edit on company page, billing, invites
-  'admin'  → promoted by owner. Same as owner minus billing + delete
-  'member' → joins via invite or matched email domain. Edit own profile, post to feed,
-             use agents, view company page (read-only)
-```
+- Reuse `useMessageThreads` pattern but scoped to `company_id`.
+- New table `gro10x_agent_threads` (user_id, company_id, agent_key, last_message_at, unread_count, pinned).
+- Auto-seed pinned threads from `companies.goals` on first load (e.g. goal `hire` → Recruiter + Lead Hunter pinned).
+- `Gro10xChat.tsx` reuses `useAgentChat` but passes `context: { mode: 'b2b', company_id }` so the agent knows it's acting for a company.
 
-When person #2 signs up with `@acme.com` and Acme already exists:
-- Riya: "Acme already has a workspace, owned by Sarah. Want to request to join?"
-- Creates `company_members` row with `status='invited'` → owner gets an in-app notification + email
-- Owner one-click approves → status='active'
+### Step 2 — Agent-Authored Feed
 
-No more "no company workspace" dead-end.
+- Wire `Gro10xFeed.tsx` to fetch from `feed_posts` filtered by `author_company_id IN (member companies)` plus the user's own posts.
+- Extend `company-agent-tools` edge function with a `draft_company_post` tool that inserts into `company_post_drafts`.
+- Add a "Drafts awaiting your approval" strip at the top of the feed for Owners — one-tap Publish moves it to `feed_posts` with `author_type='company'`.
+- Composer at the bottom: free text + "Ask Growth Agent to write this" button.
 
----
+### Step 3 — Company Page (editable + public)
 
-## 3. Shared, editable Company Page
+- `/gro10x/page` — Owner sees inline-edit fields (tagline, cover, logo, services). Members see read-only.
+- Sections: Header (logo/cover/tagline) → Team grid (query `companies_members` → `talents`) → Open jobs (existing `jobs` table filtered by `company_id`) → Services (`company_services`).
+- `/c/:slug` — public mirror, no auth, SEO-friendly with JSON-LD `Organization`. Routes added to main `App.tsx` (academy host) so the page works on both domains.
 
-New page at `/company/page/:companyId` (and `/company/page` for own).
+### Step 4 — Me (profile bridge)
 
-**Sections** (all inline-editable by owner/admin, read-only for members):
-- Banner + logo + tagline + about (AI-draft button)
-- Team grid (avatars from `company_members` joined to `talents`)
-- Open jobs (auto-pulled from `jobs` table)
-- Services we offer / need (from `company_services`)
-- Posts by company (see #5)
-- Contact info (website, LinkedIn, email, hours)
+- `Gro10xMe.tsx` reads from `talents` (existing) + `companies_members` for role badge.
+- Inline edit: headline, role, skills, CV re-upload (calls `parse-cv` to refresh).
+- "Switch to Talent App" link for users who also have a personal talent flow.
 
-Public version at `/c/:slug` — SEO-indexed, used as outreach landing.
+### Step 5 — Agent Marketplace (curated B2B set)
 
----
+- New constant `GRO10X_AGENTS` in `src/gro10x/lib/agents.ts` — filtered subset of `src/lib/constants/agents.ts` tagged `b2b: true`, plus 4 new ones (Recruiter, Lead Hunter, Growth, Billing).
+- One-tap "Add to Inbox" → inserts into `gro10x_agent_threads` with `pinned=true`.
 
-## 4. Personal Profile inside Gro10x
+### Step 6 — Welcome flow polish
 
-`/professional/me` — same data as talent profile but with a **B2B framing**:
-- Headline ("Head of Talent @ Acme")
-- About + CV download
-- Posts authored by this person
-- Companies they belong to (multi-company support — same user can be member of 2 companies)
-- "Message me on Gro10x" deep-link button (goes to /messages thread with this user)
+- After Riya completes signup, `/gro10x/welcome` shows a 3-card walkthrough (Your inbox is ready · Invite teammates · Edit company page) then drops into `/gro10x/inbox`.
 
 ---
 
-## 5. Agent-authored Feed posts
+### Technical Details
 
-Currently the talent feed lets users post. Extend to Gro10x:
-- Member chats: *"Growth Agent, post on the company feed: we just hired 3 engineers, link to careers page"*
-- Growth Agent drafts post → shows preview card → member taps **Confirm** → publishes to `feed_posts` with `author_type='company'` and `author_company_id`
-- Company posts appear in members' personal feeds and on `/c/:slug` public page
-- Optional: cross-post to LinkedIn via mailto/share-sheet (no API integration — per your B2B mailto strategy)
-
-Same for personal posts — *"Riya, post: thrilled to join Acme as Head of Talent"* → drafts → publishes under personal handle.
-
----
-
-## 6. The agent shortlist (driven by signup step 5)
-
-After Riya finishes, the user lands in `/gro10x/inbox` (the WhatsApp clone) with **only the agents that match their goals pre-pinned**:
-
-| Goal selected | Pre-pinned agents |
-|---|---|
-| Hire people | Recruiter, Sourcer, Outreach |
-| Find freelancers | Gig Finder, Briefing, Escrow |
-| Sell to companies | Lead Hunter, Outreach Writer, CRM |
-| Train my team | Curriculum, Cohort Manager, Progress Tracker |
-| Run ops/billing | Billing, Ops, Calendar |
-| Just exploring | Concierge only |
-
-The rest live in **Agent Marketplace** (`/gro10x/agents`), addable any time. This is exactly what you wanted: "find which agents he/she requires most."
-
----
-
-## 7. Gro10x as a separate PWA
-
-Two installable PWAs from the **same codebase**, switched by hostname:
-
-| Domain | App name | Manifest | Start route | Theme |
-|---|---|---|---|---|
-| `groupacademy.online` | GroUp Academy | existing | `/` | current |
-| `gro10x.app` (or `app.gro10x.com`) | **Gro10x** | new | `/gro10x` | brand-new dark/glass theme |
-
-**How**:
-- One React build, host-aware root: `if (host.includes('gro10x')) → mount Gro10xApp` else → existing.
-- Two `manifest.webmanifest` files served conditionally by Lovable's hosting based on host header (or `/manifest-gro10x.webmanifest` linked from a Gro10x-only `index-gro10x.html` — simplest path: a tiny `useEffect` that swaps the `<link rel=manifest>` href and theme-color on mount when host matches).
-- Service worker stays single (kill-switch friendly), with `start_url` resolved from current host so installs lock to the right shell.
-- Icons + splash: new Gro10x set in `/public/gro10x/`.
-- App name in manifest: **"Gro10x — Professional AI"**.
-- Display: `standalone`, theme `#0B1220`, accent `#33E1E4` (your existing Vibrant Cyan, but on near-black to feel "pro tool" vs talent's lighter feel).
-
-Result on a contact's phone: they install Gro10x, and the icon opens straight to **the inbox of agents** — feels like WhatsApp Business but every contact is an AI that does work.
-
----
-
-## 8. Routing inside Gro10x
-
-```text
-/gro10x                  → redirect to /gro10x/inbox (or /welcome if onboarding pending)
-/gro10x/welcome          → 5-step company onboarding wizard (skippable steps)
-/gro10x/inbox            → list of agent threads (left rail on desktop, full screen mobile)
-/gro10x/c/:agentId       → chat with one agent
-/gro10x/feed             → company + network feed
-/gro10x/agents           → agent marketplace
-/gro10x/page             → my company page (editable)
-/gro10x/page/:companyId  → other company pages
-/gro10x/me               → my professional profile
-/gro10x/team             → invites + member list
-/gro10x/billing          → credits, top-up, invoices
-```
-
-Nav: bottom tab bar on mobile (Inbox · Feed · Page · Me), left rail on desktop.
-
----
-
-## 9. What we're building (file list)
-
-**DB migration**:
+**New tables (1 migration):**
 ```sql
-alter table companies
-  add column if not exists onboarding_completed_at timestamptz,
-  add column if not exists tagline text,
-  add column if not exists slug text unique;
+gro10x_agent_threads (
+  id uuid pk, user_id uuid, company_id uuid,
+  agent_key text, last_message text, last_message_at timestamptz,
+  unread_count int default 0, pinned boolean default false,
+  created_at timestamptz default now(),
+  unique (user_id, company_id, agent_key)
+)
 
-create table company_services (
-  company_id uuid references companies(id) on delete cascade,
-  service_key text not null,
-  primary key (company_id, service_key)
-);
-
-alter table feed_posts
-  add column if not exists author_type text default 'user',  -- 'user' | 'company'
-  add column if not exists author_company_id uuid references companies(id);
-
--- talents already has cv_url, skills, experience — reused as-is for B2B contacts
+companies_members (  -- if not already present
+  company_id uuid, user_id uuid, role text check (role in ('owner','admin','member')),
+  joined_at timestamptz default now(),
+  primary key (company_id, user_id)
+)
 ```
+RLS: members can read their own company rows; only owners/admins can update company page fields and publish drafts.
 
-**Edge functions**:
-- `ai-company-auth-agent` (Riya — CV-aware, goal-aware)
-- `gro10x-agent-tools` (extends existing `company-agent-tools` with feed-post action)
+**Edge function changes:**
+- `company-agent-tools`: add `draft_company_post`, `list_team_members`, `update_company_page` tools.
+- `ai-company-auth-agent`: on completion, seed `gro10x_agent_threads` based on collected goals.
 
-**New pages/components**:
-- `src/gro10x/` — whole subtree (Inbox, ChatPane, Feed, CompanyPage, Profile, AgentMarketplace, Welcome wizard, BottomNav)
-- `src/pages/public/Gro10xAuthChat.tsx` at `/gro10x/auth`
-- `src/lib/host.ts` — detects gro10x vs academy, exports `IS_GRO10X`
-- `src/main.tsx` — branches on `IS_GRO10X` to load Gro10x manifest + theme
-- `public/gro10x/manifest.webmanifest`, `icon-192.png`, `icon-512.png`, `apple-touch-icon.png`
+**Frontend new/edited:**
+- New: `src/gro10x/lib/agents.ts`, `src/gro10x/hooks/useGro10xThreads.ts`, `src/gro10x/hooks/useCompanyPage.ts`, `src/gro10x/components/CompanyPageEditor.tsx`, `src/gro10x/components/FeedComposer.tsx`, `src/gro10x/components/DraftApprovalStrip.tsx`, `src/pages/public/PublicCompanyPage.tsx` (for `/c/:slug`).
+- Edited: all 5 `Gro10x*` page stubs, `App.tsx` (add `/c/:slug`), `Gro10xRoutes.tsx`.
 
-**Edits**:
-- `vite.config.ts` — add second manifest entry; both apps share the SW with route allowlist
-- `index.html` — host-aware manifest link via small inline script (before React mounts)
-- `src/App.tsx` — top-level: if `IS_GRO10X` render `<Gro10xApp/>` else current routes
-- `useAccountType.ts` — already fixed; ensure `account_type='company'` users on academy host get a "Open in Gro10x" banner instead of being dropped into talent feed
+**Out of scope for this phase** (next phases): teammate invitations by email, billing/subscription per company, cross-company DM, public company directory.
 
 ---
 
-## 10. The journeys, one-line each
+### Suggested order
+Step 1 (Inbox) → Step 5 (Marketplace, since it feeds Inbox) → Step 4 (Me) → Step 3 (Company Page) → Step 2 (Feed + drafts) → Step 6 (Welcome polish).
 
-- **New contact, new company** → Riya (CV upload + goals) → Welcome wizard → /gro10x/inbox with curated agents → first chat = Recruiter or Concierge
-- **New contact, existing company** → Riya detects domain → "Join Acme?" → request → owner approves → lands in inbox as member
-- **Returning contact** → Riya recognizes email → password → /gro10x/inbox (or /welcome if incomplete)
-- **Owner posts via agent** → chats Growth Agent → drafts → confirms → live on company feed + public page
-- **External viewer** → visits `/c/acme` → sees company page → "Message us" → opens Gro10x install prompt or web chat with company's Concierge agent
-
----
-
-## Acceptance test
-1. Visit `gro10x.app` on phone → install prompt shows "Gro10x" with cyan/dark icon
-2. Tap "Get started" → Riya chat → upload CV → confirm role → pick "Hire people" → password → land in inbox with Recruiter pinned
-3. Chat Recruiter "post a job for a React dev" → JD drafts → confirm → job live + auto-posted to company feed
-4. Open `/gro10x/page` → edit tagline inline → save → public `/c/your-slug` reflects change
-5. Invite teammate → they sign up with same domain → auto-suggested to join → owner approves → they appear on company page
-
----
-
-## Out of scope for v1 (fast follows)
-- Multi-company switcher UI (data model supports it; switcher comes later)
-- Real LinkedIn auto-post (stays mailto/share-sheet for now per existing strategy)
-- Native iOS/Android Capacitor build (PWA first; Capacitor wrap later if needed)
-- Stripe team-seat billing (single-company billing first)
+Approve to proceed, or tell me which step to drop/reprioritize.
