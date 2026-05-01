@@ -234,11 +234,11 @@ export function TalentAppShell() {
                       {[
                         { icon: Coins, label: "Buy Credits", action: () => credits.open() },
                         { icon: Receipt, label: "Transactions", action: () => navigate("/app/transactions") },
-                        { icon: Wallet, label: "Disbursement Account", action: () => navigate("/app/profile") },
+                        { icon: Wallet, label: "Withdraw earnings", action: () => navigate("/app/profile") },
                         { icon: Bookmark, label: "Saved Jobs", action: () => navigate("/app/saved") },
                         { icon: BookOpen, label: "My Learning", action: () => navigate("/app/learning/my-courses") },
                         { icon: Globe, label: "Career Abroad", action: () => navigate("/app/abroad") },
-                        { icon: FileText, label: "Applications", action: () => navigate("/app/applications") },
+                        { icon: FileText, label: "My Applications", action: () => navigate("/app/applications") },
                         ...(hasCompanyAccess
                           ? [{ icon: Sparkles, label: "Switch to Company Portal", action: () => window.open("/company", "_blank") }]
                           : []),
@@ -247,29 +247,29 @@ export function TalentAppShell() {
                           label: "Download CV",
                           action: () => {
                             if (talent?.cvUrl) downloadFile(talent.cvUrl, `${talent.fullName || "cv"}-resume.pdf`);
-                            else toast.info("Artifact Missing: Upload CV from profile.");
+                            else toast.info("No CV uploaded yet. Add one from your profile.");
                           },
                         },
                         {
                           icon: ShieldCheck,
-                          label: "Profile Verification",
+                          label: "Verify your profile",
                           action: () => navigate("/app/profile/edit"),
                         },
                         {
                           icon: HelpCircle,
-                          label: "Customer Service",
+                          label: "Help Center",
                           action: () => window.open(getWhatsAppLink("Hi! I need help with the app"), "_blank"),
                         },
-                        { icon: Info, label: "Learn About Academy", action: () => window.open("/", "_blank") },
+                        { icon: Info, label: "About GroUp Academy", action: () => window.open("/", "_blank") },
                         {
                           icon: Share2,
-                          label: "Refer App",
+                          label: "Refer the app",
                           action: async () => {
                             const data = { title: "GroUp Academy", url: window.location.origin };
                             if (navigator.share) await navigator.share(data);
                             else {
                               await navigator.clipboard.writeText(data.url);
-                              toast.success("Link Synchronized to Clipboard!");
+                              toast.success("Link copied to clipboard.");
                             }
                           },
                         },
