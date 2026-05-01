@@ -575,3 +575,40 @@ function QuickAction({ icon: Icon, label, sub, onClick }: { icon: any; label: st
     </button>
   );
 }
+
+function ToolCard({
+  icon: Icon,
+  title,
+  desc,
+  cost,
+  onClick,
+}: {
+  icon: any;
+  title: string;
+  desc: string;
+  cost: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-col gap-2 p-3 rounded-2xl border border-border/40 bg-card hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
+    >
+      <div className="flex items-center gap-2.5">
+        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <Icon className="h-4 w-4 text-primary" />
+        </div>
+        <p className="text-sm font-semibold leading-tight flex-1">{title}</p>
+      </div>
+      <p className="text-[11px] text-muted-foreground line-clamp-2">{desc}</p>
+      <div className="flex items-center justify-between pt-1 border-t border-border/40">
+        <Badge variant="outline" className="gap-1 text-[10px]">
+          <Coins className="h-3 w-3 text-amber-500" /> {cost}
+        </Badge>
+        <span className="flex items-center gap-1 text-[11px] font-medium text-primary">
+          Open <ArrowRight className="h-3 w-3" />
+        </span>
+      </div>
+    </button>
+  );
+}
