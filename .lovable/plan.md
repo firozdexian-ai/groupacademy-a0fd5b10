@@ -1,44 +1,59 @@
-# Fix: Gro10x sign-in always behaves like new signup
+## Problem
 
-## Problems observed
+Sign-in for `firoz@gro10x.com` (a real company member) fails with:
+> "This account is not registered to any company workspace. Maybe it is a talent account."
 
-1. **Riya (the Gro10x auth chat) always runs the signup script.** The hook only has one branch — `collect_email → collect_name → CV → role/company → goals → country → phone → quiz → password`. There is no "is this an existing user?" check, so a returning user typing their email is asked for their name and treated as new.
-2. **The "Sign in" link routes to the talent app.** `Gro10xAuth.tsx` line 267 uses `<Link to="/auth">`, which is the talent (Aisha) chat. After login, `useAccountType` resolves and `postAuthRoute` may also send some users to `/app/feed` instead of `/gro10x/inbox` if the metadata fast-path doesn't fire correctly on first session.
+Network trace shows the actual cause:
 
-## What we will build
+```
+GET /rest/v1/company_members?...&user_id=eq.866df0ba...
+500 — infinite recursion detected in policy for relation "company_members"
+```
 
-### 1. Dedicated Gro10x sign-in page
-Create `src/gro10x/pages/Gro10xSignIn.tsx` — same dark Gro10x shell, simple email + password form (with "Forgot password?"). On success it explicitly navigates to `/gro10x/inbox` regardless of `useAccountType` state, so company users never get bounced to the talent feed.
+Riya's pre-check (`check-company-account`, service role) correctly returns `{exists:true, isCompany:true}`, but the client-side membership verification in `Gro10xSignIn.tsx` hits broken RLS, throws, and the catch branch shows the misleading "talent account" message before signing the user out.
 
-Mount it at `/gro10x/signin` in `Gro10xRoutes.tsx`.
+## Fix
 
-### 2. Stop pointing "Sign in" at the talent app
-In `Gro10xAuth.tsx`, change the footer link from `<Link to="/auth">Sign in</Link>` to `<Link to="/gro10x/signin">Sign in</Link>`. Same change on `Gro10xLanding.tsx` — add a secondary "I already have an account" link below the "Get started" CTA.
+### 1. Repair `company_members` RLS (root cause)
 
-### 3. Detect existing accounts inside Riya
-In `useGro10xAuthChat.ts`, after the email-validation step (`collect_email`), check whether an account with that email already exists. If yes, Riya pivots:
+Drop the recursive policies on `company_members` and replace them with policies backed by a `SECURITY DEFINER` helper that bypasses RLS, mirroring the `has_role` pattern already used elsewhere.
 
-> "Welcome back — looks like you already have a Gro10x account. Want to sign in instead?"
+New helper (in a migration):
+```sql
+create or replace function public.is_company_member(_user_id uuid, _company_id uuid)
+returns boolean
+language sql stable security definer set search_path = public as $$
+  select exists (
+    select 1 from public.company_members
+    where user_id = _user_id and company_id = _company_id and status = 'active'
+  )
+$$;
+```
 
-…and renders an inline "Sign in here" button that routes to `/gro10x/signin?email=<prefilled>`. The signup branch only continues if the email is genuinely new.
+Then rewrite the policies on `company_members`:
+- `select`: `user_id = auth.uid()` OR `public.is_company_member(auth.uid(), company_id)` OR `public.has_role(auth.uid(), 'admin')`.
+- `insert`/`update`/`delete`: scoped to admins of that company via `is_company_member` + an admin role check on `company_members.role`, never via a self-referential subquery in the policy itself.
 
-We can detect existence cheaply by calling a new tiny edge function `check-company-account` that does a server-side lookup against `auth.users` (admin client, returns only a boolean). This avoids exposing user enumeration to the anon key while still letting the UI branch.
+This eliminates the recursion (the helper runs as definer, so it does not re-trigger RLS on `company_members`).
 
-### 4. Harden post-auth routing for company users
-In `Gro10xSignIn.tsx`, after `signInWithPassword` succeeds, query `company_members` directly for the user's id. If a row exists → `navigate("/gro10x/inbox")`. Otherwise show an inline error: "This email is registered as a talent account — open the talent app instead." with a link to `/auth`. This guarantees the Gro10x sign-in surface never silently dumps a user into the wrong PWA.
+### 2. Harden `Gro10xSignIn.tsx`
+
+Even with RLS fixed, the page should not lie to the user when a query fails:
+
+- Replace the direct `from("company_members").select(...)` membership check with a call to the existing `check-company-account` edge function (service-role, RLS-immune), passing the email we just signed in with.
+- Branch on the response:
+  - `isCompany: true` → route to `/gro10x/inbox`.
+  - `exists: true && !isCompany` → show the "talent account, switch app" message and sign out.
+  - Any error → show a generic "Couldn't verify your workspace, please try again" toast and keep the session (do NOT sign out + show a wrong reason).
+
+### 3. Verify
+
+- Re-run sign-in for `firoz@gro10x.com` → lands on `/gro10x/inbox`.
+- Sign in with a known talent-only account → still gets the correct "wrong app" message.
+- Confirm the talent app's existing `useAccountType` (which also queries `company_members`) stops 500-ing on every load for company users.
 
 ## Files
 
-- **Create**: `src/gro10x/pages/Gro10xSignIn.tsx`
-- **Create**: `supabase/functions/check-company-account/index.ts` (anon-callable, returns `{ exists: boolean, isCompany: boolean }`)
-- **Edit**: `src/gro10x/Gro10xRoutes.tsx` (add `/signin` route)
-- **Edit**: `src/gro10x/pages/Gro10xAuth.tsx` (link target + early-exit branch when Riya detects existing user)
-- **Edit**: `src/gro10x/pages/Gro10xLanding.tsx` (add "Sign in" secondary link)
-- **Edit**: `src/gro10x/hooks/useGro10xAuthChat.ts` (call `check-company-account` after `collect_email`, expose `existingAccount` flag)
-
-## Out of scope
-
-- No changes to the talent `/auth` flow.
-- No changes to `useAccountType` — the explicit navigation in `Gro10xSignIn` is sufficient and avoids touching the global routing hook.
-
-Approve to implement.
+- New migration: drop recursive policies on `company_members`, add `is_company_member()`, recreate policies.
+- Edit `src/gro10x/pages/Gro10xSignIn.tsx`: swap direct table query for `check-company-account` invoke + better error UX.
+- No edge function changes needed (`check-company-account` already does the right thing).
