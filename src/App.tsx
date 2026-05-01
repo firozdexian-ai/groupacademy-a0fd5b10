@@ -68,6 +68,9 @@ import AIGeneral from "./pages/app/AIGeneral";
 import Profile from "./pages/app/Profile";
 import ProfileEdit from "./pages/app/ProfileEdit";
 import Notifications from "./pages/app/Notifications";
+import Messages from "./pages/app/Messages";
+import MessageThread from "./pages/app/MessageThread";
+import AgentProfile from "./pages/app/AgentProfile";
 import MyResults from "./pages/app/MyResults";
 import MyApplications from "./pages/app/MyApplications";
 import SavedItems from "./pages/app/SavedItems";
@@ -424,8 +427,11 @@ export default function App() {
                     <Route path="services/my-results" element={<MyResults />} />
 
                     {/* Other App Routes */}
-                    <Route path="notifications" element={<Notifications />} />
+                    <Route path="notifications" element={<Navigate to="/app/messages" replace />} />
+                    <Route path="messages" element={<Messages />} />
+                    <Route path="messages/:threadKey" element={<MessageThread />} />
                     <Route path="profile/edit" element={<ProfileEdit />} />
+                    <Route path="agents/:agentKey/profile" element={<AgentProfile />} />
                     <Route path="agents/:agentKey" element={<AgentChat />} />
                     <Route path="ai-general" element={<AIGeneral />} />
                     <Route path="transactions" element={<Transactions />} />
