@@ -150,10 +150,10 @@ const Auth = () => {
   const strength = getPasswordStrength(signupData.password);
 
   const valueProps = [
-    { icon: Target, label: "Career Audit", description: "Gemini-powered skill mapping" },
-    { icon: Mic, label: "Mock Interviews", description: "Practice with real-time feedback" },
-    { icon: DollarSign, label: "Salary Index", description: "Live market value analysis" },
-    { icon: Gift, label: "250 Bonus Credits", description: "Initial onboarding reward" },
+    { icon: Target, label: "Career audit", description: "AI-powered skill mapping" },
+    { icon: Mic, label: "Mock interviews", description: "Practice with real-time feedback" },
+    { icon: DollarSign, label: "Salary index", description: "Live market value analysis" },
+    { icon: Gift, label: "250 bonus credits", description: "Welcome reward for new members" },
   ];
 
   if (authLoading)
