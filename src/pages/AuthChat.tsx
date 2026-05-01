@@ -274,19 +274,25 @@ const AuthChat = () => {
                     );
                   })}
                 </div>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 text-right mt-3">
-                  Entropy Level: <span className="text-slate-900">{getPasswordStrength(passwordValue).label}</span>
+                <p className="text-xs text-slate-500 text-right mt-2">
+                  Strength: <span className="font-semibold text-slate-900">{getPasswordStrength(passwordValue).label}</span>
                 </p>
               </div>
             )}
           </form>
 
-          <div className="mt-6 text-center">
+          <div className="mt-6 text-center space-y-2">
             <button
               onClick={() => navigate(`/auth/classic?${searchParams.toString()}`)}
-              className="text-[10px] font-bold text-slate-400 uppercase tracking-widest hover:text-blue-500 transition-colors"
+              className="block mx-auto text-xs font-medium text-slate-500 hover:text-blue-600 transition-colors"
             >
-              Legacy Authentication Fallback
+              Use email & password instead
+            </button>
+            <button
+              onClick={() => navigate("/for-companies")}
+              className="block mx-auto text-xs font-medium text-slate-400 hover:text-blue-600 transition-colors"
+            >
+              Hiring? Apply for company access →
             </button>
           </div>
         </div>
