@@ -1,99 +1,142 @@
-# Phase 11G — Compact Mobile Gig Hub + Autonomous Approval
 
-Two intertwined goals:
-1. **Make the Gig Ecosystem screen actually mobile-friendly** (tabs no longer collide at 390px, cards become dense rows, header collapses).
-2. **Auto-approve and auto-credit most platform tasks** so the human reviewer is only needed for genuinely ambiguous cases.
+# Phase 11H — Agent Marketplace + Messenger Inbox
 
----
-
-## Part A — Mobile UI Compaction
-
-### Screen header (`Gigs.tsx`)
-- Drop the 5xl italic title for mobile; show a compact header (`text-2xl`) with the verification chip inline (badge instead of full card on <md).
-- Remove "Neural Economy Protocol v2.6" tagline on mobile.
-
-### Tab strip (the one that "intercollides")
-- 4 tabs in a `grid-cols-4` at `h-16` with `text-[10px]` + 4-letter words + icon overflow at 390px.
-- Replace with a horizontally-scrollable pill row (`overflow-x-auto snap-x`) on mobile, icon-only with tooltip; full label appears at `md:`.
-- Height drops to `h-11`, padding `p-1`.
-
-### Platform Task cards (`GigCard.tsx`)
-- Current card is ~220px tall (icon 14×14, big title, requirements row, footer with badges + button). Convert to a **compact row** on mobile:
-  - 1 line title, 1 line description (`line-clamp-1`).
-  - Inline reward chip + max-completion progress.
-  - Right-aligned arrow; tap row anywhere to open the submission sheet.
-  - Drop the decorative Zap watermark and rotating icon hover effects.
-- Grid: `grid-cols-1` mobile, `md:grid-cols-2`. Card height target: ~88px.
-- Strip the `_` underscore and `CR_REWARD` jargon from labels.
-
-### Projects tab
-- Sidebar (`grid-cols-[280px,1fr]`) hides on mobile; replace with a horizontal category chip strip above the list.
-- Project card: shrink to ~120px row with title, category chip, credits, bid count.
-
-### Build Academy tab
-- Audit `BuildAcademyTab.tsx` for the same density rules (single-column on mobile, smaller hero).
+Reframe the platform around two pillars:
+1. **`/app/agents`** = Agent **Marketplace / Discovery** (LinkedIn-style profiles, no inline chat).
+2. **`/app/notifications`** → **`/app/messages`** = WhatsApp-style **Inbox** where every conversation, system alert, and broadcast is a message thread from an agent (including a system "AI General" agent).
 
 ---
 
-## Part B — Autonomous Approval & Credit Disbursement
+## 1. Agent Marketplace Redesign (`/app/agents`)
 
-Goal: when a talent submits a platform task, the system decides automatically whether to approve, reject, or escalate to a human, and credits are disbursed in the same transaction.
+Strip the current "Registry / Chats" tabs. Make this a **pure discovery surface**.
 
-### New columns on `gigs`
-- `auto_approval_mode` text — one of `manual`, `link_check`, `ai_score`, `event_trigger`.
-- `auto_approval_config` jsonb — per-task tuning (min AI score, allowed domains, expected event name, score-to-credit curve).
+**New structure (mobile-first, vertical):**
+- Compact header (no rotated badge) + search + horizontal scrollable category pills (reuse `.no-scrollbar`).
+- **Featured strip** (1 row, horizontal scroll): top 5 agents by usage.
+- **All Agents grid** (2-col mobile, 3-col desktop): each `AgentCard` becomes denser:
+  - Avatar + name + 1-line tagline
+  - Stats row: ⭐ rating · 👥 users count · 💰 connection fee
+  - **Primary CTA: "View Profile"** (was "Initialize Sync")
+  - Secondary text link: "Message" → opens thread in `/app/messages/:agentKey`
+- Remove the inline "Logic Suite" career-tools block and the "Chats / Active Uplinks / Interaction Logs" tab (these move to Messages).
 
-### New columns on `gig_submissions`
-- `ai_score` numeric(4,2) — 0-10 quality score.
-- `ai_feedback` text — short reasoning shown to the talent.
-- `auto_decision` text — `approved`, `rejected`, `escalated`.
-- `processed_at` timestamptz.
-
-### Edge function: `auto-review-gig-submission`
-Triggered immediately after a `gig_submissions` insert (via DB trigger calling `pg_net` to invoke the function, or via the client right after insert). Logic per task category:
-
-| Category | Auto check |
-|---|---|
-| `job_sharing` (Share a Job Lead, Spread the Word, Refer a friend) | Verify the URL is a `groupacademy.online` job/share link with a valid `ref=<talent_id>` query param. Cross-check `referral_logs` / `gig_share_logs` for clicks. Auto-approve when ≥1 verified visit. |
-| `content_creation` (Write & publish a feed post, Create a poll, Course review, Salary data point) | Read the linked `feed_posts` / `course_reviews` row owned by the talent. Send title + body to Lovable AI Gateway with `google/gemini-3-flash-preview` and a structured-output tool that returns `{score: 0-10, reasons, flags: [spam, low_effort, off_topic, ok]}`. Map score → credit multiplier (0.5×–1.25× of base reward). Auto-approve at score ≥ 6, auto-reject at < 3, escalate in between. |
-| `content_creation` (Upload a free educational video, Translate a resource) | Confirm the referenced asset exists in `course_resources` / `module_resources` and is published. Run a lightweight AI metadata check on title/description quality; same scoring band. |
-| `cv_upload` (Help a Friend Get Discovered) | Confirm a new talent row exists with the `referrer_id` matching, plus a parsed CV. Auto-approve. |
-| `job_posting` (Submit a verified company lead, Share a Job Lead) | Validate domain + dedupe against existing `companies`/`jobs`; auto-approve unique entries, escalate duplicates. |
-| `course_resell` (Recommend a Course) | Verify share log + at least one click; auto-approve. |
-| Any task with `auto_approval_mode = 'manual'` | Stays in admin queue (current behavior). |
-
-The function calls a SECURITY DEFINER RPC `finalize_gig_submission(submission_id, decision, score, feedback, credit_amount)` that:
-- Writes status, ai_score, feedback.
-- Inserts a `credit_transactions` row of type `earned` when approved (no double-credit guard via unique `(gig_submission_id)`).
-- Notifies the talent.
-
-### UI surfacing
-- Submission form (`GigSubmissionForm.tsx`) shows "Reviewed automatically — usually within a minute" for auto-eligible tasks.
-- `MySubmissions.tsx` displays AI score and feedback line when present.
-- Admin queue keeps only `escalated` + `manual` items.
-
-### Safety
-- Hard caps from `max_completions_per_user` enforced before scoring.
-- Same-talent rate limit: max 5 auto-approvals/hour per category to deter farming.
-- All AI calls are server-side via the edge function (LOVABLE_API_KEY).
+**New route: `/app/agents/:agentKey/profile`** (LinkedIn-style human profile)
+- Hero: large avatar, name, headline, "Created by {company/Lovable}" badge.
+- About section (long bio).
+- Skills / Expertise chips.
+- "What I can do" — bullet list of capabilities.
+- Stats card: total conversations, avg rating, response style, languages.
+- Reviews section (list of feedbacks with stars + talent name + date).
+- Pricing card: connection fee + per-response cost.
+- Sticky bottom CTA: **"Connect & Message"** → deducts connection fee (one-time), then routes to `/app/messages/:agentKey`.
+- "Leave a review" button (only enabled if user has chatted ≥3 times).
 
 ---
 
-## Files
+## 2. Messenger Inbox (replaces Notifications)
 
-**Edit**
-- `src/pages/app/Gigs.tsx` — responsive header, scrollable tabs, mobile category chips.
-- `src/components/gigs/GigCard.tsx` — compact row layout, copy cleanup.
-- `src/components/gigs/BuildAcademyTab.tsx` — density pass.
-- `src/components/gigs/MySubmissions.tsx` — show AI score/feedback.
-- `src/components/gigs/GigSubmissionForm.tsx` — auto-review messaging.
-- `src/components/dashboard/GigSubmissionsManager.tsx` (admin queue) — filter to escalated/manual only by default.
+Rename `/app/notifications` → `/app/messages` (keep redirect from old path). Bell icon in `TalentAppShell` becomes a **chat bubble icon** with unread badge.
+
+**Inbox view (`/app/messages`)** — WhatsApp-style:
+- Search bar at top: "Search conversations…"
+- Optional filter chips: All · Unread · Agents · System
+- Vertical list of **thread rows**:
+  - 56×56 avatar (agent or system "AI General" logo)
+  - Name (bold if unread) + last message preview (1 line, truncated)
+  - Right column: timestamp + unread count pill
+- Pinned **"AI General"** thread always at top — receives all platform/system notifications (credit added, withdrawal approved, course unlocked, gig auto-approved, etc.).
+- Empty state: "No conversations yet — visit the Agent Marketplace."
+
+**Thread view (`/app/messages/:threadKey`)** — chat surface:
+- Sticky header: back arrow, agent avatar + name, "View Profile" link.
+- Chat bubbles (user right, agent left, system center grey).
+- For **system/notification messages**: render as agent bubble with optional CTA button (e.g. "View Job", "Open Course") derived from the existing `notifications.link`.
+- Composer at bottom (only enabled for actual AI agents, hidden for AI General system thread or set to read-only).
+- Reuses existing `useAgentChat` streaming for AI agents.
+
+**Web layout:** split-pane (inbox left 360px, thread right) — like WhatsApp Web / LinkedIn messaging. On mobile, single pane with navigation.
+
+---
+
+## 3. Data Model Changes
+
+**New table: `message_threads`**
+```
+id uuid pk
+talent_id uuid → talents
+thread_type text  -- 'agent' | 'system'
+agent_key text nullable  -- null for system
+last_message_at timestamptz
+last_message_preview text
+unread_count int default 0
+is_pinned boolean default false
+is_archived boolean default false
+```
+Unique index on `(talent_id, agent_key)` where `thread_type='agent'`; one `(talent_id, 'system')` row per user.
+
+**Existing `notifications` table**: add `thread_id uuid` + trigger that on insert:
+1. Finds/creates the user's "system" (`AI General`) thread.
+2. Updates `last_message_*` and increments `unread_count`.
+This way every notification automatically appears as a message in the AI General thread without breaking existing notification producers.
+
+**Existing `agent_chat_sessions`**: add `thread_id uuid` (nullable). Trigger on insert/update mirrors `last_message_at/preview/unread_count` to the matching thread row.
+
+**New table: `agent_reviews`**
+```
+id uuid pk
+agent_key text
+talent_id uuid
+rating int (1-5)
+review_text text
+created_at timestamptz
+```
+RLS: anyone authenticated can read; talent can insert/update own.
+
+**`ai_agents` augmentation**: add view `ai_agents_with_stats` (security invoker) exposing `total_users`, `avg_rating`, `total_messages` aggregated from `agent_chat_sessions` + `agent_reviews`.
+
+---
+
+## 4. Routing & Navigation
+
+- `/app/messages` (inbox) and `/app/messages/:threadKey` (thread).
+- `/app/notifications` → `<Navigate to="/app/messages" replace />`.
+- `/app/agents/:agentKey/profile` (new profile page).
+- `/app/agents/:agentKey` (existing chat page) stays but is reached **only via "Connect & Message"** from profile. Internally it can redirect to `/app/messages/:agentKey` in Phase 2 once thread persistence is verified.
+- Update `TalentAppShell` bottom nav and top bar bell → MessageCircle icon pointing to `/app/messages`.
+
+---
+
+## 5. Files to Create / Edit
 
 **Create**
-- `supabase/functions/auto-review-gig-submission/index.ts` — orchestrator described above.
-- `supabase/migrations/<ts>_gig_autonomous_approval.sql` — new columns, `finalize_gig_submission` RPC, seed `auto_approval_mode` per existing gig, after-insert trigger that calls `pg_net` to invoke the edge function.
+- `src/pages/app/Messages.tsx` (inbox)
+- `src/pages/app/MessageThread.tsx` (thread)
+- `src/pages/app/AgentProfile.tsx` (LinkedIn-style profile)
+- `src/components/messages/ThreadListItem.tsx`
+- `src/components/messages/ChatBubble.tsx`
+- `src/components/messages/SystemMessageBubble.tsx`
+- `src/components/agents/AgentReviewSection.tsx`
+- `src/hooks/useMessageThreads.ts`
+- `supabase/migrations/...messenger_inbox.sql`
+
+**Edit**
+- `src/pages/app/AIAgents.tsx` — strip tabs, redesign as marketplace, "View Profile" CTA.
+- `src/components/ai-agents/AgentCard.tsx` — denser layout with stats + dual CTA.
+- `src/layouts/TalentAppShell.tsx` — bell → chat icon → `/app/messages`.
+- `src/App.tsx` + `src/lib/routes.ts` — new routes + redirect.
+- `src/hooks/useNotifications.ts` — keep as compatibility layer; inbox uses `useMessageThreads` instead.
 
 ---
 
-## Open question
-None blocking. After approval I'll implement Part A first (visible immediately on `/app/gigs` at 390px), then Part B (database + edge function + admin queue refresh).
+## 6. Out of Scope (Phase 11I+)
+- Push/web-push delivery layer (Capacitor + service worker).
+- Real-time typing indicators / read receipts in threads.
+- Group threads (multi-agent conversations).
+- Voice notes.
+
+These can be added once the inbox model is stable.
+
+---
+
+**Approve to implement Phase 11H?**

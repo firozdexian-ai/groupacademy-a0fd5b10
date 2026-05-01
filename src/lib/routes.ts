@@ -68,7 +68,11 @@ export const ROUTES = {
     // AI Agents
     agents: '/app/agents',
     agentChat: (agentKey: string) => `/app/agents/${agentKey}`,
+    agentProfile: (agentKey: string) => `/app/agents/${agentKey}/profile`,
     aiGeneral: '/app/ai-general',
+    // Messenger
+    messages: '/app/messages',
+    messageThread: (key: string) => `/app/messages/${key}`,
     
     // Profile
     profile: '/app/profile',
@@ -81,7 +85,7 @@ export const ROUTES = {
     abroadIelts: '/app/abroad/ielts',
     abroadRoadmap: '/app/abroad/roadmap',
     abroadRoadmapResults: (id: string) => `/app/abroad/roadmap/${id}`,
-    notifications: '/app/notifications',
+    notifications: '/app/messages',
     
     // Gigs & Marketplace
     gigs: '/app/gigs',
