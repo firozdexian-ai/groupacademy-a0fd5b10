@@ -358,65 +358,70 @@ export default function Gigs() {
             <MySubmissions talentId={talent?.id} />
           </section>
 
-          <div className="grid md:grid-cols-2 gap-12 pt-12 border-t border-border/40">
-            <section className="space-y-6">
-              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] flex items-center gap-4 text-blue-500">
-                <Send className="h-5 w-5" /> Transmission Registry (Proposals)
+          <div className="grid sm:grid-cols-2 gap-4 pt-4 border-t border-border/40">
+            <section className="space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-wide text-blue-600 flex items-center gap-1.5">
+                <Send className="h-3.5 w-3.5" /> My Bids
               </h3>
-              <div className="space-y-4">
-                {myBids?.map((bid) => (
-                  <div
-                    key={bid.id}
-                    className="p-6 rounded-[28px] bg-card/30 border-2 border-border/40 shadow-sm space-y-4 group hover:border-blue-500/40 transition-all"
-                  >
-                    <div className="flex justify-between items-start">
-                      <h4 className="text-base font-black uppercase tracking-tight italic leading-tight group-hover:text-blue-500 transition-colors">
-                        {bid.marketplace_gigs?.title}
-                      </h4>
-                      <Badge
-                        variant="outline"
-                        className="rounded-lg text-[8px] font-black uppercase tracking-widest border-blue-500/20 bg-blue-500/5 text-blue-600"
-                      >
-                        {bid.status}
-                      </Badge>
+              <div className="space-y-2">
+                {myBids?.length ? (
+                  myBids.map((bid) => (
+                    <div
+                      key={bid.id}
+                      className="rounded-2xl border border-border/40 bg-card p-3 hover:border-blue-500/40 transition-all"
+                    >
+                      <div className="flex justify-between items-start gap-2">
+                        <h4 className="text-sm font-semibold leading-tight">
+                          {bid.marketplace_gigs?.title}
+                        </h4>
+                        <Badge variant="outline" className="text-[10px] h-5 capitalize shrink-0">
+                          {bid.status}
+                        </Badge>
+                      </div>
+                      <p className="text-[11px] text-muted-foreground mt-1">
+                        {bid.marketplace_gigs?.employer_name}
+                      </p>
                     </div>
-                    <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-[0.2em] italic">
-                      {bid.marketplace_gigs?.employer_name}
-                    </p>
-                  </div>
-                ))}
+                  ))
+                ) : (
+                  <p className="text-[11px] text-muted-foreground italic px-1">No bids yet.</p>
+                )}
               </div>
             </section>
 
-            <section className="space-y-6">
-              <h3 className="text-[11px] font-black uppercase tracking-[0.3em] flex items-center gap-4 text-emerald-500">
-                <ShieldCheck className="h-5 w-5" /> Active Logic Handshakes (Contracts)
+            <section className="space-y-2">
+              <h3 className="text-xs font-bold uppercase tracking-wide text-emerald-600 flex items-center gap-1.5">
+                <ShieldCheck className="h-3.5 w-3.5" /> Active Contracts
               </h3>
-              <div className="space-y-4">
-                {myContracts
-                  ?.filter((c) => c.status === "active")
-                  .map((contract) => (
-                    <div
-                      key={contract.id}
-                      className="p-6 rounded-[28px] bg-emerald-500/5 border-2 border-emerald-500/20 shadow-sm flex justify-between items-center group"
-                    >
-                      <div className="space-y-1">
-                        <h4 className="text-base font-black uppercase tracking-tight italic">
-                          {contract.marketplace_gigs?.title}
-                        </h4>
-                        <p className="text-xs font-black text-emerald-600 italic tracking-tighter">
-                          {contract.agreed_amount} Performance Credits
-                        </p>
-                      </div>
-                      <Button
-                        size="sm"
-                        className="h-11 px-6 rounded-xl text-[10px] font-black uppercase tracking-widest bg-emerald-600 shadow-lg shadow-emerald-500/20 hover:scale-105"
-                        onClick={() => setDeliverableDialog(contract.id)}
+              <div className="space-y-2">
+                {myContracts?.filter((c) => c.status === "active").length ? (
+                  myContracts
+                    ?.filter((c) => c.status === "active")
+                    .map((contract) => (
+                      <div
+                        key={contract.id}
+                        className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-3 flex justify-between items-center gap-2"
                       >
-                        Execute
-                      </Button>
-                    </div>
-                  ))}
+                        <div className="min-w-0">
+                          <h4 className="text-sm font-semibold leading-tight truncate">
+                            {contract.marketplace_gigs?.title}
+                          </h4>
+                          <p className="text-[11px] text-emerald-700 mt-0.5">
+                            {contract.agreed_amount} credits
+                          </p>
+                        </div>
+                        <Button
+                          size="sm"
+                          className="h-8 px-3 rounded-lg text-[11px] shrink-0"
+                          onClick={() => setDeliverableDialog(contract.id)}
+                        >
+                          Deliver
+                        </Button>
+                      </div>
+                    ))
+                ) : (
+                  <p className="text-[11px] text-muted-foreground italic px-1">No active contracts.</p>
+                )}
               </div>
             </section>
           </div>
