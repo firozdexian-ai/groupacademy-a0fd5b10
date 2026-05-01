@@ -131,7 +131,11 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       // REGISTRY_SYNC: Intelligent Data Merging
       const updatePayload: Record<string, any> = { cvUrl: publicUrl, cvParsedAt: new Date().toISOString() };
 
-      if (parsed.full_name && (!talent.fullName || talent.fullName === talent.email?.split("@"))) {
+      // Type-safe string evaluations to prevent TS2367
+      const currentName = talent.fullName ? String(talent.fullName) : "";
+      const emailPrefix = talent.email ? String(talent.email).split("@") : "";
+
+      if (parsed.full_name && (!currentName || currentName === emailPrefix)) {
         updatePayload.fullName = parsed.full_name;
       }
 
@@ -226,9 +230,9 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         onDrop={(e) => {
           e.preventDefault();
           setIsDragging(false);
-          const files = e.dataTransfer.files;
-          const f = files && files.length > 0 ? files : null;
-          if (f) handleExecutiveUpload(f);
+          if (e.dataTransfer.files && e.dataTransfer.files.length > 0) {
+            handleExecutiveUpload(e.dataTransfer.files);
+          }
         }}
       >
         <input
@@ -236,9 +240,9 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
           accept=".pdf,.doc,.docx"
           className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
           onChange={(e) => {
-            const files = e.target.files;
-            const f = files && files.length > 0 ? files : null;
-            if (f) handleExecutiveUpload(f);
+            if (e.target.files && e.target.files.length > 0) {
+              handleExecutiveUpload(e.target.files);
+            }
           }}
         />
 
