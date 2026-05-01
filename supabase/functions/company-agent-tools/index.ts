@@ -352,3 +352,109 @@ async function list_teammates(ctx: Ctx) {
   if (error) return { ok: false, error: error.message };
   return { ok: true, result: { members: data ?? [] }, canvas: { type: "team", payload: { members: data ?? [] } } };
 }
+
+// ===================== Growth / feed =====================
+
+async function draft_company_post(ctx: Ctx, a: any) {
+  const text = String(a.text_content ?? "").trim();
+  if (text.length < 20) return { ok: false, error: "Post too short (min 20 chars)" };
+  if (text.length > 2000) return { ok: false, error: "Post too long (max 2000 chars)" };
+  const tags = Array.isArray(a.tags)
+    ? a.tags.filter((t: unknown) => typeof t === "string").slice(0, 6)
+    : [];
+  const { data, error } = await ctx.admin.from("company_post_drafts").insert({
+    company_id: ctx.companyId,
+    author_user_id: ctx.userId,
+    agent_key: a.agent_key ?? "growth",
+    text_content: text,
+    tags,
+    link_url: a.link_url ?? null,
+    media_url: a.media_url ?? null,
+    status: "pending",
+  }).select("id, text_content").single();
+  if (error) return { ok: false, error: error.message };
+  return {
+    ok: true,
+    result: { draft_id: data.id, status: "pending" },
+    canvas: { type: "post_draft", payload: { draft_id: data.id, text: data.text_content } },
+    user_message: `Draft saved. Open the Feed tab to review and publish.`,
+  };
+}
+
+async function list_pending_drafts(ctx: Ctx) {
+  const { data, error } = await ctx.admin
+    .from("company_post_drafts")
+    .select("id, text_content, tags, agent_key, created_at, status")
+    .eq("company_id", ctx.companyId)
+    .eq("status", "pending")
+    .order("created_at", { ascending: false })
+    .limit(20);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, result: { count: data?.length ?? 0, drafts: data ?? [] } };
+}
+
+async function publish_company_post(ctx: Ctx, a: any) {
+  // Owner-only: verify role
+  const { data: m } = await ctx.admin
+    .from("company_members")
+    .select("role")
+    .eq("user_id", ctx.userId)
+    .eq("company_id", ctx.companyId)
+    .eq("status", "active")
+    .maybeSingle();
+  if (!m || (m.role !== "owner" && m.role !== "admin")) {
+    return { ok: false, error: "Only company owners or admins can publish" };
+  }
+
+  const { data: draft } = await ctx.admin
+    .from("company_post_drafts")
+    .select("id, company_id, text_content, tags, link_url, media_url, status")
+    .eq("id", a.draft_id)
+    .maybeSingle();
+  if (!draft || draft.company_id !== ctx.companyId) return { ok: false, error: "Draft not found" };
+  if (draft.status !== "pending") return { ok: false, error: `Already ${draft.status}` };
+
+  const { data: company } = await ctx.admin
+    .from("companies")
+    .select("name, logo_url")
+    .eq("id", ctx.companyId)
+    .single();
+
+  const { data: post, error: postErr } = await ctx.admin.from("feed_posts").insert({
+    author_name: company?.name ?? "Company",
+    author_title: "Company",
+    author_avatar: company?.logo_url ?? null,
+    content_type: "text",
+    text_content: draft.text_content,
+    tags: draft.tags ?? [],
+    link_url: draft.link_url,
+    media_url: draft.media_url,
+    author_type: "company",
+    author_company_id: ctx.companyId,
+    author_user_id: ctx.userId,
+    status: "published",
+    is_active: true,
+  }).select("id").single();
+  if (postErr) return { ok: false, error: postErr.message };
+
+  await ctx.admin
+    .from("company_post_drafts")
+    .update({ status: "published", published_post_id: post.id })
+    .eq("id", draft.id);
+
+  return {
+    ok: true,
+    result: { post_id: post.id, draft_id: draft.id },
+    user_message: `Published to your company feed.`,
+  };
+}
+
+async function discard_company_draft(ctx: Ctx, a: any) {
+  const { error } = await ctx.admin
+    .from("company_post_drafts")
+    .update({ status: "discarded" })
+    .eq("id", a.draft_id)
+    .eq("company_id", ctx.companyId);
+  if (error) return { ok: false, error: error.message };
+  return { ok: true, result: { draft_id: a.draft_id, status: "discarded" } };
+}
