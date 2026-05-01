@@ -1,17 +1,15 @@
-import { useState, useCallback, useEffect } from "react";
+import { useState, useEffect } from "react";
 import {
-  FileText,
   Upload,
   Loader2,
   CheckCircle2,
   Sparkles,
   User,
   Briefcase,
-  GraduationCap,
   AlertCircle,
-  Eye,
-  Zap,
   ShieldCheck,
+  FileText,
+  ArrowRight
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -20,11 +18,6 @@ import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@
 import { useTalent } from "@/hooks/useTalent";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-
-/**
- * GroUp Academy: Intelligent Onboarding Ingress (CVUploadStep)
- * CTO Reference: Authoritative node for CV parsing and career vector initialization.
- */
 
 interface CVUploadStepProps {
   onContinue: () => void;
@@ -41,11 +34,11 @@ interface ParsedCVData {
 }
 
 const PARSING_STAGES = [
-  { progress: 20, message: "Syncing document with registry..." },
-  { progress: 40, message: "Initializing OCR protocols..." },
-  { progress: 60, message: "Extracting knowledge artifacts..." },
-  { progress: 80, message: "Synthesizing professional profile..." },
-  { progress: 95, message: "Finalizing identity mapping..." },
+  { progress: 20, message: "Uploading document..." },
+  { progress: 40, message: "Analyzing text structure..." },
+  { progress: 60, message: "Extracting skills and experience..." },
+  { progress: 80, message: "Building professional profile..." },
+  { progress: 95, message: "Finalizing..." },
 ];
 
 export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
@@ -92,7 +85,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       "application/vnd.openxmlformats-officedocument.wordprocessingml.document",
     ];
     if (!validTypes.includes(file.type)) {
-      toast.error("PROTOCOL_ERROR: Invalid format. PDF or Word required.");
+      toast.error("Invalid format. PDF or Word document required.");
       return;
     }
 
@@ -124,8 +117,8 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
 
       if (invokeError || !parseResult?.success) {
         await updateTalent({ cvUrl: publicUrl });
-        setParseError("SYNAPSE_FAULT: Manual entry required for specific attributes.");
-        toast.warning("Artifact uploaded. Auto-mapping offline.");
+        setParseError("Auto-parsing unavailable. You can manually enter details later.");
+        toast.warning("File uploaded successfully.");
         setIsParsing(false);
         setParseComplete(true);
         return;
@@ -138,18 +131,18 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       // REGISTRY_SYNC: Intelligent Data Merging
       const updatePayload: Record<string, any> = { cvUrl: publicUrl, cvParsedAt: new Date().toISOString() };
 
-      if (parsed.full_name && (!talent.fullName || talent.fullName === talent.email?.split("@")[0])) {
+      if (parsed.full_name && (!talent.fullName || talent.fullName === talent.email?.split("@"))) {
         updatePayload.fullName = parsed.full_name;
       }
 
       await updateTalent(updatePayload);
       await refreshTalent();
 
-      toast.success("NEURAL_SYNC_COMPLETE");
+      toast.success("CV successfully parsed and synced.");
       setParseComplete(true);
       setIsParsing(false);
     } catch (error) {
-      toast.error("DATA_INGRESS_FAULT");
+      toast.error("Upload failed. Please try again.");
       setIsUploading(false);
       setIsParsing(false);
     }
@@ -157,44 +150,48 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
 
   const renderArtifactAudit = () => {
     if (!parsedData && !parseComplete) return null;
-    if (parseError)
+    
+    if (parseError) {
       return (
-        <div className="w-full mt-6 p-5 bg-amber-500/5 border-2 border-amber-500/20 rounded-[20px] animate-in fade-in slide-in-from-top-2">
-          <div className="flex items-center gap-3 mb-2 text-amber-600">
+        <div className="w-full mt-8 p-6 bg-rose-50 border border-rose-100 rounded-[24px] animate-in fade-in slide-in-from-top-2">
+          <div className="flex items-center gap-3 mb-2 text-rose-600">
             <AlertCircle className="h-5 w-5" />
-            <span className="font-black uppercase italic text-[11px] tracking-widest">Ingress_Warning</span>
+            <span className="font-bold uppercase text-[10px] tracking-widest">Notice</span>
           </div>
-          <p className="text-xs font-medium italic text-muted-foreground">{parseError}</p>
+          <p className="text-sm font-medium text-rose-700">{parseError}</p>
         </div>
       );
+    }
 
     return (
-      <div className="w-full mt-6 p-5 bg-emerald-500/5 border-2 border-emerald-500/20 rounded-[24px] animate-in slide-in-from-bottom-4 duration-700">
-        <div className="flex items-center gap-3 mb-4">
+      <div className="w-full mt-8 p-6 bg-emerald-50 border border-emerald-100 rounded-[32px] animate-in slide-in-from-bottom-4 duration-700">
+        <div className="flex items-center gap-3 mb-5">
           <ShieldCheck className="h-5 w-5 text-emerald-500" />
-          <span className="font-black uppercase italic text-[11px] tracking-widest text-emerald-600">
-            Profile_Synchronized
+          <span className="font-bold uppercase text-[10px] tracking-widest text-emerald-600">
+            Profile Synchronized
           </span>
         </div>
 
         {parsedData?.full_name && (
-          <div className="flex items-center gap-3 mb-4 p-3 bg-background/50 border border-border/40 rounded-xl">
-            <User className="h-4 w-4 text-primary" />
-            <span className="text-sm font-black uppercase italic tracking-tighter">{parsedData.full_name}</span>
+          <div className="flex items-center gap-4 mb-4 p-4 bg-white border border-slate-100 rounded-[20px] shadow-sm">
+            <div className="h-8 w-8 rounded-full bg-blue-50 flex items-center justify-center">
+              <User className="h-4 w-4 text-blue-500" />
+            </div>
+            <span className="text-base font-black uppercase tracking-tight text-slate-900">{parsedData.full_name}</span>
           </div>
         )}
 
-        <div className="grid grid-cols-2 gap-3">
+        <div className="grid grid-cols-2 gap-4">
           {parsedData?.skills?.length && (
-            <div className="p-3 bg-muted/20 rounded-xl border border-border/10">
-              <p className="text-[8px] font-black uppercase text-muted-foreground mb-1 tracking-widest">Artifacts</p>
-              <p className="text-[10px] font-bold italic truncate">{parsedData.skills.length} Knowledge_Nodes</p>
+            <div className="p-4 bg-white rounded-[20px] border border-slate-100 shadow-sm">
+              <p className="text-[10px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Skills Found</p>
+              <p className="text-xl font-black text-slate-900">{parsedData.skills.length}</p>
             </div>
           )}
           {parsedData?.experience?.length && (
-            <div className="p-3 bg-muted/20 rounded-xl border border-border/10">
-              <p className="text-[8px] font-black uppercase text-muted-foreground mb-1 tracking-widest">History</p>
-              <p className="text-[10px] font-bold italic truncate">{parsedData.experience.length} Exp_Clusters</p>
+            <div className="p-4 bg-white rounded-[20px] border border-slate-100 shadow-sm">
+              <p className="text-[10px] font-bold uppercase text-slate-400 mb-1 tracking-widest">Experience</p>
+              <p className="text-xl font-black text-slate-900">{parsedData.experience.length} Roles</p>
             </div>
           )}
         </div>
@@ -203,24 +200,25 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
   };
 
   return (
-    <div className="flex flex-col items-center px-4 py-8 max-w-lg mx-auto text-left">
-      <div className="mb-10 space-y-2 text-center">
-        <h2 className="text-3xl font-black uppercase italic tracking-tighter text-foreground leading-none">
-          Initialize_Talent_Registry
+    <div className="flex flex-col items-center px-4 py-8 max-w-xl mx-auto text-left w-full">
+      <div className="mb-12 space-y-3 text-center">
+        <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 leading-tight">
+          Build Your Profile
         </h2>
-        <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground italic">
-          Sync your professional artifacts for autonomous profile mapping
+        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
+          Upload your resume to automatically map your skills.
         </p>
       </div>
 
       {/* COMPONENT: DROPSHIP_ZONE */}
       <div
         className={cn(
-          "relative w-full border-2 border-dashed rounded-[32px] p-12 text-center transition-all duration-700",
+          "relative w-full border-2 border-dashed rounded-[32px] p-12 text-center transition-all duration-500",
           isDragging
-            ? "border-primary bg-primary/5 scale-105 shadow-2xl shadow-primary/10"
-            : "border-border/40 bg-muted/5",
-          (isUploading || isParsing) && "pointer-events-none opacity-50 grayscale",
+            ? "border-blue-500 bg-blue-50 scale-[1.02]"
+            : "border-slate-200 bg-white hover:border-blue-200 hover:bg-slate-50",
+          (isUploading || isParsing) && "pointer-events-none opacity-60",
+          parseComplete && "border-emerald-200 bg-emerald-50/50"
         )}
         onDragOver={(e) => {
           e.preventDefault();
@@ -230,49 +228,59 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         onDrop={(e) => {
           e.preventDefault();
           setIsDragging(false);
-          const f = e.dataTransfer.files[0];
+          const f = e.dataTransfer.files;
           if (f) handleExecutiveUpload(f);
         }}
       >
         <input
           type="file"
           accept=".pdf,.doc,.docx"
-          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer"
+          className="absolute inset-0 w-full h-full opacity-0 cursor-pointer z-10"
           onChange={(e) => {
-            const f = e.target.files?.[0];
+            const f = e.target.files?.;
             if (f) handleExecutiveUpload(f);
           }}
         />
 
         {isUploading ? (
-          <div className="flex flex-col items-center gap-4 animate-in fade-in">
-            <Loader2 className="h-12 w-12 text-primary animate-spin" />
-            <p className="text-[10px] font-black uppercase tracking-[0.2em] italic">Commiting_to_Storage...</p>
+          <div className="flex flex-col items-center gap-5 animate-in fade-in">
+            <Loader2 className="h-10 w-10 text-blue-500 animate-spin" />
+            <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">Uploading Document...</p>
           </div>
         ) : isParsing ? (
           <div className="flex flex-col items-center gap-6 w-full animate-in zoom-in-95">
-            <Sparkles className="h-12 w-12 text-primary animate-pulse" />
-            <div className="w-full space-y-3">
-              <div className="h-1.5 bg-primary/10 rounded-full overflow-hidden shadow-inner">
+            <Sparkles className="h-10 w-10 text-blue-500 animate-pulse" />
+            <div className="w-full max-w-[200px] space-y-4 mx-auto">
+              <div className="h-2 bg-slate-100 rounded-full overflow-hidden">
                 <div
-                  className="h-full bg-primary transition-all duration-700 ease-out"
+                  className="h-full bg-blue-500 transition-all duration-700 ease-out"
                   style={{ width: `${parseProgress}%` }}
                 />
               </div>
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary italic text-center">
+              <p className="text-[10px] font-bold uppercase tracking-widest text-blue-500 text-center">
                 {parseMessage}
               </p>
             </div>
           </div>
-        ) : (
-          <div className="flex flex-col items-center gap-4 group">
-            <div className="h-20 w-20 rounded-[24px] bg-primary/10 flex items-center justify-center border border-primary/20 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-transform duration-500">
-              <Upload className="h-8 w-8 text-primary" />
+        ) : parseComplete ? (
+          <div className="flex flex-col items-center gap-4">
+            <div className="h-16 w-16 rounded-full bg-emerald-100 flex items-center justify-center text-emerald-500 mb-2">
+              <CheckCircle2 className="h-8 w-8" />
             </div>
-            <div className="space-y-1">
-              <p className="text-base font-black uppercase italic tracking-tighter">Authorize_Upload</p>
-              <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
-                PDF | DOCX (Max 5MB)
+            <p className="text-lg font-black tracking-tighter text-slate-900">Upload Complete</p>
+            <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+              Click or drag to replace
+            </p>
+          </div>
+        ) : (
+          <div className="flex flex-col items-center gap-5 group">
+            <div className="h-16 w-16 rounded-full bg-slate-100 flex items-center justify-center group-hover:bg-blue-100 transition-colors duration-300">
+              <FileText className="h-7 w-7 text-slate-400 group-hover:text-blue-500 transition-colors" />
+            </div>
+            <div className="space-y-2">
+              <p className="text-xl font-black tracking-tighter text-slate-900">Upload Resume</p>
+              <p className="text-[10px] font-bold text-slate-400 uppercase tracking-widest">
+                PDF or DOCX (Max 5MB)
               </p>
             </div>
           </div>
@@ -282,55 +290,52 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       {renderArtifactAudit()}
 
       {/* HUD: CATEGORY_LEDGER */}
-      <div className="w-full mt-10 p-6 bg-card/40 backdrop-blur-xl border-2 border-border/40 rounded-[32px] shadow-2xl relative overflow-hidden">
-        <div className="absolute top-0 right-0 p-6 opacity-5 pointer-events-none">
-          <Zap className="h-24 w-24 rotate-12" />
-        </div>
-
-        <Label className="text-[10px] font-black uppercase italic tracking-[0.2em] text-primary mb-4 flex items-center gap-3">
-          <Briefcase className="h-4 w-4" /> Primary_Trajectory_Key <span className="text-destructive">*</span>
+      <div className="w-full mt-8 p-8 bg-white border border-slate-100 rounded-[32px] shadow-sm">
+        <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-3">
+          <Briefcase className="h-4 w-4" /> Select Career Track <span className="text-rose-500">*</span>
         </Label>
 
         <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={isParsing}>
-          <SelectTrigger className="h-12 bg-background/50 border-2 rounded-2xl font-bold italic focus:ring-primary/20 transition-all">
-            <SelectValue placeholder="Initialize trajectory selection..." />
+          <SelectTrigger className="h-14 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-blue-500/20 text-slate-900">
+            <SelectValue placeholder="Choose your primary focus..." />
           </SelectTrigger>
-          <SelectContent className="rounded-xl border-2 shadow-2xl">
+          <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
             {categories.map((cat) => (
-              <SelectItem key={cat.id} value={cat.id} className="font-bold italic text-xs py-3">
+              <SelectItem key={cat.id} value={cat.id} className="font-bold text-sm py-3 text-slate-700">
                 {cat.name.toUpperCase()}
               </SelectItem>
             ))}
           </SelectContent>
         </Select>
-        <p className="text-[8px] font-black text-muted-foreground/60 uppercase tracking-widest mt-3 leading-relaxed italic">
-          This key initializes your dedicated AI faculty and global placement vectors.
+        <p className="text-[10px] font-medium text-slate-400 mt-4 leading-relaxed">
+          This determines your dedicated AI instructor and curates recommended learning paths.
         </p>
       </div>
 
       {/* FOOTER: ACTION_INGRESS */}
-      <div className="flex flex-col w-full gap-4 mt-10 pt-6 border-t-2 border-border/10">
+      <div className="flex flex-col w-full gap-4 mt-12 pt-8 border-t border-slate-200">
         <Button
-          size="xl"
+          size="lg"
           onClick={async () => {
-            if (selectedCategory === "none") return toast.error("TRAJECTORY_NOT_DEFINED");
+            if (selectedCategory === "none") return toast.error("Please select a career track to continue.");
             setIsSaving(true);
             await updateTalent({ professionCategoryId: selectedCategory });
             onContinue();
           }}
           disabled={isParsing || isUploading || selectedCategory === "none"}
-          className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-[0.2em] shadow-[0_20px_50px_rgba(var(--primary),0.2)] hover:shadow-primary/40 transition-all active:scale-95 gap-3"
+          className="w-full h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white font-bold uppercase tracking-widest text-[10px] shadow-sm gap-3"
         >
-          {isSaving ? <Loader2 className="h-5 w-5 animate-spin" /> : <ShieldCheck className="h-6 w-6" />}
-          VERIFY_AND_COMMENCE
+          {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
+          Verify & Continue
+          {!isSaving && <ArrowRight className="h-4 w-4" />}
         </Button>
         <Button
           variant="ghost"
           onClick={onSkip}
-          className="text-[9px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 hover:text-foreground transition-colors"
+          className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors h-12 rounded-full"
           disabled={isParsing || isUploading}
         >
-          AUTHORIZE_SYNC_SKIP
+          Skip for now
         </Button>
       </div>
     </div>
