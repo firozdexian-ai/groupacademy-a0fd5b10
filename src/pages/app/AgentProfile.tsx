@@ -26,6 +26,8 @@ export default function AgentProfile() {
   });
   const [isLoading, setLoading] = useState(true);
   const [hasChatted, setHasChatted] = useState(false);
+  const [isConnected, setIsConnected] = useState(false);
+  const [isConnecting, setIsConnecting] = useState(false);
 
   useEffect(() => {
     if (!agentKey) return;
@@ -45,21 +47,43 @@ export default function AgentProfile() {
         });
       }
       if (talent?.id) {
-        const { data: sess } = await supabase
-          .from("agent_chat_sessions")
-          .select("id,messages")
-          .eq("talent_id", talent.id)
-          .eq("agent_key", agentKey)
-          .limit(1);
+        const [{ data: sess }, { data: connected }] = await Promise.all([
+          supabase
+            .from("agent_chat_sessions")
+            .select("id,messages")
+            .eq("talent_id", talent.id)
+            .eq("agent_key", agentKey)
+            .limit(1),
+          supabase.rpc("is_agent_connected", { _agent_key: agentKey, _talent_id: talent.id }),
+        ]);
         const total = (sess || []).reduce(
           (n, row: any) => n + (Array.isArray(row.messages) ? row.messages.length : 0),
           0,
         );
         setHasChatted(total >= 3);
+        setIsConnected(Boolean(connected));
       }
       setLoading(false);
     })();
   }, [agentKey, talent?.id]);
+
+  async function handleConnect() {
+    if (!agentKey || !talent?.id) return;
+    setIsConnecting(true);
+    const fee = Number(agent?.connection_fee ?? 0);
+    const { error } = await supabase.rpc("connect_agent", {
+      _agent_key: agentKey,
+      _talent_id: talent.id,
+      _fee: fee,
+    });
+    setIsConnecting(false);
+    if (error) {
+      console.error("[AgentProfile] connect error", error);
+      return;
+    }
+    setIsConnected(true);
+    navigate(`/app/messages/${agentKey}`);
+  }
 
   if (isLoading) {
     return (
@@ -184,13 +208,26 @@ export default function AgentProfile() {
       {/* Sticky CTA */}
       <div className="fixed bottom-0 left-0 right-0 z-20 bg-background/95 backdrop-blur-md border-t border-border/40 px-3 py-3 pb-[max(env(safe-area-inset-bottom),0.75rem)]">
         <div className="max-w-2xl mx-auto">
-          <Button
-            className="w-full h-11 rounded-full gap-2 font-bold"
-            onClick={() => navigate(`/app/messages/${agentKey}`)}
-          >
-            <MessageCircle className="h-4 w-4" />
-            {hasChatted ? "Continue Conversation" : "Connect & Message"}
-          </Button>
+          {isConnected ? (
+            <Button
+              className="w-full h-11 rounded-full gap-2 font-bold"
+              onClick={() => navigate(`/app/messages/${agentKey}`)}
+            >
+              <MessageCircle className="h-4 w-4" />
+              Message
+            </Button>
+          ) : (
+            <Button
+              className="w-full h-11 rounded-full gap-2 font-bold"
+              disabled={isConnecting}
+              onClick={handleConnect}
+            >
+              <MessageCircle className="h-4 w-4" />
+              {Number(agent.connection_fee ?? 0) > 0
+                ? `Connect · ${agent.connection_fee} credits`
+                : "Connect · Free"}
+            </Button>
+          )}
         </div>
       </div>
     </div>

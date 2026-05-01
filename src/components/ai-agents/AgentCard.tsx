@@ -92,30 +92,17 @@ export function AgentCard({
         </span>
       </div>
 
-      {/* CTAs */}
-      <div className="flex gap-1.5 pt-0.5">
-        <Button
-          size="sm"
-          className="flex-1 h-8 text-xs font-semibold rounded-full"
-          onClick={(e) => {
-            e.stopPropagation();
-            handleViewProfile?.();
-          }}
-        >
-          View Profile
-        </Button>
-        <Button
-          size="sm"
-          variant="outline"
-          className="h-8 w-8 p-0 rounded-full shrink-0"
-          onClick={(e) => {
-            e.stopPropagation();
-            onMessage?.();
-          }}
-        >
-          <MessageCircle className="h-3.5 w-3.5" />
-        </Button>
-      </div>
+      {/* CTA — single full-width View Profile (Connect/Message live inside the profile) */}
+      <Button
+        size="sm"
+        className="w-full h-8 text-xs font-semibold rounded-full"
+        onClick={(e) => {
+          e.stopPropagation();
+          handleViewProfile?.();
+        }}
+      >
+        View Profile
+      </Button>
     </Card>
   );
 }
