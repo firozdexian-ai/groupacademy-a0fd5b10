@@ -428,59 +428,49 @@ export default function Gigs() {
         </TabsContent>
       </Tabs>
 
-      {/* High-Fidelity Deliverable Protocol */}
+      {/* Submit deliverable */}
       <Dialog open={!!deliverableDialog} onOpenChange={(o) => !o && setDeliverableDialog(null)}>
-        <DialogContent className="rounded-[40px] border-2 border-border/40 bg-background/80 backdrop-blur-2xl p-10 max-w-xl">
-          <DialogHeader className="mb-6">
-          <DialogTitle className="text-lg font-bold">Submit deliverable</DialogTitle>
-            <p className="text-xs text-muted-foreground mt-1">Share your work for review.</p>
+        <DialogContent className="rounded-2xl max-w-md p-4">
+          <DialogHeader>
+            <DialogTitle className="text-base font-bold">Submit deliverable</DialogTitle>
+            <p className="text-xs text-muted-foreground">Share your work for review.</p>
           </DialogHeader>
-          <div className="space-y-8">
-            <div className="space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
-                Artifact Title
-              </Label>
+          <div className="space-y-3 pt-2">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Title</Label>
               <Input
                 value={delivTitle}
                 onChange={(e) => setDelivTitle(e.target.value)}
-                placeholder="Logic Submission V1.0"
-                className="h-12 rounded-xl border-2 bg-background/50 font-bold"
+                placeholder="My deliverable"
+                className="h-10 rounded-xl text-sm"
               />
             </div>
-            <div className="space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
-                Documentation Briefing
-              </Label>
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">Description</Label>
               <Textarea
                 value={delivDesc}
                 onChange={(e) => setDelivDesc(e.target.value)}
-                placeholder="Log work parameters and performance metrics..."
-                className="rounded-xl min-h-[140px] bg-muted/10 border-2 italic font-medium p-4 leading-relaxed"
+                placeholder="Brief notes about your submission..."
+                className="rounded-xl min-h-[100px] text-sm"
               />
             </div>
-            <div className="space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
-                Artifact Evidence
-              </Label>
-              <div className="p-4 rounded-xl border-2 border-dashed border-border/60 bg-muted/5 group hover:border-primary/40 transition-all cursor-pointer">
+            <div className="space-y-1.5">
+              <Label className="text-xs font-semibold">File (optional)</Label>
+              <div className="p-2.5 rounded-xl border border-dashed border-border/60 bg-muted/10">
                 <Input
                   type="file"
                   onChange={(e) => setDelivFile(e.target.files?.[0] || null)}
-                  className="border-none bg-transparent h-auto p-0 cursor-pointer"
+                  className="border-none bg-transparent h-auto p-0 text-xs"
                 />
               </div>
             </div>
             <Button
-              className="w-full h-16 rounded-[24px] font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-primary/30 transition-all hover:scale-[1.02] active:scale-95"
+              className="w-full h-11 rounded-xl text-sm"
               onClick={() => submitDeliverable.mutate()}
               disabled={submitDeliverable.isPending}
             >
-              {submitDeliverable.isPending ? (
-                <Loader2 className="animate-spin h-5 w-5 mr-3" />
-              ) : (
-                <Zap className="h-5 w-5 mr-3 fill-current" />
-              )}
-              Finalize Submission Protocol
+              {submitDeliverable.isPending && <Loader2 className="animate-spin h-4 w-4 mr-2" />}
+              Submit deliverable
             </Button>
           </div>
         </DialogContent>
