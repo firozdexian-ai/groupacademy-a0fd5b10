@@ -40,6 +40,7 @@ import {
   FileText,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { AgentBrainPanel } from "@/components/dashboard/AgentBrainPanel";
 
 /**
  * Agent Studio: No-code builder for the unified Agent OS.
