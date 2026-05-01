@@ -130,6 +130,8 @@ import BlogPost from "./pages/app/BlogPost";
 import PublicBlog from "./pages/PublicBlog";
 import PublicBlogPost from "./pages/PublicBlogPost";
 import Unsubscribe from "./pages/app/Unsubscribe";
+import { Gro10xRoutes } from "./gro10x/Gro10xRoutes";
+import { IS_GRO10X } from "./lib/host";
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -197,7 +199,7 @@ export default function App() {
 
                 <Routes>
                   {/* ================= PUBLIC ROUTES ================= */}
-                  <Route path="/" element={<Index />} />
+                  <Route path="/" element={IS_GRO10X ? <Navigate to="/gro10x" replace /> : <Index />} />
                   <Route path="/auth" element={<AuthChat />} />
                   <Route path="/auth/classic" element={<AuthClassic />} />
                   <Route path="/reset-password" element={<ResetPassword />} />
@@ -214,6 +216,9 @@ export default function App() {
                   <Route path="/for-companies" element={<ForCompanies />} />
                   <Route path="/for-companies/signup" element={<CompanySignup />} />
                   <Route path="/for-companies/apply" element={<CompanySignup />} />
+
+                  {/* ================= GRO10X (B2B super-app) ================= */}
+                  <Route path="/gro10x/*" element={<Gro10xRoutes />} />
                   <Route path="/service/:serviceSlug" element={<ServiceLanding />} />
                   <Route path="/blog" element={<PublicBlog />} />
                   <Route path="/blog/:slug" element={<PublicBlogPost />} />
