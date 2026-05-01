@@ -54,13 +54,13 @@ interface CountryGroup {
   cities: { name: string; count: number }[];
 }
 
-type TabKey = "browse" | "company" | "country" | "agents";
+type TabKey = "browse" | "company" | "country" | "tools";
 
 const TABS: { key: TabKey; label: string; icon: any }[] = [
   { key: "browse", label: "Browse", icon: Layers },
   { key: "company", label: "Companies", icon: Building2 },
   { key: "country", label: "Locations", icon: Globe },
-  { key: "agents", label: "Agents", icon: Bot },
+  { key: "tools", label: "Tools", icon: Zap },
 ];
 
 const INITIAL_SHOW = 3;
@@ -226,8 +226,18 @@ export default function JobsHub() {
         });
       }
     });
-    return Array.from(map.values()).sort((a, b) => b.totalJobs - a.totalJobs);
-  }, [locations]);
+    const list = Array.from(map.values()).sort((a, b) => b.totalJobs - a.totalJobs);
+    // Pin user's country to the top
+    const userCountry = talent?.country;
+    if (userCountry) {
+      const idx = list.findIndex((g) => g.country.toLowerCase() === userCountry.toLowerCase());
+      if (idx > 0) {
+        const [pinned] = list.splice(idx, 1);
+        list.unshift(pinned);
+      }
+    }
+    return list;
+  }, [locations, talent?.country]);
 
   async function handleGetAIRecommendations() {
     if (!canAfford("SUGGESTED_JOBS")) return toast.error("Need 10 credits to run AI matching.");
@@ -412,91 +422,135 @@ export default function JobsHub() {
           <h2 className="text-base font-semibold flex items-center gap-2 mb-3">
             <Globe className="h-4 w-4 text-primary" /> Jobs by country
           </h2>
-          {countryGroups.map((g) => (
-            <Card key={g.country}>
-              <button
-                onClick={() => setExpandedCountry(expandedCountry === g.country ? null : g.country)}
-                className="w-full flex items-center p-3 hover:bg-muted/40 text-left transition-colors"
+          {countryGroups.map((g) => {
+            const isUserCountry =
+              !!talent?.country && g.country.toLowerCase() === talent.country.toLowerCase();
+            return (
+              <Card
+                key={g.country}
+                className={cn(isUserCountry && "border-primary/40 bg-primary/5")}
               >
-                <div className="h-9 w-9 rounded-lg bg-muted/50 flex items-center justify-center text-lg mr-3">
-                  {g.flag}
-                </div>
-                <div className="flex-1 min-w-0">
-                  <p className="text-sm font-semibold">{g.country}</p>
-                  <p className="text-xs text-muted-foreground">{g.totalJobs} open {g.totalJobs === 1 ? "role" : "roles"}</p>
-                </div>
-                {expandedCountry === g.country ? (
-                  <ChevronUp className="text-primary h-4 w-4" />
-                ) : (
-                  <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                <button
+                  onClick={() => setExpandedCountry(expandedCountry === g.country ? null : g.country)}
+                  className="w-full flex items-center p-3 hover:bg-muted/40 text-left transition-colors"
+                >
+                  <div className="h-9 w-9 rounded-lg bg-muted/50 flex items-center justify-center text-lg mr-3">
+                    {g.flag}
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <p className="text-sm font-semibold">{g.country}</p>
+                      {isUserCountry && (
+                        <Badge className="bg-primary/15 text-primary border-0 text-[9px] px-1.5 py-0">
+                          Your country
+                        </Badge>
+                      )}
+                    </div>
+                    <p className="text-xs text-muted-foreground">{g.totalJobs} open {g.totalJobs === 1 ? "role" : "roles"}</p>
+                  </div>
+                  {expandedCountry === g.country ? (
+                    <ChevronUp className="text-primary h-4 w-4" />
+                  ) : (
+                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
+                  )}
+                </button>
+                {expandedCountry === g.country && (
+                  <div className="bg-muted/20 p-2 grid grid-cols-2 gap-1.5 border-t">
+                    {g.cities.slice(0, 10).map((city) => (
+                      <button
+                        key={city.name}
+                        onClick={() => navigate(`/app/jobs/all?location=${encodeURIComponent(city.name)}`)}
+                        className="flex justify-between items-center px-3 py-2 rounded-md bg-background hover:bg-primary/5 transition-all border border-border/40"
+                      >
+                        <span className="text-xs font-medium truncate">{city.name}</span>
+                        <Badge variant="outline" className="text-[10px] px-1.5">
+                          {city.count}
+                        </Badge>
+                      </button>
+                    ))}
+                  </div>
                 )}
-              </button>
-              {expandedCountry === g.country && (
-                <div className="bg-muted/20 p-2 grid grid-cols-2 gap-1.5 border-t">
-                  {g.cities.slice(0, 10).map((city) => (
-                    <button
-                      key={city.name}
-                      onClick={() => navigate(`/app/jobs/all?location=${encodeURIComponent(city.name)}`)}
-                      className="flex justify-between items-center px-3 py-2 rounded-md bg-background hover:bg-primary/5 transition-all border border-border/40"
-                    >
-                      <span className="text-xs font-medium truncate">{city.name}</span>
-                      <Badge variant="outline" className="text-[10px] px-1.5">
-                        {city.count}
-                      </Badge>
-                    </button>
-                  ))}
-                </div>
-              )}
-            </Card>
-          ))}
+              </Card>
+            );
+          })}
         </div>
       )}
 
-      {/* Agents tab */}
-      {activeTab === "agents" && (
+      {/* Tools tab */}
+      {activeTab === "tools" && (
         <div className="space-y-5 animate-in fade-in duration-300">
-          {/* Quick actions */}
           <section className="space-y-2">
-            <h2 className="text-base font-semibold">Quick actions</h2>
-            <div className="grid grid-cols-2 gap-2">
-              <QuickAction icon={Sparkles} label="AI matches" sub="10 credits" onClick={handleGetAIRecommendations} />
-              <QuickAction icon={Target} label="Score me vs job" sub="10 credits" onClick={() => navigate("/app/jobs/all")} />
-              <QuickAction icon={FileText} label="Polish my CV" sub="Chat with CV Coach" onClick={() => navigate("/app/agents/cv-coach")} />
-              <QuickAction icon={MessageSquare} label="Practice interview" sub="Chat with coach" onClick={() => navigate("/app/agents/interview-coach")} />
+            <h2 className="text-base font-semibold flex items-center gap-2">
+              <Zap className="h-4 w-4 text-primary" /> Career tools
+            </h2>
+            <p className="text-xs text-muted-foreground">
+              Practical AI tools to ship a stronger application — fast.
+            </p>
+
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <ToolCard
+                icon={FileText}
+                title="ATS-friendly CV"
+                desc="Generate a clean, scanner-safe CV PDF from your profile."
+                cost="15 credits"
+                onClick={() => navigate("/app/tools/cv-maker")}
+              />
+              <ToolCard
+                icon={MessageSquare}
+                title="Application answers"
+                desc="Paste questions, get tailored answers grounded in your profile."
+                cost="10 credits"
+                onClick={() => navigate("/app/tools/application-helper")}
+              />
+              <ToolCard
+                icon={Sparkles}
+                title="AI job matches"
+                desc="Rank your best-fit open roles against your profile."
+                cost="10 credits"
+                onClick={handleGetAIRecommendations}
+              />
+              <ToolCard
+                icon={Target}
+                title="Score me vs job"
+                desc="See your match score for any specific role."
+                cost="10 credits"
+                onClick={() => navigate("/app/jobs/all")}
+              />
             </div>
           </section>
 
-          {/* Career agents */}
-          <section className="space-y-2">
-            <h2 className="text-base font-semibold flex items-center gap-2">
-              <Bot className="h-4 w-4 text-primary" /> Career agents
-            </h2>
-            <p className="text-xs text-muted-foreground">
-              Free to start. Each chat costs ~0.5 credits per reply, plus a small one-time connection fee.
-            </p>
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              {careerAgents.map((agent) => (
-                <Card
-                  key={agent.agent_key}
-                  className="hover:border-primary/40 transition-all cursor-pointer"
-                  onClick={() => navigate(`/app/agents/${agent.agent_key}`)}
-                >
-                  <CardContent className="p-3 flex items-center gap-3">
-                    <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                      <AgentAvatar name={agent.name} avatarUrl={agent.avatar_url} size="md" />
-                    </div>
-                    <div className="flex-1 min-w-0">
-                      <p className="text-sm font-semibold truncate">{agent.name}</p>
-                      <p className="text-xs text-muted-foreground line-clamp-1">
-                        {AGENT_PURPOSE[agent.agent_key] || agent.description}
-                      </p>
-                    </div>
-                    <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
-                  </CardContent>
-                </Card>
-              ))}
-            </div>
-          </section>
+          {careerAgents.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-base font-semibold flex items-center gap-2">
+                <Bot className="h-4 w-4 text-primary" /> Talk to a career agent
+              </h2>
+              <p className="text-xs text-muted-foreground">
+                Prefer a conversation? Career agents go deeper, step-by-step.
+              </p>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {careerAgents.map((agent) => (
+                  <Card
+                    key={agent.agent_key}
+                    className="hover:border-primary/40 transition-all cursor-pointer"
+                    onClick={() => navigate(`/app/agents/${agent.agent_key}`)}
+                  >
+                    <CardContent className="p-3 flex items-center gap-3">
+                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                        <AgentAvatar name={agent.name} avatarUrl={agent.avatar_url} size="md" />
+                      </div>
+                      <div className="flex-1 min-w-0">
+                        <p className="text-sm font-semibold truncate">{agent.name}</p>
+                        <p className="text-xs text-muted-foreground line-clamp-1">
+                          {AGENT_PURPOSE[agent.agent_key] || agent.description}
+                        </p>
+                      </div>
+                      <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                    </CardContent>
+                  </Card>
+                ))}
+              </div>
+            </section>
+          )}
         </div>
       )}
 
@@ -517,6 +571,43 @@ function QuickAction({ icon: Icon, label, sub, onClick }: { icon: any; label: st
       <div className="flex-1 min-w-0">
         <p className="text-xs font-semibold leading-tight">{label}</p>
         <p className="text-[10px] text-muted-foreground">{sub}</p>
+      </div>
+    </button>
+  );
+}
+
+function ToolCard({
+  icon: Icon,
+  title,
+  desc,
+  cost,
+  onClick,
+}: {
+  icon: any;
+  title: string;
+  desc: string;
+  cost: string;
+  onClick: () => void;
+}) {
+  return (
+    <button
+      onClick={onClick}
+      className="flex flex-col gap-2 p-3 rounded-2xl border border-border/40 bg-card hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
+    >
+      <div className="flex items-center gap-2.5">
+        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+          <Icon className="h-4 w-4 text-primary" />
+        </div>
+        <p className="text-sm font-semibold leading-tight flex-1">{title}</p>
+      </div>
+      <p className="text-[11px] text-muted-foreground line-clamp-2">{desc}</p>
+      <div className="flex items-center justify-between pt-1 border-t border-border/40">
+        <Badge variant="outline" className="gap-1 text-[10px]">
+          <Coins className="h-3 w-3 text-amber-500" /> {cost}
+        </Badge>
+        <span className="flex items-center gap-1 text-[11px] font-medium text-primary">
+          Open <ArrowRight className="h-3 w-3" />
+        </span>
       </div>
     </button>
   );

@@ -1,35 +1,39 @@
 import { useState, lazy, Suspense, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
-import { BookOpen, Target, Library, Calendar } from "lucide-react";
-import { BannerCarousel } from "@/components/BannerCarousel";
+import { BookOpen, Target, Library, Globe } from "lucide-react";
 import { MyCoursesTab } from "@/components/learning/MyCoursesTab";
 import { TracksTab } from "@/components/learning/TracksTab";
 import { CoursesTab } from "@/components/learning/CoursesTab";
-import { EventsTab } from "@/components/learning/EventsTab";
+import { StudyAbroadSection } from "@/components/learning/StudyAbroadSection";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 /**
  * Learning Hub — compact mobile-first shell.
- * Tabs: My Hub · Career Path · Academy · Arena
+ * Tabs: My Hub · Career Path · Academy · Study Abroad
  */
 
 const CompetitionDetail = lazy(() => import("@/pages/app/CompetitionDetail"));
 const AppCourseDetail = lazy(() => import("@/pages/app/AppCourseDetail"));
 
-type TabKey = "my-courses" | "tracks" | "courses" | "events";
+type TabKey = "my-courses" | "tracks" | "academy" | "study-abroad";
 type DetailView = { type: "competition" | "course"; slug: string } | null;
 
 const tabs: { key: TabKey; icon: any; label: string }[] = [
   { key: "my-courses", icon: BookOpen, label: "My Hub" },
   { key: "tracks", icon: Target, label: "Career Path" },
-  { key: "courses", icon: Library, label: "Academy" },
-  { key: "events", icon: Calendar, label: "Arena" },
+  { key: "academy", icon: Library, label: "Academy" },
+  { key: "study-abroad", icon: Globe, label: "Study Abroad" },
 ];
 
 export default function LearningHub() {
   const [searchParams, setSearchParams] = useSearchParams();
-  const initialTab = (searchParams.get("tab") as TabKey) || "my-courses";
+  const initialRaw = searchParams.get("tab");
+  // Back-compat: old `events` / `courses` keys map to academy
+  const initialTab: TabKey =
+    initialRaw === "events" || initialRaw === "courses"
+      ? "academy"
+      : ((initialRaw as TabKey) || "my-courses");
 
   const [activeTab, setActiveTab] = useState<TabKey>(initialTab);
   const [detailView, setDetailView] = useState<DetailView>(null);
@@ -37,11 +41,9 @@ export default function LearningHub() {
   useEffect(() => {
     if (!detailView) {
       const params: Record<string, string> = { tab: activeTab };
-      const kind = searchParams.get("kind");
-      if (kind && activeTab === "events") params.kind = kind;
       setSearchParams(params, { replace: true });
     }
-  }, [activeTab, detailView, setSearchParams, searchParams]);
+  }, [activeTab, detailView, setSearchParams]);
 
   const handleTabChange = (tab: TabKey) => {
     setActiveTab(tab);
@@ -62,13 +64,9 @@ export default function LearningHub() {
       {!detailView && (
         <>
           <header className="px-1">
-            <h1 className="text-xl font-bold leading-tight">Academy</h1>
-            <p className="text-xs text-muted-foreground">Courses, career paths, events and study abroad.</p>
+            <h1 className="text-xl font-bold leading-tight">Learn</h1>
+            <p className="text-xs text-muted-foreground">Courses, career paths and study abroad.</p>
           </header>
-
-          <div className="rounded-2xl overflow-hidden border border-border/40">
-            <BannerCarousel placement="learning" />
-          </div>
 
           <nav className="flex p-1 h-12 bg-muted/50 rounded-xl border border-border/50 sticky top-14 z-30">
             {tabs.map((tab) => {
@@ -106,12 +104,15 @@ export default function LearningHub() {
           </Suspense>
         ) : (
           <div className="animate-in fade-in duration-300">
-            {activeTab === "my-courses" && <MyCoursesTab onBrowseCatalog={() => handleTabChange("courses")} />}
+            {activeTab === "my-courses" && <MyCoursesTab onBrowseCatalog={() => handleTabChange("academy")} />}
             {activeTab === "tracks" && <TracksTab />}
-            {activeTab === "courses" && <CoursesTab onOpenCourse={(slug) => setDetailView({ type: "course", slug })} />}
-            {activeTab === "events" && (
-              <EventsTab onOpenCompetition={(slug) => setDetailView({ type: "competition", slug })} />
+            {activeTab === "academy" && (
+              <CoursesTab
+                onOpenCourse={(slug) => setDetailView({ type: "course", slug })}
+                onOpenCompetition={(slug) => setDetailView({ type: "competition", slug })}
+              />
             )}
+            {activeTab === "study-abroad" && <StudyAbroadSection />}
           </div>
         )}
       </main>
