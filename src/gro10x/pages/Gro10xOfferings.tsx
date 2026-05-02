@@ -90,33 +90,33 @@ export default function Gro10xOfferings() {
         )}
 
         {list.map((o) => (
-          <div key={o.id} className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-3`}>
+          <div key={o.id} className={`${GRO10X_PANEL} border border-white/10 rounded-xl p-2.5`}>
             <div className="flex items-start justify-between gap-2">
               <div className="min-w-0 flex-1">
-                <div className="flex items-center gap-1.5">
+                <div className="flex items-center gap-1.5 flex-wrap">
                   {o.kind === "product" ? (
-                    <Package className="h-3.5 w-3.5 text-[#33E1E4]" />
+                    <Package className="h-3.5 w-3.5 text-[#33E1E4] shrink-0" />
                   ) : (
-                    <Briefcase className="h-3.5 w-3.5 text-[#33E1E4]" />
+                    <Briefcase className="h-3.5 w-3.5 text-[#33E1E4] shrink-0" />
                   )}
                   <p className="text-sm font-medium truncate">{o.name}</p>
+                  {(o.price_min || o.price_max) && (
+                    <span className="text-[11px] text-emerald-300 inline-flex items-center gap-0.5">
+                      <DollarSign className="h-2.5 w-2.5" />
+                      {priceRange(o)}
+                      {o.unit && <span className="text-slate-500 ml-0.5">/{o.unit}</span>}
+                    </span>
+                  )}
                   {!o.is_active && (
                     <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-slate-500/20 text-slate-400">
                       hidden
                     </span>
                   )}
                 </div>
-                {o.tagline && <p className="text-[11px] text-slate-400 mt-0.5">{o.tagline}</p>}
-                {(o.price_min || o.price_max) && (
-                  <p className="text-[11px] text-emerald-300 mt-1 inline-flex items-center gap-0.5">
-                    <DollarSign className="h-2.5 w-2.5" />
-                    {priceRange(o)}
-                    {o.unit && <span className="text-slate-500 ml-1">/{o.unit}</span>}
-                  </p>
-                )}
+                {o.tagline && <p className="text-[11px] text-slate-400 mt-0.5 line-clamp-1">{o.tagline}</p>}
                 {o.tags?.length > 0 && (
-                  <div className="mt-1.5 flex flex-wrap gap-1">
-                    {o.tags.map((t) => (
+                  <div className="mt-1 flex flex-wrap gap-1">
+                    {o.tags.slice(0, 4).map((t) => (
                       <span
                         key={t}
                         className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/5 text-slate-300 inline-flex items-center gap-0.5"
@@ -128,11 +128,11 @@ export default function Gro10xOfferings() {
                 )}
               </div>
               {canEdit && (
-                <div className="flex flex-col gap-1 shrink-0">
+                <div className="flex gap-1 shrink-0">
                   <button
                     onClick={() => setEditing(o)}
                     className="p-1.5 rounded-lg bg-white/5 hover:bg-white/10"
-                    aria-label="Edit"
+                    aria-label={`Edit ${o.name}`}
                   >
                     <Pencil className="h-3 w-3 text-slate-300" />
                   </button>
@@ -141,7 +141,7 @@ export default function Gro10xOfferings() {
                       if (confirm(`Delete "${o.name}"?`)) del.mutate(o.id);
                     }}
                     className="p-1.5 rounded-lg bg-white/5 hover:bg-rose-500/15"
-                    aria-label="Delete"
+                    aria-label={`Delete ${o.name}`}
                   >
                     <Trash2 className="h-3 w-3 text-rose-300" />
                   </button>
@@ -221,7 +221,13 @@ function OfferingEditor({
   };
 
   return (
-    <div className="fixed inset-0 z-50 bg-black/60 flex items-end" onClick={onClose}>
+    <div
+      className="fixed inset-0 z-50 bg-black/60 flex items-end"
+      onClick={onClose}
+      role="dialog"
+      aria-modal="true"
+      aria-label={initial.id ? "Edit offering" : "Add offering"}
+    >
       <div
         className="w-full max-w-md mx-auto bg-[#0B1220] border-t border-white/10 rounded-t-3xl max-h-[90vh] overflow-y-auto"
         onClick={(e) => e.stopPropagation()}
