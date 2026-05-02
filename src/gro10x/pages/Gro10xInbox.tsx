@@ -2,7 +2,7 @@ import { Link, useNavigate } from "react-router-dom";
 import { Search, Plus, Building2 } from "lucide-react";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { useGro10xThreads } from "../hooks/useGro10xThreads";
-import { AGENT_BY_KEY } from "../lib/agents";
+import { getAgentMeta } from "../lib/agents";
 import { useState, useMemo } from "react";
 import { useAuth } from "@/hooks/useAuth";
 
@@ -26,10 +26,10 @@ export default function Gro10xInbox() {
     if (!q.trim()) return threads;
     const needle = q.toLowerCase();
     return threads.filter((t) => {
-      const meta = AGENT_BY_KEY[t.agent_key];
+      const meta = getAgentMeta(t.agent_key);
       return (
         t.agent_key.includes(needle) ||
-        meta?.name.toLowerCase().includes(needle) ||
+        meta.name.toLowerCase().includes(needle) ||
         (t.last_message ?? "").toLowerCase().includes(needle)
       );
     });
@@ -115,11 +115,7 @@ export default function Gro10xInbox() {
           </p>
           <ul className="divide-y divide-white/5">
             {filtered.map((t) => {
-              const meta = AGENT_BY_KEY[t.agent_key] ?? {
-                name: t.agent_key,
-                desc: "AI agent",
-                emoji: "🤖",
-              };
+              const meta = getAgentMeta(t.agent_key);
               return (
                 <li key={t.id}>
                   <Link
