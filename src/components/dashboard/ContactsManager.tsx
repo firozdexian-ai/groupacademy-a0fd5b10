@@ -361,6 +361,28 @@ export function ContactsManager() {
         </CardHeader>
 
         <CardContent className="p-8">
+          {/* Registration segmentation tabs */}
+          <div className="mb-4 inline-flex rounded-2xl border-2 border-border/40 bg-muted/20 p-1 text-xs font-semibold">
+            {([
+              ["all", "All"],
+              ["registered", "Registered"],
+              ["uploaded", "Uploaded"],
+              ["cv-matched", "CV-matched"],
+            ] as const).map(([k, label]) => (
+              <button
+                key={k}
+                onClick={() => { setRegistrationTab(k); setPage(1); }}
+                className={cn(
+                  "px-4 py-1.5 rounded-xl transition-colors",
+                  registrationTab === k
+                    ? "bg-primary text-primary-foreground shadow"
+                    : "text-muted-foreground hover:text-foreground",
+                )}
+              >
+                {label}
+              </button>
+            ))}
+          </div>
           {/* Query Console */}
           <div className="mb-8 flex flex-col md:flex-row gap-4 bg-muted/20 p-4 rounded-[28px] border-2 border-border/40 backdrop-blur-md">
             <div className="relative flex-1 group">
