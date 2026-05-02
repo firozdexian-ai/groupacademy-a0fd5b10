@@ -20,6 +20,7 @@ export const GRO10X_AGENTS: Gro10xAgent[] = [
   { key: "growth",      name: "Growth Agent",     desc: "Post on company feed, draft campaigns", emoji: "📈", goals: ["sell_b2b"] },
   { key: "lead_hunter", name: "Lead Hunter",      desc: "Find B2B prospects matching ICP",       emoji: "🎯", goals: ["sell_b2b"] },
   { key: "crm",         name: "CRM Agent",        desc: "Track conversations, follow-ups",       emoji: "🗂", goals: ["sell_b2b"] },
+  { key: "sales",       name: "Sales Agent",      desc: "Pitch offerings, manage your pipeline", emoji: "💼", goals: ["sell_b2b"] },
   { key: "gig_finder",  name: "Gig Finder",       desc: "Source freelancers fast",               emoji: "🛠", goals: ["freelance"] },
   { key: "briefing",    name: "Briefing Agent",   desc: "Turn ideas into clear gig briefs",      emoji: "📋", goals: ["freelance"] },
   { key: "billing",     name: "Billing Agent",    desc: "Credits, invoices, top-ups",            emoji: "💳", goals: ["ops"] },
