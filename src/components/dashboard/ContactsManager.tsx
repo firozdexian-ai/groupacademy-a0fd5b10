@@ -132,6 +132,7 @@ export function ContactsManager() {
   const debouncedSearch = useDebounce(searchQuery, 500);
   const [companyFilter, setCompanyFilter] = useState<string>("all");
   const [sourceFilter, setSourceFilter] = useState<string>("all");
+  const [registrationTab, setRegistrationTab] = useState<"all" | "registered" | "uploaded" | "cv-matched">("all");
 
   const [isDialogOpen, setIsDialogOpen] = useState(false);
   const [editingContact, setEditingContact] = useState<Contact | null>(null);
