@@ -268,6 +268,9 @@ function LeadDetail({
 }) {
   const qc = useQueryClient();
   const [note, setNote] = useState("");
+  const [nextStep, setNextStep] = useState(lead.next_step ?? "");
+  const [offeringId, setOfferingId] = useState(lead.offering_id ?? "");
+  const offerings = useCompanyOfferings(companyId, { activeOnly: true });
 
   const activitiesQuery = useQuery({
     queryKey: ["lead-activities", lead.id],
@@ -278,6 +281,17 @@ function LeadDetail({
         .eq("lead_id", lead.id)
         .order("created_at", { ascending: false });
       return data ?? [];
+    },
+  });
+
+  const updateLead = useMutation({
+    mutationFn: async (patch: Partial<Lead>) => {
+      const { error } = await supabase.from("company_leads").update(patch as any).eq("id", lead.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["company-leads", companyId] });
+      toast.success("Updated");
     },
   });
 
