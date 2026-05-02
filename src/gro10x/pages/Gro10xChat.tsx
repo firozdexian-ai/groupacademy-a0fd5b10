@@ -5,7 +5,7 @@ import ReactMarkdown from "react-markdown";
 import { useAuth } from "@/hooks/useAuth";
 import { useGro10xThreads } from "../hooks/useGro10xThreads";
 import { useAgentRuntime } from "@/hooks/useAgentRuntime";
-import { AGENT_BY_KEY } from "../lib/agents";
+import { getAgentMeta } from "../lib/agents";
 import { GRO10X_PANEL } from "../lib/tokens";
 
 /**
@@ -18,7 +18,7 @@ export default function Gro10xChat() {
   const navigate = useNavigate();
   const { user } = useAuth();
   const { companyId, bumpThread, markRead, pinAgent } = useGro10xThreads();
-  const meta = AGENT_BY_KEY[agentKey] ?? { name: agentKey, desc: "AI agent", emoji: "🤖" };
+  const meta = getAgentMeta(agentKey);
 
   const subject = companyId ? ({ kind: "company", id: companyId } as const) : undefined;
   const runtime = useAgentRuntime(subject as any);
@@ -43,14 +43,20 @@ export default function Gro10xChat() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages.length, isStreaming]);
 
+  // Bump the inbox preview only when the assistant has finished replying.
+  useEffect(() => {
+    if (isStreaming) return;
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant" || !last.content) return;
+    void bumpThread(agentKey, last.content.slice(0, 200));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isStreaming, messages.length]);
+
   const handleSend = async () => {
     const text = input.trim();
     if (!text || isStreaming) return;
     setInput("");
     await sendMessage(text);
-    // After streaming completes, last message will be the assistant reply
-    const last = (messages[messages.length - 1]?.content ?? text).slice(0, 200);
-    await bumpThread(agentKey, last);
   };
 
   if (!user) {
@@ -124,7 +130,7 @@ export default function Gro10xChat() {
         ))}
       </div>
 
-      <footer className="sticky bottom-[calc(64px+env(safe-area-inset-bottom))] px-3 pb-3 bg-[#0B1220]/95 backdrop-blur-md">
+      <footer className="sticky bottom-0 px-3 pb-[calc(12px+env(safe-area-inset-bottom))] pt-2 bg-[#0B1220]/95 backdrop-blur-md">
         <div className="flex items-center gap-2 rounded-full bg-white/5 px-4 py-2 border border-white/10">
           <input
             value={input}

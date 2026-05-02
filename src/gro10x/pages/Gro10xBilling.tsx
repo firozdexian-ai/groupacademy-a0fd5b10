@@ -2,7 +2,7 @@
  * Gro10x billing screen — balance, 90-day ledger, top-up CTA.
  * USD-base display with localized equivalent (per platform currency model).
  */
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
 import { ArrowLeft, ArrowDownCircle, ArrowUpCircle, Plus, Loader2, AlertTriangle } from "lucide-react";
 import { useCompanyCredits } from "../hooks/useCompanyCredits";
@@ -27,14 +27,21 @@ export default function Gro10xBilling() {
   const [topupPending, setTopupPending] = useState<number | null>(null);
 
   // Pull country from talents (best-effort) so we can localize.
-  if (user && country === null) {
+  useEffect(() => {
+    if (!user?.id) return;
+    let cancelled = false;
     void supabase
       .from("talents")
       .select("country")
       .eq("user_id", user.id)
       .maybeSingle()
-      .then(({ data }) => setCountry((data?.country as string | null) ?? ""));
-  }
+      .then(({ data }) => {
+        if (!cancelled) setCountry((data?.country as string | null) ?? "");
+      });
+    return () => {
+      cancelled = true;
+    };
+  }, [user?.id]);
 
   const lowBalance = balance < 50;
 
