@@ -222,9 +222,7 @@ export default function Gigs() {
     if (!search) return courseProjects;
     const q = search.toLowerCase();
     return (courseProjects || []).filter(
-      (p: any) =>
-        p.course?.title?.toLowerCase().includes(q) ||
-        p.subtasks.some((s: any) => s.title?.toLowerCase().includes(q)),
+      (p: any) => p.course?.title?.toLowerCase().includes(q),
     );
   }, [courseProjects, search]);
 
