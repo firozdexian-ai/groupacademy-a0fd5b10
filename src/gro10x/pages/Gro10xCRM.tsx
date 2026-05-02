@@ -9,6 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveCompany } from "../hooks/useActiveCompany";
+import { useCompanyOfferings } from "../hooks/useCompanyOfferings";
 import { GRO10X_MUTED } from "../lib/tokens";
 import { Plus, X, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
@@ -35,6 +36,8 @@ interface Lead {
   stage: Stage;
   value_usd: number;
   notes: string | null;
+  next_step: string | null;
+  offering_id: string | null;
   created_at: string;
 }
 
@@ -53,7 +56,7 @@ export default function Gro10xCRM() {
     queryFn: async (): Promise<Lead[]> => {
       const { data } = await supabase
         .from("company_leads")
-        .select("id,name,email,phone,company_name,title,source,stage,value_usd,notes,created_at")
+        .select("id,name,email,phone,company_name,title,source,stage,value_usd,notes,next_step,offering_id,created_at")
         .eq("company_id", companyId!)
         .order("created_at", { ascending: false });
       return (data ?? []).map((r: any) => ({ ...r, value_usd: Number(r.value_usd ?? 0) }));
@@ -265,6 +268,9 @@ function LeadDetail({
 }) {
   const qc = useQueryClient();
   const [note, setNote] = useState("");
+  const [nextStep, setNextStep] = useState(lead.next_step ?? "");
+  const [offeringId, setOfferingId] = useState(lead.offering_id ?? "");
+  const offerings = useCompanyOfferings(companyId, { activeOnly: true });
 
   const activitiesQuery = useQuery({
     queryKey: ["lead-activities", lead.id],
@@ -275,6 +281,17 @@ function LeadDetail({
         .eq("lead_id", lead.id)
         .order("created_at", { ascending: false });
       return data ?? [];
+    },
+  });
+
+  const updateLead = useMutation({
+    mutationFn: async (patch: Partial<Lead>) => {
+      const { error } = await supabase.from("company_leads").update(patch as any).eq("id", lead.id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["company-leads", companyId] });
+      toast.success("Updated");
     },
   });
 
@@ -338,6 +355,43 @@ function LeadDetail({
               {lead.value_usd > 0 && <p><span className="text-slate-400">Value:</span> ${lead.value_usd.toLocaleString()}</p>}
             </div>
           )}
+
+          {/* Offering link */}
+          <div>
+            <p className="text-[11px] text-slate-400 mb-1">Offering</p>
+            <select
+              value={offeringId}
+              onChange={(e) => {
+                const v = e.target.value;
+                setOfferingId(v);
+                updateLead.mutate({ offering_id: (v || null) as any });
+              }}
+              className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-slate-100 focus:border-[#33E1E4] outline-none"
+            >
+              <option value="">— None —</option>
+              {(offerings.data ?? []).map((o) => (
+                <option key={o.id} value={o.id}>
+                  {o.name} ({o.kind})
+                </option>
+              ))}
+            </select>
+          </div>
+
+          {/* Next step */}
+          <div>
+            <p className="text-[11px] text-slate-400 mb-1">Next step</p>
+            <input
+              value={nextStep}
+              onChange={(e) => setNextStep(e.target.value)}
+              onBlur={() => {
+                if ((lead.next_step ?? "") !== nextStep) {
+                  updateLead.mutate({ next_step: (nextStep.trim() || null) as any });
+                }
+              }}
+              placeholder="e.g. Follow up Tuesday with proposal"
+              className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-[#33E1E4] outline-none"
+            />
+          </div>
 
           <div>
             <p className="text-[11px] text-slate-400 mb-2">Add note</p>
