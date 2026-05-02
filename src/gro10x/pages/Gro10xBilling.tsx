@@ -30,10 +30,10 @@ export default function Gro10xBilling() {
   if (user && country === null) {
     void supabase
       .from("talents")
-      .select("location")
+      .select("country")
       .eq("user_id", user.id)
       .maybeSingle()
-      .then(({ data }) => setCountry((data?.location as string | null) ?? ""));
+      .then(({ data }) => setCountry((data?.country as string | null) ?? ""));
   }
 
   const lowBalance = balance < 50;
