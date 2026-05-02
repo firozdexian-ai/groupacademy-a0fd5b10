@@ -9,6 +9,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveCompany } from "../hooks/useActiveCompany";
+import { useCompanyOfferings } from "../hooks/useCompanyOfferings";
 import { GRO10X_MUTED } from "../lib/tokens";
 import { Plus, X, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
@@ -35,6 +36,8 @@ interface Lead {
   stage: Stage;
   value_usd: number;
   notes: string | null;
+  next_step: string | null;
+  offering_id: string | null;
   created_at: string;
 }
 
@@ -53,7 +56,7 @@ export default function Gro10xCRM() {
     queryFn: async (): Promise<Lead[]> => {
       const { data } = await supabase
         .from("company_leads")
-        .select("id,name,email,phone,company_name,title,source,stage,value_usd,notes,created_at")
+        .select("id,name,email,phone,company_name,title,source,stage,value_usd,notes,next_step,offering_id,created_at")
         .eq("company_id", companyId!)
         .order("created_at", { ascending: false });
       return (data ?? []).map((r: any) => ({ ...r, value_usd: Number(r.value_usd ?? 0) }));
