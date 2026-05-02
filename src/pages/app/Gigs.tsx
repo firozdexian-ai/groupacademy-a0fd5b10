@@ -13,6 +13,7 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { GigCard } from "@/components/gigs/GigCard";
 import { MySubmissions } from "@/components/gigs/MySubmissions";
+import { GigUploader, type UploadedFile } from "@/components/gigs/GigUploader";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Search,
