@@ -136,21 +136,26 @@ export default function Gro10xCRM() {
             <Plus className="h-4 w-4" />
           </button>
         </div>
-        <div className="px-4 pb-2 overflow-x-auto">
-          <div className="flex gap-2 min-w-max">
-            {STAGES.map((s) => (
-              <button
-                key={s.id}
-                onClick={() => setActiveStage(s.id)}
-                className={`px-3 py-1.5 rounded-full text-xs font-medium border transition whitespace-nowrap ${
-                  activeStage === s.id
-                    ? "bg-[#33E1E4] text-[#06121A] border-[#33E1E4]"
-                    : "bg-white/5 border-white/10 text-slate-300"
-                }`}
-              >
-                {s.label} <span className="opacity-70">{counts[s.id]}</span>
-              </button>
-            ))}
+        <div className="px-4 pb-2">
+          <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap">
+            {STAGES.map((s) => {
+              const active = activeStage === s.id;
+              return (
+                <button
+                  key={s.id}
+                  onClick={() => setActiveStage(s.id)}
+                  aria-pressed={active}
+                  className={`px-2 py-1.5 rounded-full text-xs font-medium border transition flex items-center justify-center gap-1 ${
+                    active
+                      ? "bg-[#33E1E4] text-[#06121A] border-[#33E1E4]"
+                      : "bg-white/5 border-white/10 text-slate-300"
+                  }`}
+                >
+                  <span className="truncate">{s.label}</span>
+                  <span className="opacity-70 tabular-nums">{counts[s.id]}</span>
+                </button>
+              );
+            })}
           </div>
         </div>
       </header>
