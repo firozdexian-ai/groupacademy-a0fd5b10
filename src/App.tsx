@@ -7,6 +7,7 @@ import { BrowserRouter, Routes, Route, Navigate, useParams, useLocation } from "
 import { ErrorBoundary } from "@/components/ErrorBoundary";
 import { BootGate } from "@/components/BootGate";
 import { TalentProvider } from "@/contexts/TalentContext";
+import { ImpersonationProvider } from "@/contexts/ImpersonationContext";
 import { useTalent } from "@/hooks/useTalent";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 
@@ -191,6 +192,7 @@ export default function App() {
         {/* FIX: Added React Router v7 future flags */}
         <BrowserRouter future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
           <BootGate>
+            <ImpersonationProvider>
             <TalentProvider>
               <TooltipProvider>
                 <Toaster />
