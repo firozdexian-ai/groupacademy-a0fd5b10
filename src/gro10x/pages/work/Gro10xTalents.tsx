@@ -34,8 +34,8 @@ export default function Gro10xTalents() {
       // Applicants on this company's jobs
       const { data: apps } = await supabase
         .from("job_applications")
-        .select("id, talent_id, applied_at, jobs:job_id ( title, company_id )")
-        .order("applied_at", { ascending: false })
+        .select("id, talent_id, created_at, jobs:job_id ( title, company_id )")
+        .order("created_at", { ascending: false })
         .limit(200);
       const filteredApps = (apps ?? []).filter(
         (a: any) => a?.jobs?.company_id === companyId
@@ -80,7 +80,7 @@ export default function Gro10xTalents() {
           profession: tt.custom_profession,
           photo: tt.profile_photo_url,
           source: "applicant",
-          last_at: a.applied_at,
+          last_at: a.created_at,
           job_title: a.jobs?.title,
         });
       }
