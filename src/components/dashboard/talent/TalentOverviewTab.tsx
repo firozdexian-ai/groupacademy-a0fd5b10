@@ -265,13 +265,15 @@ export function TalentOverviewTab() {
               title="New (7d)"
               value={data.new7d.toLocaleString()}
               icon={UserCheck}
-              trend={{ value: delta(data.new7d, data.prev7d), label: "vs prev 7d" }}
+              trend={`${delta(data.new7d, data.prev7d) >= 0 ? "+" : ""}${delta(data.new7d, data.prev7d)}%`}
+              trendLabel="vs prev 7d"
             />
             <StatsCard
               title="New (30d)"
               value={data.new30d.toLocaleString()}
               icon={UserCheck}
-              trend={{ value: delta(data.new30d, data.prev30d), label: "vs prev 30d" }}
+              trend={`${delta(data.new30d, data.prev30d) >= 0 ? "+" : ""}${delta(data.new30d, data.prev30d)}%`}
+              trendLabel="vs prev 30d"
             />
             <StatsCard
               title="With CV"
