@@ -473,6 +473,7 @@ export default function App() {
                 </Routes>
               </TooltipProvider>
             </TalentProvider>
+            </ImpersonationProvider>
           </BootGate>
         </BrowserRouter>
       </QueryClientProvider>
