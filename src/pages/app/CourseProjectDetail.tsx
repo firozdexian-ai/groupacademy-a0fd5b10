@@ -56,7 +56,7 @@ export default function CourseProjectDetail() {
 
       const { data: course } = await supabase
         .from("content")
-        .select("id, title, description, cover_image_url, type")
+        .select("id, title, description, cover_image_url")
         .eq("id", (project as any).course_id)
         .maybeSingle();
 
