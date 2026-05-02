@@ -206,6 +206,15 @@ const navGroups: NavGroup[] = [
     ],
   },
   {
+    title: "Stakeholders",
+    icon: Handshake,
+    roles: ["admin"],
+    items: [
+      { title: "Institutions", icon: School, value: "institutions" },
+      { title: "Partner Orgs", icon: Handshake, value: "partner-orgs" },
+    ],
+  },
+  {
     title: "Platform Config",
     icon: Settings,
     roles: ["admin"],
