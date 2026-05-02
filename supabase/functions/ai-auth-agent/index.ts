@@ -81,6 +81,36 @@ serve(async (req) => {
       parsed.reply = `${parsed.reply}\n\nQuestion: ${randomQuiz.q}`;
     }
 
+    // HUD: Telemetry — log conversation to aisha_conversations for the admin console.
+    try {
+      const sessionId = context?.session_id || context?.sessionId;
+      if (sessionId) {
+        const SUPA_URL = Deno.env.get("SUPABASE_URL");
+        const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+        if (SUPA_URL && SERVICE_KEY) {
+          const admin = createClient(SUPA_URL, SERVICE_KEY);
+          const lastUser = [...(messages || [])].reverse().find((m: any) => m.role === "user");
+          await admin.from("aisha_conversations").upsert(
+            {
+              session_id: String(sessionId),
+              email: context?.email ?? null,
+              name: context?.name ?? null,
+              country: context?.country ?? null,
+              phone: context?.phone ?? null,
+              last_step: parsed.action ?? context?.step ?? null,
+              message_count: (messages || []).length,
+              raw_messages: (messages || []).slice(-20),
+              updated_at: new Date().toISOString(),
+              completed_at: parsed.action === "complete" ? new Date().toISOString() : null,
+            },
+            { onConflict: "session_id" },
+          );
+        }
+      }
+    } catch (logErr) {
+      console.error("[Sentinel] AISHA_LOG_FAULT:", logErr);
+    }
+
     return new Response(JSON.stringify(parsed), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
