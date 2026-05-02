@@ -167,6 +167,46 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "agent-payouts": React.lazy(() =>
     import("@/components/dashboard/AgentPayoutsManager").then((m) => ({ default: m.AgentPayoutsManager })),
   ),
+  // Agent OS — unified stakeholder area
+  "agents-overview": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentsOverviewTab").then((m) => ({ default: m.AgentsOverviewTab })),
+  ),
+  "agents-channels": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentChannelsTab").then((m) => ({ default: m.AgentChannelsTab })),
+  ),
+  "agents-tools": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentToolsTab").then((m) => ({ default: m.AgentToolsTab })),
+  ),
+  "agents-studio": React.lazy(() =>
+    import("@/components/dashboard/AgentStudio").then((m) => ({ default: m.AgentStudio })),
+  ),
+  "agents-b2c": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentTypeTabs").then((m) => ({ default: m.AgentsB2CTab })),
+  ),
+  "agents-platform": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentTypeTabs").then((m) => ({ default: m.AgentsPlatformTab })),
+  ),
+  "agents-b2b": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentTypeTabs").then((m) => ({ default: m.AgentsB2BTab })),
+  ),
+  "agents-ugc": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentTypeTabs").then((m) => ({ default: m.AgentsUGCTab })),
+  ),
+  "agents-marketplace": React.lazy(() =>
+    import("@/components/dashboard/AgentMarketplaceReview").then((m) => ({ default: m.AgentMarketplaceReview })),
+  ),
+  "agents-payouts": React.lazy(() =>
+    import("@/components/dashboard/AgentPayoutsManager").then((m) => ({ default: m.AgentPayoutsManager })),
+  ),
+  "agents-manager": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentManagerConsoleTab").then((m) => ({ default: m.AgentManagerConsoleTab })),
+  ),
+  "agents-sessions": React.lazy(() =>
+    import("@/components/dashboard/AgentSessionsManager").then((m) => ({ default: m.AgentSessionsManager })),
+  ),
+  "agents-insights": React.lazy(() =>
+    import("@/components/dashboard/AgentInsights").then((m) => ({ default: m.AgentInsights })),
+  ),
   leads: React.lazy(() =>
     import("@/components/dashboard/AssessmentLeadsManager").then((m) => ({ default: m.AssessmentLeadsManager })),
   ),
@@ -297,6 +337,19 @@ const TAB_TITLES: Record<string, string> = {
   "agent-sessions": "Session Logs",
   "agent-insights": "Agent Insights",
   "agent-payouts": "Agent Payouts",
+  "agents-overview": "Agent OS Overview",
+  "agents-channels": "Channels & Triggers",
+  "agents-tools": "Tools, Skills & Connectors",
+  "agents-studio": "Agent Studio",
+  "agents-b2c": "Gro10x B2C Agents",
+  "agents-platform": "Platform Tool-Agents",
+  "agents-b2b": "Company / B2B Agents",
+  "agents-ugc": "User-Generated Agents",
+  "agents-marketplace": "Marketplace Review",
+  "agents-payouts": "Agent Payouts",
+  "agents-manager": "Agent Manager",
+  "agents-sessions": "Sessions Log",
+  "agents-insights": "Agent Insights",
   leads: "Scorecard Intel",
   interviews: "Mock Calibration",
   salary: "Market Valuation",
