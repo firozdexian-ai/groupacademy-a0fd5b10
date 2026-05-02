@@ -87,16 +87,9 @@ const navGroups: NavGroup[] = [
       { title: "Workforce Members", icon: UserCog, value: "workforce" },
     ],
   },
-  {
-    title: "Talent & Leads",
-    icon: Users,
-    roles: ["admin", "talent_exec"],
-    items: [
-      { title: "Talent Pool", icon: DatabaseIcon, value: "talent" },
-      { title: "Lead Hunter", icon: Target, value: "lead-hunter" },
-      { title: "Professions", icon: GraduationCap, value: "professions" },
-    ],
-  },
+  // Talent group is rendered separately as a collapsible (like Overview).
+  // It contains: Overview, Talent Pool, Aisha Console, Lead Hunter,
+  // AI General Console, Professions & Roles.
   {
     title: "Recruitment",
     icon: Briefcase,
