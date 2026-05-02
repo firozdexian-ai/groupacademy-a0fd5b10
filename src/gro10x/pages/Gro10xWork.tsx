@@ -38,13 +38,19 @@ export default function Gro10xWork() {
           <h1 className="text-xl font-semibold tracking-tight">Work</h1>
           <p className={`text-xs ${GRO10X_MUTED}`}>Your hiring pipeline</p>
         </div>
-        <div className="px-4 pb-2 flex gap-2">
+        <div className="px-4 pb-2 flex gap-2 items-center">
           <TabBtn active={tab === "jobs"} onClick={() => setTab("jobs")}>
             Jobs
           </TabBtn>
           <TabBtn active={tab === "shortlist"} onClick={() => setTab("shortlist")}>
             Shortlist
           </TabBtn>
+          <button
+            onClick={() => navigate("/gro10x/crm")}
+            className="ml-auto px-3 py-1.5 rounded-full text-xs font-medium border bg-white/5 border-white/10 text-slate-300 hover:bg-white/10"
+          >
+            CRM →
+          </button>
         </div>
       </header>
 
