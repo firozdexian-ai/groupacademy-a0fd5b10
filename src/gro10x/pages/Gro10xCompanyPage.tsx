@@ -80,6 +80,10 @@ export default function Gro10xCompanyPage() {
     setCanEdit(editor);
 
     if (!companyId) {
+      // Bail early so the empty state renders instead of a perpetual spinner.
+      setCompany(null);
+      setMembers([]);
+      setJobs([]);
       setLoading(false);
       return;
     }

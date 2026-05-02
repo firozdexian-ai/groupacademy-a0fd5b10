@@ -43,14 +43,20 @@ export default function Gro10xChat() {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
   }, [messages.length, isStreaming]);
 
+  // Bump the inbox preview only when the assistant has finished replying.
+  useEffect(() => {
+    if (isStreaming) return;
+    const last = messages[messages.length - 1];
+    if (!last || last.role !== "assistant" || !last.content) return;
+    void bumpThread(agentKey, last.content.slice(0, 200));
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [isStreaming, messages.length]);
+
   const handleSend = async () => {
     const text = input.trim();
     if (!text || isStreaming) return;
     setInput("");
     await sendMessage(text);
-    // After streaming completes, last message will be the assistant reply
-    const last = (messages[messages.length - 1]?.content ?? text).slice(0, 200);
-    await bumpThread(agentKey, last);
   };
 
   if (!user) {
