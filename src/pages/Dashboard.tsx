@@ -222,7 +222,12 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
 };
 
 const TAB_TITLES: Record<string, string> = {
-  overview: "Control Center",
+  overview: "Lifetime Overview",
+  "overview-lifetime": "Lifetime Overview",
+  "overview-month": "Monthly Overview",
+  "overview-quarter": "Quarterly Overview",
+  "overview-analyst": "Business Analyst",
+  "overview-reports": "Report Builder",
   workforce: "Workforce",
   talent: "Talent Intel",
   "lead-hunter": "Lead Acquisition",
