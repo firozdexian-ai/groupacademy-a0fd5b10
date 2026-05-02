@@ -167,6 +167,70 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "agent-payouts": React.lazy(() =>
     import("@/components/dashboard/AgentPayoutsManager").then((m) => ({ default: m.AgentPayoutsManager })),
   ),
+  // Agent OS — unified stakeholder area
+  "agents-overview": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentsOverviewTab").then((m) => ({ default: m.AgentsOverviewTab })),
+  ),
+  "agents-channels": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentChannelsTab").then((m) => ({ default: m.AgentChannelsTab })),
+  ),
+  "agents-tools": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentToolsTab").then((m) => ({ default: m.AgentToolsTab })),
+  ),
+  "agents-studio": React.lazy(() =>
+    import("@/components/dashboard/AgentStudio").then((m) => ({ default: m.AgentStudio })),
+  ),
+  "agents-b2c": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentListTab").then((m) => ({
+      default: () => {
+        const { AgentListTab } = m as any;
+        const { Users } = require("lucide-react");
+        return <AgentListTab title="Gro10x B2C Agents" description="Platform-built agents serving talents and end users." icon={Users} agentTypeFilter={["b2c"]} emptyHint="No B2C agents flagged yet — set agent_type='b2c' to populate." />;
+      },
+    })),
+  ),
+  "agents-platform": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentListTab").then((m) => ({
+      default: () => {
+        const { AgentListTab } = m as any;
+        const { Sparkles } = require("lucide-react");
+        return <AgentListTab title="Platform Tool-Agents" description="Non-conversational AI tools that earn credits (matching, parsing, scoring, generation)." icon={Sparkles} agentTypeFilter={["platform_tool"]} />;
+      },
+    })),
+  ),
+  "agents-b2b": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentListTab").then((m) => ({
+      default: () => {
+        const { AgentListTab } = m as any;
+        const { Building2 } = require("lucide-react");
+        return <AgentListTab title="Company / B2B Agents" description="Gro10x B2B agents — Atlas, Recruiter, Sourcer, Outreach, Growth, Lead Hunter, CRM, Sales, etc." icon={Building2} agentTypeFilter={["b2b"]} />;
+      },
+    })),
+  ),
+  "agents-ugc": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentListTab").then((m) => ({
+      default: () => {
+        const { AgentListTab } = m as any;
+        const { UserPlus } = require("lucide-react");
+        return <AgentListTab title="User-Generated Agents" description="Agents created by talents and company contacts. Admin queue for review and moderation." icon={UserPlus} agentTypeFilter={["ugc"]} emptyHint="No user-generated agents yet — creator builder ships in v2." />;
+      },
+    })),
+  ),
+  "agents-marketplace": React.lazy(() =>
+    import("@/components/dashboard/AgentMarketplaceReview").then((m) => ({ default: m.AgentMarketplaceReview })),
+  ),
+  "agents-payouts": React.lazy(() =>
+    import("@/components/dashboard/AgentPayoutsManager").then((m) => ({ default: m.AgentPayoutsManager })),
+  ),
+  "agents-manager": React.lazy(() =>
+    import("@/components/dashboard/agents/AgentManagerConsoleTab").then((m) => ({ default: m.AgentManagerConsoleTab })),
+  ),
+  "agents-sessions": React.lazy(() =>
+    import("@/components/dashboard/AgentSessionsManager").then((m) => ({ default: m.AgentSessionsManager })),
+  ),
+  "agents-insights": React.lazy(() =>
+    import("@/components/dashboard/AgentInsights").then((m) => ({ default: m.AgentInsights })),
+  ),
   leads: React.lazy(() =>
     import("@/components/dashboard/AssessmentLeadsManager").then((m) => ({ default: m.AssessmentLeadsManager })),
   ),
