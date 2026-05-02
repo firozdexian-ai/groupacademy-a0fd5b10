@@ -245,6 +245,8 @@ const TAB_TITLES: Record<string, string> = {
   "overview-reports": "Report Builder",
   workforce: "Workforce",
   talent: "Talent Intel",
+  "talent-upload": "Talent Upload",
+  "talent-outreach": "Talent Outreach",
   "lead-hunter": "Lead Acquisition",
   professions: "Taxonomies",
   "jobs-kpis": "Growth Analytics",
