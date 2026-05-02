@@ -2,9 +2,10 @@ import { useEffect, useState, useCallback } from "react";
 import { useParams, Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
-import { Building2, Globe, MapPin, Briefcase, Edit2, Check, X } from "lucide-react";
+import { Building2, Globe, MapPin, Briefcase, Edit2, Check, X, Package, ChevronRight } from "lucide-react";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { CompletionRing } from "../components/CompletionRing";
+import { useCompanyOfferings } from "../hooks/useCompanyOfferings";
 import { toast } from "sonner";
 
 interface Company {
@@ -296,6 +297,9 @@ export default function Gro10xCompanyPage() {
           </div>
         </section>
       )}
+
+      {/* Offerings */}
+      <OfferingsSection companyId={company.id} canEdit={canEdit} />
 
       {/* Open jobs */}
       {jobs.length > 0 && (
