@@ -321,6 +321,7 @@ const Dashboard = () => {
         />
 
         <main className="flex-1 overflow-y-auto relative bg-background/50">
+          <ImpersonationBanner />
           <header className="h-16 flex items-center gap-4 border-b bg-background/80 backdrop-blur-md px-6 sticky top-0 z-50">
             <SidebarTrigger className="hover:bg-primary/5 rounded-xl transition-all" />
             <div className="h-4 w-px bg-border" />
