@@ -1,4 +1,4 @@
-import { useState, useMemo, useEffect } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -13,28 +13,31 @@ import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { GigCard } from "@/components/gigs/GigCard";
 import { MySubmissions } from "@/components/gigs/MySubmissions";
-import { BuildAcademyTab } from "@/components/gigs/BuildAcademyTab";
 import { Skeleton } from "@/components/ui/skeleton";
-import { GIG_CATEGORIES, GIG_CATEGORY_MAP, categoryFromResourceType, type GigCategory } from "@/lib/constants/gigCategories";
 import {
   Search,
   Coins,
   ChevronRight,
   Send,
   Loader2,
-  ClipboardList,
+  Briefcase,
   Activity,
-  Target,
   ShieldCheck,
   Hammer,
+  BookOpen,
+  Zap,
 } from "lucide-react";
-import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 /**
- * Platform Logic: Neural Gig Ecosystem
- * High-fidelity orchestrator for micro-missions, professional projects, and contractual telemetry.
- * 2026 Standard: Executive Logic geometry with reinforced transaction guards.
+ * Gig Hub v3 — Two-tab simplified surface.
+ *
+ * Tab 1 — Earn: Quick Tasks (1-tap micro gigs) + Course Projects (course-bundled work)
+ *               + Marketplace Projects (employer-posted) shown below the fold.
+ * Tab 2 — My Work: My submissions, bids, contracts, deliverables.
+ *
+ * Build Academy (Content Lead studio) is now a thin banner shown only to roles
+ * that need it; full UI lives at /app/studio.
  */
 
 export default function Gigs() {
@@ -43,11 +46,13 @@ export default function Gigs() {
   const { talent } = useTalent();
   const queryClient = useQueryClient();
 
-  // Renamed: 'tasks' tab now labelled "Platform Tasks". Keep query key for back-compat.
-  const activeTab = searchParams.get("tab") || "tasks";
-  const [projectSearch, setProjectSearch] = useState("");
-  const [selectedProjectCategory, setSelectedProjectCategory] = useState<GigCategory | null>(null);
+  // Back-compat: old links use ?tab=tasks/projects/build/activity → collapse to earn/work
+  const rawTab = searchParams.get("tab") || "earn";
+  const activeTab = ["activity", "work"].includes(rawTab) ? "work" : "earn";
+
+  const [search, setSearch] = useState("");
   const [verificationStatus, setVerificationStatus] = useState<string>("unverified");
+  const [hasContentRole, setHasContentRole] = useState(false);
 
   useEffect(() => {
     if (!talent?.id) return;
@@ -55,11 +60,20 @@ export default function Gigs() {
       .then(({ data }) => setVerificationStatus(((data as any)?.verification_status) || "unverified"));
   }, [talent?.id]);
 
-  const handleTabChange = (tab: string) => {
-    setSearchParams({ tab });
-  };
+  useEffect(() => {
+    (async () => {
+      const { data: sess } = await supabase.auth.getSession();
+      const uid = sess.session?.user.id;
+      if (!uid) return;
+      const { data } = await supabase.from("user_roles").select("role").eq("user_id", uid);
+      const roles = (data || []).map((r: any) => r.role);
+      setHasContentRole(roles.some((r: string) => ["content_lead", "admin", "super_admin", "talent_exec"].includes(r)));
+    })();
+  }, []);
 
-  // ── Tracking Logic: Quick Tasks ──
+  const handleTabChange = (tab: string) => setSearchParams({ tab });
+
+  // ── Quick Tasks (1-tap gigs from `gigs` table) ──
   const { data: gigs, isLoading: gigsLoading } = useQuery({
     queryKey: ["gigs"],
     queryFn: async () => {
@@ -88,53 +102,65 @@ export default function Gigs() {
     },
   });
 
-  // ── Projects feed: marketplace gigs + open academy content gigs, unified by resource_category ──
-  const { data: projects, isLoading: projectsLoading } = useQuery({
-    queryKey: ["unified-projects", selectedProjectCategory],
+  // ── Course Projects: open content_gigs grouped by their course ──
+  const { data: courseProjects, isLoading: courseProjectsLoading } = useQuery({
+    queryKey: ["course-projects-grouped"],
     queryFn: async () => {
-      let mq = supabase
-        .from("marketplace_gigs")
-        .select("*")
-        .in("status", ["approved", "active"])
-        .order("is_featured", { ascending: false });
-      if (selectedProjectCategory) mq = mq.eq("resource_category", selectedProjectCategory);
-      const { data: market, error: mErr } = await mq;
-      if (mErr) throw mErr;
-
-      let cq = supabase
+      const { data: contentGigs } = await supabase
         .from("content_gigs" as any)
-        .select("id, title, brief, resource_category, resource_type, credit_reward, school_id, stage_number, status")
+        .select("id, title, brief, resource_type, credit_reward, status, content_id, school_id, stage_number")
         .eq("status", "open")
         .order("created_at", { ascending: false })
-        .limit(60);
-      if (selectedProjectCategory) cq = cq.eq("resource_category", selectedProjectCategory);
-      const { data: content } = await cq;
+        .limit(200);
 
-      const mapped = ((content as any) || []).map((c: any) => ({
-        id: `content:${c.id}`,
-        kind: "academy" as const,
-        title: c.title,
-        description: c.brief || `Academy ${c.resource_type} resource`,
-        resource_category: c.resource_category || categoryFromResourceType(c.resource_type),
-        budget_amount: c.credit_reward,
-        pricing_type: "fixed",
-        total_bids: 0,
-        contentId: c.id,
-      }));
+      const rows = (contentGigs as any[]) || [];
+      if (!rows.length) return [];
 
-      const marketRows = ((market as any) || []).map((m: any) => ({
-        ...m,
-        kind: "marketplace" as const,
-        resource_category: m.resource_category || "writing",
-      }));
-      return [...mapped, ...marketRows];
+      // Group by content_id
+      const contentIds = Array.from(new Set(rows.map((r) => r.content_id).filter(Boolean)));
+      const { data: courses } = contentIds.length
+        ? await supabase.from("content").select("id, title, cover_image_url, type").in("id", contentIds)
+        : { data: [] as any[] };
+
+      const courseMap: Record<string, any> = {};
+      (courses || []).forEach((c: any) => { courseMap[c.id] = c; });
+
+      const grouped: Record<string, { course: any; subtasks: any[]; totalReward: number }> = {};
+      rows.forEach((r) => {
+        const key = r.content_id || "unassigned";
+        if (!grouped[key]) {
+          grouped[key] = {
+            course: courseMap[r.content_id] || { id: key, title: "Unassigned tasks", type: "misc" },
+            subtasks: [],
+            totalReward: 0,
+          };
+        }
+        grouped[key].subtasks.push(r);
+        grouped[key].totalReward += Number(r.credit_reward || 0);
+      });
+
+      return Object.values(grouped).sort((a, b) => b.subtasks.length - a.subtasks.length);
     },
   });
 
-  // ── Activity List ──
+  // ── Marketplace projects (employer-posted, kept here as a peek; full UI at /app/marketplace) ──
+  const { data: marketProjects } = useQuery({
+    queryKey: ["marketplace-peek"],
+    queryFn: async () => {
+      const { data } = await supabase
+        .from("marketplace_gigs")
+        .select("id, title, description, skill_category, budget_amount, total_bids, is_featured, employer_name")
+        .in("status", ["approved", "active"])
+        .order("is_featured", { ascending: false })
+        .limit(6);
+      return data || [];
+    },
+  });
+
+  // ── My Work data ──
   const { data: myBids } = useQuery({
     queryKey: ["my-marketplace-bids", talent?.id],
-    enabled: !!talent?.id && activeTab === "activity",
+    enabled: !!talent?.id && activeTab === "work",
     queryFn: async () => {
       const { data, error } = await supabase
         .from("marketplace_bids")
@@ -148,7 +174,7 @@ export default function Gigs() {
 
   const { data: myContracts } = useQuery({
     queryKey: ["my-marketplace-contracts", talent?.id],
-    enabled: !!talent?.id && activeTab === "activity",
+    enabled: !!talent?.id && activeTab === "work",
     queryFn: async () => {
       const { data, error } = await supabase
         .from("marketplace_contracts")
@@ -160,7 +186,6 @@ export default function Gigs() {
     },
   });
 
-  // ── Deliverable Connection ──
   const [deliverableDialog, setDeliverableDialog] = useState<string | null>(null);
   const [delivTitle, setDelivTitle] = useState("");
   const [delivDesc, setDelivDesc] = useState("");
@@ -168,7 +193,7 @@ export default function Gigs() {
 
   const submitDeliverable = useMutation({
     mutationFn: async () => {
-      if (!deliverableDialog) throw new Error("Contract Context Lost");
+      if (!deliverableDialog) throw new Error("Contract context lost");
       let fileUrl = null;
       if (delivFile) {
         const path = `deliv/${talent!.id}/${deliverableDialog}/${Date.now()}-${delivFile.name}`;
@@ -191,156 +216,239 @@ export default function Gigs() {
     },
   });
 
+  const filteredCourseProjects = useMemo(() => {
+    if (!search) return courseProjects;
+    const q = search.toLowerCase();
+    return (courseProjects || []).filter(
+      (p: any) =>
+        p.course?.title?.toLowerCase().includes(q) ||
+        p.subtasks.some((s: any) => s.title?.toLowerCase().includes(q)),
+    );
+  }, [courseProjects, search]);
+
   return (
-    <div className="max-w-6xl mx-auto px-3 sm:px-6 py-4 sm:py-10 space-y-4 sm:space-y-8 pb-32 animate-in fade-in duration-500">
-      {/* Compact mobile-first header */}
-      <header className="space-y-3">
-        <div className="flex items-center justify-between gap-3">
-          <div className="min-w-0">
-            <h1 className="text-2xl sm:text-4xl font-black tracking-tight leading-none truncate">Gig Hub</h1>
-            <p className="text-[11px] text-muted-foreground mt-1">Earn credits, build the platform.</p>
-          </div>
-          <button
-            type="button"
-            onClick={() => navigate("/app/profile/verify")}
-            className={cn(
-              "flex items-center gap-2 px-3 py-2 rounded-xl border text-[11px] font-semibold shrink-0 transition-all active:scale-95",
-              verificationStatus === "verified"
-                ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700"
-                : "border-amber-500/30 bg-amber-500/10 text-amber-700",
-            )}
-          >
-            <ShieldCheck className="h-4 w-4" />
-            <span className="hidden sm:inline">
-              {verificationStatus === "verified" ? "Verified" : "Verify to withdraw"}
-            </span>
-            <span className="sm:hidden">{verificationStatus === "verified" ? "Verified" : "Verify"}</span>
-          </button>
+    <div className="max-w-5xl mx-auto px-3 sm:px-6 py-4 sm:py-8 space-y-4 pb-32 animate-in fade-in duration-500">
+      {/* Header */}
+      <header className="flex items-center justify-between gap-3">
+        <div className="min-w-0">
+          <h1 className="text-2xl sm:text-3xl font-black tracking-tight leading-none truncate">Gig Hub</h1>
+          <p className="text-[11px] text-muted-foreground mt-1">Earn credits by building the platform.</p>
         </div>
+        <button
+          type="button"
+          onClick={() => navigate("/app/profile/verify")}
+          className={cn(
+            "flex items-center gap-2 px-3 py-2 rounded-xl border text-[11px] font-semibold shrink-0 transition-all active:scale-95",
+            verificationStatus === "verified"
+              ? "border-emerald-500/30 bg-emerald-500/10 text-emerald-700"
+              : "border-amber-500/30 bg-amber-500/10 text-amber-700",
+          )}
+        >
+          <ShieldCheck className="h-4 w-4" />
+          <span className="hidden sm:inline">
+            {verificationStatus === "verified" ? "Verified" : "Verify to withdraw"}
+          </span>
+          <span className="sm:hidden">{verificationStatus === "verified" ? "Verified" : "Verify"}</span>
+        </button>
       </header>
 
-      {/* Tab strip — scrollable on mobile, no collisions */}
+      {/* Content Lead banner — only for staff */}
+      {hasContentRole && (
+        <button
+          type="button"
+          onClick={() => navigate("/app/studio")}
+          className="w-full flex items-center justify-between gap-3 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 hover:bg-primary/10 transition-all active:scale-[0.99]"
+        >
+          <div className="flex items-center gap-3 min-w-0">
+            <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+              <Hammer className="h-4 w-4 text-primary" />
+            </div>
+            <div className="text-left min-w-0">
+              <p className="text-sm font-bold leading-tight">Content Studio</p>
+              <p className="text-[11px] text-muted-foreground">Manage course production work</p>
+            </div>
+          </div>
+          <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
+        </button>
+      )}
+
+      {/* Two-tab strip */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="flex w-full overflow-x-auto no-scrollbar h-11 sm:h-12 bg-muted/40 p-1 rounded-xl border border-border/40 max-w-3xl gap-1">
-          {[
-            { id: "tasks", label: "Tasks", icon: ClipboardList },
-            { id: "projects", label: "Projects", icon: Target },
-            { id: "build", label: "Build", icon: Hammer },
-            { id: "activity", label: "Activity", icon: Activity },
-          ].map((tab) => (
-            <TabsTrigger
-              key={tab.id}
-              value={tab.id}
-              className="flex-1 min-w-[72px] rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
-            >
-              <tab.icon className="h-3.5 w-3.5" /> {tab.label}
-            </TabsTrigger>
-          ))}
+        <TabsList className="grid w-full grid-cols-2 h-11 bg-muted/40 p-1 rounded-xl border border-border/40 max-w-md">
+          <TabsTrigger
+            value="earn"
+            className="rounded-lg text-[12px] font-bold uppercase tracking-wide gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
+            <Zap className="h-3.5 w-3.5" /> Earn
+          </TabsTrigger>
+          <TabsTrigger
+            value="work"
+            className="rounded-lg text-[12px] font-bold uppercase tracking-wide gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
+            <Activity className="h-3.5 w-3.5" /> My Work
+          </TabsTrigger>
         </TabsList>
 
-        <TabsContent value="tasks" className="mt-4 sm:mt-6 space-y-3 animate-in fade-in duration-300">
-          <div>
-            <p className="text-xs font-bold uppercase tracking-wide text-primary">Platform Tasks</p>
-            <p className="text-[12px] text-muted-foreground mt-1">
-              Earn credits by helping the platform grow. Most tasks are reviewed automatically.
-            </p>
-          </div>
-          <div className="grid gap-2 sm:grid-cols-2 sm:gap-3">
-            {gigsLoading
-              ? [...Array(6)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl bg-muted/40" />)
-              : gigs?.map((gig) => <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />)}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="projects" className="mt-4 sm:mt-6 space-y-4 animate-in fade-in duration-300">
+        {/* ───── EARN ───── */}
+        <TabsContent value="earn" className="mt-4 space-y-6 animate-in fade-in duration-300">
+          {/* Search */}
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
             <Input
-              placeholder="Search projects..."
+              placeholder="Search tasks and projects..."
               className="pl-9 h-10 rounded-xl text-sm"
-              value={projectSearch}
-              onChange={(e) => setProjectSearch(e.target.value)}
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
             />
           </div>
 
-          <div className="flex gap-2 overflow-x-auto no-scrollbar -mx-3 px-3 pb-1">
-            <Button
-              variant={!selectedProjectCategory ? "default" : "outline"}
-              size="sm"
-              className="rounded-full h-8 text-xs font-semibold shrink-0"
-              onClick={() => setSelectedProjectCategory(null)}
-            >
-              All
-            </Button>
-            {GIG_CATEGORIES.map((s) => (
-              <Button
-                key={s.value}
-                variant={selectedProjectCategory === s.value ? "default" : "outline"}
-                size="sm"
-                className="rounded-full h-8 text-xs font-semibold shrink-0"
-                onClick={() => setSelectedProjectCategory(s.value)}
-              >
-                {s.label}
-              </Button>
-            ))}
-          </div>
+          {/* Quick Tasks */}
+          <section className="space-y-3">
+            <div className="flex items-center justify-between">
+              <div>
+                <h2 className="text-sm font-black uppercase tracking-wide text-primary flex items-center gap-2">
+                  <Zap className="h-3.5 w-3.5" /> Quick Tasks
+                </h2>
+                <p className="text-[11px] text-muted-foreground mt-0.5">
+                  1-tap gigs · auto-reviewed · instant credits
+                </p>
+              </div>
+            </div>
+            <div className="grid gap-2 sm:grid-cols-2">
+              {gigsLoading
+                ? [...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl bg-muted/40" />)
+                : (gigs || [])
+                    .filter((g: any) => !search || g.title.toLowerCase().includes(search.toLowerCase()))
+                    .map((gig: any) => (
+                      <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />
+                    ))}
+            </div>
+          </section>
 
-          <div className="space-y-2">
-            {projectsLoading ? (
-              [...Array(4)].map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl bg-muted/40" />)
-            ) : (
-              projects
-                ?.filter((p: any) => !projectSearch || p.title.toLowerCase().includes(projectSearch.toLowerCase()))
-                .map((gig: any) => {
-                  const cat = GIG_CATEGORY_MAP[gig.resource_category as GigCategory];
-                  const isAcademy = gig.kind === "academy";
-                  return (
-                    <button
-                      key={gig.id}
-                      type="button"
-                      onClick={() => navigate(isAcademy ? `/app/studio` : `/app/marketplace/${gig.id}`)}
-                      className="w-full text-left rounded-2xl border border-border/50 bg-card/60 hover:border-primary/40 hover:shadow-md transition-all px-3 py-3 sm:px-4 active:scale-[0.99]"
-                    >
-                      <div className="flex items-start gap-3">
-                        <div className="min-w-0 flex-1 space-y-1.5">
-                          <div className="flex flex-wrap items-center gap-1.5">
-                            <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold px-1.5 h-5">
-                              {cat?.label || gig.resource_category}
-                            </Badge>
-                            <Badge variant="outline" className="text-[10px] font-semibold px-1.5 h-5">
-                              {isAcademy ? "Academy" : "Marketplace"}
-                            </Badge>
-                          </div>
-                          <h3 className="text-sm font-bold leading-tight line-clamp-1">{gig.title}</h3>
-                          <p className="text-[11px] text-muted-foreground line-clamp-1">{gig.description}</p>
-                          <div className="flex items-center gap-3 pt-0.5">
-                            <span className="flex items-center gap-1 text-xs font-bold text-amber-700">
-                              <Coins className="h-3 w-3" /> {gig.budget_amount}
-                            </span>
-                            {!isAcademy && (
-                              <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
-                                <Send className="h-3 w-3" /> {gig.total_bids || 0} bids
-                              </span>
-                            )}
-                          </div>
+          {/* Course Projects */}
+          <section className="space-y-3">
+            <div>
+              <h2 className="text-sm font-black uppercase tracking-wide text-primary flex items-center gap-2">
+                <BookOpen className="h-3.5 w-3.5" /> Course Projects
+              </h2>
+              <p className="text-[11px] text-muted-foreground mt-0.5">
+                Build a full course — bundled subtasks · higher payout
+              </p>
+            </div>
+            <div className="space-y-2">
+              {courseProjectsLoading ? (
+                [...Array(3)].map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl bg-muted/40" />)
+              ) : (filteredCourseProjects || []).length === 0 ? (
+                <Card className="rounded-2xl border-dashed">
+                  <CardContent className="p-6 text-center text-xs text-muted-foreground">
+                    No open course projects right now. Check back soon.
+                  </CardContent>
+                </Card>
+              ) : (
+                (filteredCourseProjects || []).map((proj: any) => (
+                  <button
+                    key={proj.course.id}
+                    type="button"
+                    onClick={() => navigate("/app/studio")}
+                    className="w-full text-left rounded-2xl border border-border/50 bg-card/60 hover:border-primary/40 hover:shadow-md transition-all p-3 active:scale-[0.99]"
+                  >
+                    <div className="flex items-start gap-3">
+                      {proj.course.cover_image_url ? (
+                        <img
+                          src={proj.course.cover_image_url}
+                          alt=""
+                          className="h-14 w-14 rounded-xl object-cover shrink-0"
+                        />
+                      ) : (
+                        <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                          <BookOpen className="h-6 w-6 text-primary" />
                         </div>
-                        <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+                      )}
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold px-1.5 h-5">
+                            Course
+                          </Badge>
+                          <Badge variant="outline" className="text-[10px] font-semibold px-1.5 h-5">
+                            {proj.subtasks.length} subtasks
+                          </Badge>
+                        </div>
+                        <h3 className="text-sm font-bold leading-tight line-clamp-1">{proj.course.title}</h3>
+                        <div className="flex items-center gap-3 pt-0.5">
+                          <span className="flex items-center gap-1 text-xs font-bold text-amber-700">
+                            <Coins className="h-3 w-3" /> {proj.totalReward} total
+                          </span>
+                          <span className="text-[11px] text-muted-foreground">
+                            Tap to claim subtasks
+                          </span>
+                        </div>
                       </div>
-                    </button>
-                  );
-                })
-            )}
-          </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+                    </div>
+                  </button>
+                ))
+              )}
+            </div>
+          </section>
+
+          {/* Marketplace peek */}
+          {(marketProjects || []).length > 0 && (
+            <section className="space-y-3">
+              <div className="flex items-center justify-between">
+                <div>
+                  <h2 className="text-sm font-black uppercase tracking-wide text-primary flex items-center gap-2">
+                    <Briefcase className="h-3.5 w-3.5" /> Employer Projects
+                  </h2>
+                  <p className="text-[11px] text-muted-foreground mt-0.5">
+                    Bid on freelance gigs from companies
+                  </p>
+                </div>
+                <Button
+                  size="sm"
+                  variant="ghost"
+                  className="h-8 text-xs"
+                  onClick={() => navigate("/app/marketplace")}
+                >
+                  See all <ChevronRight className="h-3 w-3 ml-0.5" />
+                </Button>
+              </div>
+              <div className="space-y-2">
+                {(marketProjects || []).map((m: any) => (
+                  <button
+                    key={m.id}
+                    type="button"
+                    onClick={() => navigate(`/app/marketplace/${m.id}`)}
+                    className="w-full text-left rounded-2xl border border-border/50 bg-card/60 hover:border-primary/40 transition-all p-3 active:scale-[0.99]"
+                  >
+                    <div className="flex items-start gap-3">
+                      <div className="min-w-0 flex-1 space-y-1">
+                        <h3 className="text-sm font-bold leading-tight line-clamp-1">{m.title}</h3>
+                        <p className="text-[11px] text-muted-foreground line-clamp-1">
+                          {m.employer_name || "Anonymous employer"}
+                        </p>
+                        <div className="flex items-center gap-3 pt-0.5">
+                          <span className="flex items-center gap-1 text-xs font-bold text-amber-700">
+                            <Coins className="h-3 w-3" /> {m.budget_amount}
+                          </span>
+                          <span className="flex items-center gap-1 text-[11px] text-muted-foreground">
+                            <Send className="h-3 w-3" /> {m.total_bids || 0} bids
+                          </span>
+                        </div>
+                      </div>
+                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+                    </div>
+                  </button>
+                ))}
+              </div>
+            </section>
+          )}
         </TabsContent>
 
-        <TabsContent value="build" className="mt-4 sm:mt-6 animate-in fade-in duration-300">
-          <BuildAcademyTab />
-        </TabsContent>
-
-        <TabsContent value="activity" className="mt-4 sm:mt-6 space-y-6 animate-in fade-in duration-300">
+        {/* ───── MY WORK ───── */}
+        <TabsContent value="work" className="mt-4 space-y-6 animate-in fade-in duration-300">
           <section className="space-y-3">
             <h3 className="text-xs font-bold uppercase tracking-wide text-primary flex items-center gap-2">
-              <ClipboardList className="h-4 w-4" /> My Submissions
+              <Zap className="h-3.5 w-3.5" /> Quick Task Submissions
             </h3>
             <MySubmissions talentId={talent?.id} />
           </section>
@@ -352,7 +460,7 @@ export default function Gigs() {
               </h3>
               <div className="space-y-2">
                 {myBids?.length ? (
-                  myBids.map((bid) => (
+                  myBids.map((bid: any) => (
                     <div
                       key={bid.id}
                       className="rounded-2xl border border-border/40 bg-card p-3 hover:border-blue-500/40 transition-all"
@@ -381,10 +489,10 @@ export default function Gigs() {
                 <ShieldCheck className="h-3.5 w-3.5" /> Active Contracts
               </h3>
               <div className="space-y-2">
-                {myContracts?.filter((c) => c.status === "active").length ? (
+                {myContracts?.filter((c: any) => c.status === "active").length ? (
                   myContracts
-                    ?.filter((c) => c.status === "active")
-                    .map((contract) => (
+                    ?.filter((c: any) => c.status === "active")
+                    .map((contract: any) => (
                       <div
                         key={contract.id}
                         className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-3 flex justify-between items-center gap-2"
