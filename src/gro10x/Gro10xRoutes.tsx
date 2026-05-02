@@ -15,6 +15,7 @@ import Gro10xJobApplicants from "./pages/work/Gro10xJobApplicants";
 import Gro10xBilling from "./pages/Gro10xBilling";
 import Gro10xLearn from "./pages/Gro10xLearn";
 import Gro10xNotifications from "./pages/Gro10xNotifications";
+import Gro10xCRM from "./pages/Gro10xCRM";
 
 /**
  * Routes for the Gro10x B2B super-app. Mounted under /gro10x on the
