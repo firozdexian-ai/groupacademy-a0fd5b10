@@ -113,3 +113,27 @@ After this, the **agents initiative** begins (one agent at a time), then **produ
 3. **Verification tier rewards** — gamify with UI badges only for v1, or also tie a credit bonus (e.g. +50 credits at "verified")? Suggest UI-only for v1.
 
 Answer these and I'll start with Block A (currency normalization).
+## Implementation status (2026-05-02)
+
+### Block A — Currency normalization ✅
+- `currency_rates` table + 31 seeded currencies, `formatMoney` / `formatUSD` helpers, `useCurrencyRates` hook.
+
+### Block B — Three-role admin scope ✅
+- `useAdminScope`, `ImpersonationProvider`, `ImpersonationBanner`, `AdminSidebar` filtering by `companyScoped`.
+
+### Block C — Profile completion + verification tier ✅
+- `verification_tier` enum, `profile_completion` column, auto-update trigger, `CompletionRing` component on company page.
+
+### Block D — Gro10x portal essentials ✅
+- Member-read RLS for credit tables, `/gro10x/billing` with Stripe top-up, `Gro10xTopBar` (balance pill + bell), `/gro10x/notifications`, `/gro10x/learn`.
+
+### Block E — CRM data layer ✅
+- `company_leads` + `company_lead_activities` tables, member-scoped RLS, `/gro10x/crm` Kanban-style page with stage filter, lead detail sheet, notes timeline. Linked from Work hub header.
+
+### Block F — Stakeholder registry ✅
+- `institutions` + `partner_organizations` tables (super-admin only RLS).
+- Admin sidebar gains a **Stakeholders** group with Institutions and Partner Orgs managers.
+- Reusable `StakeholderRegistry` component with add / list / delete.
+
+### Next — Agent build initiative
+The platform infrastructure for Talent / Gro10x / Admin is now feature-complete for MVP. Next initiative: build out individual AI agents (Office Admin Manager, Recruiter Co-pilot, etc.) on top of this foundation, then move to products / categories / GTM.

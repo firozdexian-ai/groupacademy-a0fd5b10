@@ -41,6 +41,8 @@ import {
   Zap,
   Store,
   Layers,
+  School,
+  Handshake,
 } from "lucide-react";
 import {
   Sidebar,
@@ -201,6 +203,15 @@ const navGroups: NavGroup[] = [
       { title: "VC Firms", icon: Building2, value: "ir-vcs" },
       { title: "Investors", icon: Users, value: "ir-investors" },
       { title: "Email Updates", icon: Mail, value: "ir-emails" },
+    ],
+  },
+  {
+    title: "Stakeholders",
+    icon: Handshake,
+    roles: ["admin"],
+    items: [
+      { title: "Institutions", icon: School, value: "institutions" },
+      { title: "Partner Orgs", icon: Handshake, value: "partner-orgs" },
     ],
   },
   {
