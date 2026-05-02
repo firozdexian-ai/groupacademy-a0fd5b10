@@ -260,6 +260,8 @@ const TAB_TITLES: Record<string, string> = {
   "content-gigs": "Content Gigs",
   "content-leads": "Content Leads",
   "all-gigs": "All Gigs (cross-system)",
+  institutions: "Institutions Registry",
+  "partner-orgs": "Partner Organizations",
   modules: "Module Architecture",
   "quiz-manage": "Certification Logic",
 };
