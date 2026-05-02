@@ -338,3 +338,58 @@ export default function Gro10xCompanyPage() {
     </div>
   );
 }
+
+function OfferingsSection({ companyId, canEdit }: { companyId: string; canEdit: boolean }) {
+  const { data } = useCompanyOfferings(companyId, { activeOnly: !canEdit });
+  const list = data ?? [];
+  if (list.length === 0 && !canEdit) return null;
+  return (
+    <section className="px-4 mt-6">
+      <div className="flex items-center justify-between mb-2">
+        <h2 className="text-sm font-semibold flex items-center gap-2">
+          <Package className="h-4 w-4" /> What we offer · {list.length}
+        </h2>
+        {canEdit && (
+          <Link to="/gro10x/offerings" className="text-[11px] text-[#33E1E4] inline-flex items-center gap-0.5">
+            Manage <ChevronRight className="h-3 w-3" />
+          </Link>
+        )}
+      </div>
+      {list.length === 0 ? (
+        <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-3 text-center`}>
+          <p className="text-xs text-slate-400">No offerings yet.</p>
+          <Link
+            to="/gro10x/offerings"
+            className="mt-2 inline-block text-xs text-[#33E1E4] hover:underline"
+          >
+            Add your first service or product
+          </Link>
+        </div>
+      ) : (
+        <div className="space-y-2">
+          {list.slice(0, 6).map((o) => (
+            <div key={o.id} className={`${GRO10X_PANEL} border border-white/10 rounded-xl p-3`}>
+              <div className="flex items-center justify-between gap-2">
+                <p className="text-sm font-medium truncate">{o.name}</p>
+                <span className="text-[9px] px-1.5 py-0.5 rounded-full bg-white/5 text-slate-300 capitalize">
+                  {o.kind}
+                </span>
+              </div>
+              {o.tagline && <p className="text-[11px] text-slate-400 truncate">{o.tagline}</p>}
+              {(o.price_min || o.price_max) && (
+                <p className="text-[11px] text-emerald-300 mt-1">
+                  {o.currency === "USD" ? "$" : `${o.currency} `}
+                  {o.price_min && o.price_max && o.price_min !== o.price_max
+                    ? `${Number(o.price_min).toLocaleString()}–${Number(o.price_max).toLocaleString()}`
+                    : Number(o.price_min ?? o.price_max).toLocaleString()}
+                  {o.unit && <span className="text-slate-500"> /{o.unit}</span>}
+                </p>
+              )}
+            </div>
+          ))}
+        </div>
+      )}
+    </section>
+  );
+}
+
