@@ -8258,7 +8258,12 @@ export type Database = {
         | "freelancing"
         | "entrepreneurship"
         | "influencing"
-      app_role: "admin" | "student" | "talent_exec" | "content_lead"
+      app_role:
+        | "admin"
+        | "student"
+        | "talent_exec"
+        | "content_lead"
+        | "super_admin"
       application_status:
         | "submitted"
         | "sent_to_employer"
@@ -8489,7 +8494,13 @@ export const Constants = {
         "entrepreneurship",
         "influencing",
       ],
-      app_role: ["admin", "student", "talent_exec", "content_lead"],
+      app_role: [
+        "admin",
+        "student",
+        "talent_exec",
+        "content_lead",
+        "super_admin",
+      ],
       application_status: [
         "submitted",
         "sent_to_employer",
