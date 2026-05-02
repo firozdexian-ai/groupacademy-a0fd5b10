@@ -61,11 +61,12 @@ export function Gro10xTopBar() {
             ? `Company pool · $${(companyBalance * 0.02).toFixed(2)}`
             : `Free ${balance} · Bonus ${bonus} · Earned ${earned}`
         }
+        aria-label={isCompanyController ? "Company credits" : "My credits"}
       >
         <Coins className={`h-3.5 w-3.5 ${low ? "text-amber-400" : "text-[#33E1E4]"}`} />
         <span className="text-xs font-semibold">{Math.floor(shown).toLocaleString()}</span>
         <span className="text-[10px] text-slate-400">
-          {isCompanyController ? "co. credits" : "credits"}
+          {isCompanyController ? "company" : "mine"}
         </span>
       </Link>
       <button
