@@ -162,6 +162,9 @@ export function ContactsManager() {
 
       if (companyFilter !== "all") query = query.eq("company_id", companyFilter);
       if (sourceFilter !== "all") query = query.eq("source", sourceFilter);
+      if (registrationTab === "registered") query = query.not("user_id", "is", null);
+      else if (registrationTab === "uploaded") query = query.is("user_id", null).neq("source", "cv_match");
+      else if (registrationTab === "cv-matched") query = query.eq("source", "cv_match");
 
       const from = (page - 1) * ITEMS_PER_PAGE;
       const to = from + ITEMS_PER_PAGE - 1;
