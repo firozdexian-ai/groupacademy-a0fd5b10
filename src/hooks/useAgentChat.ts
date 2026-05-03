@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { handleAIError } from "@/lib/aiErrorHandler";
 
 /**
- * GroUp Academy: Neural Chat Orchestrator (V2.0.26)
- * CTO Reference: Authoritative controller for agent-based career intelligence.
+ * GroUp Academy: Neural Chat Orchestrator (V2.0.27)
+ * CTO Audit: Injected Pre-Flight Credit Checks to prevent Post-Paid Vulnerability.
  */
 
 export interface AgentMessage {
@@ -194,15 +194,31 @@ export function useAgentChat(): UseAgentChatReturn {
 
   const sendMessage = useCallback(
     async (content: string) => {
-      if (!session || !content.trim() || isStreaming) return;
+      if (!session || !content.trim() || isStreaming || !talent?.id) return;
 
       const userMessage: AgentMessage = { role: "user", content: content.trim() };
       const currentTrajectory = [...messages, userMessage];
       setMessages(currentTrajectory);
       setIsStreaming(true);
 
-      let assistantBuffer = "";
       try {
+        // CTO FIX: Pre-Flight Credit Check
+        // We MUST verify liquidity BEFORE waking the AI, otherwise users get answers for free.
+        if (perResponseCost > 0) {
+          const { data: creditData } = await supabase
+            .from("talent_credits")
+            .select("balance")
+            .eq("talent_id", talent.id)
+            .single();
+
+          if (!creditData || creditData.balance < perResponseCost) {
+            toast.error(`FISCAL_DEFICIT: ${perResponseCost} CR required to process. Please recharge.`);
+            setMessages(messages); // Rollback user message
+            setIsStreaming(false);
+            return;
+          }
+        }
+
         const {
           data: { session: authSession },
         } = await supabase.auth.getSession();
@@ -235,6 +251,8 @@ export function useAgentChat(): UseAgentChatReturn {
         // PHASE: Initialize Assistant Node
         setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
+        let assistantBuffer = "";
+
         while (true) {
           const { done, value } = await reader.read();
           if (done) break;
@@ -248,7 +266,7 @@ export function useAgentChat(): UseAgentChatReturn {
               if (payload === "[DONE]") break;
               try {
                 const parsed = JSON.parse(payload);
-                const token = parsed.choices?.[0]?.delta?.content;
+                const token = parsed.choices?.?.delta?.content;
                 if (token) {
                   assistantBuffer += token;
                   setMessages((prev) => {
@@ -265,17 +283,22 @@ export function useAgentChat(): UseAgentChatReturn {
         }
 
         // POST-SYNC: Atomic Credit Deduction
+        // Now that the AI has delivered value, we officially charge the account.
         if (perResponseCost > 0 && assistantBuffer) {
-          const { data: creditHandshake } = await supabase.rpc("deduct_credits", {
+          const { data: creditHandshake, error: deductionError } = await supabase.rpc("deduct_credits" as any, {
             p_amount: perResponseCost,
             p_service_type: "AI_AGENT_CHAT",
             p_reference_id: session.id,
             p_description: `Neural_Node: ${session.agent_key}`,
+            p_talent_id: talent.id
           });
 
-          if (creditHandshake && !(creditHandshake as any).success) {
-            toast.error("FISCAL_DEFICIT: Credits exhausted.");
-            return;
+          // Even if this fails, we don't crash the chat because the user already received the text,
+          // but we log it. The Pre-Flight check ensures they had funds to begin with.
+          if (deductionError) {
+             console.warn("Post-stream deduction delayed or failed", deductionError);
+          } else if (creditHandshake && !(creditHandshake as any).success) {
+            toast.error("FISCAL_DEFICIT: Credits exhausted during sync.");
           }
         }
 
@@ -287,7 +310,7 @@ export function useAgentChat(): UseAgentChatReturn {
         setIsStreaming(false);
       }
     },
-    [session, messages, isStreaming, saveTrajectory, perResponseCost],
+    [session, messages, isStreaming, saveTrajectory, perResponseCost, talent?.id],
   );
 
   const endSession = useCallback(async () => {
