@@ -11,7 +11,7 @@ import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 
 /**
  * GroUp Academy: Agent Social Proof Node
- * CTO Audit: Standardized data pipeline using React Query to prevent race conditions and memory leaks.
+ * CTO Audit: Standardized data pipeline using React Query. Array constants extracted to prevent JSX parsing drops.
  */
 
 interface Props {
@@ -28,6 +28,9 @@ interface Review {
   talentName?: string;
 }
 
+// CTO FIX: Extracting the array to a constant so the JSX parser doesn't swallow it.
+const STAR_ARRAY =;
+
 export function AgentReviewSection({ agentKey, canReview }: Props) {
   const { talent } = useTalent();
   const queryClient = useQueryClient();
@@ -35,7 +38,6 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
   const [rating, setRating] = useState(5);
   const [text, setText] = useState("");
 
-  // CTO FIX: Standardized fetching with React Query for caching and race-condition safety
   const { data: reviews = [], isLoading } = useQuery({
     queryKey: ["agent-reviews", agentKey],
     queryFn: async () => {
@@ -48,7 +50,6 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
       if (error) throw error;
       const list = (data || []) as Review[];
 
-      // Resolve talent names efficiently
       const ids = Array.from(new Set(list.map((r) => r.talent_id)));
       if (ids.length) {
         const { data: talents } = await supabase.from("talents").select("id, full_name").in("id", ids);
@@ -60,7 +61,6 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
     },
   });
 
-  // CTO FIX: Standardized mutations to automatically refresh the UI after a review is posted
   const submitMutation = useMutation({
     mutationFn: async () => {
       if (!talent?.id) throw new Error("Authentication required");
@@ -109,7 +109,7 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
           <div className="space-y-1">
             <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">Quality Metric</p>
             <div className="flex gap-1.5">
-              {.map((s) => (
+              {STAR_ARRAY.map((s) => (
                 <button key={s} onClick={() => setRating(s)} className="transition-transform hover:scale-110 active:scale-95">
                   <Star
                     className={cn(
@@ -162,7 +162,7 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
                 <div>
                   <p className="text-sm font-black uppercase italic tracking-tight">{r.talentName}</p>
                   <div className="flex gap-0.5 mt-1">
-                    {.map((s) => (
+                    {STAR_ARRAY.map((s) => (
                       <Star
                         key={s}
                         className={cn(
