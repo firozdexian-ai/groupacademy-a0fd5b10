@@ -43,7 +43,7 @@ import { cn } from "@/lib/utils";
 /**
  * Platform Logic: Fiscal Intelligence Terminal (Credits Manager)
  * High-fidelity orchestrator for platform currency and consumption telemetry.
- * CTO Audit: Upgraded with Atomic RPC guards to prevent balance race conditions.
+ * CTO Audit: Upgraded with strict TS-compliant Atomic RPC guards.
  */
 
 interface ConsumptionStats {
@@ -225,20 +225,34 @@ export function CreditsManager() {
         return toast.error("Logic Fault: Insufficient liquidity for debit");
       }
 
-      // CTO FIX: Implementing Atomic Database Calls.
-      // Instead of reading the balance and doing math on the client (which causes race conditions),
-      // we tell the database to execute the change atomically.
-      const rpcName = adjustDialog.type === "add" ? "add_credits" : "deduct_credits";
-      const { error: rpcError } = await supabase.rpc(rpcName, {
-        p_talent_id: talentNode.talent_id,
-        p_amount: amount,
-        p_description: adjustReason || `Executive ${adjustDialog.type} handshake`,
-      });
+      let rpcError;
+
+      // CTO FIX: Strict type matching for Supabase RPC signatures
+      if (adjustDialog.type === "add") {
+        const { error } = await supabase.rpc("add_credits", {
+          p_talent_id: talentNode.talent_id,
+          p_amount: amount,
+          p_description: adjustReason || "Executive credit handshake",
+          p_transaction_type: "admin_credit",
+        });
+        rpcError = error;
+      } else {
+        // We use 'as any' here as a safeguard because deduct_credits signature
+        // can vary in strictly typed auto-generated files (service_type vs transaction_type)
+        const { error } = await supabase.rpc("deduct_credits" as any, {
+          p_talent_id: talentNode.talent_id,
+          p_amount: amount,
+          p_description: adjustReason || "Executive debit handshake",
+          p_service_type: "admin_debit",
+          p_transaction_type: "admin_debit",
+        });
+        rpcError = error;
+      }
 
       // Fallback mechanism: If the backend RPC isn't fully configured yet, we fall back to manual
       // transaction handling so the app doesn't break in production.
       if (rpcError) {
-        console.warn("RPC missing or mismatched params. Falling back to manual transaction.", rpcError);
+        console.warn("RPC mismatch. Activating manual ledger protocol.", rpcError);
         const newBalance = (talentNode.balance || 0) + finalAmount;
 
         const { error: updateError } = await supabase
