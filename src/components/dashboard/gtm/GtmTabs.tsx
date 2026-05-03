@@ -105,19 +105,29 @@ export const GtmCountriesTab = () => (
   />
 );
 
+function ComingSoonTab({ title, description }: { title: string; description: string }) {
+  return (
+    <div className="space-y-3">
+      <h2 className="text-xl font-semibold">{title}</h2>
+      <p className="text-sm text-muted-foreground">{description}</p>
+      <Card className="p-8 text-center text-sm text-muted-foreground">
+        Coming soon — will populate once `state` / `city` are captured on talents and companies.
+      </Card>
+    </div>
+  );
+}
+
 export const GtmStatesTab = () => (
-  <ReadOnlyDistinct
-    table="talents" column="state"
+  <ComingSoonTab
     title="States / Regions / Divisions"
-    description="Distinct states/regions from the talent pool."
+    description="Sub-country administrative areas. Used for regional GTM targeting."
   />
 );
 
 export const GtmCitiesTab = () => (
-  <ReadOnlyDistinct
-    table="talents" column="city"
+  <ComingSoonTab
     title="Cities"
-    description="Distinct cities from the talent pool."
+    description="City-level GTM view aggregated from talents, companies and jobs."
   />
 );
 
