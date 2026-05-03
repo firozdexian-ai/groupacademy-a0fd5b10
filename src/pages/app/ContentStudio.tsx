@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
-import { Coins, FileText, Send, Hammer, CheckCircle2 } from "lucide-react";
+import { Coins, FileText, Send, Hammer, CheckCircle2, Copy } from "lucide-react";
 import { toast } from "sonner";
 
 interface ContentGig {
