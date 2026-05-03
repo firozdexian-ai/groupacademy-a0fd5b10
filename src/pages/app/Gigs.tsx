@@ -150,7 +150,7 @@ export default function Gigs() {
         .select("id, title, description, skill_category, budget_amount, total_bids, is_featured, employer_name")
         .in("status", ["approved", "active"])
         .order("is_featured", { ascending: false })
-        .limit(6);
+        .limit(50);
       return data || [];
     },
   });
