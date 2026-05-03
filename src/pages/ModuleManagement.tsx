@@ -223,7 +223,11 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
   };
 
   const openResources = (moduleId: string) => {
-    navigate(`/content/${contentId}/modules/${moduleId}/resources`);
+    // When the admin opened Module Management from the dashboard (via props.onBack),
+    // tag the deep-link so ModuleResourcesManager returns to the dashboard tab on Back.
+    const fromDashboard = !!props.onBack;
+    const qs = fromDashboard ? "?fromTab=1" : "";
+    navigate(`/content/${contentId}/modules/${moduleId}/resources${qs}`);
   };
 
   if (!contentId) {
