@@ -64,6 +64,7 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 ];
 
 const INITIAL_SHOW = 3;
+const FREE_AI_MATCHES_LIMIT = 5;
 
 const COUNTRY_FLAGS: Record<string, string> = {
   Bangladesh: "🇧🇩",
@@ -78,7 +79,6 @@ const COUNTRY_FLAGS: Record<string, string> = {
   Canada: "🇨🇦",
 };
 
-// Purpose copy for each career agent (keyed by agent_key)
 const AGENT_PURPOSE: Record<string, string> = {
   "job-hunter": "Find roles that fit your profile",
   "cv-coach": "Polish your CV to pass ATS screens",
@@ -116,6 +116,21 @@ export default function JobsHub() {
     featured: false,
     expiring: false,
     hot: false,
+  });
+
+  // CTO FIX: Added Service History query to track freemium usage
+  const { data: aiMatchUsageCount = 0 } = useQuery({
+    queryKey: ["service-usage-ai-match", talent?.id],
+    queryFn: async () => {
+      if (!talent?.id) return 0;
+      const { count } = await supabase
+        .from("credit_transactions")
+        .select("*", { count: "exact", head: true })
+        .eq("talent_id", talent.id)
+        .eq("service_type", "SUGGESTED_JOBS");
+      return count || 0;
+    },
+    enabled: !!talent?.id,
   });
 
   const { data: locations = [] } = useQuery({
@@ -188,7 +203,6 @@ export default function JobsHub() {
     enabled: !!talent?.id,
   });
 
-  // Career agents only — career category, drop education/IELTS
   const { data: careerAgents = [] } = useQuery({
     queryKey: ["career-agents-jobshub"],
     queryFn: async () => {
@@ -227,7 +241,6 @@ export default function JobsHub() {
       }
     });
     const list = Array.from(map.values()).sort((a, b) => b.totalJobs - a.totalJobs);
-    // Pin user's country to the top
     const userCountry = talent?.country;
     if (userCountry) {
       const idx = list.findIndex((g) => g.country.toLowerCase() === userCountry.toLowerCase());
@@ -239,11 +252,30 @@ export default function JobsHub() {
     return list;
   }, [locations, talent?.country]);
 
+  // CTO FIX: Implemented Freemium Logic (5 Free Uses)
   async function handleGetAIRecommendations() {
-    if (!canAfford("SUGGESTED_JOBS")) return toast.error("Need 10 credits to run AI matching.");
+    const isFreeRun = aiMatchUsageCount < FREE_AI_MATCHES_LIMIT;
+
+    if (!isFreeRun && !canAfford("SUGGESTED_JOBS")) {
+      return toast.error("Need 10 credits to run AI matching.");
+    }
+
     setLoadingAI(true);
     try {
-      await deductCredits("SUGGESTED_JOBS", undefined, "AI Job Suggestions");
+      // Only deduct credits if free runs are exhausted
+      if (!isFreeRun) {
+        await deductCredits("SUGGESTED_JOBS", undefined, "AI Job Suggestions");
+      } else {
+        // We log the free usage so the count increments
+        await supabase.from("credit_transactions").insert({
+          talent_id: talent?.id,
+          amount: 0,
+          transaction_type: "freemium_usage",
+          service_type: "SUGGESTED_JOBS",
+          description: `Free AI Match (${aiMatchUsageCount + 1}/${FREE_AI_MATCHES_LIMIT})`,
+        });
+      }
+
       const { error } = await supabase.functions.invoke("suggest-jobs-for-talent");
       if (error) throw error;
       await refetchRecs();
@@ -309,8 +341,24 @@ export default function JobsHub() {
               <h2 className="text-base font-semibold flex items-center gap-2">
                 <Brain className="h-4 w-4 text-primary" /> AI job matches
               </h2>
-              <Badge variant="outline" className="gap-1 text-[10px]">
-                <Coins className="h-3 w-3 text-amber-500" /> 10 credits
+              <Badge
+                variant="outline"
+                className={cn(
+                  "gap-1 text-[10px]",
+                  aiMatchUsageCount < FREE_AI_MATCHES_LIMIT
+                    ? "text-emerald-500 border-emerald-500/20"
+                    : "text-amber-500",
+                )}
+              >
+                {aiMatchUsageCount < FREE_AI_MATCHES_LIMIT ? (
+                  <>
+                    <Sparkles className="h-3 w-3" /> {FREE_AI_MATCHES_LIMIT - aiMatchUsageCount} FREE LEFT
+                  </>
+                ) : (
+                  <>
+                    <Coins className="h-3 w-3" /> 10 CREDITS
+                  </>
+                )}
               </Badge>
             </div>
 
@@ -344,12 +392,17 @@ export default function JobsHub() {
             </h2>
             {loadingCollection ? (
               <div className="space-y-2">
-                {[1, 2, 3].map((i) => <Skeleton key={i} className="h-24 w-full rounded-lg" />)}
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-[120px] w-full rounded-xl" />
+                ))}
               </div>
             ) : collectionData?.featured?.length ? (
               renderJobSection(collectionData.featured, "featured")
             ) : (
-              <p className="text-sm text-muted-foreground">No featured jobs right now.</p>
+              // CTO FIX: Standardized empty state height to prevent layout shift
+              <div className="h-[120px] flex items-center justify-center border border-dashed rounded-xl bg-muted/20">
+                <p className="text-sm text-muted-foreground italic">No trending jobs right now.</p>
+              </div>
             )}
           </section>
 
@@ -423,13 +476,9 @@ export default function JobsHub() {
             <Globe className="h-4 w-4 text-primary" /> Jobs by country
           </h2>
           {countryGroups.map((g) => {
-            const isUserCountry =
-              !!talent?.country && g.country.toLowerCase() === talent.country.toLowerCase();
+            const isUserCountry = !!talent?.country && g.country.toLowerCase() === talent.country.toLowerCase();
             return (
-              <Card
-                key={g.country}
-                className={cn(isUserCountry && "border-primary/40 bg-primary/5")}
-              >
+              <Card key={g.country} className={cn(isUserCountry && "border-primary/40 bg-primary/5")}>
                 <button
                   onClick={() => setExpandedCountry(expandedCountry === g.country ? null : g.country)}
                   className="w-full flex items-center p-3 hover:bg-muted/40 text-left transition-colors"
@@ -446,7 +495,9 @@ export default function JobsHub() {
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs text-muted-foreground">{g.totalJobs} open {g.totalJobs === 1 ? "role" : "roles"}</p>
+                    <p className="text-xs text-muted-foreground">
+                      {g.totalJobs} open {g.totalJobs === 1 ? "role" : "roles"}
+                    </p>
                   </div>
                   {expandedCountry === g.country ? (
                     <ChevronUp className="text-primary h-4 w-4" />
@@ -483,9 +534,7 @@ export default function JobsHub() {
             <h2 className="text-base font-semibold flex items-center gap-2">
               <Zap className="h-4 w-4 text-primary" /> Career tools
             </h2>
-            <p className="text-xs text-muted-foreground">
-              Practical AI tools to ship a stronger application — fast.
-            </p>
+            <p className="text-xs text-muted-foreground">Practical AI tools to ship a stronger application — fast.</p>
 
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
               <ToolCard
@@ -559,22 +608,7 @@ export default function JobsHub() {
   );
 }
 
-function QuickAction({ icon: Icon, label, sub, onClick }: { icon: any; label: string; sub: string; onClick: () => void }) {
-  return (
-    <button
-      onClick={onClick}
-      className="flex items-center gap-2.5 p-3 rounded-xl border border-border/50 bg-card hover:border-primary/40 hover:bg-primary/5 transition-all text-left"
-    >
-      <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-        <Icon className="h-4 w-4 text-primary" />
-      </div>
-      <div className="flex-1 min-w-0">
-        <p className="text-xs font-semibold leading-tight">{label}</p>
-        <p className="text-[10px] text-muted-foreground">{sub}</p>
-      </div>
-    </button>
-  );
-}
+// CTO NOTE: Removed dead QuickAction component to optimize bundle size.
 
 function ToolCard({
   icon: Icon,
