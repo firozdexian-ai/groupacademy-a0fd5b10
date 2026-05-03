@@ -4,24 +4,34 @@ import { Badge } from "@/components/ui/badge";
 import { formatDistanceToNow } from "date-fns";
 import { AgentSession } from "@/hooks/useAgentChat";
 import { cn } from "@/lib/utils";
+// CTO FIX: Imported the standardized identity node
+import { AgentAvatar } from "@/components/ai-agents/AgentAvatar";
 
 /**
  * GroUp Academy: Neural Session Ledger
- * CTO Reference: Authoritative list for active and historic agent interactions.
+ * CTO Audit: Eradicated rogue UI elements. Integrated the centralized `AgentAvatar`
+ * to strictly enforce Creator Economy and Institutional visual rules.
  */
 
 interface RecentConversationsProps {
   sessions: AgentSession[];
   onSelectSession: (sessionId: string) => void;
   getAgentName: (agentKey: string) => string;
-  getAgentIcon: (agentKey: string) => React.ReactNode;
+  // Legacy prop kept for backward compatibility with the parent page
+  getAgentIcon?: (agentKey: string) => React.ReactNode;
+  // CTO FIX: Added lookup functions to support the full avatar ecosystem
+  getAgentAvatar?: (agentKey: string) => string | null;
+  isCompanyAgent?: (agentKey: string) => boolean;
+  isCreatorAgent?: (agentKey: string) => boolean;
 }
 
 export function RecentConversations({
   sessions,
   onSelectSession,
   getAgentName,
-  getAgentIcon,
+  getAgentAvatar,
+  isCompanyAgent,
+  isCreatorAgent,
 }: RecentConversationsProps) {
   if (sessions.length === 0) {
     return (
@@ -61,14 +71,17 @@ export function RecentConversations({
           >
             <CardContent className="p-5">
               <div className="flex items-center gap-4 text-left">
-                {/* COMPONENT: AGENT_AVATAR_INGRESS */}
+                {/* CTO FIX: Utilizing the centralized ecosystem component */}
                 <div className="relative shrink-0">
-                  <div className="h-12 w-12 rounded-xl bg-background border border-border/10 flex items-center justify-center shadow-lg transition-transform duration-500 group-hover:scale-110 group-hover:rotate-3">
-                    {getAgentIcon(session.agent_key)}
-                  </div>
-                  {isActive && (
-                    <div className="absolute -top-1 -right-1 h-4 w-4 bg-emerald-500 rounded-full border-2 border-background shadow-lg animate-pulse" />
-                  )}
+                  <AgentAvatar
+                    name={getAgentName(session.agent_key)}
+                    avatarUrl={getAgentAvatar?.(session.agent_key)}
+                    isOnline={isActive}
+                    isCompanyAgent={isCompanyAgent?.(session.agent_key)}
+                    isCreatorAgent={isCreatorAgent?.(session.agent_key)}
+                    size="lg"
+                    className="transition-transform duration-500 group-hover:scale-110"
+                  />
                 </div>
 
                 <div className="flex-1 min-w-0 space-y-1">
