@@ -5,7 +5,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Admissions Trajectory Timeline
- * CTO Reference: Authoritative node for temporal process mapping.
+ * CTO Audit: Eliminated "Dead End UI" by injecting an executable callback for phase actions.
  */
 
 interface TimelineItem {
@@ -18,9 +18,11 @@ interface TimelineItem {
 interface RoadmapTimelineProps {
   timeline: TimelineItem[];
   currentMonth?: number;
+  // CTO FIX: Injected callback to make the timeline interactive
+  onExecutePhase?: (month: number) => void;
 }
 
-export function RoadmapTimeline({ timeline, currentMonth = 1 }: RoadmapTimelineProps) {
+export function RoadmapTimeline({ timeline, currentMonth = 1, onExecutePhase }: RoadmapTimelineProps) {
   return (
     <div className="space-y-6 relative animate-in fade-in duration-1000">
       {timeline.map((item, index) => {
@@ -73,7 +75,7 @@ export function RoadmapTimeline({ timeline, currentMonth = 1 }: RoadmapTimelineP
                     )}
                   </div>
 
-                  {/* HUD: NODE_CONTENT_ARAY */}
+                  {/* HUD: NODE_CONTENT_ARRAY */}
                   <div className="flex-1 min-w-0 space-y-4">
                     <div className="flex items-center justify-between gap-4 flex-wrap">
                       <div className="space-y-1">
@@ -126,11 +128,15 @@ export function RoadmapTimeline({ timeline, currentMonth = 1 }: RoadmapTimelineP
                       ))}
                     </div>
 
-                    {isCurrent && (
+                    {/* CTO FIX: Wired up the onClick handler to make the UI functional */}
+                    {isCurrent && onExecutePhase && (
                       <div className="pt-2 flex justify-end">
-                        <div className="flex items-center gap-2 text-[9px] font-black uppercase italic tracking-widest text-primary hover:translate-x-1 transition-transform cursor-pointer">
+                        <button
+                          onClick={() => onExecutePhase(item.month)}
+                          className="flex items-center gap-2 text-[9px] font-black uppercase italic tracking-widest text-primary hover:translate-x-1 transition-transform cursor-pointer bg-transparent border-none p-0"
+                        >
                           EXECUTE_PHASE_TASKS <ArrowRight className="h-3 w-3" />
-                        </div>
+                        </button>
                       </div>
                     )}
                   </div>
