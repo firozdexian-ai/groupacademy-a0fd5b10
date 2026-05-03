@@ -30,9 +30,22 @@ import {
   ChevronRight,
   Loader2,
   RefreshCw,
+  Sparkles,
+  HelpCircle,
+  Wand2,
 } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
+import {
+  Sheet,
+  SheetContent,
+  SheetHeader,
+  SheetTitle,
+  SheetDescription,
+} from "@/components/ui/sheet";
+import ResearchPromptDialog from "@/components/modules/ResearchPromptDialog";
+import QuizManagement from "@/pages/QuizManagement";
+import { BatchContentGenerator } from "@/components/dashboard/BatchContentGenerator";
 
 /**
  * Curriculum Module Manager
