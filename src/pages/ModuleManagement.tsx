@@ -547,6 +547,41 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
+
+      {researchModuleId && (() => {
+        const mod = modules.find((m) => m.id === researchModuleId);
+        if (!mod) return null;
+        const idx = modules.findIndex((m) => m.id === researchModuleId);
+        return (
+          <ResearchPromptDialog
+            open={!!researchModuleId}
+            onOpenChange={(o) => !o && setResearchModuleId(null)}
+            moduleTitle={mod.title}
+            moduleDescription={mod.description ?? ""}
+            moduleIndex={idx + 1}
+            totalModules={modules.length}
+            courseTitle={course?.title ?? "Course"}
+            courseIndex={1}
+            totalCourses={1}
+            levelName={course?.content_type ?? "Course"}
+            programName={course?.title ?? ""}
+            schoolName="GroUp Academy"
+            academyName="GroUp Academy"
+          />
+        );
+      })()}
+
+      <Sheet open={studioOpen} onOpenChange={setStudioOpen}>
+        <SheetContent side="right" className="w-full sm:max-w-3xl overflow-y-auto p-0">
+          <SheetHeader className="px-6 py-4 border-b">
+            <SheetTitle>AI Content Studio</SheetTitle>
+            <SheetDescription>Bulk-generate quizzes, scenarios, and other resources.</SheetDescription>
+          </SheetHeader>
+          <div className="p-4">
+            <BatchContentGenerator />
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
