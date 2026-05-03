@@ -1,6 +1,7 @@
 // Admin Agent Manager — chat with the entire AI Agent OS.
 // Admin/super_admin only. Reports on agents, tools, channels, sessions, credits.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
+import { augmentLastUserMessage } from "../_shared/attachments.ts";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -116,6 +117,7 @@ Deno.serve(async (req) => {
     const messages = body.messages ?? [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
     const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
       const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {

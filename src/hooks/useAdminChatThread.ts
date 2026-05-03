@@ -29,6 +29,7 @@ export interface ThreadSummary {
   agent_key: string;
   title: string | null;
   last_message_at: string;
+  last_read_at: string;
 }
 
 const ATTACHMENT_BUCKET = "admin-chat-attachments";
@@ -39,7 +40,7 @@ export function useAdminThreads() {
   const reload = useCallback(async () => {
     const { data } = await supabase
       .from("admin_chat_threads")
-      .select("id, agent_key, title, last_message_at")
+      .select("id, agent_key, title, last_message_at, last_read_at")
       .order("last_message_at", { ascending: false });
     setThreads((data as any) ?? []);
   }, []);
@@ -119,6 +120,49 @@ export function useAdminChatThread(agentKey: string | null) {
     };
   }, [agentKey]);
 
+  // realtime: mirror new messages from other tabs/devices
+  useEffect(() => {
+    if (!threadId) return;
+    const channel = supabase
+      .channel(`admin_chat_${threadId}`)
+      .on(
+        "postgres_changes",
+        {
+          event: "INSERT",
+          schema: "public",
+          table: "admin_chat_messages",
+          filter: `thread_id=eq.${threadId}`,
+        },
+        async (payload) => {
+          const row: any = payload.new;
+          setMessages((prev) => {
+            if (prev.some((m) => m.id === row.id)) return prev;
+            return [...prev, { ...row, attachments: row.attachments ?? [] }];
+          });
+          if (row.attachments?.length) {
+            const signed = await signAttachments(row.attachments);
+            setMessages((prev) =>
+              prev.map((m) => (m.id === row.id ? { ...m, attachments: signed } : m)),
+            );
+          }
+        },
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [threadId]);
+
+  // mark thread as read while it's open
+  useEffect(() => {
+    if (!threadId || messages.length === 0) return;
+    supabase
+      .from("admin_chat_threads")
+      .update({ last_read_at: new Date().toISOString() })
+      .eq("id", threadId)
+      .then(() => {});
+  }, [threadId, messages.length]);
+
   /**
    * Upload a File to the admin chat attachments bucket and return its
    * metadata (without signed URL). Caller is expected to attach this
@@ -196,30 +240,12 @@ export function useAdminChatThread(agentKey: string | null) {
       }
 
       try {
-        // Render attachments inline in the prompt so even agents that don't
-        // know about the new field still see them as context.
-        const augmentedNext = next.map((m, idx) => {
-          if (idx !== next.length - 1) return { role: m.role, content: m.content };
-          if (!attachments.length) return { role: m.role, content: m.content };
-          const lines = attachments
-            .map(
-              (a) =>
-                `- ${a.name} (${a.mime}, ${(a.size / 1024).toFixed(1)} KB)${
-                  a.url ? ` — ${a.url}` : ""
-                }`,
-            )
-            .join("\n");
-          return {
-            role: m.role,
-            content:
-              `${m.content}\n\n[Attached files]\n${lines}`.trim(),
-          };
-        });
-
+        const plainMessages = next.map(({ role, content }) => ({ role, content }));
         const { data, error } = await supabase.functions.invoke(agent.functionName, {
           body: {
-            messages: augmentedNext,
-            attachments: attachments.map(({ url, ...rest }) => ({ ...rest, url })),
+            messages: plainMessages,
+            // server-side helper signs URLs and pulls file bytes itself
+            attachments: attachments.map(({ url: _u, ...rest }) => rest),
           },
         });
         if (error) throw error;
@@ -256,8 +282,58 @@ export function useAdminChatThread(agentKey: string | null) {
   const clear = useCallback(async () => {
     if (!threadId) return;
     await supabase.from("admin_chat_messages").delete().eq("thread_id", threadId);
+    // best-effort: cleanup orphaned attachment files for this thread
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData?.user?.id;
+      if (uid) {
+        const prefix = `${uid}/${threadId}`;
+        const { data: list } = await supabase.storage
+          .from(ATTACHMENT_BUCKET)
+          .list(prefix, { limit: 1000 });
+        const paths = (list ?? []).map((f) => `${prefix}/${f.name}`);
+        if (paths.length) {
+          await supabase.storage.from(ATTACHMENT_BUCKET).remove(paths);
+        }
+      }
+    } catch (e) {
+      console.warn("attachment cleanup failed", e);
+    }
     setMessages([]);
   }, [threadId]);
 
-  return { threadId, messages, loading, sending, send, clear, uploadAttachment };
+  const regenerate = useCallback(async () => {
+    if (!threadId || sending) return;
+    // remove last assistant message and re-send the previous user turn
+    let lastUserIdx = -1;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        lastUserIdx = i;
+        break;
+      }
+    }
+    if (lastUserIdx < 0) return;
+    const lastUser = messages[lastUserIdx];
+    // delete trailing assistant rows after lastUser
+    const trailing = messages.slice(lastUserIdx + 1).filter((m) => m.id);
+    if (trailing.length) {
+      await supabase
+        .from("admin_chat_messages")
+        .delete()
+        .in("id", trailing.map((m) => m.id!));
+    }
+    setMessages(messages.slice(0, lastUserIdx));
+    await send(lastUser.content, lastUser.attachments ?? []);
+  }, [threadId, sending, messages, send]);
+
+  return {
+    threadId,
+    messages,
+    loading,
+    sending,
+    send,
+    clear,
+    uploadAttachment,
+    regenerate,
+  };
 }

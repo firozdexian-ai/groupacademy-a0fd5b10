@@ -10,6 +10,7 @@ import { Button } from "@/components/ui/button";
 import { AgentRail } from "@/components/dashboard/chat/AgentRail";
 import { ChatThread } from "@/components/dashboard/chat/ChatThread";
 import { useAdminThreads } from "@/hooks/useAdminChatThread";
+import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ADMIN_AGENTS, ADMIN_AGENTS_BY_KEY } from "@/lib/adminAgents";
 
 export default function DashboardChat() {
@@ -25,7 +26,7 @@ export default function DashboardChat() {
     if (activeKey) setSearchParams({ agent: activeKey }, { replace: true });
   }, [activeKey, setSearchParams]);
 
-  const showRail = activeKey === null || typeof window === "undefined" || window.innerWidth >= 768;
+  const isDesktop = useMediaQuery("(min-width: 768px)");
   const showThread = activeKey !== null;
 
   return (

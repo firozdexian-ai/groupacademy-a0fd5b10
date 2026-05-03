@@ -167,6 +167,7 @@ export type Database = {
           attachments: Json
           content: string
           created_at: string
+          handoff_to: string | null
           id: string
           role: string
           thread_id: string
@@ -175,6 +176,7 @@ export type Database = {
           attachments?: Json
           content: string
           created_at?: string
+          handoff_to?: string | null
           id?: string
           role: string
           thread_id: string
@@ -183,6 +185,7 @@ export type Database = {
           attachments?: Json
           content?: string
           created_at?: string
+          handoff_to?: string | null
           id?: string
           role?: string
           thread_id?: string
@@ -203,6 +206,7 @@ export type Database = {
           created_at: string
           id: string
           last_message_at: string
+          last_read_at: string
           title: string | null
           user_id: string
         }
@@ -211,6 +215,7 @@ export type Database = {
           created_at?: string
           id?: string
           last_message_at?: string
+          last_read_at?: string
           title?: string | null
           user_id: string
         }
@@ -219,6 +224,7 @@ export type Database = {
           created_at?: string
           id?: string
           last_message_at?: string
+          last_read_at?: string
           title?: string | null
           user_id?: string
         }

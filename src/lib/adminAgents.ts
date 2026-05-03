@@ -13,6 +13,7 @@ import {
   Bot,
   Landmark,
   Handshake,
+  BarChart3,
   type LucideIcon,
 } from "lucide-react";
 
@@ -42,8 +43,21 @@ export const ADMIN_AGENTS: AdminAgent[] = [
     ],
   },
   {
+    key: "report-builder",
+    functionName: "admin-report-builder",
+    name: "Report Builder",
+    tagline: "Reports · charts · weekly digests",
+    icon: BarChart3,
+    accent: "bg-teal-500/15 text-teal-500",
+    suggestions: [
+      "Build a weekly revenue & signups report",
+      "Generate a Q-on-Q growth digest",
+      "Make a one-pager summary for the leadership meeting",
+    ],
+  },
+  {
     key: "talent-aisha",
-    functionName: "ai-talent-analyst",
+    functionName: "admin-aisha-analyst",
     name: "Aisha",
     tagline: "Talent Success · pool insights & matching",
     icon: Users,
@@ -56,7 +70,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
   },
   {
     key: "talent-ai-general",
-    functionName: "ai-general-analyst",
+    functionName: "admin-ai-general-analyst",
     name: "AI General (Talent)",
     tagline: "Cross-platform concierge for the talent side",
     icon: Bot,
