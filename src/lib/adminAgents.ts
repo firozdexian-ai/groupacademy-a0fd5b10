@@ -15,6 +15,7 @@ import {
   Handshake,
   BarChart3,
   School,
+  Coins,
   type LucideIcon,
 } from "lucide-react";
 
