@@ -44,8 +44,7 @@ import { cn } from "@/lib/utils";
 
 /**
  * Platform Logic: Incentive Validation Terminal (Gig Submissions)
- * High-fidelity orchestrator for multi-modal task verification and reward synthesis.
- * 2026 Standard: Executive Logic geometry with reinforced payload adaptation.
+ * CTO Audit: Wired automated in-app notifications upon successful gig payout to complete the feedback loop.
  */
 
 /* -----------------------------------------------------------
@@ -217,37 +216,71 @@ export function GigSubmissionsManager() {
   });
 
   const approveMutation = useMutation({
-    mutationFn: async (submissionId: string) => {
+    mutationFn: async (submission: any) => {
       const { data, error } = await supabase.rpc("award_gig_credits", {
-        p_submission_id: submissionId,
+        p_submission_id: submission.id,
         p_admin_notes: adminNotes || null,
       });
+
       if (error) throw error;
       if (!(data as any)?.success) throw new Error((data as any)?.error || "Protocol Failure");
+
+      // CTO FIX: Closing the loop! Auto-trigger a notification to the talent.
+      try {
+        await supabase.from("notifications").insert({
+          user_id: submission.talent_id,
+          title: "Gig Approved!",
+          content: `Your submission for "${submission.gigs?.title}" was approved. You earned ${(data as any).credits_awarded} credits!`,
+          type: "system",
+          action_url: "/app/transactions",
+        });
+      } catch (notifErr) {
+        console.warn("Failed to dispatch user notification", notifErr);
+      }
+
       return data;
     },
-    onSuccess: (data: any, subId) => {
-      toast.success(`Protocol Committed: ${data.credits_awarded} tokens awarded.`);
+    onSuccess: (data: any) => {
+      toast.success(`Protocol Committed: ${data.credits_awarded} tokens awarded and user notified.`);
       queryClient.invalidateQueries({ queryKey: ["admin-gig-submissions"] });
       setSelectedSubmission(null);
       setAdminNotes("");
+    },
+    onError: (err: any) => {
+      toast.error(`Approval Failed: ${err.message}`);
     },
   });
 
   const rejectMutation = useMutation({
-    mutationFn: async (id: string) => {
+    mutationFn: async (submission: any) => {
       const { data, error } = await supabase.rpc("reject_gig_submission", {
-        p_submission_id: id,
+        p_submission_id: submission.id,
         p_admin_notes: adminNotes || null,
       });
       if (error) throw error;
       if (!(data as any)?.success) throw new Error((data as any)?.error || "Rejection logic failed");
+
+      // Notify user of rejection
+      try {
+        await supabase.from("notifications").insert({
+          user_id: submission.talent_id,
+          title: "Gig Review Update",
+          content: `Your submission for "${submission.gigs?.title}" requires attention. Check your gig history for admin notes.`,
+          type: "system",
+          action_url: "/app/gigs",
+        });
+      } catch (notifErr) {
+        console.warn("Failed to dispatch user notification", notifErr);
+      }
     },
     onSuccess: () => {
-      toast.success("Artifact Purged: Submission rejected");
+      toast.success("Artifact Purged: Submission rejected and user notified.");
       queryClient.invalidateQueries({ queryKey: ["admin-gig-submissions"] });
       setSelectedSubmission(null);
       setAdminNotes("");
+    },
+    onError: (err: any) => {
+      toast.error(`Rejection Failed: ${err.message}`);
     },
   });
 
@@ -400,7 +433,7 @@ export function GigSubmissionsManager() {
                           variant="ghost"
                           size="icon"
                           className="h-10 w-10 rounded-xl hover:bg-emerald-500 hover:text-white transition-all text-emerald-500/40"
-                          onClick={() => approveMutation.mutate(sub.id)}
+                          onClick={() => approveMutation.mutate(sub)}
                         >
                           <ShieldCheck className="h-5 w-5" />
                         </Button>
@@ -408,7 +441,7 @@ export function GigSubmissionsManager() {
                           variant="ghost"
                           size="icon"
                           className="h-10 w-10 rounded-xl hover:bg-destructive hover:text-white transition-all text-destructive/40"
-                          onClick={() => rejectMutation.mutate(sub.id)}
+                          onClick={() => rejectMutation.mutate(sub)}
                         >
                           <XCircle className="h-5 w-5" />
                         </Button>
@@ -473,7 +506,7 @@ export function GigSubmissionsManager() {
 
               <div className="pt-6 border-t border-border/10 flex gap-4">
                 <Button
-                  onClick={() => approveMutation.mutate(selectedSubmission.id)}
+                  onClick={() => approveMutation.mutate(selectedSubmission)}
                   disabled={approveMutation.isPending}
                   className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/30 gap-2"
                 >
@@ -486,7 +519,7 @@ export function GigSubmissionsManager() {
                 </Button>
                 <Button
                   variant="ghost"
-                  onClick={() => rejectMutation.mutate(selectedSubmission.id)}
+                  onClick={() => rejectMutation.mutate(selectedSubmission)}
                   disabled={rejectMutation.isPending}
                   className="h-14 px-8 rounded-2xl font-black uppercase text-[11px] tracking-widest text-destructive hover:bg-destructive/10"
                 >
