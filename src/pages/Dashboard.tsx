@@ -269,18 +269,6 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   invoices: React.lazy(() =>
     import("@/components/dashboard/payments/InvoiceManager").then((m) => ({ default: m.InvoiceManager })),
   ),
-  "content-readiness": React.lazy(() =>
-    import("@/components/dashboard/ContentReadinessBoard").then((m) => ({ default: m.ContentReadinessBoard })),
-  ),
-  "content-gigs": React.lazy(() =>
-    import("@/components/dashboard/ContentGigReview").then((m) => ({ default: m.ContentGigReview })),
-  ),
-  "content-leads": React.lazy(() =>
-    import("@/components/dashboard/ContentLeadsManager").then((m) => ({ default: m.ContentLeadsManager })),
-  ),
-  "all-gigs": React.lazy(() =>
-    import("@/components/dashboard/AllGigsCrossSystem").then((m) => ({ default: m.AllGigsCrossSystem })),
-  ),
   institutions: React.lazy(() =>
     import("@/components/dashboard/StakeholderRegistry").then((m) => ({ default: m.InstitutionsManager })),
   ),
