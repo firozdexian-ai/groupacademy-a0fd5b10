@@ -80,7 +80,7 @@ import MarketplaceGigDetail from "./pages/app/MarketplaceGigDetail";
 import Transactions from "./pages/app/Transactions";
 import Withdrawals from "./pages/app/Withdrawals";
 import ProfileVerify from "./pages/app/ProfileVerify";
-import ContentStudio from "./pages/app/ContentStudio";
+
 import CVMaker from "./pages/app/tools/CVMaker";
 import ApplicationHelper from "./pages/app/tools/ApplicationHelper";
 
