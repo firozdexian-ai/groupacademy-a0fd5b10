@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { handleAIError } from "@/lib/aiErrorHandler";
 
 /**
- * GroUp Academy: Neural Chat Orchestrator (V2.0.28)
- * CTO Audit: Actually fixed stream parser syntax and enforced Pre-Flight Credit Checks.
+ * GroUp Academy: Neural Chat Orchestrator (V2.0.29)
+ * CTO Audit: Bulletproof stream parser syntax and enforced Pre-Flight Credit Checks.
  */
 
 export interface AgentMessage {
@@ -208,7 +208,7 @@ export function useAgentChat(): UseAgentChatReturn {
 
           if (!creditData || creditData.balance < perResponseCost) {
             toast.error(`FISCAL_DEFICIT: ${perResponseCost} CR required to process. Please recharge.`);
-            setMessages(messages); 
+            setMessages(messages);
             setIsStreaming(false);
             return;
           }
@@ -235,7 +235,7 @@ export function useAgentChat(): UseAgentChatReturn {
           const errorData = await response.json().catch(() => ({}));
           const { message } = handleAIError(errorData, response.status);
           toast.error(message);
-          setMessages(messages); 
+          setMessages(messages);
           return;
         }
 
@@ -260,8 +260,9 @@ export function useAgentChat(): UseAgentChatReturn {
               if (payload === "[DONE]") break;
               try {
                 const parsed = JSON.parse(payload);
-                // FIXED PARSER SYNTAX HERE
-                const token = parsed.choices?.?.delta?.content;
+                // BULLETPROOF PARSER SYNTAX HERE - No optional chaining
+                const token =
+                  parsed.choices && parsed.choices && parsed.choices.delta ? parsed.choices.delta.content : null;
                 if (token) {
                   assistantBuffer += token;
                   setMessages((prev) => {
@@ -283,11 +284,11 @@ export function useAgentChat(): UseAgentChatReturn {
             p_service_type: "AI_AGENT_CHAT",
             p_reference_id: session.id,
             p_description: `Neural_Node: ${session.agent_key}`,
-            p_talent_id: talent.id
+            p_talent_id: talent.id,
           });
 
           if (deductionError) {
-             console.warn("Post-stream deduction delayed or failed", deductionError);
+            console.warn("Post-stream deduction delayed or failed", deductionError);
           } else if (creditHandshake && !(creditHandshake as any).success) {
             toast.error("FISCAL_DEFICIT: Credits exhausted during sync.");
           }
@@ -296,7 +297,7 @@ export function useAgentChat(): UseAgentChatReturn {
         await saveTrajectory([...currentTrajectory, { role: "assistant", content: assistantBuffer }], perResponseCost);
       } catch (err) {
         console.error("NEURAL_SYNC_FAULT:", err);
-        setMessages((prev) => prev.slice(0, -1)); 
+        setMessages((prev) => prev.slice(0, -1));
       } finally {
         setIsStreaming(false);
       }
