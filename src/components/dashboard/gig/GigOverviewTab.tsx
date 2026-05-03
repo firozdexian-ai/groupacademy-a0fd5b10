@@ -7,9 +7,9 @@ export default function GigOverviewTab() {
     queryKey: ["gig-overview"],
     queryFn: async () => {
       const [g, s, w] = await Promise.all([
-        supabase.from("gigs").select("id", { count: "exact", head: true }),
-        supabase.from("gig_submissions").select("id", { count: "exact", head: true }),
-        supabase.from("withdrawals").select("id", { count: "exact", head: true }),
+        supabase.from("gigs" as any).select("id", { count: "exact", head: true }),
+        supabase.from("gig_submissions" as any).select("id", { count: "exact", head: true }),
+        supabase.from("withdrawals" as any).select("id", { count: "exact", head: true }),
       ]);
       return { gigs: g.count ?? 0, subs: s.count ?? 0, w: w.count ?? 0 };
     },

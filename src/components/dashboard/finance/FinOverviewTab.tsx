@@ -7,9 +7,9 @@ export default function FinOverviewTab() {
     queryKey: ["fin-overview"],
     queryFn: async () => {
       const [t, w, i] = await Promise.all([
-        supabase.from("credit_transactions").select("id", { count: "exact", head: true }),
-        supabase.from("withdrawals").select("id", { count: "exact", head: true }),
-        supabase.from("invoices").select("id", { count: "exact", head: true }),
+        supabase.from("credit_transactions" as any).select("id", { count: "exact", head: true }),
+        supabase.from("withdrawals" as any).select("id", { count: "exact", head: true }),
+        supabase.from("invoices" as any).select("id", { count: "exact", head: true }),
       ]);
       return { tx: t.count ?? 0, w: w.count ?? 0, i: i.count ?? 0 };
     },

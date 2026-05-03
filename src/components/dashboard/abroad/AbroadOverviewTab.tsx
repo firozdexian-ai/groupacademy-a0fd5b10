@@ -7,8 +7,8 @@ export default function AbroadOverviewTab() {
     queryKey: ["abroad-overview"],
     queryFn: async () => {
       const [p, l] = await Promise.all([
-        supabase.from("study_abroad_programs").select("id", { count: "exact", head: true }),
-        supabase.from("study_abroad_roadmap_leads").select("id", { count: "exact", head: true }),
+        supabase.from("study_abroad_programs" as any).select("id", { count: "exact", head: true }),
+        supabase.from("study_abroad_roadmap_leads" as any).select("id", { count: "exact", head: true }),
       ]);
       return { programs: p.count ?? 0, leads: l.count ?? 0 };
     },
