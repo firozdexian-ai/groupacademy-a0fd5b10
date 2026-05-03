@@ -66,6 +66,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
   const [loading, setLoading] = useState(true);
   const [course, setCourse] = useState<{ title: string; content_type: string } | null>(null);
   const [modules, setModules] = useState<CourseModule[]>([]);
+  const [resourceCounts, setResourceCounts] = useState<Record<string, number>>({});
   const [saveStates, setSaveStates] = useState<Record<string, SaveStatus>>({});
   const [deleteId, setDeleteId] = useState<string | null>(null);
 
@@ -94,8 +95,25 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
       if (courseRes.data) setCourse(courseRes.data);
       if (modulesRes.error) throw modulesRes.error;
 
-      setModules(modulesRes.data || []);
+      const mods = (modulesRes.data || []) as CourseModule[];
+      setModules(mods);
       setSaveStates({});
+
+      // Fetch resource counts per module so admins see content readiness at a glance.
+      if (mods.length > 0) {
+        const ids = mods.map((m) => m.id);
+        const { data: resRows } = await supabase
+          .from("module_resources")
+          .select("module_id")
+          .in("module_id", ids);
+        const counts: Record<string, number> = {};
+        (resRows || []).forEach((r: any) => {
+          counts[r.module_id] = (counts[r.module_id] || 0) + 1;
+        });
+        setResourceCounts(counts);
+      } else {
+        setResourceCounts({});
+      }
     } catch (e: any) {
       toast.error(`Failed to load modules: ${e.message ?? "unknown error"}`);
     } finally {
@@ -300,6 +318,24 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
                           <Video className="h-3 w-3" /> Video
                         </Badge>
                       )}
+                      {(() => {
+                        const c = resourceCounts[mod.id] || 0;
+                        return (
+                          <Badge
+                            variant="outline"
+                            className={cn(
+                              "rounded-lg gap-1 font-black text-[10px] tracking-widest",
+                              c === 0
+                                ? "border-rose-500/30 text-rose-600 bg-rose-500/5"
+                                : c < 6
+                                  ? "border-amber-500/30 text-amber-600 bg-amber-500/5"
+                                  : "border-emerald-500/30 text-emerald-600 bg-emerald-500/5",
+                            )}
+                          >
+                            <Layers className="h-3 w-3" /> {c} resource{c === 1 ? "" : "s"}
+                          </Badge>
+                        );
+                      })()}
                       {status === "unsaved" && (
                         <Badge className="rounded-lg bg-amber-500/15 text-amber-600 border-amber-500/30 font-black text-[10px] tracking-widest">
                           Unsaved
