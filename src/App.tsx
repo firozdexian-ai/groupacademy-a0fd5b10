@@ -460,7 +460,7 @@ export default function App() {
                     <Route path="transactions" element={<Transactions />} />
                     <Route path="withdrawals" element={<Withdrawals />} />
                     <Route path="profile/verify" element={<ProfileVerify />} />
-                    <Route path="studio" element={<ContentStudio />} />
+                    
                     <Route path="tools/cv-maker" element={<CVMaker />} />
                     <Route path="tools/application-helper" element={<ApplicationHelper />} />
 
