@@ -82,6 +82,9 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
   const [resourceCounts, setResourceCounts] = useState<Record<string, number>>({});
   const [saveStates, setSaveStates] = useState<Record<string, SaveStatus>>({});
   const [deleteId, setDeleteId] = useState<string | null>(null);
+  const [researchModuleId, setResearchModuleId] = useState<string | null>(null);
+  const [studioOpen, setStudioOpen] = useState(false);
+  const [quizOpen, setQuizOpen] = useState(false);
 
   const handleBack = () => {
     if (props.onBack) return props.onBack();
