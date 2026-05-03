@@ -1,126 +1,47 @@
-# Admin Restructure — Final Groups 11–16
+# CTO Handoff Document — May 2026 Edition
 
-This completes the 16-group admin sidebar. Existing groups 1–10 (Overview, Talent, Companies, AI Agents, Investors, Institutions, Workforce, GTM, UGC & Contents, Jobs) stay as-is. We now restructure the remaining legacy groups (Learning, Marketing & Outreach, Career Abroad, Monetization, Platform Config) into the layout from your notes and remove duplicates.
+## Goal
 
-## Final sidebar order
+Produce a downloadable `.docx` (and matching `.pdf` for sharing) that mirrors the structure of the March-end CTO brief, but reflects everything built since. It should let your CTO immediately see: what is production-ready, what is scaffolded with placeholders, what is broken/non-functional, and what to build next — with priorities and effort estimates.
 
-1–10. (unchanged)
+## Deliverable
 
-**11. Learn**
-- Dashboard (overview)
-- Academies (registry)
-- Schools (registry)
-- Professional Lives (career-story library)
-- Career Track AI Courses
-- Recorded Courses
-- Online Courses (Webinars & Live Classes — merged tab)
-- Enrollments
-- Learner Progress
-- Graduates (new — completed-with-certificate view)
-- B2B Courses (company-assigned cohorts)
+- `/mnt/documents/Group_Academy_CTO_Handoff_May2026.docx`
+- `/mnt/documents/Group_Academy_CTO_Handoff_May2026.pdf`
 
-**12. Gig Economy**
-- Overview & Dashboard
-- Quick Action Gigs
-- Course Projects
-- Client Projects
-- Gig Submissions (approval queue)
-- Gig Workers & Wallet (people + payouts merged)
+Generated with the `docx` skill, validated, and QA'd page-by-page before delivery.
 
-**13. Career Abroad**
-- Dashboard
-- University Programs
-- IELTS Resources (redesigned as course-module style — reuses module/lesson UI)
-- Roadmap Leads
+## Document Structure
 
-**14. Marketing & Outreach**
-- Analytics Overview
-- Channels
-- Community
-- Admins & Reps
-- Talent Outreach (logs)
-- Content Outreach (logs)
-- Service & Agent Outreach (logs)
-- Leads & Activities
-- Banner Management (moved from Platform Config)
-- Access Codes (moved from Platform Config)
+1. **Executive Summary** — what changed since March, headline metrics (tables, edge functions, agents, modules), strategic posture
+2. **Platform Architecture Overview** — Lovable + Cloud (Supabase), edge functions, Lovable AI Gateway, native email, Stripe/managed payments, PWA, RBAC model
+3. **Talent-Side (B2C) Product Status** — Career Hub, Jobs Board, Learn, Gig Economy, Career Abroad, Portfolio, Salary AI, Mock Interview, Assessments, Feed, Credits Wallet, Certificates. Each: Built / Scaffolded / Broken / Next
+4. **Company-Side (B2B) Product Status** — Companies module, jobs upload, talent search, outreach, billing
+5. **Admin Dashboard — 16 Group Map** — Groups 1–16 (Talent, Companies, AI Agents, Investors, Institutions, Workforce, GTM, UGC, Jobs, Learn, Gig, Abroad, Marketing, Finance, Platform Config). For each group: tab inventory, what's wired vs placeholder, RLS coverage, missing CRUD
+6. **Agentic OS** — `/dashboard/chat` unified messenger, registry of all chat agents (`src/lib/adminAgents.ts`), edge function status, knowledge ingestion, observability gaps
+7. **Database & Security** — table count, RLS posture, `has_role` discipline, `search_path` hardening, recent migrations, known linter findings to chase
+8. **Edge Functions Catalog** — all 89 functions grouped by domain, auth verification status, secrets used, ones that are stubs
+9. **Critical Gaps & Placeholders** — explicit list of "agents not wired", "tabs that render but don't persist", "AI calls without retries", payments edge cases, email deliverability follow-ups
+10. **Recommended Next Sprints (8 weeks)** — prioritized backlog: P0 (block launch), P1 (revenue), P2 (scale), P3 (polish), with effort (S/M/L) and owner suggestions
+11. **Operational Runbook** — how to deploy, rotate keys, monitor edge function logs, handle Cloud instance scaling, restore RLS, debug auth loops
+12. **Open Decisions for CTO** — architectural forks (e.g., agent runtime vs per-function, payments consolidation, multi-tenant isolation, observability stack)
+13. **Appendix** — full table list, full edge function list, full agent registry, env var inventory, route map
 
-**15. Finance & Monetization**
-- Dashboard
-- Talent Credits Management
-- Gro10x Credit Management
-- Company Credit Management
-- Transactions
-- Payment Infrastructure (Stripe / Paddle / bKash config)
-- Invoices & Payments
-- Withdrawals (gig/creator payouts)
+## How It Will Be Built
 
-**16. Platform Config & Others**
-- Support AI
-- Team Members
-- Notifications Center
-- Anything left (system settings, feature flags)
+- Inspect the live codebase (`src/pages`, `src/components/dashboard/*`, `supabase/functions/*`, recent migrations, `src/lib/adminAgents.ts`, `AdminSidebar.tsx`, `Dashboard.tsx`, `.lovable/plan.md`) to enumerate every module's actual status
+- Query the database via `supabase--read_query` for table list, row counts (per major table), and check RLS coverage via `supabase--linter`
+- Cross-reference each registered chat agent against its edge function existence and whether it has real logic vs a stub returning canned text
+- Identify "scaffolded" tabs by scanning for components that render but never call `supabase.from(...)` or only use mock data
+- Categorize each finding into: Built / Scaffolded / Broken / Missing
+- Generate the `.docx` using docx-js with proper styles, headings, tables (status matrices), and tab-stop dot leaders. Then convert to PDF and screenshot every page to QA before delivery
+- Use Group Academy brand: Tech Blue #2A7DDE for headings, neutral body, Arial font, US Letter
 
-## Duplicates removed
+## Out of Scope
 
-- `Recruitment` group (already replaced by group 10 Jobs)
-- Banners + Access Codes — moved out of Platform Config into Marketing
-- Withdrawals — moved into Finance
-- Notifications — moved into Platform Config (centralized)
-- Standalone "AI Content Tools" — replaced by chat agents
-- Legacy `study-abroad` / `ielts` / `roadmap-leads` flat tabs — folded under Career Abroad with Dashboard
-- Old Monetization leads tabs (Assessment / Mock / Salary / Portfolio leads) — these are service leads; consolidated under a single **Service Leads** tab inside Marketing → Leads & Activities (filterable by service type) instead of 4 separate sidebar entries
+- No code changes, no migrations, no edge function edits — this is a documentation deliverable only
+- No publishing or deployment changes
 
-## Agents → moved to `/dashboard/chat`
+## Approve to proceed
 
-Add these to `ADMIN_AGENTS` and remove any duplicate sidebar tabs:
-
-- **Learn**: `learn-dean` (Academies & Schools Dean Agent — analytics + outreach to instructors/deans)
-- **Gig Economy**: one agent per major category — `gig-design`, `gig-dev`, `gig-content`, `gig-data`, `gig-ops` (drafts gig briefs, screens submissions, suggests pricing). Plus `gig-ops-manager` for overall gig health.
-- **Career Abroad**: `abroad-counselor` (study-plan + university shortlisting), `abroad-ielts-coach` (IELTS prep guidance), `abroad-outreach` (university partner mailto drafts)
-- **Marketing & Outreach**: `mkt-outreach-strategist` (campaign planner across channels + community), `mkt-content-outreach` (already partially exists — consolidate)
-- **Finance**: `fin-controller` (read-only finance analyst — MRR, transactions, gross margin, payout health), `fin-credits-ops` (credit issuance / refund drafts)
-
-That brings total chat agents to ~25, all reachable from the unified chat inbox.
-
-## Technical changes
-
-```text
-src/components/dashboard/AdminSidebar.tsx   — replace groups 11–16
-src/pages/Dashboard.tsx                     — register new tab keys + lazy components
-src/lib/adminAgents.ts                      — add ~9 new agent entries
-src/components/dashboard/learn/             — new: LearnOverviewTab, GraduatesTab,
-                                              OnlineCoursesTab (merge webinars+live),
-                                              B2BCoursesTab
-src/components/dashboard/gig/               — new: GigOverviewTab, QuickActionGigsTab,
-                                              CourseProjectsTab, ClientProjectsTab,
-                                              GigWorkersWalletTab
-src/components/dashboard/abroad/            — new: AbroadOverviewTab,
-                                              IeltsModulesTab (course-module style)
-src/components/dashboard/marketing/         — new: ChannelsTab, CommunityTab,
-                                              AdminsRepsTab, LeadsActivitiesTab
-src/components/dashboard/finance/           — new: FinOverviewTab, TalentCreditsTab,
-                                              Gro10xCreditsTab, CompanyCreditsTab,
-                                              TransactionsTab, PaymentInfraTab,
-                                              InvoicesPaymentsTab
-supabase/functions/                         — 9 new lightweight chat-agent functions
-                                              (admin-learn-dean, admin-gig-*,
-                                              admin-abroad-*, admin-fin-controller,
-                                              admin-fin-credits-ops, admin-mkt-strategist)
-supabase/migrations/...sql                  — new tables:
-                                              academies, schools, professional_lives,
-                                              gig_categories, mkt_channels,
-                                              mkt_community_groups, fin_payment_configs
-                                              (admin-only RLS via has_role)
-```
-
-All new edge functions follow the existing pattern: `verify_jwt = false` in config + manual `auth.getUser(token)` + `has_role(user, 'admin')` check.
-
-## Open questions
-
-If you want any of the following changed, say so and I'll revise before building:
-1. Should **Online Courses** truly merge Webinars + Live Classes into one tab, or keep them separate?
-2. **Service Leads** — keep one combined tab under Marketing, or restore 4 separate tabs (assessment / mock / salary / portfolio) under Finance?
-3. Any additional category-specific Gig Agents beyond the 5 listed (design/dev/content/data/ops)?
-
-Approve to start implementation.
+On approval I will: (1) run the inspection queries, (2) build the doc, (3) QA every page as images, (4) deliver `.docx` + `.pdf` artifacts.
