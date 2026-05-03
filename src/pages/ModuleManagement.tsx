@@ -464,21 +464,50 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
                     </div>
                   </div>
 
-                  <div className="flex items-center justify-between gap-3 pt-2 border-t border-border/40">
-                    <Button
-                      variant="outline"
-                      onClick={() => openResources(mod.id)}
-                      className={cn(
-                        "rounded-xl font-bold uppercase text-[10px] tracking-widest group",
-                      )}
-                    >
-                      <Layers className="mr-2 h-3.5 w-3.5" />
-                      Manage Resources
-                      <ChevronRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
-                    </Button>
+                  <div className="flex flex-wrap items-center justify-between gap-2 pt-2 border-t border-border/40">
+                    <div className="flex flex-wrap items-center gap-2">
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => openResources(mod.id)}
+                        className="rounded-xl font-bold uppercase text-[10px] tracking-widest group"
+                      >
+                        <Layers className="mr-1.5 h-3.5 w-3.5" />
+                        Resources
+                        <ChevronRight className="ml-1 h-3.5 w-3.5 transition-transform group-hover:translate-x-0.5" />
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setResearchModuleId(mod.id)}
+                        className="rounded-xl font-bold uppercase text-[10px] tracking-widest border-primary/30 text-primary"
+                        title="Open AI deep-research prompt for this module"
+                      >
+                        <Sparkles className="mr-1.5 h-3.5 w-3.5" /> AI Research
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => navigate(`/quiz-manage/${contentId}`)}
+                        className="rounded-xl font-bold uppercase text-[10px] tracking-widest"
+                        title="Open the quiz builder for this course"
+                      >
+                        <HelpCircle className="mr-1.5 h-3.5 w-3.5" /> Quiz
+                      </Button>
+                      <Button
+                        variant="outline"
+                        size="sm"
+                        onClick={() => setStudioOpen(true)}
+                        className="rounded-xl font-bold uppercase text-[10px] tracking-widest"
+                        title="Bulk-generate content with AI Content Studio"
+                      >
+                        <Wand2 className="mr-1.5 h-3.5 w-3.5" /> AI Studio
+                      </Button>
+                    </div>
                     <Button
                       onClick={() => saveModule(mod)}
                       disabled={status === "saving" || status === "saved"}
+                      size="sm"
                       className="rounded-xl font-bold uppercase text-[10px] tracking-widest"
                     >
                       {status === "saving" ? (
