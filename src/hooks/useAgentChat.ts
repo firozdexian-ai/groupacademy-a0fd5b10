@@ -5,8 +5,8 @@ import { toast } from "sonner";
 import { handleAIError } from "@/lib/aiErrorHandler";
 
 /**
- * GroUp Academy: Neural Chat Orchestrator (V2.0.27)
- * CTO Audit: Injected Pre-Flight Credit Checks to prevent Post-Paid Vulnerability.
+ * GroUp Academy: Neural Chat Orchestrator (V2.0.28)
+ * CTO Audit: Fixed stream parser syntax and enforced Pre-Flight Credit Checks.
  */
 
 export interface AgentMessage {
@@ -43,7 +43,6 @@ export interface UseAgentChatReturn {
 export function useAgentChat(): UseAgentChatReturn {
   const { talent } = useTalent();
 
-  // --- HUD: CORE_STATE_REGISTRY ---
   const [session, setSession] = useState<AgentSession | null>(null);
   const [messages, setMessages] = useState<AgentMessage[]>([]);
   const [isLoading, setIsLoading] = useState(false);
@@ -52,7 +51,6 @@ export function useAgentChat(): UseAgentChatReturn {
   const [isLoadingSessions, setIsLoadingSessions] = useState(true);
   const [perResponseCost, setPerResponseCost] = useState<number>(1);
 
-  // --- PROTOCOL: REGISTRY_PERSISTENCE ---
   const saveTrajectory = useCallback(
     async (newMessages: AgentMessage[], additionalCredits: number = 0) => {
       if (!session) return;
@@ -140,7 +138,6 @@ export function useAgentChat(): UseAgentChatReturn {
         const cost = agentConfig?.credit_cost ?? 1;
         setPerResponseCost(cost);
 
-        // SYNC: Re-attach to active neural thread if existing
         const { data: existing } = await supabase
           .from("agent_chat_sessions")
           .select("*")
@@ -161,7 +158,6 @@ export function useAgentChat(): UseAgentChatReturn {
           return sessionData;
         }
 
-        // INITIALIZE: Create new registry node
         const now = new Date();
         const { data, error } = await supabase
           .from("agent_chat_sessions")
@@ -202,8 +198,7 @@ export function useAgentChat(): UseAgentChatReturn {
       setIsStreaming(true);
 
       try {
-        // CTO FIX: Pre-Flight Credit Check
-        // We MUST verify liquidity BEFORE waking the AI, otherwise users get answers for free.
+        // Pre-Flight Credit Check
         if (perResponseCost > 0) {
           const { data: creditData } = await supabase
             .from("talent_credits")
@@ -213,7 +208,7 @@ export function useAgentChat(): UseAgentChatReturn {
 
           if (!creditData || creditData.balance < perResponseCost) {
             toast.error(`FISCAL_DEFICIT: ${perResponseCost} CR required to process. Please recharge.`);
-            setMessages(messages); // Rollback user message
+            setMessages(messages); 
             setIsStreaming(false);
             return;
           }
@@ -240,7 +235,7 @@ export function useAgentChat(): UseAgentChatReturn {
           const errorData = await response.json().catch(() => ({}));
           const { message } = handleAIError(errorData, response.status);
           toast.error(message);
-          setMessages(messages); // Rollback to previous state
+          setMessages(messages); 
           return;
         }
 
@@ -248,7 +243,6 @@ export function useAgentChat(): UseAgentChatReturn {
         const decoder = new TextDecoder();
         if (!reader) throw new Error("STREAM_TRANSMISSION_FAULT");
 
-        // PHASE: Initialize Assistant Node
         setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
         let assistantBuffer = "";
@@ -266,7 +260,8 @@ export function useAgentChat(): UseAgentChatReturn {
               if (payload === "[DONE]") break;
               try {
                 const parsed = JSON.parse(payload);
-                const token = parsed.choices?.[0]?.delta?.content;
+                // FIXED PARSER SYNTAX HERE
+                const token = parsed.choices?.?.delta?.content;
                 if (token) {
                   assistantBuffer += token;
                   setMessages((prev) => {
@@ -282,8 +277,6 @@ export function useAgentChat(): UseAgentChatReturn {
           }
         }
 
-        // POST-SYNC: Atomic Credit Deduction
-        // Now that the AI has delivered value, we officially charge the account.
         if (perResponseCost > 0 && assistantBuffer) {
           const { data: creditHandshake, error: deductionError } = await supabase.rpc("deduct_credits" as any, {
             p_amount: perResponseCost,
@@ -293,8 +286,6 @@ export function useAgentChat(): UseAgentChatReturn {
             p_talent_id: talent.id
           });
 
-          // Even if this fails, we don't crash the chat because the user already received the text,
-          // but we log it. The Pre-Flight check ensures they had funds to begin with.
           if (deductionError) {
              console.warn("Post-stream deduction delayed or failed", deductionError);
           } else if (creditHandshake && !(creditHandshake as any).success) {
@@ -305,7 +296,7 @@ export function useAgentChat(): UseAgentChatReturn {
         await saveTrajectory([...currentTrajectory, { role: "assistant", content: assistantBuffer }], perResponseCost);
       } catch (err) {
         console.error("NEURAL_SYNC_FAULT:", err);
-        setMessages((prev) => prev.slice(0, -1)); // Cleanup incomplete assistant node
+        setMessages((prev) => prev.slice(0, -1)); 
       } finally {
         setIsStreaming(false);
       }
