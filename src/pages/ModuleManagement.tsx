@@ -44,7 +44,6 @@ import {
   SheetDescription,
 } from "@/components/ui/sheet";
 import ResearchPromptDialog from "@/components/modules/ResearchPromptDialog";
-import QuizManagement from "@/pages/QuizManagement";
 import { BatchContentGenerator } from "@/components/dashboard/BatchContentGenerator";
 
 /**
