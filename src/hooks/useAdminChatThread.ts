@@ -302,5 +302,38 @@ export function useAdminChatThread(agentKey: string | null) {
     setMessages([]);
   }, [threadId]);
 
-  return { threadId, messages, loading, sending, send, clear, uploadAttachment };
+  const regenerate = useCallback(async () => {
+    if (!threadId || sending) return;
+    // remove last assistant message and re-send the previous user turn
+    let lastUserIdx = -1;
+    for (let i = messages.length - 1; i >= 0; i--) {
+      if (messages[i].role === "user") {
+        lastUserIdx = i;
+        break;
+      }
+    }
+    if (lastUserIdx < 0) return;
+    const lastUser = messages[lastUserIdx];
+    // delete trailing assistant rows after lastUser
+    const trailing = messages.slice(lastUserIdx + 1).filter((m) => m.id);
+    if (trailing.length) {
+      await supabase
+        .from("admin_chat_messages")
+        .delete()
+        .in("id", trailing.map((m) => m.id!));
+    }
+    setMessages(messages.slice(0, lastUserIdx));
+    await send(lastUser.content, lastUser.attachments ?? []);
+  }, [threadId, sending, messages, send]);
+
+  return {
+    threadId,
+    messages,
+    loading,
+    sending,
+    send,
+    clear,
+    uploadAttachment,
+    regenerate,
+  };
 }
