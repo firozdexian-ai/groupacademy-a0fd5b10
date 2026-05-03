@@ -95,8 +95,25 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
       if (courseRes.data) setCourse(courseRes.data);
       if (modulesRes.error) throw modulesRes.error;
 
-      setModules(modulesRes.data || []);
+      const mods = (modulesRes.data || []) as CourseModule[];
+      setModules(mods);
       setSaveStates({});
+
+      // Fetch resource counts per module so admins see content readiness at a glance.
+      if (mods.length > 0) {
+        const ids = mods.map((m) => m.id);
+        const { data: resRows } = await supabase
+          .from("module_resources")
+          .select("module_id")
+          .in("module_id", ids);
+        const counts: Record<string, number> = {};
+        (resRows || []).forEach((r: any) => {
+          counts[r.module_id] = (counts[r.module_id] || 0) + 1;
+        });
+        setResourceCounts(counts);
+      } else {
+        setResourceCounts({});
+      }
     } catch (e: any) {
       toast.error(`Failed to load modules: ${e.message ?? "unknown error"}`);
     } finally {
