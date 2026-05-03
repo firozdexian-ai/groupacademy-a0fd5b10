@@ -1,5 +1,5 @@
 import { formatDistanceToNow, isValid } from "date-fns";
-import { Coins, ArrowRight, MessageCircle, Zap, ShieldCheck } from "lucide-react";
+import { Coins, ArrowRight, MessageCircle } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { AgentAvatar } from "./AgentAvatar";
 import { Badge } from "@/components/ui/badge";
@@ -7,7 +7,7 @@ import { LucideIcon } from "lucide-react";
 
 /**
  * GroUp Academy: Agent Messaging Ledger Node
- * CTO Reference: High-density interaction node for active threads and discovery.
+ * CTO Audit: Wired `isCreatorAgent` through the prop chain to maintain Creator Economy aesthetics.
  */
 
 interface AgentListItemProps {
@@ -22,6 +22,7 @@ interface AgentListItemProps {
   category?: string;
   isActive?: boolean;
   isCompanyAgent?: boolean;
+  isCreatorAgent?: boolean; // CTO FIX: Propagated Creator Economy flag
   companyName?: string;
   lastMessage?: string;
   lastMessageTime?: string;
@@ -39,6 +40,7 @@ export function AgentListItem({
   creditCost = 10,
   isActive = false,
   isCompanyAgent = false,
+  isCreatorAgent = false, // CTO FIX: Default extraction
   companyName,
   lastMessage,
   lastMessageTime,
@@ -78,6 +80,7 @@ export function AgentListItem({
         size="lg"
         isOnline={isActive}
         isCompanyAgent={isCompanyAgent}
+        isCreatorAgent={isCreatorAgent} // CTO FIX: Passed down to the visual layer
         companyName={companyName}
         className="shrink-0 transition-transform duration-500 group-hover:scale-105"
       />
