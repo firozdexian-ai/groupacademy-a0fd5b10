@@ -6,7 +6,7 @@ import { handleAIError } from "@/lib/aiErrorHandler";
 
 /**
  * GroUp Academy: Neural Chat Orchestrator (V2.0.28)
- * CTO Audit: Fixed stream parser syntax and enforced Pre-Flight Credit Checks.
+ * CTO Audit: Actually fixed stream parser syntax and enforced Pre-Flight Credit Checks.
  */
 
 export interface AgentMessage {
