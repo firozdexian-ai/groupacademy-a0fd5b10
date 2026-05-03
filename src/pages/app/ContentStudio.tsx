@@ -112,11 +112,34 @@ export default function ContentStudio() {
                 {gig.status === "approved" && <Badge className="text-[10px] bg-emerald-500/15 text-emerald-700 border-none"><CheckCircle2 className="h-3 w-3 mr-1" />Approved</Badge>}
               </div>
               <h3 className="font-bold text-sm leading-snug">{gig.title}</h3>
-              {gig.brief && <p className="text-xs text-muted-foreground mt-1">{gig.brief}</p>}
+              {gig.brief && (
+                <div className="mt-2 p-3 rounded-xl bg-muted/40 border border-border/40 space-y-2">
+                  <div className="flex items-center justify-between gap-2">
+                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                      Research brief
+                    </p>
+                    <Button
+                      type="button"
+                      variant="ghost"
+                      size="sm"
+                      className="h-6 px-2 text-[10px] font-bold"
+                      onClick={() => {
+                        navigator.clipboard.writeText(gig.brief || "");
+                        toast.success("Brief copied — paste into your research tool.");
+                      }}
+                    >
+                      <Copy className="h-3 w-3 mr-1" /> Copy
+                    </Button>
+                  </div>
+                  <pre className="text-[11px] whitespace-pre-wrap font-sans text-muted-foreground leading-relaxed">
+                    {gig.brief}
+                  </pre>
+                </div>
+              )}
               {gig.expected_format && (
-                <p className="text-[11px] text-muted-foreground mt-1.5 flex items-start gap-1.5">
+                <p className="text-[11px] text-muted-foreground mt-2 flex items-start gap-1.5">
                   <FileText className="h-3 w-3 mt-0.5 shrink-0" />
-                  <span>{gig.expected_format}</span>
+                  <span>Deliverable: {gig.expected_format}</span>
                 </p>
               )}
             </div>
