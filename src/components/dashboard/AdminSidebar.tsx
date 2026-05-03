@@ -322,7 +322,7 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
     }
 
     if (filteredNavGroups.length > 0) {
-      return filteredNavGroups.title;
+      return filteredNavGroups[0].title;
     }
 
     return undefined;
