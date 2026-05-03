@@ -7,8 +7,9 @@ export const AcademiesTab = () => (
     description="Top-level academy brands grouping schools and instructors."
     fields={[
       { key: "name", label: "Academy name", required: true },
-      { key: "owner_email", label: "Owner email", type: "email" },
-      { key: "region", label: "Region" },
+      { key: "slug", label: "Slug" },
+      { key: "academy_type", label: "Type" },
+      { key: "primary_language", label: "Primary language" },
       { key: "description", label: "Description", type: "textarea" },
     ]}
   />
@@ -21,7 +22,8 @@ export const SchoolsTab = () => (
     description="Schools/departments within an academy."
     fields={[
       { key: "name", label: "School name", required: true },
-      { key: "dean_email", label: "Dean email", type: "email" },
+      { key: "slug", label: "Slug" },
+      { key: "executive_capability_goal", label: "Capability goal" },
       { key: "description", label: "Description", type: "textarea" },
     ]}
   />
