@@ -256,6 +256,23 @@ export function useAdminChatThread(agentKey: string | null) {
   const clear = useCallback(async () => {
     if (!threadId) return;
     await supabase.from("admin_chat_messages").delete().eq("thread_id", threadId);
+    // best-effort: cleanup orphaned attachment files for this thread
+    try {
+      const { data: userData } = await supabase.auth.getUser();
+      const uid = userData?.user?.id;
+      if (uid) {
+        const prefix = `${uid}/${threadId}`;
+        const { data: list } = await supabase.storage
+          .from(ATTACHMENT_BUCKET)
+          .list(prefix, { limit: 1000 });
+        const paths = (list ?? []).map((f) => `${prefix}/${f.name}`);
+        if (paths.length) {
+          await supabase.storage.from(ATTACHMENT_BUCKET).remove(paths);
+        }
+      }
+    } catch (e) {
+      console.warn("attachment cleanup failed", e);
+    }
     setMessages([]);
   }, [threadId]);
 
