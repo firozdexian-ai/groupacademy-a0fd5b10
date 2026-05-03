@@ -117,6 +117,7 @@ Deno.serve(async (req) => {
     const messages = body.messages ?? [];
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
     const convo: any[] = [{ role: "system", content: SYSTEM }, ...messages];
+    await augmentLastUserMessage(admin, convo, body.attachments);
 
     for (let step = 0; step < 5; step++) {
       const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
