@@ -11,7 +11,7 @@ export default function JobsOverviewTab() {
       const { count: jobs } = await supabase.from("jobs" as any).select("*", { count: "exact", head: true });
       out["jobs"] = jobs ?? 0;
       const { count: pending } = await supabase
-        .from("jobs" as any).select("*", { count: "exact", head: true }).eq("status", "pending");
+        .from("jobs" as any).select("*", { count: "exact", head: true }).eq("is_active", false);
       out["pending"] = pending ?? 0;
       const { count: apps } = await supabase
         .from("job_applications" as any).select("*", { count: "exact", head: true });
