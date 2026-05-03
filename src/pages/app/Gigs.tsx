@@ -47,9 +47,17 @@ export default function Gigs() {
   const { talent } = useTalent();
   const queryClient = useQueryClient();
 
-  // Back-compat: old links use ?tab=tasks/projects/build/activity → collapse to earn/work
-  const rawTab = searchParams.get("tab") || "earn";
-  const activeTab = ["activity", "work"].includes(rawTab) ? "work" : "earn";
+  // 4-tab layout with back-compat for older links
+  const rawTab = searchParams.get("tab") || "tasks";
+  const activeTab = ["work", "activity"].includes(rawTab)
+    ? "work"
+    : ["projects", "course", "courses", "course-projects"].includes(rawTab)
+    ? "course"
+    : ["client", "marketplace", "employer"].includes(rawTab)
+    ? "client"
+    : ["earn", "tasks", "quick"].includes(rawTab)
+    ? "tasks"
+    : "tasks";
 
   const [search, setSearch] = useState("");
   const [verificationStatus, setVerificationStatus] = useState<string>("unverified");
@@ -142,7 +150,7 @@ export default function Gigs() {
         .select("id, title, description, skill_category, budget_amount, total_bids, is_featured, employer_name")
         .in("status", ["approved", "active"])
         .order("is_featured", { ascending: false })
-        .limit(6);
+        .limit(50);
       return data || [];
     },
   });
@@ -242,148 +250,164 @@ export default function Gigs() {
 
 
 
-      {/* Two-tab strip */}
+      {/* 4-tab strip */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-2 h-11 bg-muted/40 p-1 rounded-xl border border-border/40 max-w-md">
+        <TabsList className="grid w-full grid-cols-4 h-11 bg-muted/40 p-1 rounded-xl border border-border/40">
           <TabsTrigger
-            value="earn"
-            className="rounded-lg text-[12px] font-bold uppercase tracking-wide gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            value="tasks"
+            className="rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1 data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
-            <Zap className="h-3.5 w-3.5" /> Earn
+            <Zap className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Quick Tasks</span>
+            <span className="sm:hidden">Tasks</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="course"
+            className="rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
+            <BookOpen className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Course Projects</span>
+            <span className="sm:hidden">Course</span>
+          </TabsTrigger>
+          <TabsTrigger
+            value="client"
+            className="rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+          >
+            <Briefcase className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">Client Projects</span>
+            <span className="sm:hidden">Client</span>
           </TabsTrigger>
           <TabsTrigger
             value="work"
-            className="rounded-lg text-[12px] font-bold uppercase tracking-wide gap-1.5 data-[state=active]:bg-background data-[state=active]:shadow-sm"
+            className="rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1 data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
-            <Activity className="h-3.5 w-3.5" /> My Work
+            <Activity className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">My Work</span>
+            <span className="sm:hidden">Mine</span>
           </TabsTrigger>
         </TabsList>
 
-        {/* ───── EARN ───── */}
-        <TabsContent value="earn" className="mt-4 space-y-6 animate-in fade-in duration-300">
-          {/* Search */}
+        {/* ───── QUICK TASKS ───── */}
+        <TabsContent value="tasks" className="mt-4 space-y-4 animate-in fade-in duration-300">
           <div className="relative">
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
             <Input
-              placeholder="Search tasks and projects..."
+              placeholder="Search quick tasks..."
               className="pl-9 h-10 rounded-xl text-sm"
               value={search}
               onChange={(e) => setSearch(e.target.value)}
             />
           </div>
+          <p className="text-[11px] text-muted-foreground">
+            1-tap gigs · auto-reviewed · instant credits
+          </p>
+          <div className="grid gap-2 sm:grid-cols-2">
+            {gigsLoading
+              ? [...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl bg-muted/40" />)
+              : (gigs || [])
+                  .filter((g: any) => !search || g.title.toLowerCase().includes(search.toLowerCase()))
+                  .map((gig: any) => (
+                    <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />
+                  ))}
+          </div>
+        </TabsContent>
 
-          {/* Quick Tasks */}
-          <section className="space-y-3">
-            <div className="flex items-center justify-between">
-              <div>
-                <h2 className="text-sm font-black uppercase tracking-wide text-primary flex items-center gap-2">
-                  <Zap className="h-3.5 w-3.5" /> Quick Tasks
-                </h2>
-                <p className="text-[11px] text-muted-foreground mt-0.5">
-                  1-tap gigs · auto-reviewed · instant credits
-                </p>
-              </div>
-            </div>
-            <div className="grid gap-2 sm:grid-cols-2">
-              {gigsLoading
-                ? [...Array(4)].map((_, i) => <Skeleton key={i} className="h-20 rounded-2xl bg-muted/40" />)
-                : (gigs || [])
-                    .filter((g: any) => !search || g.title.toLowerCase().includes(search.toLowerCase()))
-                    .map((gig: any) => (
-                      <GigCard key={gig.id} gig={gig} userSubmissions={submissionCounts?.[gig.id]} />
-                    ))}
-            </div>
-          </section>
-
-          {/* Course Projects */}
-          <section className="space-y-3">
-            <div>
-              <h2 className="text-sm font-black uppercase tracking-wide text-primary flex items-center gap-2">
-                <BookOpen className="h-3.5 w-3.5" /> Course Projects
-              </h2>
-              <p className="text-[11px] text-muted-foreground mt-0.5">
-                Build a full course — bundled subtasks · higher payout
-              </p>
-            </div>
-            <div className="space-y-2">
-              {courseProjectsLoading ? (
-                [...Array(3)].map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl bg-muted/40" />)
-              ) : (filteredCourseProjects || []).length === 0 ? (
-                <Card className="rounded-2xl border-dashed">
-                  <CardContent className="p-6 text-center text-xs text-muted-foreground">
-                    No open course projects right now. Check back soon.
-                  </CardContent>
-                </Card>
-              ) : (
-                (filteredCourseProjects || []).map((proj: any) => (
-                  <button
-                    key={proj.projectId || proj.course.id}
-                    type="button"
-                    onClick={() => navigate(`/app/course-project/${proj.projectId}`)}
-                    className="w-full text-left rounded-2xl border border-border/50 bg-card/60 hover:border-primary/40 hover:shadow-md transition-all p-3 active:scale-[0.99]"
-                  >
-                    <div className="flex items-start gap-3">
-                      {proj.course.cover_image_url ? (
-                        <img
-                          src={proj.course.cover_image_url}
-                          alt=""
-                          className="h-14 w-14 rounded-xl object-cover shrink-0"
-                        />
-                      ) : (
-                        <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-                          <BookOpen className="h-6 w-6 text-primary" />
-                        </div>
-                      )}
-                      <div className="min-w-0 flex-1 space-y-1">
-                        <div className="flex flex-wrap items-center gap-1.5">
-                          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold px-1.5 h-5">
-                            Course
-                          </Badge>
-                          <Badge variant="outline" className="text-[10px] font-semibold px-1.5 h-5">
-                            {proj.subtasks.length} subtasks
-                          </Badge>
-                        </div>
-                        <h3 className="text-sm font-bold leading-tight line-clamp-1">{proj.course.title}</h3>
-                        <div className="flex items-center gap-3 pt-0.5">
-                          <span className="flex items-center gap-1 text-xs font-bold text-amber-700">
-                            <Coins className="h-3 w-3" /> {proj.totalReward} total
-                          </span>
-                          <span className="text-[11px] text-muted-foreground">
-                            Tap to claim subtasks
-                          </span>
-                        </div>
-                      </div>
-                      <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
-                    </div>
-                  </button>
-                ))
-              )}
-            </div>
-          </section>
-
-          {/* Marketplace peek */}
-          {(marketProjects || []).length > 0 && (
-            <section className="space-y-3">
-              <div className="flex items-center justify-between">
-                <div>
-                  <h2 className="text-sm font-black uppercase tracking-wide text-primary flex items-center gap-2">
-                    <Briefcase className="h-3.5 w-3.5" /> Employer Projects
-                  </h2>
-                  <p className="text-[11px] text-muted-foreground mt-0.5">
-                    Bid on freelance gigs from companies
-                  </p>
-                </div>
-                <Button
-                  size="sm"
-                  variant="ghost"
-                  className="h-8 text-xs"
-                  onClick={() => navigate("/app/marketplace")}
+        {/* ───── COURSE PROJECTS ───── */}
+        <TabsContent value="course" className="mt-4 space-y-4 animate-in fade-in duration-300">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Input
+              placeholder="Search course projects..."
+              className="pl-9 h-10 rounded-xl text-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Build a full course — bundled subtasks · higher payout
+          </p>
+          <div className="space-y-2">
+            {courseProjectsLoading ? (
+              [...Array(3)].map((_, i) => <Skeleton key={i} className="h-24 rounded-2xl bg-muted/40" />)
+            ) : (filteredCourseProjects || []).length === 0 ? (
+              <Card className="rounded-2xl border-dashed">
+                <CardContent className="p-6 text-center text-xs text-muted-foreground">
+                  No open course projects right now. Check back soon.
+                </CardContent>
+              </Card>
+            ) : (
+              (filteredCourseProjects || []).map((proj: any) => (
+                <button
+                  key={proj.projectId || proj.course.id}
+                  type="button"
+                  onClick={() => navigate(`/app/course-project/${proj.projectId}`)}
+                  className="w-full text-left rounded-2xl border border-border/50 bg-card/60 hover:border-primary/40 hover:shadow-md transition-all p-3 active:scale-[0.99]"
                 >
-                  See all <ChevronRight className="h-3 w-3 ml-0.5" />
-                </Button>
-              </div>
-              <div className="space-y-2">
-                {(marketProjects || []).map((m: any) => (
+                  <div className="flex items-start gap-3">
+                    {proj.course.cover_image_url ? (
+                      <img
+                        src={proj.course.cover_image_url}
+                        alt=""
+                        className="h-14 w-14 rounded-xl object-cover shrink-0"
+                      />
+                    ) : (
+                      <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <BookOpen className="h-6 w-6 text-primary" />
+                      </div>
+                    )}
+                    <div className="min-w-0 flex-1 space-y-1">
+                      <div className="flex flex-wrap items-center gap-1.5">
+                        <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold px-1.5 h-5">
+                          Course
+                        </Badge>
+                        <Badge variant="outline" className="text-[10px] font-semibold px-1.5 h-5">
+                          {proj.subtasks.length} subtasks
+                        </Badge>
+                        <Badge variant="outline" className="text-[10px] font-semibold px-1.5 h-5 capitalize">
+                          {proj.status}
+                        </Badge>
+                      </div>
+                      <h3 className="text-sm font-bold leading-tight line-clamp-1">{proj.course.title}</h3>
+                      <div className="flex items-center gap-3 pt-0.5">
+                        <span className="flex items-center gap-1 text-xs font-bold text-amber-700">
+                          <Coins className="h-3 w-3" /> {proj.totalReward} total
+                        </span>
+                        <span className="text-[11px] text-muted-foreground">Tap to claim subtasks</span>
+                      </div>
+                    </div>
+                    <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
+                  </div>
+                </button>
+              ))
+            )}
+          </div>
+        </TabsContent>
+
+        {/* ───── CLIENT PROJECTS (Marketplace) ───── */}
+        <TabsContent value="client" className="mt-4 space-y-4 animate-in fade-in duration-300">
+          <div className="relative">
+            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/60" />
+            <Input
+              placeholder="Search client projects..."
+              className="pl-9 h-10 rounded-xl text-sm"
+              value={search}
+              onChange={(e) => setSearch(e.target.value)}
+            />
+          </div>
+          <p className="text-[11px] text-muted-foreground">
+            Bid on freelance gigs from companies · negotiate scope and price
+          </p>
+          <div className="space-y-2">
+            {(marketProjects || []).length === 0 ? (
+              <Card className="rounded-2xl border-dashed">
+                <CardContent className="p-6 text-center text-xs text-muted-foreground">
+                  No open client projects right now.
+                </CardContent>
+              </Card>
+            ) : (
+              (marketProjects || [])
+                .filter((m: any) => !search || m.title.toLowerCase().includes(search.toLowerCase()))
+                .map((m: any) => (
                   <button
                     key={m.id}
                     type="button"
@@ -391,7 +415,20 @@ export default function Gigs() {
                     className="w-full text-left rounded-2xl border border-border/50 bg-card/60 hover:border-primary/40 transition-all p-3 active:scale-[0.99]"
                   >
                     <div className="flex items-start gap-3">
+                      <div className="h-14 w-14 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
+                        <Briefcase className="h-6 w-6 text-primary" />
+                      </div>
                       <div className="min-w-0 flex-1 space-y-1">
+                        <div className="flex flex-wrap items-center gap-1.5">
+                          <Badge className="bg-primary/10 text-primary border-primary/20 text-[10px] font-bold px-1.5 h-5">
+                            Client
+                          </Badge>
+                          {m.is_featured && (
+                            <Badge className="bg-amber-500/15 text-amber-700 border-amber-500/30 text-[10px] font-bold px-1.5 h-5">
+                              Featured
+                            </Badge>
+                          )}
+                        </div>
                         <h3 className="text-sm font-bold leading-tight line-clamp-1">{m.title}</h3>
                         <p className="text-[11px] text-muted-foreground line-clamp-1">
                           {m.employer_name || "Anonymous employer"}
@@ -408,10 +445,9 @@ export default function Gigs() {
                       <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0 mt-1" />
                     </div>
                   </button>
-                ))}
-              </div>
-            </section>
-          )}
+                ))
+            )}
+          </div>
         </TabsContent>
 
         {/* ───── MY WORK ───── */}
