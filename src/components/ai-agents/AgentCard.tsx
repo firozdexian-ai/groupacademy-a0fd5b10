@@ -1,12 +1,12 @@
-import { LucideIcon, MessageCircle, Coins, Bot, Star, Users } from "lucide-react";
+import { LucideIcon, MessageCircle, Coins, Bot, Star, Users, Zap } from "lucide-react";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { cn } from "@/lib/utils";
+import { AgentAvatar } from "@/components/ai-agents/AgentAvatar"; // CTO FIX: Imported the standardized ecosystem component
 
 /**
  * Phase 11H: Marketplace card — dense, profile-first.
- * Primary CTA: View Profile. Secondary: Message.
+ * CTO Audit: Upgraded to Premium SaaS aesthetic. Wired into the Creator Economy identity system.
  */
 interface AgentCardProps {
   id: string;
@@ -22,6 +22,8 @@ interface AgentCardProps {
   hasActiveSession?: boolean;
   rating?: number;
   users?: number;
+  isCreatorAgent?: boolean; // CTO FIX: Added support for marketplace distinction
+  isCompanyAgent?: boolean; // CTO FIX: Added support for marketplace distinction
   onViewProfile?: () => void;
   onMessage?: () => void;
   onClick?: () => void;
@@ -40,68 +42,94 @@ export function AgentCard({
   hasActiveSession,
   rating,
   users,
+  isCreatorAgent,
+  isCompanyAgent,
   onViewProfile,
   onMessage,
   onClick,
 }: AgentCardProps) {
   const handleViewProfile = onViewProfile || onClick;
+
   return (
     <Card
       className={cn(
-        "relative overflow-hidden rounded-2xl border border-border/60 bg-card p-3 flex flex-col gap-2 transition-all hover:shadow-md hover:border-primary/40 cursor-pointer",
-        hasActiveSession && "ring-1 ring-emerald-500/40",
+        "relative overflow-hidden rounded-[28px] border-2 border-border/40 bg-card/30 backdrop-blur-sm p-5 flex flex-col gap-4 transition-all duration-500 hover:shadow-2xl hover:-translate-y-1 cursor-pointer group",
+        hasActiveSession ? "border-emerald-500/50 bg-emerald-500/5" : "hover:border-primary/40",
+        isCreatorAgent && !isCompanyAgent && "hover:border-amber-500/40",
       )}
       onClick={handleViewProfile}
     >
-      <div className="flex items-start gap-2.5">
-        <Avatar className="h-12 w-12 rounded-full shrink-0">
-          {avatarUrl && <AvatarImage src={avatarUrl} alt={name} className="object-cover" />}
-          <AvatarFallback
-            className="rounded-full text-white"
-            style={{
-              backgroundColor: isHex(bgColor) ? bgColor : isHex(color) ? color : "#2A7DDE",
-            }}
-          >
-            {Icon ? <Icon className="h-5 w-5" /> : <Bot className="h-5 w-5" />}
-          </AvatarFallback>
-        </Avatar>
-        <div className="flex-1 min-w-0">
-          <h3 className="font-bold text-sm leading-tight line-clamp-1">{name}</h3>
-          <p className="text-[11px] text-muted-foreground line-clamp-2 leading-snug mt-0.5">{description}</p>
+      {/* HUD: ACTIVE_SYNC_INDICATOR */}
+      {hasActiveSession && (
+        <div className="absolute top-0 left-0 w-full h-1 bg-gradient-to-r from-emerald-400 to-emerald-600" />
+      )}
+
+      <div className="flex items-start gap-4">
+        {/* CTO FIX: Utilizing the centralized AgentAvatar component */}
+        <AgentAvatar
+          name={name}
+          avatarUrl={avatarUrl}
+          icon={Icon}
+          bgColor={isHex(bgColor) ? bgColor : undefined}
+          iconColor={isHex(color) ? color : undefined}
+          size="lg"
+          isOnline={hasActiveSession}
+          isCreatorAgent={isCreatorAgent}
+          isCompanyAgent={isCompanyAgent}
+        />
+
+        <div className="flex-1 min-w-0 space-y-1">
+          <h3 className="font-black text-lg uppercase italic tracking-tighter leading-none line-clamp-1 group-hover:text-primary transition-colors">
+            {name}
+          </h3>
+          <p className="text-xs font-medium italic text-muted-foreground line-clamp-2 leading-relaxed">{description}</p>
         </div>
       </div>
 
-      {/* Stats row */}
-      <div className="flex items-center gap-2 text-[10px] text-muted-foreground">
+      {/* Stats Row */}
+      <div className="flex items-center gap-3 text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 border-t border-border/10 pt-3">
         {rating && rating > 0 ? (
-          <span className="flex items-center gap-0.5">
+          <span className="flex items-center gap-1">
             <Star className="h-3 w-3 fill-yellow-400 text-yellow-400" />
-            <span className="font-semibold text-foreground">{rating.toFixed(1)}</span>
+            <span className="text-foreground">{rating.toFixed(1)}</span>
           </span>
         ) : (
-          <span className="flex items-center gap-0.5 opacity-60">
-            <Star className="h-3 w-3" /> New
+          <span className="flex items-center gap-1 opacity-60">
+            <Star className="h-3 w-3" /> NEW_NODE
           </span>
         )}
-        <span>·</span>
-        <span className="flex items-center gap-0.5">
+
+        <span className="opacity-30">|</span>
+
+        <span className="flex items-center gap-1">
           <Users className="h-3 w-3" /> {users || 0}
         </span>
-        <span className="ml-auto flex items-center gap-0.5 text-foreground font-semibold">
-          <Coins className="h-3 w-3 text-primary" /> {creditCost ?? 1}
+
+        <span className="ml-auto flex items-center gap-1.5 text-foreground">
+          <Coins className="h-3.5 w-3.5 text-primary" />
+          {creditCost ?? 1} TKN
         </span>
       </div>
 
-      {/* CTA — single full-width View Profile (Connect/Message live inside the profile) */}
+      {/* CTA */}
       <Button
         size="sm"
-        className="w-full h-8 text-xs font-semibold rounded-full"
+        className={cn(
+          "w-full h-10 text-[10px] font-black uppercase tracking-widest rounded-xl shadow-lg transition-all",
+          hasActiveSession ? "bg-emerald-500 hover:bg-emerald-600 text-white" : "",
+        )}
         onClick={(e) => {
           e.stopPropagation();
           handleViewProfile?.();
         }}
       >
-        View Profile
+        {hasActiveSession ? (
+          <>
+            <Zap className="h-3 w-3 mr-2" /> Resume Sync
+          </>
+        ) : (
+          "Initialize Profile"
+        )}
       </Button>
     </Card>
   );
