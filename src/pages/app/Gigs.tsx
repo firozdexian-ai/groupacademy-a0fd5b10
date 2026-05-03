@@ -252,25 +252,7 @@ export default function Gigs() {
         </button>
       </header>
 
-      {/* Content Lead banner — only for staff */}
-      {hasContentRole && (
-        <button
-          type="button"
-          onClick={() => navigate("/app/studio")}
-          className="w-full flex items-center justify-between gap-3 rounded-2xl border border-primary/30 bg-primary/5 px-4 py-3 hover:bg-primary/10 transition-all active:scale-[0.99]"
-        >
-          <div className="flex items-center gap-3 min-w-0">
-            <div className="h-9 w-9 rounded-xl bg-primary/10 flex items-center justify-center shrink-0">
-              <Hammer className="h-4 w-4 text-primary" />
-            </div>
-            <div className="text-left min-w-0">
-              <p className="text-sm font-bold leading-tight">Content Studio</p>
-              <p className="text-[11px] text-muted-foreground">Manage course production work</p>
-            </div>
-          </div>
-          <ChevronRight className="h-4 w-4 text-muted-foreground shrink-0" />
-        </button>
-      )}
+
 
       {/* Two-tab strip */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
