@@ -116,20 +116,49 @@ const ContentList = ({ filter }: ContentListProps) => {
       setModuleStatsMap({});
       return;
     }
-    const { data } = await supabase
-      .from("course_modules")
-      .select("content_id, description, video_url")
-      .in("content_id", contentIds);
-    if (!data) return;
+    const [modulesRes, resourcesRes] = await Promise.all([
+      supabase.from("course_modules").select("id, content_id, description, video_url").in("content_id", contentIds),
+      supabase
+        .from("module_resources")
+        .select("module_id, resource_url")
+        .in(
+          "module_id",
+          // resolved below after modulesRes returns
+          [],
+        ),
+    ]);
+
+    const modules = modulesRes.data || [];
+    // Re-fetch resources scoped to actual module ids (cannot chain .in until we have ids)
+    const moduleIds = modules.map((m: any) => m.id);
+    const resources = moduleIds.length
+      ? (
+          await supabase
+            .from("module_resources")
+            .select("module_id, resource_url")
+            .in("module_id", moduleIds)
+        ).data || []
+      : [];
+
+    // module_id -> has at least one non-empty resource_url
+    const moduleHasResource = new Set<string>();
+    for (const r of resources as any[]) {
+      if (r.resource_url && String(r.resource_url).trim().length > 0) moduleHasResource.add(r.module_id);
+    }
 
     const map: Record<string, ModuleStats> = {};
-    for (const row of data) {
-      if (!map[row.content_id]) map[row.content_id] = { module_count: 0, modules_with_desc: 0, modules_with_video: 0 };
-      map[row.content_id].module_count++;
-      if (row.description && row.description.trim().length > 500) map[row.content_id].modules_with_desc++;
-      if (row.video_url && row.video_url.trim().length > 0) map[row.content_id].modules_with_video++;
+    for (const row of modules as any[]) {
+      if (!map[row.content_id])
+        map[row.content_id] = { module_count: 0, modules_with_desc: 0, modules_with_video: 0, playable_modules: 0 };
+      const m = map[row.content_id];
+      m.module_count++;
+      if (row.description && row.description.trim().length > 500) m.modules_with_desc++;
+      const hasVideo = !!(row.video_url && row.video_url.trim().length > 0);
+      if (hasVideo) m.modules_with_video++;
+      if (hasVideo || moduleHasResource.has(row.id)) m.playable_modules = (m.playable_modules || 0) + 1;
     }
     setModuleStatsMap(map);
+    void resourcesRes; // intentionally discarded; first call was a placeholder
   }, []);
 
   const loadRegistry = useCallback(async () => {
