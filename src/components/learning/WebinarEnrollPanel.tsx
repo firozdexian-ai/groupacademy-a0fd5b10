@@ -2,7 +2,7 @@
  * Inline registration panel for live webinars / batch classes.
  * Spends credits via existing `deduct_credits` RPC and reveals the WhatsApp group.
  */
-import { useEffect, useState } from "react";
+import { useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -34,7 +34,7 @@ interface Props {
 
 export function WebinarEnrollPanel({ course }: Props) {
   const { talent } = useTalent();
-  const { credits, deductCredits, refreshCredits } = useCredits();
+  const { balance, deductCustomAmount, refresh } = useCredits() as any;
   const navigate = useNavigate();
   const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
@@ -66,7 +66,7 @@ export function WebinarEnrollPanel({ course }: Props) {
       navigate(`/auth?redirect=/app/learning/courses/${course.slug}`);
       return;
     }
-    if (creditCost > 0 && (credits ?? 0) < creditCost) {
+    if (creditCost > 0 && (balance ?? 0) < creditCost) {
       toast.error(`You need ${creditCost} credits — top up to reserve.`);
       navigate("/app/wallet");
       return;
@@ -74,22 +74,23 @@ export function WebinarEnrollPanel({ course }: Props) {
     setBusy(true);
     try {
       if (creditCost > 0) {
-        const ok = await deductCredits(creditCost, "webinar_enrollment", `Joined: ${course.title}`);
+        const ok = await deductCustomAmount(creditCost, "webinar_enrollment", course.id, `Joined: ${course.title}`);
         if (!ok) throw new Error("Could not deduct credits");
       }
       const { error } = await supabase.from("enrollments").insert({
         talent_id: talent.id,
+        student_id: talent.id,
         content_id: course.id,
-        status: "active",
+        status: "active" as const,
         payment_amount: creditCost,
-      });
+      } as any);
       if (error && !error.message.includes("duplicate")) throw error;
       await supabase
         .from("content")
         .update({ current_enrollment: (course.current_enrollment || 0) + 1 })
         .eq("id", course.id);
       toast.success("You're in! Check your email for details.");
-      await refreshCredits();
+      if (typeof refresh === "function") await refresh();
       qc.invalidateQueries({ queryKey: ["enrollment", talent.id, course.id] });
       qc.invalidateQueries({ queryKey: ["app-course-detail"] });
     } catch (e: any) {
