@@ -84,6 +84,16 @@ export default function ImmersiveCoursePlayer() {
     timeout: TIMEOUTS.DEFAULT,
   });
 
+  const { data: talent } = useQueryWithTimeout({
+    queryKey: ["talent-id", user?.id],
+    queryFn: async () => {
+      const { data } = await supabase.from("talents").select("id").eq("user_id", user!.id).maybeSingle();
+      return data;
+    },
+    enabled: !!user?.id,
+    timeout: TIMEOUTS.DEFAULT,
+  });
+
   const { data: student } = useQueryWithTimeout({
     queryKey: ["student-profile", user?.id],
     queryFn: async () => {
@@ -96,19 +106,21 @@ export default function ImmersiveCoursePlayer() {
   });
 
   const { data: enrollment, isLoading: enrollmentLoading } = useQueryWithTimeout({
-    queryKey: ["enrollment", student?.id, content?.id],
+    queryKey: ["enrollment", talent?.id, student?.id, content?.id],
     queryFn: async () => {
+      const ids = [talent?.id, student?.id].filter(Boolean) as string[];
+      const orFilter = ids.map((id) => `talent_id.eq.${id},student_id.eq.${id}`).join(",");
       const { data, error } = await supabase
         .from("enrollments")
         .select("*")
-        .eq("student_id", student!.id)
         .eq("content_id", content!.id)
         .in("status", ["active", "completed"])
+        .or(orFilter)
         .maybeSingle();
       if (error) throw error;
       return data;
     },
-    enabled: !!student?.id && !!content?.id,
+    enabled: !!content?.id && (!!talent?.id || !!student?.id),
     timeout: TIMEOUTS.DEFAULT,
   });
 

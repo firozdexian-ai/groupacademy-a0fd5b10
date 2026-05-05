@@ -3694,6 +3694,59 @@ export type Database = {
           },
         ]
       }
+      course_affiliate_clicks: {
+        Row: {
+          clicked_at: string
+          content_id: string
+          id: string
+          ref_code: string
+          talent_id: string
+        }
+        Insert: {
+          clicked_at?: string
+          content_id: string
+          id?: string
+          ref_code: string
+          talent_id: string
+        }
+        Update: {
+          clicked_at?: string
+          content_id?: string
+          id?: string
+          ref_code?: string
+          talent_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "course_affiliate_clicks_content_id_fkey"
+            columns: ["content_id"]
+            isOneToOne: false
+            referencedRelation: "content"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_affiliate_clicks_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "course_affiliate_clicks_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "course_affiliate_clicks_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+        ]
+      }
       course_modules: {
         Row: {
           content_id: string
@@ -10827,6 +10880,10 @@ export type Database = {
         }
         Returns: string
       }
+      enroll_in_content: {
+        Args: { p_content_id: string; p_ref_code?: string }
+        Returns: Json
+      }
       ensure_agent_thread: {
         Args: { _agent_key: string; _talent_id: string }
         Returns: string
@@ -10979,6 +11036,10 @@ export type Database = {
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       sweep_expired_connections: { Args: never; Returns: number }
+      sync_recorded_course_readiness: {
+        Args: { p_content_id?: string }
+        Returns: number
+      }
       talent_connection_request: { Args: { _recipient: string }; Returns: Json }
       talent_connection_respond: {
         Args: { _accept: boolean; _request: string }
@@ -10992,6 +11053,10 @@ export type Database = {
       track_content_click: {
         Args: { p_content_id: string; p_source: string }
         Returns: undefined
+      }
+      track_course_referral_click: {
+        Args: { p_content_id: string; p_ref_code: string }
+        Returns: Json
       }
       track_job_apply_click: {
         Args: { p_job_id: string; p_source?: string; p_talent_id?: string }

@@ -84,15 +84,30 @@ export function ContentOutreachManager() {
   const [customChannel, setCustomChannel] = useState("");
 
   const loadContents = useCallback(async () => {
-    const { data, error } = await supabase
+    const cutoff = new Date(Date.now() - 2 * 60 * 60 * 1000).toISOString();
+    // Recorded courses: must be ready (has modules + resources) per readiness sync.
+    const { data: recorded, error: e1 } = await supabase
       .from("content")
       .select("id, title, slug, content_type, current_enrollment, is_published, description")
       .eq("is_published", true)
-      .in("content_type", ["recorded_course", "batch_class", "live_webinar"])
+      .eq("is_ready", true)
+      .eq("is_private", false)
+      .eq("content_type", "recorded_course")
       .order("title");
+    // Live/batch: only upcoming (or in-grace) sessions
+    const { data: live, error: e2 } = await supabase
+      .from("content")
+      .select("id, title, slug, content_type, current_enrollment, is_published, description")
+      .eq("is_published", true)
+      .eq("is_ready", true)
+      .eq("is_private", false)
+      .in("content_type", ["batch_class", "live_webinar"])
+      .not("event_date", "is", null)
+      .gte("event_date", cutoff)
+      .order("event_date", { ascending: true });
 
-    if (error) return console.error("Registry Fault:", error);
-    setContents(data || []);
+    if (e1 || e2) return console.error("Registry Fault:", e1 || e2);
+    setContents([...(recorded || []), ...(live || [])]);
     setIsLoading(false);
   }, []);
 
