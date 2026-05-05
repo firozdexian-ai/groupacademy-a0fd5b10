@@ -44,6 +44,7 @@ export default function PublicCourses() {
         )
         .eq("is_published", true)
         .eq("is_private", false)
+        .eq("is_ready", true)
         .in("content_type", ["recorded_course", "batch_class", "free_video"])
         .order("current_enrollment", { ascending: false })
         .limit(12);
