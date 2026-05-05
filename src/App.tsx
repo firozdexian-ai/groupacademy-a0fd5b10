@@ -80,6 +80,8 @@ import Gigs from "./pages/app/Gigs";
 import MarketplaceGigDetail from "./pages/app/MarketplaceGigDetail";
 import Transactions from "./pages/app/Transactions";
 import Withdrawals from "./pages/app/Withdrawals";
+import TalentDirectory from "./pages/app/TalentDirectory";
+import TalentPublicProfile from "./pages/app/TalentPublicProfile";
 import ProfileVerify from "./pages/app/ProfileVerify";
 
 import CVMaker from "./pages/app/tools/CVMaker";
