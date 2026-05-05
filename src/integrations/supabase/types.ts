@@ -3392,6 +3392,7 @@ export type Database = {
           estimated_hours: number | null
           event_date: string | null
           event_duration_minutes: number | null
+          event_timezone: string
           id: string
           instructor_name: string | null
           is_b2b: boolean
@@ -3429,6 +3430,7 @@ export type Database = {
           estimated_hours?: number | null
           event_date?: string | null
           event_duration_minutes?: number | null
+          event_timezone?: string
           id?: string
           instructor_name?: string | null
           is_b2b?: boolean
@@ -3466,6 +3468,7 @@ export type Database = {
           estimated_hours?: number | null
           event_date?: string | null
           event_duration_minutes?: number | null
+          event_timezone?: string
           id?: string
           instructor_name?: string | null
           is_b2b?: boolean
