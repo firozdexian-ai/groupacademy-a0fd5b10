@@ -75,8 +75,8 @@ Deno.serve(async (req) => {
     const { data: insertedMsg } = await admin.from("messaging_messages").insert({
       conversation_id,
       external_message_id: externalMessageId,
-      direction: "outbound",
-      author: agent_run_id ? "agent" : "operator",
+      direction: "out",
+      author: agent_run_id ? "agent" : "human_operator",
       body: text,
       status: status as any,
       error: errorMsg,

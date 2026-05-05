@@ -108,8 +108,8 @@ Deno.serve(async (req) => {
   await admin.from("messaging_messages").insert({
     conversation_id: conversationId,
     external_message_id: externalMsgId ?? null,
-    direction: isFromMe ? "outbound" : "inbound",
-    author: isFromMe ? "operator" : "peer",
+    direction: isFromMe ? "out" : "in",
+    author: isFromMe ? "human_operator" : "user",
     body: text,
     status: "delivered",
   });

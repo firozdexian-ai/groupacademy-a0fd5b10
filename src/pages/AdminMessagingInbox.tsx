@@ -23,8 +23,8 @@ interface Conversation {
 
 interface Message {
   id: string;
-  direction: "inbound" | "outbound";
-  author: "peer" | "operator" | "agent";
+  direction: "in" | "out";
+  author: "user" | "human_operator" | "agent";
   body: string | null;
   created_at: string;
   status: string;
@@ -140,10 +140,10 @@ export default function AdminMessagingInbox() {
             </div>
             <div ref={scrollRef} className="flex-1 overflow-y-auto p-4 space-y-2 bg-muted/20">
               {messages.map((m) => (
-                <div key={m.id} className={`flex ${m.direction === "outbound" ? "justify-end" : "justify-start"}`}>
-                  <div className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${m.direction === "outbound" ? "bg-primary text-primary-foreground" : "bg-background border"}`}>
+                <div key={m.id} className={`flex ${m.direction === "out" ? "justify-end" : "justify-start"}`}>
+                  <div className={`max-w-[75%] rounded-lg px-3 py-2 text-sm ${m.direction === "out" ? "bg-primary text-primary-foreground" : "bg-background border"}`}>
                     {m.author === "agent" && <div className="flex items-center gap-1 text-xs opacity-70 mb-1"><Bot className="h-3 w-3" /> AI</div>}
-                    {m.author === "operator" && m.direction === "outbound" && <div className="flex items-center gap-1 text-xs opacity-70 mb-1"><User className="h-3 w-3" /> You</div>}
+                    {m.author === "human_operator" && m.direction === "out" && <div className="flex items-center gap-1 text-xs opacity-70 mb-1"><User className="h-3 w-3" /> You</div>}
                     <div className="whitespace-pre-wrap break-words">{m.body}</div>
                     <div className="text-[10px] opacity-60 mt-1">{new Date(m.created_at).toLocaleTimeString()}</div>
                   </div>
