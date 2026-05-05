@@ -3,8 +3,8 @@
  * Spends credits via existing `deduct_credits` RPC and reveals the WhatsApp group.
  */
 import { useState } from "react";
-import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
+import { useEnrollment } from "@/hooks/useEnrollment";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Calendar, Clock, Users, Coins, MessageCircle, CheckCircle2, ArrowRight } from "lucide-react";
