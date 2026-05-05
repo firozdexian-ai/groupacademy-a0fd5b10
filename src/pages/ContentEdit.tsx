@@ -30,6 +30,8 @@ import { youtubeUrlSchema, whatsappUrlSchema } from "@/lib/validations";
 import { cn } from "@/lib/utils";
 import { EventDateTimeField } from "@/components/admin/EventDateTimeField";
 import { DEFAULT_EVENT_TZ } from "@/lib/eventTime";
+import ContentReadinessBadge, { type ModuleStats } from "@/components/dashboard/ContentReadinessBadge";
+import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export default function ContentEdit() {
   const { id } = useParams();
