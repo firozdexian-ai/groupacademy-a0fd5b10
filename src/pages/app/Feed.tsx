@@ -18,6 +18,7 @@ import { PersonalizedPromptCard } from "@/components/feed/PersonalizedPromptCard
 import { BannerCarousel } from "@/components/BannerCarousel";
 import { QuickActionsGrid } from "@/components/feed/QuickActionsGrid";
 import { ComposePost } from "@/components/feed/ComposePost";
+import { WeeklyLeaderboardWidget } from "@/components/feed/WeeklyLeaderboardWidget";
 import { cn } from "@/lib/utils";
 
 /**
