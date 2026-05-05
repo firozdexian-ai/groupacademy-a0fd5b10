@@ -73,6 +73,42 @@ export default function ContentEdit() {
     if (id) loadContent();
   }, [id]);
 
+  const loadModuleStats = async () => {
+    if (!id) return;
+    const { data: modules } = await supabase
+      .from("course_modules")
+      .select("id, title, description, video_url")
+      .eq("content_id", id)
+      .order("order_index", { ascending: true });
+    const moduleIds = (modules || []).map((m: any) => m.id);
+    const { data: resources } = moduleIds.length
+      ? await supabase.from("module_resources").select("module_id, resource_url").in("module_id", moduleIds)
+      : { data: [] as any[] };
+
+    const moduleHasResource = new Set<string>();
+    for (const r of resources || []) {
+      if (r.resource_url && String(r.resource_url).trim().length > 0) moduleHasResource.add(r.module_id);
+    }
+
+    const stats: ModuleStats = {
+      module_count: modules?.length || 0,
+      modules_with_desc: 0,
+      modules_with_video: 0,
+      playable_modules: 0,
+    };
+    const audit: Array<{ id: string; title: string; reason: string }> = [];
+    for (const row of modules || []) {
+      if (row.description && row.description.trim().length > 500) stats.modules_with_desc++;
+      const hasVideo = !!(row.video_url && row.video_url.trim().length > 0);
+      const hasResource = moduleHasResource.has(row.id);
+      if (hasVideo) stats.modules_with_video++;
+      if (hasVideo || hasResource) stats.playable_modules!++;
+      else audit.push({ id: row.id, title: row.title || "Untitled module", reason: "No video URL and no resource attached" });
+    }
+    setModuleStats(stats);
+    setModuleAudit(audit);
+  };
+
   const loadContent = async () => {
     try {
       setLoading(true);
