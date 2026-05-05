@@ -9388,6 +9388,7 @@ export type Database = {
         | "talent_exec"
         | "content_lead"
         | "super_admin"
+        | "talent_success_executive"
       application_status:
         | "submitted"
         | "sent_to_employer"
@@ -9624,6 +9625,7 @@ export const Constants = {
         "talent_exec",
         "content_lead",
         "super_admin",
+        "talent_success_executive",
       ],
       application_status: [
         "submitted",
