@@ -10686,6 +10686,10 @@ export type Database = {
         Args: { p_service: string; p_talent_id: string }
         Returns: undefined
       }
+      admin_award_credits: {
+        Args: { _amount: number; _reason: string; _talent: string }
+        Returns: undefined
+      }
       analyst_metric: { Args: { metric: string; period?: Json }; Returns: Json }
       analyst_series: {
         Args: { granularity?: string; metric: string; period?: Json }
@@ -10854,6 +10858,14 @@ export type Database = {
       get_talent_connection_price: {
         Args: { _recipient: string }
         Returns: number
+      }
+      get_weekly_winners: {
+        Args: { _end: string; _start: string }
+        Returns: {
+          credits_earned: number
+          hype_count: number
+          talent_id: string
+        }[]
       }
       grant_company_welcome_credits: {
         Args: { p_amount?: number; p_company_id: string }
