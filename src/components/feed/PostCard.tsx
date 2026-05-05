@@ -8,6 +8,7 @@ import { ReactionBar } from "./ReactionBar";
 import { PollWidget } from "./PollWidget";
 import { ShareSheet } from "./ShareSheet";
 import { HypeButton } from "./HypeButton";
+import { CommentList } from "./CommentList";
 import { usePostReactions } from "@/hooks/usePostReactions";
 import { usePollVoting } from "@/hooks/usePollVoting";
 import { cn } from "@/lib/utils";
@@ -214,6 +215,8 @@ export function PostCard({ post }: PostCardProps) {
         {totalReactions > 0 && (
           <p className="text-[10px] text-muted-foreground -mt-1">{totalReactions} reactions</p>
         )}
+
+        <CommentList postId={post.id} />
       </CardContent>
     </Card>
   );

@@ -16,6 +16,7 @@ import { formatDistanceToNow } from "date-fns";
 import { cn } from "@/lib/utils";
 import { InboxUnlockCard } from "@/components/talents/InboxUnlockCard";
 import { HypeEarningsCard } from "@/components/feed/HypeEarningsCard";
+import { ReferralCard } from "@/components/wallet/ReferralCard";
 
 interface WithdrawalRow {
   id: string;
@@ -130,6 +131,7 @@ export default function Withdrawals() {
 
       <HypeEarningsCard />
       <InboxUnlockCard />
+      <ReferralCard />
 
       <Card>
 

@@ -18,6 +18,7 @@ import { PersonalizedPromptCard } from "@/components/feed/PersonalizedPromptCard
 import { BannerCarousel } from "@/components/BannerCarousel";
 import { QuickActionsGrid } from "@/components/feed/QuickActionsGrid";
 import { ComposePost } from "@/components/feed/ComposePost";
+import { WeeklyLeaderboardWidget } from "@/components/feed/WeeklyLeaderboardWidget";
 import { cn } from "@/lib/utils";
 
 /**
@@ -243,6 +244,7 @@ export default function Feed() {
         <aside className="hidden lg:block lg:col-span-4">
           <div className="sticky top-24 space-y-6">
             <PersonalizedPromptCard />
+            <WeeklyLeaderboardWidget />
             <CareerInsightsStack insights={insights || []} />
           </div>
         </aside>
