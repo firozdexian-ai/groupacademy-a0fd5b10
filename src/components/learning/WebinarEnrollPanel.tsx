@@ -36,7 +36,6 @@ export function WebinarEnrollPanel({ course }: Props) {
   const { talent } = useTalent();
   const { balance, deductCustomAmount, refresh } = useCredits() as any;
   const navigate = useNavigate();
-  const qc = useQueryClient();
   const [busy, setBusy] = useState(false);
 
   const creditCost = getCourseCredits(Number(course.price ?? 0));
@@ -45,20 +44,7 @@ export function WebinarEnrollPanel({ course }: Props) {
     ? course.max_capacity - (course.current_enrollment || 0)
     : null;
 
-  const { data: enrollment, isLoading: enrollmentLoading } = useQuery({
-    queryKey: ["enrollment", talent?.id, course.id],
-    enabled: !!talent?.id,
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("enrollments")
-        .select("id, status, enrolled_at")
-        .eq("talent_id", talent!.id)
-        .eq("content_id", course.id)
-        .maybeSingle();
-      return data;
-    },
-  });
-
+  const { data: enrollment, isLoading: enrollmentLoading, invalidate } = useEnrollment(course.id);
   const isEnrolled = !!enrollment;
 
   const handleEnroll = async () => {
@@ -85,16 +71,12 @@ export function WebinarEnrollPanel({ course }: Props) {
         payment_amount: creditCost,
       } as any);
       if (error && !error.message.includes("duplicate")) throw error;
-      await supabase
-        .from("content")
-        .update({ current_enrollment: (course.current_enrollment || 0) + 1 })
-        .eq("id", course.id);
+      await (supabase.rpc as any)("increment_content_enrollment", { p_content_id: course.id });
       toast.success("You're in! Check your email for details.");
       if (typeof refresh === "function") await refresh();
-      qc.invalidateQueries({ queryKey: ["enrollment", talent.id, course.id] });
-      qc.invalidateQueries({ queryKey: ["app-course-detail"] });
+      invalidate();
     } catch (e: any) {
-      toast.error(e.message || "Reservation failed");
+      toast.error(e?.message || "Reservation failed");
     } finally {
       setBusy(false);
     }
