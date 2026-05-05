@@ -10891,6 +10891,10 @@ export type Database = {
         Args: { p_agent_key: string }
         Returns: undefined
       }
+      increment_content_enrollment: {
+        Args: { p_content_id: string }
+        Returns: number
+      }
       is_agent_connected: {
         Args: { _agent_key: string; _talent_id: string }
         Returns: boolean
