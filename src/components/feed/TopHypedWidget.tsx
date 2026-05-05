@@ -24,7 +24,7 @@ export function TopHypedWidget() {
       if (!ids.length) return;
       const { data: posts } = await supabase
         .from("feed_posts")
-        .select("id, content, talent_id, talents(full_name)")
+        .select("id, text_content, talent_id, talents(full_name)")
         .in("id", ids);
       const pMap = new Map((posts ?? []).map((p: any) => [p.id, p]));
       setPosts(
@@ -33,7 +33,7 @@ export function TopHypedWidget() {
           return {
             post_id: t.post_id,
             hypes_week: Number(t.hypes_week),
-            preview: p?.content?.slice(0, 80) ?? null,
+            preview: p?.text_content?.slice(0, 80) ?? null,
             author_name: p?.talents?.full_name ?? null,
           };
         }),
