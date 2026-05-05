@@ -39,6 +39,7 @@ import { PWAUpdatePrompt } from "./components/PWAUpdatePrompt";
 // Admin Pages
 import Dashboard from "./pages/Dashboard";
 import DashboardChat from "./pages/DashboardChat";
+import AdminMessagingInbox from "./pages/AdminMessagingInbox";
 // CompanyPortal retired — /company now redirects to /gro10x
 import Students from "./pages/Students";
 import Enrollments from "./pages/Enrollments";
