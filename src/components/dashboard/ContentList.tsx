@@ -57,6 +57,7 @@ interface Content {
   description: string | null;
   price: number;
   is_published: boolean;
+  is_ready: boolean | null;
   instructor_name: string | null;
   event_date: string | null;
   max_capacity: number | null;
@@ -115,18 +116,31 @@ const ContentList = ({ filter }: ContentListProps) => {
       setModuleStatsMap({});
       return;
     }
-    const { data } = await supabase
+    const { data: modules } = await supabase
       .from("course_modules")
-      .select("content_id, description, video_url")
+      .select("id, content_id, description, video_url")
       .in("content_id", contentIds);
-    if (!data) return;
+
+    const moduleIds = (modules || []).map((m: any) => m.id);
+    const { data: resources } = moduleIds.length
+      ? await supabase.from("module_resources").select("module_id, resource_url").in("module_id", moduleIds)
+      : { data: [] as any[] };
+
+    const moduleHasResource = new Set<string>();
+    for (const r of resources || []) {
+      if (r.resource_url && String(r.resource_url).trim().length > 0) moduleHasResource.add(r.module_id);
+    }
 
     const map: Record<string, ModuleStats> = {};
-    for (const row of data) {
-      if (!map[row.content_id]) map[row.content_id] = { module_count: 0, modules_with_desc: 0, modules_with_video: 0 };
-      map[row.content_id].module_count++;
-      if (row.description && row.description.trim().length > 500) map[row.content_id].modules_with_desc++;
-      if (row.video_url && row.video_url.trim().length > 0) map[row.content_id].modules_with_video++;
+    for (const row of modules || []) {
+      if (!map[row.content_id])
+        map[row.content_id] = { module_count: 0, modules_with_desc: 0, modules_with_video: 0, playable_modules: 0 };
+      const m = map[row.content_id];
+      m.module_count++;
+      if (row.description && row.description.trim().length > 500) m.modules_with_desc++;
+      const hasVideo = !!(row.video_url && row.video_url.trim().length > 0);
+      if (hasVideo) m.modules_with_video++;
+      if (hasVideo || moduleHasResource.has(row.id)) m.playable_modules = (m.playable_modules || 0) + 1;
     }
     setModuleStatsMap(map);
   }, []);
@@ -253,14 +267,24 @@ const ContentList = ({ filter }: ContentListProps) => {
                     >
                       <Icon className={cn("h-6 w-6", config.color)} />
                     </div>
-                    <Badge
-                      className={cn(
-                        "rounded-lg font-black text-[8px] uppercase tracking-[0.2em] px-3 py-1 border-none",
-                        item.is_published ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground/60",
+                    <div className="flex items-center gap-1.5">
+                      <Badge
+                        className={cn(
+                          "rounded-lg font-black text-[8px] uppercase tracking-[0.2em] px-3 py-1 border-none",
+                          item.is_published ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground/60",
+                        )}
+                      >
+                        {item.is_published ? "PUBLISHED" : "DRAFT"}
+                      </Badge>
+                      {(item.content_type === "recorded_course" || item.content_type === "live_webinar" || item.content_type === "batch_class") && (
+                        <ContentReadinessBadge
+                          stats={moduleStatsMap[item.id]}
+                          isReady={item.is_ready ?? undefined}
+                          appliesPlayableRule={item.content_type === "recorded_course"}
+                          compact
+                        />
                       )}
-                    >
-                      {item.is_published ? "LIVE_NODE" : "IDLE_DRAFT"}
-                    </Badge>
+                    </div>
                   </div>
                   <CardTitle className="text-2xl font-black uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors line-clamp-2 min-h-[56px]">
                     {item.title}
@@ -270,7 +294,11 @@ const ContentList = ({ filter }: ContentListProps) => {
                 <CardContent className="p-8 pt-0 space-y-6 flex-1 flex flex-col justify-between">
                   <div className="space-y-4">
                     <div className="p-4 rounded-2xl bg-muted/10 border border-border/10">
-                      <ContentReadinessBadge stats={moduleStatsMap[item.id]} />
+                      <ContentReadinessBadge
+                        stats={moduleStatsMap[item.id]}
+                        isReady={item.is_ready ?? undefined}
+                        appliesPlayableRule={item.content_type === "recorded_course"}
+                      />
                     </div>
 
                     <div className="flex items-center justify-between">
