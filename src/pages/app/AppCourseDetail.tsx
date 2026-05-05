@@ -136,12 +136,9 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
               <p className="text-[11px] text-muted-foreground">Lifetime access · {sortedModules.length} chapters</p>
             </div>
           </div>
-          <Button
-            className="w-full h-10 rounded-xl text-sm"
-            onClick={() => navigate(`/app/learn/${course.slug}`)}
-          >
-            Start course
-          </Button>
+          {course.content_type !== "live_webinar" && course.content_type !== "batch_class" && (
+            <RecordedEnrollCta course={course} />
+          )}
         </CardContent>
       </Card>
 
