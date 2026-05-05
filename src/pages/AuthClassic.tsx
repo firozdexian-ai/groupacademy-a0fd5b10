@@ -39,6 +39,15 @@ const Auth = () => {
   const [isLoading, setIsLoading] = useState(false);
   const [activeTab, setActiveTab] = useState(searchParams.get("tab") || "login");
 
+  // Capture referral code from URL
+  useEffect(() => {
+    const ref = searchParams.get("ref");
+    if (ref) {
+      localStorage.setItem("pending_ref", ref);
+      setActiveTab("signup");
+    }
+  }, [searchParams]);
+
   // Form States
   const [loginData, setLoginData] = useState({ identifier: "", password: "" });
   const [signupData, setSignupData] = useState({
