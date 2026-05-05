@@ -224,10 +224,10 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           {event.description && <p className="text-[11px] text-muted-foreground line-clamp-2">{event.description}</p>}
           <div className="flex flex-wrap items-center gap-3 text-[10px] text-muted-foreground border-t border-border/40 pt-2">
             {eventDate && (
-              <span className="flex items-center gap-1"><Calendar className="h-3 w-3" /> {format(eventDate, "MMM d")}</span>
-            )}
-            {eventDate && (
-              <span className="flex items-center gap-1"><Clock className="h-3 w-3" /> {format(eventDate, "p")}</span>
+              <span className="flex items-center gap-1" title={formatEventLocal(eventDate)}>
+                <Calendar className="h-3 w-3" />
+                {formatEventTime(eventDate, event.event_timezone || DEFAULT_EVENT_TZ)}
+              </span>
             )}
             {spotsLeft !== null && (
               <span className={cn("flex items-center gap-1", spotsLeft <= 5 && spotsLeft > 0 && "text-rose-600")}>
