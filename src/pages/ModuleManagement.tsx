@@ -202,23 +202,26 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
     const idx = modules.findIndex((m) => m.id === id);
     const swapIdx = direction === "up" ? idx - 1 : idx + 1;
     if (idx < 0 || swapIdx < 0 || swapIdx >= modules.length) return;
-
-    const a = modules[idx];
-    const b = modules[swapIdx];
-    const orderA = a.display_order ?? idx + 1;
-    const orderB = b.display_order ?? swapIdx + 1;
-
     const newList = [...modules];
-    newList[idx] = { ...a, display_order: orderB };
-    newList[swapIdx] = { ...b, display_order: orderA };
-    newList.sort((x, y) => (x.display_order ?? 0) - (y.display_order ?? 0));
-    setModules(newList);
+    [newList[idx], newList[swapIdx]] = [newList[swapIdx], newList[idx]];
+    await reorderModules(newList);
+  };
 
+  const reorderModules = async (newList: CourseModule[]) => {
+    // Densely renumber and persist only changed rows.
+    const renumbered = newList.map((m, i) => ({ ...m, display_order: i + 1 }));
+    const changed = renumbered.filter((m) => {
+      const orig = modules.find((o) => o.id === m.id);
+      return orig && orig.display_order !== m.display_order;
+    });
+    setModules(renumbered);
+    if (!changed.length) return;
     try {
-      await Promise.all([
-        supabase.from("course_modules").update({ display_order: orderB }).eq("id", a.id),
-        supabase.from("course_modules").update({ display_order: orderA }).eq("id", b.id),
-      ]);
+      await Promise.all(
+        changed.map((m) =>
+          supabase.from("course_modules").update({ display_order: m.display_order }).eq("id", m.id),
+        ),
+      );
     } catch (e: any) {
       toast.error("Reorder failed; reloading.");
       loadModules();
