@@ -134,6 +134,13 @@ export function JobCard({
                 <Brain className="w-3 h-3 fill-current" /> {matchInfo.match_score}%
               </Badge>
             )}
+            {matchInfo?.match_reason === "verified_skill" && (
+              <VerifiedMatchBadge
+                compact
+                credentials={matchInfo.verified_match?.verified_credentials}
+                masteryScore={matchInfo.verified_match?.mastery_score}
+              />
+            )}
 
             <Badge
               variant="secondary"
