@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
-import { Bot, LucideIcon } from "lucide-react";
+import { Bot, LayoutGrid, LucideIcon } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -17,7 +17,7 @@ interface QuickAgent {
   avatar_url: string | null;
 }
 
-const VISIBLE_LIMIT = 5;
+const VISIBLE_LIMIT = 4;
 
 export function QuickActionsGrid() {
   const navigate = useNavigate();
@@ -118,13 +118,19 @@ export function QuickActionsGrid() {
               </button>
             );
           })}
-        </div>
-        <div className="flex justify-end mt-1.5">
+
+          {/* 5th tile — All agents */}
           <button
             onClick={() => setSheetOpen(true)}
-            className="text-[11px] text-muted-foreground hover:text-primary transition-colors"
+            aria-label="View all agents"
+            className="flex flex-col items-center gap-1.5 min-w-0 active:scale-95 transition-transform outline-none"
           >
-            View all agents →
+            <div className="h-11 w-11 rounded-xl flex items-center justify-center border border-dashed border-border/60 bg-muted/30 text-muted-foreground">
+              <LayoutGrid className="h-5 w-5" />
+            </div>
+            <span className="text-[10px] font-medium text-center text-muted-foreground truncate leading-tight w-full px-0.5">
+              All
+            </span>
           </button>
         </div>
       </div>
