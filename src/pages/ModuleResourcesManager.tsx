@@ -590,8 +590,8 @@ export default function ModuleResourcesManager() {
                               </CardContent>
                             </Card>
                           );
-                        })}
-                      </div>
+                        }}
+                      />
                     )}
                   </CardContent>
                 </Card>
