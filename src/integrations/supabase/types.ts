@@ -1502,25 +1502,31 @@ export type Database = {
           generated_at: string
           id: string
           job_id: string
+          match_reason: string | null
           match_score: number
           reason: string | null
           talent_id: string
+          verified_match: Json | null
         }
         Insert: {
           generated_at?: string
           id?: string
           job_id: string
+          match_reason?: string | null
           match_score?: number
           reason?: string | null
           talent_id: string
+          verified_match?: Json | null
         }
         Update: {
           generated_at?: string
           id?: string
           job_id?: string
+          match_reason?: string | null
           match_score?: number
           reason?: string | null
           talent_id?: string
+          verified_match?: Json | null
         }
         Relationships: [
           {
