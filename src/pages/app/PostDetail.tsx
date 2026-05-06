@@ -34,6 +34,7 @@ function mapRowToPost(row: any): FeedPost {
 export default function PostDetail() {
   const { id } = useParams<{ id: string }>();
   const navigate = useNavigate();
+  const { talent } = useTalent();
 
   const { data: post, isLoading, error } = useQuery({
     queryKey: ["feed-post", id],
