@@ -362,17 +362,26 @@ const ContentList = ({ filter }: ContentListProps) => {
             return (
               <Card
                 key={item.id}
-                className="group rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl transition-all duration-500 hover:border-primary/40 flex flex-col overflow-hidden"
+                className={cn(
+                  "group rounded-[40px] border-2 bg-card/30 backdrop-blur-xl transition-all duration-500 hover:border-primary/40 flex flex-col overflow-hidden",
+                  selectedIds.has(item.id) ? "border-primary/60 ring-2 ring-primary/20" : "border-border/40",
+                )}
               >
                 <CardHeader className="p-8 pb-4">
                   <div className="flex items-center justify-between mb-4">
-                    <div
-                      className={cn(
-                        "h-12 w-12 rounded-2xl flex items-center justify-center border-2 border-white/5 shadow-inner transition-transform duration-500 group-hover:rotate-6",
-                        config.bg,
-                      )}
-                    >
-                      <Icon className={cn("h-6 w-6", config.color)} />
+                    <div className="flex items-center gap-3">
+                      <Checkbox
+                        checked={selectedIds.has(item.id)}
+                        onCheckedChange={() => toggleSelect(item.id)}
+                      />
+                      <div
+                        className={cn(
+                          "h-12 w-12 rounded-2xl flex items-center justify-center border-2 border-white/5 shadow-inner transition-transform duration-500 group-hover:rotate-6",
+                          config.bg,
+                        )}
+                      >
+                        <Icon className={cn("h-6 w-6", config.color)} />
+                      </div>
                     </div>
                     <div className="flex items-center gap-1.5">
                       <Badge
