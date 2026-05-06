@@ -627,43 +627,105 @@ export default function JobsHub() {
       {/* Tools tab */}
       {activeTab === "tools" && (
         <div className="space-y-5 animate-in fade-in duration-300">
+          {/* Up next for you */}
+          {nextBest && (
+            <section>
+              <Card
+                className="border-primary/30 bg-gradient-to-br from-primary/5 to-transparent cursor-pointer hover:border-primary/50 transition-all"
+                onClick={() => {
+                  const t = TOOL_META[nextBest.tool_key];
+                  if (!t) return;
+                  if (nextBest.tool_key === "score") {
+                    if (nextBest.job_id) navigate(`/app/jobs/${nextBest.job_id}?score=1`);
+                    else setScorePickerOpen(true);
+                  } else if (nextBest.tool_key === "answers" && nextBest.job_id) {
+                    navigate(`${t.href}?job=${nextBest.job_id}`);
+                  } else {
+                    navigate(t.href);
+                  }
+                }}
+              >
+                <CardContent className="p-3.5 flex items-center gap-3">
+                  <div className="h-11 w-11 rounded-xl bg-primary/15 flex items-center justify-center shrink-0">
+                    <Lightbulb className="h-5 w-5 text-primary" />
+                  </div>
+                  <div className="flex-1 min-w-0">
+                    <div className="flex items-center gap-2">
+                      <Badge variant="secondary" className="text-[10px]">Up next for you</Badge>
+                    </div>
+                    <p className="text-sm font-semibold truncate mt-0.5">
+                      {TOOL_META[nextBest.tool_key]?.title || nextBest.tool_key}
+                    </p>
+                    <p className="text-[11px] text-muted-foreground truncate">{nextBest.reason}</p>
+                  </div>
+                  <ArrowRight className="h-4 w-4 text-primary shrink-0" />
+                </CardContent>
+              </Card>
+            </section>
+          )}
+
+          {/* Profile builders */}
           <section className="space-y-2">
             <h2 className="text-base font-semibold flex items-center gap-2">
-              <Zap className="h-4 w-4 text-primary" /> Career tools
+              <Sparkles className="h-4 w-4 text-primary" /> Profile builders
             </h2>
-            <p className="text-xs text-muted-foreground">Practical AI tools to ship a stronger application — fast.</p>
-
+            <p className="text-xs text-muted-foreground">Sharpen who you are — your CV, skills, market value, portfolio.</p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
-              <ToolCard
-                icon={FileText}
-                title="ATS-friendly CV"
-                desc="Generate a clean, scanner-safe CV PDF from your profile."
-                cost="15 credits"
-                onClick={() => navigate("/app/tools/cv-maker")}
-              />
-              <ToolCard
-                icon={MessageSquare}
-                title="Application answers"
-                desc="Paste questions, get tailored answers grounded in your profile."
-                cost="10 credits"
-                onClick={() => navigate("/app/tools/application-helper")}
-              />
-              <ToolCard
-                icon={Sparkles}
-                title="AI job matches"
-                desc="Rank your best-fit open roles against your profile."
-                cost="10 credits"
-                onClick={handleGetAIRecommendations}
-              />
-              <ToolCard
-                icon={Target}
-                title="Score me vs job"
-                desc="See your match score for any specific role."
-                cost="10 credits"
-                onClick={() => navigate("/app/jobs/all")}
-              />
+              <ToolCard icon={FileText} title="ATS-friendly CV" desc="Generate a clean, scanner-safe CV PDF from your profile." cost="15 credits" onClick={() => navigate("/app/tools/cv-maker")} />
+              <ToolCard icon={ClipboardCheck} title="Career Assessment" desc="Multi-modal readiness & skills gap report card." cost="Paid" onClick={() => navigate("/app/services/assessment")} />
+              <ToolCard icon={DollarSign} title="Salary Insight" desc="Benchmark your market worth with negotiation logic." cost="50 credits" onClick={() => navigate("/app/services/salary-analysis")} />
+              <ToolCard icon={Palette} title="Portfolio Service" desc="Build and share a polished professional portfolio." cost="Paid" onClick={() => navigate("/app/services/portfolio")} />
             </div>
           </section>
+
+          {/* Job-specific tools */}
+          <section className="space-y-2">
+            <h2 className="text-base font-semibold flex items-center gap-2">
+              <Target className="h-4 w-4 text-primary" /> Job-specific tools
+            </h2>
+            <p className="text-xs text-muted-foreground">Win this role — score, answers, interview prep.</p>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              <ToolCard icon={Target} title="Score me vs job" desc="Pick a job and see your match score & gaps." cost="10 credits" onClick={() => setScorePickerOpen(true)} />
+              <ToolCard icon={MessageSquare} title="Application answers" desc="Paste questions, get tailored answers grounded in your profile." cost="10 credits" onClick={() => navigate("/app/tools/application-helper")} />
+              <ToolCard icon={Mic} title="Mock Interview" desc="Practice with high-fidelity AI-driven scenarios." cost="Paid" onClick={() => navigate("/app/services/mock-interview")} />
+            </div>
+          </section>
+
+          {/* Recent results */}
+          {recentRuns.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-base font-semibold flex items-center gap-2">
+                <Clock className="h-4 w-4 text-primary" /> Recent results
+              </h2>
+              <div className="space-y-2">
+                {recentRuns.map((run) => {
+                  const meta = TOOL_META[run.tool_key];
+                  const Icon = meta?.icon || Sparkles;
+                  return (
+                    <Card
+                      key={run.id}
+                      className="cursor-pointer hover:border-primary/40 transition-all"
+                      onClick={() => meta && navigate(`${meta.href}?run=${run.id}`)}
+                    >
+                      <CardContent className="p-3 flex items-center gap-3">
+                        <div className="h-9 w-9 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
+                          <Icon className="h-4 w-4 text-primary" />
+                        </div>
+                        <div className="flex-1 min-w-0">
+                          <p className="text-sm font-medium truncate">{meta?.title || run.tool_key}</p>
+                          <p className="text-[11px] text-muted-foreground">
+                            {formatDistanceToNow(new Date(run.created_at), { addSuffix: true })}
+                            {run.cost_credits > 0 && ` · ${run.cost_credits} cr`}
+                          </p>
+                        </div>
+                        <ArrowRight className="h-4 w-4 text-muted-foreground shrink-0" />
+                      </CardContent>
+                    </Card>
+                  );
+                })}
+              </div>
+            </section>
+          )}
 
           {careerAgents.length > 0 && (
             <section className="space-y-2">
@@ -699,6 +761,8 @@ export default function JobsHub() {
           )}
         </div>
       )}
+
+      <ScoreMeJobPicker open={scorePickerOpen} onOpenChange={setScorePickerOpen} />
 
       <JobPreferencesSheet open={preferencesOpen} onOpenChange={setPreferencesOpen} onSaved={() => refetchRecs()} />
       <CompanyDetailSheet
