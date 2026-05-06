@@ -204,15 +204,6 @@ export default function Gro10xLearn() {
         )}
       </section>
 
-      {/* Coming soon */}
-      <div className={`mx-4 mt-6 ${GRO10X_PANEL} border border-white/10 rounded-2xl p-4`}>
-        <p className="text-sm font-medium flex items-center gap-1.5">
-          <Building2 className="h-4 w-4 text-slate-400" /> Company tracks · soon
-        </p>
-        <p className={`text-[11px] ${GRO10X_MUTED} mt-1`}>
-          Curated multi-course paths (e.g. "Sales onboarding", "New manager") — assignable to your whole team in one tap.
-        </p>
-      </div>
     </div>
   );
 }
