@@ -311,50 +311,20 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
 
       {renderParseSummary()}
 
-      {/* HUD: CATEGORY_LEDGER */}
-      <div className="w-full mt-8 p-8 bg-white border border-slate-100 rounded-[32px] shadow-sm">
-        <Label className="text-[10px] font-bold uppercase tracking-widest text-slate-500 mb-4 flex items-center gap-3">
-          <Briefcase className="h-4 w-4" /> Choose your career track <span className="text-rose-500">*</span>
-        </Label>
-
-        <Select value={selectedCategory} onValueChange={setSelectedCategory} disabled={isParsing}>
-          <SelectTrigger className="h-14 bg-slate-50 border-slate-200 rounded-2xl font-bold focus:ring-blue-500/20 text-slate-900">
-            <SelectValue placeholder="Pick your main focus…" />
-          </SelectTrigger>
-          <SelectContent className="rounded-2xl border-slate-100 shadow-xl">
-            {categories.map((cat) => (
-              <SelectItem key={cat.id} value={cat.id} className="font-bold text-sm py-3 text-slate-700">
-                {cat.name.toUpperCase()}
-              </SelectItem>
-            ))}
-          </SelectContent>
-        </Select>
-        <p className="text-[10px] font-medium text-slate-400 mt-4 leading-relaxed">
-          This sets your AI mentor and tailors the learning paths we recommend.
-        </p>
-      </div>
-
-      {/* FOOTER: ACTION_INGRESS */}
-      <div className="flex flex-col w-full gap-4 mt-12 pt-8 border-t border-slate-200">
+      <div className="flex flex-col w-full gap-3 mt-10 pt-6 border-t border-slate-200">
         <Button
           size="lg"
-          onClick={async () => {
-            if (selectedCategory === "none") return toast.error("Please choose a career track to continue.");
-            setIsSaving(true);
-            await updateTalent({ professionCategoryId: selectedCategory });
-            onContinue();
-          }}
-          disabled={isParsing || isUploading || selectedCategory === "none"}
-          className="w-full h-14 rounded-full bg-blue-500 hover:bg-blue-600 text-white font-bold uppercase tracking-widest text-[10px] shadow-sm gap-3"
+          onClick={onContinue}
+          disabled={isParsing || isUploading}
+          className="w-full h-12 rounded-xl text-base gap-2"
         >
-          {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : null}
           Continue
-          {!isSaving && <ArrowRight className="h-4 w-4" />}
+          <ArrowRight className="h-4 w-4" />
         </Button>
         <Button
           variant="ghost"
           onClick={onSkip}
-          className="text-[10px] font-bold uppercase tracking-widest text-slate-400 hover:text-slate-600 transition-colors h-12 rounded-full"
+          className="text-sm text-slate-500 hover:text-slate-700 h-11 rounded-xl"
           disabled={isParsing || isUploading}
         >
           Skip for now
