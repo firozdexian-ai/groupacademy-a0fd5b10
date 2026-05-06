@@ -124,19 +124,9 @@ export default function JobsHub() {
     hot: false,
   });
 
-  const { data: aiMatchUsageCount = 0 } = useQuery({
-    queryKey: ["service-usage-ai-match", talent?.id],
-    queryFn: async () => {
-      if (!talent?.id) return 0;
-      const { count } = await supabase
-        .from("credit_transactions")
-        .select("*", { count: "exact", head: true })
-        .eq("talent_id", talent.id)
-        .eq("service_type", "SUGGESTED_JOBS");
-      return count || 0;
-    },
-    enabled: !!talent?.id,
-  });
+  const { data: trendingJobs = [], isLoading: loadingTrending } = useTrendingJobs(10);
+  const { data: jobsInField = [] } = useJobsInField(talent?.id, 5);
+  const { data: jobTypeCounts = {} } = useJobTypeCounts(talent?.country);
 
   const { data: locations = [] } = useQuery({
     queryKey: ["all-job-locations"],
