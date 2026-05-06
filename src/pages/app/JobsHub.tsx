@@ -20,6 +20,8 @@ import {
   Target,
   Briefcase,
   Layers,
+  SlidersHorizontal,
+  RefreshCw,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
@@ -32,6 +34,10 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Input } from "@/components/ui/input";
 import { JobPreferencesSheet } from "@/components/jobs/JobPreferencesSheet";
 import { JobCard, type JobCardData } from "@/components/jobs/JobCard";
+import { ProfileCompletenessGate } from "@/components/jobs/ProfileCompletenessGate";
+import { useTrendingJobs } from "@/hooks/useTrendingJobs";
+import { useJobsInField } from "@/hooks/useJobsInField";
+import { useJobTypeCounts } from "@/hooks/useJobTypeCounts";
 import { JOB_COLLECTIONS } from "@/lib/constants/jobTypes";
 import { toast } from "sonner";
 import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
