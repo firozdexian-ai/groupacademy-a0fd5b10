@@ -184,7 +184,7 @@ export function useAuthChat() {
 
           case "collect_name":
             setCollectedData((prev) => ({ ...prev, name: trimmed }));
-            addMessage("assistant", `Identity noted, ${trimmed}. In which country is your current base?`);
+            addMessage("assistant", `Nice to meet you, ${trimmed}. Which country are you in?`);
             setCurrentAction("collect_country");
             break;
 
