@@ -35,6 +35,8 @@ import { DEFAULT_EVENT_TZ } from "@/lib/eventTime";
 import ContentReadinessBadge, { type ModuleStats } from "@/components/dashboard/ContentReadinessBadge";
 import ContentReadinessChecklist from "@/components/dashboard/ContentReadinessChecklist";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
+import { AIActionButton } from "@/components/dashboard/ContentAIActions";
+import { AICoverImageSheet } from "@/components/dashboard/AICoverImageSheet";
 
 export default function ContentEdit() {
   const { id } = useParams();
@@ -48,6 +50,7 @@ export default function ContentEdit() {
   };
   const { toast } = useToast();
   const [loading, setLoading] = useState(true);
+  const [aiCoverOpen, setAiCoverOpen] = useState(false);
   const [saving, setSaving] = useState(false);
   const [copiedLink, setCopiedLink] = useState(false);
   const [moduleStats, setModuleStats] = useState<ModuleStats | null>(null);
@@ -250,11 +253,24 @@ export default function ContentEdit() {
                 </CardTitle>
               </CardHeader>
               <CardContent className="p-6 space-y-6 pt-8">
-                <div data-readiness-field="cover_image"><ImageUpload
-                  value={formData.cover_image_url}
-                  onUpload={(url) => setFormData({ ...formData, cover_image_url: url })}
-                  onRemove={() => setFormData({ ...formData, cover_image_url: "" })}
-                /></div>
+                <div data-readiness-field="cover_image" className="space-y-2">
+                  <ImageUpload
+                    value={formData.cover_image_url}
+                    onUpload={(url) => setFormData({ ...formData, cover_image_url: url })}
+                    onRemove={() => setFormData({ ...formData, cover_image_url: "" })}
+                  />
+                  <div className="flex justify-end">
+                    <Button
+                      type="button"
+                      variant="outline"
+                      size="sm"
+                      onClick={() => setAiCoverOpen(true)}
+                      className="h-7 px-2 text-[10px] font-bold uppercase tracking-widest gap-1 rounded-lg border-primary/30 text-primary hover:bg-primary/10"
+                    >
+                      ✨ AI cover
+                    </Button>
+                  </div>
+                </div>
 
                 <div className="grid gap-6">
                   <div className="space-y-2">
@@ -271,9 +287,16 @@ export default function ContentEdit() {
 
                   <div className="grid grid-cols-2 gap-4">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                        URL Path (Slug) *
-                      </Label>
+                      <div className="flex items-center justify-between">
+                        <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                          URL Path (Slug) *
+                        </Label>
+                        <AIActionButton
+                          mode="slug"
+                          context={{ title: formData.title, profession: formData.content_type }}
+                          onResult={(slug: string) => setFormData((f) => ({ ...f, slug }))}
+                        />
+                      </div>
                       <Input data-readiness-field="slug"
                         value={formData.slug}
                         onChange={(e) =>
@@ -306,9 +329,16 @@ export default function ContentEdit() {
                   </div>
 
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                      Marketplace Description
-                    </Label>
+                    <div className="flex items-center justify-between">
+                      <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
+                        Marketplace Description
+                      </Label>
+                      <AIActionButton
+                        mode="description"
+                        context={{ title: formData.title, description: formData.description, content_type: formData.content_type }}
+                        onResult={(description: string) => setFormData((f) => ({ ...f, description }))}
+                      />
+                    </div>
                     <Textarea data-readiness-field="description"
                       value={formData.description}
                       onChange={(e) => setFormData({ ...formData, description: e.target.value })}
@@ -618,6 +648,12 @@ export default function ContentEdit() {
           </Card>
         )}
       </div>
+      <AICoverImageSheet
+        open={aiCoverOpen}
+        onOpenChange={setAiCoverOpen}
+        context={{ title: formData.title, description: formData.description, content_type: formData.content_type }}
+        onApply={(url) => setFormData((f) => ({ ...f, cover_image_url: url }))}
+      />
     </div>
   );
 }

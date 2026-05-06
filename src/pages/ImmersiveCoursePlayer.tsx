@@ -388,6 +388,7 @@ function StageContentRouter({
           onComplete={() => onComplete(4)}
           isCompleted={isComp}
           professionLineId={content.profession_line_id}
+          moduleId={currentModule?.id}
         />
       );
     case 5:
