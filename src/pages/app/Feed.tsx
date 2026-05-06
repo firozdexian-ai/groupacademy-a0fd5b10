@@ -28,6 +28,11 @@ import { cn } from "@/lib/utils";
 
 export default function Feed() {
   const navigate = useNavigate();
+  const [searchParams] = useSearchParams();
+  useEffect(() => {
+    const legacyId = searchParams.get("post");
+    if (legacyId) navigate(`/app/feed/post/${legacyId}`, { replace: true });
+  }, [searchParams, navigate]);
   const { talent } = useTalent();
 
   // Pull-to-refresh state
