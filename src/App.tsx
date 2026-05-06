@@ -456,6 +456,7 @@ export default function App() {
                     <Route path="learning/courses/:slug" element={<AppCourseDetail />} />
                     <Route path="learning/my-courses" element={<AppMyLearning />} />
                     <Route path="talent-mirror" element={<TalentMirror />} />
+                    <Route path="instructor/review-queue" element={<InstructorReviewQueue />} />
                     <Route path="learning/events" element={<AppEvents />} />
                     <Route path="learning/webinars" element={<AppEvents />} />
                     <Route path="learning/competitions" element={<Competitions />} />
