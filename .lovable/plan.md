@@ -1,3 +1,22 @@
+# Phase 2 — Adaptive Learning Engine
+
+## Progress
+
+| Sub-phase | Scope | Status |
+|---|---|---|
+| 2.1 | Item bank | Done |
+| 2.2 | Adaptive sampling | Done |
+| 2.3 | Skill profile + EWMA trigger | Done |
+| 2.4 | Spaced repetition (a–f) | Done |
+| 2.5 | Scenario evaluation → skill signal (a–e) | Done |
+| 2.6 | Adaptive learner dashboard widget (a–e) | **Done** |
+| 2.7 | Instructor analytics for item bank | Pending |
+| 2.8 | Talent Mirror cross-course rollup | Pending |
+
+**Phase 2 completion: ~75%** (6 of 8 sub-phases shipped — engine ingests quiz + scenario signals and is now visible to learners on My Hub and inside the course player).
+
+---
+
 # Sub-phase 2.6 — Adaptive Learner Dashboard Widget
 
 ## Goal
