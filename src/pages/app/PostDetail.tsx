@@ -9,6 +9,8 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { PostCard, type FeedPost } from "@/components/feed/PostCard";
 import { CommentList } from "@/components/feed/CommentList";
+import { PostInsightsAccordion } from "@/components/feed/PostInsightsAccordion";
+import { useTalent } from "@/hooks/useTalent";
 
 function mapRowToPost(row: any): FeedPost {
   return {
