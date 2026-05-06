@@ -192,9 +192,39 @@ export default function JobsHub() {
 
   const filteredCompanies = useMemo(() => {
     const q = companySearch.trim().toLowerCase();
-    const list = q ? allCompanies.filter((c) => c.name.toLowerCase().includes(q)) : allCompanies;
-    return list.slice(0, 24);
-  }, [allCompanies, companySearch]);
+    let list = companiesSignal;
+    if (q) list = list.filter((c) => c.company_name.toLowerCase().includes(q));
+    if (hiringNowOnly) list = list.filter((c) => c.jobs_last_14d > 0);
+    return list.slice(0, 60);
+  }, [companiesSignal, companySearch, hiringNowOnly]);
+
+  const followedRail = useMemo(
+    () => companiesSignal.filter((c) => followed.includes(c.company_name)),
+    [companiesSignal, followed],
+  );
+
+  const sortedCountries = useMemo(() => {
+    const list = [...countriesSignal];
+    const userCountry = talent?.country;
+    if (userCountry) {
+      const idx = list.findIndex((g) => g.country.toLowerCase() === userCountry.toLowerCase());
+      if (idx > 0) {
+        const [pinned] = list.splice(idx, 1);
+        list.unshift(pinned);
+      }
+    }
+    return list;
+  }, [countriesSignal, talent?.country]);
+
+  const userCountryRow = useMemo(
+    () => (talent?.country ? sortedCountries.find((c) => c.country.toLowerCase() === talent.country!.toLowerCase()) : null),
+    [sortedCountries, talent?.country],
+  );
+
+  const abroadCountries = useMemo(
+    () => sortedCountries.filter((c) => !talent?.country || c.country.toLowerCase() !== talent.country.toLowerCase()).slice(0, 5),
+    [sortedCountries, talent?.country],
+  );
 
   const visibleRecommendations = useMemo(
     () =>
