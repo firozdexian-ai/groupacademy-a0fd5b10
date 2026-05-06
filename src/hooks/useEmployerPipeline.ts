@@ -25,6 +25,8 @@ export interface PipelineApplication {
   last_status_at: string | null;
   cv_url: string | null;
   cover_letter: string | null;
+  sourced?: boolean | null;
+  sourced_relationship_id?: string | null;
 }
 
 export function useEmployerPipeline(opts: {
@@ -40,7 +42,7 @@ export function useEmployerPipeline(opts: {
     let q = supabase
       .from("job_applications")
       .select(
-        "id, job_id, talent_id, ai_match_score, application_status, created_at, last_status_at, cv_url, cover_letter, jobs!inner(title, company_id, company_name), talents(full_name, headline)",
+        "id, job_id, talent_id, ai_match_score, application_status, created_at, last_status_at, cv_url, cover_letter, sourced, sourced_relationship_id, jobs!inner(title, company_id, company_name), talents(full_name, headline)",
       )
       .order("last_status_at", { ascending: false })
       .limit(500);
@@ -64,6 +66,8 @@ export function useEmployerPipeline(opts: {
       last_status_at: r.last_status_at,
       cv_url: r.cv_url,
       cover_letter: r.cover_letter,
+      sourced: r.sourced,
+      sourced_relationship_id: r.sourced_relationship_id,
     }));
     setApps(flat);
 

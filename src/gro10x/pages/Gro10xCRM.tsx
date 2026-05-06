@@ -13,6 +13,9 @@ import { useCompanyOfferings } from "../hooks/useCompanyOfferings";
 import { GRO10X_MUTED } from "../lib/tokens";
 import { Plus, X, ChevronRight } from "lucide-react";
 import { toast } from "sonner";
+import { TalentPipelinePanel } from "../components/TalentPipelinePanel";
+
+type CrmTab = "sales" | "talent";
 
 type Stage = "new" | "contacted" | "qualified" | "proposal" | "won" | "lost";
 
@@ -49,6 +52,7 @@ export default function Gro10xCRM() {
   const [activeStage, setActiveStage] = useState<Stage>("new");
   const [showNew, setShowNew] = useState(false);
   const [openLead, setOpenLead] = useState<Lead | null>(null);
+  const [crmTab, setCrmTab] = useState<CrmTab>("sales");
 
   const leadsQuery = useQuery({
     queryKey: ["company-leads", companyId],
@@ -126,16 +130,36 @@ export default function Gro10xCRM() {
         <div className="px-4 pt-3 pb-2 flex items-center justify-between">
           <div>
             <h1 className="text-xl font-semibold tracking-tight">CRM</h1>
-            <p className={`text-xs ${GRO10X_MUTED}`}>{leads.length} leads in pipeline</p>
+            <p className={`text-xs ${GRO10X_MUTED}`}>
+              {crmTab === "sales" ? `${leads.length} leads in pipeline` : "Talent relationships"}
+            </p>
           </div>
-          <button
-            onClick={() => setShowNew(true)}
-            className="rounded-full bg-[#33E1E4] text-[#06121A] p-2"
-            aria-label="Add lead"
-          >
-            <Plus className="h-4 w-4" />
-          </button>
+          {crmTab === "sales" && (
+            <button
+              onClick={() => setShowNew(true)}
+              className="rounded-full bg-[#33E1E4] text-[#06121A] p-2"
+              aria-label="Add lead"
+            >
+              <Plus className="h-4 w-4" />
+            </button>
+          )}
         </div>
+        <div className="px-4 pb-2 flex gap-1.5">
+          {(["sales", "talent"] as CrmTab[]).map((t) => (
+            <button
+              key={t}
+              onClick={() => setCrmTab(t)}
+              className={`flex-1 px-3 py-1.5 rounded-full text-xs font-medium border ${
+                crmTab === t
+                  ? "bg-[#33E1E4] text-[#06121A] border-[#33E1E4]"
+                  : "bg-white/5 border-white/10 text-slate-300"
+              }`}
+            >
+              {t === "sales" ? "Sales Leads" : "Talent Pipeline"}
+            </button>
+          ))}
+        </div>
+        {crmTab === "sales" && (
         <div className="px-4 pb-2">
           <div className="grid grid-cols-3 gap-1.5 sm:flex sm:flex-wrap">
             {STAGES.map((s) => {
@@ -158,8 +182,14 @@ export default function Gro10xCRM() {
             })}
           </div>
         </div>
+        )}
       </header>
 
+      {crmTab === "talent" ? (
+        <div className="px-4 py-3">
+          <TalentPipelinePanel companyId={companyId} />
+        </div>
+      ) : (
       <div className="px-4 py-3 space-y-2">
         {filtered.length === 0 && (
           <p className="text-center text-xs text-slate-500 py-12">No leads in {activeStage}.</p>
@@ -185,6 +215,7 @@ export default function Gro10xCRM() {
           </button>
         ))}
       </div>
+      )}
 
       {showNew && (
         <NewLeadSheet

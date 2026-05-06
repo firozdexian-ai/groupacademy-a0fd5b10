@@ -6,8 +6,9 @@ import Gro10xJobsList from "./work/Gro10xJobsList";
 import Gro10xShortlist from "./work/Gro10xShortlist";
 import Gro10xTalents from "./work/Gro10xTalents";
 import Gro10xCRM from "./Gro10xCRM";
+import Gro10xSourcing from "./sourcing/Gro10xSourcing";
 
-type Tab = "hiring" | "talents" | "crm";
+type Tab = "hiring" | "talents" | "sourcing" | "crm";
 
 /**
  * Gro10x Activities hub — three tabs covering hiring, talents the company
@@ -42,6 +43,7 @@ export default function Gro10xWork() {
         <div className="px-4 pb-2 flex gap-2 items-center overflow-x-auto">
           <TabBtn active={tab === "hiring"}   onClick={() => setTab("hiring")}>Hiring</TabBtn>
           <TabBtn active={tab === "talents"}  onClick={() => setTab("talents")}>Talents</TabBtn>
+          <TabBtn active={tab === "sourcing"} onClick={() => setTab("sourcing")}>Sourcing</TabBtn>
           <TabBtn active={tab === "crm"}      onClick={() => setTab("crm")}>CRM</TabBtn>
         </div>
       </header>
@@ -56,6 +58,7 @@ export default function Gro10xWork() {
         </>
       )}
       {tab === "talents" && <Gro10xTalents />}
+      {tab === "sourcing" && <Gro10xSourcing />}
       {tab === "crm" && <Gro10xCRM />}
     </div>
   );

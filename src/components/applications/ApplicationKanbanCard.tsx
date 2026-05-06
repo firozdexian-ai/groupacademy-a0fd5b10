@@ -31,6 +31,11 @@ export function ApplicationKanbanCard({ app, onClick }: Props) {
             {app.ai_match_score}%
           </Badge>
         )}
+        {app.sourced && (
+          <Badge className="shrink-0 text-[10px] bg-cyan-500/20 text-cyan-300 border-cyan-500/30">
+            Sourced
+          </Badge>
+        )}
       </div>
       <div className="flex items-center justify-between text-[11px] text-muted-foreground">
         <span className="truncate">{app.job_title}</span>
