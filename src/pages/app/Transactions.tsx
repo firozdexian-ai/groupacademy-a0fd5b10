@@ -25,6 +25,7 @@ import {
   Zap,
   TrendingUp,
   History,
+  Flame,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
