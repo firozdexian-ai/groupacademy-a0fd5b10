@@ -430,6 +430,7 @@ function StageContentRouter({
     case 6:
       return (
         <ProgressStage
+          moduleId={currentModuleId ?? undefined}
           moduleName={currentModule?.title}
           moduleIndex={moduleIndex}
           totalModules={totalModules}
