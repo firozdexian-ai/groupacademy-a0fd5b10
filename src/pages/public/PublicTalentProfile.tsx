@@ -5,7 +5,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Button } from "@/components/ui/button";
-import { BadgeCheck, Award, Trophy, ExternalLink, Linkedin, Globe, Lock, ShieldCheck, MapPin, ArrowRight } from "lucide-react";
+import { BadgeCheck, Award, Trophy, ExternalLink, Linkedin, Globe, Lock, ShieldCheck, MapPin, ArrowRight, Layers, Activity } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 const LEVEL_META: Record<string, { icon: any; label: string; tone: string }> = {
@@ -67,13 +67,27 @@ export default function PublicTalentProfile() {
       jobTitle: profile.profession,
       address: profile.country ? { "@type": "PostalAddress", addressCountry: profile.country } : undefined,
       sameAs: [profile.linkedin_url, profile.portfolio_url].filter(Boolean),
-      hasCredential: (profile.credentials ?? []).map((c: any) => ({
-        "@type": "EducationalOccupationalCredential",
-        name: c.topic_tag.replace(/_/g, " "),
-        credentialCategory: c.level,
-        recognizedBy: { "@type": "Organization", name: "Group Academy" },
-        url: `${window.location.origin}/verify/skill/${c.verify_code}`,
-      })),
+      hasCredential: [
+        ...(profile.credentials ?? []).map((c: any) => ({
+          "@type": "EducationalOccupationalCredential",
+          name: c.topic_tag.replace(/_/g, " "),
+          credentialCategory: c.level,
+          recognizedBy: { "@type": "Organization", name: "Group Academy" },
+          url: `${window.location.origin}/verify/skill/${c.verify_code}`,
+        })),
+        ...(profile.tracks_completed ?? []).map((t: any) => ({
+          "@type": "EducationalOccupationalCredential",
+          name: t.track_title,
+          credentialCategory: "track",
+          recognizedBy: {
+            "@type": "Organization",
+            name: t.sponsor_company_name ?? "Group Academy",
+          },
+          url: t.certificate_code
+            ? `${window.location.origin}/verify/${t.certificate_code}`
+            : undefined,
+        })),
+      ],
     });
     document.head.appendChild(ld);
 
@@ -153,8 +167,62 @@ export default function PublicTalentProfile() {
               </Link>
             </Button>
           </div>
+          {/* Recency chip */}
+          {Number(profile.learning_recency_score ?? 0) >= 0.7 && (
+            <div className="pt-1">
+              <span className="inline-flex items-center gap-1 px-2 py-0.5 rounded-full bg-success-green/10 border border-success-green/30 text-success-green text-[11px]">
+                <Activity className="h-3 w-3" /> Active learner
+              </span>
+            </div>
+          )}
         </CardContent>
       </Card>
+
+      {/* Completed Tracks */}
+      {profile.show_credentials && profile.tracks_completed?.length > 0 && (
+        <Card className="rounded-2xl border-border/60">
+          <CardContent className="p-4 space-y-3">
+            <h2 className="text-sm font-bold flex items-center gap-2">
+              <Layers className="h-4 w-4 text-[#33E1E4]" />
+              Completed tracks ({profile.tracks_completed.length})
+            </h2>
+            <ul className="space-y-2">
+              {profile.tracks_completed.map((t: any, i: number) => (
+                <li
+                  key={i}
+                  className="flex items-center gap-3 rounded-xl border border-border/60 p-2"
+                >
+                  {t.sponsor_company_logo ? (
+                    <img
+                      src={t.sponsor_company_logo}
+                      alt=""
+                      className="h-8 w-8 rounded object-cover"
+                    />
+                  ) : (
+                    <Layers className="h-5 w-5 text-muted-foreground" />
+                  )}
+                  <div className="min-w-0 flex-1">
+                    <p className="text-sm font-semibold truncate">{t.track_title}</p>
+                    {t.sponsor_company_name && (
+                      <p className="text-[11px] text-muted-foreground truncate">
+                        Sponsored by {t.sponsor_company_name}
+                      </p>
+                    )}
+                  </div>
+                  {t.certificate_code && (
+                    <Link
+                      to={`/verify/${t.certificate_code}`}
+                      className="text-[11px] font-semibold inline-flex items-center gap-0.5 text-primary hover:underline"
+                    >
+                      Verify <ExternalLink className="h-3 w-3" />
+                    </Link>
+                  )}
+                </li>
+              ))}
+            </ul>
+          </CardContent>
+        </Card>
+      )}
 
       {/* Verified Skills */}
       {profile.show_credentials && profile.credentials?.length > 0 && (
