@@ -27,7 +27,7 @@ export function useTutorMasteryContext(opts: {
         _content_id: opts.contentId || null,
       });
       if (error) return null;
-      return data as TutorMasteryContext;
+      return data as unknown as TutorMasteryContext;
     },
     staleTime: 60_000,
   });
