@@ -90,6 +90,16 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
       default: m.AdminApplicationsPipeline,
     })),
   ),
+  "sourcing-admin": React.lazy(() =>
+    import("@/components/dashboard/AdminTalentSourcing").then((m) => ({
+      default: m.AdminTalentSourcing,
+    })),
+  ),
+  "sourcing-pipeline": React.lazy(() =>
+    import("@/components/dashboard/AdminSourcingPipeline").then((m) => ({
+      default: m.AdminSourcingPipeline,
+    })),
+  ),
   companies: React.lazy(() =>
     import("@/components/dashboard/CompaniesManager").then((m) => ({ default: m.CompaniesManager })),
   ),
