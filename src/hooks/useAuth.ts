@@ -189,11 +189,11 @@ export const useAuth = (): AuthState => {
       } catch {}
 
       toast.dismiss();
-      toast.success("ACCOUNT_SYNC_COMPLETE");
+      toast.success("Account created.");
       return true;
     } catch (err: any) {
       toast.dismiss();
-      toast.error(err.message || "SIGN_UP_FAULT");
+      toast.error(err.message || "Couldn't create your account. Please try again.");
       throw err;
     }
   };
