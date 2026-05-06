@@ -446,20 +446,6 @@ export default function ModuleResourcesManager() {
                                   >
                                     {resource.resource_type.replace("_", " ")}
                                   </Badge>
-                      <div className="space-y-5">
-                        {stageResources.map((resource) => {
-                          const key = resource._key!;
-                          const state = saveStates[key] || { status: "saved" };
-                          return (
-                            <Card key={key} className="rounded-2xl border-border/40 bg-background overflow-hidden">
-                              <CardHeader className="py-3 px-5 border-b border-border/20 flex flex-row items-center justify-between bg-muted/10">
-                                <div className="flex items-center gap-3 flex-wrap">
-                                  <Badge
-                                    variant="outline"
-                                    className="h-6 rounded-full border-primary/20 bg-primary/5 text-primary font-black text-[9px] uppercase"
-                                  >
-                                    {resource.resource_type.replace("_", " ")}
-                                  </Badge>
                                   {state.status === "saved" && (
                                     <span className="flex items-center gap-1 text-emerald-600 text-[9px] font-black uppercase tracking-widest">
                                       <CheckCircle2 className="h-3 w-3" /> Saved
