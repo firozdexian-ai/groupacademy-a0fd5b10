@@ -33,6 +33,7 @@ import { cn } from "@/lib/utils";
 import { EventDateTimeField } from "@/components/admin/EventDateTimeField";
 import { DEFAULT_EVENT_TZ } from "@/lib/eventTime";
 import ContentReadinessBadge, { type ModuleStats } from "@/components/dashboard/ContentReadinessBadge";
+import ContentReadinessChecklist from "@/components/dashboard/ContentReadinessChecklist";
 import { AlertTriangle, CheckCircle2 } from "lucide-react";
 
 export default function ContentEdit() {
@@ -52,6 +53,7 @@ export default function ContentEdit() {
   const [moduleStats, setModuleStats] = useState<ModuleStats | null>(null);
   const [isReady, setIsReady] = useState<boolean | null>(null);
   const [moduleAudit, setModuleAudit] = useState<Array<{ id: string; title: string; reason: string }>>([]);
+  const [sessionCount, setSessionCount] = useState(0);
 
   const [formData, setFormData] = useState({
     title: "",
