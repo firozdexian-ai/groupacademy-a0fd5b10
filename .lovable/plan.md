@@ -92,3 +92,15 @@ Step 8 → Memory entry + Phase 5.2 checkpoint in .lovable/plan.md
 2. **Anonymization** of bidders to posters — keep anonymous until shortlist (recommended for trust), or always reveal?
 3. **Cap on matches/talent/day** — default to 5 hot pushes + 1 daily digest. OK?
 4. **For-you tab** — make it the default landing tab on `/app/gigs`, or keep "Tasks" default and add a banner?
+
+---
+# Phase 5.2 — Shipped
+
+- 5.1 cleanup: `acceptance_criteria` + `skills` parity on `gigs`/`marketplace_gigs`, `gigs_unified_view` (security_invoker), `ai-gig-pricer` edge.
+- Schema: `gig_matches`, `talent_availability`, `talent_trust_score`, `gig_match_digests`; `marketplace_bids` extended with AI fields.
+- RPCs: `match_talents_to_gig`, `refresh_gig_matches`, `match_gigs_for_talent`, `record_match_event`, `shortlist_match`, `recompute_talent_trust_score`.
+- Edges: `ai-gig-pricer`, `ai-bid-coach`, `ai-match-explainer`, `cron-gig-matchmaker`, `cron-gig-digest` (every 15 min + daily 03:00 UTC).
+- Talent UI: `/app/gigs?tab=for-you` default, `AvailabilityWidget`, `GigForYouTab`, `BidCoachDialog` on marketplace detail.
+- Poster UI: `RecommendedBiddersPanel` (top 5 + Shortlist) on owner's marketplace gig.
+- Admin: Gig Ops → Matchmaker subtab (funnel + avg score + digest counter).
+- Memory: `mem://product/gig-matchmaker-and-bid-coach`.
