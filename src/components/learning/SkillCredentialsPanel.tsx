@@ -87,6 +87,26 @@ export function SkillCredentialsPanel({ compact = false, limit }: { compact?: bo
             See all {data.length} credentials →
           </Link>
         )}
+        {pub?.public_profile_enabled && pub.public_handle ? (
+          <button
+            type="button"
+            onClick={() => {
+              const url = `${window.location.origin}/t/${pub.public_handle}`;
+              navigator.clipboard.writeText(url);
+              toast({ title: "Public profile link copied" });
+            }}
+            className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-primary hover:underline pt-1"
+          >
+            <Share2 className="h-3 w-3" /> Share public profile
+          </button>
+        ) : (
+          <Link
+            to="/app/profile"
+            className="w-full inline-flex items-center justify-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-primary pt-1"
+          >
+            <Lock className="h-3 w-3" /> Make your skills public →
+          </Link>
+        )}
       </CardContent>
     </Card>
   );
