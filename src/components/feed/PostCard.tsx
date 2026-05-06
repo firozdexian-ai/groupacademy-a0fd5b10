@@ -218,5 +218,6 @@ export function PostCard({ post }: PostCardProps) {
         />
       </CardContent>
     </Card>
+    </div>
   );
 }
