@@ -1,102 +1,85 @@
-## Sub-phase 3.5 — AI Tutor with Mastery Context
+# Sub-phase 3.6 — Authoring Feedback Loop
 
-Make the existing AI instructor chat (`ai-instructor-chat` + `<AIChatPanel>`) aware of the learner's verified mastery, so it teaches to gaps and references credentials/scenarios instead of giving generic explanations.
+Close the loop from learner data → course authors. Today `instructor-item-analytics` exposes per-item p-values, rubric averages, and `needs_review` flags inside `<ItemBankAnalyticsPanel>`, but authors only see them if they manually open the analytics drawer. 3.6 makes those signals **push** to authors and surfaces them inline in the Module Manager so weak items get fixed.
 
-### Goal
-When a talent opens the chat (general, course, module, or scenario context), the tutor:
-- Knows their **weakest topics** in the active module/course (from `talent_skill_profile`).
-- Knows their **strong topics + earned credentials** (from `skill_credentials`).
-- Suggests a concrete next action: review weak topic → quiz/scenario.
-- References their last scenario evaluation when relevant.
+## Goal
 
-### Scope
+When learners struggle (low p-value items, low-rubric scenarios, weak topics), the platform:
+- **Pushes a weekly digest** to course owners + admins listing the top items to revise.
+- **Annotates the Module Manager** with inline "needs review" badges so the next click fixes the problem.
+- **One-click action**: jump from a flagged item to its editor in the existing pool dialog.
 
-a. **Mastery context RPC**
-   - New `get_tutor_mastery_context(_talent_id, _module_id, _content_id)` RPC returning JSON:
-     - `weak_topics` (mastery < 0.7, top 5 by lowest mastery)
-     - `strong_topics` (mastery >= 0.8, top 5)
-     - `due_for_review_count`
-     - `credentials` (topic_tag, level)
-     - `last_scenario` (topic_tag + score + when, optional)
-   - Scoped: if `_module_id` provided → only that module; else course; else cross-course.
+## Scope
 
-b. **Edge function upgrade — `ai-instructor-chat`**
-   - Accept new optional `talentId`, `moduleId`, `contentId` in body (resolve `talentId` server-side from auth as fallback).
-   - Call the new RPC with service-role client and inject a "LEARNER MASTERY SNAPSHOT" block into `systemPrompt` after the curriculum KB:
-     ```
-     LEARNER MASTERY SNAPSHOT
-     - Weak topics: [...]
-     - Strong topics: [...]
-     - Earned credentials: [...]
-     - Items due for spaced review: N
-     - Last scenario: <topic> scored <x>/100
-     Coach the learner toward their weak topics first; reference their wins; if they ask "what should I study", recommend the weakest topic and link to /app/talent-mirror.
-     ```
-   - Cap snapshot to ~1.5KB; gracefully no-op if no profile exists.
+### a. Digest aggregator RPC + edge function
+- New RPC `get_authoring_review_digest(_module_id, _days)` reusing the same flagging logic from `instructor-item-analytics` but as a SQL function so it can run from cron and the edge function. Returns:
+  - `module_id`, `module_title`, `content_id`, `content_title`, `owner_id` (course `instructor_id` if set, else first admin)
+  - `summary`: counts of flagged quiz items, flagged scenarios, weak topics
+  - `top_items`: up to 10 worst (p-value asc / rubric asc) with id, title, flags, topic_tags
+  - `weak_topics`: up to 5 with avg_p_value and learner_mastery_mean
+- New edge function `authoring-review-digest` (admin/cron-callable):
+  - Modes: `mode="single"` (one module → returns JSON), `mode="course"` (loop a course's modules), `mode="weekly"` (all active courses, send emails).
+  - In `weekly` mode, iterates owners, composes one HTML email per owner via the existing native email queue, and writes a row to a new `authoring_digest_log` table for de-dup + admin visibility.
 
-c. **AIChatPanel wiring**
-   - Pass `moduleId`/`contentId` through `<AIChatPanel>` props (already supports `contextId` — formalize naming) and forward to edge function.
-   - Update `DiscussStage` and any course-context usage to pass the right IDs.
-   - Add a small "Tutor knows your progress" hint chip on first open of the chat (one-time per session, dismissible).
+### b. Database
+- Migration:
+  - `authoring_digest_log (id, owner_id, module_ids[], items_flagged int, period_start, period_end, sent_at, channel)` with RLS: admins read all, owner reads own.
+  - Add `instructor_id uuid` to `courses` if not present (nullable; falls back to admin); skip if already there.
+  - SQL function `get_authoring_review_digest` (`security definer`, `set search_path = public`) mirroring the edge aggregator's flag rules so both layers agree.
 
-d. **Smart starter prompts**
-   - When mastery context is available, render 2 dynamic suggestion chips above the input:
-     - "Help me with: <weakest topic>"
-     - "Quick review: <due count> items"
-   - Tap = pre-fills the message and sends.
+### c. Inline nudges in Module Manager
+- New hook `useModuleReviewBadge(moduleId)` calling `get_authoring_review_digest` (single module) and caching for 5 min.
+- Update `src/pages/ModuleManagement.tsx`:
+  - Next to each module row: a small amber "N items need review" badge (hidden when 0). Click opens the existing `ItemBankAnalyticsPanel` already wired at `analyticsModuleId`.
+  - Inside the analytics panel, each flagged item gets a new "Edit item" button that opens the existing pool editor for that quiz/scenario id (re-use existing dialogs; no new editor surface).
 
-e. **Telemetry hook (lightweight)**
-   - Log `tutor_opened` and `tutor_starter_used` with module/content into existing analytics table (re-use the pattern from 3.4) for 3.8 trend lines.
+### d. Author-facing digest page
+- New route `/app/instructor/review-queue` (admin + course-owner gated) showing:
+  - This week's digest (calls `authoring-review-digest` with `mode=course` for each course owned)
+  - Per-module table with flagged items, last digest sent, "Mark fixed" (optional, soft — just records `times_served=0` reset is out of scope; for v1 it links to the editor).
+- Add link in `ModuleManagement` header ("Open review queue").
 
----
+### e. Weekly cron
+- pg_cron job (Sunday 03:00 UTC) → `select net.http_post(...)` to `authoring-review-digest` with `{ mode: "weekly" }` using the service role key from `vault`. Skip if `vault` not configured — leave commented with TODO and a manual "Send weekly digests now" button on the admin Learn → Dean page.
 
-### Data flow
+### f. Telemetry
+- Log `authoring_digest_sent` and `authoring_item_opened_from_digest` to existing analytics table for 3.8.
+
+## Out of scope
+- AI rewrite suggestions for flagged items (Phase 3.7).
+- Author-side comparative benchmarking across courses (Phase 3.8 trends).
+- Mobile push notifications (only email + in-app badges for v1).
+
+## Data flow
 
 ```text
-AIChatPanel ──(talentId, moduleId, contentId, messages)──► ai-instructor-chat
-                                                             │
-                                            get_tutor_mastery_context (RPC)
-                                                             │
-                                System prompt = instructor + KB + MASTERY SNAPSHOT
-                                                             │
-                                                         streamed AI reply
+pg_cron (weekly) ──► authoring-review-digest (mode=weekly)
+                        │
+                ┌───────┴────────┐
+                ▼                ▼
+      get_authoring_review   notify.groupacademy.online
+        _digest (RPC)             (one email per owner)
+                                       │
+                         authoring_digest_log row written
+                                       │
+ModuleManagement ──► useModuleReviewBadge ──► same RPC (single module) ──► amber badge + click → ItemBankAnalyticsPanel
 ```
 
----
-
-### Out of scope (deferred)
-- Persisting tutor chat history (still ephemeral per session — a separate phase).
-- Tool-calling (e.g. tutor enrolling user in next module) — Phase 4.
-- Multilingual coaching tone — Phase 3.8 ties into trend lines.
-
----
-
-### Files to create / edit
+## Files to create / edit
 
 **New**
-- `supabase/migrations/...` — `get_tutor_mastery_context` RPC.
-- `src/hooks/useTutorMasteryContext.ts` — fetches snapshot for chip rendering.
-- `mem://product/ai-tutor-mastery-context`
+- `supabase/migrations/...` — `authoring_digest_log` table + RLS, `get_authoring_review_digest` SQL function, optional `courses.instructor_id`, optional pg_cron job.
+- `supabase/functions/authoring-review-digest/index.ts` — single/course/weekly modes + email send.
+- `src/hooks/useModuleReviewBadge.ts`
+- `src/pages/app/InstructorReviewQueue.tsx` — owner/admin review page.
+- `mem://product/authoring-feedback-loop`
 
 **Edit**
-- `supabase/functions/ai-instructor-chat/index.ts` — RPC call + snapshot injection, accept new IDs.
-- `src/components/ai-instructor/AIChatPanel.tsx` — forward IDs, render starter chips + hint.
-- `src/components/player/stages/DiscussStage.tsx` — pass moduleId/contentId.
-- `src/components/learning/MyCoursesTab.tsx` (if it embeds chat) — pass IDs.
+- `src/pages/ModuleManagement.tsx` — inline badge, "Edit item" wiring, header link.
+- `src/components/learning/ItemBankAnalyticsPanel.tsx` — add per-item "Edit" button that opens existing pool editors.
+- `src/App.tsx` — register `/app/instructor/review-queue` route.
 - `.lovable/plan.md`, `mem://index.md`
 
----
-
-### Approval options
-- **continue with 3.5** — ship a–e together (recommended).
-- **continue with 3.5.a+b** — backend only (RPC + edge function), starter chips in a follow-up.
----
-
-## 3.5 ship notes
-
-- DB: `get_tutor_mastery_context(_talent_id, _module_id, _content_id)` returns weak/strong topics, due-for-review count, credentials, last scenario.
-- Edge `ai-instructor-chat` resolves talentId from auth and appends a LEARNER MASTERY SNAPSHOT block to the system prompt with a "coach to weakest topic, reference wins, link /app/talent-mirror" directive.
-- `<AIChatPanel>` adds optional `moduleId`/`contentId` props (auto-derived from contextType/contextId), renders dynamic starter chips and a one-time hint on empty state via new `useTutorMasteryContext` hook.
-- Phase 3 progress: ~62% (5 of 8).
-
-**Up next:** 3.6 Authoring Feedback Loop. Reply **continue with 3.6**.
+## Approval options
+- **continue with 3.6** — ship a–f together (recommended).
+- **continue with 3.6.a+c** — backend digest + inline badges only; defer dedicated review-queue page and weekly cron.
