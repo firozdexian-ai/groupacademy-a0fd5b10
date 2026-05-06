@@ -30,6 +30,9 @@ import {
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { BidCoachDialog } from "@/components/gigs/BidCoachDialog";
+import { RecommendedBiddersPanel } from "@/components/gigs/RecommendedBiddersPanel";
+import { Sparkles } from "lucide-react";
 
 /**
  * Platform Logic: Mission List & Proposal Connection
