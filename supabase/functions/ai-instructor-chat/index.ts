@@ -36,7 +36,14 @@ serve(async (req) => {
     } = await supabaseAuth.auth.getUser();
     if (authError || !user) return new Response("Unauthorized", { status: 401, headers: corsHeaders });
 
-    const { messages, professionLineId, contextType, contextId } = await req.json();
+    const { messages, professionLineId, contextType, contextId, moduleId, contentId } = await req.json();
+
+    // Resolve talentId for mastery context
+    let talentId: string | null = null;
+    try {
+      const { data: t } = await supabaseAdmin.from("talents").select("id").eq("user_id", user.id).maybeSingle();
+      talentId = t?.id || null;
+    } catch (_) {}
 
     // PHASE: Hierarchical_Context_Hydration
     let systemPrompt = "You are a professional academic coach at GroUp Academy.";
