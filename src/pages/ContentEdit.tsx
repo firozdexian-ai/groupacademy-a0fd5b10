@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CourseSessionsManager from "@/components/dashboard/CourseSessionsManager";
+import CoursePerformanceDashboard from "@/components/dashboard/CoursePerformanceDashboard";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -229,7 +230,12 @@ export default function ContentEdit() {
             {["live_webinar", "batch_class", "offline_seminar"].includes(formData.content_type) && (
               <TabsTrigger value="sessions" className="rounded-xl text-[10px] font-black uppercase tracking-widest">Sessions</TabsTrigger>
             )}
+            <TabsTrigger value="performance" className="rounded-xl text-[10px] font-black uppercase tracking-widest">Performance</TabsTrigger>
           </TabsList>
+
+          <TabsContent value="performance" className="mt-0">
+            {id && <CoursePerformanceDashboard contentId={id} contentTitle={formData.title} />}
+          </TabsContent>
 
           <TabsContent value="sessions" className="mt-0">
             {id && (
