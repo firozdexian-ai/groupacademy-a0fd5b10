@@ -439,7 +439,7 @@ export default function App() {
                     <Route path="jobs" element={<JobsHub />} />
                     <Route path="learning" element={<LearningHub />} />
                     <Route path="learning/review" element={<LearningReview />} />
-                    <Route path="services" element={<Navigate to="/app/agents" replace />} />
+                    <Route path="services" element={<Navigate to="/app/jobs?tab=tools" replace />} />
                     <Route path="abroad" element={<CareerAbroad />} />
                     <Route path="agents" element={<AIAgents />} />
                     <Route path="my-agents" element={<MyAgents />} />
