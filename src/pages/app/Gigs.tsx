@@ -14,6 +14,8 @@ import { Textarea } from "@/components/ui/textarea";
 import { GigCard } from "@/components/gigs/GigCard";
 import { MySubmissions } from "@/components/gigs/MySubmissions";
 import { GigUploader, type UploadedFile } from "@/components/gigs/GigUploader";
+import { GigForYouTab } from "@/components/gigs/GigForYouTab";
+import { AvailabilityWidget } from "@/components/gigs/AvailabilityWidget";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Search,
@@ -49,7 +51,7 @@ export default function Gigs() {
   const queryClient = useQueryClient();
 
   // 4-tab layout with back-compat for older links
-  const rawTab = searchParams.get("tab") || "tasks";
+  const rawTab = searchParams.get("tab") || "for-you";
   const activeTab = ["work", "activity"].includes(rawTab)
     ? "work"
     : ["projects", "course", "courses", "course-projects"].includes(rawTab)
@@ -58,7 +60,9 @@ export default function Gigs() {
     ? "client"
     : ["earn", "tasks", "quick"].includes(rawTab)
     ? "tasks"
-    : "tasks";
+    : ["for-you", "foryou", "matches"].includes(rawTab)
+    ? "for-you"
+    : "for-you";
 
   const [search, setSearch] = useState("");
   const [verificationStatus, setVerificationStatus] = useState<string>("unverified");
@@ -258,7 +262,12 @@ export default function Gigs() {
 
       {/* 4-tab strip */}
       <Tabs value={activeTab} onValueChange={handleTabChange} className="w-full">
-        <TabsList className="grid w-full grid-cols-4 h-11 bg-muted/40 p-1 rounded-xl border border-border/40">
+        <TabsList className="grid w-full grid-cols-5 h-11 bg-muted/40 p-1 rounded-xl border border-border/40">
+          <TabsTrigger value="for-you" className="rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1 data-[state=active]:bg-background data-[state=active]:shadow-sm">
+            <Sparkles className="h-3.5 w-3.5" />
+            <span className="hidden sm:inline">For You</span>
+            <span className="sm:hidden">You</span>
+          </TabsTrigger>
           <TabsTrigger
             value="tasks"
             className="rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1 data-[state=active]:bg-background data-[state=active]:shadow-sm"
@@ -272,7 +281,7 @@ export default function Gigs() {
             className="rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1 data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
             <BookOpen className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Course Projects</span>
+            <span className="hidden sm:inline">Course</span>
             <span className="sm:hidden">Course</span>
           </TabsTrigger>
           <TabsTrigger
@@ -280,7 +289,7 @@ export default function Gigs() {
             className="rounded-lg text-[11px] font-bold uppercase tracking-wide gap-1 data-[state=active]:bg-background data-[state=active]:shadow-sm"
           >
             <Briefcase className="h-3.5 w-3.5" />
-            <span className="hidden sm:inline">Client Projects</span>
+            <span className="hidden sm:inline">Client</span>
             <span className="sm:hidden">Client</span>
           </TabsTrigger>
           <TabsTrigger
@@ -292,6 +301,11 @@ export default function Gigs() {
             <span className="sm:hidden">Mine</span>
           </TabsTrigger>
         </TabsList>
+
+        <TabsContent value="for-you" className="mt-4 space-y-4 animate-in fade-in duration-300">
+          <AvailabilityWidget />
+          <GigForYouTab />
+        </TabsContent>
 
         {/* ───── QUICK TASKS ───── */}
         <TabsContent value="tasks" className="mt-4 space-y-4 animate-in fade-in duration-300">
