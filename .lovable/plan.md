@@ -80,6 +80,14 @@ ModuleManagement ──► useModuleReviewBadge ──► same RPC (single modul
 - `src/App.tsx` — register `/app/instructor/review-queue` route.
 - `.lovable/plan.md`, `mem://index.md`
 
-## Approval options
-- **continue with 3.6** — ship a–f together (recommended).
-- **continue with 3.6.a+c** — backend digest + inline badges only; defer dedicated review-queue page and weekly cron.
+## 3.6 ship notes
+
+- DB: `get_authoring_review_digest(_module_id, _days)` SECURITY DEFINER RPC + `authoring_digest_log` (admin-read) for cron audit.
+- Edge `authoring-review-digest` (single | course | weekly). Weekly mode loops `content.is_published=true`, groups by primary `content_instructors`, sends `authoring-review-digest` transactional email, writes log row.
+- New email template `authoring-review-digest` registered in TEMPLATES.
+- Module Manager: amber "N need review" nudge per module (via `useModuleReviewBadge`, 5-min cache) → opens existing analytics sheet. New header link to "Review queue".
+- New page `/app/instructor/review-queue` (`InstructorReviewQueue`) — auto-resolves admin vs instructor, lists flagged modules, deep-links to module manager analytics, admin "Send weekly" trigger.
+- Skipped (deferred): pg_cron schedule (no vault here) — admin "Send weekly" button covers manual trigger; per-item "Edit" deep-link inside analytics panel.
+- Phase 3 progress: ~75% (6 of 8).
+
+**Up next:** 3.7 (AI rewrite suggestions for flagged items). Reply **continue with 3.7**.
