@@ -31,6 +31,9 @@ interface AIChatPanelProps {
   placeholder?: string;
   className?: string;
   onMessageSent?: () => void;
+  mode?: "tutor" | "career_coach";
+  seedAssistantMessage?: string;
+  starterChips?: { label: string; prompt: string }[];
 }
 
 const CHAT_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-instructor-chat`;
@@ -45,6 +48,9 @@ export function AIChatPanel({
   placeholder = "Initialize query regarding trajectory or curriculum...",
   className = "",
   onMessageSent,
+  mode = "tutor",
+  seedAssistantMessage,
+  starterChips,
 }: AIChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
