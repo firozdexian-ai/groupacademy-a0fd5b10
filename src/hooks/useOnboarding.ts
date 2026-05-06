@@ -5,9 +5,8 @@ import { useCredits } from "@/hooks/useCredits";
 import { useQueryClient } from "@tanstack/react-query";
 
 /**
- * GroUp Academy: Talent Lifecycle Orchestrator
- * CTO Reference: Authoritative gatekeeper for talent ingress and trajectory initialization.
- * Logic: Implements idempotent welcome bonuses and neural cache purging.
+ * Onboarding wizard state — tracks current step, awards welcome credits once,
+ * and resets recommendation cache on completion.
  */
 
 export interface OnboardingState {
