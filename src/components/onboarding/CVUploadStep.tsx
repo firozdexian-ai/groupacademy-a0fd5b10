@@ -182,7 +182,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
     }
   }
 
-  const renderArtifactAudit = () => {
+  const renderParseSummary = () => {
     if (!parsedData && !parseComplete) return null;
 
     if (parseError) {
@@ -242,7 +242,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         </p>
       </div>
 
-      {/* COMPONENT: DROPSHIP_ZONE */}
+      {/* Drop zone */}
       <div
         className={cn(
           "relative w-full border-2 border-dashed rounded-[32px] p-12 text-center transition-all duration-500",
@@ -325,7 +325,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         )}
       </div>
 
-      {renderArtifactAudit()}
+      {renderParseSummary()}
 
       {/* HUD: CATEGORY_LEDGER */}
       <div className="w-full mt-8 p-8 bg-white border border-slate-100 rounded-[32px] shadow-sm">
