@@ -361,33 +361,53 @@ export default function ImmersiveCoursePlayer() {
             </CollapsibleContent>
           </Collapsible>
 
-          <StageNavigation
-            currentStage={currentStage}
-            completedStages={completedStages}
-            onStageSelect={goToStage}
-            className="mb-10"
-          />
+          <div className="sticky top-[68px] z-30 -mx-6 px-6 py-3 bg-background/85 backdrop-blur-xl border-b border-border/30">
+            <StageNavigation
+              currentStage={currentStage}
+              completedStages={completedStages}
+              onStageSelect={goToStage}
+            />
+            <div className="mt-2 grid grid-cols-6 gap-1">
+              {[1, 2, 3, 4, 5, 6].map((s) => (
+                <div
+                  key={s}
+                  className={cn(
+                    "h-1 rounded-full transition-all",
+                    completedStages.includes(s)
+                      ? "bg-emerald-500"
+                      : s === currentStage
+                        ? "bg-primary animate-pulse"
+                        : "bg-muted",
+                  )}
+                />
+              ))}
+            </div>
+          </div>
 
           <div className="min-h-[500px] relative">
-            <StageContentRouter
-              stage={currentStage}
-              content={content}
-              currentModule={currentModule}
-              resources={stageResources.find((s) => s.stage === currentStage)?.resources || []}
-              completedStages={completedStages}
-              onComplete={handleStageComplete}
-              onQuizComplete={handleQuizComplete}
-              onNextModule={handleNextModule}
-              aiInstructor={aiInstructor}
-              studentId={student?.id}
-              enrollmentId={enrollment.id}
-              hasNextModule={hasNextModule}
-              moduleIndex={currentModuleIndex}
-              totalModules={modules.length}
-            />
+            <StageShell stageKey={`${currentModuleId}-${currentStage}`}>
+              <StageContentRouter
+                stage={currentStage}
+                content={content}
+                currentModule={currentModule}
+                resources={stageResources.find((s) => s.stage === currentStage)?.resources || []}
+                completedStages={completedStages}
+                onComplete={handleStageComplete}
+                onQuizComplete={handleQuizComplete}
+                onNextModule={handleNextModule}
+                aiInstructor={aiInstructor}
+                studentId={student?.id}
+                enrollmentId={enrollment.id}
+                hasNextModule={hasNextModule}
+                moduleIndex={currentModuleIndex}
+                totalModules={modules.length}
+              />
+            </StageShell>
           </div>
         </div>
       </main>
+
+      <ShortcutsDialog open={shortcutsOpen} onOpenChange={setShortcutsOpen} />
     </div>
   );
 }
