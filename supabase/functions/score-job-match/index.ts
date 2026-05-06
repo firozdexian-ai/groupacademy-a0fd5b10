@@ -73,6 +73,12 @@ serve(async (req) => {
       ? masterySnapshot
       : { mastery_score: 0, mastery_topics: [], gap_topics: [], verified_credentials: [] };
 
+    // Phase 4.6: outcome signal (verified skills, completed tracks, recency)
+    const { data: outcomeSignal } = await supabase.rpc(
+      "get_talent_outcome_signal",
+      { _talent_id: talentId },
+    );
+
     const systemPrompt = `You are a career matching expert. Analyze how well a candidate matches a job posting.
 Return a JSON object with:
 - overall_match: number 0-100
@@ -178,6 +184,32 @@ Return only the JSON object, no markdown.`;
     }
 
     result.verified_match = verifiedMatch;
+    result.outcome_signal = outcomeSignal ?? null;
+
+    // Verified-skill boost: if any verified skill (≥0.7 mastery) appears
+    // in matched skills, nudge overall_match upward (capped at 100).
+    try {
+      const verified: string[] = (
+        (outcomeSignal as any)?.verified_skills ?? []
+      )
+        .filter((s: any) => Number(s.mastery_at_issue ?? 0) >= 0.7)
+        .map((s: any) => String(s.topic_tag).toLowerCase());
+      const matched: string[] = (result?.skills_match?.matched ?? []).map((s: string) =>
+        String(s).toLowerCase(),
+      );
+      const overlap = matched.filter((m) =>
+        verified.some((v) => v.includes(m) || m.includes(v)),
+      );
+      if (overlap.length > 0) {
+        result.overall_match = Math.min(
+          100,
+          (Number(result.overall_match) || 0) + Math.min(8, overlap.length * 3),
+        );
+        result.verified_skill_boost = overlap;
+      }
+    } catch (_) {
+      // non-fatal
+    }
 
     console.log("Match analysis completed for job:", jobId, "talent:", talentId);
 
