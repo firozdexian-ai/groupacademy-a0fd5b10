@@ -76,9 +76,10 @@ export function useFeedRecommendations() {
   const [filters, setFiltersState] = useState<FeedFilters>(() => {
     try {
       const saved = localStorage.getItem(STORAGE_KEY_FILTERS);
-      return saved ? JSON.parse(saved) : { type: "all", sort: "newest" };
+      const parsed = saved ? JSON.parse(saved) : null;
+      return { type: "all", sort: "newest", scope: "global", ...(parsed || {}) };
     } catch {
-      return { type: "all", sort: "newest" };
+      return { type: "all", sort: "newest", scope: "global" };
     }
   });
 
