@@ -11,3 +11,11 @@ export function trackOnboardingStep(stepId: string, action: OnboardingAction, me
   // eslint-disable-next-line no-console
   console.debug("[onboarding]", stepId, action, meta ?? {});
 }
+
+export type CoachAction = "opened" | "first_message" | "session_resume";
+
+export function trackCoachEvent(action: CoachAction, meta?: Record<string, unknown>) {
+  if (typeof window === "undefined") return;
+  // eslint-disable-next-line no-console
+  console.debug("[career-coach]", action, meta ?? {});
+}
