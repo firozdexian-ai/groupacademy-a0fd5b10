@@ -46,6 +46,7 @@ import {
 } from "@/components/ui/sheet";
 import ResearchPromptDialog from "@/components/modules/ResearchPromptDialog";
 import { BatchContentGenerator } from "@/components/dashboard/BatchContentGenerator";
+import { DraggableList } from "@/components/dashboard/common/DraggableList";
 
 /**
  * Curriculum Module Manager
