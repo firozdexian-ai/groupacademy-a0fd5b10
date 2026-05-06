@@ -9,9 +9,12 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Textarea } from "@/components/ui/textarea";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { AlertTriangle, Sparkles, Check } from "lucide-react";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { AlertTriangle, Sparkles, Check, Languages } from "lucide-react";
 import { toast } from "sonner";
 import { useItemRewrite, type QuizSuggestion, type ScenarioSuggestion } from "@/hooks/useItemRewrite";
+import { useItemTranslate, SUPPORTED_TRANSLATION_LANGS } from "@/hooks/useItemTranslate";
 
 interface Props {
   open: boolean;
