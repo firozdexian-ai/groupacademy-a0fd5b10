@@ -15649,6 +15649,7 @@ export type Database = {
         Args: { p_application_id: string }
         Returns: string
       }
+      apply_for_reviewer: { Args: { _categories: string[] }; Returns: string }
       apply_verification_verdict: {
         Args: { _verification_id: string }
         Returns: undefined
@@ -15735,6 +15736,10 @@ export type Database = {
         Returns: boolean
       }
       claim_course_project: { Args: { p_project_id: string }; Returns: Json }
+      claim_review_assignment: {
+        Args: { _assignment_id: string }
+        Returns: Json
+      }
       cleanup_rate_limits: { Args: never; Returns: undefined }
       cohort_health: {
         Args: { _cohort_id: string }
@@ -16232,6 +16237,18 @@ export type Database = {
       }
       offer_company_id: { Args: { p_offer_id: string }; Returns: string }
       offer_talent_id: { Args: { p_offer_id: string }; Returns: string }
+      open_gig_dispute: {
+        Args: {
+          _evidence?: Json
+          _gig_id: string
+          _narrative: string
+          _opened_by_role: string
+          _reason_code: string
+          _submission_id: string
+          _verification_id: string
+        }
+        Returns: string
+      }
       open_verification_appeal: {
         Args: { _evidence?: Json; _reason: string; _verification_id: string }
         Returns: string
@@ -16349,6 +16366,10 @@ export type Database = {
         Args: { _amount: number; _details?: Json; _method: string }
         Returns: string
       }
+      resolve_dispute: {
+        Args: { _dispute_id: string; _notes: string; _verdict: string }
+        Returns: undefined
+      }
       resolve_verification_appeal: {
         Args: { _appeal_id: string; _decision: string; _notes?: string }
         Returns: undefined
@@ -16362,9 +16383,28 @@ export type Database = {
         Args: { p_filters?: Json; p_limit?: number; p_offset?: number }
         Returns: Json
       }
+      settle_review_panel: {
+        Args: { _kind: string; _source_id: string }
+        Returns: Json
+      }
       shortlist_match: { Args: { _match_id: string }; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      submit_calibration_attempt: {
+        Args: { _answers: Json; _score: number }
+        Returns: Json
+      }
+      submit_review_verdict: {
+        Args: {
+          _assignment_id: string
+          _confidence?: number
+          _payload?: Json
+          _rationale?: string
+          _time_spent_s?: number
+          _verdict: string
+        }
+        Returns: Json
+      }
       submit_revision: {
         Args: { _payload: Json; _revision_id: string }
         Returns: string
