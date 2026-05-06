@@ -203,6 +203,7 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
           </SelectItem>
         </SelectContent>
       </Select>
+      </div>
     </div>
   );
 };
