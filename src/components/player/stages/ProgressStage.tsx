@@ -28,6 +28,7 @@ import { toast } from "sonner";
  */
 
 export function ProgressStage({
+  moduleId,
   moduleName,
   moduleIndex,
   totalModules,
