@@ -251,7 +251,7 @@ export function useAuthChat() {
       try {
         if (flow === "login") {
           await signIn(collectedData.email, password);
-          addMessage("assistant", "SESSION_ESTABLISHED: Access granted.");
+          addMessage("assistant", "Signed in. Taking you to your dashboard…");
           setIsComplete(true);
         } else {
           const finalPhone = collectedData.phone.startsWith("+")
@@ -270,14 +270,14 @@ export function useAuthChat() {
             addMessage("assistant", res.reply);
             setIsComplete(true);
           } else {
-            addMessage("assistant", "SIGNUP_PENDING: Please verify your email artifact, then return to synchronize.");
+            addMessage("assistant", "Almost there — please check your inbox to confirm your email, then come back to sign in.");
             setFlow("login");
             setCurrentAction("collect_email");
           }
         }
       } catch (err: any) {
         toast.error(err.message);
-        addMessage("assistant", `AUTH_ERROR: ${err.message}. Please re-input credentials.`);
+        addMessage("assistant", err.message ? `${err.message} — please try again.` : "Something went wrong. Please try again.");
       } finally {
         setIsLoading(false);
       }
