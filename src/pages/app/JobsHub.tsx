@@ -319,32 +319,36 @@ export default function JobsHub() {
       {/* Browse tab */}
       {activeTab === "browse" && (
         <div className="space-y-7 animate-in fade-in duration-300">
+          {/* Profile completeness gate */}
+          {talent && <ProfileCompletenessGate talent={talent} />}
+
           {/* AI matching CTA */}
           <section className="space-y-3">
-            <div className="flex items-center justify-between">
+            <div className="flex items-center justify-between gap-2">
               <h2 className="text-base font-semibold flex items-center gap-2">
                 <Brain className="h-4 w-4 text-primary" /> AI job matches
               </h2>
-              <Badge
-                variant="outline"
-                className={cn(
-                  "gap-1 text-[10px]",
-                  aiMatchUsageCount < FREE_AI_MATCHES_LIMIT
-                    ? "text-emerald-500 border-emerald-500/20"
-                    : "text-amber-500",
-                )}
-              >
-                {aiMatchUsageCount < FREE_AI_MATCHES_LIMIT ? (
-                  <>
-                    <Sparkles className="h-3 w-3" /> {FREE_AI_MATCHES_LIMIT - aiMatchUsageCount} FREE LEFT
-                  </>
-                ) : (
-                  <>
-                    <Coins className="h-3 w-3" /> 10 CREDITS
-                  </>
-                )}
-              </Badge>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="ghost"
+                  size="sm"
+                  className="h-7 px-2 rounded-lg text-[10px] font-medium text-muted-foreground hover:text-foreground gap-1"
+                  onClick={() => setPreferencesOpen(true)}
+                >
+                  <SlidersHorizontal className="h-3 w-3" /> Tune
+                </Button>
+                <Badge variant="outline" className="gap-1 text-[10px] text-amber-500 border-amber-500/30">
+                  <Coins className="h-3 w-3" /> {AI_MATCH_COST} CREDITS
+                </Badge>
+              </div>
             </div>
+
+            {recommendations.length > 0 && !loadingAI && (
+              <p className="text-[10px] text-muted-foreground flex items-center gap-1.5">
+                <RefreshCw className="h-2.5 w-2.5" />
+                Updated {timeAgo((recommendations[0] as any)?.generated_at)}
+              </p>
+            )}
 
             <Button
               className="w-full h-12 rounded-xl text-sm font-semibold"
@@ -359,9 +363,9 @@ export default function JobsHub() {
               <ProcessingCard title="Finding jobs for you" stages={AI_PROCESSING_STAGES} duration={20000} />
             )}
 
-            {recommendations.length > 0 && !loadingAI && (
+            {visibleRecommendations.length > 0 && !loadingAI && (
               <div className="pt-2 space-y-3">
-                {recommendations.slice(0, showMore.recommended ? recommendations.length : INITIAL_SHOW).map((r: any) => (
+                {visibleRecommendations.slice(0, showMore.recommended ? visibleRecommendations.length : INITIAL_SHOW).map((r: any) => (
                   <JobCard
                     key={r.id}
                     job={r.job}
@@ -375,34 +379,59 @@ export default function JobsHub() {
                       match_reason: r.match_reason,
                       verified_match: r.verified_match,
                     }}
+                    whyChip={r.reason || undefined}
                   />
                 ))}
-                {recommendations.length > INITIAL_SHOW && (
+                {visibleRecommendations.length > INITIAL_SHOW && (
                   <Button
                     variant="ghost"
                     className="w-full h-9 rounded-lg text-xs font-medium text-muted-foreground"
                     onClick={() => setShowMore((p) => ({ ...p, recommended: !p.recommended }))}
                   >
-                    {showMore.recommended ? "Show less" : `Show ${recommendations.length - INITIAL_SHOW} more`}
+                    {showMore.recommended ? "Show less" : `Show ${visibleRecommendations.length - INITIAL_SHOW} more`}
                   </Button>
                 )}
               </div>
             )}
           </section>
 
-          {/* Featured */}
-          <section className="space-y-3">
-            <h2 className="text-base font-semibold flex items-center gap-2">
-              <Flame className="h-4 w-4 text-rose-500" /> Trending now
-            </h2>
-            {loadingCollection ? (
+          {/* For You — open in your field/country */}
+          {jobsInField.length > 0 && (
+            <section className="space-y-3">
+              <h2 className="text-base font-semibold flex items-center gap-2">
+                <Target className="h-4 w-4 text-primary" />
+                {talent?.profession_category_id || talent?.custom_profession
+                  ? "Open in your field"
+                  : `Open in ${talent?.country || "your area"}`}
+              </h2>
               <div className="space-y-2">
-                {[1, 2, 3].map((i) => (
-                  <Skeleton key={i} className="h-[120px] w-full rounded-xl" />
+                {jobsInField.slice(0, 5).map((job) => (
+                  <JobCard
+                    key={job.id}
+                    job={job}
+                    variant="compact"
+                    isSaved={isSaved(job.id, "job")}
+                    onSaveToggle={() => toggleSave(job.id, "job")}
+                    onClick={() => navigate(`/app/jobs/${job.id}`)}
+                  />
                 ))}
               </div>
-            ) : collectionData?.featured?.length ? (
-              renderJobSection(collectionData.featured, "featured")
+            </section>
+          )}
+
+          {/* Trending */}
+          <section className="space-y-3">
+            <h2 className="text-base font-semibold flex items-center gap-2">
+              <Flame className="h-4 w-4 text-rose-500" /> Trending this week
+            </h2>
+            {loadingTrending ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-[64px] w-full rounded-xl" />
+                ))}
+              </div>
+            ) : trendingJobs.length > 0 ? (
+              renderJobSection(trendingJobs, "featured")
             ) : (
               <div className="h-[120px] flex items-center justify-center border border-dashed rounded-xl bg-muted/20">
                 <p className="text-sm text-muted-foreground italic">No trending jobs right now.</p>
@@ -414,15 +443,20 @@ export default function JobsHub() {
           <section className="space-y-3">
             <h2 className="text-base font-semibold">Browse by type</h2>
             <div className="grid grid-cols-3 sm:grid-cols-4 gap-2">
-              {JOB_COLLECTIONS.map((c) => (
+              {smartCollections.map((c) => (
                 <Card
                   key={c.filter}
-                  className="hover:border-primary/40 transition-all cursor-pointer"
+                  className="hover:border-primary/40 transition-all cursor-pointer relative"
                   onClick={() => navigate(`/app/jobs/all?type=${c.filter}`)}
                 >
                   <CardContent className="p-3 flex flex-col items-center text-center gap-1.5">
                     <c.icon className="h-5 w-5 text-primary" />
                     <span className="text-[11px] font-medium leading-tight">{c.label}</span>
+                    {c.count > 0 && (
+                      <Badge variant="secondary" className="text-[9px] px-1.5 py-0 mt-0.5">
+                        {c.count}
+                      </Badge>
+                    )}
                   </CardContent>
                 </Card>
               ))}
