@@ -76,7 +76,7 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
     }, 1200);
   };
 
-  async function handleExecutiveUpload(file: File) {
+  async function handleCVUpload(file: File) {
     if (!talent?.id) return;
 
     const validTypes = [
@@ -128,14 +128,44 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
       setParsedData(parsed);
       setParseProgress(100);
 
-      // REGISTRY_SYNC: Intelligent Data Merging
-      const updatePayload: Record<string, any> = { cvUrl: publicUrl, cvParsedAt: new Date().toISOString() };
+      // Merge parsed fields into the talent profile (don't overwrite user-edited values)
+      const updatePayload: Record<string, any> = {
+        cvUrl: publicUrl,
+        cvParsedAt: new Date().toISOString(),
+      };
 
       const currentName = talent.fullName ? String(talent.fullName) : "";
-      const emailPrefix = talent.email ? String(talent.email).split("@") : "";
+      const emailPrefix = talent.email ? String(talent.email).split("@")[0] : "";
 
       if (parsed.full_name && (!currentName || currentName === emailPrefix)) {
         updatePayload.fullName = parsed.full_name;
+      }
+      if (parsed.skills?.length && (!talent.skills || talent.skills.length === 0)) {
+        updatePayload.skills = parsed.skills;
+      }
+      if (parsed.experience?.length && (!talent.experience || talent.experience.length === 0)) {
+        updatePayload.experience = parsed.experience;
+      }
+      if (parsed.education?.length && (!talent.education || talent.education.length === 0)) {
+        updatePayload.education = parsed.education;
+      }
+
+      // Compute fingerprint and check for duplicates server-side
+      try {
+        const fingerprint = await computeCVFingerprint(parsed);
+        if (fingerprint) {
+          updatePayload.cvFingerprint = fingerprint;
+          const { data: dupResult } = await supabase.rpc("check_cv_duplicate", {
+            _fingerprint: fingerprint,
+            _self_user_id: talent.userId,
+          });
+          const dup = Array.isArray(dupResult) ? dupResult[0] : dupResult;
+          if (dup?.duplicate) {
+            updatePayload.isSuspectedDuplicate = true;
+          }
+        }
+      } catch (e) {
+        console.warn("[CVUpload] fingerprint check failed", e);
       }
 
       await updateTalent(updatePayload);
