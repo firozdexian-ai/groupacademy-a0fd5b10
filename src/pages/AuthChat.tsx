@@ -138,7 +138,7 @@ const AuthChat = () => {
         </div>
         <div>
           <p className="text-lg font-bold tracking-tight text-slate-900">{agentName}</p>
-          <p className="text-xs text-slate-500">Your AI guide</p>
+          <p className="text-xs text-slate-500">Your sign-in assistant</p>
         </div>
       </div>
 
