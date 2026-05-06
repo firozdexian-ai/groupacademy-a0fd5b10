@@ -275,7 +275,30 @@ export default function ModuleResourcesManager() {
     }
   };
 
-  if (loading)
+  const reorderStageResources = async (stage: number, newStageItems: ModuleResource[]) => {
+    // Renumber within the stage densely. Persist only changed (already-saved) rows.
+    const renumbered = newStageItems.map((r, i) => ({ ...r, display_order: i }));
+    const updates = renumbered.filter((r) => {
+      if (!r.id) return false;
+      const orig = resources.find((o) => o._key === r._key);
+      return orig && orig.display_order !== r.display_order;
+    });
+    setResources((prev) => {
+      const others = prev.filter((r) => r.stage_number !== stage);
+      return [...others, ...renumbered];
+    });
+    if (!updates.length) return;
+    try {
+      await Promise.all(
+        updates.map((r) =>
+          supabase.from("module_resources").update({ display_order: r.display_order }).eq("id", r.id!),
+        ),
+      );
+    } catch (e: any) {
+      toast.error("Reorder failed; reloading.");
+      loadData();
+    }
+  };
     return (
       <div className="h-screen flex items-center justify-center text-muted-foreground">
         <Loader2 className="h-5 w-5 mr-2 animate-spin" /> Loading resources…
