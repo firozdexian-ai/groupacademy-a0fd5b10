@@ -11,6 +11,7 @@ import {
 } from "@/hooks/useTalentRelationships";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useState } from "react";
+import { TalentSignalPanel } from "@/components/talent/TalentSignalPanel";
 import { GRO10X_PANEL, GRO10X_MUTED } from "@/gro10x/lib/tokens";
 
 interface Props {
@@ -86,6 +87,9 @@ export function TalentPipelinePanel({ companyId }: Props) {
                   {r.source}
                 </Badge>
               )}
+            </div>
+            <div className="mt-2">
+              <TalentSignalPanel talentId={r.talent_id} compact />
             </div>
             <div className="mt-2 flex items-center gap-2">
               <Select
