@@ -1,130 +1,151 @@
-# Phase 3.3 — Consolidated AI Tools Hub
+# Phase 3.4 — Job Details + Application Workflow
 
-## What I missed
+The Tools tab is consolidated. Now the actual transaction — viewing a role and applying — needs the same overhaul. Today's `AppJobDetail` is dense, "executive logic" framing, three-column desktop layout that collapses awkwardly on the 390px mobile viewport users actually live on. `MyApplications` is a flat list. The apply flow is a separate 488-line page with its own CV/cover-letter logic.
 
-There are already **4 mature career services** in a separate hub (`ServicesHub` at `/app/services`) that I was ignoring. Plus 2 in the Tools tab and 1 component-only tool. **7 working tools total**, spread across 2 hubs. Goal of 3.3: bring them all into one home.
+3.4 turns the detail page into a single-screen decision surface and the application step into a confident 2-tap submit, with applications becoming a real **tracked pipeline** the user can revisit.
 
-## Current state
+---
 
-| # | Tool | Status | Lives at |
-|---|---|---|---|
-| 1 | Career Assessment | Built | `/app/services/assessment` |
-| 2 | Mock Interview | Built | `/app/services/mock-interview` |
-| 3 | Salary AI | Built | `/app/services/salary-analysis` |
-| 4 | Portfolio Service | Built | `/app/services/portfolio` |
-| 5 | ATS CV Maker | Built | `/app/tools/cv-maker` |
-| 6 | Application Answers | Built | `/app/tools/application-helper` |
-| 7 | Score me vs job | Component built, no entry | dashboard widgets only |
+## Scope
 
-## Final consolidated list (7 tools)
+### A. Job Details redesign (`/app/jobs/:id`)
 
-**Profile builders** (sharpen who you are)
-1. ATS CV Maker — 15 cr
-2. Career Assessment — paid
-3. Salary Insight — paid (no free first run; 250 welcome credits already cover it)
-4. Portfolio Service — paid request
-
-**Job-specific tools** (win this role)
-5. Score me vs job — 10 cr (new inline picker)
-6. Application Answers — 10 cr
-7. Mock Interview — paid
-
-No new tools. No new edge functions. Pure consolidation + personalization.
-
-## Pricing change — remove "first analysis free" everywhere
-
-Per your direction: 250 welcome credits already cover trial usage, so the Salary AI's "First Analysis Free" / "Free Audit" framing is removed.
-- `src/pages/SalaryAnalysis.tsx` lines 74, 92, 217 — replace "First Analysis Free", "Initialize Free Audit", "Launch Free Audit" with neutral CTA copy showing the actual credit price.
-- Remove any free-first-run logic in salary edge / hooks (none currently in code; only the marketing copy).
-- Update [AI Salary Analysis](mem://product/ai-salary-analysis-free-then-paid-model) memory to reflect "always paid via credits".
-
-## What changes in 3.3
-
-### 1. Jobs > Tools tab becomes the only AI Tools home
+Replace the current page top-to-bottom with a mobile-first stack:
 
 ```text
-Tools tab
 ┌──────────────────────────────────────────┐
-│ Up next for you  (1 personalized card)   │
+│ Sticky header: ← Back   ♥ Save  Share    │
 ├──────────────────────────────────────────┤
-│ Profile builders                         │
-│  CV  •  Assessment  •  Salary  •  Folio  │
+│ Logo  Title                              │
+│       Company · Location · Remote chip   │
+│       Salary range · Job type · Level    │
 ├──────────────────────────────────────────┤
-│ Job-specific tools                       │
-│  Score-me  •  Answers  •  Mock interview │
+│ MATCH STRIP (auto-runs if free, else CTA)│
+│  87% match  ✓ skills · ✓ exp · ⚠ tools   │
+│  [Why you match ↓]  [Score me · 10 cr]   │
 ├──────────────────────────────────────────┤
-│ Recent results (resume / re-download)    │
+│ About this role  (collapsible, 4 lines)  │
 ├──────────────────────────────────────────┤
-│ Talk to a career agent (existing list)   │
+│ Requirements & nice-to-haves  (chips)    │
+├──────────────────────────────────────────┤
+│ About the company  (logo + 1-line bio)   │
+├──────────────────────────────────────────┤
+│ Similar roles rail                       │
+├──────────────────────────────────────────┤
+│ Sticky bottom bar:                       │
+│  ⏰ Closes in 3 days     [Apply now →]   │
 └──────────────────────────────────────────┘
 ```
 
-### 2. Deprecate ServicesHub
-- Replace `/app/services` route with redirect to `/app/jobs?tab=tools`.
-- Remove "Services" sidebar/nav entries pointing to it.
-- Keep underlying tool routes (deep links from emails/transactions still work).
+Key behaviors:
+- **Match strip** — if user has a verified profile + CV, auto-fetches cached `match_score` (no credits, just read). If no cached score and user has saved/viewed signal, shows "Score me · 10 cr" inline; uses existing `score-job-match` edge + `recordToolRun({toolKey:"score"})`.
+- **Sticky apply bar** — always visible on mobile, swaps to "Closed", "Submitted ✓", or "Continue assessment →" based on state.
+- **One CTA** per state — kill the dual "Save big button + Initialize Application" duplication.
+- **Deadline urgency** — color shifts (neutral → amber ≤7d → red ≤2d).
+- Strip the italic "Operational Parameters / List Narrative" copy. Plain English: About this role, Requirements, About the company.
+- Verified company badge (uses existing `company_verification_tier`).
 
-### 3. "Up next for you" — rule-based pick
-First match wins:
-1. No CV → CV Maker
-2. Profile <60% → Tune profile
-3. Saved job, deadline ≤7d → Application Answers (pre-loaded with that job)
-4. Saved job without AI score → Score me vs job (pre-loaded)
-5. No assessment in 90d → Career Assessment
-6. No salary lookup in 30d → Salary Insight
-7. Else → Mock Interview
+### B. Application workflow (`/app/jobs/:id/apply`)
 
-Powered by `get_next_best_tool(user_id) → { tool_key, reason, job_id }` reading `talents`, `saved_items`, `tool_runs`.
+Today: 488-line page. Target: ~200 lines, 2-step sheet on mobile:
 
-### 4. "Score me vs job" gets a real entry
-- New `ScoreMeJobPicker` sheet listing saved jobs + recent applications + last viewed.
-- On select → existing `score-job-match` edge → result in existing `AIJobInsights` sheet.
-- 10 credits, deducted only after edge succeeds.
+**Step 1 — Confirm package** (auto-prefilled from profile)
+- CV: latest profile CV with "Use this" / "Upload different" toggle
+- Cover letter: empty by default, with a **"Polish with AI"** chip → reuses `generate-application-answers` edge to draft a 4-paragraph letter from job + profile (10 cr, recorded as `tool_runs.toolKey='answers'`)
+- Application questions (if `application_type='internal'` and job has `assessment_config.questions`): show inline
 
-### 5. Recent results rail
-- New `tool_runs` table (user_id, tool_key, cost_credits, payload jsonb, job_id, created_at, RLS own-rows-only).
-- Each tool calls a single `recordToolRun()` helper after successful credit deduction.
-- Tools tab shows last 5 runs with click-to-resume (`?run=<id>` prefill).
+**Step 2 — Confirm & submit**
+- Cost summary: "Application: 5 cr · Total: 5 cr"
+- Submit button → inserts `job_applications` row, fires `notify-employer-application` (existing or new), navigates to `/app/applications/:id` confirmation
+- If `ai_assessment_enabled` → branch to `/app/job-assessment/:assessmentId` instead of confirmation
 
-## Backend (1 table + 1 RPC, 0 edges)
+### C. Applications tracker (`/app/applications`)
 
-### `tool_runs`
-| Column | Type |
-|---|---|
-| id | uuid pk |
-| user_id | uuid not null, RLS |
-| tool_key | text (cv/assessment/salary/portfolio/score/answers/interview) |
-| cost_credits | numeric(12,1) |
-| payload | jsonb (≤8 KB summary) |
-| job_id | uuid nullable |
-| created_at | timestamptz default now() |
+Today: status timeline exists but the page mixes everything. Reframe as 3 tabs:
 
-RLS: own rows only.
+- **Active** — submitted / sent / viewed / shortlisted (default tab)
+- **Action needed** — pending assessment, employer message reply, missing CV
+- **Closed** — rejected / withdrawn / hired
 
-### `get_next_best_tool(p_user_id uuid) returns jsonb`
-SECURITY INVOKER, `search_path = public`.
+Each row:
+- Logo + title + company + applied X ago
+- Status pill (Submitted · Viewed · Shortlisted · Rejected · Hired)
+- Right chevron → `/app/applications/:id` detail
+- For `Action needed`: amber chip with the action ("Start AI assessment", "Reply to recruiter")
 
-## Frontend wiring
+### D. Application detail (`/app/applications/:id`) — new page
 
-**New**
-- `src/components/jobs/ToolsHub.tsx` (extracted from JobsHub)
-- `src/components/jobs/ScoreMeJobPicker.tsx`
-- `src/hooks/useNextBestTool.ts`
-- `src/hooks/useToolRuns.ts` (list + recordToolRun helper)
+Single screen showing:
+- Job snapshot (clickable → back to `/app/jobs/:id`)
+- Timeline (existing `ApplicationTimeline` component, extracted)
+- Submitted CV + cover letter (read-only, "View CV" opens signed URL)
+- AI match score & rationale (cached from `job_applications.ai_match_score` / `ai_match_rationale`)
+- AI assessment status if applicable, with deep link
+- "Withdraw application" destructive action
 
-**Modified**
-- `src/pages/app/JobsHub.tsx` — render `<ToolsHub />` for tools tab
-- `src/pages/SalaryAnalysis.tsx` — strip "free" copy (lines 74, 92, 217)
-- 6 tool pages (CVMaker, ApplicationHelper, AppMockInterviewSetup, AppCareerAssessment, AppSalaryAnalysisSetup, AppPortfolioRequest) — single `recordToolRun()` call after credit deduction; no other behavior changes
-- `src/App.tsx` — `/app/services` → `<Navigate to="/app/jobs?tab=tools" />`
-- Sidebar/nav — drop "Services" link
+### E. AI assessment on job (no new functionality, integration polish)
 
-**Untouched**
-- All public service landing pages, tool flows, credit pricing logic, PDF templates
+- The existing `/app/job-assessment/:id` flow already works. 3.4 just makes the hand-off seamless from B (apply) and C (action needed tab).
+- Add `tool_runs` write on assessment completion (`toolKey='assessment'`, `jobId`).
 
-## Out of scope (3.4)
-- Job Details redesign
-- Application workflow
-- AI assessment-on-job
+---
+
+## Backend
+
+### Status enum extension
+Current `application_status` enum: `submitted | sent_to_employer | viewed | shortlisted | rejected`.
+
+Add: `withdrawn`, `hired`. (Migration alters enum.)
+
+### New columns on `job_applications`
+- `withdrawn_at timestamptz`
+- `last_status_at timestamptz` (auto-updated by trigger when `application_status` changes — drives sort order in the tracker)
+
+### New RPC: `get_application_buckets(p_user_id uuid) returns jsonb`
+Returns counts per bucket (active / action_needed / closed) so the tabs can show pill counts without a second query.
+
+### No new edge functions
+- Cover letter polish uses existing `generate-application-answers` (just a new prompt template variant — handled client-side by passing `mode:"cover_letter"` in body; if that mode doesn't exist yet, add it as a 10-line branch in the existing edge).
+
+---
+
+## Frontend file plan
+
+### New
+- `src/components/jobs/JobMatchStrip.tsx` — match score + Why panel
+- `src/components/jobs/JobApplyBar.tsx` — sticky bottom CTA
+- `src/components/jobs/JobMetaPills.tsx` — salary/type/level/remote chips
+- `src/components/jobs/CompanyMiniCard.tsx`
+- `src/components/applications/ApplicationsTabs.tsx` — Active/Action/Closed
+- `src/components/applications/ApplicationActionChip.tsx`
+- `src/pages/app/AppApplicationDetail.tsx`
+- `src/hooks/useJobMatchCached.ts` (read-only fetch from `job_applications.ai_match_score`)
+- `src/hooks/useApplicationBuckets.ts`
+
+### Replaced/rewritten
+- `src/pages/app/AppJobDetail.tsx` — full rewrite, mobile-first
+- `src/pages/app/AppJobApplication.tsx` — slim 2-step sheet
+- `src/pages/app/MyApplications.tsx` — tabs + counts
+
+### Touched
+- `src/App.tsx` — add `/app/applications/:id` route
+- `src/components/jobs/AIJobInsights.tsx` — extract Why-you-match panel for reuse in JobMatchStrip
+- `src/lib/creditPricing.ts` — confirm `EXTERNAL_APPLICATION` and `JOB_APPLICATION` costs
+
+---
+
+## Out of scope (saved for 3.5)
+- Employer-side updates to applications (admin already has `JobApplicationsManager`)
+- Push/email notifications on status change
+- Talent-side messaging with recruiters
+- Public-facing job detail page (`PublicJobDetail.tsx`) — separate redesign
+
+---
+
+## Open questions
+
+1. **Cover letter polish cost** — keep at 10 credits (same as Application Answers), or bundle into the application fee?
+2. **Auto-score on view** — should the match strip auto-spend 10 credits the first time the user opens a job page, or always require explicit tap? (My recommendation: explicit tap — respects the credit economy and avoids surprise charges.)
+3. **Withdraw** — soft (marks `withdrawn`, recoverable) or hard (deletes row)? Recommendation: soft.
 
 Approve to proceed.

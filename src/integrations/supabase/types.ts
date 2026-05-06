@@ -6508,9 +6508,11 @@ export type Database = {
           id: string
           is_paid: boolean | null
           job_id: string
+          last_status_at: string | null
           professional_id: string | null
           source: string
           talent_id: string | null
+          withdrawn_at: string | null
         }
         Insert: {
           added_by?: string | null
@@ -6532,9 +6534,11 @@ export type Database = {
           id?: string
           is_paid?: boolean | null
           job_id: string
+          last_status_at?: string | null
           professional_id?: string | null
           source?: string
           talent_id?: string | null
+          withdrawn_at?: string | null
         }
         Update: {
           added_by?: string | null
@@ -6556,9 +6560,11 @@ export type Database = {
           id?: string
           is_paid?: boolean | null
           job_id?: string
+          last_status_at?: string | null
           professional_id?: string | null
           source?: string
           talent_id?: string | null
+          withdrawn_at?: string | null
         }
         Relationships: [
           {
@@ -11932,6 +11938,7 @@ export type Database = {
         }
         Returns: Json
       }
+      get_application_buckets: { Args: { p_user_id: string }; Returns: Json }
       get_authoring_review_digest: {
         Args: { _days?: number; _module_id: string }
         Returns: Json
@@ -12315,6 +12322,8 @@ export type Database = {
         | "viewed"
         | "shortlisted"
         | "rejected"
+        | "withdrawn"
+        | "hired"
       application_type: "email" | "link"
       company_verification_tier: "unverified" | "self_completed" | "verified"
       content_type:
@@ -12568,6 +12577,8 @@ export const Constants = {
         "viewed",
         "shortlisted",
         "rejected",
+        "withdrawn",
+        "hired",
       ],
       application_type: ["email", "link"],
       company_verification_tier: ["unverified", "self_completed", "verified"],
