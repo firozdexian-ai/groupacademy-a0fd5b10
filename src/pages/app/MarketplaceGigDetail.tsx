@@ -50,8 +50,6 @@ export default function MarketplaceGigDetail() {
   const [coverLetter, setCoverLetter] = useState("");
   const [estimatedDays, setEstimatedDays] = useState("");
   const [coachOpen, setCoachOpen] = useState(false);
-  const isOwner = !!(talent && (gigPostedBy()) ); // placeholder, computed below
-  function gigPostedBy() { return false; }
 
   const { data: gig, isLoading } = useQuery({
     queryKey: ["marketplace-gig", id],
