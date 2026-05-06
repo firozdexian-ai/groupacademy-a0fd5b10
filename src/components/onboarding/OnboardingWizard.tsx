@@ -69,11 +69,11 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
   const renderActiveNode = () => {
     switch (ONBOARDING_NODES[currentStep].id) {
       case "welcome":
-        return <WelcomeBonus onContinue={executeTrajectoryAdvance} />;
+        return <WelcomeBonus onContinue={goToNextStep} />;
       case "profile":
-        return <CVUploadStep onContinue={executeTrajectoryAdvance} onSkip={executeTrajectoryAdvance} />;
+        return <CVUploadStep onContinue={goToNextStep} onSkip={goToNextStep} />;
       case "explore":
-        return <ServicesTour onComplete={finalizeOnboarding} />;
+        return <ServicesTour onComplete={finishOnboarding} />;
       default:
         return null;
     }
@@ -81,16 +81,15 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
 
   return (
     <div className="fixed inset-0 z-50 bg-slate-50 flex flex-col font-sans animate-in fade-in duration-700">
-      {/* HUD: TRAJECTORY_PROGRESS */}
       <header className="border-b border-slate-200 bg-white/90 backdrop-blur-xl">
         <div className="flex items-center justify-between px-6 py-5 md:px-8">
           <div className="flex items-center gap-4">
             <div className="h-10 w-10 rounded-2xl bg-blue-50 border border-blue-100 flex items-center justify-center">
               <Zap className="h-5 w-5 text-blue-500 fill-blue-500" />
             </div>
-            <div className="flex flex-col hidden sm:flex">
-              <span className="text-[10px] font-black uppercase tracking-widest text-slate-900">Initialization</span>
-              <span className="text-[10px] font-bold uppercase tracking-widest text-slate-400">Sequence Active</span>
+            <div className="hidden sm:flex flex-col">
+              <span className="text-sm font-bold text-slate-900">Set up your account</span>
+              <span className="text-xs text-slate-400">{ONBOARDING_NODES[currentStep].label}</span>
             </div>
           </div>
 
@@ -101,14 +100,13 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
           <Button
             variant="ghost"
             size="sm"
-            onClick={executeEmergencySkip}
-            className="rounded-full h-10 px-5 font-bold uppercase text-[10px] tracking-widest text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-all gap-2"
+            onClick={handleSkip}
+            className="rounded-full h-10 px-5 text-sm font-medium text-slate-500 hover:bg-slate-100 hover:text-slate-900 transition-all gap-2"
           >
-            <X className="h-4 w-4" /> Skip Sequence
+            <X className="h-4 w-4" /> Skip for now
           </Button>
         </div>
 
-        {/* HUD: NODE_REGISTRY */}
         <div className="flex items-center justify-center gap-6 pb-5 pt-2">
           {ONBOARDING_NODES.map((step, index) => (
             <div
@@ -130,7 +128,7 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
               />
               <span
                 className={cn(
-                  "text-[10px] font-black uppercase tracking-widest hidden sm:block",
+                  "text-xs font-semibold hidden sm:block",
                   index === currentStep ? "text-blue-500" : "text-slate-400",
                 )}
               >
@@ -142,20 +140,11 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
         </div>
       </header>
 
-      {/* VIEWPORT: ACTIVE_PROTOCOL */}
       <main className="flex-1 overflow-y-auto">
         <div className="h-full w-full max-w-5xl mx-auto flex items-center justify-center p-4 md:p-8">
           {renderActiveNode()}
         </div>
       </main>
-
-      {/* FOOTER: SYSTEM_TELEMETRY */}
-      <footer className="p-4 border-t border-slate-200 bg-white flex justify-center">
-        <div className="flex items-center gap-2 text-slate-300">
-          <ShieldCheck className="h-4 w-4" />
-          <span className="text-[10px] font-black uppercase tracking-widest">Platform Secured</span>
-        </div>
-      </footer>
     </div>
   );
 }
