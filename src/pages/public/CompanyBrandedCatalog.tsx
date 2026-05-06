@@ -68,28 +68,21 @@ export default function CompanyBrandedCatalog() {
 
   const c = data.company;
   const title = `${c.name} · Learning catalog`;
+  setHead(title, c.tagline ?? `Learning tracks from ${c.name}.`, {
+    "@context": "https://schema.org",
+    "@type": "ItemList",
+    name: title,
+    itemListElement: data.tracks.map((t, i) => ({
+      "@type": "Course",
+      position: i + 1,
+      name: t.title,
+      description: t.summary ?? undefined,
+      provider: { "@type": "Organization", name: c.name },
+    })),
+  });
 
   return (
     <div className="min-h-screen bg-background">
-      <Helmet>
-        <title>{title}</title>
-        <meta name="description" content={c.tagline ?? `Learning tracks from ${c.name}.`} />
-        <link rel="canonical" href={`/c/${c.slug}/learn`} />
-        <script type="application/ld+json">
-          {JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "ItemList",
-            name: title,
-            itemListElement: data.tracks.map((t, i) => ({
-              "@type": "Course",
-              position: i + 1,
-              name: t.title,
-              description: t.summary ?? undefined,
-              provider: { "@type": "Organization", name: c.name },
-            })),
-          })}
-        </script>
-      </Helmet>
 
       {/* Banner */}
       <header className="relative">
