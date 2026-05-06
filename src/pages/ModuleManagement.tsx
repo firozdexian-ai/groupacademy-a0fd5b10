@@ -327,11 +327,15 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
             </CardContent>
           </Card>
         ) : (
-          modules.map((mod, index) => {
-            const status = saveStates[mod.id] ?? "saved";
-            return (
-              <Card key={mod.id} className="rounded-[24px] border-border/40 overflow-hidden">
-                <CardContent className="p-5 space-y-4">
+          <DraggableList
+            items={modules}
+            getId={(m) => m.id}
+            onReorder={reorderModules}
+            renderItem={(mod, index, dragHandle) => {
+              const status = saveStates[mod.id] ?? "saved";
+              return (
+                <Card key={mod.id} className="rounded-[24px] border-border/40 overflow-hidden">
+                  <CardContent className="p-5 space-y-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">
                       <Badge variant="outline" className="rounded-lg font-black text-[10px] tracking-widest">
