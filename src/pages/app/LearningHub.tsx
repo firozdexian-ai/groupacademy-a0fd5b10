@@ -1,6 +1,7 @@
 import { useState, lazy, Suspense, useEffect } from "react";
-import { useSearchParams } from "react-router-dom";
-import { BookOpen, Target, Library, Globe } from "lucide-react";
+import { useSearchParams, Link } from "react-router-dom";
+import { BookOpen, Target, Library, Globe, Bell } from "lucide-react";
+import { useReviewQueue } from "@/hooks/useReviewQueue";
 import { MyCoursesTab } from "@/components/learning/MyCoursesTab";
 import { TracksTab } from "@/components/learning/TracksTab";
 import { CoursesTab } from "@/components/learning/CoursesTab";
