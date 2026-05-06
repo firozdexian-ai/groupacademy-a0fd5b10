@@ -232,13 +232,13 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
   };
 
   return (
-    <div className="flex flex-col items-center px-4 py-8 max-w-xl mx-auto text-left w-full">
-      <div className="mb-12 space-y-3 text-center">
-        <h2 className="text-4xl md:text-5xl font-black tracking-tighter text-slate-900 leading-tight">
-          Build your profile
+    <div className="flex flex-col items-center px-4 py-6 max-w-xl mx-auto text-left w-full">
+      <div className="mb-6 space-y-2 text-center">
+        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">
+          Add your resume
         </h2>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-slate-500">
-          Upload your resume so we can pre-fill your profile.
+        <p className="text-sm text-slate-500">
+          Upload your CV so we can pre-fill your profile. You can skip and add it later.
         </p>
       </div>
 
