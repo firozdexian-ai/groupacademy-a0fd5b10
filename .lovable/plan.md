@@ -1,96 +1,125 @@
-## Sub-phase 2.1 — Immersive Course Player Polish
+# Sub-phase 2.2 — Progress Engine
 
-Tighten the existing 6-stage player so it feels deliberate, persistent, and keyboard-friendly. No new tables — reuses `enrollment_stage_progress` + `enrollments`.
+Goal: a single authoritative source of truth for learner progress, auto-computed from stage events, that powers enrollments.progress, dashboards, certificates (2.4), and streaks (2.5).
+
+Today the codebase has two parallel progress paths (`useStageProgress` writes `enrollment_stage_progress` + manual % math; `useCourseProgress` derives from `student_resource_progress`). They drift. Phase 2.2 unifies both behind a DB-side engine.
 
 ---
 
-### 1. Resume-where-you-left-off
+## 2.2 mini sub-phases
 
-`src/pages/ImmersiveCoursePlayer.tsx`
-- On enrollment load, compute `lastModuleId` = `enrollment.current_module_id` (fallback: most recently progressed module from `enrollment_stage_progress`, fallback: first module).
-- Compute `lastStage` = first incomplete stage (1–6) for that module; default to 1 if all complete or none started.
-- Replace current `setCurrentModuleId(modules[0].id)` initializer with `setCurrentModuleId(lastModuleId)` and `setCurrentStage(lastStage)`.
-- Fire `enrollments.update({ current_module_id, last_accessed_at: now() })` whenever module changes (debounced 500ms).
+| # | Sub-phase | Outcome |
+|---|---|---|
+| 2.2.a | Schema: `module_progress` + indexes + RLS | Per-(enrollment, module) row with stages_completed, %, started_at, completed_at |
+| 2.2.b | DB triggers: auto-recompute | On `enrollment_stage_progress` upsert → recompute matching `module_progress` row + parent `enrollments.progress` + auto-flip enrollment status to `completed` |
+| 2.2.c | Backfill migration | Populate `module_progress` from existing `enrollment_stage_progress` and legacy `student_resource_progress` |
+| 2.2.d | Unified hook `useProgress` | Replaces split between `useStageProgress` + `useCourseProgress`; reads from `module_progress` view, writes only stage events |
+| 2.2.e | UI rewire (no behavior change) | Player, Enrollments page, dashboard "Continue learning" rail consume `useProgress` |
+| 2.2.f | Completion event hook | Emits `course_completed` notification + sets `enrollments.completed_at`; certificate handoff stub for 2.4 |
 
-### 2. Stage transitions (visual polish)
+We will plan/approve/build each in order. Below is the full 2.2 plan; implementation lands a-then-b-then-c… in one or two PR-sized chunks per your preference.
 
-`src/components/player/stages/StageShell.tsx` (new wrapper)
-- Wrap each stage's content with framer-motion `<AnimatePresence mode="wait">` keyed by `stage`.
-- Slide-fade transition (x: 24 → 0, opacity 0 → 1, 220ms).
-- Reduced-motion respected via `useReducedMotion()`.
+---
 
-Apply by rendering `<StageShell stageKey={currentStage}>{stageNode}</StageShell>` in `ImmersiveCoursePlayer`.
+## Detailed plan
 
-### 3. Sticky stage header + progress rail
-
-`src/components/player/StageNavigation.tsx` (edit existing)
-- Make the stage chip strip `sticky top-0 z-30` with a subtle backdrop-blur.
-- Show **module N / total** + **stage label** + a slim 6-segment progress bar (filled = completed, glowing = current).
-- Add prev/next stage chevrons inline.
-
-### 4. Keyboard navigation
-
-`src/hooks/usePlayerHotkeys.ts` (new)
-- `←` / `→` → previous / next stage (no-op if at boundary).
-- `[` / `]` → previous / next module.
-- `Enter` (when a "Mark complete" CTA is focusable) → triggers `handleStageComplete(currentStage)`.
-- `?` → opens a small `ShortcutsDialog` listing keys.
-- Disabled when `document.activeElement` is an input/textarea/contenteditable.
-
-Wired into `ImmersiveCoursePlayer` via `usePlayerHotkeys({ onPrevStage, onNextStage, onPrevModule, onNextModule, onComplete })`.
-
-### 5. Per-resource progress persistence
-
-`src/hooks/useResourceProgress.ts` (new)
-- Persists per `(enrollment_id, resource_id)` watch position (videos) + read state (links/files) using a single JSONB column `enrollment_stage_progress.resource_state` (added via migration — see §7).
-- `VideoPlayer.tsx`: emit `onTimeUpdate` (throttled 5s) + `onEnded` → `useResourceProgress.update(resourceId, { sec, done })`.
-- `ResourceViewer.tsx`: mark link/file resources as `done=true` after 3s focus or explicit "Mark done" click.
-- LearnStage shows ✓ badge on completed resources and **resumes video at saved time**.
-
-### 6. Auto-advance + smarter stage gating
-
-`src/hooks/useStageProgress.ts` (edit)
-- Once **all** resources in a stage are `done`, auto-trigger `handleStageComplete(stage)` (still requires confirm toast for Practice/Assess).
-- Lock future stages behind incomplete prior stages — clicking a locked chip shows an inline tooltip "Complete Stage N first".
-
-### 7. Tiny migration
+### 2.2.a — Schema
 
 ```sql
-ALTER TABLE public.enrollment_stage_progress
-  ADD COLUMN IF NOT EXISTS resource_state jsonb NOT NULL DEFAULT '{}'::jsonb;
+create table public.module_progress (
+  id uuid primary key default gen_random_uuid(),
+  enrollment_id uuid not null references public.enrollments(id) on delete cascade,
+  module_id uuid not null references public.course_modules(id) on delete cascade,
+  stages_completed int[] not null default '{}',
+  total_stages int not null default 6,
+  progress_pct int not null default 0,
+  started_at timestamptz,
+  completed_at timestamptz,
+  updated_at timestamptz not null default now(),
+  unique (enrollment_id, module_id)
+);
+
+create index module_progress_enrollment_idx on public.module_progress(enrollment_id);
+alter table public.module_progress enable row level security;
 ```
-No new RLS — inherits existing policies.
 
-### 8. Exit & resume UX
+RLS: learner reads own (`enrollment.talent_id = auth.uid()` via existing `is_enrolled_in_module`); admins read via `has_role(auth.uid(),'admin')`. No client writes (trigger-only).
 
-- "X" close button in player header → updates `current_module_id` + `last_accessed_at` then `navigate(-1)`.
-- On `/dashboard` learning rail (existing): course cards already exist; ensure the "Continue" CTA links to `/courses/:slug` which the player already handles — **no new dashboard work**, just verify.
+### 2.2.b — Triggers
+
+```text
+enrollment_stage_progress  ──AFTER INSERT/UPDATE──▶  fn_recompute_module_progress()
+                                                         │
+                                                         ├─ upsert module_progress row
+                                                         │  (stages_completed, pct = card(stages)/total*100,
+                                                         │   started_at on first stage, completed_at when full)
+                                                         │
+                                                         └─ recompute enrollments.progress =
+                                                              avg(module_progress.progress_pct) across course modules
+                                                              + flip status='completed', completed_at=now()
+                                                                when all modules done
+```
+
+All functions: `language plpgsql security definer set search_path = public`.
+
+### 2.2.c — Backfill
+
+One-shot in the same migration:
+- For every existing row in `enrollment_stage_progress`, call the trigger fn manually to seed `module_progress`.
+- For legacy `student_resource_progress` data without `enrollment_stage_progress` rows, derive completed stages by grouping `(student_id, module_resources.module_id, stage_number)` and resolving `enrollment_id` via `enrollments.talent_id = student_id and content_id = module.content_id`.
+
+### 2.2.d — Unified hook
+
+`src/hooks/useProgress.ts` (new) — single API:
+```ts
+useProgress({ enrollmentId, contentId })
+  → { modules: ModuleProgress[], overallPct, isCompleted,
+      currentModuleId, currentStage,
+      markStageComplete(moduleId, stage), isStageUnlocked, isResourceViewed, markResourceViewed,
+      reload }
+```
+Reads from `module_progress` (joined with `course_modules` for ordering) + `enrollment_stage_progress.resource_view_states` for per-resource flags. Writes go to `enrollment_stage_progress` only — engine derives the rest.
+
+Realtime: subscribe to `module_progress` changes for current enrollment so multi-tab stays in sync.
+
+### 2.2.e — UI rewire (no UX change)
+
+- `ImmersiveCoursePlayer.tsx`: swap `useStageProgress` + `useCourseProgress` for `useProgress`.
+- `Enrollments.tsx` + dashboard "Continue learning" rail: drop manual progress math, read `module_progress.progress_pct` / `enrollments.progress`.
+- Delete dead local % math inside `useStageProgress` (kept temporarily as thin shim re-exporting from `useProgress` to avoid blast radius, removed in 2.2.f).
+
+### 2.2.f — Completion handoff
+
+- DB trigger emits a `notifications` row `type='course_completed'` once `enrollments.status` flips to `completed`.
+- Add `course_completed_at` index for 2.4 (certificates) and 2.5 (streaks) consumers.
+- Remove the legacy `useStageProgress` shim once player + dashboard are migrated.
 
 ---
 
-### Files
+## Files
+
+**Migrations**
+- `module_progress` table + RLS + indexes
+- `fn_recompute_module_progress`, `fn_recompute_enrollment_progress`, triggers on `enrollment_stage_progress`
+- Backfill block
 
 **New**
-- `src/components/player/StageShell.tsx`
-- `src/hooks/usePlayerHotkeys.ts`
-- `src/hooks/useResourceProgress.ts`
-- `src/components/player/ShortcutsDialog.tsx`
+- `src/hooks/useProgress.ts`
 
 **Edited**
-- `src/pages/ImmersiveCoursePlayer.tsx` — resume logic, hotkeys, debounced enrollment updates, StageShell wrapper.
-- `src/components/player/StageNavigation.tsx` — sticky header + progress rail.
-- `src/components/player/VideoPlayer.tsx` — resume + persist watch time.
-- `src/components/player/ResourceViewer.tsx` — done-marking.
-- `src/hooks/useStageProgress.ts` — auto-advance + gating.
-
-**Migration**
-- Add `resource_state jsonb` to `enrollment_stage_progress`.
+- `src/pages/ImmersiveCoursePlayer.tsx`
+- `src/pages/Enrollments.tsx`
+- `src/components/dashboard/*` (continue-learning rail)
+- `src/hooks/useStageProgress.ts` → shim, then deleted
+- `src/hooks/useCourseProgress.ts` → deleted
 
 ---
 
-### Out of scope (deferred to 2.2)
-- `module_progress` table + auto-recompute of `enrollments.progress` (whole next sub-phase).
-- Adaptive difficulty (2.3).
-- Certificates on completion (2.4).
+## Out of scope (next sub-phases)
+- Adaptive difficulty (2.3)
+- Certificates on completion (2.4)
+- Streaks/goals (2.5)
 
-Reply **continue** to implement (migration first, then hooks, then UI wiring).
+---
+
+Reply **continue with 2.2.a** to start with the schema migration, or **continue 2.2 a–c** to ship schema + triggers + backfill in one batch (recommended).
