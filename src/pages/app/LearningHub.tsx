@@ -8,6 +8,7 @@ import { CoursesTab } from "@/components/learning/CoursesTab";
 import { StudyAbroadSection } from "@/components/learning/StudyAbroadSection";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
  * Learning Hub — compact mobile-first shell.
@@ -47,6 +48,11 @@ export default function LearningHub() {
       setSearchParams(params, { replace: true });
     }
   }, [activeTab, detailView, setSearchParams]);
+
+  // Fire-and-forget daily review-due nudge (deduped server-side per UTC day)
+  useEffect(() => {
+    supabase.functions.invoke("notify-review-due").catch(() => {});
+  }, []);
 
   const handleTabChange = (tab: TabKey) => {
     setActiveTab(tab);
