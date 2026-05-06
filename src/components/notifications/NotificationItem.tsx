@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { X, Zap, ShieldCheck, Clock } from "lucide-react";
+import { X, Zap, ShieldCheck, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   getNotificationIcon,
   getNotificationColor,
   formatRelativeTime,
+  isAgenticNotification,
   type Notification,
 } from "@/lib/notificationHelpers";
 import { cn } from "@/lib/utils";
