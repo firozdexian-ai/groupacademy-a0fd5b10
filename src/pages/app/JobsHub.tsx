@@ -384,10 +384,31 @@ export default function JobsHub() {
             )}
 
             {recommendations.length > 0 && !loadingAI && (
-              <div className="pt-2">
-                {renderJobSection(
-                  recommendations.map((r) => r.job),
-                  "recommended",
+              <div className="pt-2 space-y-3">
+                {recommendations.slice(0, showMore.recommended ? recommendations.length : INITIAL_SHOW).map((r: any) => (
+                  <JobCard
+                    key={r.id}
+                    job={r.job}
+                    variant="compact"
+                    isSaved={isSaved(r.job.id, "job")}
+                    onSaveToggle={() => toggleSave(r.job.id, "job")}
+                    onClick={() => navigate(`/app/jobs/${r.job.id}`)}
+                    matchInfo={{
+                      match_score: r.match_score,
+                      reason: r.reason || "",
+                      match_reason: r.match_reason,
+                      verified_match: r.verified_match,
+                    }}
+                  />
+                ))}
+                {recommendations.length > INITIAL_SHOW && (
+                  <Button
+                    variant="ghost"
+                    className="w-full h-9 rounded-lg text-xs font-medium text-muted-foreground"
+                    onClick={() => setShowMore((p) => ({ ...p, recommended: !p.recommended }))}
+                  >
+                    {showMore.recommended ? "Show less" : `Show ${recommendations.length - INITIAL_SHOW} more`}
+                  </Button>
                 )}
               </div>
             )}
