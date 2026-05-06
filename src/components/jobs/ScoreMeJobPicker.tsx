@@ -38,7 +38,7 @@ export function ScoreMeJobPicker({ open, onOpenChange }: Props) {
         const seen = new Set<string>();
 
         if (uid) {
-          const savedRes: any = await supabase
+          const savedRes: any = await (supabase as any)
             .from("saved_items")
             .select("item_id")
             .eq("user_id", uid)
