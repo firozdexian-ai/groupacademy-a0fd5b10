@@ -260,6 +260,7 @@ export function TalentAppShell() {
                         { icon: Coins, label: "Buy Credits", action: () => credits.open() },
                         { icon: Receipt, label: "Transactions", action: () => navigate("/app/transactions") },
                         { icon: Wallet, label: "Withdraw earnings", action: () => navigate("/app/withdrawals") },
+                        { icon: BarChart3, label: "Creator Analytics", action: () => navigate("/app/creator/analytics"), suffix: "New" },
                         { icon: Bookmark, label: "Saved Jobs", action: () => navigate("/app/saved") },
                         { icon: BookOpen, label: "My Learning", action: () => navigate("/app/learning/my-courses") },
                         { icon: Globe, label: "Study & Work Abroad", action: () => navigate("/app/abroad"), suffix: "New" },
