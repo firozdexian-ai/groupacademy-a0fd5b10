@@ -216,9 +216,9 @@ export function useCoursePerformance(contentId: string | undefined) {
         if (talentIds.length) {
           const { data: talents } = await supabase
             .from("talents")
-            .select("id,name")
+            .select("id,full_name")
             .in("id", talentIds);
-          (talents ?? []).forEach((t: any) => nameMap.set(t.id, t.name ?? "Unknown"));
+          (talents ?? []).forEach((t: any) => nameMap.set(t.id, t.full_name ?? "Unknown"));
         }
 
         const recent = recentRaw.map((r) => ({
