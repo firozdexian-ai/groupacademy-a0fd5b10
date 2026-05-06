@@ -213,6 +213,26 @@ export default function ContentEdit() {
           </div>
         </header>
 
+        <Tabs value={activeTab} onValueChange={setActiveTab} className="space-y-6">
+          <TabsList className="rounded-2xl bg-muted/40 p-1">
+            <TabsTrigger value="schema" className="rounded-xl text-[10px] font-black uppercase tracking-widest">Schema</TabsTrigger>
+            {["live_webinar", "batch_class", "offline_seminar"].includes(formData.content_type) && (
+              <TabsTrigger value="sessions" className="rounded-xl text-[10px] font-black uppercase tracking-widest">Sessions</TabsTrigger>
+            )}
+          </TabsList>
+
+          <TabsContent value="sessions" className="mt-0">
+            {id && (
+              <CourseSessionsManager
+                contentId={id}
+                contentTitle={formData.title || "Untitled course"}
+                defaultTimezone={formData.event_timezone}
+                parentEventDate={formData.event_date || null}
+              />
+            )}
+          </TabsContent>
+
+          <TabsContent value="schema" className="mt-0">
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-[1fr,300px] gap-8">
           <div className="space-y-6">
             {/* Core Identity Section */}
