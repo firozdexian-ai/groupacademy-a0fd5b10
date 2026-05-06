@@ -116,15 +116,40 @@ serve(async (req) => {
       addJobs(keyJobs);
     }
 
+    // Compute mastery snapshot per candidate (cap to top 60 to control RPC load)
+    const masteryById = new Map<string, any>();
+    const toScore = candidateJobs.slice(0, 60);
+    await Promise.all(
+      toScore.map(async (j) => {
+        try {
+          const { data } = await supabase.rpc("score_talent_job_mastery", {
+            _talent_id: talent.id,
+            _job_id: j.id,
+          });
+          if (data && !data.error) masteryById.set(j.id, data);
+        } catch (_) {}
+      })
+    );
+
+    // Sort candidates by mastery_score desc so highest-signal jobs lead the AI prompt
+    candidateJobs.sort((a, b) => {
+      const ma = masteryById.get(a.id)?.mastery_score || 0;
+      const mb = masteryById.get(b.id)?.mastery_score || 0;
+      return mb - ma;
+    });
+
     const jobSummaries = candidateJobs.map((j) => {
       const isLocal = aliases.some((a) => j.location?.toLowerCase().includes(a.toLowerCase()));
       const isRemote = j.location?.toLowerCase().includes("remote");
+      const m = masteryById.get(j.id);
       return {
         id: j.id,
         title: j.title,
         company: j.company_name,
         location: j.location,
         is_geographically_relevant: isLocal || isRemote,
+        verified_mastery_score: m?.mastery_score || 0,
+        verified_credentials: (m?.verified_credentials || []).length,
         desc: j.description?.slice(0, 200),
       };
     });
@@ -138,10 +163,10 @@ serve(async (req) => {
           {
             role: "system",
             content: `You are a career matcher for GroUp Academy. 
-            CRITICAL RULE: The candidate is in ${talentCountry}.
-            1. Jobs where "is_geographically_relevant" is true MUST be ranked higher than any other job.
-            2. If a job is NOT geographically relevant (different country and not remote), its score MUST NOT exceed 55%, even with a perfect skill match.
-            3. A job in ${talentCountry} with a 70% skill match is better than a job in Australia with 100% skill match.
+            CRITICAL RULES (in order):
+            1. The candidate is in ${talentCountry}. Jobs where "is_geographically_relevant" is true MUST rank higher than non-relevant jobs.
+            2. Jobs with "verified_mastery_score" >= 60 OR "verified_credentials" >= 1 are STRONG matches — boost them and surface first.
+            3. Non-relevant jobs (different country, not remote) MUST NOT exceed 55%, even with perfect skill match.
             Rank the top 12 jobs.`,
           },
           {
@@ -183,10 +208,31 @@ serve(async (req) => {
 
     const suggestions = (parsed.matches || [])
       .filter((m: any) => jobMap.has(m.job_id))
-      .map((m: any) => ({
-        ...m,
-        job: jobMap.get(m.job_id),
-      }));
+      .map((m: any) => {
+        const mastery = masteryById.get(m.job_id);
+        const credentialCount = (mastery?.verified_credentials || []).length;
+        const masteryScore = mastery?.mastery_score || 0;
+        const baseScore = Number(m.match_score) || 0;
+        const finalScore = Math.min(
+          100,
+          Math.round(baseScore * (1 + 0.4 * masteryScore / 100) + credentialCount * 5)
+        );
+        const matchReason: "verified_skill" | "keyword" | "location_only" =
+          credentialCount > 0 || masteryScore >= 60
+            ? "verified_skill"
+            : baseScore >= 60
+            ? "keyword"
+            : "location_only";
+        return {
+          ...m,
+          match_score: finalScore,
+          base_match_score: baseScore,
+          match_reason: matchReason,
+          verified_match: mastery || null,
+          job: jobMap.get(m.job_id),
+        };
+      })
+      .sort((a: any, b: any) => b.match_score - a.match_score);
 
     return new Response(JSON.stringify({ suggestions }), {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
