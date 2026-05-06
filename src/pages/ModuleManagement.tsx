@@ -49,6 +49,22 @@ import ResearchPromptDialog from "@/components/modules/ResearchPromptDialog";
 import { BatchContentGenerator } from "@/components/dashboard/BatchContentGenerator";
 import { DraggableList } from "@/components/dashboard/common/DraggableList";
 import { ItemBankAnalyticsPanel } from "@/components/learning/ItemBankAnalyticsPanel";
+import { useModuleReviewBadge } from "@/hooks/useModuleReviewBadge";
+
+function ReviewNudge({ moduleId, onClick }: { moduleId: string; onClick: () => void }) {
+  const { flagged, loading } = useModuleReviewBadge(moduleId);
+  if (loading || flagged <= 0) return null;
+  return (
+    <button
+      type="button"
+      onClick={onClick}
+      className="rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-600 px-2 py-1 text-[10px] font-bold uppercase tracking-widest hover:bg-amber-500/20 transition"
+      title="Items flagged for author review"
+    >
+      {flagged} need review
+    </button>
+  );
+}
 
 /**
  * Curriculum Module Manager
@@ -287,6 +303,15 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
             </div>
           </div>
           <div className="flex items-center gap-2">
+            <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/app/instructor/review-queue")}
+              className="rounded-xl font-bold uppercase text-[10px] tracking-widest"
+              title="Items flagged across all modules"
+            >
+              <BarChart3 className="mr-2 h-3.5 w-3.5" /> Review queue
+            </Button>
             <Button
               variant="outline"
               size="sm"
@@ -533,6 +558,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
                       >
                         <BarChart3 className="mr-1.5 h-3.5 w-3.5" /> Analytics
                       </Button>
+                      <ReviewNudge moduleId={mod.id} onClick={() => setAnalyticsModuleId(mod.id)} />
                     </div>
                     <Button
                       onClick={() => saveModule(mod)}

@@ -1761,6 +1761,51 @@ export type Database = {
           },
         ]
       }
+      authoring_digest_log: {
+        Row: {
+          channel: string
+          content_id: string | null
+          created_at: string
+          id: string
+          instructor_id: string | null
+          items_flagged: number
+          metadata: Json
+          module_ids: string[]
+          period_end: string
+          period_start: string
+          recipient_email: string | null
+          sent_at: string
+        }
+        Insert: {
+          channel?: string
+          content_id?: string | null
+          created_at?: string
+          id?: string
+          instructor_id?: string | null
+          items_flagged?: number
+          metadata?: Json
+          module_ids?: string[]
+          period_end: string
+          period_start: string
+          recipient_email?: string | null
+          sent_at?: string
+        }
+        Update: {
+          channel?: string
+          content_id?: string | null
+          created_at?: string
+          id?: string
+          instructor_id?: string | null
+          items_flagged?: number
+          metadata?: Json
+          module_ids?: string[]
+          period_end?: string
+          period_start?: string
+          recipient_email?: string | null
+          sent_at?: string
+        }
+        Relationships: []
+      }
       banners: {
         Row: {
           created_at: string | null
@@ -11340,6 +11385,10 @@ export type Database = {
           p_course_id: string
           p_credit_per_subtask?: number
         }
+        Returns: Json
+      }
+      get_authoring_review_digest: {
+        Args: { _days?: number; _module_id: string }
         Returns: Json
       }
       get_or_create_talent: {
