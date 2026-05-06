@@ -479,6 +479,7 @@ export default function App() {
                     <Route path="agent-marketplace" element={<AgentMarketplace />} />
                     <Route path="gigs" element={<Gigs />} />
                     <Route path="gigs/new" element={<NewGigWizard />} />
+                    <Route path="gigs/appeals" element={<GigAppeals />} />
                     <Route path="marketplace" element={<Navigate to="/app/gigs?tab=projects" replace />} />
                     <Route path="marketplace/:id" element={<MarketplaceGigDetail />} />
                     <Route path="my-gigs" element={<Navigate to="/app/gigs?tab=activity" replace />} />
