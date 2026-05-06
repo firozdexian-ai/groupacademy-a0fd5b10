@@ -308,6 +308,28 @@ export default function AppApplicationDetail() {
         </CardContent>
       </Card>
 
+      {/* Messages */}
+      {!isClosed && (
+        <Card>
+          <CardContent className="p-4 space-y-2">
+            <div className="flex items-center gap-2">
+              <MessageCircle className="h-4 w-4 text-primary" />
+              <p className="text-sm font-semibold">Messages with recruiter</p>
+            </div>
+            <ApplicationMessageThread applicationId={detail.id} actorRole="talent" />
+          </CardContent>
+        </Card>
+      )}
+
+      {/* Restore (within 7 days) */}
+      {detail.application_status === "withdrawn" &&
+        detail.withdrawn_at &&
+        differenceInDays(new Date(), new Date(detail.withdrawn_at)) < 7 && (
+          <Button variant="outline" size="sm" className="w-full" onClick={handleRestore}>
+            <RotateCcw className="h-4 w-4 mr-2" /> Restore application
+          </Button>
+        )}
+
       {/* Withdraw */}
       {!isClosed && (
         <AlertDialog>
