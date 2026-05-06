@@ -304,6 +304,15 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
           </div>
           <div className="flex items-center gap-2">
             <Button
+              variant="ghost"
+              size="sm"
+              onClick={() => navigate("/app/instructor/review-queue")}
+              className="rounded-xl font-bold uppercase text-[10px] tracking-widest"
+              title="Items flagged across all modules"
+            >
+              <BarChart3 className="mr-2 h-3.5 w-3.5" /> Review queue
+            </Button>
+            <Button
               variant="outline"
               size="sm"
               onClick={loadModules}
