@@ -108,15 +108,46 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
   if (!scenario) return null;
 
   if (evalResult) {
+    const isV1 = evalResult.version === 1 || Array.isArray(evalResult.topics);
+    const overallPct = Math.round((isV1 ? Number(evalResult.overall ?? 0) * 100 : Number(evalResult.overall_score ?? 0)));
+    const items: Array<{ label: string; pct: number; notes?: string }> = isV1
+      ? (evalResult.topics ?? []).map((t: any) => ({
+          label: String(t.tag ?? "topic").replace(/_/g, " "),
+          pct: Math.round(Number(t.score ?? 0) * 100),
+          notes: t.notes,
+        }))
+      : (evalResult.criteria ?? []).map((c: any) => ({
+          label: String(c.criterion ?? ""),
+          pct: Math.round(Number(c.score ?? 0)),
+          notes: c.feedback,
+        }));
     return (
       <Card className="rounded-3xl">
-        <CardHeader><CardTitle className="flex items-center gap-2"><Award className="h-5 w-5 text-primary" /> Score: {Math.round(evalResult.overall_score)}%</CardTitle></CardHeader>
+        <CardHeader>
+          <CardTitle className="flex items-center gap-2">
+            <Award className="h-5 w-5 text-primary" /> Score: {overallPct}%
+          </CardTitle>
+        </CardHeader>
         <CardContent className="space-y-3">
-          <p className="text-sm">{evalResult.summary}</p>
-          {evalResult.criteria?.map((c: any, i: number) => (
+          {evalResult.summary && <p className="text-sm">{evalResult.summary}</p>}
+          {isV1 && (
+            <p className="text-xs text-muted-foreground">
+              Your skill profile has been updated and these topics are now scheduled for review.
+            </p>
+          )}
+          {items.map((it, i) => (
             <div key={i} className="border rounded-xl p-3">
-              <div className="flex justify-between text-sm font-semibold"><span>{c.criterion}</span><span>{Math.round(c.score)}%</span></div>
-              <p className="text-xs text-muted-foreground mt-1">{c.feedback}</p>
+              <div className="flex justify-between text-sm font-semibold capitalize">
+                <span>{it.label}</span>
+                <span>{it.pct}%</span>
+              </div>
+              <div className="h-1.5 mt-2 bg-muted rounded-full overflow-hidden">
+                <div
+                  className="h-full bg-primary transition-all"
+                  style={{ width: `${Math.max(0, Math.min(100, it.pct))}%` }}
+                />
+              </div>
+              {it.notes && <p className="text-xs text-muted-foreground mt-2">{it.notes}</p>}
             </div>
           ))}
         </CardContent>
