@@ -23,6 +23,12 @@ import {
   Layers,
   SlidersHorizontal,
   RefreshCw,
+  ClipboardCheck,
+  Mic,
+  DollarSign,
+  Palette,
+  Lightbulb,
+  Clock,
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
