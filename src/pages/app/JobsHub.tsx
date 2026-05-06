@@ -432,7 +432,7 @@ export default function JobsHub() {
             <section className="space-y-3">
               <h2 className="text-base font-semibold flex items-center gap-2">
                 <Target className="h-4 w-4 text-primary" />
-                {talent?.profession_category_id || talent?.custom_profession
+                {(talent as any)?.professionCategoryId || (talent as any)?.customProfession
                   ? "Open in your field"
                   : `Open in ${talent?.country || "your area"}`}
               </h2>
