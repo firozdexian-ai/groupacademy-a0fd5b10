@@ -1,16 +1,19 @@
 import { useState } from "react";
-import { Pin, ExternalLink, Play, MoreHorizontal, MessageSquare } from "lucide-react";
+import { Pin, ExternalLink, Play, MoreHorizontal, Bookmark, BookmarkCheck, Flag } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { PostAuthor } from "./PostAuthor";
-import { ReactionBar } from "./ReactionBar";
 import { PollWidget } from "./PollWidget";
-import { ShareSheet } from "./ShareSheet";
-import { HypeButton } from "./HypeButton";
-import { CommentList } from "./CommentList";
-import { usePostReactions } from "@/hooks/usePostReactions";
+import { PostActionBar } from "./PostActionBar";
 import { usePollVoting } from "@/hooks/usePollVoting";
+import { useSavedItems } from "@/hooks/useSavedItems";
+import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 /**
@@ -56,7 +59,8 @@ const TYPE_META: Record<string, { label: string; className: string } | null> = {
 
 export function PostCard({ post }: PostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { reactions, userReaction, toggleReaction, isLoading: reactionsLoading } = usePostReactions(post.id);
+  const { isSaved, toggleSave } = useSavedItems();
+  const saved = isSaved(post.id, "post" as any);
 
   const pollOptions = post.pollOptions || [];
   const { hasVoted, userVote, results, totalVotes, castVote, isLoading: pollLoading } = usePollVoting(
@@ -66,9 +70,17 @@ export function PostCard({ post }: PostCardProps) {
 
   const isLongText = post.textContent.length > 280;
   const displayText = isLongText && !isExpanded ? post.textContent.slice(0, 280) + "..." : post.textContent;
-  const totalReactions = Object.values(reactions).reduce((sum, count) => sum + count, 0);
   const typeMeta = TYPE_META[post.contentType] ?? null;
   const isVideo = post.mediaUrl?.match(/(youtube\.com|youtu\.be)/);
+
+  const handleSaveToggle = async () => {
+    try {
+      await toggleSave(post.id, "post" as any);
+      toast.success(saved ? "Removed from saved" : "Saved");
+    } catch {
+      toast.error("Couldn't update saved");
+    }
+  };
 
   return (
     <Card className="overflow-hidden border border-border/40 hover:border-primary/40 bg-card rounded-2xl transition-colors">
@@ -88,17 +100,26 @@ export function PostCard({ post }: PostCardProps) {
             avatar={post.authorAvatar}
             createdAt={post.createdAt}
           />
-          <button className="text-muted-foreground/50 hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted/40">
-            <MoreHorizontal className="h-4 w-4" />
-          </button>
+          <DropdownMenu>
+            <DropdownMenuTrigger asChild>
+              <button
+                className="text-muted-foreground/60 hover:text-foreground transition-colors p-1 rounded-md hover:bg-muted/40"
+                aria-label="More"
+              >
+                <MoreHorizontal className="h-4 w-4" />
+              </button>
+            </DropdownMenuTrigger>
+            <DropdownMenuContent align="end" className="w-44">
+              <DropdownMenuItem onClick={handleSaveToggle}>
+                {saved ? <BookmarkCheck className="h-4 w-4 mr-2" /> : <Bookmark className="h-4 w-4 mr-2" />}
+                {saved ? "Saved" : "Save"}
+              </DropdownMenuItem>
+              <DropdownMenuItem onClick={() => toast.info("Reported. Thanks.")}>
+                <Flag className="h-4 w-4 mr-2" /> Report
+              </DropdownMenuItem>
+            </DropdownMenuContent>
+          </DropdownMenu>
         </div>
-
-        {/* Type chip */}
-        {typeMeta && (
-          <Badge variant="outline" className={cn("text-[10px] font-medium px-2 py-0 rounded-full border", typeMeta.className)}>
-            {typeMeta.label}
-          </Badge>
-        )}
 
         {/* Body */}
         <div className="text-left">
