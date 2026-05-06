@@ -6,6 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Sparkles } from "lucide-react";
 import { GigMatchmakerTab } from "./GigMatchmakerTab";
+import { GigVerificationQueueTab } from "./GigVerificationQueueTab";
 
 export default function GigOpsTab() {
   const { data: briefs, isLoading } = useQuery({
