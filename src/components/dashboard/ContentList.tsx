@@ -434,7 +434,6 @@ const ContentList = ({ filter }: ContentListProps) => {
                         <Icon className={cn("h-6 w-6", config.color)} />
                       </div>
                     </div>
-                    <div className="flex items-center gap-1.5">
                     <div className="flex items-center gap-1.5 flex-wrap justify-end">
                       {liveNow && (
                         <Badge className="rounded-lg font-black text-[8px] uppercase tracking-[0.2em] px-3 py-1 border-none bg-red-500 text-white animate-pulse">
