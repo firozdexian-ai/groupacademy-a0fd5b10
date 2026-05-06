@@ -1,4 +1,4 @@
-# Phase 1.4 — AI Career Coach (Talent Side)
+# Phase 1.4 — AI Career Coach (Talent Side) — IMPLEMENTED
 
 Goal: now that 1.3 captures **profession_category_id**, **professional_role_id**, **current_status**, and **primary_goal**, turn that data into a working **personal Career Coach** for every talent. Reuse the existing `ai_instructors` table (78 active, one per profession category — `Career Coaching` already exists as a fallback) and the streaming `ai-instructor-chat` edge function. No new model, no new chat surface — just the **routing, persona injection, and entry points**.
 
