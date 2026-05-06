@@ -77,19 +77,6 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 const INITIAL_SHOW = 3;
 const AI_MATCH_COST = 10;
 
-const COUNTRY_FLAGS: Record<string, string> = {
-  Bangladesh: "🇧🇩",
-  India: "🇮🇳",
-  Singapore: "🇸🇬",
-  Japan: "🇯🇵",
-  "United Arab Emirates": "🇦🇪",
-  "Saudi Arabia": "🇸🇦",
-  Ireland: "🇮🇪",
-  "United States": "🇺🇸",
-  "United Kingdom": "🇬🇧",
-  Canada: "🇨🇦",
-};
-
 const AGENT_PURPOSE: Record<string, string> = {
   "job-hunter": "Find roles that fit your profile",
   "cv-coach": "Polish your CV to pass ATS screens",
@@ -99,16 +86,6 @@ const AGENT_PURPOSE: Record<string, string> = {
   "remote-expert": "Discover remote-first opportunities",
   "career-abroad": "Explore careers overseas",
 };
-
-function parseLocation(location: string): { city: string; country: string } {
-  const parts = location.split(",").map((s) => s.trim());
-  if (parts.length >= 2) {
-    const country = parts[parts.length - 1];
-    const city = parts.slice(0, -1).join(", ");
-    return { city, country };
-  }
-  return { city: "Global", country: location || "International" };
-}
 
 export default function JobsHub() {
   const navigate = useNavigate();
