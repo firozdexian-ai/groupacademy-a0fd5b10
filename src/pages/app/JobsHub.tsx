@@ -111,7 +111,11 @@ export default function JobsHub() {
   const { isSaved, toggleSave } = useSavedItems();
   const { canAfford, deductCredits } = useCredits();
 
-  const [activeTab, setActiveTab] = useState<TabKey>("browse");
+  const [searchParams] = useSearchParams();
+  const initialTab = (searchParams.get("tab") as TabKey) || "browse";
+  const [activeTab, setActiveTab] = useState<TabKey>(
+    ["browse", "company", "country", "tools"].includes(initialTab) ? initialTab : "browse",
+  );
   const [preferencesOpen, setPreferencesOpen] = useState(false);
   const [loadingAI, setLoadingAI] = useState(false);
   const [companySearch, setCompanySearch] = useState("");
