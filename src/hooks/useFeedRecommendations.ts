@@ -158,7 +158,23 @@ export function useFeedRecommendations() {
           });
         });
 
+        // Enrich posts with author country/profession (single batched query)
+        const authorIds = Array.from(
+          new Set((postsRes.data || []).map((p: any) => p.author_user_id).filter(Boolean)),
+        );
+        let authorMeta = new Map<string, { country?: string; profession?: string }>();
+        if (authorIds.length > 0) {
+          const { data: authors } = await supabase
+            .from("talents")
+            .select("user_id, country, custom_profession")
+            .in("user_id", authorIds);
+          authors?.forEach((a: any) =>
+            authorMeta.set(a.user_id, { country: a.country, profession: a.custom_profession }),
+          );
+        }
+
         postsRes.data?.forEach((p) => {
+          const meta = p.author_user_id ? authorMeta.get(p.author_user_id) : undefined;
           items.push({
             id: p.id,
             type: "post",
@@ -172,6 +188,8 @@ export function useFeedRecommendations() {
             authorTitle: p.author_title,
             contentType: p.content_type,
             isPinned: p.is_pinned,
+            authorCountry: meta?.country,
+            authorProfession: meta?.profession,
             // FIXED: Resolved Json assignment conflict
             pollOptions: p.poll_options as unknown as { id: string; text: string }[],
           });
