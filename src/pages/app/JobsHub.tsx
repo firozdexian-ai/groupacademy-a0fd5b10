@@ -258,35 +258,6 @@ export default function JobsHub() {
     return `${days}d ago`;
   }
 
-  const countryGroups = useMemo(() => {
-    const map = new Map<string, CountryGroup>();
-    locations.forEach((loc) => {
-      const { city, country } = parseLocation(loc.location);
-      const ex = map.get(country);
-      if (ex) {
-        ex.totalJobs += loc.count;
-        if (city) ex.cities.push({ name: city, count: loc.count });
-      } else {
-        map.set(country, {
-          country,
-          flag: COUNTRY_FLAGS[country] || "🌍",
-          totalJobs: loc.count,
-          cities: city ? [{ name: city, count: loc.count }] : [],
-        });
-      }
-    });
-    const list = Array.from(map.values()).sort((a, b) => b.totalJobs - a.totalJobs);
-    const userCountry = talent?.country;
-    if (userCountry) {
-      const idx = list.findIndex((g) => g.country.toLowerCase() === userCountry.toLowerCase());
-      if (idx > 0) {
-        const [pinned] = list.splice(idx, 1);
-        list.unshift(pinned);
-      }
-    }
-    return list;
-  }, [locations, talent?.country]);
-
   async function handleGetAIRecommendations() {
     if (!talent?.id) {
       return toast.error("Identity verification required to process matches.");
