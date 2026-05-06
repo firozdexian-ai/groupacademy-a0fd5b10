@@ -198,6 +198,13 @@ export function MyCoursesTab({ onBrowseCatalog }: MyCoursesTabProps) {
       ) : (
         <>
           <AdaptiveSnapshotCard />
+          <button
+            type="button"
+            onClick={() => navigate("/app/talent-mirror")}
+            className="w-full text-left text-[11px] font-bold uppercase tracking-widest text-primary hover:underline px-1 -mt-2"
+          >
+            Open Talent Mirror →
+          </button>
           {active.length > 0 && (
             <section className="space-y-2">
               <h2 className="text-sm font-semibold px-1">In progress</h2>

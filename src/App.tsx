@@ -98,6 +98,7 @@ import AppJobApplication from "./pages/app/AppJobApplication";
 import AppCourses from "./pages/app/AppCourses";
 import AppCourseDetail from "./pages/app/AppCourseDetail";
 import AppMyLearning from "./pages/app/AppMyLearning";
+import TalentMirror from "./pages/app/TalentMirror";
 import AppProfessions from "./pages/app/AppProfessions";
 import AppProfessionDetail from "./pages/app/AppProfessionDetail";
 import SchoolDetail from "./pages/app/SchoolDetail";
@@ -450,6 +451,7 @@ export default function App() {
                     <Route path="learning/courses" element={<AppCourses />} />
                     <Route path="learning/courses/:slug" element={<AppCourseDetail />} />
                     <Route path="learning/my-courses" element={<AppMyLearning />} />
+                    <Route path="talent-mirror" element={<TalentMirror />} />
                     <Route path="learning/events" element={<AppEvents />} />
                     <Route path="learning/webinars" element={<AppEvents />} />
                     <Route path="learning/competitions" element={<Competitions />} />
