@@ -314,6 +314,38 @@ const ContentList = ({ filter }: ContentListProps) => {
 
       <ContentFilters values={filters} onChange={setFilters} className="px-2" />
 
+      {selectedIds.size > 0 && (
+        <div className="flex flex-wrap items-center gap-3 p-4 rounded-2xl border-2 border-primary/30 bg-primary/5 sticky top-2 z-10 backdrop-blur">
+          <p className="text-xs font-black uppercase tracking-widest">
+            {selectedIds.size} selected
+          </p>
+          <Button size="sm" variant="outline" className="rounded-lg h-9 text-[10px] font-bold uppercase"
+            onClick={() => bulkSetPublished(true)} disabled={bulkBusy}>
+            <Power className="w-3.5 h-3.5 mr-1.5" /> Publish
+          </Button>
+          <Button size="sm" variant="outline" className="rounded-lg h-9 text-[10px] font-bold uppercase"
+            onClick={() => bulkSetPublished(false)} disabled={bulkBusy}>
+            <PowerOff className="w-3.5 h-3.5 mr-1.5" /> Unpublish
+          </Button>
+          <Button size="sm" variant="ghost" className="rounded-lg h-9 text-[10px] font-bold uppercase ml-auto"
+            onClick={clearSelection}>
+            Clear
+          </Button>
+        </div>
+      )}
+
+      {content.length > 0 && (
+        <div className="flex items-center gap-2 px-2">
+          <Checkbox
+            checked={selectedIds.size === content.length && content.length > 0}
+            onCheckedChange={toggleSelectAll}
+          />
+          <span className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+            Select all on this page
+          </span>
+        </div>
+      )}
+
       {content.length === 0 ? (
         <Card className="rounded-[40px] border-2 border-dashed border-border/40 bg-card/10 py-24 text-center">
           <Layers className="h-16 w-16 text-muted-foreground/20 mx-auto mb-6" />
