@@ -7,6 +7,8 @@ import { CheckCircle, Brain, Layers, Target, Zap, ShieldCheck } from "lucide-rea
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import type { Database } from "@/integrations/supabase/types";
 import { cn } from "@/lib/utils";
+import { ModuleQuizRunner } from "@/components/learning/ModuleQuizRunner";
+import { ModuleScenarioRunner } from "@/components/learning/ModuleScenarioRunner";
 
 /**
  * GroUp Academy: Cognitive Consolidation Node (PracticeStage)
@@ -20,14 +22,17 @@ interface PracticeStageProps {
   onComplete: () => void;
   isCompleted: boolean;
   professionLineId: string;
+  moduleId: string;
 }
 
-export function PracticeStage({ resources, onComplete, isCompleted, professionLineId }: PracticeStageProps) {
+export function PracticeStage({ resources, onComplete, isCompleted, professionLineId, moduleId }: PracticeStageProps) {
   const [flashcardsCompleted, setFlashcardsCompleted] = useState(false);
   const [scenarioCompleted, setScenarioCompleted] = useState(false);
+  const [quizCompleted, setQuizCompleted] = useState(false);
 
   const flashcardResource = resources.find((r) => r.resource_type === "flashcards");
   const scenarioResource = resources.find((r) => r.resource_type === "ai_scenario");
+  const quizResource = resources.find((r) => r.resource_type === "quiz");
 
   // REGISTRY_PROTOCOL: Normalize heterogeneous data formats
   const normalizeFlashcards = (resourceData: unknown): Flashcard[] => {
