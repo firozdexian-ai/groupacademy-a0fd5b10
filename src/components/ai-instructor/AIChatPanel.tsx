@@ -31,6 +31,9 @@ interface AIChatPanelProps {
   placeholder?: string;
   className?: string;
   onMessageSent?: () => void;
+  mode?: "tutor" | "career_coach";
+  seedAssistantMessage?: string;
+  starterChips?: { label: string; prompt: string }[];
 }
 
 const CHAT_ENDPOINT = `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-instructor-chat`;
@@ -45,6 +48,9 @@ export function AIChatPanel({
   placeholder = "Initialize query regarding trajectory or curriculum...",
   className = "",
   onMessageSent,
+  mode = "tutor",
+  seedAssistantMessage,
+  starterChips,
 }: AIChatPanelProps) {
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
@@ -60,6 +66,7 @@ export function AIChatPanel({
   });
 
   const starterPrompts = useMemo(() => {
+    if (starterChips && starterChips.length > 0) return starterChips;
     const out: { label: string; prompt: string }[] = [];
     if (!masteryCtx) return out;
     const weakest = masteryCtx.weak_topics?.[0];
@@ -76,7 +83,15 @@ export function AIChatPanel({
       });
     }
     return out;
-  }, [masteryCtx]);
+  }, [masteryCtx, starterChips]);
+
+  // Seed first assistant message (career coach intro etc.)
+  useEffect(() => {
+    if (seedAssistantMessage && messages.length === 0) {
+      setMessages([{ role: "assistant", content: seedAssistantMessage }]);
+    }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [seedAssistantMessage]);
 
   // PROTOCOL: Viewport Auto-Sync
   useEffect(() => {
@@ -113,6 +128,7 @@ export function AIChatPanel({
           contextId,
           moduleId: moduleId || (contextType === "module" ? contextId : undefined),
           contentId: contentId || (contextType === "course" ? contextId : undefined),
+          mode,
         }),
         signal: abortControllerRef.current.signal,
       });

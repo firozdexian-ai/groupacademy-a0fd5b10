@@ -36,13 +36,22 @@ serve(async (req) => {
     } = await supabaseAuth.auth.getUser();
     if (authError || !user) return new Response("Unauthorized", { status: 401, headers: corsHeaders });
 
-    const { messages, professionLineId, contextType, contextId, moduleId, contentId } = await req.json();
+    const { messages, professionLineId, contextType, contextId, moduleId, contentId, mode } = await req.json();
+    const isCareerCoach = mode === "career_coach";
 
-    // Resolve talentId for mastery context
+    // Resolve talent (id + career profile fields for coach mode)
     let talentId: string | null = null;
+    let talentRow: any = null;
     try {
-      const { data: t } = await supabaseAdmin.from("talents").select("id").eq("user_id", user.id).maybeSingle();
+      const { data: t } = await supabaseAdmin
+        .from("talents")
+        .select(
+          "id, full_name, current_status, primary_goal, professional_role_id, experience, skills, professional_roles:professional_role_id(name)",
+        )
+        .eq("user_id", user.id)
+        .maybeSingle();
       talentId = t?.id || null;
+      talentRow = t || null;
     } catch (_) {}
 
     // PHASE: Hierarchical_Context_Hydration
@@ -73,8 +82,8 @@ serve(async (req) => {
       }
     }
 
-    // PHASE: Curriculum_KB_Ingress
-    if (instructor?.profession_line_id) {
+    // PHASE: Curriculum_KB_Ingress (skip in career coach mode — noise for career chat)
+    if (instructor?.profession_line_id && !isCareerCoach) {
       const { data: courses } = await supabaseAdmin
         .from("content")
         .select("id, title, description, course_modules(title, description)")
@@ -89,6 +98,24 @@ serve(async (req) => {
           .join("\n\n");
         systemPrompt += `\n\nCURRICULUM KNOWLEDGE BASE:\n${kb.substring(0, 10000)}`;
       }
+    }
+
+    // PHASE: Career_Profile_Injection (coach mode)
+    if (isCareerCoach && talentRow) {
+      const role = talentRow.professional_roles?.name || "Not set";
+      const skills = Array.isArray(talentRow.skills) ? talentRow.skills.slice(0, 5).join(", ") : "Not set";
+      const recentExp = Array.isArray(talentRow.experience) && talentRow.experience[0]
+        ? `${talentRow.experience[0].title || ""} @ ${talentRow.experience[0].company || ""}`.trim()
+        : "Not set";
+      const goal = talentRow.primary_goal || "Not set";
+      const status = talentRow.current_status || "Not set";
+      systemPrompt += `\n\nCAREER PROFILE (use to ground every reply)
+- Goal: ${goal}
+- Status: ${status}
+- Target role: ${role}
+- Recent role: ${recentExp}
+- Top skills: ${skills}
+You are this talent's personal Career Coach. Coach toward their goal. Be direct, practical, name a concrete next step in every reply. Use markdown links to platform routes when relevant: [Jobs](/app/jobs), [Learning](/app/learning), [CV Maker](/app/tools/cv-maker), [Mock Interview](/app/mock-interview/setup).`.slice(0, 1500);
     }
 
     // PHASE: Mastery_Context_Injection

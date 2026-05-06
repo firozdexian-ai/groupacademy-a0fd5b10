@@ -72,6 +72,7 @@ import MyAgents from "./pages/app/MyAgents";
 import AgentMarketplace from "./pages/app/AgentMarketplace";
 import AgentChat from "./pages/app/AgentChat";
 import AIGeneral from "./pages/app/AIGeneral";
+import CareerCoach from "./pages/app/CareerCoach";
 import Profile from "./pages/app/Profile";
 import ProfileEdit from "./pages/app/ProfileEdit";
 import Notifications from "./pages/app/Notifications";
@@ -488,6 +489,7 @@ export default function App() {
                     <Route path="agents/:agentKey/profile" element={<AgentProfile />} />
                     <Route path="agents/:agentKey" element={<AgentChat />} />
                     <Route path="ai-general" element={<AIGeneral />} />
+                    <Route path="career-coach" element={<CareerCoach />} />
                     <Route path="transactions" element={<Transactions />} />
                     <Route path="withdrawals" element={<Withdrawals />} />
                     <Route path="profile/verify" element={<ProfileVerify />} />

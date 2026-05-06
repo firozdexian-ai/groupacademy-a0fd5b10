@@ -82,6 +82,13 @@ export function useOnboarding() {
 
       if (syncError) throw syncError;
 
+      // Bind the talent's Career Coach (idempotent — based on profession_category_id)
+      try {
+        await supabase.rpc("assign_career_coach" as any, { _talent_id: talent.id });
+      } catch (e) {
+        console.warn("assign_career_coach skipped:", e);
+      }
+
       // Clear stale recommendations so they re-rank with the new profile
       await supabase.from("ai_recommendations").delete().eq("talent_id", talent.id);
       queryClient.invalidateQueries({ queryKey: ["feed-recommendations"] });
