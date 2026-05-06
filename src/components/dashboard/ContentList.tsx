@@ -421,16 +421,66 @@ const ContentList = ({ filter }: ContentListProps) => {
                       <p className="text-[10px] font-black uppercase tracking-widest text-primary italic leading-none">
                         {config.label}
                       </p>
-                      {item.price > 0 ? (
-                        <div className="flex items-center gap-1.5 font-black italic text-lg tracking-tighter">
-                          <Zap className="h-4 w-4 fill-primary text-primary" /> ${item.price}
-                        </div>
-                      ) : (
-                        <Badge variant="outline" className="text-[9px] font-black uppercase">
-                          ALPHA_FREE
-                        </Badge>
-                      )}
+                      <div className="flex items-center gap-3">
+                        <span className="text-[10px] font-bold uppercase text-muted-foreground">
+                          {item.current_enrollment} enrolled
+                        </span>
+                        {item.price > 0 ? (
+                          <div className="flex items-center gap-1.5 font-black italic text-lg tracking-tighter">
+                            <Zap className="h-4 w-4 fill-primary text-primary" /> ${item.price}
+                          </div>
+                        ) : (
+                          <Badge variant="outline" className="text-[9px] font-black uppercase">
+                            FREE
+                          </Badge>
+                        )}
+                      </div>
                     </div>
+                  </div>
+
+                  <div className="pt-6 border-t border-border/10 flex flex-wrap gap-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl h-9 text-[10px] font-bold uppercase"
+                      onClick={() => navigate(`/content/${item.id}/edit`)}
+                    >
+                      <Edit className="w-3.5 h-3.5 mr-1.5" /> Edit
+                    </Button>
+                    {(item.content_type === "recorded_course" || item.content_type === "live_webinar") && (
+                      <Button
+                        variant="default"
+                        size="sm"
+                        className="rounded-xl h-9 text-[10px] font-bold uppercase"
+                        onClick={() => navigate(`/dashboard?tab=modules&id=${item.id}`)}
+                      >
+                        <Layers className="w-3.5 h-3.5 mr-1.5" /> Modules
+                      </Button>
+                    )}
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl h-9 text-[10px] font-bold uppercase"
+                      onClick={() => previewAsTalent(item)}
+                    >
+                      <Eye className="w-3.5 h-3.5 mr-1.5" /> Preview
+                    </Button>
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="rounded-xl h-9 text-[10px] font-bold uppercase"
+                      onClick={() => duplicateContent(item)}
+                    >
+                      <Copy className="w-3.5 h-3.5 mr-1.5" /> Duplicate
+                    </Button>
+                    <Button
+                      variant="ghost"
+                      size="sm"
+                      className="rounded-xl h-9 w-9 p-0 ml-auto text-destructive/40 hover:text-destructive hover:bg-destructive/10"
+                      onClick={() => setDeleteId(item.id)}
+                    >
+                      <Trash2 className="w-4 h-4" />
+                    </Button>
                   </div>
 
                   <div className="pt-6 border-t border-border/10 flex flex-wrap gap-2">
