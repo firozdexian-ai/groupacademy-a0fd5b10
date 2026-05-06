@@ -6136,6 +6136,38 @@ export type Database = {
         }
         Relationships: []
       }
+      gig_bid_events: {
+        Row: {
+          bid_id: string
+          created_at: string
+          event: string
+          id: string
+          payload: Json
+        }
+        Insert: {
+          bid_id: string
+          created_at?: string
+          event: string
+          id?: string
+          payload?: Json
+        }
+        Update: {
+          bid_id?: string
+          created_at?: string
+          event?: string
+          id?: string
+          payload?: Json
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_bid_events_bid_id_fkey"
+            columns: ["bid_id"]
+            isOneToOne: false
+            referencedRelation: "marketplace_bids"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       gig_briefs: {
         Row: {
           company_id: string | null
@@ -6303,6 +6335,80 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "v_weekly_leaderboard"
             referencedColumns: ["talent_id"]
+          },
+        ]
+      }
+      gig_revision_requests: {
+        Row: {
+          attempts_remaining: number
+          created_at: string
+          due_at: string
+          id: string
+          required_changes: Json
+          resolution_payload: Json | null
+          resolved_at: string | null
+          status: string
+          summary: string
+          talent_id: string
+          updated_at: string
+          verification_id: string
+        }
+        Insert: {
+          attempts_remaining?: number
+          created_at?: string
+          due_at?: string
+          id?: string
+          required_changes?: Json
+          resolution_payload?: Json | null
+          resolved_at?: string | null
+          status?: string
+          summary: string
+          talent_id: string
+          updated_at?: string
+          verification_id: string
+        }
+        Update: {
+          attempts_remaining?: number
+          created_at?: string
+          due_at?: string
+          id?: string
+          required_changes?: Json
+          resolution_payload?: Json | null
+          resolved_at?: string | null
+          status?: string
+          summary?: string
+          talent_id?: string
+          updated_at?: string
+          verification_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_revision_requests_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gig_revision_requests_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "gig_revision_requests_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "gig_revision_requests_verification_id_fkey"
+            columns: ["verification_id"]
+            isOneToOne: false
+            referencedRelation: "gig_verifications"
+            referencedColumns: ["id"]
           },
         ]
       }
@@ -6501,6 +6607,159 @@ export type Database = {
           },
           {
             foreignKeyName: "gig_submissions_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+        ]
+      }
+      gig_verification_appeals: {
+        Row: {
+          created_at: string
+          evidence_links: Json
+          id: string
+          reason: string
+          resolution_notes: string | null
+          resolved_at: string | null
+          resolved_by: string | null
+          status: string
+          talent_id: string
+          verification_id: string
+        }
+        Insert: {
+          created_at?: string
+          evidence_links?: Json
+          id?: string
+          reason: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          talent_id: string
+          verification_id: string
+        }
+        Update: {
+          created_at?: string
+          evidence_links?: Json
+          id?: string
+          reason?: string
+          resolution_notes?: string | null
+          resolved_at?: string | null
+          resolved_by?: string | null
+          status?: string
+          talent_id?: string
+          verification_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_verification_appeals_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gig_verification_appeals_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "gig_verification_appeals_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "gig_verification_appeals_verification_id_fkey"
+            columns: ["verification_id"]
+            isOneToOne: false
+            referencedRelation: "gig_verifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gig_verifications: {
+        Row: {
+          created_at: string
+          criteria_results: Json
+          gig_id: string | null
+          gig_kind: string
+          id: string
+          latency_ms: number | null
+          model: string | null
+          rationale: string | null
+          reviewed_at: string | null
+          reviewed_by: string | null
+          risk_flags: Json
+          score: number | null
+          submission_id: string
+          suggested_revisions: Json
+          talent_id: string
+          tokens_used: number | null
+          updated_at: string
+          verdict: string
+        }
+        Insert: {
+          created_at?: string
+          criteria_results?: Json
+          gig_id?: string | null
+          gig_kind: string
+          id?: string
+          latency_ms?: number | null
+          model?: string | null
+          rationale?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_flags?: Json
+          score?: number | null
+          submission_id: string
+          suggested_revisions?: Json
+          talent_id: string
+          tokens_used?: number | null
+          updated_at?: string
+          verdict?: string
+        }
+        Update: {
+          created_at?: string
+          criteria_results?: Json
+          gig_id?: string | null
+          gig_kind?: string
+          id?: string
+          latency_ms?: number | null
+          model?: string | null
+          rationale?: string | null
+          reviewed_at?: string | null
+          reviewed_by?: string | null
+          risk_flags?: Json
+          score?: number | null
+          submission_id?: string
+          suggested_revisions?: Json
+          talent_id?: string
+          tokens_used?: number | null
+          updated_at?: string
+          verdict?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_verifications_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gig_verifications_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "gig_verifications_talent_id_fkey"
             columns: ["talent_id"]
             isOneToOne: false
             referencedRelation: "v_weekly_leaderboard"
@@ -14261,6 +14520,68 @@ export type Database = {
           },
         ]
       }
+      talent_trust_events: {
+        Row: {
+          created_at: string
+          event: string
+          gig_kind: string | null
+          id: string
+          metadata: Json
+          talent_id: string
+          verification_id: string | null
+          weight: number
+        }
+        Insert: {
+          created_at?: string
+          event: string
+          gig_kind?: string | null
+          id?: string
+          metadata?: Json
+          talent_id: string
+          verification_id?: string | null
+          weight?: number
+        }
+        Update: {
+          created_at?: string
+          event?: string
+          gig_kind?: string | null
+          id?: string
+          metadata?: Json
+          talent_id?: string
+          verification_id?: string | null
+          weight?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_trust_events_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_trust_events_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "talent_trust_events_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "talent_trust_events_verification_id_fkey"
+            columns: ["verification_id"]
+            isOneToOne: false
+            referencedRelation: "gig_verifications"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       talent_trust_score: {
         Row: {
           components: Json
@@ -14594,6 +14915,45 @@ export type Database = {
           },
         ]
       }
+      verification_rules: {
+        Row: {
+          auto_approve_floor: number
+          category: string | null
+          escalate_floor: number
+          gig_kind: string
+          id: string
+          is_active: boolean
+          max_revisions: number
+          revision_due_hours: number
+          risk_flag_overrides: Json
+          updated_at: string
+        }
+        Insert: {
+          auto_approve_floor?: number
+          category?: string | null
+          escalate_floor?: number
+          gig_kind: string
+          id?: string
+          is_active?: boolean
+          max_revisions?: number
+          revision_due_hours?: number
+          risk_flag_overrides?: Json
+          updated_at?: string
+        }
+        Update: {
+          auto_approve_floor?: number
+          category?: string | null
+          escalate_floor?: number
+          gig_kind?: string
+          id?: string
+          is_active?: boolean
+          max_revisions?: number
+          revision_due_hours?: number
+          risk_flag_overrides?: Json
+          updated_at?: string
+        }
+        Relationships: []
+      }
       withdrawal_requests: {
         Row: {
           admin_notes: string | null
@@ -14786,6 +15146,19 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      gig_submissions_unified_view: {
+        Row: {
+          created_at: string | null
+          gig_id: string | null
+          gig_kind: string | null
+          payload: Json | null
+          reviewed_at: string | null
+          status: string | null
+          submission_id: string | null
+          talent_id: string | null
+        }
+        Relationships: []
       }
       gigs_unified_view: {
         Row: {
@@ -15001,6 +15374,10 @@ export type Database = {
       application_talent_user_id: {
         Args: { p_application_id: string }
         Returns: string
+      }
+      apply_verification_verdict: {
+        Args: { _verification_id: string }
+        Returns: undefined
       }
       approve_content_gig:
         | { Args: { p_admin_notes?: string; p_gig_id: string }; Returns: Json }
@@ -15581,6 +15958,10 @@ export type Database = {
       }
       offer_company_id: { Args: { p_offer_id: string }; Returns: string }
       offer_talent_id: { Args: { p_offer_id: string }; Returns: string }
+      open_verification_appeal: {
+        Args: { _evidence?: Json; _reason: string; _verification_id: string }
+        Returns: string
+      }
       org_assign_talents: {
         Args: {
           p_budget_per_seat?: number
@@ -15649,6 +16030,10 @@ export type Database = {
         Args: { _talent_id: string }
         Returns: number
       }
+      recompute_talent_trust_score_v2: {
+        Args: { _talent_id: string }
+        Returns: number
+      }
       recompute_talent_verification: {
         Args: { p_talent_id: string }
         Returns: string
@@ -15677,9 +16062,17 @@ export type Database = {
         Args: { p_admin_notes?: string; p_submission_id: string }
         Returns: Json
       }
+      request_gig_verification: {
+        Args: { _gig_kind: string; _submission_id: string }
+        Returns: string
+      }
       request_instructor_payout: {
         Args: { _amount: number; _details?: Json; _method: string }
         Returns: string
+      }
+      resolve_verification_appeal: {
+        Args: { _appeal_id: string; _decision: string; _notes?: string }
+        Returns: undefined
       }
       school_id_for_content: { Args: { _content_id: string }; Returns: string }
       score_talent_job_mastery: {
@@ -15693,6 +16086,10 @@ export type Database = {
       shortlist_match: { Args: { _match_id: string }; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
+      submit_revision: {
+        Args: { _payload: Json; _revision_id: string }
+        Returns: string
+      }
       sweep_expired_connections: { Args: never; Returns: number }
       sync_recorded_course_readiness: {
         Args: { p_content_id?: string }
