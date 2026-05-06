@@ -25,6 +25,8 @@ export interface PipelineApplication {
   last_status_at: string | null;
   cv_url: string | null;
   cover_letter: string | null;
+  sourced?: boolean | null;
+  sourced_relationship_id?: string | null;
 }
 
 export function useEmployerPipeline(opts: {
