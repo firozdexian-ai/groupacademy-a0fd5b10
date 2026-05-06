@@ -71,7 +71,7 @@ const SalaryAnalysis = () => {
                 variant="outline"
                 className="rounded-full px-4 py-1.5 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-[0.2em]"
               >
-                <Sparkles className="w-3 h-3 mr-2 fill-primary" /> Founding Grant: First Analysis Free
+                <Sparkles className="w-3 h-3 mr-2 fill-primary" /> AI Salary Intelligence · 50 Credits
               </Badge>
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-foreground">
                 Know Your <span className="text-primary">Market Alpha.</span>
@@ -89,7 +89,7 @@ const SalaryAnalysis = () => {
                 className="h-16 px-10 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-[1.02] transition-all"
               >
                 <Link to="/salary-analysis/setup">
-                  Initialize Free Audit <ArrowRight className="ml-2 h-4 w-4" />
+                  Start Salary Audit <ArrowRight className="ml-2 h-4 w-4" />
                 </Link>
               </Button>
               <div className="flex items-center gap-2 px-4 py-2 rounded-xl bg-background border border-border/40 text-[10px] font-black uppercase tracking-widest text-muted-foreground">
@@ -205,7 +205,7 @@ const SalaryAnalysis = () => {
           <div className="space-y-2">
             <h2 className="text-4xl font-black tracking-tighter uppercase">Initialize Valuation.</h2>
             <p className="text-muted-foreground font-medium text-lg leading-relaxed">
-              Secure your professional market position today. Your first executive audit is complimentary.
+              Secure your professional market position today. Each audit costs 50 credits — covered by your welcome balance.
             </p>
           </div>
           <Button
@@ -214,7 +214,7 @@ const SalaryAnalysis = () => {
             className="h-16 px-12 rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl shadow-primary/20"
           >
             <Link to="/salary-analysis/setup">
-              Launch Free Audit <ArrowRight className="ml-2 h-4 w-4" />
+              Launch Salary Audit <ArrowRight className="ml-2 h-4 w-4" />
             </Link>
           </Button>
           <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground opacity-40">
