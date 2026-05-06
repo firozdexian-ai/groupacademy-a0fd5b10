@@ -13,6 +13,7 @@ import { PollWidget } from "./PollWidget";
 import { PostActionBar } from "./PostActionBar";
 import { usePollVoting } from "@/hooks/usePollVoting";
 import { useSavedItems } from "@/hooks/useSavedItems";
+import { useImpressionTracker } from "@/hooks/useCreatorAnalytics";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
