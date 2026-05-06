@@ -466,6 +466,7 @@ const TAB_TITLES: Record<string, string> = {
   portfolios: "Creative Assets",
   gigs: "Micro-Earning",
   "course-projects": "Course Projects",
+  "course-briefs": "Course Briefs",
   "marketplace-gigs": "Project Gigs",
   "gig-submissions": "Work Evidence",
   credits: "Financial Ledger",
