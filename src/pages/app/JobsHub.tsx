@@ -479,100 +479,163 @@ export default function JobsHub() {
       {/* Companies tab */}
       {activeTab === "company" && (
         <div className="space-y-4 animate-in fade-in duration-300">
-          <div className="relative">
-            <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
-            <Input
-              placeholder="Search companies..."
-              className="h-10 pl-9 rounded-lg"
-              value={companySearch}
-              onChange={(e) => setCompanySearch(e.target.value)}
-            />
+          <div className="space-y-2">
+            <div className="relative">
+              <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+              <Input
+                placeholder="Search companies..."
+                className="h-10 pl-9 rounded-lg"
+                value={companySearch}
+                onChange={(e) => setCompanySearch(e.target.value)}
+              />
+            </div>
+            <div className="flex items-center justify-between px-1">
+              <label className="flex items-center gap-2 text-xs font-medium cursor-pointer">
+                <Switch checked={hiringNowOnly} onCheckedChange={setHiringNowOnly} />
+                <span>Hiring now</span>
+                <span className="text-[10px] text-muted-foreground">(last 14 days)</span>
+              </label>
+              {followed.length > 0 && (
+                <Badge variant="outline" className="text-[10px] gap-1">
+                  <Heart className="h-2.5 w-2.5 fill-rose-500 text-rose-500" />
+                  {followed.length} following
+                </Badge>
+              )}
+            </div>
           </div>
-          <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-2">
-            {filteredCompanies.map((c) => (
-              <Card
-                key={c.name}
-                className="hover:border-primary/40 transition-all cursor-pointer"
-                onClick={() => navigate(`/app/jobs/all?company=${encodeURIComponent(c.name)}`)}
-              >
-                <CardContent className="p-3 flex flex-col items-center text-center gap-2">
-                  <Avatar className="h-10 w-10">
-                    {c.logo_url && <AvatarImage src={c.logo_url} />}
-                    {!c.logo_url && (
-                      <AvatarFallback className="text-xs font-semibold">
-                        {c.name.slice(0, 2).toUpperCase()}
-                      </AvatarFallback>
-                    )}
-                  </Avatar>
-                  <p className="text-[11px] font-semibold line-clamp-1 w-full">{c.name}</p>
-                  <Badge variant="secondary" className="text-[9px] px-1.5 py-0">
-                    {c.count} {c.count === 1 ? "role" : "roles"}
-                  </Badge>
-                </CardContent>
-              </Card>
-            ))}
-            {filteredCompanies.length === 0 && (
-              <p className="col-span-full text-sm text-muted-foreground text-center py-8">No companies found.</p>
-            )}
-          </div>
+
+          {followedRail.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-sm font-semibold flex items-center gap-1.5">
+                <Heart className="h-3.5 w-3.5 fill-rose-500 text-rose-500" /> Following
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {followedRail.map((c) => (
+                  <CompanyCard
+                    key={c.company_name}
+                    company={c}
+                    isFollowing={true}
+                    onToggleFollow={() => toggleFollow(c.company_name)}
+                    onClick={() => setActiveCompany(c.company_name)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section className="space-y-2">
+            <h2 className="text-sm font-semibold flex items-center gap-1.5">
+              <TrendingUp className="h-3.5 w-3.5 text-primary" />
+              {hiringNowOnly ? "Hiring now" : "Top hiring employers"}
+            </h2>
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+              {filteredCompanies.map((c) => (
+                <CompanyCard
+                  key={c.company_name}
+                  company={c}
+                  isFollowing={isFollowing(c.company_name)}
+                  onToggleFollow={() => toggleFollow(c.company_name)}
+                  onClick={() => setActiveCompany(c.company_name)}
+                />
+              ))}
+              {filteredCompanies.length === 0 && (
+                <p className="col-span-full text-sm text-muted-foreground text-center py-8 italic">
+                  No companies found.
+                </p>
+              )}
+            </div>
+          </section>
         </div>
       )}
 
       {/* Locations tab */}
       {activeTab === "country" && (
-        <div className="space-y-2 animate-in fade-in duration-300">
-          <h2 className="text-base font-semibold flex items-center gap-2 mb-3">
-            <Globe className="h-4 w-4 text-primary" /> Jobs by country
-          </h2>
-          {countryGroups.map((g) => {
-            const isUserCountry = !!talent?.country && g.country.toLowerCase() === talent.country.toLowerCase();
-            return (
-              <Card key={g.country} className={cn(isUserCountry && "border-primary/40 bg-primary/5")}>
-                <button
-                  onClick={() => setExpandedCountry(expandedCountry === g.country ? null : g.country)}
-                  className="w-full flex items-center p-3 hover:bg-muted/40 text-left transition-colors"
-                >
-                  <div className="h-9 w-9 rounded-lg bg-muted/50 flex items-center justify-center text-lg mr-3">
-                    {g.flag}
+        <div className="space-y-4 animate-in fade-in duration-300">
+          {userCountryRow && (
+            <Card className="border-primary/40 bg-gradient-to-br from-primary/10 to-primary/5">
+              <CardContent className="p-4 space-y-2">
+                <div className="flex items-center gap-3">
+                  <div className="h-12 w-12 rounded-xl bg-background/60 flex items-center justify-center text-3xl">
+                    🌍
                   </div>
                   <div className="flex-1 min-w-0">
-                    <div className="flex items-center gap-2 flex-wrap">
-                      <p className="text-sm font-semibold">{g.country}</p>
-                      {isUserCountry && (
-                        <Badge className="bg-primary/15 text-primary border-0 text-[9px] px-1.5 py-0">
-                          Your country
-                        </Badge>
-                      )}
-                    </div>
-                    <p className="text-xs text-muted-foreground">
-                      {g.totalJobs} open {g.totalJobs === 1 ? "role" : "roles"}
+                    <p className="text-xs text-muted-foreground">Your country</p>
+                    <p className="text-base font-bold">{userCountryRow.country}</p>
+                    <p className="text-[11px] text-muted-foreground">
+                      {userCountryRow.active_jobs} open {userCountryRow.active_jobs === 1 ? "role" : "roles"}
+                      {userCountryRow.jobs_last_14d > 0 && ` · +${userCountryRow.jobs_last_14d} this fortnight`}
                     </p>
                   </div>
-                  {expandedCountry === g.country ? (
-                    <ChevronUp className="text-primary h-4 w-4" />
-                  ) : (
-                    <ChevronDown className="h-4 w-4 text-muted-foreground" />
-                  )}
-                </button>
-                {expandedCountry === g.country && (
-                  <div className="bg-muted/20 p-2 grid grid-cols-2 gap-1.5 border-t">
-                    {g.cities.slice(0, 10).map((city) => (
-                      <button
-                        key={city.name}
-                        onClick={() => navigate(`/app/jobs/all?location=${encodeURIComponent(city.name)}`)}
-                        className="flex justify-between items-center px-3 py-2 rounded-md bg-background hover:bg-primary/5 transition-all border border-border/40"
-                      >
-                        <span className="text-xs font-medium truncate">{city.name}</span>
-                        <Badge variant="outline" className="text-[10px] px-1.5">
-                          {city.count}
-                        </Badge>
-                      </button>
-                    ))}
-                  </div>
-                )}
-              </Card>
-            );
-          })}
+                </div>
+                <Button
+                  size="sm"
+                  className="w-full h-9 text-xs"
+                  onClick={() => navigate(`/app/jobs/all?location=${encodeURIComponent(userCountryRow.country)}`)}
+                >
+                  Browse all in {userCountryRow.country}
+                </Button>
+              </CardContent>
+            </Card>
+          )}
+
+          {remoteSummary && remoteSummary.active_jobs > 0 && (
+            <Card
+              className="cursor-pointer hover:border-primary/40 transition-all"
+              onClick={() => navigate(`/app/jobs/all?type=remote`)}
+            >
+              <CardContent className="p-3 flex items-center gap-3">
+                <div className="h-10 w-10 rounded-lg bg-cyan-500/15 flex items-center justify-center shrink-0">
+                  <Wifi className="h-5 w-5 text-cyan-600" />
+                </div>
+                <div className="flex-1 min-w-0">
+                  <p className="text-sm font-semibold">Remote-friendly</p>
+                  <p className="text-[11px] text-muted-foreground">
+                    {remoteSummary.active_jobs} open roles · work from anywhere
+                  </p>
+                </div>
+                <ChevronRight className="h-4 w-4 text-muted-foreground" />
+              </CardContent>
+            </Card>
+          )}
+
+          {abroadCountries.length > 0 && (
+            <section className="space-y-2">
+              <h2 className="text-sm font-semibold flex items-center gap-1.5">
+                <Globe className="h-3.5 w-3.5 text-primary" /> Working abroad
+              </h2>
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {abroadCountries.map((c) => (
+                  <CountryCard
+                    key={c.country}
+                    country={c}
+                    onCityClick={(city) => navigate(`/app/jobs/all?location=${encodeURIComponent(city)}`)}
+                  />
+                ))}
+              </div>
+            </section>
+          )}
+
+          <section className="space-y-2">
+            <h2 className="text-sm font-semibold">All locations</h2>
+            {loadingCountries ? (
+              <div className="space-y-2">
+                {[1, 2, 3].map((i) => (
+                  <Skeleton key={i} className="h-[100px] w-full rounded-xl" />
+                ))}
+              </div>
+            ) : (
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                {sortedCountries.map((c) => (
+                  <CountryCard
+                    key={c.country}
+                    country={c}
+                    isUserCountry={!!talent?.country && c.country.toLowerCase() === talent.country.toLowerCase()}
+                    onCityClick={(city) => navigate(`/app/jobs/all?location=${encodeURIComponent(city)}`)}
+                  />
+                ))}
+              </div>
+            )}
+          </section>
         </div>
       )}
 
