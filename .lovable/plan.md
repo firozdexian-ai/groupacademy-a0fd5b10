@@ -1,112 +1,93 @@
-# Sub-phase 1.5 — AI Helpers in ContentEdit + Talent-Generated Quiz/Scenario Pool
+## Sub-phase 1.6 — Course Performance Dashboard
 
-Two coordinated tracks: (A) admin-side AI helpers inside the catalog editor, (B) a learner-driven quiz & AI-scenario generator backed by a shared, reusable pool to keep AI costs flat as enrollment grows.
-
----
-
-## Track A — AI helpers inside ContentEdit (unchanged from prior plan)
-
-Single edge function `admin-content-ai` with `mode` discriminator: `description | slug | image_prompt | outline`.
-
-UI surfaces:
-- ✨ button next to **Description** → streams a 200+ char marketing description.
-- ✨ button next to **Slug** → kebab-case + dedup-checked against `content`.
-- **AI Cover** on `ImageUpload` → sheet with 3 prompt variants → image via `gemini-3.1-flash-image-preview` → uploaded to `course-content` bucket → patches `cover_image`.
-- **AI Outline** in the empty Modules tab → drafts 5–8 modules (admin edits/reorders).
-- **Fix with AI** at top of `ContentReadinessChecklist` → runs the relevant helpers in sequence then re-runs `recompute_content_readiness`.
-
-All AI calls go through the edge function; admin role enforced via `auth.getUser` + `has_role('admin')`. 402/429 surfaced as toasts.
-
-**Files (Track A):**
-- New: `supabase/functions/admin-content-ai/index.ts`, `src/lib/contentAI.ts`, `src/components/dashboard/ContentAIActions.tsx`, `src/components/dashboard/AICoverImageSheet.tsx`.
-- Edit: `src/pages/ContentEdit.tsx`, `src/components/dashboard/ContentReadinessChecklist.tsx`.
+A new **Performance** tab inside `ContentEdit` giving admins per-course analytics: enrollment funnel, completion stats, quiz/scenario pool health, and per-module drop-off. Read-only, fully client-aggregated from existing tables — no schema changes.
 
 ---
 
-## Track B — Talent-generated quiz & AI scenarios with shared pool
+### 1. New tab in ContentEdit
 
-### Idea
-Instead of admins authoring (or pre-generating) quizzes/scenarios per module, the **learner triggers generation in-flow**. Generated items are saved to a **module-scoped pool** and reused for future learners — so AI cost is amortized across enrollments while each talent still gets a fresh, personalized experience layer on top.
+`src/pages/ContentEdit.tsx`
+- Add `<TabsTrigger value="performance">Performance</TabsTrigger>` next to Schema/Sessions.
+- Add `<TabsContent value="performance">` rendering the new component:
+  ```tsx
+  {id && <CoursePerformanceDashboard contentId={id} contentTitle={formData.title} />}
+  ```
 
-### Pooling model
+### 2. New component — `src/components/dashboard/CoursePerformanceDashboard.tsx`
 
-```text
-module ──┬── quiz_pool (shared, reusable items)
-         └── scenario_pool (shared, reusable items)
-              │
-              ▼
-   talent_quiz_attempt / talent_scenario_run
-   (per-learner selection + personalization seed)
+Composed of 5 cards in a responsive grid (matches existing rounded-3xl / muted header style):
+
+1. **KPI strip** — 4 stat tiles
+   - Enrollments (total)
+   - Active learners (last 7d via `enrollments.last_accessed_at`)
+   - Completion rate (`status = 'completed' / total`)
+   - Avg progress (`avg(progress)`)
+
+2. **Enrollment funnel** — horizontal bars
+   - Enrolled → Started (`progress > 0`) → Mid (`>= 50`) → Completed (`status='completed'`)
+
+3. **Per-module drop-off** — table of `course_modules` (ordered by `display_order`) with:
+   - Learners who reached this module (count where `enrollments.current_module_id = m.id` OR passed it)
+   - Quiz attempts (`talent_quiz_attempt` count + avg score)
+   - Scenario runs (`talent_scenario_run` count + avg `evaluation->>score`)
+   - Drop-off %
+
+4. **Pool health** — for each module, two compact rows:
+   - Quiz pool: size, avg `quality_score`, total `times_served`, low-quality count (`quality_score < 0`)
+   - Scenario pool: same metrics
+   - Color chip: green (≥20 quiz / ≥10 scenarios), amber, red.
+
+5. **Recent activity** — last 10 rows across `enrollments`, `talent_quiz_attempt`, `talent_scenario_run` with timestamp + talent name.
+
+### 3. Data layer — `src/lib/coursePerformance.ts`
+
+Single hook `useCoursePerformance(contentId)` that fires parallel queries:
+
+```ts
+const [enrollments, modules, quizAttempts, scenarioRuns, quizPool, scenarioPool]
+  = await Promise.all([
+    supabase.from("enrollments").select("id,status,progress,current_module_id,last_accessed_at,enrolled_at,talent_id").eq("content_id", contentId),
+    supabase.from("course_modules").select("id,title,display_order").eq("content_id", contentId).order("display_order"),
+    supabase.from("talent_quiz_attempt").select("id,module_id,score,created_at,talent_id").in("module_id", moduleIds),
+    supabase.from("talent_scenario_run").select("id,module_id,evaluation,created_at,talent_id").in("module_id", moduleIds),
+    supabase.from("module_quiz_pool").select("module_id,quality_score,times_served").in("module_id", moduleIds),
+    supabase.from("module_scenario_pool").select("module_id,quality_score,times_served").in("module_id", moduleIds),
+  ]);
 ```
 
-When a talent reaches the quiz/scenario step:
+Aggregations done in-memory (volumes are small per course). Returns a typed `CoursePerformance` object consumed by the dashboard.
 
-1. Look up the module's pool. If pool size ≥ target threshold (e.g. 20 quiz questions / 10 scenarios), **sample** N items deterministically by `(talent_id, module_id, attempt_no)` → no AI call.
-2. If pool is below threshold, generate a small batch (5 quiz questions / 1 scenario) via Lovable AI, **insert into the pool**, then sample the talent's set from the now-larger pool.
-3. The "personalization layer" is a lightweight wrapper applied at render time — talent's name, role goal, prior wrong-answer topics — without re-generating the underlying item. Keeps cost flat.
+### 4. Export
 
-This means: first ~4 learners "pay" the AI cost; everyone after draws from the pool.
+A "Download CSV" button in the dashboard header that flattens the per-module table via `papaparse` (already in deps — fallback to manual CSV string if not) and triggers a Blob download.
 
-### New tables (migration)
+### 5. Empty / loading states
 
-- `module_quiz_pool` — `id, module_id, question, options jsonb, correct_index, explanation, difficulty, topic_tags text[], generated_by ('ai'|'admin'), created_by_talent_id nullable, quality_score numeric default 0, times_served int default 0, created_at`.
-- `module_scenario_pool` — `id, module_id, title, scenario_prompt, rubric jsonb, difficulty, topic_tags text[], generated_by, created_by_talent_id nullable, quality_score, times_served, created_at`.
-- `talent_quiz_attempt` — `id, talent_id, module_id, item_ids uuid[], answers jsonb, score, attempt_no, created_at`.
-- `talent_scenario_run` — `id, talent_id, module_id, scenario_id, conversation jsonb, evaluation jsonb, created_at`.
+- Skeleton cards while loading.
+- Empty state: "No enrollments yet" with a link to share the course.
 
-RLS:
-- Pool tables: `select` open to authenticated talents enrolled in the parent course; `insert` only via SECURITY DEFINER edge function (no direct client writes).
-- Attempt/run tables: talent can `select/insert` own rows; admins can read all.
+### 6. Permissions
 
-### New edge functions
-
-- `learner-quiz-pool` — modes: `draw` (sample N for this talent, generating only if pool below threshold), `submit` (score + persist attempt + bump `times_served` and `quality_score` based on item discrimination).
-- `learner-scenario-pool` — modes: `draw`, `turn` (streams a single conversational turn grounded in `scenario_prompt` + module resources), `evaluate` (rubric scoring at end).
-
-Both functions:
-- Verify talent JWT, confirm enrollment in parent course.
-- Cap per-talent generation to prevent abuse (e.g. ≤ 2 net-new pool items per module per talent per day).
-- Use `google/gemini-3-flash-preview` for generation, with a structured-output tool schema to avoid free-form JSON.
-
-### Frontend (talent side)
-
-- `src/components/learning/ModuleQuizRunner.tsx` — calls `learner-quiz-pool/draw` on entry, renders questions, posts `/submit`, shows score + explanations.
-- `src/components/learning/ModuleScenarioRunner.tsx` — chat UI streaming turns from `learner-scenario-pool/turn`, ends with rubric evaluation.
-- Hook into existing module stage runner where `resource_type` is `quiz` or `ai_scenario`.
-
-### Admin oversight (lightweight, in 1.5)
-
-- Add a **Pool Inspector** tab inside `ContentEdit` → Modules → per-module drawer showing pool counts, top-served items, and a "hide low-quality" toggle (sets `quality_score = -1` to exclude from sampling). Full curation UI lives in a later phase.
-
-### Cost / performance notes
-- First N learners trigger generation; subsequent learners hit the pool → roughly **O(modules)** AI cost, not **O(modules × learners)**.
-- `times_served` + `quality_score` (driven by aggregate correct rate / time-to-answer) feed sampling weights — bad items naturally fade.
-- Personalization stays cheap: name/goal interpolation is template-side, no extra AI call.
+- Tab only mounts; data queries already protected by existing RLS (admin role can read these tables). No new policies needed.
 
 ---
 
-## Files (Track B)
+### Files
 
-### New
-- `supabase/functions/learner-quiz-pool/index.ts`
-- `supabase/functions/learner-scenario-pool/index.ts`
-- `src/components/learning/ModuleQuizRunner.tsx`
-- `src/components/learning/ModuleScenarioRunner.tsx`
-- `src/lib/learnerAIPool.ts` — shared client wrappers + sampling helpers.
+**New**
+- `src/components/dashboard/CoursePerformanceDashboard.tsx`
+- `src/components/dashboard/performance/KPIStrip.tsx`
+- `src/components/dashboard/performance/EnrollmentFunnel.tsx`
+- `src/components/dashboard/performance/ModuleDropoffTable.tsx`
+- `src/components/dashboard/performance/PoolHealthCard.tsx`
+- `src/components/dashboard/performance/RecentActivityList.tsx`
+- `src/lib/coursePerformance.ts`
 
-### Edited
-- Module stage runner (existing) — route `quiz` / `ai_scenario` resources to the new runners.
-- `src/pages/ContentEdit.tsx` — add Pool Inspector drawer in the Modules tab.
+**Edited**
+- `src/pages/ContentEdit.tsx` — add Performance tab.
 
-### Database (migration)
-- 4 new tables + RLS + a SECURITY DEFINER function `pool_draw_or_generate(module_id, kind, n, talent_id)` that the edge functions call.
-
----
-
-## Out of scope for 1.5
-- Per-talent adaptive difficulty progression (next phase).
-- Admin bulk pre-seeding of pools (separate tool).
-- Cross-module pool sharing.
-- Image/audio scenarios.
-
-Reply **continue** to implement (DB migration first, then Track B backend, then Track A helpers, then UI wiring).
+### Out of scope (later phases)
+- Time-series charts (weekly enrollments, retention curves).
+- Cohort analysis / per-traffic-source breakdown.
+- Per-talent drill-down view.
+- Server-side materialized views (only needed once per-course volume > 10k rows).
