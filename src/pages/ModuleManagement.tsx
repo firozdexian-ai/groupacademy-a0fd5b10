@@ -610,6 +610,18 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
           </div>
         </SheetContent>
       </Sheet>
+
+      <Sheet open={!!analyticsModuleId} onOpenChange={(o) => !o && setAnalyticsModuleId(null)}>
+        <SheetContent side="right" className="w-full sm:max-w-2xl overflow-y-auto p-0">
+          <SheetHeader className="px-6 py-4 border-b">
+            <SheetTitle>Item-bank Analytics</SheetTitle>
+            <SheetDescription>Per-item difficulty, topic mastery, and items needing review.</SheetDescription>
+          </SheetHeader>
+          <div className="p-4">
+            {analyticsModuleId && <ItemBankAnalyticsPanel moduleId={analyticsModuleId} />}
+          </div>
+        </SheetContent>
+      </Sheet>
     </div>
   );
 }
