@@ -101,7 +101,7 @@ Deno.serve(async (req) => {
     let q = supabase
       .from("talent_skill_profile")
       .select(
-        "module_id, content_id, topic_tag, mastery, ease, interval_days, due_at, last_reviewed_at",
+        "module_id, content_id, topic_tag, mastery, ease, interval_days, due_at, last_reviewed_at, last_source",
       )
       .eq("talent_id", user.id)
       .order("due_at", { ascending: true })
