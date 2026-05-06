@@ -99,6 +99,38 @@ function TopicCard({
     onCompleted();
   };
 
+  if (topic.source === "scenario") {
+    return (
+      <Card className="rounded-3xl">
+        <CardHeader className="pb-3">
+          <div className="flex items-start justify-between gap-2">
+            <div className="space-y-1 min-w-0">
+              <CardTitle className="text-base flex items-center gap-2">
+                <MessageSquare className="h-4 w-4 text-primary" />
+                <span className="truncate">{topic.topic_tag}</span>
+              </CardTitle>
+              <p className="text-[11px] text-muted-foreground truncate">
+                {topic.content_title ?? "Course"} · {topic.module_title ?? "Module"}
+              </p>
+            </div>
+            <Badge variant="secondary" className="shrink-0 text-[10px]">
+              Scenario
+            </Badge>
+          </div>
+          <div className="flex items-center gap-2 pt-1 text-[10px] text-muted-foreground">
+            <span>Mastery {Math.round(topic.mastery * 100)}%</span>
+            <span>·</span>
+            <span>Interval {topic.interval_days}d</span>
+            {overdueLabel && <><span>·</span><span>{overdueLabel}</span></>}
+          </div>
+        </CardHeader>
+        <CardContent>
+          <ModuleScenarioRunner moduleId={topic.module_id} onComplete={onCompleted} />
+        </CardContent>
+      </Card>
+    );
+  }
+
   return (
     <Card className="rounded-3xl">
       <CardHeader className="pb-3">
