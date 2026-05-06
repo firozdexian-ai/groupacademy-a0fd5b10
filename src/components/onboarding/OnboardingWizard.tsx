@@ -62,12 +62,17 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
   };
 
   const finishOnboarding = async () => {
-    const success = await completeOnboarding();
-    if (success) {
-      toast.success("All set!", {
-        description: "250 welcome credits are in your wallet.",
-        icon: <Zap className="h-4 w-4 text-emerald-500 fill-current" />,
-      });
+    const result = await completeOnboarding();
+    if (result?.success) {
+      if (result.creditsAwarded) {
+        toast.success("All set!", {
+          description: "250 welcome credits are in your wallet.",
+          icon: <Zap className="h-4 w-4 text-emerald-500 fill-current" />,
+        });
+      } else {
+        toast.success("You're all set!", { description: "Explore the platform anytime." });
+      }
+      trackOnboardingStep("explore", "complete");
       onComplete();
     }
   };
@@ -76,8 +81,12 @@ export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
     switch (ONBOARDING_NODES[currentStep].id) {
       case "welcome":
         return <WelcomeBonus onContinue={goToNextStep} />;
-      case "profile":
+      case "cv":
         return <CVUploadStep onContinue={goToNextStep} onSkip={goToNextStep} />;
+      case "profession":
+        return <ProfessionStep onContinue={goToNextStep} />;
+      case "goal":
+        return <GoalStep onContinue={goToNextStep} />;
       case "explore":
         return <ServicesTour onComplete={finishOnboarding} />;
       default:
