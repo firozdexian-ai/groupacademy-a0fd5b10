@@ -235,6 +235,7 @@ const navGroups: NavGroup[] = [
     roles: ["admin"],
     items: [
       { title: "Dashboard", icon: LayoutDashboard, value: "gig-overview" },
+      { title: "AI Scoper Queue", icon: Sparkles, value: "gig-ops-scoper" },
       { title: "Quick Action Gigs", icon: Zap, value: "quick-action-gigs" },
       { title: "Course Projects", icon: Layers, value: "course-projects" },
       { title: "Client Projects", icon: Store, value: "client-projects" },
