@@ -240,6 +240,36 @@ export function AIChatPanel({
             <p className="text-[10px] font-medium text-muted-foreground/30 italic max-w-[200px] leading-relaxed">
               {placeholder}
             </p>
+
+            {!hintDismissed && masteryCtx && (masteryCtx.weak_topics?.length || masteryCtx.credentials?.length) ? (
+              <div className="mt-6 max-w-[280px] flex items-start gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-left">
+                <ShieldCheck className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
+                <p className="text-[11px] text-foreground/80 italic leading-snug">
+                  Tutor knows your progress — weak topics, credentials, and items due for review.
+                </p>
+                <button
+                  onClick={() => setHintDismissed(true)}
+                  className="text-muted-foreground/40 hover:text-foreground"
+                  aria-label="Dismiss"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </div>
+            ) : null}
+
+            {starterPrompts.length > 0 && (
+              <div className="mt-5 flex flex-wrap gap-2 justify-center max-w-[300px]">
+                {starterPrompts.map((s) => (
+                  <button
+                    key={s.label}
+                    onClick={() => handleMessageIngress(undefined, s.prompt)}
+                    className="rounded-full border-2 border-primary/20 bg-primary/5 px-3 py-1.5 text-[10px] font-semibold text-primary hover:bg-primary/10 transition"
+                  >
+                    {s.label}
+                  </button>
+                ))}
+              </div>
+            )}
           </div>
         ) : (
           <div className="space-y-6">
