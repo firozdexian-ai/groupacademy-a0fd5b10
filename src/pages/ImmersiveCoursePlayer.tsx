@@ -30,7 +30,7 @@ import { ProgressStage } from "@/components/player/stages/ProgressStage";
 import StageShell from "@/components/player/StageShell";
 import ShortcutsDialog from "@/components/player/ShortcutsDialog";
 import { useModuleResourcesByStage } from "@/hooks/useModuleResources";
-import { useStageProgress } from "@/hooks/useStageProgress";
+import { useProgress } from "@/hooks/useProgress";
 import { usePlayerHotkeys } from "@/hooks/usePlayerHotkeys";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
