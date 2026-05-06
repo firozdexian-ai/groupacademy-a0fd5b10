@@ -144,7 +144,7 @@ export function PostActionBar({ postId, initialHypeCount = 0, postTitle, postUrl
           type="button"
           variant="ghost"
           size="sm"
-          onClick={() => setShareOpen(true)}
+          onClick={handleShare}
           className="flex-1 h-9 gap-1.5 rounded-lg text-xs font-semibold text-muted-foreground hover:text-primary hover:bg-primary/5"
         >
           <Share2 className="h-4 w-4" />
@@ -164,17 +164,6 @@ export function PostActionBar({ postId, initialHypeCount = 0, postTitle, postUrl
           </div>
         </SheetContent>
       </Sheet>
-
-      {shareOpen && (
-        <ShareSheet
-          title={postTitle}
-          url={postUrl}
-          description={postDescription}
-          controlledOpen={shareOpen}
-          onOpenChange={setShareOpen}
-          hideTrigger
-        />
-      )}
     </>
   );
 }
