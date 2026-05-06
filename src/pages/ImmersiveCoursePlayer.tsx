@@ -304,8 +304,8 @@ export default function ImmersiveCoursePlayer() {
                   currentModuleId={currentModuleId}
                   moduleProgress={moduleProgress}
                   onModuleSelect={(id) => {
-                    resetForModule(id);
-                    setCurrentModuleId(id);
+                    setCurrentModule(id);
+                    setCurrentStage(1);
                   }}
                 />
               </div>
