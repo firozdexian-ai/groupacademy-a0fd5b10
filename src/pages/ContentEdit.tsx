@@ -629,6 +629,8 @@ export default function ContentEdit() {
             </div>
           </aside>
         </form>
+          </TabsContent>
+        </Tabs>
 
         {formData.is_private && (
           <Card className="rounded-[32px] border-dashed border-primary/40 bg-primary/[0.01] animate-in zoom-in-95">
