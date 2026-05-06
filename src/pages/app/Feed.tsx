@@ -19,6 +19,7 @@ import { BannerCarousel } from "@/components/BannerCarousel";
 import { QuickActionsGrid } from "@/components/feed/QuickActionsGrid";
 import { ComposePost } from "@/components/feed/ComposePost";
 import { WeeklyLeaderboardWidget } from "@/components/feed/WeeklyLeaderboardWidget";
+import { NewPostsPill } from "@/components/feed/NewPostsPill";
 import { cn } from "@/lib/utils";
 
 /**
@@ -167,6 +168,8 @@ export default function Feed() {
           </div>
 
           <FeedFilters filters={filters} onChange={setFilters} counts={counts} />
+
+          <NewPostsPill onTap={() => refresh()} />
 
           {error ? (
             <Card className="border-destructive/20 bg-destructive/5 rounded-3xl py-10 md:py-16 text-center animate-in zoom-in-95">

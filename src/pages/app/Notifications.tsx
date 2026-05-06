@@ -9,6 +9,7 @@ import { Badge } from "@/components/ui/badge";
 import { ArrowLeft, BellOff, CheckCheck, Zap, ShieldCheck, Target, Signal } from "lucide-react";
 import { format } from "date-fns";
 import { getNotificationIcon } from "@/lib/notificationHelpers";
+import { NotificationChannels } from "@/components/notifications/NotificationChannels";
 import { cn } from "@/lib/utils";
 
 /**
@@ -206,6 +207,10 @@ export default function Notifications() {
           ))}
         </div>
       </footer>
+
+      <div className="px-4 pb-8 max-w-3xl mx-auto">
+        <NotificationChannels />
+      </div>
     </div>
   );
 }

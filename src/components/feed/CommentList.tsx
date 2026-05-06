@@ -39,6 +39,21 @@ export function CommentList({ postId }: { postId: string }) {
     if (open) load();
   }, [open, postId]);
 
+  // Realtime: refresh when a new comment is inserted on this post
+  useEffect(() => {
+    const channel = supabase
+      .channel(`post_comments_${postId}`)
+      .on(
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "post_comments", filter: `post_id=eq.${postId}` },
+        () => load(),
+      )
+      .subscribe();
+    return () => {
+      supabase.removeChannel(channel);
+    };
+  }, [postId]);
+
   const submit = async () => {
     if (!body.trim()) return;
     setPosting(true);

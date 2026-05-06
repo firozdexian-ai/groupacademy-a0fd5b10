@@ -25,6 +25,7 @@ import {
   Zap,
   TrendingUp,
   History,
+  Flame,
 } from "lucide-react";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Card, CardContent } from "@/components/ui/card";
@@ -55,6 +56,7 @@ const SERVICE_META: Record<string, { icon: React.ElementType; label: string }> =
   refund: { icon: ShieldCheck, label: "Ledger Revert" },
   gig_reward: { icon: TrendingUp, label: "Performance Pay" },
   service_usage: { icon: Coins, label: "Fee" },
+  hype: { icon: Flame, label: "Hype" },
 };
 
 function getServiceMeta(serviceType: string | null, transactionType: string) {

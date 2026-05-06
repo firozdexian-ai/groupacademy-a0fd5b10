@@ -1,10 +1,11 @@
 import { useNavigate } from "react-router-dom";
-import { X, Zap, ShieldCheck, Clock } from "lucide-react";
+import { X, Zap, ShieldCheck, Clock, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import {
   getNotificationIcon,
   getNotificationColor,
   formatRelativeTime,
+  isAgenticNotification,
   type Notification,
 } from "@/lib/notificationHelpers";
 import { cn } from "@/lib/utils";
@@ -81,6 +82,11 @@ export function NotificationItem({ notification, onMarkAsRead, onDelete, onClose
         </p>
 
         <div className="flex items-center gap-2 pt-1">
+          {isAgenticNotification(notification.type) && (
+            <span className="inline-flex items-center gap-1 rounded-full bg-primary/10 px-2 py-0.5 text-[8px] font-black uppercase tracking-widest text-primary">
+              <Sparkles className="h-2.5 w-2.5" /> AI General
+            </span>
+          )}
           <Clock className="h-3 w-3 text-muted-foreground/40" />
           <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest tabular-nums">
             SYNC_{formatRelativeTime(notification.createdAt).toUpperCase()}
