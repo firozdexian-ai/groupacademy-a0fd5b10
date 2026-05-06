@@ -10738,6 +10738,7 @@ export type Database = {
         Row: {
           achievements: Json | null
           batch_upload_id: string | null
+          career_coach_instructor_id: string | null
           country: string | null
           country_code: string | null
           cover_image_url: string | null
@@ -10792,6 +10793,7 @@ export type Database = {
         Insert: {
           achievements?: Json | null
           batch_upload_id?: string | null
+          career_coach_instructor_id?: string | null
           country?: string | null
           country_code?: string | null
           cover_image_url?: string | null
@@ -10846,6 +10848,7 @@ export type Database = {
         Update: {
           achievements?: Json | null
           batch_upload_id?: string | null
+          career_coach_instructor_id?: string | null
           country?: string | null
           country_code?: string | null
           cover_image_url?: string | null
@@ -10903,6 +10906,13 @@ export type Database = {
             columns: ["batch_upload_id"]
             isOneToOne: false
             referencedRelation: "batch_uploads"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talents_career_coach_instructor_id_fkey"
+            columns: ["career_coach_instructor_id"]
+            isOneToOne: false
+            referencedRelation: "ai_instructors"
             referencedColumns: ["id"]
           },
           {
@@ -11339,6 +11349,7 @@ export type Database = {
         }
         Returns: Json
       }
+      assign_career_coach: { Args: { _talent_id: string }; Returns: string }
       auto_deactivate_expired_jobs: { Args: never; Returns: number }
       auto_finalize_gig_submission: {
         Args: {
