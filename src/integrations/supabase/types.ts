@@ -6184,6 +6184,128 @@ export type Database = {
         }
         Relationships: []
       }
+      gig_match_digests: {
+        Row: {
+          channel: string
+          digest_date: string
+          id: string
+          match_count: number
+          match_ids: string[]
+          sent_at: string
+          talent_id: string
+        }
+        Insert: {
+          channel?: string
+          digest_date?: string
+          id?: string
+          match_count?: number
+          match_ids?: string[]
+          sent_at?: string
+          talent_id: string
+        }
+        Update: {
+          channel?: string
+          digest_date?: string
+          id?: string
+          match_count?: number
+          match_ids?: string[]
+          sent_at?: string
+          talent_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_match_digests_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gig_match_digests_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "gig_match_digests_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+        ]
+      }
+      gig_matches: {
+        Row: {
+          created_at: string
+          expires_at: string
+          gig_id: string
+          gig_kind: string
+          id: string
+          offered_at: string
+          score: number
+          signals: Json
+          status: string
+          talent_id: string
+          updated_at: string
+          viewed_at: string | null
+          why_text: string | null
+        }
+        Insert: {
+          created_at?: string
+          expires_at?: string
+          gig_id: string
+          gig_kind: string
+          id?: string
+          offered_at?: string
+          score?: number
+          signals?: Json
+          status?: string
+          talent_id: string
+          updated_at?: string
+          viewed_at?: string | null
+          why_text?: string | null
+        }
+        Update: {
+          created_at?: string
+          expires_at?: string
+          gig_id?: string
+          gig_kind?: string
+          id?: string
+          offered_at?: string
+          score?: number
+          signals?: Json
+          status?: string
+          talent_id?: string
+          updated_at?: string
+          viewed_at?: string | null
+          why_text?: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gig_matches_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gig_matches_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "gig_matches_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: false
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+        ]
+      }
       gig_scope_drafts: {
         Row: {
           acceptance_criteria: Json
@@ -6394,6 +6516,7 @@ export type Database = {
           category: string
           created_at: string | null
           credit_reward: number
+          deadline: string | null
           description: string
           display_order: number | null
           icon: string | null
@@ -6401,6 +6524,7 @@ export type Database = {
           is_active: boolean | null
           max_completions_per_user: number | null
           requirements: string | null
+          skills: string[]
           source_brief_id: string | null
           title: string
           total_budget: number | null
@@ -6414,6 +6538,7 @@ export type Database = {
           category: string
           created_at?: string | null
           credit_reward?: number
+          deadline?: string | null
           description: string
           display_order?: number | null
           icon?: string | null
@@ -6421,6 +6546,7 @@ export type Database = {
           is_active?: boolean | null
           max_completions_per_user?: number | null
           requirements?: string | null
+          skills?: string[]
           source_brief_id?: string | null
           title: string
           total_budget?: number | null
@@ -6434,6 +6560,7 @@ export type Database = {
           category?: string
           created_at?: string | null
           credit_reward?: number
+          deadline?: string | null
           description?: string
           display_order?: number | null
           icon?: string | null
@@ -6441,6 +6568,7 @@ export type Database = {
           is_active?: boolean | null
           max_completions_per_user?: number | null
           requirements?: string | null
+          skills?: string[]
           source_brief_id?: string | null
           title?: string
           total_budget?: number | null
@@ -9610,37 +9738,52 @@ export type Database = {
       }
       marketplace_bids: {
         Row: {
+          ai_rationale: Json | null
           bid_amount: number
+          coached_text: string | null
           cover_letter: string
           created_at: string | null
           estimated_days: number | null
           gig_id: string
           id: string
+          match_id: string | null
+          original_text: string | null
           portfolio_links: Json | null
+          proof_links: Json | null
           status: string
           talent_id: string
           updated_at: string | null
         }
         Insert: {
+          ai_rationale?: Json | null
           bid_amount: number
+          coached_text?: string | null
           cover_letter: string
           created_at?: string | null
           estimated_days?: number | null
           gig_id: string
           id?: string
+          match_id?: string | null
+          original_text?: string | null
           portfolio_links?: Json | null
+          proof_links?: Json | null
           status?: string
           talent_id: string
           updated_at?: string | null
         }
         Update: {
+          ai_rationale?: Json | null
           bid_amount?: number
+          coached_text?: string | null
           cover_letter?: string
           created_at?: string | null
           estimated_days?: number | null
           gig_id?: string
           id?: string
+          match_id?: string | null
+          original_text?: string | null
           portfolio_links?: Json | null
+          proof_links?: Json | null
           status?: string
           talent_id?: string
           updated_at?: string | null
@@ -9651,6 +9794,13 @@ export type Database = {
             columns: ["gig_id"]
             isOneToOne: false
             referencedRelation: "marketplace_gigs"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "marketplace_bids_match_id_fkey"
+            columns: ["match_id"]
+            isOneToOne: false
+            referencedRelation: "gig_matches"
             referencedColumns: ["id"]
           },
           {
@@ -9818,6 +9968,7 @@ export type Database = {
           selected_bid_id: string | null
           skill_category: string
           skill_subcategory: string | null
+          skills: string[]
           source_brief_id: string | null
           status: string
           title: string
@@ -9843,6 +9994,7 @@ export type Database = {
           selected_bid_id?: string | null
           skill_category: string
           skill_subcategory?: string | null
+          skills?: string[]
           source_brief_id?: string | null
           status?: string
           title: string
@@ -9868,6 +10020,7 @@ export type Database = {
           selected_bid_id?: string | null
           skill_category?: string
           skill_subcategory?: string | null
+          skills?: string[]
           source_brief_id?: string | null
           status?: string
           title?: string
@@ -13227,6 +13380,61 @@ export type Database = {
           },
         ]
       }
+      talent_availability: {
+        Row: {
+          categories: string[]
+          daily_match_cap: number
+          notify_via_email: boolean
+          notify_via_inapp: boolean
+          paused_until: string | null
+          talent_id: string
+          updated_at: string
+          weekly_capacity_hours: number
+        }
+        Insert: {
+          categories?: string[]
+          daily_match_cap?: number
+          notify_via_email?: boolean
+          notify_via_inapp?: boolean
+          paused_until?: string | null
+          talent_id: string
+          updated_at?: string
+          weekly_capacity_hours?: number
+        }
+        Update: {
+          categories?: string[]
+          daily_match_cap?: number
+          notify_via_email?: boolean
+          notify_via_inapp?: boolean
+          paused_until?: string | null
+          talent_id?: string
+          updated_at?: string
+          weekly_capacity_hours?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_availability_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: true
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_availability_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: true
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "talent_availability_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: true
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+        ]
+      }
       talent_boosts: {
         Row: {
           boosted_until: string
@@ -14053,6 +14261,52 @@ export type Database = {
           },
         ]
       }
+      talent_trust_score: {
+        Row: {
+          components: Json
+          computed_at: string
+          score: number
+          talent_id: string
+          updated_at: string
+        }
+        Insert: {
+          components?: Json
+          computed_at?: string
+          score?: number
+          talent_id: string
+          updated_at?: string
+        }
+        Update: {
+          components?: Json
+          computed_at?: string
+          score?: number
+          talent_id?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "talent_trust_score_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: true
+            referencedRelation: "talents"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "talent_trust_score_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: true
+            referencedRelation: "v_talent_transaction_volume"
+            referencedColumns: ["talent_id"]
+          },
+          {
+            foreignKeyName: "talent_trust_score_talent_id_fkey"
+            columns: ["talent_id"]
+            isOneToOne: true
+            referencedRelation: "v_weekly_leaderboard"
+            referencedColumns: ["talent_id"]
+          },
+        ]
+      }
       talents: {
         Row: {
           achievements: Json | null
@@ -14532,6 +14786,24 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      gigs_unified_view: {
+        Row: {
+          acceptance_criteria: Json | null
+          created_at: string | null
+          credits: number | null
+          deadline: string | null
+          description: string | null
+          id: string | null
+          kind: string | null
+          posted_by: string | null
+          skill_category: string | null
+          skills: string[] | null
+          status: string | null
+          title: string | null
+          updated_at: string | null
+        }
+        Relationships: []
       }
       instructors_public: {
         Row: {
@@ -15257,6 +15529,29 @@ export type Database = {
           similarity: number
         }[]
       }
+      match_gigs_for_talent: {
+        Args: { _limit?: number; _talent_id: string }
+        Returns: {
+          credits: number
+          deadline: string
+          gig_id: string
+          gig_kind: string
+          match_id: string
+          score: number
+          signals: Json
+          status: string
+          title: string
+          why_text: string
+        }[]
+      }
+      match_talents_to_gig: {
+        Args: { _gig_id: string; _gig_kind?: string; _limit?: number }
+        Returns: {
+          score: number
+          signals: Json
+          talent_id: string
+        }[]
+      }
       move_to_dlq: {
         Args: {
           dlq_name: string
@@ -15350,6 +15645,10 @@ export type Database = {
         Args: { _school_id: string }
         Returns: undefined
       }
+      recompute_talent_trust_score: {
+        Args: { _talent_id: string }
+        Returns: number
+      }
       recompute_talent_verification: {
         Args: { p_talent_id: string }
         Returns: string
@@ -15358,9 +15657,17 @@ export type Database = {
         Args: { _post_id: string; _surface?: string }
         Returns: undefined
       }
+      record_match_event: {
+        Args: { _event: string; _match_id: string }
+        Returns: undefined
+      }
       record_share: {
         Args: { _channel?: string; _post_id: string }
         Returns: undefined
+      }
+      refresh_gig_matches: {
+        Args: { _gig_id: string; _gig_kind?: string; _limit?: number }
+        Returns: number
       }
       reject_content_gig: {
         Args: { p_admin_notes?: string; p_gig_id: string }
@@ -15383,6 +15690,7 @@ export type Database = {
         Args: { p_filters?: Json; p_limit?: number; p_offset?: number }
         Returns: Json
       }
+      shortlist_match: { Args: { _match_id: string }; Returns: undefined }
       show_limit: { Args: never; Returns: number }
       show_trgm: { Args: { "": string }; Returns: string[] }
       sweep_expired_connections: { Args: never; Returns: number }
