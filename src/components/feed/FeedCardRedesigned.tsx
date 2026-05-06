@@ -5,6 +5,8 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { CircularMatchBadge } from "./CircularMatchBadge";
 import { ShareSheet } from "./ShareSheet";
+import { HypeButton } from "./HypeButton";
+import type { HypeContentType } from "@/hooks/useContentHype";
 import { cn } from "@/lib/utils";
 import { useSavedItems, SavedItemType } from "@/hooks/useSavedItems";
 import type { FeedItem } from "@/hooks/useFeedRecommendations";
