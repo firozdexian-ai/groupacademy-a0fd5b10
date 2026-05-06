@@ -4,19 +4,25 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { WelcomeBonus } from "./WelcomeBonus";
 import { CVUploadStep } from "./CVUploadStep";
+import { ProfessionStep } from "./ProfessionStep";
+import { GoalStep } from "./GoalStep";
 import { ServicesTour } from "./ServicesTour";
 import { useOnboarding } from "@/hooks/useOnboarding";
+import { trackOnboardingStep } from "@/lib/onboarding/telemetry";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 /**
- * Onboarding wizard — 3 steps: welcome bonus, profile setup, quick tour.
+ * Onboarding wizard — 5 steps:
+ * welcome → CV (optional) → profession+role → status+goal → quick tour.
  */
 
 const ONBOARDING_NODES = [
   { id: "welcome", label: "Welcome" },
-  { id: "profile", label: "Your profile" },
-  { id: "explore", label: "Quick tour" },
+  { id: "cv", label: "Resume" },
+  { id: "profession", label: "Profession" },
+  { id: "goal", label: "Goal" },
+  { id: "explore", label: "Tour" },
 ];
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
