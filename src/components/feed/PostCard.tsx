@@ -59,7 +59,8 @@ const TYPE_META: Record<string, { label: string; className: string } | null> = {
 
 export function PostCard({ post }: PostCardProps) {
   const [isExpanded, setIsExpanded] = useState(false);
-  const { reactions, userReaction, toggleReaction, isLoading: reactionsLoading } = usePostReactions(post.id);
+  const { isItemSaved, saveItem, unsaveItem } = useSavedItems();
+  const saved = isItemSaved(post.id, "post" as any);
 
   const pollOptions = post.pollOptions || [];
   const { hasVoted, userVote, results, totalVotes, castVote, isLoading: pollLoading } = usePollVoting(
@@ -69,9 +70,22 @@ export function PostCard({ post }: PostCardProps) {
 
   const isLongText = post.textContent.length > 280;
   const displayText = isLongText && !isExpanded ? post.textContent.slice(0, 280) + "..." : post.textContent;
-  const totalReactions = Object.values(reactions).reduce((sum, count) => sum + count, 0);
   const typeMeta = TYPE_META[post.contentType] ?? null;
   const isVideo = post.mediaUrl?.match(/(youtube\.com|youtu\.be)/);
+
+  const toggleSave = async () => {
+    try {
+      if (saved) {
+        await unsaveItem(post.id, "post" as any);
+        toast.success("Removed from saved");
+      } else {
+        await saveItem(post.id, "post" as any);
+        toast.success("Saved");
+      }
+    } catch {
+      toast.error("Couldn't update saved");
+    }
+  };
 
   return (
     <Card className="overflow-hidden border border-border/40 hover:border-primary/40 bg-card rounded-2xl transition-colors">
