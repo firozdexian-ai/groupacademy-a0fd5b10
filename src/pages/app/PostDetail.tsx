@@ -79,22 +79,41 @@ export default function PostDetail() {
   const titleText = post?.text_content?.slice(0, 60) || "Post";
   const descText = post?.text_content?.slice(0, 160) || "Community post on GroUp Academy";
 
+  useEffect(() => {
+    if (!post) return;
+    const prevTitle = document.title;
+    document.title = `${titleText} · GroUp Academy`;
+    let metaDesc = document.querySelector('meta[name="description"]');
+    const prevDesc = metaDesc?.getAttribute("content") ?? null;
+    if (!metaDesc) {
+      metaDesc = document.createElement("meta");
+      metaDesc.setAttribute("name", "description");
+      document.head.appendChild(metaDesc);
+    }
+    metaDesc.setAttribute("content", descText);
+
+    const ld = document.createElement("script");
+    ld.type = "application/ld+json";
+    ld.text = JSON.stringify({
+      "@context": "https://schema.org",
+      "@type": "SocialMediaPosting",
+      headline: titleText,
+      articleBody: post.text_content || "",
+      datePublished: post.created_at,
+      author: { "@type": "Person", name: post.author_name || "Community member" },
+    });
+    ld.dataset.postLd = post.id;
+    document.head.appendChild(ld);
+
+    return () => {
+      document.title = prevTitle;
+      if (prevDesc !== null) metaDesc?.setAttribute("content", prevDesc);
+      ld.remove();
+    };
+  }, [post, titleText, descText]);
+
   return (
     <div className="min-h-screen bg-muted/10 pb-32">
-      <Helmet>
-        <title>{titleText} · GroUp Academy</title>
-        <meta name="description" content={descText} />
-        {post && (
-          <script type="application/ld+json">{JSON.stringify({
-            "@context": "https://schema.org",
-            "@type": "SocialMediaPosting",
-            headline: titleText,
-            articleBody: post.text_content || "",
-            datePublished: post.created_at,
-            author: { "@type": "Person", name: post.author_name || "Community member" },
-          })}</script>
-        )}
-      </Helmet>
 
       <div className="sticky top-0 z-10 bg-background/90 backdrop-blur border-b border-border/40">
         <div className="max-w-2xl mx-auto px-3 py-2 flex items-center gap-2">
