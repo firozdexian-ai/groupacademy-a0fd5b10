@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { X, Zap, ShieldCheck } from "lucide-react";
+import { X, Zap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { WelcomeBonus } from "./WelcomeBonus";
@@ -10,14 +10,13 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 /**
- * GroUp Academy: Onboarding Orchestration Node
- * CTO Reference: Authoritative controller for talent initialization and credit grant.
+ * Onboarding wizard — 3 steps: welcome bonus, profile setup, quick tour.
  */
 
 const ONBOARDING_NODES = [
   { id: "welcome", label: "Welcome" },
-  { id: "profile", label: "Profile Audit" },
-  { id: "explore", label: "Platform Tour" },
+  { id: "profile", label: "Your profile" },
+  { id: "explore", label: "Quick tour" },
 ];
 
 export function OnboardingWizard({ onComplete }: { onComplete: () => void }) {
