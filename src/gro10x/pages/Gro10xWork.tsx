@@ -6,8 +6,9 @@ import Gro10xJobsList from "./work/Gro10xJobsList";
 import Gro10xShortlist from "./work/Gro10xShortlist";
 import Gro10xTalents from "./work/Gro10xTalents";
 import Gro10xCRM from "./Gro10xCRM";
+import Gro10xSourcing from "./sourcing/Gro10xSourcing";
 
-type Tab = "hiring" | "talents" | "crm";
+type Tab = "hiring" | "talents" | "sourcing" | "crm";
 
 /**
  * Gro10x Activities hub — three tabs covering hiring, talents the company
