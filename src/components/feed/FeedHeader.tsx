@@ -89,12 +89,8 @@ export function FeedHeader({ talentName, talentPhoto, talentProfession, isRefres
               <button
                 onClick={() => setLevelOpen(true)}
                 className="flex-1 flex items-center gap-1.5 min-w-0 group"
-                aria-label="Career level"
+                aria-label="Career level progress"
               >
-                <Trophy className={cn("h-3 w-3 shrink-0", isLight ? "text-white" : "text-primary")} />
-                <span className={cn("text-[10px] font-semibold whitespace-nowrap", textCls)}>
-                  Lv {career.level}
-                </span>
                 <div className={cn("flex-1 h-1.5 rounded-full overflow-hidden", isLight ? "bg-white/25" : "bg-muted")}>
                   <div
                     className="h-full rounded-full bg-gradient-to-r from-primary to-primary/70 transition-all"
