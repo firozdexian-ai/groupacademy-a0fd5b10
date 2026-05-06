@@ -16,6 +16,7 @@ import Gro10xApplications from "./pages/work/Gro10xApplications";
 import Gro10xOfferComposer from "./pages/work/Gro10xOfferComposer";
 import Gro10xBilling from "./pages/Gro10xBilling";
 import Gro10xLearn from "./pages/Gro10xLearn";
+import Gro10xLearnOps from "./pages/Gro10xLearnOps";
 import Gro10xCRM from "./pages/Gro10xCRM";
 import Gro10xOfferings from "./pages/Gro10xOfferings";
 import Gro10xSourcing from "./pages/sourcing/Gro10xSourcing";
@@ -50,6 +51,7 @@ export function Gro10xRoutes() {
         <Route path="work/applications/:applicationId/offer/new" element={<Gro10xOfferComposer />} />
         <Route path="billing" element={<Gro10xBilling />} />
         <Route path="learn" element={<Gro10xLearn />} />
+        <Route path="learn/ops" element={<Gro10xLearnOps />} />
         <Route path="crm" element={<Gro10xCRM />} />
         <Route path="offerings" element={<Gro10xOfferings />} />
         <Route path="sourcing" element={<Gro10xSourcing />} />
