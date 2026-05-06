@@ -65,7 +65,7 @@ export const useAuth = (): AuthState => {
           setUser(data.session.user);
         }
       } catch (err: any) {
-        console.warn("[Auth] Registry_Audit_Fault:", err);
+        console.warn("[Auth] Session check failed:", err);
         if (err?.message?.includes("Refresh Token")) await supabase.auth.signOut();
         if (mounted.current) {
           setSession(null);
