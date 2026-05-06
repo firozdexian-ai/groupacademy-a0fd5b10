@@ -1,13 +1,15 @@
-import { useState, useRef, useEffect } from "react";
+import { useState, useRef, useEffect, useMemo } from "react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Avatar, AvatarFallback } from "@/components/ui/avatar";
-import { Send, Bot, User, Loader2, Sparkles, RefreshCw, Zap, ShieldCheck } from "lucide-react";
+import { Send, Bot, User, Loader2, Sparkles, RefreshCw, Zap, ShieldCheck, X } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
+import { useTutorMasteryContext } from "@/hooks/useTutorMasteryContext";
 
 /**
  * GroUp Academy: Neural Instructor Interface
@@ -23,6 +25,8 @@ interface AIChatPanelProps {
   professionLineId?: string;
   contextType?: "general" | "course" | "module";
   contextId?: string;
+  moduleId?: string;
+  contentId?: string;
   instructorName?: string;
   placeholder?: string;
   className?: string;
@@ -35,6 +39,8 @@ export function AIChatPanel({
   professionLineId,
   contextType = "general",
   contextId,
+  moduleId,
+  contentId,
   instructorName = "Neural Instructor",
   placeholder = "Initialize query regarding trajectory or curriculum...",
   className = "",
@@ -43,6 +49,7 @@ export function AIChatPanel({
   const [messages, setMessages] = useState<Message[]>([]);
   const [input, setInput] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [hintDismissed, setHintDismissed] = useState(false);
   const [lastError, setLastError] = useState<string | null>(null);
   const scrollRef = useRef<HTMLDivElement>(null);
   const abortControllerRef = useRef<AbortController | null>(null);
