@@ -1,11 +1,9 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import {
-  Upload,
   Loader2,
   CheckCircle2,
   Sparkles,
   User,
-  Briefcase,
   AlertCircle,
   ShieldCheck,
   FileText,
@@ -13,8 +11,6 @@ import {
 } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
-import { Label } from "@/components/ui/label";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { useTalent } from "@/hooks/useTalent";
 import { computeCVFingerprint } from "@/lib/onboarding/cvFingerprint";
 import { toast } from "sonner";
@@ -49,22 +45,10 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
   const [isParsing, setIsParsing] = useState(false);
   const [parseProgress, setParseProgress] = useState(0);
   const [parseMessage, setParseMessage] = useState("");
-  const [uploadedFile, setUploadedFile] = useState<string | null>(talent?.cvUrl || null);
+  const [, setUploadedFile] = useState<string | null>(talent?.cvUrl || null);
   const [parsedData, setParsedData] = useState<ParsedCVData | null>(null);
   const [parseComplete, setParseComplete] = useState(false);
   const [parseError, setParseError] = useState<string | null>(null);
-
-  const [categories, setCategories] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<string>(talent?.professionCategoryId || "none");
-  const [isSaving, setIsSaving] = useState(false);
-
-  useEffect(() => {
-    const fetchCategories = async () => {
-      const { data, error } = await supabase.from("profession_categories").select("id, name").order("name");
-      if (!error && data) setCategories(data);
-    };
-    fetchCategories();
-  }, []);
 
   const simulateProgress = () => {
     let stageIndex = 0;
