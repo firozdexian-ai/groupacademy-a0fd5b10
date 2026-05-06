@@ -200,7 +200,7 @@ export const useAuth = (): AuthState => {
 
   const signOut = async () => {
     await supabase.auth.signOut();
-    toast.success("SESSION_TERMINATED");
+    toast.success("Signed out.");
     navigate("/", { replace: true });
   };
 
@@ -209,13 +209,13 @@ export const useAuth = (): AuthState => {
       redirectTo: `${window.location.origin}/reset-password`,
     });
     if (error) throw error;
-    toast.success("RECOVERY_SYNC_SENT");
+    toast.success("Reset link sent — check your inbox.");
   };
 
   const updatePassword = async (newPassword: string) => {
     const { error } = await supabase.auth.updateUser({ password: newPassword });
     if (error) throw error;
-    toast.success("ARTIFACT_UPDATED: Password reset complete.");
+    toast.success("Password updated.");
   };
 
   return { user, session, isLoading, signIn, signUp, signOut, resetPassword, updatePassword };
