@@ -7925,6 +7925,60 @@ export type Database = {
           },
         ]
       }
+      module_progress: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          enrollment_id: string
+          id: string
+          module_id: string
+          progress_pct: number
+          stages_completed: number[]
+          started_at: string | null
+          total_stages: number
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          enrollment_id: string
+          id?: string
+          module_id: string
+          progress_pct?: number
+          stages_completed?: number[]
+          started_at?: string | null
+          total_stages?: number
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          enrollment_id?: string
+          id?: string
+          module_id?: string
+          progress_pct?: number
+          stages_completed?: number[]
+          started_at?: string | null
+          total_stages?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "module_progress_enrollment_id_fkey"
+            columns: ["enrollment_id"]
+            isOneToOne: false
+            referencedRelation: "enrollments"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "module_progress_module_id_fkey"
+            columns: ["module_id"]
+            isOneToOne: false
+            referencedRelation: "course_modules"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       module_quiz_pool: {
         Row: {
           correct_index: number
