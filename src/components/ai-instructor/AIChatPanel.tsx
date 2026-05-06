@@ -131,11 +131,12 @@ export function AIChatPanel({
     }
   };
 
-  const handleMessageIngress = async (e?: React.FormEvent) => {
+  const handleMessageIngress = async (e?: React.FormEvent, override?: string) => {
     e?.preventDefault();
-    if (!input.trim() || isLoading) return;
+    const text = (override ?? input).trim();
+    if (!text || isLoading) return;
 
-    const userPayload: Message = { role: "user", content: input.trim() };
+    const userPayload: Message = { role: "user", content: text };
     const trajectory = [...messages, userPayload];
 
     setMessages(trajectory);
