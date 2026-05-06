@@ -6,9 +6,7 @@ import { toast } from "sonner";
 import { isPhoneNumber } from "@/lib/validations";
 
 /**
- * GroUp Academy: Neural Identity Orchestrator
- * CTO Reference: Authoritative controller for identity sync and session lifecycle.
- * Sync Version: 2026.04.29 - Fixed createStudentProfile parameter mismatch (TS2554).
+ * Talent identity hook — wraps Supabase auth with friendly toasts and phone-based sign-in.
  */
 
 export interface AuthState {
