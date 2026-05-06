@@ -70,7 +70,7 @@ const TABS: { key: TabKey; label: string; icon: any }[] = [
 ];
 
 const INITIAL_SHOW = 3;
-const FREE_AI_MATCHES_LIMIT = 5;
+const AI_MATCH_COST = 10;
 
 const COUNTRY_FLAGS: Record<string, string> = {
   Bangladesh: "🇧🇩",
