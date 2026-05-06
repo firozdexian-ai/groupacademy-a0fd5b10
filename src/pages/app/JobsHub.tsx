@@ -48,7 +48,7 @@ import { useCountriesWithSignal } from "@/hooks/useCountriesWithSignal";
 import { useRemoteFriendly } from "@/hooks/useRemoteFriendly";
 import { JOB_COLLECTIONS } from "@/lib/constants/jobTypes";
 import { toast } from "sonner";
-import { Avatar, AvatarImage, AvatarFallback } from "@/components/ui/avatar";
+
 import { ProcessingCard, type ProcessingStage } from "@/components/ui/processing-card";
 import { AgentAvatar } from "@/components/ai-agents/AgentAvatar";
 import { cn } from "@/lib/utils";
