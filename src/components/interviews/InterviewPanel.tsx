@@ -9,8 +9,8 @@ import { ScheduleInterviewSheet } from "./ScheduleInterviewSheet";
 
 interface Props {
   applicationId: string;
-  companyId: string;
-  talentId: string;
+  companyId?: string;
+  talentId?: string;
   actorRole: "talent" | "recruiter" | "admin";
 }
 
@@ -110,14 +110,13 @@ export function InterviewPanel({ applicationId, companyId, talentId, actorRole }
         </CardContent>
       </Card>
 
-      <ScheduleInterviewSheet
-        open={sheetOpen}
-        onOpenChange={setSheetOpen}
-        applicationId={applicationId}
-        companyId={companyId}
-        talentId={talentId}
-        onCreated={reload}
-      />
-    </div>
-  );
-}
+      {actorRole !== "talent" && companyId && talentId && (
+        <ScheduleInterviewSheet
+          open={sheetOpen}
+          onOpenChange={setSheetOpen}
+          applicationId={applicationId}
+          companyId={companyId}
+          talentId={talentId}
+          onCreated={reload}
+        />
+      )}
