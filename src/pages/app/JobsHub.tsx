@@ -673,7 +673,7 @@ export default function JobsHub() {
         </div>
       )}
 
-      <JobPreferencesSheet open={preferencesOpen} onOpenChange={setPreferencesOpen} />
+      <JobPreferencesSheet open={preferencesOpen} onOpenChange={setPreferencesOpen} onSaved={() => refetchRecs()} />
     </div>
   );
 }
