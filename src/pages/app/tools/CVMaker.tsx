@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
+import { recordToolRun } from "@/hooks/useToolRuns";
 import { CREDIT_CONFIG } from "@/lib/creditPricing";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
@@ -181,6 +182,7 @@ export default function CVMaker() {
     try {
       await deductCredits("CV_GENERATION", undefined, `ATS CV (${template}) generated`);
       pdfDoc.save(`${(talent.fullName || "cv").replace(/\s+/g, "_")}_${template}_CV.pdf`);
+      recordToolRun({ toolKey: "cv", costCredits: cost, payload: { template } });
       toast.success("CV downloaded.");
     } catch (e) {
       console.error(e);

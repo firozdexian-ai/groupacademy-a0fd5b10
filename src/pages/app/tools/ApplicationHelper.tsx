@@ -7,6 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
+import { recordToolRun } from "@/hooks/useToolRuns";
 import { CREDIT_CONFIG } from "@/lib/creditPricing";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
@@ -44,6 +45,7 @@ export default function ApplicationHelper() {
       if (!result.length) throw new Error("No answers returned");
       await deductCredits("APPLICATION_ANSWERS", undefined, "Application answer sheet");
       setAnswers(result);
+      recordToolRun({ toolKey: "answers", costCredits: cost, payload: { count: result.length } });
       toast.success("Answers ready.");
     } catch (e) {
       console.error(e);
