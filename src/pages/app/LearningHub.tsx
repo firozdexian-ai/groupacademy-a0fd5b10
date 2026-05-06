@@ -49,6 +49,11 @@ export default function LearningHub() {
     }
   }, [activeTab, detailView, setSearchParams]);
 
+  // Fire-and-forget daily review-due nudge (deduped server-side per UTC day)
+  useEffect(() => {
+    supabase.functions.invoke("notify-review-due").catch(() => {});
+  }, []);
+
   const handleTabChange = (tab: TabKey) => {
     setActiveTab(tab);
     setDetailView(null);
