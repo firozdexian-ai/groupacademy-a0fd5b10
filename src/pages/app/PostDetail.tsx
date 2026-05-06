@@ -158,13 +158,11 @@ export default function PostDetail() {
 
         {post && <PostCard post={mapRowToPost(post)} />}
 
-        {post && (
-          <Card className="rounded-2xl border border-border/40">
-            <CardContent className="p-3">
-              <CommentList postId={post.id} />
-            </CardContent>
-          </Card>
+        {post && talent?.id && (post as any).author_user_id === talent.userId && (
+          <PostInsightsAccordion postId={post.id} />
         )}
+
+        {post && (
 
         {related && related.length > 0 && (
           <div className="space-y-2">
