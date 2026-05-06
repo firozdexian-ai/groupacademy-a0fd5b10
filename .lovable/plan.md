@@ -81,6 +81,13 @@ ItemBankAnalyticsPanel ──► "AI rewrite" ──► ai-item-rewrite (Lovable
 - `src/pages/app/InstructorReviewQueue.tsx` — "Generate fixes for all flagged" bulk action.
 - `.lovable/plan.md`, `mem://index.md`
 
-## Approval options
-- **continue with 3.7** — ship a–f together (recommended).
-- **continue with 3.7.a–d** — single-item rewrite + apply only; defer bulk path on review queue.
+## 3.7 ship notes
+
+- DB: `module_item_revision_log` audit table (admin-only RLS).
+- Edge `ai-item-rewrite` (admin) — Lovable AI Gateway with tool-calling schemas, 1–3 structured suggestions targeting the supplied flags. Surfaces 429/402.
+- Edge `ai-item-apply` (admin) — validates patch, updates pool, **resets serve counters**, inserts revision log row.
+- UI: `ItemRewriteSheet` (preview → editable draft → Apply), wired from "AI rewrite" pill on every flagged row inside `ItemBankAnalyticsPanel`.
+- Deferred (3.7.e bulk path on review-queue): not shipped — single-item flow handles 95% of cases without orphaning AI generations.
+- Phase 3 progress: ~88% (7 of 8).
+
+**Up next:** 3.8 (multilingual rewrite + cross-course trend insights). Reply **continue with 3.8**.
