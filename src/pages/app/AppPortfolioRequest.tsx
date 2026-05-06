@@ -31,6 +31,7 @@ import {
 import { Badge } from "@/components/ui/badge";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
+import { recordToolRun } from "@/hooks/useToolRuns";
 import { ExistingCVCard } from "@/components/cv/ExistingCVCard";
 import { ProfileCompletionPrompt } from "@/components/profile/ProfileCompletionPrompt";
 import { cn } from "@/lib/utils";
@@ -264,6 +265,7 @@ export default function AppPortfolioRequest() {
 
       setRequestId(tempRequestId);
       setIsSuccess(true);
+      recordToolRun({ toolKey: "portfolio", costCredits: isFreePromotion ? 0 : 0, payload: { request_id: tempRequestId } });
       toast({ title: "Synthesis Initialized", description: "Our team will sync via WhatsApp shortly." });
     } catch (error: any) {
       toast({ title: "Failed", description: error.message || "Retry protocol.", variant: "destructive" });
