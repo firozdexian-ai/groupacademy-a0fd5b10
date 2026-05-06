@@ -74,6 +74,10 @@ export default function GigOpsTab() {
         <TabsContent value="matchmaker" className="mt-3">
           <GigMatchmakerTab />
         </TabsContent>
+
+        <TabsContent value="verification" className="mt-3">
+          <GigVerificationQueueTab />
+        </TabsContent>
       </Tabs>
     </div>
   );
