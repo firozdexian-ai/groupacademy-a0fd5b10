@@ -287,6 +287,13 @@ export default function App() {
                   <Route path="/verify/skill/:code" element={<VerifySkillCredential />} />
                   <Route path="/t/:handle" element={<PublicTalentProfile />} />
 
+                  {/* Phase 5.6 — public discovery */}
+                  <Route path="/projects" element={<PublicProjectsIndex />} />
+                  <Route path="/projects/:slug" element={<PublicProjectDetail />} />
+                  <Route path="/leaderboards" element={<Navigate to="/leaderboards/talents" replace />} />
+                  <Route path="/leaderboards/:kind" element={<PublicLeaderboard />} />
+                  <Route path="/c/:slug/projects" element={<CompanyPublicProjects />} />
+
                   {/* Public Services */}
                   <Route path="/career-assessment" element={<CareerAssessment />} />
                   <Route path="/assessment-results/:id" element={<AssessmentResults />} />
