@@ -3,6 +3,7 @@
  * for the unified `/dashboard/chat` messenger. Persistence is client-side
  * (no edge function changes required): we replay full history when invoking
  * the agent, then store the resulting user+assistant turn.
+ * * CTO Audit: Wired directly to the consolidated `admin-agents-router` Edge Function.
  */
 import { useCallback, useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
@@ -10,10 +11,10 @@ import { ADMIN_AGENTS_BY_KEY } from "@/lib/adminAgents";
 
 export interface ChatAttachment {
   name: string;
-  path: string;       // storage object path: <uid>/<thread>/<uuid>-<name>
+  path: string; // storage object path: <uid>/<thread>/<uuid>-<name>
   mime: string;
   size: number;
-  url?: string;       // signed URL (transient)
+  url?: string; // signed URL (transient)
 }
 
 export type ChatMsg = {
@@ -56,9 +57,7 @@ async function signAttachments(atts: ChatAttachment[]): Promise<ChatAttachment[]
   if (!atts?.length) return [];
   const out: ChatAttachment[] = [];
   for (const a of atts) {
-    const { data } = await supabase.storage
-      .from(ATTACHMENT_BUCKET)
-      .createSignedUrl(a.path, 60 * 60);
+    const { data } = await supabase.storage.from(ATTACHMENT_BUCKET).createSignedUrl(a.path, 60 * 60);
     out.push({ ...a, url: data?.signedUrl });
   }
   return out;
@@ -141,9 +140,7 @@ export function useAdminChatThread(agentKey: string | null) {
           });
           if (row.attachments?.length) {
             const signed = await signAttachments(row.attachments);
-            setMessages((prev) =>
-              prev.map((m) => (m.id === row.id ? { ...m, attachments: signed } : m)),
-            );
+            setMessages((prev) => prev.map((m) => (m.id === row.id ? { ...m, attachments: signed } : m)));
           }
         },
       )
@@ -176,19 +173,15 @@ export function useAdminChatThread(agentKey: string | null) {
       if (!uid) return null;
       const safe = file.name.replace(/[^\w.\-]+/g, "_");
       const path = `${uid}/${threadId}/${crypto.randomUUID()}-${safe}`;
-      const { error } = await supabase.storage
-        .from(ATTACHMENT_BUCKET)
-        .upload(path, file, {
-          contentType: file.type || "application/octet-stream",
-          upsert: false,
-        });
+      const { error } = await supabase.storage.from(ATTACHMENT_BUCKET).upload(path, file, {
+        contentType: file.type || "application/octet-stream",
+        upsert: false,
+      });
       if (error) {
         console.error("attachment upload failed", error);
         return null;
       }
-      const { data: signed } = await supabase.storage
-        .from(ATTACHMENT_BUCKET)
-        .createSignedUrl(path, 60 * 60);
+      const { data: signed } = await supabase.storage.from(ATTACHMENT_BUCKET).createSignedUrl(path, 60 * 60);
       return {
         name: file.name,
         path,
@@ -204,14 +197,13 @@ export function useAdminChatThread(agentKey: string | null) {
     async (text: string, attachments: ChatAttachment[] = []) => {
       if (!agentKey || !threadId || sending) return;
       if (!text.trim() && attachments.length === 0) return;
-      const agent = ADMIN_AGENTS_BY_KEY[agentKey];
-      if (!agent) return;
 
       const userMsg: ChatMsg = {
         role: "user",
         content: text.trim(),
         attachments,
       };
+
       const next = [...messages, userMsg];
       setMessages(next);
       setSending(true);
@@ -219,10 +211,7 @@ export function useAdminChatThread(agentKey: string | null) {
       const titlePatch =
         messages.length === 0
           ? {
-              title:
-                userMsg.content.slice(0, 80) ||
-                attachments[0]?.name?.slice(0, 80) ||
-                "Attachment",
+              title: userMsg.content.slice(0, 80) || attachments[0]?.name?.slice(0, 80) || "Attachment",
             }
           : {};
 
@@ -241,14 +230,19 @@ export function useAdminChatThread(agentKey: string | null) {
 
       try {
         const plainMessages = next.map(({ role, content }) => ({ role, content }));
-        const { data, error } = await supabase.functions.invoke(agent.functionName, {
+
+        // CTO PATCH: Route all traffic through the consolidated admin-agents-router
+        const { data, error } = await supabase.functions.invoke("admin-agents-router", {
           body: {
-            messages: plainMessages,
-            // server-side helper signs URLs and pulls file bytes itself
+            agent_key: agentKey, // Dynamically pass the requested agent
+            message: text.trim(),
+            history: plainMessages.slice(0, -1), // Pass previous turns for context
             attachments: attachments.map(({ url: _u, ...rest }) => rest),
           },
         });
+
         if (error) throw error;
+
         const payload = data as any;
         if (payload?.error) {
           const detail = payload.detail
@@ -256,10 +250,15 @@ export function useAdminChatThread(agentKey: string | null) {
             : "";
           throw new Error(`${payload.error}${detail}`);
         }
+
+        // Ensure we properly map the 'reply' field from our new router structure
+        const replyText = payload?.reply || payload?.content || "(no answer)";
+
         const reply: ChatMsg = {
           role: "assistant",
-          content: payload?.content || "(no answer)",
+          content: replyText,
         };
+
         setMessages([...next, reply]);
         await supabase.from("admin_chat_messages").insert({
           thread_id: threadId,
@@ -288,9 +287,7 @@ export function useAdminChatThread(agentKey: string | null) {
       const uid = userData?.user?.id;
       if (uid) {
         const prefix = `${uid}/${threadId}`;
-        const { data: list } = await supabase.storage
-          .from(ATTACHMENT_BUCKET)
-          .list(prefix, { limit: 1000 });
+        const { data: list } = await supabase.storage.from(ATTACHMENT_BUCKET).list(prefix, { limit: 1000 });
         const paths = (list ?? []).map((f) => `${prefix}/${f.name}`);
         if (paths.length) {
           await supabase.storage.from(ATTACHMENT_BUCKET).remove(paths);
@@ -320,7 +317,10 @@ export function useAdminChatThread(agentKey: string | null) {
       await supabase
         .from("admin_chat_messages")
         .delete()
-        .in("id", trailing.map((m) => m.id!));
+        .in(
+          "id",
+          trailing.map((m) => m.id!),
+        );
     }
     setMessages(messages.slice(0, lastUserIdx));
     await send(lastUser.content, lastUser.attachments ?? []);
