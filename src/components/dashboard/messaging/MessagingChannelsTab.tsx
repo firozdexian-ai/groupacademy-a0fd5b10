@@ -158,6 +158,29 @@ export function MessagingChannelsTab({
           <p className="text-xs text-muted-foreground">
             Opens Unipile hosted QR. Scan from the WhatsApp app you want this agent to use.
           </p>
+
+          <div className="border-t pt-3 space-y-2">
+            <Label className="text-xs font-semibold uppercase text-muted-foreground">
+              Already scanned? Paste account ID
+            </Label>
+            <p className="text-xs text-muted-foreground">
+              If the redirect didn't fire, copy the <code>account_id</code> from your Unipile dashboard and paste it here to finish linking.
+            </p>
+            <div className="flex gap-2">
+              <Input
+                placeholder="Unipile account_id (UUID)"
+                value={accountId}
+                onChange={(e) => setAccountId(e.target.value)}
+              />
+              <Button onClick={verifyAndSave} disabled={verifying} variant="secondary">
+                {verifying ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
+                Verify & save
+              </Button>
+            </div>
+            {hasStarted && (
+              <p className="text-xs text-muted-foreground">QR opened — complete the scan, then verify above if status doesn't flip automatically.</p>
+            )}
+          </div>
         </CardContent>
       </Card>
 
