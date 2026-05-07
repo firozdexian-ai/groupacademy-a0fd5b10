@@ -391,6 +391,16 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
     import("@/components/dashboard/marketing/MktSimpleTabs").then((m) => ({ default: m.CommunityTab })),
   ),
   "mkt-admins-reps": React.lazy(() => import("@/components/dashboard/marketing/AdminsRepsTab")),
+  "community-wa-channel": React.lazy(() =>
+    import("@/components/dashboard/marketing/CommunityMessagingChannelTab").then((m) => ({
+      default: m.CommunityMessagingChannelTab,
+    })),
+  ),
+  "companies-wa-channel": React.lazy(() =>
+    import("@/components/dashboard/companies/EmployerMessagingChannelTab").then((m) => ({
+      default: m.EmployerMessagingChannelTab,
+    })),
+  ),
   "leads-activities": React.lazy(() => import("@/components/dashboard/marketing/LeadsActivitiesTab")),
   "fin-overview": React.lazy(() => import("@/components/dashboard/finance/FinOverviewTab")),
   "gro10x-credits": React.lazy(() =>
