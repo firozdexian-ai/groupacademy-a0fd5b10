@@ -64,16 +64,21 @@ export function MessagingChannelsTab({
     return () => { supabase.removeChannel(ch); };
   }, [agentKey]);
 
+  const [accountId, setAccountId] = useState("");
+  const [verifying, setVerifying] = useState(false);
+  const [hasStarted, setHasStarted] = useState(false);
+
   const connectWhatsApp = async () => {
     if (!label.trim()) return toast.error("Label is required");
     setCreating(true);
     try {
       const { data, error } = await supabase.functions.invoke("unipile-connect", {
-        body: { agent_key: agentKey, label, region, provider: "whatsapp" },
+        body: { action: "start_hosted_auth", agent_key: agentKey, label, region, provider: "whatsapp" },
       });
       if (error) throw error;
       if (data?.url) {
         window.open(data.url, "_blank", "noopener");
+        setHasStarted(true);
         toast.success("Scan the QR in the new tab to link WhatsApp");
       } else {
         toast.error(data?.error || "Failed to start link");
@@ -85,15 +90,39 @@ export function MessagingChannelsTab({
     }
   };
 
+  const verifyAndSave = async () => {
+    if (!accountId.trim()) return toast.error("Paste the Unipile account_id first");
+    setVerifying(true);
+    try {
+      const { data, error } = await supabase.functions.invoke("unipile-connect", {
+        body: { action: "verify_and_save", agent_key: agentKey, account_id: accountId.trim() },
+      });
+      if (error) throw error;
+      if (data?.ok) {
+        toast.success(`Connected${data.phone ? ` · ${data.phone}` : ""}`);
+        setAccountId("");
+        setHasStarted(false);
+      } else {
+        toast.error(data?.error || "Verification failed");
+      }
+    } catch (e: any) {
+      toast.error(e.message);
+    } finally {
+      setVerifying(false);
+    }
+  };
+
   const toggleAutoReply = async (id: string, val: boolean) => {
     const { error } = await supabase.from("messaging_channels").update({ auto_reply_enabled: val }).eq("id", id);
     if (error) toast.error(error.message);
   };
 
-  const removeChannel = async (id: string) => {
-    if (!confirm("Disconnect this channel?")) return;
-    const { error } = await supabase.from("messaging_channels").delete().eq("id", id);
-    if (error) toast.error(error.message);
+  const removeChannel = async () => {
+    if (!confirm("Disconnect this channel? The Unipile account will be removed.")) return;
+    const { data, error } = await supabase.functions.invoke("unipile-connect", {
+      body: { action: "delete", agent_key: agentKey },
+    });
+    if (error || data?.error) toast.error(error?.message || data?.error);
     else toast.success("Channel removed");
   };
 
