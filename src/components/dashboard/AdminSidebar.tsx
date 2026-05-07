@@ -145,8 +145,6 @@ const navGroups: NavGroup[] = [
       { title: "Clubs & Departments", icon: Network, value: "inst-clubs" },
       { title: "Representatives", icon: Users, value: "inst-reps" },
       { title: "Events & Competitions", icon: Trophy, value: "inst-events" },
-      { title: "Outreach Agent", icon: Send, value: "inst-outreach" },
-      { title: "Query Agent", icon: Sparkles, value: "inst-analyst" },
     ],
   },
   {
