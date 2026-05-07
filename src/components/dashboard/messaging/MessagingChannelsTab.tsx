@@ -99,6 +99,12 @@ export function MessagingChannelsTab({
 
   return (
     <div className="space-y-4">
+      {(title || description) && (
+        <div className="space-y-1">
+          {title && <h2 className="text-xl font-semibold">{title}</h2>}
+          {description && <p className="text-sm text-muted-foreground">{description}</p>}
+        </div>
+      )}
       <Card>
         <CardHeader>
           <CardTitle className="text-base">Connect a new channel</CardTitle>
