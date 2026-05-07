@@ -17009,10 +17009,12 @@ export type Database = {
         Args: { p_company_id: string; p_content_id?: string }
         Returns: Json
       }
-      outreach_can_send: {
-        Args: { p_channel_id: string; p_contact_id?: string }
-        Returns: Json
-      }
+      outreach_can_send:
+        | { Args: { p_channel_id: string }; Returns: boolean }
+        | {
+            Args: { p_channel_id: string; p_contact_id?: string }
+            Returns: Json
+          }
       process_instructor_payout: {
         Args: {
           _action: string
