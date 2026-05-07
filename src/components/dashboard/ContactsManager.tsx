@@ -2,21 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
 import { Switch } from "@/components/ui/switch";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import {
   AlertDialog,
   AlertDialogAction,
@@ -52,19 +45,19 @@ import {
   ShieldCheck,
   Zap,
   Activity,
-  Terminal,
   Database,
 } from "lucide-react";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
-import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
+import { DashboardTableSkeleton } from "./DashboardSkeleton";
 import { getDexianWhatsAppLink } from "@/lib/companyOutreachTemplates";
 import { cn } from "@/lib/utils";
+import { useUserRole } from "@/components/ProtectedRoute";
 
 /**
  * Platform Logic: Stakeholder Registry Hub (Contacts)
  * High-fidelity orchestrator for institutional relationship mapping and outreach telemetry.
- * 2026 Standard: Executive Logic geometry with reinforced contact-sync guards.
+ * CTO Audit: Applied PII Masking to protect B2B data from unauthorized roles.
  */
 
 interface Contact {
@@ -120,7 +113,27 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
+// CTO Utility: PII Masking Functions
+const maskEmail = (email: string | null, isAdmin: boolean) => {
+  if (!email) return null;
+  if (isAdmin) return email;
+  const parts = email.split("@");
+  if (parts.length !== 2) return email.slice(0, 2) + "***";
+  return `${parts[0].slice(0, 2)}***@${parts[1]}`;
+};
+
+const maskPhone = (phone: string | null, isAdmin: boolean) => {
+  if (!phone) return null;
+  if (isAdmin) return phone;
+  const visible = phone.slice(-4);
+  const maskedLength = Math.max(0, phone.length - 4);
+  return "*".repeat(maskedLength) + visible;
+};
+
 export function ContactsManager() {
+  const { role } = useUserRole();
+  const isAdmin = role === "admin" || role === "super_admin";
+
   const [contacts, setContacts] = useState<Contact[]>([]);
   const [companies, setCompanies] = useState<Company[]>([]);
   const [isLoading, setIsLoading] = useState(true);
@@ -186,6 +199,7 @@ export function ContactsManager() {
   useEffect(() => {
     loadData();
   }, [loadData]);
+
   useEffect(() => {
     setPage(1);
   }, [debouncedSearch, companyFilter, sourceFilter]);
@@ -198,9 +212,9 @@ export function ContactsManager() {
         full_name: contact.full_name,
         designation: contact.designation || "",
         department: contact.department || "",
-        email: contact.email || "",
-        phone: contact.phone || "",
-        whatsapp_number: contact.whatsapp_number || "",
+        email: maskEmail(contact.email, isAdmin) || "",
+        phone: maskPhone(contact.phone, isAdmin) || "",
+        whatsapp_number: maskPhone(contact.whatsapp_number, isAdmin) || "",
         linkedin_url: contact.linkedin_url || "",
         source: contact.source || "manual",
         is_primary: contact.is_primary,
@@ -217,12 +231,23 @@ export function ContactsManager() {
     if (!formData.full_name.trim()) return toast.error("Logic Fault: Name identifier required");
     setSaving(true);
     try {
-      const payload = {
-        ...formData,
+      const payload: any = {
         full_name: formData.full_name.trim(),
         company_id: formData.company_id || null,
-        whatsapp_number: formData.whatsapp_number?.trim() || formData.phone?.trim() || null,
+        designation: formData.designation,
+        department: formData.department,
+        linkedin_url: formData.linkedin_url,
+        source: formData.source,
+        is_primary: formData.is_primary,
+        notes: formData.notes,
       };
+
+      // CTO Security Check: Prevent non-admins from saving masked PII strings back to the DB
+      if (isAdmin || !editingContact) {
+        payload.email = formData.email;
+        payload.phone = formData.phone;
+        payload.whatsapp_number = formData.whatsapp_number?.trim() || formData.phone?.trim() || null;
+      }
 
       const { error } = editingContact
         ? await supabase.from("contacts").update(payload).eq("id", editingContact.id)
@@ -240,6 +265,7 @@ export function ContactsManager() {
   };
 
   const handleWhatsAppOutreach = async (contact: Contact) => {
+    // We use the raw contact data for outreach, so it works even if masked in UI
     const phone = contact.whatsapp_number || contact.phone;
     if (!phone) return toast.error("No communication endpoint available");
 
@@ -361,17 +387,14 @@ export function ContactsManager() {
         </CardHeader>
 
         <CardContent className="p-8">
-          {/* Registration segmentation tabs */}
           <div className="mb-4 inline-flex rounded-2xl border-2 border-border/40 bg-muted/20 p-1 text-xs font-semibold">
-            {([
-              ["all", "All"],
-              ["registered", "Registered"],
-              ["uploaded", "Uploaded"],
-              ["cv-matched", "CV-matched"],
-            ] as const).map(([k, label]) => (
+            {(["all", "registered", "uploaded", "cv-matched"] as const).map((k) => (
               <button
                 key={k}
-                onClick={() => { setRegistrationTab(k); setPage(1); }}
+                onClick={() => {
+                  setRegistrationTab(k);
+                  setPage(1);
+                }}
                 className={cn(
                   "px-4 py-1.5 rounded-xl transition-colors",
                   registrationTab === k
@@ -379,7 +402,7 @@ export function ContactsManager() {
                     : "text-muted-foreground hover:text-foreground",
                 )}
               >
-                {label}
+                {k.charAt(0).toUpperCase() + k.slice(1).replace("-", " ")}
               </button>
             ))}
           </div>
@@ -419,11 +442,21 @@ export function ContactsManager() {
                   <SelectValue placeholder="Source" />
                 </SelectTrigger>
                 <SelectContent className="rounded-2xl border-2">
-                  <SelectItem value="all" className="font-bold">All Sources</SelectItem>
-                  <SelectItem value="gro10x_signup" className="font-bold">Gro10x Signup</SelectItem>
-                  <SelectItem value="manual" className="font-bold">Manual</SelectItem>
-                  <SelectItem value="linkedin_import" className="font-bold">LinkedIn Import</SelectItem>
-                  <SelectItem value="batch_upload" className="font-bold">Batch Upload</SelectItem>
+                  <SelectItem value="all" className="font-bold">
+                    All Sources
+                  </SelectItem>
+                  <SelectItem value="gro10x_signup" className="font-bold">
+                    Gro10x Signup
+                  </SelectItem>
+                  <SelectItem value="manual" className="font-bold">
+                    Manual
+                  </SelectItem>
+                  <SelectItem value="linkedin_import" className="font-bold">
+                    LinkedIn Import
+                  </SelectItem>
+                  <SelectItem value="batch_upload" className="font-bold">
+                    Batch Upload
+                  </SelectItem>
                 </SelectContent>
               </Select>
             </div>
@@ -499,12 +532,12 @@ export function ContactsManager() {
                             {contact.email && (
                               <div className="flex items-center gap-2 text-[11px] font-bold text-foreground/80 group/mail">
                                 <Mail className="h-3.5 w-3.5 text-primary/40 group-hover/mail:text-primary transition-colors" />
-                                <span className="truncate max-w-[120px]">{contact.email}</span>
+                                <span className="truncate max-w-[120px]">{maskEmail(contact.email, isAdmin)}</span>
                               </div>
                             )}
                             {contact.phone && (
                               <div className="flex items-center gap-2 text-[10px] font-medium text-muted-foreground italic">
-                                <Phone className="h-3 w-3 opacity-40" /> {contact.phone}
+                                <Phone className="h-3 w-3 opacity-40" /> {maskPhone(contact.phone, isAdmin)}
                               </div>
                             )}
                           </div>
@@ -519,7 +552,7 @@ export function ContactsManager() {
                                 : "bg-background",
                             )}
                           >
-                            {contact.source === "gro10x_signup" ? "● Gro10x User" : (contact.source || "MANUAL")}
+                            {contact.source === "gro10x_signup" ? "● Gro10x User" : contact.source || "MANUAL"}
                           </Badge>
                         </TableCell>
                         <TableCell className="text-right pr-8">
@@ -551,14 +584,16 @@ export function ContactsManager() {
                             >
                               <Edit className="h-4 w-4" />
                             </Button>
-                            <Button
-                              variant="ghost"
-                              size="icon"
-                              className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive transition-all"
-                              onClick={() => setDeleteTarget(contact.id)}
-                            >
-                              <Trash2 className="h-4 w-4" />
-                            </Button>
+                            {isAdmin && (
+                              <Button
+                                variant="ghost"
+                                size="icon"
+                                className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive transition-all"
+                                onClick={() => setDeleteTarget(contact.id)}
+                              >
+                                <Trash2 className="h-4 w-4" />
+                              </Button>
+                            )}
                           </div>
                         </TableCell>
                       </TableRow>
@@ -661,6 +696,21 @@ export function ContactsManager() {
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
                       className="h-12 rounded-xl border-2"
+                      disabled={!isAdmin && !!editingContact}
+                    />
+                  </div>
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      Phone / WhatsApp Number
+                    </Label>
+                    <Input
+                      value={formData.phone}
+                      onChange={(e) =>
+                        setFormData({ ...formData, phone: e.target.value, whatsapp_number: e.target.value })
+                      }
+                      className="h-12 rounded-xl border-2"
+                      disabled={!isAdmin && !!editingContact}
+                      placeholder="e.g. +1234567890"
                     />
                   </div>
                   <div className="space-y-2">
