@@ -224,8 +224,8 @@ export function MessagingChannelsTab({
                     </div>
                   </div>
                   <div className="flex items-center gap-3">
-                    <Badge variant={c.status === "active" ? "default" : "secondary"}>{c.status}</Badge>
-                    {c.status !== "active" && (
+                    <Badge variant={c.status === "connected" ? "default" : "secondary"}>{c.status}</Badge>
+                    {c.status !== "connected" && (
                       <Button size="sm" variant="outline" onClick={reconcile} disabled={reconciling}>
                         {reconciling ? <Loader2 className="h-3 w-3 mr-1 animate-spin" /> : null}
                         Reconcile
