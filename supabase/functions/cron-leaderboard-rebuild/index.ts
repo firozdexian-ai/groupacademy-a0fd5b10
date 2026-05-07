@@ -38,7 +38,8 @@ Deno.serve(async (req) => {
       trust: r.trust, completed: r.completed,
       ...(tMap.get(r.talent_id) || {}),
     }));
-    await admin.from("leaderboard_snapshots").upsert({ kind: "talent", period, category: null, payload: talentPayload, computed_at: new Date().toISOString() }, { onConflict: "kind,period" } as never);
+    await admin.from("leaderboard_snapshots").delete().eq("kind", "talent").eq("period", period).is("category", null);
+    await admin.from("leaderboard_snapshots").insert({ kind: "talent", period, category: null, payload: talentPayload });
 
     // ---- Companies ----
     const { data: projects } = await admin
