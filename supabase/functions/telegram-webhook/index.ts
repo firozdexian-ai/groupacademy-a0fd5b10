@@ -50,10 +50,13 @@ serve(async (req) => {
 
       if (rpcError) throw rpcError;
 
+      // 4. Self-verification: read balance, audit_log, credit_transactions
+      const verification = await runApprovalVerification(supabase, request.talent_id, request.requested_credits);
+
       await sendTelegramEdit(
         chatId,
         messageId,
-        `✅ *APPROVED*\n\n৳${request.amount_bdt || "N/A"} verified.\n${request.requested_credits} credits added to the user's wallet.\nTrxID: \`${request.trx_id}\``,
+        `✅ *APPROVED*\n\n৳${request.amount_bdt || "N/A"} verified.\n${request.requested_credits} credits added.\nTrxID: \`${request.trx_id}\`\n\n${verification}`,
       );
     } else if (action === "reject") {
       // Mark as Rejected
