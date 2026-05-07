@@ -25,7 +25,7 @@ Deno.serve(async (req) => {
     // (same source of truth as admin-agents-router). No more hardcoded prompts.
     const { data: agentCfg } = await admin
       .from("ai_agents")
-      .select("system_prompt, name, model_preference, is_active")
+      .select("system_prompt, name, model, is_active")
       .eq("agent_key", channel.agent_key)
       .maybeSingle();
 
