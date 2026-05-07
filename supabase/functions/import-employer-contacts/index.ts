@@ -1,4 +1,4 @@
-// Bulk import employer contacts from CSV (admin only)
+// Bulk import employer contacts from CSV (admin only) — v2
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
