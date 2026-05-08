@@ -1,6 +1,6 @@
-import { useState } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQuery } from "@tanstack/react-query";
+import { useQuery, useInfiniteQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
@@ -65,9 +65,21 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
   const showEvents = selectedType === "all" || selectedType === "events";
   const showCompete = selectedType === "all" || selectedType === "compete";
 
-  const { data: courses = [], isLoading: coursesLoading } = useQuery({
-    queryKey: ["app-academy-courses"],
-    queryFn: async () => {
+  const PAGE_SIZE = 12;
+  const {
+    data: coursesData,
+    isLoading: coursesLoading,
+    fetchNextPage,
+    hasNextPage,
+    isFetchingNextPage,
+  } = useInfiniteQuery({
+    queryKey: ["app-academy-courses-infinite"],
+    enabled: showCourses,
+    staleTime: 5 * 60 * 1000,
+    initialPageParam: 0,
+    queryFn: async ({ pageParam = 0 }) => {
+      const from = (pageParam as number) * PAGE_SIZE;
+      const to = from + PAGE_SIZE - 1;
       const { data, error } = await supabase
         .from("content")
         .select(
@@ -77,13 +89,30 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         .eq("is_private", false)
         .eq("is_ready", true)
         .in("content_type", ["recorded_course", "live_webinar", "batch_class"])
-        .order("display_order");
+        .order("display_order")
+        .range(from, to);
       if (error) throw error;
       return (data || []) as Course[];
     },
-    enabled: showCourses,
-    staleTime: 5 * 60 * 1000,
+    getNextPageParam: (lastPage, allPages) =>
+      lastPage.length < PAGE_SIZE ? undefined : allPages.length,
   });
+  const courses: Course[] = coursesData?.pages.flat() ?? [];
+
+  const sentinelRef = useRef<HTMLDivElement | null>(null);
+  useEffect(() => {
+    if (!showCourses || !hasNextPage) return;
+    const node = sentinelRef.current;
+    if (!node) return;
+    const io = new IntersectionObserver(
+      (entries) => {
+        if (entries[0]?.isIntersecting && !isFetchingNextPage) fetchNextPage();
+      },
+      { rootMargin: "400px" },
+    );
+    io.observe(node);
+    return () => io.disconnect();
+  }, [showCourses, hasNextPage, isFetchingNextPage, fetchNextPage, courses.length]);
 
   const { data: events = [], isLoading: eventsLoading } = useQuery({
     queryKey: ["app-academy-events"],
@@ -334,6 +363,15 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           <div className="grid gap-3 grid-cols-1 sm:grid-cols-2">
             {filteredCourses.map(renderCourseCard)}
           </div>
+          {showCourses && hasNextPage && (
+            <div ref={sentinelRef} className="py-4 flex justify-center">
+              {isFetchingNextPage ? (
+                <Skeleton className="h-8 w-32 rounded-lg" />
+              ) : (
+                <span className="text-[10px] text-muted-foreground">Loading more…</span>
+              )}
+            </div>
+          )}
         </section>
       )}
 
