@@ -72,6 +72,26 @@ export default function ProfileBuilder() {
 
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply || "" }]);
 
+      // Domain coach handoff
+      if (data.handoff?.agent_key && data.handoff.agent_key !== coach?.agent_key) {
+        const { data: agentRow } = await supabase
+          .from("ai_agents")
+          .select("name, agent_key")
+          .eq("agent_key", data.handoff.agent_key)
+          .maybeSingle();
+        if (agentRow) {
+          setCoach({ name: agentRow.name, agent_key: agentRow.agent_key });
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: `✨ Handing you off to ${agentRow.name}, your domain coach. They'll take it from here to finish your profile.`,
+            },
+          ]);
+          toast.success(`Connected with ${agentRow.name}`);
+        }
+      }
+
       // Refresh talent so the next message has updated KNOWN PROFILE & we can detect completion
       await refreshTalent();
 
