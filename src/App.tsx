@@ -77,6 +77,8 @@ import AIGeneral from "./pages/app/AIGeneral";
 import CareerCoach from "./pages/app/CareerCoach";
 import Profile from "./pages/app/Profile";
 import ProfileEdit from "./pages/app/ProfileEdit";
+import TalentHome from "./pages/app/TalentHome";
+import TalentPitches from "./pages/app/TalentPitches";
 import Notifications from "./pages/app/Notifications";
 import Messages from "./pages/app/Messages";
 import MessageThread from "./pages/app/MessageThread";
@@ -502,6 +504,8 @@ export default function App() {
                     <Route path="marketplace" element={<Navigate to="/app/gigs?tab=projects" replace />} />
                     <Route path="marketplace/:id" element={<MarketplaceGigDetail />} />
                     <Route path="my-gigs" element={<Navigate to="/app/gigs?tab=activity" replace />} />
+                    <Route path="me" element={<TalentHome />} />
+                    <Route path="pitches" element={<TalentPitches />} />
                     <Route path="profile" element={<Profile />} />
                     <Route path="talents" element={<TalentDirectory />} />
                     <Route path="talents/:id" element={<TalentPublicProfile />} />
