@@ -23,12 +23,25 @@ import { Plus, Zap, Wallet, Trash2, PlayCircle, Loader2 } from "lucide-react";
 const EVENT_KINDS = [
   "talent.signup",
   "talent.profile_completed",
+  "talent.market_ready",
+  "talent.coach_assigned",
+  "talent.profile_stale",
   "assessment.completed",
   "course.completed",
   "job.applied",
+  "pitch.sent",
+  "gig.match_high_score",
   "credits.low_balance",
   "company.signup",
   "cron",
+];
+
+const CHANNELS = [
+  { value: "auto", label: "Auto (agent default)" },
+  { value: "in_app", label: "In-app notification" },
+  { value: "whatsapp", label: "WhatsApp (Unipile)" },
+  { value: "telegram", label: "Telegram" },
+  { value: "email", label: "Email" },
 ];
 
 const RECIPIENT_STRATEGIES = [
@@ -47,6 +60,8 @@ interface Trigger {
   template: string;
   is_active: boolean;
   last_fired_at: string | null;
+  channel: string | null;
+  cooldown_minutes: number;
 }
 interface Pool {
   balance: number;
@@ -83,6 +98,8 @@ export function AgentTriggers() {
     recipient_strategy: "subject",
     template: "",
     is_active: true,
+    channel: "auto",
+    cooldown_minutes: 1440,
   });
 
   const agentMap = useMemo(() => Object.fromEntries(agents.map(a => [a.id, a])), [agents]);
@@ -116,6 +133,8 @@ export function AgentTriggers() {
       recipient_strategy: draft.recipient_strategy || "subject",
       template: draft.template,
       is_active: draft.is_active ?? true,
+      channel: draft.channel && draft.channel !== "auto" ? draft.channel : null,
+      cooldown_minutes: Number(draft.cooldown_minutes ?? 1440),
     });
     if (error) {
       toast({ title: "Save failed", description: error.message, variant: "destructive" });
@@ -123,7 +142,7 @@ export function AgentTriggers() {
     }
     toast({ title: "Trigger created" });
     setDialogOpen(false);
-    setDraft({ agent_id: "", event_kind: "talent.signup", recipient_strategy: "subject", template: "", is_active: true });
+    setDraft({ agent_id: "", event_kind: "talent.signup", recipient_strategy: "subject", template: "", is_active: true, channel: "auto", cooldown_minutes: 1440 });
     load();
   }
 
@@ -219,6 +238,20 @@ export function AgentTriggers() {
                     <SelectContent>{RECIPIENT_STRATEGIES.map(r => <SelectItem key={r.value} value={r.value}>{r.label}</SelectItem>)}</SelectContent>
                   </Select>
                 </div>
+                <div className="grid grid-cols-2 gap-3">
+                  <div>
+                    <Label>Channel</Label>
+                    <Select value={draft.channel || "auto"} onValueChange={(v) => setDraft({ ...draft, channel: v })}>
+                      <SelectTrigger><SelectValue /></SelectTrigger>
+                      <SelectContent>{CHANNELS.map(c => <SelectItem key={c.value} value={c.value}>{c.label}</SelectItem>)}</SelectContent>
+                    </Select>
+                  </div>
+                  <div>
+                    <Label>Cooldown (minutes)</Label>
+                    <Input type="number" min={1} value={String(draft.cooldown_minutes ?? 1440)}
+                      onChange={(e) => setDraft({ ...draft, cooldown_minutes: Number(e.target.value) })} />
+                  </div>
+                </div>
                 <div>
                   <Label>Template / intent</Label>
                   <Textarea
@@ -227,7 +260,7 @@ export function AgentTriggers() {
                     onChange={(e) => setDraft({ ...draft, template: e.target.value })}
                     placeholder="E.g. Welcome the new talent, point them to the career assessment as a first step."
                   />
-                  <p className="text-xs text-muted-foreground mt-1">The agent rewrites this naturally using the event payload.</p>
+                  <p className="text-xs text-muted-foreground mt-1">The agent rewrites this naturally using the event payload. WhatsApp falls back to in-app if no phone is on file.</p>
                 </div>
               </div>
               <DialogFooter>
@@ -278,6 +311,8 @@ export function AgentTriggers() {
                       <Badge variant="outline">{t.event_kind}</Badge>
                       <span className="font-medium text-sm truncate">{agentMap[t.agent_id]?.name || "(agent missing)"}</span>
                       <Badge variant="secondary" className="text-[10px]">{t.recipient_strategy}</Badge>
+                      <Badge variant="outline" className="text-[10px]">{t.channel || "auto"}</Badge>
+                      <Badge variant="outline" className="text-[10px]">{t.cooldown_minutes ?? 1440}m cd</Badge>
                       {t.last_fired_at && <span className="text-[10px] text-muted-foreground">last: {new Date(t.last_fired_at).toLocaleString()}</span>}
                     </div>
                     <p className="text-xs text-muted-foreground mt-1 line-clamp-2">{t.template}</p>
