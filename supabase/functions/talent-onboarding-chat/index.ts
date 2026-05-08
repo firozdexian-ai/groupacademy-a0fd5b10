@@ -32,6 +32,45 @@ const tools = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "assign_career_coach",
+      description:
+        "Assign a domain-expert Instructor as the talent's career coach AND hand off the conversation. Call this the moment the user names their profession or career field. Returns the agent_key the client should switch to.",
+      parameters: {
+        type: "object",
+        properties: {
+          profession_id: {
+            type: "string",
+            description: "UUID of the profession_categories row matching the user's stated profession.",
+          },
+          goal: {
+            type: "string",
+            description: "Optional career goal (e.g. 'job', 'gig', 'study_abroad').",
+          },
+        },
+        required: ["profession_id"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "search_professions",
+      description:
+        "Look up profession_categories by free-text name to obtain the profession_id needed by assign_career_coach.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "Profession name or keyword (e.g. 'graphic design')." },
+        },
+        required: ["query"],
+        additionalProperties: false,
+      },
+    },
+  },
 ];
 
 serve(async (req) => {
