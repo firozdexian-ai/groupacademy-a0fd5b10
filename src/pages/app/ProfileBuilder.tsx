@@ -16,6 +16,7 @@ interface Msg {
 export default function ProfileBuilder() {
   const { talent, refreshTalent } = useTalent();
   const navigate = useNavigate();
+  const [coach, setCoach] = useState<{ name: string; agent_key: string } | null>(null);
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
@@ -71,6 +72,26 @@ export default function ProfileBuilder() {
 
       setMessages((prev) => [...prev, { role: "assistant", content: data.reply || "" }]);
 
+      // Domain coach handoff
+      if (data.handoff?.agent_key && data.handoff.agent_key !== coach?.agent_key) {
+        const { data: agentRow } = await supabase
+          .from("ai_agents")
+          .select("name, agent_key")
+          .eq("agent_key", data.handoff.agent_key)
+          .maybeSingle();
+        if (agentRow) {
+          setCoach({ name: agentRow.name, agent_key: agentRow.agent_key });
+          setMessages((prev) => [
+            ...prev,
+            {
+              role: "assistant",
+              content: `✨ Handing you off to ${agentRow.name}, your domain coach. They'll take it from here to finish your profile.`,
+            },
+          ]);
+          toast.success(`Connected with ${agentRow.name}`);
+        }
+      }
+
       // Refresh talent so the next message has updated KNOWN PROFILE & we can detect completion
       await refreshTalent();
 
@@ -107,8 +128,10 @@ export default function ProfileBuilder() {
             <Sparkles className="h-5 w-5 text-primary-foreground" />
           </div>
           <div className="flex-1 min-w-0">
-            <h1 className="text-sm font-semibold text-foreground">Aisha</h1>
-            <p className="text-xs text-muted-foreground">Profile Concierge · {readiness.percent}% complete</p>
+            <h1 className="text-sm font-semibold text-foreground">{coach?.name ?? "Aisha"}</h1>
+            <p className="text-xs text-muted-foreground">
+              {coach ? "Domain Coach" : "Profile Concierge"} · {readiness.percent}% complete
+            </p>
           </div>
         </div>
         <div className="mt-2 h-1.5 w-full rounded-full bg-muted overflow-hidden">

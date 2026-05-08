@@ -32,6 +32,45 @@ const tools = [
       },
     },
   },
+  {
+    type: "function",
+    function: {
+      name: "assign_career_coach",
+      description:
+        "Assign a domain-expert Instructor as the talent's career coach AND hand off the conversation. Call this the moment the user names their profession or career field. Returns the agent_key the client should switch to.",
+      parameters: {
+        type: "object",
+        properties: {
+          profession_id: {
+            type: "string",
+            description: "UUID of the profession_categories row matching the user's stated profession.",
+          },
+          goal: {
+            type: "string",
+            description: "Optional career goal (e.g. 'job', 'gig', 'study_abroad').",
+          },
+        },
+        required: ["profession_id"],
+        additionalProperties: false,
+      },
+    },
+  },
+  {
+    type: "function",
+    function: {
+      name: "search_professions",
+      description:
+        "Look up profession_categories by free-text name to obtain the profession_id needed by assign_career_coach.",
+      parameters: {
+        type: "object",
+        properties: {
+          query: { type: "string", description: "Profession name or keyword (e.g. 'graphic design')." },
+        },
+        required: ["query"],
+        additionalProperties: false,
+      },
+    },
+  },
 ];
 
 serve(async (req) => {
@@ -76,6 +115,7 @@ serve(async (req) => {
 
     const conversation: any[] = [{ role: "system", content: systemPrompt }, ...incoming];
 
+    let handoff: { agent_key: string; instructor_id: string | null } | null = null;
     // Tool-calling loop (max 4 turns to be safe)
     for (let i = 0; i < 4; i++) {
       const r = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -110,22 +150,42 @@ serve(async (req) => {
 
       const toolCalls = msg.tool_calls || [];
       if (toolCalls.length === 0) {
-        return json({ reply: msg.content || "" }, 200);
+        return json({ reply: msg.content || "", handoff }, 200);
       }
 
       for (const tc of toolCalls) {
         let result: any = { ok: false, error: "unknown_tool" };
-        if (tc.function?.name === "update_talent_profile") {
-          try {
-            const args = JSON.parse(tc.function.arguments || "{}");
+        const fname = tc.function?.name;
+        try {
+          const args = JSON.parse(tc.function?.arguments || "{}");
+          if (fname === "update_talent_profile") {
             const { data: rpcData, error: rpcErr } = await userClient.rpc("update_talent_profile", {
               p_field: args.field,
               p_value: String(args.value ?? ""),
             });
             result = rpcErr ? { ok: false, error: rpcErr.message } : rpcData;
-          } catch (e) {
-            result = { ok: false, error: String(e) };
+          } else if (fname === "assign_career_coach") {
+            const { data: rpcData, error: rpcErr } = await userClient.rpc("assign_career_coach", {
+              p_profession_id: args.profession_id,
+              p_goal: args.goal ?? null,
+            });
+            result = rpcErr ? { ok: false, error: rpcErr.message } : rpcData;
+            if ((result as any)?.ok && (result as any)?.agent_key) {
+              handoff = {
+                agent_key: (result as any).agent_key,
+                instructor_id: (result as any).instructor_id ?? null,
+              };
+            }
+          } else if (fname === "search_professions") {
+            const { data: rows, error: pErr } = await userClient
+              .from("profession_categories")
+              .select("id, name")
+              .ilike("name", `%${String(args.query ?? "")}%`)
+              .limit(8);
+            result = pErr ? { ok: false, error: pErr.message } : { ok: true, results: rows ?? [] };
           }
+        } catch (e) {
+          result = { ok: false, error: String(e) };
         }
         conversation.push({
           role: "tool",
@@ -135,7 +195,7 @@ serve(async (req) => {
       }
     }
 
-    return json({ reply: "Thanks! Your profile is saved." }, 200);
+    return json({ reply: "Thanks! Your profile is saved.", handoff }, 200);
   } catch (e) {
     console.error("talent-onboarding-chat fault:", e);
     return json({ error: String(e) }, 500);

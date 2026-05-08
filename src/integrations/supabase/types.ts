@@ -1536,17 +1536,20 @@ export type Database = {
           color: string | null
           company_id: string | null
           connection_fee: number
+          country_code: string | null
           created_at: string | null
           credit_cost: number | null
           delivery_credit_cost: number | null
           description: string
           display_order: number | null
           expertise_areas: string[] | null
+          goal: string | null
           icon: string | null
           id: string
           is_active: boolean | null
           is_featured: boolean | null
           kill_switch: boolean
+          language: string | null
           marketplace_status: string
           message_credit_cost: number
           model: string
@@ -1555,7 +1558,9 @@ export type Database = {
           owner_id: string | null
           owner_kind: string
           personality_traits: Json | null
+          profession_line_id: string | null
           prompt_variants: Json
+          region: string | null
           sample_conversations: Json | null
           session_duration_minutes: number | null
           system_prompt: string
@@ -1580,17 +1585,20 @@ export type Database = {
           color?: string | null
           company_id?: string | null
           connection_fee?: number
+          country_code?: string | null
           created_at?: string | null
           credit_cost?: number | null
           delivery_credit_cost?: number | null
           description: string
           display_order?: number | null
           expertise_areas?: string[] | null
+          goal?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean | null
           is_featured?: boolean | null
           kill_switch?: boolean
+          language?: string | null
           marketplace_status?: string
           message_credit_cost?: number
           model?: string
@@ -1599,7 +1607,9 @@ export type Database = {
           owner_id?: string | null
           owner_kind?: string
           personality_traits?: Json | null
+          profession_line_id?: string | null
           prompt_variants?: Json
+          region?: string | null
           sample_conversations?: Json | null
           session_duration_minutes?: number | null
           system_prompt: string
@@ -1624,17 +1634,20 @@ export type Database = {
           color?: string | null
           company_id?: string | null
           connection_fee?: number
+          country_code?: string | null
           created_at?: string | null
           credit_cost?: number | null
           delivery_credit_cost?: number | null
           description?: string
           display_order?: number | null
           expertise_areas?: string[] | null
+          goal?: string | null
           icon?: string | null
           id?: string
           is_active?: boolean | null
           is_featured?: boolean | null
           kill_switch?: boolean
+          language?: string | null
           marketplace_status?: string
           message_credit_cost?: number
           model?: string
@@ -1643,7 +1656,9 @@ export type Database = {
           owner_id?: string | null
           owner_kind?: string
           personality_traits?: Json | null
+          profession_line_id?: string | null
           prompt_variants?: Json
+          region?: string | null
           sample_conversations?: Json | null
           session_duration_minutes?: number | null
           system_prompt?: string
@@ -1657,6 +1672,13 @@ export type Database = {
             columns: ["company_id"]
             isOneToOne: false
             referencedRelation: "companies"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "ai_agents_profession_line_id_fkey"
+            columns: ["profession_line_id"]
+            isOneToOne: false
+            referencedRelation: "profession_categories"
             referencedColumns: ["id"]
           },
         ]
@@ -1715,6 +1737,7 @@ export type Database = {
           name: string
           persona: string
           profession_line_id: string
+          profile_coach_prompt: string | null
           system_prompt: string
           updated_at: string | null
         }
@@ -1727,6 +1750,7 @@ export type Database = {
           name: string
           persona: string
           profession_line_id: string
+          profile_coach_prompt?: string | null
           system_prompt: string
           updated_at?: string | null
         }
@@ -1739,6 +1763,7 @@ export type Database = {
           name?: string
           persona?: string
           profession_line_id?: string
+          profile_coach_prompt?: string | null
           system_prompt?: string
           updated_at?: string | null
         }
@@ -16606,7 +16631,9 @@ export type Database = {
         Args: { _application_id: string; _counsellor_user_id: string }
         Returns: undefined
       }
-      assign_career_coach: { Args: { _talent_id: string }; Returns: string }
+      assign_career_coach:
+        | { Args: { _talent_id: string }; Returns: string }
+        | { Args: { p_goal?: string; p_profession_id: string }; Returns: Json }
       assign_peer_reviewers: {
         Args: { _n?: number; _submission_id: string }
         Returns: number
@@ -17371,6 +17398,15 @@ export type Database = {
       request_milestone_revision: {
         Args: { _milestone_id: string; _notes: string }
         Returns: Json
+      }
+      resolve_agent: {
+        Args: {
+          p_audience: string
+          p_country?: string
+          p_goal?: string
+          p_profession_id?: string
+        }
+        Returns: string
       }
       resolve_dispute: {
         Args: { _dispute_id: string; _notes: string; _verdict: string }
