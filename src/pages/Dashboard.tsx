@@ -115,6 +115,9 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "companies-overview": React.lazy(() =>
     import("@/components/dashboard/companies/CompaniesOverviewTab").then((m) => ({ default: m.CompaniesOverviewTab })),
   ),
+  "companies-unlocks": React.lazy(() =>
+    import("@/components/dashboard/companies/ContactUnlocksTab").then((m) => ({ default: m.ContactUnlocksTab })),
+  ),
   all: React.lazy(() => import("@/components/dashboard/ContentList")),
   videos: React.lazy(() => import("@/components/dashboard/ContentList")),
   courses: React.lazy(() => import("@/components/dashboard/ContentList")),
@@ -426,6 +429,7 @@ const TAB_TITLES: Record<string, string> = {
   "company-agents": "Internal Agents",
   industries: "Verticals",
   "companies-overview": "Companies Overview",
+  "companies-unlocks": "Contact Unlocks",
   all: "Catalog Architecture",
   videos: "Digital Library",
   courses: "Academy Courses",
