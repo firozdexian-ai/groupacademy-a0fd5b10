@@ -16698,6 +16698,15 @@ export type Database = {
         Returns: string
       }
       apply_for_reviewer: { Args: { _categories: string[] }; Returns: string }
+      apply_to_job: {
+        Args: {
+          p_cover_letter?: string
+          p_cv_url?: string
+          p_job_id: string
+          p_source?: string
+        }
+        Returns: Json
+      }
       apply_verification_verdict: {
         Args: { _verification_id: string }
         Returns: undefined
@@ -17551,6 +17560,7 @@ export type Database = {
         Args: { _appeal_id: string; _decision: string; _notes?: string }
         Returns: undefined
       }
+      save_job: { Args: { p_job_id: string }; Returns: Json }
       school_id_for_content: { Args: { _content_id: string }; Returns: string }
       score_talent_job_mastery: {
         Args: { _job_id: string; _talent_id: string }
@@ -17639,6 +17649,10 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      track_application_status: {
+        Args: { p_application_id?: string; p_job_id?: string }
+        Returns: Json
       }
       track_content_click: {
         Args: { p_content_id: string; p_source: string }
