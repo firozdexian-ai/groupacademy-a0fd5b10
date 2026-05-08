@@ -17109,6 +17109,7 @@ export type Database = {
         Args: { _category?: string; _kind: string; _period?: string }
         Returns: Json
       }
+      get_learning_hub_dashboard: { Args: never; Returns: Json }
       get_next_best_tool: { Args: { p_user_id: string }; Returns: Json }
       get_or_create_talent: {
         Args: {
@@ -17473,6 +17474,14 @@ export type Database = {
         Args: { p_project_id: string }
         Returns: undefined
       }
+      recompute_enrollment_progress: {
+        Args: { p_enrollment_id: string }
+        Returns: undefined
+      }
+      recompute_module_rollup: {
+        Args: { p_enrollment_id: string; p_module_id: string }
+        Returns: undefined
+      }
       recompute_reviewer_reputation: {
         Args: { _talent_id: string }
         Returns: undefined
@@ -17609,6 +17618,7 @@ export type Database = {
         Args: { p_days?: number }
         Returns: number
       }
+      sweep_stalled_courses: { Args: never; Returns: number }
       sync_recorded_course_readiness: {
         Args: { p_content_id?: string }
         Returns: number
