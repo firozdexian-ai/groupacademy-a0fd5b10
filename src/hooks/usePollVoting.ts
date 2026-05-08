@@ -1,12 +1,13 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useMemo, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
+import { useFeedEngagement, patchEngagementCache } from "@/hooks/useFeedEngagement";
 
 /**
- * GroUp Academy: Democratic Engagement Sentinel
- * CTO Reference: Authoritative controller for community sentiment and poll synchronization.
- * Logic: Implements optimistic voting handshakes and distribution telemetry.
+ * Poll voting hook — optimistic with 200ms tap-lock.
+ * Reads from shared batched engagement cache.
  */
 
 interface PollResult {
@@ -24,101 +25,85 @@ interface UsePollVotingResult {
   isLoading: boolean;
 }
 
-export function usePollVoting(postId: string, options: { id: string; text: string }[]): UsePollVotingResult {
+const TAP_LOCK_MS = 200;
+
+export function usePollVoting(
+  postId: string,
+  options: { id: string; text: string }[],
+): UsePollVotingResult {
   const { talent } = useTalent();
   const { toast } = useToast();
-
-  const [hasVoted, setHasVoted] = useState(false);
-  const [userVote, setUserVote] = useState<string | null>(null);
-  const [voteCounts, setVoteCounts] = useState<Record<string, number>>({});
+  const queryClient = useQueryClient();
+  const lastTap = useRef(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // PHASE: Registry_Ingress_Audit
-  useEffect(() => {
-    const fetchInstitutionalVotes = async () => {
-      const { data: votes, error } = await supabase
-        .from("poll_votes")
-        .select("option_id, talent_id")
-        .eq("post_id", postId);
+  const { data: engagementMap } = useFeedEngagement([postId]);
+  const eng = engagementMap?.[postId];
+  const voteCounts = eng?.pollCounts || {};
+  const userVote = eng?.userVote || null;
+  const hasVoted = !!userVote;
 
-      if (error) {
-        console.error("POLL_SYNC_FAULT:", error);
-        return;
-      }
+  const totalVotes = useMemo(
+    () => Object.values(voteCounts).reduce((s: number, n: any) => s + Number(n || 0), 0),
+    [voteCounts],
+  );
 
-      const counts: Record<string, number> = {};
-      options.forEach((opt) => {
-        counts[opt.id] = 0;
-      });
+  const results: PollResult[] = useMemo(
+    () =>
+      options.map((opt) => {
+        const votes = Number(voteCounts[opt.id] || 0);
+        const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
+        return { optionId: opt.id, votes, percentage };
+      }),
+    [options, voteCounts, totalVotes],
+  );
 
-      if (votes) {
-        votes.forEach((vote) => {
-          if (counts[vote.option_id] !== undefined) {
-            counts[vote.option_id]++;
-          }
-          // HUD: Identity Handshake
-          if (talent?.id && vote.talent_id === talent.id) {
-            setHasVoted(true);
-            setUserVote(vote.option_id);
-          }
-        });
-        setVoteCounts(counts);
-      }
-    };
-
-    fetchInstitutionalVotes();
-  }, [postId, talent?.id, options]);
-
-  // PHASE: Telemetry_Derivation
-  const totalVotes = Object.values(voteCounts).reduce((sum, count) => sum + count, 0);
-
-  const results: PollResult[] = options.map((opt) => {
-    const votes = voteCounts[opt.id] || 0;
-    const percentage = totalVotes > 0 ? Math.round((votes / totalVotes) * 100) : 0;
-    return { optionId: opt.id, votes, percentage };
-  });
-
-  // PHASE: Artifact_Synchronization
   const castVote = useCallback(
     async (optionId: string) => {
+      const now = Date.now();
+      if (now - lastTap.current < TAP_LOCK_MS) return;
+      lastTap.current = now;
+
       if (!talent?.id) {
-        toast({ title: "INGRESS_REQUIRED", description: "Sign in to authorize your vote.", variant: "destructive" });
+        toast({ title: "Sign in required", description: "Sign in to vote.", variant: "destructive" });
+        return;
+      }
+      if (hasVoted) {
+        toast({ title: "Already voted", description: "Your vote is already recorded." });
         return;
       }
 
-      if (hasVoted) {
-        toast({ title: "IDEMPOTENCY_RESTRICTION", description: "Your vote artifact is already recorded." });
-        return;
-      }
+      // OPTIMISTIC
+      patchEngagementCache(queryClient, talent.id, postId, (curr) => ({
+        ...curr,
+        pollCounts: { ...curr.pollCounts, [optionId]: Number(curr.pollCounts[optionId] || 0) + 1 },
+        userVote: optionId,
+      }));
 
       setIsLoading(true);
-
       try {
-        const { error } = await supabase.from("poll_votes").insert({
-          post_id: postId,
-          talent_id: talent.id,
-          option_id: optionId,
-        });
-
+        const { error } = await supabase
+          .from("poll_votes")
+          .insert({ post_id: postId, talent_id: talent.id, option_id: optionId });
         if (error) throw error;
-
-        // HUD: OPTIMISTIC_UI_SYNC
-        setVoteCounts((prev) => ({
-          ...prev,
-          [optionId]: (prev[optionId] || 0) + 1,
+        toast({ title: "Vote recorded" });
+      } catch (err: any) {
+        // ROLLBACK
+        patchEngagementCache(queryClient, talent.id, postId, (curr) => ({
+          ...curr,
+          pollCounts: {
+            ...curr.pollCounts,
+            [optionId]: Math.max(0, Number(curr.pollCounts[optionId] || 0) - 1),
+          },
+          userVote: null,
         }));
-        setHasVoted(true);
-        setUserVote(optionId);
-
-        toast({ title: "VOTE_SYNCHRONIZED", description: "Artifact successfully committed to ledger." });
-      } catch (err) {
-        console.error("VOTING_COMMIT_FAULT:", err);
-        toast({ title: "REGISTRY_ERROR", variant: "destructive" });
+        console.error("Poll vote error:", err);
+        toast({ title: "Couldn't save your vote", variant: "destructive" });
       } finally {
         setIsLoading(false);
       }
     },
-    [postId, talent?.id, hasVoted, toast],
+    [postId, talent?.id, hasVoted, queryClient, toast],
   );
 
   return { hasVoted, userVote, results, totalVotes, castVote, isLoading };

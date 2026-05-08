@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Inbox, RefreshCw, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTalent } from "@/hooks/useTalent";
 import { useFeedRecommendations, FeedItem } from "@/hooks/useFeedRecommendations";
+import { useFeedEngagement } from "@/hooks/useFeedEngagement";
 
 import { FeedCardRedesigned } from "@/components/feed/FeedCardRedesigned";
 import { PostCard } from "@/components/feed/PostCard";
@@ -47,6 +48,8 @@ export default function Feed() {
     insights = [],
     isLoading,
     isRefreshing,
+    isFetchingNextPage,
+    hasNextPage,
     error,
     filters,
     setFilters,
@@ -55,6 +58,29 @@ export default function Feed() {
     markInterested,
     markNotInterested,
   } = useFeedRecommendations();
+
+  // Prefetch engagement for visible posts in a single batched RPC (kills N+1)
+  const postIds = useMemo(
+    () => items.filter((i) => i.type === "post").map((i) => i.id),
+    [items],
+  );
+  useFeedEngagement(postIds);
+
+  // IntersectionObserver-driven infinite scroll
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const handleLoadMore = useCallback(() => loadMore(), [loadMore]);
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !hasNextPage) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) handleLoadMore();
+      },
+      { rootMargin: "400px 0px" },
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [hasNextPage, handleLoadMore, items.length]);
 
   const handleInterested = async (item: FeedItem) => {
     await markInterested(item);
@@ -237,14 +263,23 @@ export default function Feed() {
                 </div>
               ))}
 
-              <div className="flex flex-col items-center py-8 group">
-                <Button
-                  variant="ghost"
-                  onClick={loadMore}
-                  className="rounded-xl font-semibold text-sm gap-2"
-                >
-                  <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} /> Load more
-                </Button>
+              <div ref={sentinelRef} className="flex flex-col items-center py-8 min-h-[60px]">
+                {isFetchingNextPage ? (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    <span>Loading more…</span>
+                  </div>
+                ) : hasNextPage ? (
+                  <Button
+                    variant="ghost"
+                    onClick={handleLoadMore}
+                    className="rounded-xl font-semibold text-sm gap-2"
+                  >
+                    Load more
+                  </Button>
+                ) : (
+                  <span className="text-xs text-muted-foreground">You're all caught up</span>
+                )}
               </div>
             </div>
           )}

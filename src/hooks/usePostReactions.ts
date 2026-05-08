@@ -1,15 +1,21 @@
-import { useState, useEffect, useCallback } from "react";
+import { useCallback, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
+import {
+  useFeedEngagement,
+  patchEngagementCache,
+  EMPTY_REACTIONS,
+  type ReactionType,
+} from "@/hooks/useFeedEngagement";
 
 /**
- * GroUp Academy: Sentiment Ingress Controller
- * CTO Reference: Authoritative controller for social engagement and reaction telemetry.
- * Logic: Implements optimistic UI updates and single-reaction enforcement.
+ * Per-post reaction hook — fully optimistic with 200ms tap-lock.
+ * Reads from the shared batched engagement cache (no N+1 fetches).
  */
 
-export type ReactionType = "like" | "insightful" | "celebrate" | "support";
+export type { ReactionType };
 
 interface UsePostReactionsResult {
   reactions: Record<ReactionType, number>;
@@ -18,94 +24,96 @@ interface UsePostReactionsResult {
   isLoading: boolean;
 }
 
+const TAP_LOCK_MS = 200;
+
 export function usePostReactions(postId: string): UsePostReactionsResult {
   const { talent } = useTalent();
   const { toast } = useToast();
-
-  const [reactions, setReactions] = useState<Record<ReactionType, number>>({
-    like: 0,
-    insightful: 0,
-    celebrate: 0,
-    support: 0,
-  });
-  const [userReaction, setUserReaction] = useState<ReactionType | null>(null);
+  const queryClient = useQueryClient();
+  const lastTap = useRef(0);
   const [isLoading, setIsLoading] = useState(false);
 
-  // PHASE: Registry_Audit
-  useEffect(() => {
-    const fetchInstitutionalReactions = async () => {
-      const { data: artifacts, error } = await supabase
-        .from("post_reactions")
-        .select("reaction_type, talent_id")
-        .eq("post_id", postId);
+  // Subscribe to shared cache (batched RPC fills it)
+  const { data: engagementMap } = useFeedEngagement([postId]);
+  const eng = engagementMap?.[postId];
+  const reactions = eng?.reactionCounts || EMPTY_REACTIONS;
+  const userReaction = eng?.userReaction || null;
 
-      if (error) {
-        console.error("SENTIMENT_SYNC_FAULT:", error);
-        return;
-      }
-
-      const counts: Record<ReactionType, number> = {
-        like: 0,
-        insightful: 0,
-        celebrate: 0,
-        support: 0,
-      };
-
-      if (artifacts) {
-        artifacts.forEach((r) => {
-          const type = r.reaction_type as ReactionType;
-          if (counts[type] !== undefined) counts[type]++;
-          // HUD: Identity Handshake
-          if (talent?.id && r.talent_id === talent.id) setUserReaction(type);
-        });
-        setReactions(counts);
-      }
-    };
-
-    fetchInstitutionalReactions();
-  }, [postId, talent?.id]);
-
-  // PHASE: Optimistic_Transaction_Handshake
   const toggleReaction = useCallback(
     async (type: ReactionType) => {
+      const now = Date.now();
+      if (now - lastTap.current < TAP_LOCK_MS) return;
+      lastTap.current = now;
+
       if (!talent?.id) {
-        toast({ title: "INGRESS_REQUIRED", description: "Sign in to authorize reactions.", variant: "destructive" });
+        toast({ title: "Sign in required", description: "Sign in to react.", variant: "destructive" });
         return;
       }
 
-      setIsLoading(true);
+      const prevUserReaction = userReaction;
+      const isToggleOff = prevUserReaction === type;
 
-      try {
-        if (userReaction === type) {
-          // ACTION: Remove Sentiment Artifact
-          await supabase.from("post_reactions").delete().eq("post_id", postId).eq("talent_id", talent.id);
-
-          setReactions((prev) => ({ ...prev, [type]: Math.max(0, prev[type] - 1) }));
-          setUserReaction(null);
+      // OPTIMISTIC: update cache immediately
+      patchEngagementCache(queryClient, talent.id, postId, (curr) => {
+        const next = { ...curr, reactionCounts: { ...curr.reactionCounts } };
+        if (isToggleOff) {
+          next.reactionCounts[type] = Math.max(0, next.reactionCounts[type] - 1);
+          next.userReaction = null;
         } else {
-          // ACTION: Switch Sentiment Node
-          if (userReaction) {
-            await supabase.from("post_reactions").delete().eq("post_id", postId).eq("talent_id", talent.id);
-            setReactions((prev) => ({ ...prev, [userReaction]: Math.max(0, prev[userReaction] - 1) }));
+          if (prevUserReaction) {
+            next.reactionCounts[prevUserReaction] = Math.max(
+              0,
+              next.reactionCounts[prevUserReaction] - 1,
+            );
           }
-
-          await supabase.from("post_reactions").insert({
-            post_id: postId,
-            talent_id: talent.id,
-            reaction_type: type,
-          });
-
-          setReactions((prev) => ({ ...prev, [type]: prev[type] + 1 }));
-          setUserReaction(type);
+          next.reactionCounts[type] = (next.reactionCounts[type] || 0) + 1;
+          next.userReaction = type;
         }
-      } catch (err) {
-        console.error("SENTIMENT_COMMIT_FAULT:", err);
-        toast({ title: "REGISTRY_ERROR", variant: "destructive" });
+        return next;
+      });
+
+      setIsLoading(true);
+      try {
+        if (isToggleOff) {
+          const { error } = await supabase
+            .from("post_reactions")
+            .delete()
+            .eq("post_id", postId)
+            .eq("talent_id", talent.id);
+          if (error) throw error;
+        } else {
+          if (prevUserReaction) {
+            await supabase.from("post_reactions").delete().eq("post_id", postId).eq("talent_id", talent.id);
+          }
+          const { error } = await supabase
+            .from("post_reactions")
+            .insert({ post_id: postId, talent_id: talent.id, reaction_type: type });
+          if (error) throw error;
+        }
+      } catch (err: any) {
+        // ROLLBACK
+        patchEngagementCache(queryClient, talent.id, postId, (curr) => {
+          const next = { ...curr, reactionCounts: { ...curr.reactionCounts } };
+          if (isToggleOff) {
+            next.reactionCounts[type] = (next.reactionCounts[type] || 0) + 1;
+            next.userReaction = type;
+          } else {
+            next.reactionCounts[type] = Math.max(0, next.reactionCounts[type] - 1);
+            if (prevUserReaction) {
+              next.reactionCounts[prevUserReaction] =
+                (next.reactionCounts[prevUserReaction] || 0) + 1;
+            }
+            next.userReaction = prevUserReaction;
+          }
+          return next;
+        });
+        console.error("Reaction error:", err);
+        toast({ title: "Couldn't save reaction", description: "Please try again.", variant: "destructive" });
       } finally {
         setIsLoading(false);
       }
     },
-    [postId, talent?.id, userReaction, toast],
+    [postId, talent?.id, userReaction, queryClient, toast],
   );
 
   return { reactions, userReaction, toggleReaction, isLoading };
