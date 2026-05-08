@@ -1036,10 +1036,12 @@ export type Database = {
           agent_id: string
           body: string
           channel: string
+          conversation_id: string | null
           created_at: string
           credits_charged: number
           error_message: string | null
           event_id: string | null
+          external_message_id: string | null
           id: string
           payload: Json
           recipient_id: string | null
@@ -1052,10 +1054,12 @@ export type Database = {
           agent_id: string
           body: string
           channel?: string
+          conversation_id?: string | null
           created_at?: string
           credits_charged?: number
           error_message?: string | null
           event_id?: string | null
+          external_message_id?: string | null
           id?: string
           payload?: Json
           recipient_id?: string | null
@@ -1068,10 +1072,12 @@ export type Database = {
           agent_id?: string
           body?: string
           channel?: string
+          conversation_id?: string | null
           created_at?: string
           credits_charged?: number
           error_message?: string | null
           event_id?: string | null
+          external_message_id?: string | null
           id?: string
           payload?: Json
           recipient_id?: string | null
@@ -1110,6 +1116,30 @@ export type Database = {
             referencedColumns: ["id"]
           },
         ]
+      }
+      agent_outreach_dedupe: {
+        Row: {
+          agent_id: string
+          event_kind: string
+          recipient_id: string | null
+          recipient_kind: string
+          sent_at: string
+        }
+        Insert: {
+          agent_id: string
+          event_kind: string
+          recipient_id?: string | null
+          recipient_kind: string
+          sent_at?: string
+        }
+        Update: {
+          agent_id?: string
+          event_kind?: string
+          recipient_id?: string | null
+          recipient_kind?: string
+          sent_at?: string
+        }
+        Relationships: []
       }
       agent_payout_requests: {
         Row: {
@@ -1464,12 +1494,17 @@ export type Database = {
       agent_triggers: {
         Row: {
           agent_id: string
+          channel: string | null
+          cooldown_minutes: number
+          country_code: string | null
           created_at: string
           cron_expression: string | null
           event_kind: string
+          goal: string | null
           id: string
           is_active: boolean
           last_fired_at: string | null
+          profession_line_id: string | null
           recipient_filter: Json | null
           recipient_strategy: string
           template: string
@@ -1477,12 +1512,17 @@ export type Database = {
         }
         Insert: {
           agent_id: string
+          channel?: string | null
+          cooldown_minutes?: number
+          country_code?: string | null
           created_at?: string
           cron_expression?: string | null
           event_kind: string
+          goal?: string | null
           id?: string
           is_active?: boolean
           last_fired_at?: string | null
+          profession_line_id?: string | null
           recipient_filter?: Json | null
           recipient_strategy?: string
           template: string
@@ -1490,12 +1530,17 @@ export type Database = {
         }
         Update: {
           agent_id?: string
+          channel?: string | null
+          cooldown_minutes?: number
+          country_code?: string | null
           created_at?: string
           cron_expression?: string | null
           event_kind?: string
+          goal?: string | null
           id?: string
           is_active?: boolean
           last_fired_at?: string | null
+          profession_line_id?: string | null
           recipient_filter?: Json | null
           recipient_strategy?: string
           template?: string
@@ -1539,6 +1584,7 @@ export type Database = {
           country_code: string | null
           created_at: string | null
           credit_cost: number | null
+          default_channel: string
           delivery_credit_cost: number | null
           description: string
           display_order: number | null
@@ -1588,6 +1634,7 @@ export type Database = {
           country_code?: string | null
           created_at?: string | null
           credit_cost?: number | null
+          default_channel?: string
           delivery_credit_cost?: number | null
           description: string
           display_order?: number | null
@@ -1637,6 +1684,7 @@ export type Database = {
           country_code?: string | null
           created_at?: string | null
           credit_cost?: number | null
+          default_channel?: string
           delivery_credit_cost?: number | null
           description?: string
           display_order?: number | null
@@ -16290,6 +16338,43 @@ export type Database = {
       }
     }
     Views: {
+      agent_outreach_admin_v: {
+        Row: {
+          agent_key: string | null
+          agent_name: string | null
+          body: string | null
+          channel: string | null
+          conversation_id: string | null
+          created_at: string | null
+          credits_charged: number | null
+          error_message: string | null
+          event_id: string | null
+          event_kind: string | null
+          external_message_id: string | null
+          id: string | null
+          recipient_id: string | null
+          recipient_kind: string | null
+          status: string | null
+          subject: string | null
+          trigger_id: string | null
+        }
+        Relationships: [
+          {
+            foreignKeyName: "agent_outreach_event_id_fkey"
+            columns: ["event_id"]
+            isOneToOne: false
+            referencedRelation: "platform_events"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "agent_outreach_trigger_id_fkey"
+            columns: ["trigger_id"]
+            isOneToOne: false
+            referencedRelation: "agent_triggers"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       ai_agents_with_stats: {
         Row: {
           active_prompt_variant: string | null
@@ -17492,6 +17577,10 @@ export type Database = {
         Returns: string
       }
       sweep_expired_connections: { Args: never; Returns: number }
+      sweep_stale_talent_profiles: {
+        Args: { p_days?: number }
+        Returns: number
+      }
       sync_recorded_course_readiness: {
         Args: { p_content_id?: string }
         Returns: number
@@ -17556,6 +17645,16 @@ export type Database = {
       track_shared_job_click: {
         Args: { p_job_id: string; p_ref_code: string }
         Returns: Json
+      }
+      try_dedupe_outreach: {
+        Args: {
+          p_agent_id: string
+          p_cooldown_minutes?: number
+          p_event_kind: string
+          p_recipient_id: string
+          p_recipient_kind: string
+        }
+        Returns: boolean
       }
       unlock_talent_contact: {
         Args: { p_company_id: string; p_talent_id: string }
