@@ -263,14 +263,23 @@ export default function Feed() {
                 </div>
               ))}
 
-              <div className="flex flex-col items-center py-8 group">
-                <Button
-                  variant="ghost"
-                  onClick={loadMore}
-                  className="rounded-xl font-semibold text-sm gap-2"
-                >
-                  <RefreshCw className={cn("h-4 w-4", isRefreshing && "animate-spin")} /> Load more
-                </Button>
+              <div ref={sentinelRef} className="flex flex-col items-center py-8 min-h-[60px]">
+                {isFetchingNextPage ? (
+                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
+                    <RefreshCw className="h-4 w-4 animate-spin" />
+                    <span>Loading more…</span>
+                  </div>
+                ) : hasNextPage ? (
+                  <Button
+                    variant="ghost"
+                    onClick={handleLoadMore}
+                    className="rounded-xl font-semibold text-sm gap-2"
+                  >
+                    Load more
+                  </Button>
+                ) : (
+                  <span className="text-xs text-muted-foreground">You're all caught up</span>
+                )}
               </div>
             </div>
           )}
