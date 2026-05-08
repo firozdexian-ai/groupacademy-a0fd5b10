@@ -190,6 +190,13 @@ export default function Gro10xBilling() {
           </div>
         )}
       </section>
+
+      <TelegramTopUpModal
+        open={topupOpen}
+        onOpenChange={setTopupOpen}
+        companyId={companyId}
+        defaultCredits={topupCredits}
+      />
     </div>
   );
 }
