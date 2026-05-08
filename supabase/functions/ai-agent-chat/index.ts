@@ -12,11 +12,9 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-// HUD: Institutional Fail-Safe Prompts
-const FALLBACK_PROMPTS: Record<string, string> = {
-  "career-consultant": `You are a Career Consultant AI at GroUp Academy, specializing in career guidance for professionals in Bangladesh. Keep responses concise, use bullet points, and occasionally use Bangla rapport phrases.`,
-  "mental-wellness-coach": `You are Mira, a Mental Wellness Coach AI at GroUp Academy. Be empathetic and supportive. SAFETY: If crisis mentioned, provide Kaan Pete Roi (01779-554391) or 16789.`,
-};
+// Generic last-resort fallback. Canonical personas live in `ai_agents` keyed by agent_key
+// (e.g. 'career-consultant', 'mental-wellness-coach'). Edit prompts there, not here.
+const GENERIC_FALLBACK = `You are a helpful assistant at GroUp Academy. Keep responses concise and supportive.`;
 
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
