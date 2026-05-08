@@ -16,6 +16,7 @@ interface Msg {
 export default function ProfileBuilder() {
   const { talent, refreshTalent } = useTalent();
   const navigate = useNavigate();
+  const [coach, setCoach] = useState<{ name: string; agent_key: string } | null>(null);
   const [messages, setMessages] = useState<Msg[]>([
     {
       role: "assistant",
