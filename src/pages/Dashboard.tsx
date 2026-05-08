@@ -429,6 +429,7 @@ const TAB_TITLES: Record<string, string> = {
   "company-agents": "Internal Agents",
   industries: "Verticals",
   "companies-overview": "Companies Overview",
+  "companies-unlocks": "Contact Unlocks",
   all: "Catalog Architecture",
   videos: "Digital Library",
   courses: "Academy Courses",
