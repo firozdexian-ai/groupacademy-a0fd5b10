@@ -471,6 +471,17 @@ export default function JobsHub() {
               ))}
             </div>
           </section>
+
+          {/* Zero-latency matched feed (infinite scroll) */}
+          {talent?.id && (
+            <section className="space-y-3">
+              <h2 className="text-base font-semibold flex items-center gap-2">
+                <Brain className="h-4 w-4 text-primary" /> Matched for you
+                <Badge variant="secondary" className="text-[9px] ml-1">Free · instant</Badge>
+              </h2>
+              <InfiniteJobsList talentId={talent.id} />
+            </section>
+          )}
         </div>
       )}
 
