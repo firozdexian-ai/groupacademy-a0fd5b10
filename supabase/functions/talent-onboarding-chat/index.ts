@@ -195,7 +195,7 @@ serve(async (req) => {
       }
     }
 
-    return json({ reply: "Thanks! Your profile is saved." }, 200);
+    return json({ reply: "Thanks! Your profile is saved.", handoff }, 200);
   } catch (e) {
     console.error("talent-onboarding-chat fault:", e);
     return json({ error: String(e) }, 500);
