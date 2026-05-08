@@ -23,12 +23,25 @@ import { Plus, Zap, Wallet, Trash2, PlayCircle, Loader2 } from "lucide-react";
 const EVENT_KINDS = [
   "talent.signup",
   "talent.profile_completed",
+  "talent.market_ready",
+  "talent.coach_assigned",
+  "talent.profile_stale",
   "assessment.completed",
   "course.completed",
   "job.applied",
+  "pitch.sent",
+  "gig.match_high_score",
   "credits.low_balance",
   "company.signup",
   "cron",
+];
+
+const CHANNELS = [
+  { value: "auto", label: "Auto (agent default)" },
+  { value: "in_app", label: "In-app notification" },
+  { value: "whatsapp", label: "WhatsApp (Unipile)" },
+  { value: "telegram", label: "Telegram" },
+  { value: "email", label: "Email" },
 ];
 
 const RECIPIENT_STRATEGIES = [
