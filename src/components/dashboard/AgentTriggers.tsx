@@ -60,6 +60,8 @@ interface Trigger {
   template: string;
   is_active: boolean;
   last_fired_at: string | null;
+  channel: string | null;
+  cooldown_minutes: number;
 }
 interface Pool {
   balance: number;
