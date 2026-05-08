@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo, useCallback } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { Inbox, RefreshCw, WifiOff } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -6,6 +6,7 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { useTalent } from "@/hooks/useTalent";
 import { useFeedRecommendations, FeedItem } from "@/hooks/useFeedRecommendations";
+import { useFeedEngagement } from "@/hooks/useFeedEngagement";
 
 import { FeedCardRedesigned } from "@/components/feed/FeedCardRedesigned";
 import { PostCard } from "@/components/feed/PostCard";
