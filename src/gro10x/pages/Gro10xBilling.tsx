@@ -24,7 +24,8 @@ export default function Gro10xBilling() {
   const { companyId, balance, ledger, isLoading } = useCompanyCredits();
   const { rates } = useCurrencyRates();
   const [country, setCountry] = useState<string | null>(null);
-  const [topupPending, setTopupPending] = useState<number | null>(null);
+  const [topupOpen, setTopupOpen] = useState(false);
+  const [topupCredits, setTopupCredits] = useState<number>(100);
   const [instructorEarnings, setInstructorEarnings] = useState<{ available: number; lifetime: number } | null>(null);
 
   useEffect(() => {
@@ -59,27 +60,9 @@ export default function Gro10xBilling() {
 
   const lowBalance = balance < 50;
 
-  const startTopup = async (credits: number) => {
-    if (!companyId) return;
-    setTopupPending(credits);
-    try {
-      const { data, error } = await supabase.functions.invoke("create-checkout", {
-        body: {
-          mode: "company_credit",
-          company_id: companyId,
-          credits,
-          usd_amount: creditsToUSD(credits),
-        },
-      });
-      if (error) throw error;
-      const url = (data as any)?.url;
-      if (url) window.open(url, "_blank");
-      else toast.error("Could not open checkout");
-    } catch (e) {
-      toast.error(e instanceof Error ? e.message : "Top-up failed");
-    } finally {
-      setTopupPending(null);
-    }
+  const openTopup = (credits: number) => {
+    setTopupCredits(credits);
+    setTopupOpen(true);
   };
 
   if (isLoading) {
