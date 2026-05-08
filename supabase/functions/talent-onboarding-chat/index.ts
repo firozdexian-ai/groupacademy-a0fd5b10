@@ -150,7 +150,7 @@ serve(async (req) => {
 
       const toolCalls = msg.tool_calls || [];
       if (toolCalls.length === 0) {
-        return json({ reply: msg.content || "" }, 200);
+        return json({ reply: msg.content || "", handoff }, 200);
       }
 
       for (const tc of toolCalls) {
