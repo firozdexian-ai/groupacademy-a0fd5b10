@@ -48,6 +48,8 @@ export default function Feed() {
     insights = [],
     isLoading,
     isRefreshing,
+    isFetchingNextPage,
+    hasNextPage,
     error,
     filters,
     setFilters,
@@ -56,6 +58,29 @@ export default function Feed() {
     markInterested,
     markNotInterested,
   } = useFeedRecommendations();
+
+  // Prefetch engagement for visible posts in a single batched RPC (kills N+1)
+  const postIds = useMemo(
+    () => items.filter((i) => i.type === "post").map((i) => i.id),
+    [items],
+  );
+  useFeedEngagement(postIds);
+
+  // IntersectionObserver-driven infinite scroll
+  const sentinelRef = useRef<HTMLDivElement>(null);
+  const handleLoadMore = useCallback(() => loadMore(), [loadMore]);
+  useEffect(() => {
+    const node = sentinelRef.current;
+    if (!node || !hasNextPage) return;
+    const obs = new IntersectionObserver(
+      (entries) => {
+        if (entries[0].isIntersecting) handleLoadMore();
+      },
+      { rootMargin: "400px 0px" },
+    );
+    obs.observe(node);
+    return () => obs.disconnect();
+  }, [hasNextPage, handleLoadMore, items.length]);
 
   const handleInterested = async (item: FeedItem) => {
     await markInterested(item);
