@@ -49,7 +49,7 @@ export function ReactionBar({ reactions, userReaction, onReact, disabled, inline
           size="sm"
           disabled={disabled}
           className={cn(
-            "flex-1 h-10 text-[10px] font-black italic gap-2 transition-all duration-300 rounded-[14px] px-3",
+            "flex-1 h-9 text-xs font-medium gap-2 transition-all duration-200 rounded-lg px-3",
             isActive
               ? cn(config.color, config.activeBg, "scale-105 border border-current/20 shadow-sm")
               : "text-muted-foreground/60 hover:bg-muted/40 hover:text-foreground",
