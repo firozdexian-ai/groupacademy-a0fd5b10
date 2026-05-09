@@ -335,6 +335,94 @@ function buildSubjectContext(talent: any): string {
   return parts.join("\n");
 }
 
+/** Build a rich company context: workspace + the resource the user is
+ * currently looking at (job, applicant, gig, bid, talent). Keeps payload
+ * small (one row per resource, key fields only). */
+async function buildCompanyContext(
+  admin: any,
+  companyId: string,
+  pageCtx: Record<string, unknown> | undefined,
+): Promise<string> {
+  const lines: string[] = ["", "## Caller Workspace"];
+  const { data: company } = await admin
+    .from("companies")
+    .select("id, name, industry, country")
+    .eq("id", companyId)
+    .maybeSingle();
+  if (company) {
+    lines.push(`Company: ${company.name ?? "—"} (id: ${company.id})`);
+    if (company.industry) lines.push(`Industry: ${company.industry}`);
+    if (company.country) lines.push(`Country: ${company.country}`);
+  } else {
+    lines.push(`Company id: ${companyId}`);
+  }
+
+  if (!pageCtx || typeof pageCtx !== "object") return lines.join("\n");
+
+  lines.push("", "## Page Context");
+  if (typeof pageCtx.route === "string") lines.push(`Route: ${pageCtx.route}`);
+
+  const jobId = (pageCtx.job_id as string | undefined) || undefined;
+  if (jobId) {
+    const { data: job } = await admin
+      .from("jobs")
+      .select("id, title, location, is_active, created_at")
+      .eq("id", jobId)
+      .eq("company_id", companyId)
+      .maybeSingle();
+    if (job) {
+      lines.push(`Active Job: "${job.title}" (id: ${job.id}, status: ${job.is_active ? "live" : "draft/paused"}, location: ${job.location ?? "—"})`);
+    } else {
+      lines.push(`Active Job id: ${jobId} (not found in this company)`);
+    }
+  }
+
+  const appId = (pageCtx.application_id as string | undefined) || undefined;
+  if (appId) {
+    const { data: app } = await admin
+      .from("job_applications")
+      .select("id, application_status, talent_id, job_id, talents(full_name, headline)")
+      .eq("id", appId)
+      .maybeSingle();
+    if (app) {
+      const t = (app as any).talents;
+      lines.push(`Active Applicant: ${t?.full_name ?? "—"} (application id: ${app.id}, talent id: ${app.talent_id}, job id: ${app.job_id}, stage: ${app.application_status})`);
+    }
+  }
+
+  const talentId = (pageCtx.talent_id as string | undefined) || undefined;
+  if (talentId) {
+    const { data: t } = await admin
+      .from("talents")
+      .select("id, full_name, country, headline, profession")
+      .eq("id", talentId)
+      .maybeSingle();
+    if (t) lines.push(`Active Talent: ${t.full_name ?? "—"} (id: ${t.id}, ${t.profession ?? ""}, ${t.country ?? ""})`);
+  }
+
+  const gigId = (pageCtx.gig_id as string | undefined) || undefined;
+  if (gigId) {
+    const { data: gig } = await admin
+      .from("gigs")
+      .select("id, title, status, budget_min, budget_max, currency")
+      .eq("id", gigId)
+      .maybeSingle();
+    if (gig) lines.push(`Active Gig: "${gig.title}" (id: ${gig.id}, status: ${gig.status}, budget: ${gig.budget_min ?? "?"}–${gig.budget_max ?? "?"} ${gig.currency ?? ""})`);
+  }
+
+  const bidId = (pageCtx.bid_id as string | undefined) || undefined;
+  if (bidId) {
+    const { data: bid } = await admin
+      .from("gig_bids")
+      .select("id, gig_id, talent_id, amount, status")
+      .eq("id", bidId)
+      .maybeSingle();
+    if (bid) lines.push(`Active Bid: id ${bid.id}, gig ${bid.gig_id}, talent ${bid.talent_id}, amount ${bid.amount}, status ${bid.status}`);
+  }
+
+  return lines.join("\n");
+}
+
 async function chargeTalent(admin: any, talentId: string, amount: number, txnType: string, serviceType: string, description: string) {
   const { data: row } = await admin.from("talent_credits").select("balance").eq("talent_id", talentId).maybeSingle();
   const current = Number(row?.balance ?? 0);
