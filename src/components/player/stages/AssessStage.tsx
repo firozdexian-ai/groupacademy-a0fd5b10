@@ -1,13 +1,11 @@
 import { useState } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
 import { CheckCircle, ClipboardCheck, XCircle, AlertCircle, Trophy, RefreshCw, Zap, Target } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { useQueryWithTimeout } from "@/hooks/useQueryWithTimeout";
-import { withTimeout } from "@/hooks/useQueryWithTimeout";
-import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { cn } from "@/lib/utils";
 
 /**
