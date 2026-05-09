@@ -56,6 +56,7 @@ import { toast } from "sonner";
 import logoIcon from "@/assets/logo-icon.png";
 import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
 import { useCreditPurchase } from "@/hooks/useCreditPurchase";
+import { GlobalAIBubble } from "@/components/ai/GlobalAIBubble";
 
 /**
  * GroUp Academy: Institutional User Experience Perimeter
@@ -569,6 +570,9 @@ export function TalentAppShell() {
         onClose={credits.close}
         currentBalance={balance}
       />
+
+      {/* GLOBAL: Floating AI Assistant — Career Coach by default, context-aware */}
+      <GlobalAIBubble />
 
       {/* --- HUD: MOBILE BOTTOM TAB BAR --- */}
       <nav
