@@ -1,8 +1,10 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
+import { useGigsHubDashboard } from "@/hooks/useGigsHubDashboard";
+import { InfiniteGigsList } from "@/components/gigs/InfiniteGigsList";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,119 +77,17 @@ export default function Gigs() {
 
   const handleTabChange = (tab: string) => setSearchParams({ tab });
 
-  // ── Quick Tasks (1-tap gigs from `gigs` table) ──
-  const { data: gigs, isLoading: gigsLoading } = useQuery({
-    queryKey: ["gigs"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("gigs").select("*").eq("is_active", true).order("display_order");
-      if (error) throw error;
-      return data;
-    },
-  });
+  // ── Single zero-latency dashboard hook (replaces 6 legacy useQuery calls) ──
+  const { data: dash, isLoading: dashLoading } = useGigsHubDashboard();
 
-  const { data: submissionCounts } = useQuery({
-    queryKey: ["gig-submission-counts", talent?.id],
-    enabled: !!talent?.id,
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("gig_submissions")
-        .select("gig_id, status")
-        .eq("talent_id", talent!.id);
-      if (error) throw error;
-      const counts: Record<string, { total: number; pending: number }> = {};
-      data?.forEach((s) => {
-        if (!counts[s.gig_id]) counts[s.gig_id] = { total: 0, pending: 0 };
-        counts[s.gig_id].total++;
-        if (s.status === "pending") counts[s.gig_id].pending++;
-      });
-      return counts;
-    },
-  });
-
-  // ── Course Projects: open course_projects (Phase 3 model) ──
-  const { data: courseProjects, isLoading: courseProjectsLoading } = useQuery({
-    queryKey: ["course-projects-grouped"],
-    queryFn: async () => {
-      const { data: projects } = await supabase
-        .from("course_projects" as any)
-        .select("id, course_id, status, total_credit_reward, completion_bonus, deadline, progress_percent")
-        .in("status", ["open", "claimed", "in_progress"])
-        .order("created_at", { ascending: false })
-        .limit(60);
-
-      const rows = (projects as any[]) || [];
-      if (!rows.length) return [];
-
-      const contentIds = Array.from(new Set(rows.map((r) => r.course_id).filter(Boolean)));
-      const { data: courses } = contentIds.length
-        ? await supabase.from("content").select("id, title, cover_image_url").in("id", contentIds)
-        : { data: [] as any[] };
-
-      const { data: subtaskCounts } = await supabase
-        .from("course_project_subtasks" as any)
-        .select("project_id")
-        .in("project_id", rows.map((r) => r.id));
-
-      const counts: Record<string, number> = {};
-      ((subtaskCounts as any[]) || []).forEach((s: any) => {
-        counts[s.project_id] = (counts[s.project_id] || 0) + 1;
-      });
-
-      const courseMap: Record<string, any> = {};
-      (courses || []).forEach((c: any) => { courseMap[c.id] = c; });
-
-      return rows.map((p) => ({
-        projectId: p.id,
-        course: courseMap[p.course_id] || { id: p.course_id, title: "Untitled course" },
-        subtasks: Array(counts[p.id] || 0).fill(null),
-        totalReward: Number(p.total_credit_reward || 0),
-        status: p.status,
-      }));
-    },
-  });
-
-  // ── Marketplace projects (employer-posted, kept here as a peek; full UI at /app/marketplace) ──
-  const { data: marketProjects } = useQuery({
-    queryKey: ["marketplace-peek"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("marketplace_gigs")
-        .select("id, title, description, skill_category, budget_amount, total_bids, is_featured, employer_name")
-        .in("status", ["approved", "active"])
-        .order("is_featured", { ascending: false })
-        .limit(50);
-      return data || [];
-    },
-  });
-
-  // ── My Work data ──
-  const { data: myBids } = useQuery({
-    queryKey: ["my-marketplace-bids", talent?.id],
-    enabled: !!talent?.id && activeTab === "work",
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("marketplace_bids")
-        .select("*, marketplace_gigs(title, skill_category, employer_name)")
-        .eq("talent_id", talent!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
-
-  const { data: myContracts } = useQuery({
-    queryKey: ["my-marketplace-contracts", talent?.id],
-    enabled: !!talent?.id && activeTab === "work",
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("marketplace_contracts")
-        .select("*, marketplace_gigs:gig_id(title, skill_category)")
-        .eq("freelancer_id", talent!.id)
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return data;
-    },
-  });
+  const gigs = dash?.featured ?? [];
+  const submissionCounts = dash?.submission_counts ?? {};
+  const courseProjects = dash?.course_projects ?? [];
+  const marketProjects = dash?.marketplace_projects ?? [];
+  const myBids = dash?.my_bids ?? [];
+  const myContracts = dash?.my_contracts ?? [];
+  const gigsLoading = dashLoading;
+  const courseProjectsLoading = dashLoading;
 
   const [deliverableDialog, setDeliverableDialog] = useState<string | null>(null);
   const [delivTitle, setDelivTitle] = useState("");
@@ -215,7 +115,7 @@ export default function Gigs() {
       setDelivTitle("");
       setDelivDesc("");
       setDelivFiles([]);
-      queryClient.invalidateQueries({ queryKey: ["my-marketplace-contracts"] });
+      queryClient.invalidateQueries({ queryKey: ["gigs-hub-dashboard"] });
     },
   });
 
@@ -305,6 +205,12 @@ export default function Gigs() {
         <TabsContent value="for-you" className="mt-4 space-y-4 animate-in fade-in duration-300">
           <AvailabilityWidget />
           <GigForYouTab />
+          <div className="pt-4 border-t border-border/40 space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground flex items-center gap-2">
+              <Briefcase className="h-3.5 w-3.5" /> Browse all open gigs
+            </h3>
+            <InfiniteGigsList talentId={dash?.talent_id ?? talent?.id} />
+          </div>
         </TabsContent>
 
         {/* ───── QUICK TASKS ───── */}
