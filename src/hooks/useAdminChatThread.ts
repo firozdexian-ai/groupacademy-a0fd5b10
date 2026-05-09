@@ -267,6 +267,12 @@ export function useAdminChatThread(agentKey: string | null) {
           role: "assistant",
           content: reply.content,
         });
+
+        // Phase D1 cache bridge: refresh admin tables after AI mutations.
+        const invalidateKeys: string[] = Array.isArray(payload?.invalidate) ? payload.invalidate : [];
+        for (const key of invalidateKeys) {
+          queryClient.invalidateQueries({ queryKey: [key] });
+        }
       } catch (e: any) {
         const errMsg: ChatMsg = {
           role: "assistant",
