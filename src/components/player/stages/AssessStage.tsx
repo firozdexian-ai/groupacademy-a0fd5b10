@@ -55,7 +55,7 @@ export function AssessStage({
     isLoading,
     error: loadError,
     refetch,
-  } = useQueryWithTimeout({
+  } = useQuery<QuizQuestion[]>({
     queryKey: ["quiz-questions-adaptive", moduleId, contentId],
     queryFn: async () => {
       // 1) Try adaptive sampler (skill-aware)
@@ -115,10 +115,9 @@ export function AssessStage({
       }
 
       if (error) throw error;
-      return data as QuizQuestion[];
+      return (data as QuizQuestion[]) ?? [];
     },
     enabled: !!moduleId && !!contentId,
-    timeout: TIMEOUTS.DEFAULT,
   });
 
   const totalQuestions = questions.length;
