@@ -6,6 +6,7 @@
  * * CTO Audit: Wired directly to the consolidated `admin-agents-router` Edge Function.
  */
 import { useCallback, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ADMIN_AGENTS_BY_KEY } from "@/lib/adminAgents";
 
