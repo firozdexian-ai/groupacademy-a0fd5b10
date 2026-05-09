@@ -128,6 +128,10 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
       enroll_course: ["learning-hub", "my-courses", "courses"],
       follow_company: ["companies-with-signal", "followed-companies"],
       submit_pitch: ["talent-pitches"],
+      // Phase C2 — Instructor (Maestro) tools
+      request_payout: ["instructor-dashboard", "instructor-summary", "instructor-earnings"],
+      submit_course_for_review: ["instructor-dashboard", "instructor-review-queue", "instructor-summary"],
+      draft_module_outline: ["instructor-dashboard", "course-modules"],
     };
 
     while (hops < MAX_TOOL_HOPS && tools.length > 0) {
