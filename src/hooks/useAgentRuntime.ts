@@ -202,6 +202,12 @@ export function useAgentRuntime(subjectOverride?: AgentRuntimeSubject): UseAgent
             if (payload === "[DONE]") continue;
             try {
               const parsed = JSON.parse(payload);
+              if (parsed?.type === "invalidations" && Array.isArray(parsed.keys)) {
+                for (const k of parsed.keys as string[]) {
+                  queryClient.invalidateQueries({ queryKey: [k] });
+                }
+                continue;
+              }
               const token = parsed?.choices?.[0]?.delta?.content;
               if (typeof token === "string" && token.length) {
                 assistantBuffer += token;
