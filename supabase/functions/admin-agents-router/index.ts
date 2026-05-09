@@ -20,6 +20,16 @@ const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY") ?? "";
 
 const MAX_TOOL_HOPS = 4;
 
+// Map tool_key → React Query keys to invalidate on the admin client after a
+// successful mutation. The frontend (`useAdminChatThread`) reads the response
+// `invalidate` array and calls `queryClient.invalidateQueries` for each.
+const TOOL_INVALIDATIONS_ADMIN: Record<string, string[]> = {
+  approve_payout: ["admin-payout-requests", "instructor-payouts", "admin-credit-invoices"],
+  reject_payout: ["admin-payout-requests", "instructor-payouts"],
+  force_run_matchmaker: ["admin-gigs", "admin-marketplace-gigs", "admin-marketplace-bids"],
+  award_credits: ["admin-credit-invoices", "talent-credits", "admin-talents"],
+};
+
 serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: corsHeaders });
 
@@ -145,7 +155,7 @@ serve(async (req) => {
           prompt_tokens: aiData.usage?.prompt_tokens ?? 0,
           completion_tokens: aiData.usage?.completion_tokens ?? 0,
         }).then(() => {}, () => {});
-        return json({ reply, tool_invocations: toolInvocations }, 200);
+        return json({ reply, tool_invocations: toolInvocations, invalidate: collectInvalidations(toolInvocations) }, 200);
       }
 
       // Push the assistant turn carrying the tool calls
@@ -200,12 +210,23 @@ serve(async (req) => {
     return json({
       reply: "I tried to use my tools but kept looping. Please rephrase or break the request into smaller steps.",
       tool_invocations: toolInvocations,
+      invalidate: collectInvalidations(toolInvocations),
     }, 200);
   } catch (e: any) {
     console.error("[admin-agents-router] fault:", e);
     return json({ error: e?.message ?? String(e) }, 500);
   }
 });
+
+function collectInvalidations(invs: any[]): string[] {
+  const out = new Set<string>();
+  for (const inv of invs ?? []) {
+    if (!inv?.ok) continue;
+    const keys = TOOL_INVALIDATIONS_ADMIN[inv.tool] ?? [];
+    keys.forEach((k) => out.add(k));
+  }
+  return Array.from(out);
+}
 
 function json(b: unknown, status: number) {
   return new Response(JSON.stringify(b), {

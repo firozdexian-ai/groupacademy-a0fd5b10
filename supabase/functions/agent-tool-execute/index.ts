@@ -87,7 +87,7 @@ serve(async (req) => {
           Authorization: authHeader,
           apikey: ANON_KEY,
         },
-        body: JSON.stringify(input),
+        body: JSON.stringify({ ...input, _tool_key: tool.tool_key }),
       });
       const text = await r.text();
       try { result = JSON.parse(text); } catch { result = { raw: text }; }

@@ -6,6 +6,7 @@
  * * CTO Audit: Wired directly to the consolidated `admin-agents-router` Edge Function.
  */
 import { useCallback, useEffect, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { ADMIN_AGENTS_BY_KEY } from "@/lib/adminAgents";
 
@@ -64,6 +65,7 @@ async function signAttachments(atts: ChatAttachment[]): Promise<ChatAttachment[]
 }
 
 export function useAdminChatThread(agentKey: string | null) {
+  const queryClient = useQueryClient();
   const [threadId, setThreadId] = useState<string | null>(null);
   const [messages, setMessages] = useState<ChatMsg[]>([]);
   const [loading, setLoading] = useState(false);
@@ -265,6 +267,12 @@ export function useAdminChatThread(agentKey: string | null) {
           role: "assistant",
           content: reply.content,
         });
+
+        // Phase D1 cache bridge: refresh admin tables after AI mutations.
+        const invalidateKeys: string[] = Array.isArray(payload?.invalidate) ? payload.invalidate : [];
+        for (const key of invalidateKeys) {
+          queryClient.invalidateQueries({ queryKey: [key] });
+        }
       } catch (e: any) {
         const errMsg: ChatMsg = {
           role: "assistant",
@@ -275,7 +283,7 @@ export function useAdminChatThread(agentKey: string | null) {
         setSending(false);
       }
     },
-    [agentKey, threadId, messages, sending],
+    [agentKey, threadId, messages, sending, queryClient],
   );
 
   const clear = useCallback(async () => {
