@@ -61,6 +61,7 @@ export function Gro10xRoutes() {
         <Route path="sourcing" element={<Gro10xSourcing />} />
         <Route path="sourcing/lists" element={<Gro10xSourcingLists />} />
         <Route path="work/projects" element={<Gro10xProjects />} />
+        <Route path="work/gigs/:gigId/bids" element={<Gro10xGigBids />} />
       </Route>
 
       <Route path="*" element={<Navigate to="/gro10x" replace />} />
