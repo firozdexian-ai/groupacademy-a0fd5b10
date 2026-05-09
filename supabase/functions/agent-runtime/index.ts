@@ -150,7 +150,13 @@ serve(async (req) => {
     // Resolve system prompt (A/B variant)
     const variant = agent.active_prompt_variant || "A";
     const variantPrompt = (agent.prompt_variants as any)?.[variant];
-    const systemPrompt = (variantPrompt || agent.system_prompt || "You are a helpful assistant.") + buildSubjectContext(talentRow);
+    const baseSystem = variantPrompt || agent.system_prompt || "You are a helpful assistant.";
+
+    // Build subject context — talent profile OR company page context
+    const subjectCtx = subjectKind === "company"
+      ? await buildCompanyContext(admin, subjectId!, body.context)
+      : buildSubjectContext(talentRow);
+    const systemPrompt = baseSystem + subjectCtx;
 
     // Load tools
     const allowedToolKeys: string[] = agent.allowed_tools || [];
