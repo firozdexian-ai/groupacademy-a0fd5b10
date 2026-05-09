@@ -155,7 +155,7 @@ serve(async (req) => {
           prompt_tokens: aiData.usage?.prompt_tokens ?? 0,
           completion_tokens: aiData.usage?.completion_tokens ?? 0,
         }).then(() => {}, () => {});
-        return json({ reply, tool_invocations: toolInvocations }, 200);
+        return json({ reply, tool_invocations: toolInvocations, invalidate: collectInvalidations(toolInvocations) }, 200);
       }
 
       // Push the assistant turn carrying the tool calls
