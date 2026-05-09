@@ -205,6 +205,12 @@ export default function Gigs() {
         <TabsContent value="for-you" className="mt-4 space-y-4 animate-in fade-in duration-300">
           <AvailabilityWidget />
           <GigForYouTab />
+          <div className="pt-4 border-t border-border/40 space-y-3">
+            <h3 className="text-xs font-bold uppercase tracking-wide text-muted-foreground flex items-center gap-2">
+              <Briefcase className="h-3.5 w-3.5" /> Browse all open gigs
+            </h3>
+            <InfiniteGigsList talentId={dash?.talent_id ?? talent?.id} />
+          </div>
         </TabsContent>
 
         {/* ───── QUICK TASKS ───── */}
