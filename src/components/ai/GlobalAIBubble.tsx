@@ -62,6 +62,7 @@ async function deriveContext(pathname: string): Promise<Record<string, string>> 
 export function GlobalAIBubble() {
   const { talent } = useTalent();
   const location = useLocation();
+  const queryClient = useQueryClient();
   const [open, setOpen] = useState(false);
   const [agentKey, setAgentKey] = useState<string>("ai-general");
   const [agentName, setAgentName] = useState<string>("AI Assistant");
