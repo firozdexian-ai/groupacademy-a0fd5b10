@@ -72,6 +72,8 @@ Deno.serve(async (req) => {
       case "pause_job":           return j(await pause_job(ctx, args));
       case "close_job":           return j(await close_job(ctx, args));
       case "get_job_applicants":  return j(await get_job_applicants(ctx, args));
+      case "move_application_stage": return j(await move_application_stage(ctx, args));
+      case "accept_gig_bid":      return j(await accept_gig_bid(ctx, args));
       // --- Maya / talent ---
       case "search_talent":       return j(await search_talent(ctx, args));
       case "reveal_talent":       return j(await reveal_talent(ctx, args));
