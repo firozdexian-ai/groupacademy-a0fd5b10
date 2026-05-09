@@ -23,6 +23,7 @@ import Gro10xOfferings from "./pages/Gro10xOfferings";
 import Gro10xSourcing from "./pages/sourcing/Gro10xSourcing";
 import Gro10xSourcingLists from "./pages/sourcing/Gro10xSourcingLists";
 import Gro10xProjects from "./pages/work/Gro10xProjects";
+import Gro10xGigBids from "./pages/work/Gro10xGigBids";
 // Notifications fold into the Atlas concierge thread — no standalone tab/route.
 
 /**
