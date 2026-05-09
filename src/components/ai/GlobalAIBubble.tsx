@@ -112,7 +112,7 @@ export function GlobalAIBubble() {
       const { data: { session } } = await supabase.auth.getSession();
       if (!session?.access_token) throw new Error("Not authenticated");
 
-      const ctx = deriveContext(location.pathname);
+      const ctx = await deriveContext(location.pathname);
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-agent-chat`, {
         method: "POST",
         headers: {
@@ -138,6 +138,7 @@ export function GlobalAIBubble() {
       if (!reader) throw new Error("No stream");
       const decoder = new TextDecoder();
       let buffer = "";
+      const invalidationKeys = new Set<string>();
       setMessages(prev => [...prev, { role: "assistant", content: "" }]);
 
       while (true) {
@@ -150,6 +151,11 @@ export function GlobalAIBubble() {
           if (payload === "[DONE]") break;
           try {
             const parsed = JSON.parse(payload);
+            // Tool-driven invalidation hint frame
+            if (parsed?.type === "invalidations" && Array.isArray(parsed.keys)) {
+              for (const k of parsed.keys) invalidationKeys.add(String(k));
+              continue;
+            }
             const tok = parsed.choices?.[0]?.delta?.content;
             if (tok) {
               buffer += tok;
@@ -162,6 +168,13 @@ export function GlobalAIBubble() {
           } catch { /* fragment */ }
         }
       }
+
+      // Refresh affected lists so the UI updates without a hard reload
+      if (invalidationKeys.size > 0) {
+        for (const k of invalidationKeys) {
+          queryClient.invalidateQueries({ queryKey: [k] });
+        }
+      }
     } catch (e: any) {
       console.error("[GlobalAIBubble]", e);
       toast.error(e?.message || "Chat failed");
@@ -169,7 +182,7 @@ export function GlobalAIBubble() {
     } finally {
       setStreaming(false);
     }
-  }, [input, messages, streaming, agentKey, location.pathname]);
+  }, [input, messages, streaming, agentKey, location.pathname, queryClient]);
 
   // Don't show if no talent (auth/onboarding)
   if (!talent?.id) return null;
