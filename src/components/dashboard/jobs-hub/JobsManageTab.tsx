@@ -248,15 +248,27 @@ export function JobsManageTab() {
                 <Activity className="h-3.5 w-3.5" /> {totalCount} TOTAL_UNITS
               </Badge>
             </div>
-            <Button
-              onClick={() => {
-                setEditingJobId(null);
-                setDialogOpen(true);
-              }}
-              className="h-10 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg"
-            >
-              <Plus className="h-4 w-4" /> Deploy Units
-            </Button>
+            <div className="flex items-center gap-2">
+              <Button
+                variant="outline"
+                onClick={purgeExpired}
+                disabled={purging}
+                className="h-10 px-5 rounded-xl border-2 border-amber-500/40 text-amber-600 hover:bg-amber-500/10 font-black uppercase text-[10px] tracking-widest gap-2"
+                title="Archive jobs past deadline or stale (>90d)"
+              >
+                <Flame className="h-4 w-4" />
+                {purging ? "Purging…" : "Purge Expired"}
+              </Button>
+              <Button
+                onClick={() => {
+                  setEditingJobId(null);
+                  setDialogOpen(true);
+                }}
+                className="h-10 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg"
+              >
+                <Plus className="h-4 w-4" /> Deploy Units
+              </Button>
+            </div>
           </div>
 
           {selected.size > 0 && (
