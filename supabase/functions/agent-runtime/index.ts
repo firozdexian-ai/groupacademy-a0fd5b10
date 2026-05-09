@@ -318,6 +318,7 @@ function json(payload: unknown, status = 200) {
 }
 
 function buildSubjectContext(talent: any): string {
+  if (!talent) return "";
   const parts: string[] = ["", "## Caller Profile"];
   if (talent.full_name) parts.push(`Name: ${talent.full_name}`);
   if (talent.country) parts.push(`Country: ${talent.country}`);
