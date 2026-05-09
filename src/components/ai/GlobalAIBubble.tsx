@@ -21,20 +21,41 @@ import ReactMarkdown from "react-markdown";
 
 interface Msg { role: "user" | "assistant"; content: string }
 
-function deriveContext(pathname: string): Record<string, string> {
+// Slug → UUID cache so we don't hit the DB on every keystroke
+const slugIdCache = new Map<string, string>();
+
+async function resolveCourseIdFromSlug(slug: string): Promise<string | null> {
+  if (slugIdCache.has(slug)) return slugIdCache.get(slug)!;
+  const { data } = await supabase.from("content").select("id").eq("slug", slug).maybeSingle();
+  const id = (data as any)?.id ?? null;
+  if (id) slugIdCache.set(slug, id);
+  return id;
+}
+
+const UUID = "[0-9a-f]{8}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{4}-[0-9a-f]{12}";
+
+async function deriveContext(pathname: string): Promise<Record<string, string>> {
   const ctx: Record<string, string> = {};
-  // /app/jobs/:id  /app/jobs/123  PublicJobDetail too
-  const job = pathname.match(/\/app\/jobs\/([0-9a-f-]{8,})/i);
+  // /app/jobs/:id and PublicJobDetail
+  const job = pathname.match(new RegExp(`/app/jobs/(${UUID})`, "i"));
   if (job) ctx.job_id = job[1];
-  // /app/gigs/marketplace/:id or /app/gigs/:id
-  const gig = pathname.match(/\/app\/gigs\/(?:marketplace\/)?([0-9a-f-]{8,})/i);
-  if (gig) {
+  // Marketplace gigs live at /app/marketplace/:id (canonical) and legacy /app/gigs/marketplace/:id
+  const mkt = pathname.match(new RegExp(`/app/marketplace/(${UUID})`, "i"));
+  if (mkt) { ctx.gig_id = mkt[1]; ctx.gig_kind = "marketplace"; }
+  const gig = pathname.match(new RegExp(`/app/gigs/(?:marketplace/)?(${UUID})`, "i"));
+  if (gig && !ctx.gig_id) {
     ctx.gig_id = gig[1];
     ctx.gig_kind = pathname.includes("/marketplace/") ? "marketplace" : "quick";
   }
-  // /app/learning/courses/:id  /app/courses/:id
-  const course = pathname.match(/\/(?:learning\/)?courses?\/([0-9a-f-]{8,})/i);
-  if (course) ctx.course_id = course[1];
+  // Course routes use SLUGS: /app/learning/courses/:slug. Resolve to UUID.
+  const courseSlug = pathname.match(/\/app\/learning\/courses\/([^/?#]+)/i);
+  if (courseSlug) {
+    const id = await resolveCourseIdFromSlug(courseSlug[1]);
+    if (id) ctx.course_id = id;
+  }
+  // Direct UUID-style course routes (defensive)
+  const courseId = pathname.match(new RegExp(`/courses?/(${UUID})`, "i"));
+  if (courseId && !ctx.course_id) ctx.course_id = courseId[1];
   return ctx;
 }
 
