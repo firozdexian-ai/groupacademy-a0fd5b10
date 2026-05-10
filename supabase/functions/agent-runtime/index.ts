@@ -50,13 +50,23 @@ serve(async (req) => {
       return json({ error: "agent_key and message required" }, 400);
     }
 
-    // Resolve subject — defaults to authenticated talent.
+    // Resolve subject — admin > company > talent.
+    // Admins (per has_any_admin_role) bypass credit charges and the company tool-loop;
     // Company subjects must be requested explicitly and verified via company_members.
     let subjectKind = "talent";
     let subjectId: string | null = null;
     let talentRow: any = null;
+    let isAdmin = false;
 
-    if ((body as any).subject_kind === "company" && (body as any).subject_id) {
+    // Admin probe — same gate as the `Admins manage all threads` RLS policy.
+    const { data: adminFlag } = await admin.rpc("has_any_admin_role", { _user_id: user.id });
+    isAdmin = adminFlag === true;
+
+    if (isAdmin && (body as any).subject_kind !== "company") {
+      // Default admin path: subject = the admin user themselves.
+      subjectKind = "admin";
+      subjectId = user.id;
+    } else if ((body as any).subject_kind === "company" && (body as any).subject_id) {
       const companyId = (body as any).subject_id as string;
       const { data: membership } = await admin
         .from("company_members")
@@ -152,10 +162,15 @@ serve(async (req) => {
     const variantPrompt = (agent.prompt_variants as any)?.[variant];
     const baseSystem = variantPrompt || agent.system_prompt || "You are a helpful assistant.";
 
-    // Build subject context — talent profile OR company page context
-    const subjectCtx = subjectKind === "company"
-      ? await buildCompanyContext(admin, subjectId!, body.context)
-      : buildSubjectContext(talentRow);
+    // Build subject context — admin caller, company workspace, or talent profile.
+    let subjectCtx = "";
+    if (subjectKind === "admin") {
+      subjectCtx = `\n\n## Caller\nAdmin user (id: ${user.id}, email: ${user.email ?? "—"})\nYou are speaking inside the internal admin Agentic Dashboard. The caller is platform staff with full read access; do not ask them to authenticate, and prefer concise, operational answers.`;
+    } else if (subjectKind === "company") {
+      subjectCtx = await buildCompanyContext(admin, subjectId!, body.context);
+    } else {
+      subjectCtx = buildSubjectContext(talentRow);
+    }
     const systemPrompt = baseSystem + subjectCtx;
 
     // Load tools
