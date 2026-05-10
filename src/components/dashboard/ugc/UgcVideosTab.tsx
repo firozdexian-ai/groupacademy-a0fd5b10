@@ -41,8 +41,8 @@ import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { CardGridSkeleton } from "@/components/ui/page-loading-skeleton";
 import { useNavigate } from "react-router-dom";
-import ContentFilters, { type ContentFilterValues } from "./ContentFilters";
-import ContentReadinessBadge, { type ModuleStats } from "./ContentReadinessBadge";
+import ContentFilters, { type ContentFilterValues } from "../ContentFilters";
+import ContentReadinessBadge, { type ModuleStats } from "../ContentReadinessBadge";
 import { cn } from "@/lib/utils";
 import { formatEventTime, DEFAULT_EVENT_TZ } from "@/lib/eventTime";
 
@@ -98,7 +98,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-const ContentList = ({ filter }: ContentListProps) => {
+const UgcVideosTab = ({ filter }: ContentListProps) => {
   const navigate = useNavigate();
   const [content, setContent] = useState<Content[]>([]);
   const [moduleStatsMap, setModuleStatsMap] = useState<Record<string, ModuleStats>>({});
@@ -650,4 +650,4 @@ const ContentList = ({ filter }: ContentListProps) => {
   );
 };
 
-export default ContentList;
+export default UgcVideosTab;

@@ -102,7 +102,7 @@ const defaultFormData: PostFormData = {
   is_active: true,
 };
 
-export function FeedPostsManager() {
+export function UgcFeedTab() {
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const [isDialogOpen, setIsDialogOpen] = useState(false);

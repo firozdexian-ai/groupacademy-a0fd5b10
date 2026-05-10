@@ -3,7 +3,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
-import { DashboardTableSkeleton, DashboardErrorState } from "./DashboardSkeleton";
+import { DashboardTableSkeleton, DashboardErrorState } from "../DashboardSkeleton";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -75,7 +75,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-export function CompetitionsManager() {
+export function UgcCompetitionsTab() {
   const [competitions, setCompetitions] = useState<Competition[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);

@@ -118,10 +118,10 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "companies-unlocks": React.lazy(() =>
     import("@/components/dashboard/companies/ContactUnlocksTab").then((m) => ({ default: m.ContactUnlocksTab })),
   ),
-  all: React.lazy(() => import("@/components/dashboard/ContentList")),
-  videos: React.lazy(() => import("@/components/dashboard/ContentList")),
-  courses: React.lazy(() => import("@/components/dashboard/ContentList")),
-  webinars: React.lazy(() => import("@/components/dashboard/ContentList")),
+  all: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
+  "ugc-videos": React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
+  courses: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
+  webinars: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
   enrollments: React.lazy(() =>
     import("@/components/dashboard/EnrollmentsManager").then((m) => ({ default: m.EnrollmentsManager })),
   ),
@@ -143,12 +143,12 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "service-outreach": React.lazy(() =>
     import("@/components/dashboard/ServiceOutreachManager").then((m) => ({ default: m.ServiceOutreachManager })),
   ),
-  blog: React.lazy(() => import("@/components/dashboard/BlogManager").then((m) => ({ default: m.BlogManager }))),
-  "feed-posts": React.lazy(() =>
-    import("@/components/dashboard/FeedPostsManager").then((m) => ({ default: m.FeedPostsManager })),
+  "ugc-blog": React.lazy(() => import("@/components/dashboard/ugc/UgcBlogTab").then((m) => ({ default: m.UgcBlogTab }))),
+  "ugc-feed": React.lazy(() =>
+    import("@/components/dashboard/ugc/UgcFeedTab").then((m) => ({ default: m.UgcFeedTab })),
   ),
-  competitions: React.lazy(() =>
-    import("@/components/dashboard/CompetitionsManager").then((m) => ({ default: m.CompetitionsManager })),
+  "ugc-competitions": React.lazy(() =>
+    import("@/components/dashboard/ugc/UgcCompetitionsTab").then((m) => ({ default: m.UgcCompetitionsTab })),
   ),
   "study-abroad": React.lazy(() =>
     import("@/components/dashboard/StudyAbroadManager").then((m) => ({ default: m.StudyAbroadManager })),
@@ -368,7 +368,7 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "professional-lives": React.lazy(() =>
     import("@/components/dashboard/learn/LearnSimpleTabs").then((m) => ({ default: m.ProfessionalLivesTab })),
   ),
-  "career-tracks": React.lazy(() => import("@/components/dashboard/ContentList")),
+  "career-tracks": React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
   graduates: React.lazy(() => import("@/components/dashboard/learn/GraduatesTab")),
   "b2b-courses": React.lazy(() => import("@/components/dashboard/learn/B2BCoursesTab")),
   "course-briefs": React.lazy(() => import("@/components/dashboard/learn/CourseBriefsTab")),
@@ -446,7 +446,7 @@ const TAB_TITLES: Record<string, string> = {
   "companies-overview": "Companies Overview",
   "companies-unlocks": "Contact Unlocks",
   all: "Catalog Architecture",
-  videos: "Digital Library",
+  "ugc-videos": "Digital Library",
   courses: "Academy Courses",
   webinars: "Live Syncs",
   enrollments: "Student Ingestion",
@@ -456,9 +456,9 @@ const TAB_TITLES: Record<string, string> = {
   outreach: "CV Intelligence",
   "content-outreach": "Campaign Hub",
   "service-outreach": "Service Sync",
-  blog: "Thought Leadership",
-  "feed-posts": "Network Stream",
-  competitions: "Gamification",
+  "ugc-blog": "Thought Leadership",
+  "ugc-feed": "Network Stream",
+  "ugc-competitions": "Gamification",
   "study-abroad": "International Ed",
   ielts: "Linguistic Prep",
   "roadmap-leads": "Global Pipeline",
