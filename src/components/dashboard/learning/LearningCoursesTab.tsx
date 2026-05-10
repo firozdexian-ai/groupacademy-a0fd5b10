@@ -32,6 +32,9 @@ export function LearningCoursesTab() {
 
   // Selected course for module management
   const [selectedModuleCourseId, setSelectedModuleCourseId] = useState<string | null>(null);
+  const [showBatchGenerator, setShowBatchGenerator] = useState(false);
+  const [selectedCourseForChecklist, setSelectedCourseForChecklist] = useState<any | null>(null);
+  const [tempResourceUrl, setTempResourceUrl] = useState<string | null>(null);
 
   // Unified ContentFilters state
   const [filters, setFilters] = useState<ContentFilterValues>({
