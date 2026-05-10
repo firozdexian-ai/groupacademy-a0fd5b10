@@ -6,13 +6,20 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Tv, ShieldCheck, BookOpen, Filter, Layers } from "lucide-react";
+import { Plus, Pencil, Trash2, Tv, ShieldCheck, BookOpen, Filter, Layers, Sparkles, FileCheck2, Wand2 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 import ContentFilters, { type ContentFilterValues } from "./content-widgets/ContentFilters";
 import ModulePickerPanel from "./modules/ModulePickerPanel";
+import { BatchContentGenerator } from "./content-widgets/BatchContentGenerator";
+import { AIActionButton } from "./content-widgets/ContentAIActions";
+import ContentReadinessBadge from "./content-widgets/ContentReadinessBadge";
+import ContentReadinessChecklist from "./content-widgets/ContentReadinessChecklist";
+import { FlashcardEditor } from "./modules/FlashcardEditor";
+import { ModuleResourceFileUpload } from "./modules/ModuleResourceFileUpload";
 
 export function LearningCoursesTab() {
   const {
@@ -25,6 +32,9 @@ export function LearningCoursesTab() {
 
   // Selected course for module management
   const [selectedModuleCourseId, setSelectedModuleCourseId] = useState<string | null>(null);
+  const [showBatchGenerator, setShowBatchGenerator] = useState(false);
+  const [selectedCourseForChecklist, setSelectedCourseForChecklist] = useState<any | null>(null);
+  const [tempResourceUrl, setTempResourceUrl] = useState<string | null>(null);
 
   // Unified ContentFilters state
   const [filters, setFilters] = useState<ContentFilterValues>({
@@ -79,15 +89,24 @@ export function LearningCoursesTab() {
             Universal Content Management
           </p>
         </div>
-        <Button
-          onClick={() => {
-            setDraft({ status: "draft", content_type: "recorded_course" });
-            setOpen(true);
-          }}
-          className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-cyan-500/20 bg-cyan-600 hover:bg-cyan-700 text-white"
-        >
-          <Plus className="h-4 w-4" /> Inject Course
-        </Button>
+        <div className="flex flex-col sm:flex-row gap-3">
+          <Button
+            variant="outline"
+            onClick={() => setShowBatchGenerator(true)}
+            className="h-12 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 border-2 border-violet-500/40 text-violet-600 hover:bg-violet-500/10"
+          >
+            <Wand2 className="h-4 w-4" /> Bulk Generate
+          </Button>
+          <Button
+            onClick={() => {
+              setDraft({ status: "draft", content_type: "recorded_course" });
+              setOpen(true);
+            }}
+            className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-cyan-500/20 bg-cyan-600 hover:bg-cyan-700 text-white"
+          >
+            <Plus className="h-4 w-4" /> Inject Course
+          </Button>
+        </div>
       </header>
 
       {/* Unified Content Filters HUD */}
@@ -153,14 +172,32 @@ export function LearningCoursesTab() {
                           </Badge>
                         </TableCell>
                         <TableCell>
-                          <Badge
-                            className={cn(
-                              "font-bold text-[9px] uppercase tracking-widest border-none px-3",
-                              isRowPublished ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600",
-                            )}
-                          >
-                            {isRowPublished ? "Published" : "Unpublished"}
-                          </Badge>
+                          <div className="flex items-center gap-2 flex-wrap">
+                            <Badge
+                              className={cn(
+                                "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                                isRowPublished ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600",
+                              )}
+                            >
+                              {isRowPublished ? "Published" : "Unpublished"}
+                            </Badge>
+                            <button
+                              type="button"
+                              onClick={() => setSelectedCourseForChecklist(row)}
+                              title="Open readiness checklist"
+                              className="focus:outline-none focus:ring-2 focus:ring-primary rounded-md"
+                            >
+                              <ContentReadinessBadge
+                                compact
+                                isReady={isRowPublished}
+                                stats={
+                                  isRowPublished
+                                    ? { module_count: 1, modules_with_desc: 1, modules_with_video: 1, playable_modules: 1 }
+                                    : undefined
+                                }
+                              />
+                            </button>
+                          </div>
                         </TableCell>
                         <TableCell className="text-right font-mono text-[10px] text-muted-foreground">
                           {new Date(row.created_at).toLocaleDateString()}
@@ -176,6 +213,17 @@ export function LearningCoursesTab() {
                             >
                               <Layers className="h-4 w-4" />
                             </Button>
+                            <AIActionButton
+                              mode="description"
+                              context={{
+                                title: row.title,
+                                content_type: row.content_type,
+                              }}
+                              onResult={() => {}}
+                              label="AI"
+                              size="sm"
+                              className="hover:bg-violet-500/10 hover:text-violet-600"
+                            />
                             <Button
                               variant="ghost"
                               size="icon"
@@ -300,9 +348,82 @@ export function LearningCoursesTab() {
             </DialogDescription>
           </DialogHeader>
           {selectedModuleCourseId && (
-            <ModulePickerPanel
-              contentId={selectedModuleCourseId}
-              onClose={() => setSelectedModuleCourseId(null)}
+            <Tabs defaultValue="modules" className="w-full">
+              <TabsList className="grid grid-cols-3 mb-4">
+                <TabsTrigger value="modules" className="text-[10px] font-black uppercase tracking-widest gap-2">
+                  <Layers className="h-3.5 w-3.5" /> Modules
+                </TabsTrigger>
+                <TabsTrigger value="flashcards" className="text-[10px] font-black uppercase tracking-widest gap-2">
+                  <Sparkles className="h-3.5 w-3.5" /> Flashcards
+                </TabsTrigger>
+                <TabsTrigger value="resources" className="text-[10px] font-black uppercase tracking-widest gap-2">
+                  <BookOpen className="h-3.5 w-3.5" /> Resources
+                </TabsTrigger>
+              </TabsList>
+              <TabsContent value="modules">
+                <ModulePickerPanel
+                  contentId={selectedModuleCourseId}
+                  onClose={() => setSelectedModuleCourseId(null)}
+                />
+              </TabsContent>
+              <TabsContent value="flashcards">
+                <FlashcardEditor onSave={() => {}} />
+              </TabsContent>
+              <TabsContent value="resources">
+                <div className="space-y-3 p-4 border-2 border-dashed border-border/40 rounded-2xl">
+                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                    Attach a resource file or link for this course.
+                  </p>
+                  <ModuleResourceFileUpload
+                    value={tempResourceUrl}
+                    onChange={setTempResourceUrl}
+                  />
+                </div>
+              </TabsContent>
+            </Tabs>
+          )}
+        </DialogContent>
+      </Dialog>
+
+      {/* Bulk Content Generator */}
+      <Dialog open={showBatchGenerator} onOpenChange={setShowBatchGenerator}>
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-[32px] p-6 border-2 border-border/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
+              <Wand2 className="h-5 w-5" /> Bulk Content Generator
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+              Generate multiple courses, modules, or resources in a single batch.
+            </DialogDescription>
+          </DialogHeader>
+          <BatchContentGenerator />
+        </DialogContent>
+      </Dialog>
+
+      {/* Readiness Checklist */}
+      <Dialog
+        open={!!selectedCourseForChecklist}
+        onOpenChange={(o) => !o && setSelectedCourseForChecklist(null)}
+      >
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[32px] p-6 border-2 border-border/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
+              <FileCheck2 className="h-5 w-5" /> Readiness Checklist
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+              Live diagnostic of platform readiness rules for this course.
+            </DialogDescription>
+          </DialogHeader>
+          {selectedCourseForChecklist && (
+            <ContentReadinessChecklist
+              contentId={selectedCourseForChecklist.id}
+              formData={{
+                title: selectedCourseForChecklist.title,
+                content_type: selectedCourseForChecklist.content_type,
+              }}
+              moduleStats={undefined}
+              moduleAudit={[]}
+              sessionCount={0}
             />
           )}
         </DialogContent>

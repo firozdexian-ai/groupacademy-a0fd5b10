@@ -19,9 +19,13 @@ import {
   Zap,
   Layers,
   ChevronRight,
+  ClipboardCheck,
 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
+import { Button } from "@/components/ui/button";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { QuizResultsViewer } from "./modules/QuizResultsViewer";
 
 /**
  * Platform Logic: Academic Progression Terminal (Learner Progress)
@@ -55,6 +59,7 @@ interface LearnerDetail {
 
 export function LearningProgressTab() {
   const [selectedCourse, setSelectedCourse] = useState<string>("all");
+  const [selectedEnrollment, setSelectedEnrollment] = useState<LearnerDetail | null>(null);
 
   const { data: courses, isLoading: coursesLoading } = useQuery({
     queryKey: ["admin-courses-list"],
@@ -397,7 +402,18 @@ export function LearningProgressTab() {
                       )}
                     </TableCell>
                     <TableCell className="text-right pr-8 font-black text-[11px] italic text-primary">
-                      {learner.completedAt ? format(new Date(learner.completedAt), "MMM d, yyyy") : "IN_TRANSIT"}
+                      <div className="flex items-center justify-end gap-2">
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setSelectedEnrollment(learner)}
+                          title="View Quiz Results"
+                          className="hover:bg-violet-500/10 hover:text-violet-600"
+                        >
+                          <ClipboardCheck className="h-4 w-4" />
+                        </Button>
+                        <span>{learner.completedAt ? format(new Date(learner.completedAt), "MMM d, yyyy") : "IN_TRANSIT"}</span>
+                      </div>
                     </TableCell>
                   </TableRow>
                 ))}
@@ -423,6 +439,22 @@ export function LearningProgressTab() {
           ))}
         </div>
       </footer>
+
+      {/* Quiz Results Viewer */}
+      <Dialog open={!!selectedEnrollment} onOpenChange={(o) => !o && setSelectedEnrollment(null)}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-[32px] p-6 border-2 border-border/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
+              <ClipboardCheck className="h-5 w-5" /> Quiz Results
+              {selectedEnrollment && <span className="text-xs text-muted-foreground"> — {selectedEnrollment.talentName}</span>}
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+              Per-learner quiz attempts and outcomes.
+            </DialogDescription>
+          </DialogHeader>
+          <QuizResultsViewer />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
