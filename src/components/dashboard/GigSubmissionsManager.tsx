@@ -4,32 +4,17 @@ import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import {
-  Dialog,
-  DialogContent,
-  DialogHeader,
-  DialogTitle,
-  DialogDescription,
-  DialogFooter,
-} from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { toast } from "sonner";
 import {
-  CheckCircle2,
   XCircle,
   Eye,
   Coins,
   User,
   Briefcase,
-  MapPin,
-  FileText,
-  Share2,
-  BookOpen,
   ExternalLink,
-  UserPlus,
-  BriefcaseBusiness,
-  MessageSquarePlus,
   Activity,
   ShieldCheck,
   Terminal,
@@ -37,14 +22,15 @@ import {
   Loader2,
   RefreshCw,
 } from "lucide-react";
-import { format } from "date-fns";
 import { useState } from "react";
+// Assuming emailNotifications wraps an edge function call to Resend/Sendgrid
 import { emailNotifications } from "@/lib/emailNotifications";
 import { cn } from "@/lib/utils";
 
 /**
  * Platform Logic: Incentive Validation Terminal (Gig Submissions)
  * CTO Audit: Notifications schema aligned with strict DB types (talent_id, message, link).
+ * Added Email Dispatch triggers for worker retention loops.
  */
 
 /* -----------------------------------------------------------
@@ -77,26 +63,6 @@ function adaptJob(data: any) {
     source_image_url: data?.source_image_url || (data?.input_method === "image" ? data?.source : null) || null,
     raw_text: data?.raw_text || (data?.input_method === "text" ? data?.source : null) || null,
     input_method: data?.input_method || (data?.source_image_url ? "image" : "text"),
-  };
-}
-
-function adaptContent(data: any) {
-  const p = data?.payload || {};
-  return {
-    type: data?.type || data?.content_type || "post",
-    title: p.title || data?.title || null,
-    text: p.text || data?.text || data?.body || null,
-    image_url: p.image_url || data?.image_url || null,
-    poll_question: p.poll?.question || data?.poll_question || null,
-    poll_options: p.poll?.options || data?.poll_options || [],
-  };
-}
-
-function adaptShare(data: any) {
-  return {
-    job_title: data?.job_title || null,
-    channels: data?.channels || data?.channels_shared || [],
-    share_url: data?.share_url || null,
   };
 }
 
@@ -181,7 +147,11 @@ function SubmissionPreview({ submission }: { submission: any }) {
           </div>
         </div>
         {job.source_image_url && (
-          <img src={job.source_image_url} className="rounded-xl border-2 border-border/10 h-48 w-full object-cover" />
+          <img
+            src={job.source_image_url}
+            alt="Source"
+            className="rounded-xl border-2 border-border/10 h-48 w-full object-cover"
+          />
         )}
       </div>
     );
@@ -225,23 +195,39 @@ export function GigSubmissionsManager() {
       if (error) throw error;
       if (!(data as any)?.success) throw new Error((data as any)?.error || "Protocol Failure");
 
-      // CTO FIX: DB schema match for notifications (talent_id, message, link)
+      const creditsAwarded = (data as any).credits_awarded || submission.gigs?.credit_reward;
+
+      // 1. In-App Notification
       try {
         await supabase.from("notifications").insert({
           talent_id: submission.talent_id,
-          title: "Gig Approved!",
-          message: `Your submission for "${submission.gigs?.title}" was approved. You earned ${(data as any).credits_awarded} credits!`,
+          title: "Gig Approved! 🎉",
+          message: `Your submission for "${submission.gigs?.title}" was approved. You earned ${creditsAwarded} credits!`,
           type: "system",
           link: "/app/transactions",
         });
       } catch (notifErr) {
-        console.warn("Failed to dispatch user notification", notifErr);
+        console.warn("Failed to dispatch in-app notification", notifErr);
       }
 
-      return data;
+      // 2. Email Dispatch Trigger
+      if (submission.talents?.email && typeof emailNotifications?.gigApproved === "function") {
+        try {
+          await emailNotifications.gigApproved({
+            to: submission.talents.email,
+            name: submission.talents.full_name || "Talent",
+            gigTitle: submission.gigs?.title || "Gig",
+            credits: creditsAwarded,
+          });
+        } catch (emailErr) {
+          console.warn("Failed to dispatch email", emailErr);
+        }
+      }
+
+      return { ...data, creditsAwarded };
     },
     onSuccess: (data: any) => {
-      toast.success(`Protocol Committed: ${data.credits_awarded} tokens awarded and user notified.`);
+      toast.success(`Protocol Committed: ${data.creditsAwarded} tokens awarded and user notified.`);
       queryClient.invalidateQueries({ queryKey: ["admin-gig-submissions"] });
       setSelectedSubmission(null);
       setAdminNotes("");
@@ -257,10 +243,11 @@ export function GigSubmissionsManager() {
         p_submission_id: submission.id,
         p_admin_notes: adminNotes || null,
       });
+
       if (error) throw error;
       if (!(data as any)?.success) throw new Error((data as any)?.error || "Rejection logic failed");
 
-      // CTO FIX: DB schema match for notifications
+      // 1. In-App Notification
       try {
         await supabase.from("notifications").insert({
           talent_id: submission.talent_id,
@@ -270,7 +257,21 @@ export function GigSubmissionsManager() {
           link: "/app/gigs",
         });
       } catch (notifErr) {
-        console.warn("Failed to dispatch user notification", notifErr);
+        console.warn("Failed to dispatch in-app notification", notifErr);
+      }
+
+      // 2. Email Dispatch Trigger
+      if (submission.talents?.email && typeof emailNotifications?.gigRejected === "function") {
+        try {
+          await emailNotifications.gigRejected({
+            to: submission.talents.email,
+            name: submission.talents.full_name || "Talent",
+            gigTitle: submission.gigs?.title || "Gig",
+            reason: adminNotes || "Submission did not meet quality guidelines.",
+          });
+        } catch (emailErr) {
+          console.warn("Failed to dispatch email", emailErr);
+        }
       }
     },
     onSuccess: () => {
