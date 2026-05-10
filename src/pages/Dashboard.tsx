@@ -183,12 +183,6 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   portfolios: React.lazy(() => import("@/components/dashboard/PortfolioRequestsManager")),
   // Gig Economy routes consolidated below (search "gigs-overview").
 
-  credits: React.lazy(() =>
-    import("@/components/dashboard/CreditsManager").then((m) => ({ default: m.CreditsManager })),
-  ),
-  withdrawals: React.lazy(() =>
-    import("@/components/dashboard/WithdrawalsPanel").then((m) => ({ default: m.WithdrawalsPanel })),
-  ),
   notifications: React.lazy(() =>
     import("@/components/dashboard/NotificationsManager").then((m) => ({ default: m.NotificationsManager })),
   ),
