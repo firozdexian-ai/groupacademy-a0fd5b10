@@ -216,13 +216,20 @@ const navGroups: NavGroup[] = [
     roles: ["admin"],
     items: [
       { title: "Overview", icon: LayoutDashboard, value: "ugc-overview" },
-      { title: "Free Videos", icon: Video, value: "videos" },
-      { title: "Blog Posts", icon: FileText, value: "blog" },
-      { title: "Feed Posts", icon: MessageSquare, value: "feed-posts" },
-      { title: "Competitions", icon: Trophy, value: "competitions" },
-      { title: "Gig Submissions", icon: FileCheck, value: "gig-submissions" },
+      { title: "Free Videos", icon: Video, value: "ugc-videos" },
+      { title: "Blog Posts", icon: FileText, value: "ugc-blog" },
+      { title: "Feed Posts", icon: MessageSquare, value: "ugc-feed" },
+      { title: "Competitions", icon: Trophy, value: "ugc-competitions" },
+    ],
+  },
+  {
+    title: "Gig Economy",
+    icon: Briefcase,
+    roles: ["admin"],
+    items: [
       { title: "Manage Gigs", icon: Briefcase, value: "gigs" },
       { title: "Marketplace Gigs", icon: Store, value: "marketplace-gigs" },
+      { title: "Gig Submissions", icon: FileCheck, value: "gig-submissions" },
     ],
   },
   {
