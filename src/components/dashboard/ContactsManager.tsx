@@ -57,7 +57,7 @@ import { useUserRole } from "@/components/ProtectedRoute";
 /**
  * Platform Logic: Stakeholder Registry Hub (Contacts)
  * High-fidelity orchestrator for institutional relationship mapping and outreach telemetry.
- * CTO Audit: Applied PII Masking to protect B2B data from unauthorized roles.
+ * 2024 Standard: Applied PII Masking to protect B2B data from unauthorized roles.
  */
 
 interface Contact {
@@ -202,7 +202,7 @@ export function ContactsManager() {
 
   useEffect(() => {
     setPage(1);
-  }, [debouncedSearch, companyFilter, sourceFilter]);
+  }, [debouncedSearch, companyFilter, sourceFilter, registrationTab]);
 
   const handleOpenDialog = (contact?: Contact) => {
     if (contact) {
@@ -309,6 +309,19 @@ export function ContactsManager() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000">
+      {/* Executive Header */}
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3 text-primary">
+            <Users className="h-8 w-8" />
+            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Stakeholder Hub</h2>
+          </div>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+            B2B Contact Registry · PII Masked · Telemetry Tracked
+          </p>
+        </div>
+      </header>
+
       {/* HUD: Registry Telemetry */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         {[
@@ -347,16 +360,17 @@ export function ContactsManager() {
         ))}
       </div>
 
-      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
+      {/* Main Registry */}
+      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl flex flex-col">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
         <CardHeader className="p-8 border-b border-border/10 bg-muted/10">
           <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
             <div className="space-y-1">
               <CardTitle className="text-3xl font-black uppercase tracking-tighter italic flex items-center gap-3">
-                <Users className="h-8 w-8 text-primary" /> Stakeholder Registry
+                <ShieldCheck className="h-8 w-8 text-primary" /> Authority Matrix
               </CardTitle>
               <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.3em] italic">
-                Authorized Relationship Artifacts: {totalCount} Nodes Detected
+                Secure access to {totalCount} corporate entities
               </p>
             </div>
             <div className="flex items-center gap-3">
@@ -386,26 +400,24 @@ export function ContactsManager() {
           </div>
         </CardHeader>
 
-        <CardContent className="p-8">
-          <div className="mb-4 inline-flex rounded-2xl border-2 border-border/40 bg-muted/20 p-1 text-xs font-semibold">
+        <CardContent className="p-8 flex-1 flex flex-col">
+          <div className="mb-4 inline-flex flex-wrap gap-2 rounded-2xl border-2 border-border/40 bg-muted/20 p-1.5 text-xs font-semibold">
             {(["all", "registered", "uploaded", "cv-matched"] as const).map((k) => (
               <button
                 key={k}
-                onClick={() => {
-                  setRegistrationTab(k);
-                  setPage(1);
-                }}
+                onClick={() => setRegistrationTab(k)}
                 className={cn(
-                  "px-4 py-1.5 rounded-xl transition-colors",
+                  "px-5 py-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest",
                   registrationTab === k
-                    ? "bg-primary text-primary-foreground shadow"
-                    : "text-muted-foreground hover:text-foreground",
+                    ? "bg-primary text-primary-foreground shadow-md shadow-primary/20"
+                    : "text-muted-foreground hover:text-foreground hover:bg-muted/50",
                 )}
               >
                 {k.charAt(0).toUpperCase() + k.slice(1).replace("-", " ")}
               </button>
             ))}
           </div>
+
           {/* Query Console */}
           <div className="mb-8 flex flex-col md:flex-row gap-4 bg-muted/20 p-4 rounded-[28px] border-2 border-border/40 backdrop-blur-md">
             <div className="relative flex-1 group">
@@ -465,7 +477,7 @@ export function ContactsManager() {
           {isLoading ? (
             <DashboardTableSkeleton rows={5} columns={6} />
           ) : (
-            <div className="rounded-[24px] border-2 border-border/20 overflow-hidden bg-background/50">
+            <div className="rounded-[24px] border-2 border-border/20 overflow-hidden bg-background/50 flex-1">
               <Table>
                 <TableHeader className="bg-muted/30">
                   <TableRow className="hover:bg-transparent border-b-2">
@@ -524,7 +536,9 @@ export function ContactsManager() {
                               </div>
                             </div>
                           ) : (
-                            <span className="text-[10px] opacity-20 italic">ORPHAN_NODE</span>
+                            <span className="text-[10px] opacity-20 italic font-black uppercase tracking-widest">
+                              ORPHAN_NODE
+                            </span>
                           )}
                         </TableCell>
                         <TableCell>
