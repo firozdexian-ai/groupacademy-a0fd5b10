@@ -22,9 +22,8 @@ import {
   ShieldCheck,
   Zap,
   Database,
-  ChevronRight,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { LinkedInJsonUpload } from "./LinkedInJsonUpload";
 import { cn } from "@/lib/utils";
@@ -49,13 +48,14 @@ interface BatchUpload {
 
 interface BatchTalentUploadProps {
   onComplete?: () => void;
+  singleMode?: boolean; // Prop passed from wrapper (optional usage)
 }
 
 const MAX_FILES = 20;
 const MAX_FILE_SIZE_MB = 10;
 const MAX_FILE_SIZE_BYTES = MAX_FILE_SIZE_MB * 1024 * 1024;
 
-export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
+export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadProps) {
   const [urlsInput, setUrlsInput] = useState("");
   const [isUploading, setIsUploading] = useState(false);
   const [currentBatch, setCurrentBatch] = useState<BatchUpload | null>(null);
@@ -77,6 +77,8 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
     const validFiles: File[] = [];
     const errors: string[] = [];
 
+    const fileLimit = singleMode ? 1 : MAX_FILES;
+
     files.forEach((file) => {
       if (!file.name.toLowerCase().endsWith(".pdf")) {
         errors.push(`${file.name}: Protocol Mismatch (PDF Required)`);
@@ -87,8 +89,50 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
       }
     });
 
-    setSelectedFiles(validFiles.slice(0, MAX_FILES));
+    setSelectedFiles(validFiles.slice(0, fileLimit));
     if (errors.length > 0) errors.forEach((err) => toast.error(err));
+  };
+
+  const uploadUrlsAndProcess = async () => {
+    const urls = parseCvUrls(urlsInput);
+    if (urls.length === 0) {
+      return toast.error("No valid HTTP/HTTPS URLs detected in payload.");
+    }
+
+    if (singleMode && urls.length > 1) {
+      return toast.error("Single mode active: Please provide only one URL.");
+    }
+
+    setIsUploading(true);
+    setShowProgress(true);
+
+    try {
+      const {
+        data: { user },
+      } = await supabase.auth.getUser();
+      if (!user) throw new Error("Registry Access Denied: Unauthorized");
+
+      const { data: batch, error: batchError } = await supabase
+        .from("batch_uploads")
+        .insert({ uploaded_by: user.id, file_count: urls.length, status: "pending" })
+        .select()
+        .single();
+
+      if (batchError) throw batchError;
+      setCurrentBatch(batch as BatchUpload);
+
+      await supabase.functions.invoke("batch-parse-cvs", {
+        body: { cvUrls: urls, batchId: batch.id },
+      });
+
+      toast.success(`URL Ingestion Initialized: ${urls.length} Artifacts Syncing`);
+      setUrlsInput("");
+      pollBatchProgress(batch.id);
+    } catch (error: any) {
+      toast.error(error.message || "Transmission Fault");
+      setIsUploading(false);
+      setShowProgress(false);
+    }
   };
 
   const uploadFilesAndProcess = async () => {
@@ -141,6 +185,8 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
       });
 
       toast.success(`Ingestion Initialized: ${urls.length} Artifacts Syncing`);
+      setSelectedFiles([]);
+      if (fileInputRef.current) fileInputRef.current.value = "";
       pollBatchProgress(batch.id);
     } catch (error: any) {
       toast.error(error.message || "Transmission Fault");
@@ -234,9 +280,7 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
               />
             </div>
             <Button
-              onClick={() => {
-                /* Logic for URL batch start */
-              }}
+              onClick={uploadUrlsAndProcess}
               disabled={isUploading || !urlsInput.trim()}
               className="w-full h-16 rounded-[20px] font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-primary/30 group relative overflow-hidden"
             >
@@ -258,7 +302,7 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
                   ref={fileInputRef}
                   type="file"
                   accept=".pdf"
-                  multiple
+                  multiple={!singleMode}
                   onChange={handleFileSelect}
                   className="hidden"
                   disabled={isUploading}
@@ -270,7 +314,7 @@ export function BatchTalentUpload({ onComplete }: BatchTalentUploadProps) {
                   <div>
                     <p className="text-xl font-black uppercase tracking-tight italic">Inject PDF Payloads</p>
                     <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2">
-                      Max {MAX_FILES} Artifacts · {MAX_FILE_SIZE_MB}MB Limit
+                      {singleMode ? "1 Artifact Limit" : `Max ${MAX_FILES} Artifacts`} · {MAX_FILE_SIZE_MB}MB Limit
                     </p>
                   </div>
                 </div>
