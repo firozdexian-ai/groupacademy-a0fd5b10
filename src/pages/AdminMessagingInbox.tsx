@@ -9,7 +9,8 @@ import { Label } from "@/components/ui/label";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
-import { Send, Loader2, Bot, User, MessageSquare, ShieldAlert, Users, Phone, List } from "lucide-react";
+import { Send, Loader2, Bot, User, MessageSquare, Briefcase, Users, Phone, List, ShieldAlert } from "lucide-react";
+import { cn } from "@/lib/utils";
 
 interface Conversation {
   id: string;
@@ -45,29 +46,30 @@ export default function AdminMessagingInbox() {
   const [loadingConvs, setLoadingConvs] = useState(true);
   const [composer, setComposer] = useState("");
   const [sending, setSending] = useState(false);
-  // CTO Patch: Default to "all" so inbound Talent messages (which lack a B2B contact_id) are never hidden
   const [activeTab, setActiveTab] = useState("all");
   const scrollRef = useRef<HTMLDivElement>(null);
 
   const loadConvs = async () => {
     setLoadingConvs(true);
-    let query = supabase
+    // Fetch all top-level convos. We will filter locally based on the joined channel data.
+    const { data } = await supabase
       .from("messaging_conversations")
       .select("*, messaging_channels(agent_key, phone_e164)")
-      .order("last_message_at", { ascending: false, nullsFirst: false });
+      .order("last_message_at", { ascending: false, nullsFirst: false })
+      .limit(100);
 
-    // CTO Filter Logic: Adjusted to accurately reflect B2B vs B2C routing
-    if (activeTab === "employers") {
-      query = query.not("contact_id", "is", null);
-    } else if (activeTab === "talents_unmatched") {
-      query = query.is("contact_id", null).eq("is_group", false);
-    } else if (activeTab === "groups") {
-      query = query.eq("is_group", true);
-    }
-    // "all" applies no filters
+    const allConvs = (data ?? []) as Conversation[];
 
-    const { data } = await query.limit(100);
-    setConversations((data ?? []) as Conversation[]);
+    // Filter locally to avoid complex Supabase syntax on joined tables
+    const filteredConvs = allConvs.filter((c) => {
+      if (activeTab === "all") return true;
+      if (activeTab === "talent") return c.messaging_channels?.agent_key === "talent-outreach" && !c.is_group;
+      if (activeTab === "employer") return c.messaging_channels?.agent_key === "employer-outreach" && !c.is_group;
+      if (activeTab === "groups") return c.is_group === true;
+      return true;
+    });
+
+    setConversations(filteredConvs);
     setLoadingConvs(false);
   };
 
@@ -145,11 +147,11 @@ export default function AdminMessagingInbox() {
             <TabsTrigger value="all" className="text-xs gap-2">
               <List className="h-3 w-3" /> All Inbox
             </TabsTrigger>
-            <TabsTrigger value="employers" className="text-xs gap-2">
-              <MessageSquare className="h-3 w-3" /> Employers
+            <TabsTrigger value="talent" className="text-xs gap-2">
+              <User className="h-3 w-3" /> Talent Line
             </TabsTrigger>
-            <TabsTrigger value="talents_unmatched" className="text-xs gap-2">
-              <ShieldAlert className="h-3 w-3" /> Talents / Unmatched
+            <TabsTrigger value="employer" className="text-xs gap-2">
+              <Briefcase className="h-3 w-3" /> Employer Line
             </TabsTrigger>
             <TabsTrigger value="groups" className="text-xs gap-2">
               <Users className="h-3 w-3" /> Groups
@@ -169,31 +171,46 @@ export default function AdminMessagingInbox() {
             ) : conversations.length === 0 ? (
               <div className="p-10 text-center text-xs text-muted-foreground">No conversations in this view.</div>
             ) : (
-              conversations.map((c) => (
-                <button
-                  key={c.id}
-                  onClick={() => setActiveId(c.id)}
-                  className={`w-full text-left p-3 border-b transition-colors hover:bg-muted/30 ${activeId === c.id ? "bg-primary/5 border-l-2 border-l-primary" : ""}`}
-                >
-                  <div className="flex justify-between items-start gap-2 mb-1">
-                    <span className="font-semibold text-sm truncate">
-                      {c.peer_display_name || c.peer_handle || "Unknown Sender"}
-                    </span>
-                    {c.unread_count > 0 && <Badge className="h-4 px-1.5 text-[10px]">{c.unread_count}</Badge>}
-                  </div>
-                  <div className="flex items-center gap-1.5 mb-1.5">
-                    <Badge
-                      variant="outline"
-                      className="text-[9px] uppercase tracking-tighter px-1 h-3.5 border-muted-foreground/30"
-                    >
-                      {c.messaging_channels?.agent_key === "talent-outreach" ? "Talent Line" : "Employer Line"}
-                    </Badge>
-                  </div>
-                  <p className="text-[11px] text-muted-foreground truncate">
-                    {c.last_message_preview || "No message history"}
-                  </p>
-                </button>
-              ))
+              conversations.map((c) => {
+                const isEmployerLine = c.messaging_channels?.agent_key === "employer-outreach";
+                const isUnmatchedEmployer = isEmployerLine && !c.contact_id && !c.is_group;
+
+                return (
+                  <button
+                    key={c.id}
+                    onClick={() => setActiveId(c.id)}
+                    className={`w-full text-left p-3 border-b transition-colors hover:bg-muted/30 ${activeId === c.id ? "bg-primary/5 border-l-2 border-l-primary" : ""}`}
+                  >
+                    <div className="flex justify-between items-start gap-2 mb-1">
+                      <span className="font-semibold text-sm truncate">
+                        {c.peer_display_name || c.peer_handle || "Unknown Sender"}
+                      </span>
+                      {c.unread_count > 0 && <Badge className="h-4 px-1.5 text-[10px]">{c.unread_count}</Badge>}
+                    </div>
+
+                    <div className="flex items-center gap-1.5 mb-1.5 flex-wrap">
+                      <Badge
+                        variant="outline"
+                        className="text-[9px] uppercase tracking-tighter px-1 h-3.5 border-muted-foreground/30"
+                      >
+                        {isEmployerLine ? "Employer Line" : "Talent Line"}
+                      </Badge>
+                      {isUnmatchedEmployer && (
+                        <Badge
+                          variant="destructive"
+                          className="text-[9px] uppercase tracking-tighter px-1 h-3.5 bg-destructive/10 text-destructive hover:bg-destructive/20 border-none"
+                        >
+                          <ShieldAlert className="h-2 w-2 mr-1" /> Unverified
+                        </Badge>
+                      )}
+                    </div>
+
+                    <p className="text-[11px] text-muted-foreground truncate">
+                      {c.last_message_preview || "No message history"}
+                    </p>
+                  </button>
+                );
+              })
             )}
           </ScrollArea>
         </Card>
@@ -209,7 +226,16 @@ export default function AdminMessagingInbox() {
             <>
               <div className="p-3 border-b bg-muted/10 flex items-center justify-between">
                 <div>
-                  <div className="font-bold text-sm">{active.peer_display_name || active.peer_handle}</div>
+                  <div className="font-bold text-sm flex items-center gap-2">
+                    {active.peer_display_name || active.peer_handle}
+                    {active.messaging_channels?.agent_key === "employer-outreach" &&
+                      !active.contact_id &&
+                      !active.is_group && (
+                        <Badge variant="destructive" className="h-4 px-1 text-[9px] uppercase">
+                          Unverified Lead
+                        </Badge>
+                      )}
+                  </div>
                   <div className="text-[10px] text-muted-foreground font-mono">{active.external_chat_id}</div>
                 </div>
                 <div className="flex items-center gap-3">
@@ -264,7 +290,11 @@ export default function AdminMessagingInbox() {
                       send();
                     }
                   }}
-                  placeholder="Draft your response..."
+                  placeholder={
+                    active.auto_reply_paused
+                      ? "Draft your response..."
+                      : "Draft response (Turn on Human Takeover to pause AI)..."
+                  }
                   disabled={sending}
                 />
                 <Button onClick={send} disabled={sending || !composer.trim()} className="shadow-md">
