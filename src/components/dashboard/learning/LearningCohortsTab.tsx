@@ -112,7 +112,7 @@ export function LearningCohortsTab() {
                         </Badge>
                       </TableCell>
                       <TableCell className="text-right font-mono text-[10px] text-muted-foreground">
-                        {row.start_date ? new Date(row.start_date).toLocaleDateString() : "TBD"}
+                        {row.starts_on ? new Date(row.starts_on).toLocaleDateString() : "TBD"}
                       </TableCell>
                       <TableCell className="text-right pr-8">
                         <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
