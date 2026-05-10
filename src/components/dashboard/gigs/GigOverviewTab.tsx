@@ -38,3 +38,5 @@ export default function GigOverviewTab() {
     </div>
   );
 }
+
+export { default as GigOverviewTab } from './GigOverviewTab';

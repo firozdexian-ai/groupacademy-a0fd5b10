@@ -11,3 +11,5 @@ export default function GigWorkersWalletTab() {
     </Card>
   );
 }
+
+export { default as GigWorkersWalletTab } from './GigWorkersWalletTab';

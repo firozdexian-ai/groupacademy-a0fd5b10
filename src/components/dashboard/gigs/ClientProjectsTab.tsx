@@ -10,3 +10,5 @@ export default function ClientProjectsTab() {
     </Card>
   );
 }
+
+export { default as ClientProjectsTab } from './ClientProjectsTab';
