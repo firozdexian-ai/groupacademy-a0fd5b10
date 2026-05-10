@@ -164,9 +164,6 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   portfolios: React.lazy(() => import("@/components/dashboard/PortfolioRequestsManager")),
   // Gig Economy routes consolidated below (search "gigs-overview").
 
-  notifications: React.lazy(() =>
-    import("@/components/dashboard/NotificationsManager").then((m) => ({ default: m.NotificationsManager })),
-  ),
   "ir-dashboard": React.lazy(() =>
     import("@/components/dashboard/ir/IRDashboard").then((m) => ({ default: m.IRDashboard })),
   ),
@@ -193,9 +190,6 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   ),
   "ir-overview": React.lazy(() => import("@/components/dashboard/investors/IROverviewTab")),
   "ir-influencers": React.lazy(() => import("@/components/dashboard/investors/KeyInfluencersTab")),
-  "support-assistant": React.lazy(() =>
-    import("@/components/dashboard/SupportAssistant").then((m) => ({ default: m.SupportAssistant })),
-  ),
   // Marketing banners/themes/access-codes legacy keys removed — see "marketing-*" block below.
   "hr-team": React.lazy(() => import("@/components/dashboard/hr/TeamManager").then((m) => ({ default: m.TeamManager }))),
   // Legacy "payments-legacy" + "invoices" keys removed — replaced by "finops-*" block below.
