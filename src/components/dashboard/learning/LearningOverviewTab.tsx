@@ -122,7 +122,7 @@ export function LearningOverviewTab() {
                                 Instructor Payout
                               </h4>
                               <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
-                                Amount: <span className="text-emerald-500">{payout.amount} Credits</span>
+                                Amount: <span className="text-emerald-500">{payout.amount_credits} Credits</span>
                               </p>
                             </div>
                           </div>
