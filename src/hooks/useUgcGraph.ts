@@ -30,11 +30,11 @@ export function useUgcGraph() {
       if (reportsRes.error) throw reportsRes.error;
 
       return {
-        videos: videosRes.data as UgcVideo[],
-        blogs: blogsRes.data as UgcBlog[],
-        feedPosts: feedRes.data as UgcFeedPost[],
-        competitions: compsRes.data as UgcCompetition[],
-        reports: reportsRes.data as UgcReport[],
+        videos: videosRes.data as unknown as UgcVideo[],
+        blogs: blogsRes.data as unknown as UgcBlog[],
+        feedPosts: feedRes.data as unknown as UgcFeedPost[],
+        competitions: compsRes.data as unknown as UgcCompetition[],
+        reports: reportsRes.data as unknown as UgcReport[],
       };
     },
   });
