@@ -8,6 +8,7 @@ import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
+import Papa from "papaparse";
 import {
   Upload,
   FileText,
@@ -22,6 +23,7 @@ import {
   ShieldCheck,
   Zap,
   Database,
+  FileSpreadsheet,
 } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { ScrollArea } from "@/components/ui/scroll-area";
@@ -65,6 +67,10 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
   const [uploadingFiles, setUploadingFiles] = useState(false);
   const fileInputRef = useRef<HTMLInputElement>(null);
 
+  // CSV Agent State
+  const [csvFile, setCsvFile] = useState<File | null>(null);
+  const csvInputRef = useRef<HTMLInputElement>(null);
+
   const parseCvUrls = (input: string): string[] => {
     return input
       .split("\n")
@@ -91,6 +97,142 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
     setSelectedFiles(validFiles.slice(0, fileLimit));
     if (errors.length > 0) errors.forEach((err) => toast.error(err));
+  };
+
+  const handleCsvSelect = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const file = e.target.files[0];
+      if (!file.name.toLowerCase().endsWith(".csv")) {
+        toast.error("Protocol Mismatch (CSV Required)");
+        return;
+      }
+      setCsvFile(file);
+    }
+  };
+
+  const agentReportToAdmin = async (anomalyCount: number, errorLog: string[]) => {
+    try {
+      await supabase.from("messaging_messages").insert({
+        direction: "inbound",
+        author: "Data Ingestion Agent",
+        body: `CSV Ingestion complete. Flagged ${anomalyCount} anomalies during import. Details: ${errorLog.slice(0, 3).join(" | ")}...`,
+        status: "delivered",
+      });
+    } catch (err) {
+      console.warn("Agent reporting deferred: messaging schema not fully linked.");
+    }
+  };
+
+  const processCsvDatabase = async () => {
+    if (!csvFile) return toast.error("Select a CSV Database Payload first");
+
+    setIsUploading(true);
+    setShowProgress(true);
+
+    // Create a mock batch to hook into existing telemetry UI
+    setCurrentBatch({
+      id: "csv-batch-temp",
+      file_count: 0,
+      processed_count: 0,
+      skipped_count: 0,
+      failed_count: 0,
+      status: "pending",
+      error_log: [],
+      created_at: new Date().toISOString(),
+      completed_at: null,
+    });
+
+    Papa.parse<any>(csvFile, {
+      header: true,
+      skipEmptyLines: true,
+      complete: async (results) => {
+        const rows = results.data;
+        const totalRows = rows.length;
+        let successCount = 0;
+        let anomalyCount = 0;
+        const errorLog: string[] = [];
+        const batchSize = 100;
+        const mappedData = [];
+
+        setCurrentBatch((prev) => (prev ? { ...prev, file_count: totalRows } : null));
+
+        for (const row of rows) {
+          if (!row.contact || row.contact.trim() === "") {
+            anomalyCount++;
+            errorLog.push(`Missing contact for ${row.full_name || "Unknown"}`);
+            continue;
+          }
+
+          mappedData.push({
+            full_name: row.full_name ? row.full_name.trim() : "Unknown Talent",
+            phone: `+${row.contact.replace(/\D/g, "")}`,
+            city: row.location || null,
+            country: "Bangladesh",
+            country_code: "BD",
+            resume_url: row.cv_url && row.cv_url.startsWith("http") ? row.cv_url : null,
+            status: "uploaded",
+            metadata: {
+              source: "shomvob_import",
+              import_date: new Date().toISOString(),
+              education: row.education_en,
+              gender: row.gender,
+              age: row.user_age,
+              job_type: row.job_type_en,
+              work_experience: row.work_experience_en,
+            },
+          });
+        }
+
+        for (let i = 0; i < mappedData.length; i += batchSize) {
+          const batch = mappedData.slice(i, i + batchSize);
+          const { error } = await supabase.from("talents").upsert(batch, {
+            onConflict: "phone",
+            ignoreDuplicates: true,
+          });
+
+          if (error) {
+            console.error("Batch insert error:", error);
+            errorLog.push(`Batch fault at index ${i}: ${error.message}`);
+          } else {
+            successCount += batch.length;
+          }
+
+          setCurrentBatch((prev) =>
+            prev
+              ? {
+                  ...prev,
+                  processed_count: successCount,
+                  skipped_count: anomalyCount,
+                }
+              : null,
+          );
+        }
+
+        setCurrentBatch((prev) =>
+          prev
+            ? {
+                ...prev,
+                status: "completed",
+                error_log: errorLog.map((err) => ({ error: err, url: "CSV Row Data" })),
+              }
+            : null,
+        );
+
+        setIsUploading(false);
+        toast.success(`Database Ingestion Complete: ${successCount} upserted.`);
+
+        if (anomalyCount > 0) {
+          await agentReportToAdmin(anomalyCount, errorLog);
+        }
+
+        onComplete?.();
+      },
+      error: (error) => {
+        toast.error(`CSV Parsing Fault: ${error.message}`);
+        setIsUploading(false);
+        setShowProgress(false);
+      },
+    });
   };
 
   const uploadUrlsAndProcess = async () => {
@@ -234,7 +376,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
           <div className="space-y-1">
             <CardTitle className="text-3xl font-black uppercase tracking-tighter italic">Registry Ingestion</CardTitle>
             <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
-              Bulk CV Artifact Synchronization Node v2.6
+              Bulk Talent Artifact Synchronization Node v2.7
             </CardDescription>
           </div>
         </div>
@@ -242,20 +384,27 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
       <CardContent className="p-8 pt-0 space-y-8">
         <Tabs defaultValue="links" className="w-full">
-          <TabsList className="grid w-full grid-cols-3 h-16 bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1.5 shadow-xl">
+          <TabsList className="grid w-full grid-cols-4 h-16 bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1.5 shadow-xl">
             <TabsTrigger
               value="links"
               disabled={isUploading}
               className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
             >
-              <LinkIcon className="w-4 h-4" /> Paste Links
+              <LinkIcon className="w-4 h-4" /> Links
             </TabsTrigger>
             <TabsTrigger
               value="files"
               disabled={isUploading}
               className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
             >
-              <FileUp className="w-4 h-4" /> Upload Files
+              <FileUp className="w-4 h-4" /> PDFs
+            </TabsTrigger>
+            <TabsTrigger
+              value="csv"
+              disabled={isUploading}
+              className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            >
+              <FileSpreadsheet className="w-4 h-4" /> CSV DB
             </TabsTrigger>
             <TabsTrigger
               value="linkedin"
@@ -355,6 +504,43 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             </Button>
           </TabsContent>
 
+          <TabsContent value="csv" className="mt-8 space-y-6 animate-in slide-in-from-bottom-4 duration-500">
+            <div className="space-y-4">
+              <div
+                onClick={() => !isUploading && csvInputRef.current?.click()}
+                className="group relative border-4 border-dashed rounded-[32px] p-16 text-center transition-all hover:border-primary/40 hover:bg-primary/5 cursor-pointer"
+              >
+                <input
+                  ref={csvInputRef}
+                  type="file"
+                  accept=".csv"
+                  onChange={handleCsvSelect}
+                  className="hidden"
+                  disabled={isUploading}
+                />
+                <div className="space-y-6">
+                  <div className="h-20 w-20 rounded-[24px] bg-muted/50 flex items-center justify-center mx-auto border-2 border-border/40 group-hover:rotate-6 transition-transform text-blue-500">
+                    <FileSpreadsheet className="h-10 w-10" />
+                  </div>
+                  <div>
+                    <p className="text-xl font-black uppercase tracking-tight italic">Inject Database Payload</p>
+                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2">
+                      {csvFile ? csvFile.name : "Accepts Shomvob .CSV Exports"}
+                    </p>
+                  </div>
+                </div>
+              </div>
+            </div>
+            <Button
+              onClick={processCsvDatabase}
+              disabled={isUploading || !csvFile}
+              className="w-full h-16 rounded-[20px] font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-blue-500/30 bg-blue-600 hover:bg-blue-700 text-white group"
+            >
+              {isUploading ? <Loader2 className="animate-spin mr-3 h-5 w-5" /> : <Database className="mr-3 h-5 w-5" />}
+              Execute CSV Agent Sync
+            </Button>
+          </TabsContent>
+
           <TabsContent value="linkedin" className="mt-8 animate-in slide-in-from-bottom-4 duration-500">
             <LinkedInJsonUpload mode="talent" onComplete={onComplete} />
           </TabsContent>
@@ -400,7 +586,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
             {currentBatch.status === "completed" && (
               <div className="flex justify-end gap-3 pt-4 border-t border-border/10">
-                {currentBatch.failed_count > 0 && (
+                {(currentBatch.failed_count > 0 || (currentBatch.error_log && currentBatch.error_log.length > 0)) && (
                   <Button
                     variant="ghost"
                     onClick={() => setShowErrorLog(true)}
@@ -411,7 +597,10 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                 )}
                 <Button
                   variant="outline"
-                  onClick={() => setShowProgress(false)}
+                  onClick={() => {
+                    setShowProgress(false);
+                    setCurrentBatch(null);
+                  }}
                   className="rounded-xl h-10 px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-2"
                 >
                   <RefreshCw className="w-3.5 h-3.5" /> Terminate Session
@@ -439,10 +628,10 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                       Entry_{idx.toString().padStart(3, "0")}
                     </p>
                     <p className="font-black text-sm uppercase tracking-tight italic truncate mb-1">
-                      {err.url || err.email}
+                      {err.url || err.email || "System Anomaly"}
                     </p>
                     <p className="text-[11px] font-medium text-muted-foreground italic leading-relaxed">
-                      System Fault: {err.error}
+                      Fault: {err.error}
                     </p>
                   </div>
                 )) || <div className="text-center py-20 opacity-20 italic">No exceptions recorded.</div>}
