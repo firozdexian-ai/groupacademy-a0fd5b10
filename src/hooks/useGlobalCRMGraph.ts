@@ -37,7 +37,7 @@ export function useGlobalCRMGraph() {
         // Fetch recent talents & exact platform count
         supabase.from("talents").select("id, user_id, full_name, email, phone, country, verification_status, created_at", { count: "exact" }).order("created_at", { ascending: false }).limit(300),
         // Fetch recent outreach & exact log count
-        supabase.from("talent_outreach_log").select("id, talent_id, status, channel, created_at", { count: "exact" }).order("created_at", { ascending: false }).limit(300),
+        supabase.from("talent_outreach_log").select("id, talent_id, status, channel, sent_at", { count: "exact" }).order("sent_at", { ascending: false }).limit(300),
         // Fetch total professions count
         supabase.from("professional_roles").select("id", { count: "exact", head: true })
       ]);
