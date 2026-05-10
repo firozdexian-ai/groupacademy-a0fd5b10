@@ -41,8 +41,8 @@ import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { CardGridSkeleton } from "@/components/ui/page-loading-skeleton";
 import { useNavigate } from "react-router-dom";
-import ContentFilters, { type ContentFilterValues } from "./ContentFilters";
-import ContentReadinessBadge, { type ModuleStats } from "./ContentReadinessBadge";
+import ContentFilters, { type ContentFilterValues } from "../ContentFilters";
+import ContentReadinessBadge, { type ModuleStats } from "../ContentReadinessBadge";
 import { cn } from "@/lib/utils";
 import { formatEventTime, DEFAULT_EVENT_TZ } from "@/lib/eventTime";
 
