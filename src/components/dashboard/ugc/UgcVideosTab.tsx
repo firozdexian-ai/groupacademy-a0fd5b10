@@ -98,7 +98,7 @@ function useDebounce<T>(value: T, delay: number): T {
   return debouncedValue;
 }
 
-const ContentList = ({ filter }: ContentListProps) => {
+const UgcVideosTab = ({ filter }: ContentListProps) => {
   const navigate = useNavigate();
   const [content, setContent] = useState<Content[]>([]);
   const [moduleStatsMap, setModuleStatsMap] = useState<Record<string, ModuleStats>>({});
@@ -650,4 +650,4 @@ const ContentList = ({ filter }: ContentListProps) => {
   );
 };
 
-export default ContentList;
+export default UgcVideosTab;

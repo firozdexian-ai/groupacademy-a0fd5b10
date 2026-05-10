@@ -280,7 +280,7 @@ const BlogPostForm = ({
 };
 
 // --- Main Blog Manager Node ---
-export function BlogManager() {
+export function UgcBlogTab() {
   const [posts, setPosts] = useState<BlogPost[]>([]);
   const [loading, setLoading] = useState(true);
   const [page, setPage] = useState(1);
