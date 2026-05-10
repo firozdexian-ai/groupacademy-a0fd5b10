@@ -57,7 +57,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
         // Since we don't have the investor ID directly in this component, we
         // rely on the backend triggering an email via webhook based on this log insert,
         // or we can invoke a specific Edge Function. For now, logging guarantees telemetry.
-      });
+      }]);
 
       if (logError) throw logError;
 
