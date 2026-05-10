@@ -31,7 +31,7 @@ export function useMarketingGraph() {
         supabase.from("talent_outreach_log").select("id, talent_id, channel, sent_at").order("sent_at", { ascending: false }).limit(500),
         supabase.from("company_outreach_log").select("id, company_id, contact_id, channel, sent_at").order("sent_at", { ascending: false }).limit(500),
         supabase.from("banners").select("id, placement, image_url, link_url, is_active, created_at").order("created_at", { ascending: false }).limit(100),
-        supabase.from("profile_card_themes").select("id, priority, gradient_css, media_url, created_at").order("created_at", { ascending: false }).limit(50),
+        supabase.from("profile_card_themes").select("id, name, priority, media_type, gradient_css, media_url, poster_url, overlay_opacity, text_color, start_at, end_at, is_active, created_at").order("priority", { ascending: false }).limit(50),
         supabase.from("access_codes").select("id, code, content_id, max_uses, current_uses, expires_at").order("created_at", { ascending: false }).limit(200),
       ]);
 
