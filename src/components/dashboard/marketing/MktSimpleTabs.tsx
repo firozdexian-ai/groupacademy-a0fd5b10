@@ -26,3 +26,5 @@ export const CommunityGroupsTab = () => (
     ]}
   />
 );
+
+export { CommunityGroupsTab as CommunityTab };
