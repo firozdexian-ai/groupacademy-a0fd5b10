@@ -60,16 +60,16 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "crm-support-ai": React.lazy(() => import("@/components/dashboard/talent/SupportAITab").then((m: any) => ({ default: m.SupportAITab ?? m.SupportAssistant ?? m.default }))),
   // Jobs / ATS routes consolidated below (search "jobs-overview").
   companies: React.lazy(() =>
-    import("@/components/dashboard/CompaniesManager").then((m) => ({ default: m.CompaniesManager })),
+    import("@/components/dashboard/companies/CompaniesTab").then((m: any) => ({ default: m.CompaniesTab ?? m.CompaniesManager ?? m.default })),
   ),
   contacts: React.lazy(() =>
-    import("@/components/dashboard/ContactsManager").then((m) => ({ default: m.ContactsManager })),
+    import("@/components/dashboard/talent/ContactsTab").then((m: any) => ({ default: m.ContactsTab ?? m.ContactsManager ?? m.default })),
   ),
   "company-agents": React.lazy(() =>
-    import("@/components/dashboard/CompanyAgentsManager").then((m) => ({ default: m.CompanyAgentsManager })),
+    import("@/components/dashboard/companies/CompanyAgentsTab").then((m: any) => ({ default: m.CompanyAgentsTab ?? m.CompanyAgentsManager ?? m.default })),
   ),
   industries: React.lazy(() =>
-    import("@/components/dashboard/IndustriesManager").then((m) => ({ default: m.IndustriesManager })),
+    import("@/components/dashboard/companies/IndustriesTab").then((m: any) => ({ default: m.IndustriesTab ?? m.IndustriesManager ?? m.default })),
   ),
   "companies-overview": React.lazy(() =>
     import("@/components/dashboard/companies/CompaniesOverviewTab").then((m) => ({ default: m.CompaniesOverviewTab })),
@@ -79,9 +79,7 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   ),
   all: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
   "ugc-videos": React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
-  "ai-content-tools": React.lazy(() =>
-    import("@/components/dashboard/learning/content-widgets/BatchContentGenerator").then((m) => ({ default: m.BatchContentGenerator })),
-  ),
+  // Legacy "ai-content-tools" route removed — generative suite now lives in learning module.
   // Marketing legacy keys removed — see "marketing-*" block below.
   "ugc-blog": React.lazy(() => import("@/components/dashboard/ugc/UgcBlogTab").then((m) => ({ default: m.UgcBlogTab }))),
   "ugc-feed": React.lazy(() =>
@@ -90,29 +88,8 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "ugc-competitions": React.lazy(() =>
     import("@/components/dashboard/ugc/UgcCompetitionsTab").then((m) => ({ default: m.UgcCompetitionsTab })),
   ),
-  "ai-agents": React.lazy(() =>
-    import("@/components/dashboard/AIAgentsManager").then((m) => ({ default: m.AIAgentsManager })),
-  ),
-  "agent-studio": React.lazy(() =>
-    import("@/components/dashboard/AgentStudio").then((m) => ({ default: m.AgentStudio })),
-  ),
-  "agent-triggers": React.lazy(() =>
-    import("@/components/dashboard/AgentTriggers").then((m) => ({ default: m.AgentTriggers })),
-  ),
   "agent-outreach": React.lazy(() =>
-    import("@/components/dashboard/AgentOutreachManager").then((m) => ({ default: m.AgentOutreachManager })),
-  ),
-  "agent-marketplace": React.lazy(() =>
-    import("@/components/dashboard/AgentMarketplaceReview").then((m) => ({ default: m.AgentMarketplaceReview })),
-  ),
-  "agent-sessions": React.lazy(() =>
-    import("@/components/dashboard/AgentSessionsManager").then((m) => ({ default: m.AgentSessionsManager })),
-  ),
-  "agent-insights": React.lazy(() =>
-    import("@/components/dashboard/AgentInsights").then((m) => ({ default: m.AgentInsights })),
-  ),
-  "agent-payouts": React.lazy(() =>
-    import("@/components/dashboard/AgentPayoutsManager").then((m) => ({ default: m.AgentPayoutsManager })),
+    import("@/components/dashboard/agents/AgentOutreachTab").then((m: any) => ({ default: m.AgentOutreachTab ?? m.AgentOutreachManager ?? m.default })),
   ),
   "agents-overview": React.lazy(() =>
     import("@/components/dashboard/agents/AgentsOverviewTab").then((m) => ({ default: m.AgentsOverviewTab })),
@@ -124,7 +101,7 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
     import("@/components/dashboard/agents/AgentToolsTab").then((m) => ({ default: m.AgentToolsTab })),
   ),
   "agents-studio": React.lazy(() =>
-    import("@/components/dashboard/AgentStudio").then((m) => ({ default: m.AgentStudio })),
+    import("@/components/dashboard/agents/AgentStudioTab").then((m: any) => ({ default: m.AgentStudioTab ?? m.AgentStudio ?? m.default })),
   ),
   "agents-b2c": React.lazy(() =>
     import("@/components/dashboard/agents/AgentTypeTabs").then((m) => ({ default: m.AgentsB2CTab })),
@@ -139,16 +116,16 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
     import("@/components/dashboard/agents/AgentTypeTabs").then((m) => ({ default: m.AgentsUGCTab })),
   ),
   "agents-marketplace": React.lazy(() =>
-    import("@/components/dashboard/AgentMarketplaceReview").then((m) => ({ default: m.AgentMarketplaceReview })),
+    import("@/components/dashboard/agents/AgentMarketplaceTab").then((m: any) => ({ default: m.AgentMarketplaceTab ?? m.AgentMarketplaceReview ?? m.default })),
   ),
   "agents-payouts": React.lazy(() =>
-    import("@/components/dashboard/AgentPayoutsManager").then((m) => ({ default: m.AgentPayoutsManager })),
+    import("@/components/dashboard/agents/AgentPayoutsTab").then((m: any) => ({ default: m.AgentPayoutsTab ?? m.AgentPayoutsManager ?? m.default })),
   ),
   "agents-sessions": React.lazy(() =>
-    import("@/components/dashboard/AgentSessionsManager").then((m) => ({ default: m.AgentSessionsManager })),
+    import("@/components/dashboard/agents/AgentSessionsTab").then((m: any) => ({ default: m.AgentSessionsTab ?? m.AgentSessionsManager ?? m.default })),
   ),
   "agents-insights": React.lazy(() =>
-    import("@/components/dashboard/AgentInsights").then((m) => ({ default: m.AgentInsights })),
+    import("@/components/dashboard/agents/AgentInsightsTab").then((m: any) => ({ default: m.AgentInsightsTab ?? m.AgentInsights ?? m.default })),
   ),
   leads: React.lazy(() =>
     import("@/components/dashboard/jobs/JobsAssessmentLeadsTab").then((m) => ({ default: m.JobsAssessmentLeadsTab })),
@@ -161,7 +138,7 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
       default: m.SalaryAnalysisLeadsManager,
     })),
   ),
-  portfolios: React.lazy(() => import("@/components/dashboard/PortfolioRequestsManager")),
+  portfolios: React.lazy(() => import("@/components/dashboard/talent/PortfolioRequestsTab").then((m: any) => ({ default: m.PortfolioRequestsTab ?? m.default ?? m.PortfolioRequestsManager }))),
   // Gig Economy routes consolidated below (search "gigs-overview").
 
   "ir-dashboard": React.lazy(() =>
@@ -191,7 +168,7 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "ir-overview": React.lazy(() => import("@/components/dashboard/investors/IROverviewTab")),
   "ir-influencers": React.lazy(() => import("@/components/dashboard/investors/KeyInfluencersTab")),
   // Marketing banners/themes/access-codes legacy keys removed — see "marketing-*" block below.
-  "hr-team": React.lazy(() => import("@/components/dashboard/hr/TeamManager").then((m) => ({ default: m.TeamManager }))),
+  // Legacy "hr-team" route removed — superseded by "hr-teams".
   // Legacy "payments-legacy" + "invoices" keys removed — replaced by "finops-*" block below.
   institutions: React.lazy(() =>
     import("@/components/dashboard/institutions/StakeholderRegistry").then((m) => ({ default: m.InstitutionsManager })),
@@ -382,7 +359,7 @@ const TAB_TITLES: Record<string, string> = {
   "learning-b2b-engagements": "B2B Engagements",
   "learning-payouts": "Instructor Payouts",
   "learning-json-importer": "Bulk Course Importer",
-  "ai-content-tools": "Generative Suite",
+  
   "marketing-analytics": "Conversion Intel",
   "marketing-channels": "Marketing Channels",
   "marketing-community-wa": "Community WhatsApp Line",
@@ -406,14 +383,7 @@ const TAB_TITLES: Record<string, string> = {
   "abroad-ielts-resources": "IELTS Resources",
   "abroad-language-lab": "Language Lab",
   "abroad-roadmap-leads": "Roadmap Leads",
-  "ai-agents": "Neural Workforce",
-  "agent-studio": "Agent Studio",
-  "agent-triggers": "Channel Triggers",
   "agent-outreach": "Proactive Engine",
-  "agent-marketplace": "Marketplace Review",
-  "agent-sessions": "Session Logs",
-  "agent-insights": "Agent Insights",
-  "agent-payouts": "Agent Payouts",
   "agents-overview": "Agent OS Overview",
   "agents-channels": "Channels & Triggers",
   "agents-tools": "Tools, Skills & Connectors",
