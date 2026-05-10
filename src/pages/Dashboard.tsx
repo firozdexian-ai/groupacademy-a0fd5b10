@@ -431,6 +431,7 @@ const TAB_TITLES: Record<string, string> = {
   "learning-moderation": "Moderation Queue",
   "learning-b2b-engagements": "B2B Engagements",
   "learning-payouts": "Instructor Payouts",
+  "learning-json-importer": "Bulk Course Importer",
   "ai-content-tools": "Generative Suite",
   analytics: "Conversion Intel",
   outreach: "CV Intelligence",
