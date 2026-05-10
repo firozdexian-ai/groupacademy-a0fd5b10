@@ -23,25 +23,47 @@ export function LearningCoursesTab() {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<any>({ status: "draft", content_type: "recorded_course" });
 
-  // Dynamic Filter States
-  const [filterType, setFilterType] = useState<string>("all");
-  const [filterStatus, setFilterStatus] = useState<string>("all");
+  // Selected course for module management
+  const [selectedModuleCourseId, setSelectedModuleCourseId] = useState<string | null>(null);
 
-  // Dynamic Filtering Logic matching DB columns (is_published)
-  const courses =
-    data?.content?.filter((c) => {
-      const matchType = filterType === "all" || c.content_type === filterType;
+  // Unified ContentFilters state
+  const [filters, setFilters] = useState<ContentFilterValues>({
+    programId: "all",
+    levelId: "all",
+    readiness: "all",
+    sortBy: "newest",
+    typeSegment: "all",
+  });
 
-      // Check both DB boolean and UI string to be safe against legacy data
+  // Map ContentFilters → existing dataset
+  const courses = (() => {
+    const list = (data?.content ?? []).filter((c) => {
+      const seg = filters.typeSegment ?? "all";
+      const matchType =
+        seg === "all" ||
+        (seg === "recorded" && c.content_type === "recorded_course") ||
+        (seg === "live" && (c.content_type === "live_webinar" || c.content_type === "batch_class")) ||
+        (seg === "free" && c.content_type === "free_video") ||
+        (seg === "offline" && c.content_type === "offline");
+
       const isPublished = c.is_published === true || c.status === "published";
-
       const matchStatus =
-        filterStatus === "all" ||
-        (filterStatus === "published" && isPublished) ||
-        (filterStatus === "draft" && !isPublished);
+        filters.readiness === "all" ||
+        filters.readiness === "ready_only" ||
+        filters.readiness === "inactive_only" ||
+        (filters.readiness === "published" && isPublished) ||
+        (filters.readiness === "draft" && !isPublished);
 
       return matchType && matchStatus;
-    }) || [];
+    });
+
+    return [...list].sort((a, b) => {
+      if (filters.sortBy === "oldest") return +new Date(a.created_at) - +new Date(b.created_at);
+      if (filters.sortBy === "title_asc") return (a.title || "").localeCompare(b.title || "");
+      if (filters.sortBy === "title_desc") return (b.title || "").localeCompare(a.title || "");
+      return +new Date(b.created_at) - +new Date(a.created_at);
+    });
+  })();
 
   return (
     <div className="space-y-6 animate-in fade-in duration-1000 p-4 md:p-6">
