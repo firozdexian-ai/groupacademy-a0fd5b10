@@ -170,6 +170,15 @@ export function LearningCoursesTab() {
                             <Button
                               variant="ghost"
                               size="icon"
+                              onClick={() => setSelectedModuleCourseId(row.id)}
+                              className="hover:bg-indigo-500/10 hover:text-indigo-600"
+                              title="Manage Modules"
+                            >
+                              <Layers className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
                               onClick={() => {
                                 // Prep draft state matching legacy UI expectations
                                 setDraft({ ...row, status: isRowPublished ? "published" : "draft" });
