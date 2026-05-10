@@ -217,6 +217,9 @@ export function LearningOverviewTab() {
           </div>
         </>
       ) : null}
+
+      {/* Aggregate Course Performance Telemetry */}
+      <CoursePerformanceDashboard contentId="" contentTitle="Aggregate Catalog" />
     </div>
   );
 }
