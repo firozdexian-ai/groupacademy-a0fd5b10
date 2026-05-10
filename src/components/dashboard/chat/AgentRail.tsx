@@ -1,7 +1,7 @@
-import { ADMIN_AGENTS } from "@/lib/adminAgents";
 import { cn } from "@/lib/utils";
 import { formatDistanceToNowStrict } from "date-fns";
 import type { ThreadSummary } from "@/hooks/useAdminChatThread";
+import { useAdminAgents } from "./hooks/useAdminAgents";
 
 interface AgentRailProps {
   activeKey: string | null;
@@ -10,6 +10,7 @@ interface AgentRailProps {
 }
 
 export function AgentRail({ activeKey, threads, onSelect }: AgentRailProps) {
+  const { data: agents = [], isLoading } = useAdminAgents();
   const threadByKey = new Map(threads.map((t) => [t.agent_key, t]));
 
   return (
@@ -19,11 +20,11 @@ export function AgentRail({ activeKey, threads, onSelect }: AgentRailProps) {
           Agents
         </h2>
         <p className="text-xs text-muted-foreground/70 mt-0.5">
-          {ADMIN_AGENTS.length} conversational agents
+          {isLoading ? "Loading…" : `${agents.length} conversational agents`}
         </p>
       </div>
       <div className="flex-1 overflow-y-auto">
-        {ADMIN_AGENTS.map((agent) => {
+        {agents.map((agent) => {
           const t = threadByKey.get(agent.key);
           const isActive = activeKey === agent.key;
           const unread =
