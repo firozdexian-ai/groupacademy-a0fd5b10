@@ -303,6 +303,75 @@ serve(async (req) => {
 
     // Final streamed completion (no tools advertised on the final pass for company —
     // the loop above already executed any required tools).
+    // ---------- Admin tool-execution loop ----------
+    // Dispatches via the central `agent-tool-execute`, which forwards to
+    // `admin-agent-tools` (writes) or `admin-readonly-tools` (telemetry).
+    if (subjectKind === "admin" && aiToolSchema) {
+      const MAX_HOPS = 4;
+      for (let hop = 0; hop < MAX_HOPS; hop++) {
+        const hopRes = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
+          method: "POST",
+          headers: { Authorization: `Bearer ${LOVABLE_API_KEY}`, "Content-Type": "application/json" },
+          body: JSON.stringify({
+            model: agent.model || "google/gemini-3-flash-preview",
+            messages: convo,
+            tools: aiToolSchema,
+            tool_choice: "auto",
+            stream: false,
+          }),
+        });
+        if (!hopRes.ok) {
+          if (hopRes.status === 429) return json({ error: "Rate limit exceeded, please try again." }, 429);
+          if (hopRes.status === 402) return json({ error: "AI workspace credits exhausted." }, 402);
+          const txt = await hopRes.text();
+          console.error("[agent-runtime/admin] hop fault", hopRes.status, txt);
+          break;
+        }
+        const hopJson = await hopRes.json();
+        const msg = hopJson.choices?.[0]?.message;
+        const toolCalls = msg?.tool_calls;
+        if (!toolCalls || toolCalls.length === 0) break;
+        convo.push({ role: "assistant", content: msg.content ?? "", tool_calls: toolCalls });
+        for (const call of toolCalls) {
+          const fnName = call.function?.name;
+          const toolKey = toolKeyByFn[fnName];
+          let parsedArgs: any = {};
+          try { parsedArgs = JSON.parse(call.function?.arguments ?? "{}"); } catch { /* ignore */ }
+          let toolResult: any = { ok: false, error: "tool_not_bound" };
+          if (toolKey) {
+            try {
+              const r = await fetch(`${SUPABASE_URL}/functions/v1/agent-tool-execute`, {
+                method: "POST",
+                headers: {
+                  "Content-Type": "application/json",
+                  Authorization: authHeader!,
+                  apikey: SUPABASE_ANON_KEY,
+                },
+                body: JSON.stringify({
+                  agent_key: agent.agent_key,
+                  tool_key: toolKey,
+                  input: parsedArgs,
+                  thread_id: threadId,
+                }),
+              });
+              const txt = await r.text();
+              try { toolResult = JSON.parse(txt); } catch { toolResult = { ok: r.ok, raw: txt }; }
+            } catch (e: any) {
+              toolResult = { ok: false, error: String(e?.message || e) };
+            }
+          }
+          convo.push({
+            role: "tool",
+            tool_call_id: call.id,
+            content: JSON.stringify(toolResult).slice(0, 8000),
+          });
+        }
+      }
+    }
+
+    // Final streamed completion. Strip tools for company AND admin — both ran
+    // their tool loops above, so the final pass is plain text synthesis.
+    const stripToolsOnFinal = subjectKind === "company" || subjectKind === "admin";
     const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",
       headers: {
@@ -312,7 +381,7 @@ serve(async (req) => {
       body: JSON.stringify({
         model: agent.model || "google/gemini-3-flash-preview",
         messages: convo,
-        tools: subjectKind === "company" ? undefined : aiToolSchema,
+        tools: stripToolsOnFinal ? undefined : aiToolSchema,
         stream: true,
       }),
     });
