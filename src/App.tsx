@@ -270,6 +270,7 @@ export default function App() {
                   <Route path="/blog/:slug" element={<PublicBlogPost />} />
                   <Route path="/verify/:code" element={<VerifyCertificate />} />
                   <Route path="/verify/skill/:code" element={<VerifySkillCredential />} />
+                  <Route path="/ir/view/:token" element={<IRDocumentViewer />} />
                   <Route path="/t/:handle" element={<PublicTalentProfile />} />
 
                   {/* Phase 5.6 — public discovery */}
