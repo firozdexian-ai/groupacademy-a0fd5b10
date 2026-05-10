@@ -143,12 +143,12 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "service-outreach": React.lazy(() =>
     import("@/components/dashboard/ServiceOutreachManager").then((m) => ({ default: m.ServiceOutreachManager })),
   ),
-  blog: React.lazy(() => import("@/components/dashboard/BlogManager").then((m) => ({ default: m.BlogManager }))),
-  "feed-posts": React.lazy(() =>
-    import("@/components/dashboard/FeedPostsManager").then((m) => ({ default: m.FeedPostsManager })),
+  "ugc-blog": React.lazy(() => import("@/components/dashboard/ugc/UgcBlogTab").then((m) => ({ default: m.UgcBlogTab }))),
+  "ugc-feed": React.lazy(() =>
+    import("@/components/dashboard/ugc/UgcFeedTab").then((m) => ({ default: m.UgcFeedTab })),
   ),
-  competitions: React.lazy(() =>
-    import("@/components/dashboard/CompetitionsManager").then((m) => ({ default: m.CompetitionsManager })),
+  "ugc-competitions": React.lazy(() =>
+    import("@/components/dashboard/ugc/UgcCompetitionsTab").then((m) => ({ default: m.UgcCompetitionsTab })),
   ),
   "study-abroad": React.lazy(() =>
     import("@/components/dashboard/StudyAbroadManager").then((m) => ({ default: m.StudyAbroadManager })),
