@@ -68,6 +68,10 @@ export default function ModulePickerPanel({ contentId: contentIdProp, onClose }:
       <ModuleManagement
         contentId={contentId}
         onBack={() => {
+          if (onClose) {
+            onClose();
+            return;
+          }
           const next = new URLSearchParams(searchParams);
           next.delete("id");
           setSearchParams(next, { replace: true });
