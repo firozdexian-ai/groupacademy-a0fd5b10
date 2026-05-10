@@ -6,7 +6,7 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
-import { Plus, Pencil, Trash2, Tv, ShieldCheck, BookOpen } from "lucide-react";
+import { Plus, Pencil, Trash2, Tv, ShieldCheck, BookOpen, Filter } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
@@ -21,21 +21,38 @@ export function LearningCoursesTab() {
   const [open, setOpen] = useState(false);
   const [draft, setDraft] = useState<any>({ status: "draft", content_type: "recorded_course" });
 
-  // Filter for recorded courses only
-  const courses = data?.content?.filter((c) => c.content_type === "recorded_course") || [];
+  // Dynamic Filter States
+  const [filterType, setFilterType] = useState<string>("all");
+  const [filterStatus, setFilterStatus] = useState<string>("all");
+
+  // Dynamic Filtering Logic matching DB columns (is_published)
+  const courses =
+    data?.content?.filter((c) => {
+      const matchType = filterType === "all" || c.content_type === filterType;
+
+      // Check both DB boolean and UI string to be safe against legacy data
+      const isPublished = c.is_published === true || c.status === "published";
+
+      const matchStatus =
+        filterStatus === "all" ||
+        (filterStatus === "published" && isPublished) ||
+        (filterStatus === "draft" && !isPublished);
+
+      return matchType && matchStatus;
+    }) || [];
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
+    <div className="space-y-6 animate-in fade-in duration-1000 p-4 md:p-6">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-cyan-500">
             <Tv className="h-8 w-8 text-cyan-500 fill-cyan-500/20" />
             <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
-              Recorded Courses
+              Content Catalog
             </h2>
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            Asynchronous Content Catalog
+            Universal Content Management
           </p>
         </div>
         <Button
@@ -49,6 +66,55 @@ export function LearningCoursesTab() {
         </Button>
       </header>
 
+      {/* Dynamic Filters Bar */}
+      <div className="flex flex-col sm:flex-row gap-4 px-2">
+        <div className="flex items-center gap-2 text-muted-foreground">
+          <Filter className="h-4 w-4" />
+          <span className="text-[10px] font-black uppercase tracking-widest">Filters:</span>
+        </div>
+        <div className="flex-1 flex gap-4 flex-wrap">
+          <Select value={filterType} onValueChange={setFilterType}>
+            <SelectTrigger className="w-[200px] h-10 rounded-xl font-bold text-xs uppercase tracking-widest border-2">
+              <SelectValue placeholder="Content Type" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="font-bold text-xs uppercase tracking-widest">
+                All Types
+              </SelectItem>
+              <SelectItem value="recorded_course" className="font-bold text-xs uppercase tracking-widest">
+                Recorded Course
+              </SelectItem>
+              <SelectItem value="batch_class" className="font-bold text-xs uppercase tracking-widest">
+                Batch Class
+              </SelectItem>
+              <SelectItem value="live_webinar" className="font-bold text-xs uppercase tracking-widest">
+                Live Webinar
+              </SelectItem>
+              <SelectItem value="free_video" className="font-bold text-xs uppercase tracking-widest">
+                Free Video
+              </SelectItem>
+            </SelectContent>
+          </Select>
+
+          <Select value={filterStatus} onValueChange={setFilterStatus}>
+            <SelectTrigger className="w-[200px] h-10 rounded-xl font-bold text-xs uppercase tracking-widest border-2">
+              <SelectValue placeholder="Status" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all" className="font-bold text-xs uppercase tracking-widest">
+                All Status
+              </SelectItem>
+              <SelectItem value="published" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                Published
+              </SelectItem>
+              <SelectItem value="draft" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                Unpublished
+              </SelectItem>
+            </SelectContent>
+          </Select>
+        </div>
+      </div>
+
       <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
         <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500" />
         <CardContent className="p-0">
@@ -61,9 +127,7 @@ export function LearningCoursesTab() {
                   </TableHead>
                   <TableHead className="font-black uppercase text-[10px] tracking-widest">Type</TableHead>
                   <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
-                  <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">
-                    Published
-                  </TableHead>
+                  <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">Created</TableHead>
                   <TableHead className="text-right py-5 pr-8">Manage</TableHead>
                 </TableRow>
               </TableHeader>
@@ -84,63 +148,66 @@ export function LearningCoursesTab() {
                     </TableCell>
                   </TableRow>
                 ) : (
-                  courses.map((row) => (
-                    <TableRow key={row.id} className="group hover:bg-cyan-500/[0.02]">
-                      <TableCell className="py-6 pl-8">
-                        <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-lg bg-background border-2 border-border/20 flex items-center justify-center shrink-0">
-                            <BookOpen className="h-3 w-3 text-cyan-500" />
+                  courses.map((row) => {
+                    const isRowPublished = row.is_published === true || row.status === "published";
+
+                    return (
+                      <TableRow key={row.id} className="group hover:bg-cyan-500/[0.02]">
+                        <TableCell className="py-6 pl-8">
+                          <div className="flex items-center gap-3">
+                            <div className="h-8 w-8 rounded-lg bg-background border-2 border-border/20 flex items-center justify-center shrink-0">
+                              <BookOpen className="h-3 w-3 text-cyan-500" />
+                            </div>
+                            <span className="font-black text-sm uppercase italic tracking-tight">{row.title}</span>
                           </div>
-                          <span className="font-black text-sm uppercase italic tracking-tight">{row.title}</span>
-                        </div>
-                      </TableCell>
-                      <TableCell>
-                        <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-2">
-                          {row.content_type.replace("_", " ")}
-                        </Badge>
-                      </TableCell>
-                      <TableCell>
-                        <Badge
-                          className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
-                            row.status === "published"
-                              ? "bg-emerald-500/10 text-emerald-600"
-                              : "bg-amber-500/10 text-amber-600",
-                          )}
-                        >
-                          {row.status}
-                        </Badge>
-                      </TableCell>
-                      <TableCell className="text-right font-mono text-[10px] text-muted-foreground">
-                        {new Date(row.created_at).toLocaleDateString()}
-                      </TableCell>
-                      <TableCell className="text-right pr-8">
-                        <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            onClick={() => {
-                              setDraft(row);
-                              setOpen(true);
-                            }}
-                            className="hover:bg-cyan-500/10 hover:text-cyan-600"
+                        </TableCell>
+                        <TableCell>
+                          <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-2">
+                            {row.content_type?.replace("_", " ")}
+                          </Badge>
+                        </TableCell>
+                        <TableCell>
+                          <Badge
+                            className={cn(
+                              "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                              isRowPublished ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600",
+                            )}
                           >
-                            <Pencil className="h-4 w-4" />
-                          </Button>
-                          <Button
-                            variant="ghost"
-                            size="icon"
-                            className="text-destructive hover:bg-destructive/10"
-                            onClick={() => {
-                              if (confirm("Purge Course?")) deleteContent.mutate(row.id);
-                            }}
-                          >
-                            <Trash2 className="h-4 w-4" />
-                          </Button>
-                        </div>
-                      </TableCell>
-                    </TableRow>
-                  ))
+                            {isRowPublished ? "Published" : "Unpublished"}
+                          </Badge>
+                        </TableCell>
+                        <TableCell className="text-right font-mono text-[10px] text-muted-foreground">
+                          {new Date(row.created_at).toLocaleDateString()}
+                        </TableCell>
+                        <TableCell className="text-right pr-8">
+                          <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              onClick={() => {
+                                // Prep draft state matching legacy UI expectations
+                                setDraft({ ...row, status: isRowPublished ? "published" : "draft" });
+                                setOpen(true);
+                              }}
+                              className="hover:bg-cyan-500/10 hover:text-cyan-600"
+                            >
+                              <Pencil className="h-4 w-4" />
+                            </Button>
+                            <Button
+                              variant="ghost"
+                              size="icon"
+                              className="text-destructive hover:bg-destructive/10"
+                              onClick={() => {
+                                if (confirm("Purge Course?")) deleteContent.mutate(row.id);
+                              }}
+                            >
+                              <Trash2 className="h-4 w-4" />
+                            </Button>
+                          </div>
+                        </TableCell>
+                      </TableRow>
+                    );
+                  })
                 )}
               </TableBody>
             </Table>
@@ -168,6 +235,27 @@ export function LearningCoursesTab() {
                 className="h-14 rounded-xl border-2 font-bold"
               />
             </div>
+
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Content Type</Label>
+              <Select value={draft.content_type} onValueChange={(v) => setDraft({ ...draft, content_type: v })}>
+                <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="recorded_course" className="font-bold text-xs uppercase tracking-widest">
+                    Recorded Course
+                  </SelectItem>
+                  <SelectItem value="batch_class" className="font-bold text-xs uppercase tracking-widest">
+                    Batch Class
+                  </SelectItem>
+                  <SelectItem value="live_webinar" className="font-bold text-xs uppercase tracking-widest">
+                    Live Webinar
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
                 Deployment Status
@@ -178,7 +266,7 @@ export function LearningCoursesTab() {
                 </SelectTrigger>
                 <SelectContent>
                   <SelectItem value="draft" className="font-bold text-xs uppercase tracking-widest text-amber-500">
-                    Draft
+                    Draft / Unpublished
                   </SelectItem>
                   <SelectItem
                     value="published"
