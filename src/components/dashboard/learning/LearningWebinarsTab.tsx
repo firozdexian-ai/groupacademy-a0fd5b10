@@ -212,6 +212,21 @@ export function LearningWebinarsTab() {
           </Button>
         </DialogContent>
       </Dialog>
+      <Dialog open={!!sessionsRow} onOpenChange={(o) => !o && setSessionsRow(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-[24px] p-6 border-2 border-border/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase italic tracking-tight text-pink-500 flex items-center gap-2">
+              <CalendarClock className="h-5 w-5" /> Sessions — {sessionsRow?.title}
+            </DialogTitle>
+          </DialogHeader>
+          {sessionsRow && (
+            <CourseSessionsManager
+              contentId={sessionsRow.id}
+              contentTitle={sessionsRow.title || "Webinar"}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
