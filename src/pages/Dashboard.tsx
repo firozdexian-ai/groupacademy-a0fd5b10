@@ -270,6 +270,12 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "ir-emails": React.lazy(() =>
     import("@/components/dashboard/ir/EmailComposer").then((m) => ({ default: m.EmailComposer })),
   ),
+  "ir-dataroom": React.lazy(() =>
+    import("@/components/dashboard/ir/dataroom/DataRoomManager").then((m) => ({ default: m.DataRoomManager })),
+  ),
+  "ir-economics": React.lazy(() =>
+    import("@/components/dashboard/ir/economics/UnitEconomics").then((m) => ({ default: m.UnitEconomics })),
+  ),
   "ir-overview": React.lazy(() => import("@/components/dashboard/investors/IROverviewTab")),
   "ir-influencers": React.lazy(() => import("@/components/dashboard/investors/KeyInfluencersTab")),
   "support-assistant": React.lazy(() =>
@@ -498,6 +504,8 @@ const TAB_TITLES: Record<string, string> = {
   "ir-investors": "Shareholders",
   "ir-pipeline": "Investor Pipeline",
   "ir-emails": "Executive Updates",
+  "ir-dataroom": "Data Room",
+  "ir-economics": "Unit Economics",
   "ir-overview": "IR Overview",
   "ir-influencers": "Key Influencers",
   "support-assistant": "Helpdesk AI",

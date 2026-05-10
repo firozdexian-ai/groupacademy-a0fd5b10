@@ -35,6 +35,7 @@ import PublicCourses from "./pages/PublicCourses";
 import ServiceLanding from "./pages/ServiceLanding";
 import VerifyCertificate from "./pages/VerifyCertificate";
 import VerifySkillCredential from "./pages/VerifySkillCredential";
+import IRDocumentViewer from "./pages/ir/IRDocumentViewer";
 import PublicTalentProfile from "./pages/public/PublicTalentProfile";
 import WebinarLanding from "./pages/public/WebinarLanding";
 import { PWAInstallPrompt } from "./components/PWAInstallPrompt";
@@ -269,6 +270,7 @@ export default function App() {
                   <Route path="/blog/:slug" element={<PublicBlogPost />} />
                   <Route path="/verify/:code" element={<VerifyCertificate />} />
                   <Route path="/verify/skill/:code" element={<VerifySkillCredential />} />
+                  <Route path="/ir/view/:token" element={<IRDocumentViewer />} />
                   <Route path="/t/:handle" element={<PublicTalentProfile />} />
 
                   {/* Phase 5.6 — public discovery */}
