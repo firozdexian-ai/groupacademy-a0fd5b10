@@ -283,6 +283,7 @@ const navGroups: NavGroup[] = [
       { title: "Moderation",       icon: Flag,            value: "learning-moderation" },
       { title: "B2B Engagements",  icon: Building,        value: "learning-b2b-engagements" },
       { title: "Payouts",          icon: Wallet,          value: "learning-payouts" },
+      { title: "JSON Importer",    icon: Upload,          value: "learning-json-importer" },
     ],
   },
   // Legacy Gig Economy group removed — unified above.
