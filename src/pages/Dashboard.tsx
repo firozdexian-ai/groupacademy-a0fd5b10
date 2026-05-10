@@ -118,10 +118,10 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   "companies-unlocks": React.lazy(() =>
     import("@/components/dashboard/companies/ContactUnlocksTab").then((m) => ({ default: m.ContactUnlocksTab })),
   ),
-  all: React.lazy(() => import("@/components/dashboard/ContentList")),
-  videos: React.lazy(() => import("@/components/dashboard/ContentList")),
-  courses: React.lazy(() => import("@/components/dashboard/ContentList")),
-  webinars: React.lazy(() => import("@/components/dashboard/ContentList")),
+  all: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
+  "ugc-videos": React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
+  courses: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
+  webinars: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
   enrollments: React.lazy(() =>
     import("@/components/dashboard/EnrollmentsManager").then((m) => ({ default: m.EnrollmentsManager })),
   ),
