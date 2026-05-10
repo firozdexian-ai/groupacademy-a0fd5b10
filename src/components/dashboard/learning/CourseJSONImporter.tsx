@@ -35,7 +35,6 @@ interface CoursePayload {
     title: string;
     description: string;
     content_type: string;
-    status: string;
     modules: ModulePayload[];
   };
 }
@@ -70,14 +69,14 @@ export const CourseJSONImporter = () => {
 
       const generatedSlug = generateSlug(courseData.title);
 
-      // 1. Insert the main Course (Content) record with Strict Type Casting
+      // 1. Insert the main Course (Content) record
+      // Removed the non-existent 'status' column to respect DB schema
       const { data: contentRecord, error: contentError } = await supabase
         .from("content")
         .insert({
           title: courseData.title,
           description: courseData.description,
           content_type: (courseData.content_type as ContentType) || "recorded_course",
-          status: "unpublished", // Hardcoded safety constraint
           slug: generatedSlug,
         })
         .select()
@@ -120,7 +119,7 @@ export const CourseJSONImporter = () => {
         }
       }
 
-      toast.success(`Course "${courseData.title}" successfully ingested as Unpublished.`);
+      toast.success(`Course "${courseData.title}" successfully ingested.`);
       setJson(""); // Clear on success
     } catch (err: any) {
       console.error(err);
@@ -138,8 +137,8 @@ export const CourseJSONImporter = () => {
           Bulk Course Importer
         </CardTitle>
         <CardDescription>
-          Paste a structured JSON object to rapidly scaffold courses, modules, and resources. All imports are securely
-          flagged as <span className="font-semibold text-destructive">Unpublished</span> by default.
+          Paste a structured JSON object to rapidly scaffold courses, modules, and resources. Database defaults will
+          apply to content visibility states.
         </CardDescription>
       </CardHeader>
       <CardContent>
