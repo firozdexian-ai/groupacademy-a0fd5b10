@@ -11,9 +11,7 @@ import {
   Bot,
   Edit2,
   Save,
-  X,
   MessageSquare,
-  Users,
   Zap,
   ShieldCheck,
   Activity,
@@ -21,13 +19,13 @@ import {
   Settings2,
   Loader2,
 } from "lucide-react";
-import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog";
 import { cn } from "@/lib/utils";
 
 /**
  * Platform Logic: Neural Command Center (AI Agents Manager)
  * High-fidelity orchestrator for system prompt calibration and agent performance audit.
- * 2026 Standard: Executive Logic geometry with real-time session telemetry.
+ * 2024 Standard: Executive Logic geometry with real-time session telemetry.
  */
 
 interface AIAgent {
@@ -74,9 +72,11 @@ export function AIAgentsManager() {
       if (agentsError) throw agentsError;
       setAgents(agentsData || []);
 
+      // CTO FIX: Added .limit(10000) to prevent the silent 1,000 row truncation bug
       const { data: sessionsData, error: sessionsError } = await supabase
         .from("agent_chat_sessions")
-        .select("agent_key, is_active");
+        .select("agent_key, is_active")
+        .limit(10000);
 
       if (sessionsError) throw sessionsError;
 
@@ -143,7 +143,7 @@ export function AIAgentsManager() {
 
   if (isLoading)
     return (
-      <div className="space-y-8 animate-pulse">
+      <div className="space-y-8 animate-pulse p-4 md:p-6">
         <Skeleton className="h-10 w-64 rounded-xl bg-muted/40" />
         <div className="grid gap-6 md:grid-cols-3">
           {[1, 2, 3].map((i) => (
@@ -162,11 +162,14 @@ export function AIAgentsManager() {
   const activeSessions = Object.values(stats).reduce((sum, s) => sum + s.active_sessions, 0);
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-1000">
+    <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Executive Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-2">
-          <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Neural Hub</h2>
+      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3 text-primary">
+            <Activity className="h-8 w-8 text-primary" />
+            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Neural Hub</h2>
+          </div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Core Logic Management & Performance Auditing v2.6
           </p>
@@ -174,9 +177,9 @@ export function AIAgentsManager() {
         <Button
           variant="outline"
           onClick={loadAgents}
-          className="rounded-xl h-11 px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-3 shadow-sm hover:bg-primary/5"
+          className="rounded-xl h-11 px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-3 shadow-sm hover:bg-primary/5 bg-background/50"
         >
-          <Activity className="h-4 w-4 text-primary" /> Re-Sync Registry
+          <RefreshCw className="h-4 w-4 text-primary" /> Re-Sync Registry
         </Button>
       </div>
 
@@ -195,24 +198,24 @@ export function AIAgentsManager() {
         ].map((stat, i) => (
           <Card
             key={i}
-            className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all duration-500"
+            className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all duration-500 shadow-sm"
           >
             <CardContent className="p-8">
               <div className="flex items-center gap-5">
                 <div
                   className={cn(
-                    "h-14 w-14 rounded-2xl flex items-center justify-center border-2 transition-transform duration-500 group-hover:rotate-6 shadow-inner",
+                    "h-14 w-14 rounded-2xl flex items-center justify-center border-2 transition-transform duration-500 group-hover:rotate-6 shadow-inner shrink-0",
                     stat.bg,
                     "border-white/5",
                   )}
                 >
                   <stat.icon className={cn("h-7 w-7", stat.color)} />
                 </div>
-                <div>
-                  <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                <div className="min-w-0">
+                  <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 mb-1 truncate">
                     {stat.label}
                   </p>
-                  <p className="text-3xl font-black tracking-tighter italic leading-none">{stat.val}</p>
+                  <p className="text-3xl font-black tracking-tighter italic leading-none truncate">{stat.val}</p>
                 </div>
               </div>
             </CardContent>
@@ -230,19 +233,24 @@ export function AIAgentsManager() {
             <Card
               key={agent.id}
               className={cn(
-                "group rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm transition-all duration-500 hover:border-primary/40 hover:shadow-2xl overflow-hidden flex flex-col",
+                "group rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl transition-all duration-500 hover:border-primary/40 hover:shadow-2xl overflow-hidden flex flex-col shadow-lg",
                 !isActive && "opacity-60 grayscale-[0.5] border-dashed",
               )}
             >
+              {/* CTO Phase 6 Addition: Top Gradient Accent */}
+              <div
+                className="h-2 w-full shrink-0"
+                style={{ background: `linear-gradient(to right, ${agent.color || "var(--primary)"}, transparent)` }}
+              />
               <CardHeader className="p-8 pb-4">
                 <div className="flex items-start justify-between mb-6">
                   <div
-                    className="h-14 w-14 rounded-2xl border-2 border-white/5 flex items-center justify-center transition-transform duration-500 group-hover:rotate-3 shadow-inner"
+                    className="h-14 w-14 rounded-2xl border-2 border-white/5 flex items-center justify-center transition-transform duration-500 group-hover:rotate-6 shadow-inner shrink-0"
                     style={{ backgroundColor: agent.bg_color || "rgba(var(--primary-rgb), 0.1)" }}
                   >
                     <Bot className="h-7 w-7" style={{ color: agent.color || "var(--primary)" }} />
                   </div>
-                  <div className="flex items-center gap-3">
+                  <div className="flex items-center gap-3 shrink-0">
                     <Switch
                       checked={isActive ?? true}
                       onCheckedChange={() => handleToggleActive(agent)}
@@ -258,10 +266,10 @@ export function AIAgentsManager() {
                     </Button>
                   </div>
                 </div>
-                <CardTitle className="text-2xl font-black uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors">
+                <CardTitle className="text-2xl font-black uppercase tracking-tighter italic leading-none group-hover:text-primary transition-colors truncate">
                   {agent.name}
                 </CardTitle>
-                <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 italic">
+                <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1.5 italic truncate">
                   Protocol: {agent.agent_key}
                 </p>
               </CardHeader>
@@ -298,7 +306,7 @@ export function AIAgentsManager() {
                       <span
                         className={cn(
                           "text-lg font-black italic tracking-tighter",
-                          agentStats.active_sessions > 0 ? "text-emerald-500" : "text-muted-foreground/20",
+                          agentStats.active_sessions > 0 ? "text-emerald-500" : "text-muted-foreground/30",
                         )}
                       >
                         {agentStats.active_sessions} LIVE
@@ -320,11 +328,11 @@ export function AIAgentsManager() {
             <DialogHeader className="mb-8">
               <div className="flex items-center gap-4">
                 <Settings2 className="h-8 w-8 text-primary" />
-                <div className="space-y-1">
+                <div className="space-y-1 text-left">
                   <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary italic">
                     Neural Recalibration Node
                   </p>
-                  <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+                  <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic leading-none">
                     Calibration: {editingAgent?.name}
                   </DialogTitle>
                 </div>
@@ -368,9 +376,9 @@ export function AIAgentsManager() {
 
               <div className="flex justify-end gap-4 pt-6 border-t border-border/10">
                 <Button
-                  variant="ghost"
+                  variant="outline"
                   onClick={() => setEditingAgent(null)}
-                  className="h-14 px-8 font-black uppercase text-[10px] tracking-widest"
+                  className="h-14 px-8 font-black uppercase text-[10px] tracking-widest rounded-xl border-2"
                 >
                   Terminate
                 </Button>
