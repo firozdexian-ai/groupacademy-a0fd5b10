@@ -2,16 +2,13 @@ import { createClient } from "https://esm.sh/@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
-  "Access-Control-Allow-Headers":
-    "authorization, x-client-info, apikey, content-type, stripe-signature",
+  "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type, stripe-signature",
 };
 
 async function getWebhookSecret(adminClient: any): Promise<string | null> {
-  // Try env var first
   const envSecret = Deno.env.get("STRIPE_WEBHOOK_SECRET");
   if (envSecret) return envSecret;
 
-  // Fallback: read from platform_settings
   const { data } = await adminClient
     .from("platform_settings")
     .select("value")
@@ -21,11 +18,7 @@ async function getWebhookSecret(adminClient: any): Promise<string | null> {
   return data?.value || null;
 }
 
-async function verifyStripeSignature(
-  payload: string,
-  sigHeader: string,
-  secret: string
-): Promise<boolean> {
+async function verifyStripeSignature(payload: string, sigHeader: string, secret: string): Promise<boolean> {
   const parts = sigHeader.split(",").reduce((acc: Record<string, string>, part) => {
     const [key, val] = part.split("=");
     acc[key.trim()] = val;
@@ -36,19 +29,14 @@ async function verifyStripeSignature(
   const signature = parts["v1"];
   if (!timestamp || !signature) return false;
 
-  // Check timestamp tolerance (5 min)
   const age = Math.floor(Date.now() / 1000) - parseInt(timestamp);
   if (Math.abs(age) > 300) return false;
 
   const signedPayload = `${timestamp}.${payload}`;
   const encoder = new TextEncoder();
-  const key = await crypto.subtle.importKey(
-    "raw",
-    encoder.encode(secret),
-    { name: "HMAC", hash: "SHA-256" },
-    false,
-    ["sign"]
-  );
+  const key = await crypto.subtle.importKey("raw", encoder.encode(secret), { name: "HMAC", hash: "SHA-256" }, false, [
+    "sign",
+  ]);
   const sig = await crypto.subtle.sign("HMAC", key, encoder.encode(signedPayload));
   const expectedSig = Array.from(new Uint8Array(sig))
     .map((b) => b.toString(16).padStart(2, "0"))
@@ -89,7 +77,6 @@ Deno.serve(async (req) => {
     const event = JSON.parse(body);
 
     if (event.type !== "checkout.session.completed") {
-      // Acknowledge other events
       return new Response(JSON.stringify({ received: true }), {
         headers: { "Content-Type": "application/json" },
       });
@@ -98,57 +85,75 @@ Deno.serve(async (req) => {
     const session = event.data.object;
     const talentId = session.metadata?.talent_id;
     const credits = parseInt(session.metadata?.credits || "0");
+    const amountPaid = session.amount_total ? session.amount_total / 100 : 0; // Assuming USD/BDT cents
 
     if (!talentId || credits <= 0) {
       console.error("Missing metadata in checkout session:", session.id);
       return new Response("Missing metadata", { status: 400 });
     }
 
-    // Get current balance
-    const { data: creditRecord } = await supabase
-      .from("talent_credits")
-      .select("balance")
-      .eq("talent_id", talentId)
-      .single();
+    // 1. Idempotency Check: Verify if we've already processed this exact Stripe event
+    const { data: existingInvoice } = await supabase
+      .from("credit_invoices")
+      .select("id")
+      .eq("stripe_event_id", event.id)
+      .maybeSingle();
 
-    const currentBalance = creditRecord?.balance || 0;
-    const newBalance = currentBalance + credits;
-
-    // Update balance
-    if (creditRecord) {
-      await supabase
-        .from("talent_credits")
-        .update({ balance: newBalance })
-        .eq("talent_id", talentId);
-    } else {
-      await supabase
-        .from("talent_credits")
-        .insert({ talent_id: talentId, balance: newBalance });
+    if (existingInvoice) {
+      console.log(`Idempotency guard: Event ${event.id} already processed. Skipping.`);
+      return new Response(JSON.stringify({ received: true, duplicate: true }), {
+        headers: { "Content-Type": "application/json" },
+      });
     }
 
-    // Record fulfilled transaction
-    await supabase.from("credit_transactions").insert({
+    // 2. Lock the event by writing the invoice EXACTLY once
+    const { error: invoiceError } = await supabase.from("credit_invoices").insert({
+      stripe_event_id: event.id,
+      stripe_session_id: session.id,
       talent_id: talentId,
-      amount: credits,
-      balance_after: newBalance,
-      transaction_type: "stripe_purchase",
-      service_type: "credit_purchase",
-      description: `Purchased ${credits} credits via Stripe (${session.id})`,
+      credits_purchased: credits,
+      amount_paid: amountPaid,
+      status: "paid",
     });
 
-    // Send notification
+    if (invoiceError) {
+      console.error("Failed to write to credit_invoices:", invoiceError);
+      return new Response("Failed to write invoice lock", { status: 500 });
+    }
+
+    // 3. Add credits using atomic RPC to prevent memory race conditions
+    const { error: rpcError } = await supabase.rpc("add_credits", {
+      p_talent_id: talentId,
+      p_amount: credits,
+      p_type: "purchase",
+      p_reference: `Stripe Checkout (${session.id})`,
+    });
+
+    if (rpcError) {
+      // Fallback to manual insert if RPC is unavailable in current schema
+      console.warn("RPC add_credits failed, falling back to direct ledger insert", rpcError);
+      await supabase.from("credit_transactions").insert({
+        talent_id: talentId,
+        amount: credits,
+        type: "purchase",
+        status: "completed",
+        description: `Purchased ${credits} credits via Stripe (${session.id})`,
+      });
+    }
+
+    // 4. Send notification
     await supabase.from("notifications").insert({
       talent_id: talentId,
       type: "reward",
       title: `${credits} credits added! 💳`,
-      message: `Your purchase of ${credits} credits has been confirmed. New balance: ${newBalance} credits.`,
+      message: `Your purchase of ${credits} credits has been confirmed.`,
       icon: "coins",
-      link: "/app/profile",
+      link: "/app/transactions",
     });
 
-    console.log(`Fulfilled ${credits} credits for talent ${talentId}, new balance: ${newBalance}`);
+    console.log(`Successfully fulfilled ${credits} credits for talent ${talentId} (Event: ${event.id})`);
 
-    return new Response(JSON.stringify({ received: true }), {
+    return new Response(JSON.stringify({ received: true, success: true }), {
       headers: { "Content-Type": "application/json" },
     });
   } catch (err) {
