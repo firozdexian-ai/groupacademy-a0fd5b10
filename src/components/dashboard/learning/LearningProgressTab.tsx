@@ -439,6 +439,22 @@ export function LearningProgressTab() {
           ))}
         </div>
       </footer>
+
+      {/* Quiz Results Viewer */}
+      <Dialog open={!!selectedEnrollment} onOpenChange={(o) => !o && setSelectedEnrollment(null)}>
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-[32px] p-6 border-2 border-border/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
+              <ClipboardCheck className="h-5 w-5" /> Quiz Results
+              {selectedEnrollment && <span className="text-xs text-muted-foreground"> — {selectedEnrollment.talentName}</span>}
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+              Per-learner quiz attempts and outcomes.
+            </DialogDescription>
+          </DialogHeader>
+          <QuizResultsViewer />
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
