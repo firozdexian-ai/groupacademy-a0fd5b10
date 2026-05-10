@@ -59,6 +59,7 @@ interface LearnerDetail {
 
 export function LearningProgressTab() {
   const [selectedCourse, setSelectedCourse] = useState<string>("all");
+  const [selectedEnrollment, setSelectedEnrollment] = useState<LearnerDetail | null>(null);
 
   const { data: courses, isLoading: coursesLoading } = useQuery({
     queryKey: ["admin-courses-list"],
