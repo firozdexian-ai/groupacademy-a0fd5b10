@@ -180,13 +180,11 @@ export function IRPipelineBoard() {
         </DragDropContext>
       )}
 
-      {selected && (
-        <InvestorDetailSheet
-          investor={selected as any}
-          open={!!selected}
-          onOpenChange={(open) => !open && setSelected(null)}
-        />
-      )}
+      <InvestorDetailSheet
+        investorId={selected?.id ?? null}
+        open={!!selected}
+        onOpenChange={(open) => !open && setSelected(null)}
+      />
 
       {!isLoading && (data?.length ?? 0) === 0 && (
         <Card>
