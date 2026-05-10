@@ -17,12 +17,12 @@ export function useGigGraph() {
     queryKey: ["gig_graph_master"],
     queryFn: async () => {
       const [gigsRes, marketRes, courseRes, subRes, verifRes, walletRes] = await Promise.all([
-        supabase.from("gigs").select("id, title, status, reward_amount, created_at").order("created_at", { ascending: false }).limit(500),
-        supabase.from("marketplace_gigs").select("id, title, status, budget, created_at").order("created_at", { ascending: false }).limit(500),
-        supabase.from("course_projects").select("id, title, status, created_at").order("created_at", { ascending: false }).limit(500),
+        supabase.from("gigs").select("id, title, status:is_active, reward_amount:credit_reward, created_at").order("created_at", { ascending: false }).limit(500),
+        supabase.from("marketplace_gigs").select("id, title, status, budget:budget_amount, created_at").order("created_at", { ascending: false }).limit(500),
+        supabase.from("course_projects").select("id, status, created_at, course:course_id(title)").order("created_at", { ascending: false }).limit(500),
         supabase.from("gig_submissions").select("id, gig_id, talent_id, status, created_at").order("created_at", { ascending: false }).limit(500),
-        supabase.from("gig_verifications").select("id, talent_id, status, created_at").order("created_at", { ascending: false }).limit(500),
-        supabase.from("withdrawal_requests").select("id, talent_id, amount, status, created_at").order("created_at", { ascending: false }).limit(500),
+        supabase.from("gig_verifications").select("id, talent_id, status:verdict, created_at").order("created_at", { ascending: false }).limit(500),
+        supabase.from("withdrawal_requests").select("id, talent_id, amount:amount_credits, status, created_at").order("created_at", { ascending: false }).limit(500),
       ]);
 
       if (gigsRes.error) throw gigsRes.error;
@@ -33,12 +33,20 @@ export function useGigGraph() {
       if (walletRes.error) throw walletRes.error;
 
       return {
-        quickActions: gigsRes.data as GigNode[],
-        marketplaceGigs: marketRes.data as MarketplaceGig[],
-        courseProjects: courseRes.data as CourseProject[],
-        submissions: subRes.data as GigSubmission[],
-        verifications: verifRes.data as GigVerification[],
-        withdrawals: walletRes.data as WithdrawalRequest[],
+        quickActions: (gigsRes.data ?? []).map((g: any) => ({
+          ...g,
+          status: g.status ? "active" : "inactive",
+        })) as GigNode[],
+        marketplaceGigs: (marketRes.data ?? []) as unknown as MarketplaceGig[],
+        courseProjects: (courseRes.data ?? []).map((c: any) => ({
+          id: c.id,
+          title: c.course?.title ?? "Untitled Project",
+          status: c.status,
+          created_at: c.created_at,
+        })) as CourseProject[],
+        submissions: (subRes.data ?? []) as unknown as GigSubmission[],
+        verifications: (verifRes.data ?? []) as unknown as GigVerification[],
+        withdrawals: (walletRes.data ?? []) as unknown as WithdrawalRequest[],
       };
     },
   });
