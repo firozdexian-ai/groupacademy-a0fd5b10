@@ -28,6 +28,8 @@ import {
   Bell,
   Trophy,
   FileText,
+  BarChart2,
+  Building,
   ChevronDown,
   BarChart,
   PieChart,
