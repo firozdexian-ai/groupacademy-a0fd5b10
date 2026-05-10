@@ -240,6 +240,21 @@ export function LearningCohortsTab() {
           </Button>
         </DialogContent>
       </Dialog>
+      <Dialog open={!!sessionsRow} onOpenChange={(o) => !o && setSessionsRow(null)}>
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-[24px] p-6 border-2 border-border/40">
+          <DialogHeader>
+            <DialogTitle className="text-xl font-black uppercase italic tracking-tight text-indigo-500 flex items-center gap-2">
+              <Video className="h-5 w-5" /> Live Sessions — {sessionsRow?.name}
+            </DialogTitle>
+          </DialogHeader>
+          {sessionsRow?.content_id && (
+            <CourseSessionsManager
+              contentId={sessionsRow.content_id}
+              contentTitle={sessionsRow.name || "Cohort"}
+            />
+          )}
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
