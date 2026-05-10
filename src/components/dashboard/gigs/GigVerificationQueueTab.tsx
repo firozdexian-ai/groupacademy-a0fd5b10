@@ -1,97 +1,204 @@
-import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { Badge } from "@/components/ui/badge";
+import { useState } from "react";
+import { useGigGraph } from "@/hooks/useGigGraph";
+import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
+import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
+import { Skeleton } from "@/components/ui/skeleton";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
+import { Plus, Pencil, Trash2, ShieldCheck, User } from "lucide-react";
+import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
+import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Badge } from "@/components/ui/badge";
+import { cn } from "@/lib/utils";
 
 export function GigVerificationQueueTab() {
-  const { data, isLoading, refetch } = useQuery({
-    queryKey: ["admin-verifications"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("gig_verifications")
-        .select("*")
-        .in("verdict", ["escalated", "auto_revise", "pending"])
-        .order("created_at", { ascending: false })
-        .limit(100);
-      return data ?? [];
-    },
-  });
-
-  const { data: appeals } = useQuery({
-    queryKey: ["admin-appeals"],
-    queryFn: async () => {
-      const { data } = await supabase
-        .from("gig_verification_appeals")
-        .select("*")
-        .eq("status", "pending")
-        .order("created_at", { ascending: false })
-        .limit(50);
-      return data ?? [];
-    },
-  });
-
-  const decide = async (id: string, verdict: "human_approved" | "human_rejected") => {
-    await supabase.from("gig_verifications").update({ verdict, reviewed_at: new Date().toISOString() }).eq("id", id);
-    await supabase.rpc("apply_verification_verdict", { _verification_id: id });
-    toast.success("Verdict applied");
-    refetch();
-  };
-
-  const resolveAppeal = async (id: string, decision: "approved" | "rejected") => {
-    const { error } = await supabase.rpc("resolve_verification_appeal", { _appeal_id: id, _decision: decision });
-    if (error) toast.error(error.message); else { toast.success("Appeal resolved"); refetch(); }
-  };
-
-  if (isLoading) return <Skeleton className="h-40 w-full" />;
+  const {
+    gigGraphQuery,
+    mutations: { upsertVerification, deleteVerification },
+  } = useGigGraph();
+  const { data, isLoading } = gigGraphQuery;
+  const [open, setOpen] = useState(false);
+  const [draft, setDraft] = useState<any>({ status: "pending" });
 
   return (
-    <div className="space-y-4">
-      <section>
-        <h3 className="text-sm font-semibold mb-2">Escalated & revision queue ({data?.length ?? 0})</h3>
-        {data?.length === 0 ? (
-          <Card className="p-4 text-center text-sm text-muted-foreground">Nothing to review.</Card>
-        ) : (
-          <div className="space-y-2">
-            {data?.map((v: any) => (
-              <Card key={v.id} className="p-3 space-y-2">
-                <div className="flex items-center gap-2 flex-wrap">
-                  <Badge variant="outline" className="capitalize">{v.gig_kind}</Badge>
-                  <Badge variant="secondary" className="capitalize">{v.verdict.replace("_", " ")}</Badge>
-                  {v.score != null && <Badge>Score {v.score}</Badge>}
-                  {(v.risk_flags ?? []).map((f: string) => <Badge key={f} variant="destructive">{f}</Badge>)}
-                </div>
-                {v.rationale && <p className="text-xs text-muted-foreground line-clamp-3">{v.rationale}</p>}
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => decide(v.id, "human_approved")}>Approve</Button>
-                  <Button size="sm" variant="destructive" onClick={() => decide(v.id, "human_rejected")}>Reject</Button>
-                </div>
-              </Card>
-            ))}
+    <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <div className="space-y-1 text-left">
+          <div className="flex items-center gap-3 text-emerald-500">
+            <ShieldCheck className="h-8 w-8 text-emerald-500 fill-emerald-500/20" />
+            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+              Trust Verification
+            </h2>
           </div>
-        )}
-      </section>
+          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+            Talent Identity & Quality Audits
+          </p>
+        </div>
+        <Button
+          onClick={() => {
+            setDraft({ status: "pending" });
+            setOpen(true);
+          }}
+          className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
+        >
+          <Plus className="h-4 w-4" /> Force Audit
+        </Button>
+      </header>
 
-      <section>
-        <h3 className="text-sm font-semibold mb-2">Pending appeals ({appeals?.length ?? 0})</h3>
-        {appeals?.length === 0 ? (
-          <Card className="p-4 text-center text-sm text-muted-foreground">No appeals.</Card>
-        ) : (
-          <div className="space-y-2">
-            {appeals?.map((a: any) => (
-              <Card key={a.id} className="p-3 space-y-2">
-                <p className="text-sm">{a.reason}</p>
-                <div className="flex gap-2">
-                  <Button size="sm" onClick={() => resolveAppeal(a.id, "approved")}>Uphold appeal</Button>
-                  <Button size="sm" variant="outline" onClick={() => resolveAppeal(a.id, "rejected")}>Reject appeal</Button>
-                </div>
-              </Card>
-            ))}
+      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+        <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-teal-500 to-cyan-500" />
+        <CardContent className="p-0">
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+                <TableRow className="hover:bg-transparent">
+                  <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">Audit ID</TableHead>
+                  <TableHead className="font-black uppercase text-[10px] tracking-widest">Talent Node</TableHead>
+                  <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+                  <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">
+                    Timestamp
+                  </TableHead>
+                  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody className="divide-y divide-border/5">
+                {isLoading ? (
+                  <TableRow>
+                    <TableCell colSpan={5} className="py-20 text-center">
+                      <Skeleton className="h-8 w-32 mx-auto" />
+                    </TableCell>
+                  </TableRow>
+                ) : data?.verifications?.length === 0 ? (
+                  <TableRow>
+                    <TableCell
+                      colSpan={5}
+                      className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+                    >
+                      Zero audits pending.
+                    </TableCell>
+                  </TableRow>
+                ) : (
+                  data?.verifications?.map((row) => (
+                    <TableRow key={row.id} className="group hover:bg-emerald-500/[0.02]">
+                      <TableCell className="py-6 pl-8">
+                        <div className="flex items-center gap-3">
+                          <div className="h-8 w-8 rounded-lg bg-background border-2 border-border/20 flex items-center justify-center shrink-0">
+                            <ShieldCheck className="h-3 w-3 text-emerald-500" />
+                          </div>
+                          <span className="font-mono text-xs uppercase tracking-tight text-muted-foreground">
+                            {row.id?.substring(0, 8)}
+                          </span>
+                        </div>
+                      </TableCell>
+                      <TableCell>
+                        <span className="font-mono text-[10px] text-foreground font-black flex items-center gap-1.5">
+                          <User className="h-3 w-3 text-emerald-500" />{" "}
+                          {row.talent_id ? row.talent_id.substring(0, 8) : "Unknown"}
+                        </span>
+                      </TableCell>
+                      <TableCell>
+                        <Badge
+                          className={cn(
+                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            row.status === "verified"
+                              ? "bg-emerald-500/10 text-emerald-600"
+                              : row.status === "rejected"
+                                ? "bg-rose-500/10 text-rose-600"
+                                : "bg-amber-500/10 text-amber-600",
+                          )}
+                        >
+                          {row.status}
+                        </Badge>
+                      </TableCell>
+                      <TableCell className="text-right font-mono text-[10px] text-muted-foreground">
+                        {new Date(row.created_at).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell className="text-right pr-8">
+                        <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            onClick={() => {
+                              setDraft(row);
+                              setOpen(true);
+                            }}
+                            className="hover:bg-emerald-500/10 hover:text-emerald-600"
+                          >
+                            <Pencil className="h-4 w-4" />
+                          </Button>
+                          <Button
+                            variant="ghost"
+                            size="icon"
+                            className="text-destructive hover:bg-destructive/10"
+                            onClick={() => {
+                              if (confirm("Purge Audit?")) deleteVerification.mutate(row.id);
+                            }}
+                          >
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </div>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                )}
+              </TableBody>
+            </Table>
           </div>
-        )}
-      </section>
+        </CardContent>
+      </Card>
+
+      <Dialog open={open} onOpenChange={setOpen}>
+        <DialogContent className="max-w-md rounded-[40px] p-8 border-4 border-border/40 text-left">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
+              <ShieldCheck className="h-6 w-6" /> Force Audit
+            </DialogTitle>
+            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+              Manually update trust verification status.
+            </DialogDescription>
+          </DialogHeader>
+          <div className="space-y-4 py-4">
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Talent ID</Label>
+              <Input
+                placeholder="UUID"
+                value={draft.talent_id || ""}
+                onChange={(e) => setDraft({ ...draft, talent_id: e.target.value })}
+                className="h-14 rounded-xl border-2 font-mono text-xs"
+              />
+            </div>
+            <div className="space-y-2">
+              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Audit Status</Label>
+              <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
+                <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+                  <SelectValue />
+                </SelectTrigger>
+                <SelectContent>
+                  <SelectItem value="pending" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                    Pending
+                  </SelectItem>
+                  <SelectItem value="verified" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                    Verified
+                  </SelectItem>
+                  <SelectItem value="rejected" className="font-bold text-xs uppercase tracking-widest text-rose-500">
+                    Rejected
+                  </SelectItem>
+                </SelectContent>
+              </Select>
+            </div>
+          </div>
+          <Button
+            disabled={!draft.talent_id || upsertVerification.isPending}
+            onClick={() => upsertVerification.mutate(draft, { onSuccess: () => setOpen(false) })}
+            className="h-14 rounded-xl font-black uppercase bg-emerald-600 hover:bg-emerald-700 text-white"
+          >
+            <ShieldCheck className="mr-2 h-5 w-5" /> Execute Audit
+          </Button>
+        </DialogContent>
+      </Dialog>
     </div>
   );
 }
+
+export default GigVerificationQueueTab;
