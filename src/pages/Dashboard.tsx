@@ -98,16 +98,8 @@ const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   ),
   all: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
   "ugc-videos": React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
-  courses: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
-  webinars: React.lazy(() => import("@/components/dashboard/ugc/UgcVideosTab")),
-  enrollments: React.lazy(() =>
-    import("@/components/dashboard/EnrollmentsManager").then((m) => ({ default: m.EnrollmentsManager })),
-  ),
-  "learner-progress": React.lazy(() =>
-    import("@/components/dashboard/LearnerProgressManager").then((m) => ({ default: m.LearnerProgressManager })),
-  ),
   "ai-content-tools": React.lazy(() =>
-    import("@/components/dashboard/BatchContentGenerator").then((m) => ({ default: m.BatchContentGenerator })),
+    import("@/components/dashboard/learning/content-widgets/BatchContentGenerator").then((m) => ({ default: m.BatchContentGenerator })),
   ),
   analytics: React.lazy(() =>
     import("@/components/dashboard/MarketingAnalytics").then((m) => ({ default: m.MarketingAnalytics })),
