@@ -213,6 +213,17 @@ export function LearningCoursesTab() {
                             >
                               <Layers className="h-4 w-4" />
                             </Button>
+                            <AIActionButton
+                              mode="description"
+                              context={{
+                                title: row.title,
+                                content_type: row.content_type,
+                              }}
+                              onResult={() => {}}
+                              label="AI"
+                              size="sm"
+                              className="hover:bg-violet-500/10 hover:text-violet-600"
+                            />
                             <Button
                               variant="ghost"
                               size="icon"
