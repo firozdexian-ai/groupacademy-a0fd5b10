@@ -59,6 +59,8 @@ interface AuthChatState {
   collected: CollectedData;
   quiz: QuizData | null;
   error: string | null;
+  instanceId: string | null;
+  agentName: string;
 }
 
 type Action =
@@ -70,6 +72,7 @@ type Action =
   | { type: "PATCH_COLLECTED"; value: Partial<CollectedData> }
   | { type: "SET_QUIZ"; value: QuizData | null }
   | { type: "SET_ERROR"; value: string | null }
+  | { type: "SET_INSTANCE"; instanceId: string | null; agentName: string }
   | { type: "COMPLETE" };
 
 const genId = () =>
@@ -84,6 +87,8 @@ const initialState: AuthChatState = {
   collected: { email: "", name: "", phone: "", countryCode: "+880", country: "Bangladesh" },
   quiz: null,
   error: null,
+  instanceId: null,
+  agentName: "Aisha",
 };
 
 function reducer(state: AuthChatState, action: Action): AuthChatState {
