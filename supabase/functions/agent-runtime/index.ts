@@ -36,37 +36,45 @@ serve(async (req) => {
       return json({ error: "UNAUTHORIZED" }, 401);
     }
 
-    const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
-      global: { headers: { Authorization: authHeader } },
-    });
     const admin = createClient(SUPABASE_URL, SERVICE_ROLE_KEY);
-
-    const { data: userData, error: authErr } = await userClient.auth.getUser();
-    if (authErr || !userData?.user) return json({ error: "UNAUTHORIZED" }, 401);
-    const user = userData.user;
+    const bearer = authHeader.replace(/^Bearer\s+/i, "").trim();
+    const isCronTrigger = req.headers.get("x-cron-trigger") === "true";
+    const isServiceCall = bearer === SERVICE_ROLE_KEY;
 
     const body = (await req.json()) as RunRequest;
     if (!body?.agent_key || !body?.message) {
       return json({ error: "agent_key and message required" }, 400);
     }
 
-    // Resolve subject — admin > company > talent.
-    // Admins (per has_any_admin_role) bypass credit charges and the company tool-loop;
-    // Company subjects must be requested explicitly and verified via company_members.
     let subjectKind = "talent";
     let subjectId: string | null = null;
     let talentRow: any = null;
     let isAdmin = false;
+    let user: any = null;
 
-    // Admin probe — same gate as the `Admins manage all threads` RLS policy.
-    const { data: adminFlag } = await admin.rpc("has_any_admin_role", { _user_id: user.id });
-    isAdmin = adminFlag === true;
-
-    if (isAdmin && (body as any).subject_kind !== "company") {
-      // Default admin path: subject = the admin user themselves.
+    if (isServiceCall) {
+      // Server-to-server (cron / system) — trust the payload's subject_id.
+      const sid = (body as any).subject_id as string | undefined;
+      if (!sid) return json({ error: "subject_id required for service call" }, 400);
+      isAdmin = true;
       subjectKind = "admin";
-      subjectId = user.id;
-    } else if ((body as any).subject_kind === "company" && (body as any).subject_id) {
+      subjectId = sid;
+      user = { id: sid };
+    } else {
+      const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
+        global: { headers: { Authorization: authHeader } },
+      });
+      const { data: userData, error: authErr } = await userClient.auth.getUser();
+      if (authErr || !userData?.user) return json({ error: "UNAUTHORIZED" }, 401);
+      user = userData.user;
+
+      const { data: adminFlag } = await admin.rpc("has_any_admin_role", { _user_id: user.id });
+      isAdmin = adminFlag === true;
+
+      if (isAdmin && (body as any).subject_kind !== "company") {
+        subjectKind = "admin";
+        subjectId = user.id;
+      } else if ((body as any).subject_kind === "company" && (body as any).subject_id) {
       const companyId = (body as any).subject_id as string;
       const { data: membership } = await admin
         .from("company_members")
@@ -87,6 +95,7 @@ serve(async (req) => {
       if (!talent) return json({ error: "NO_TALENT_PROFILE" }, 403);
       subjectId = talent.id;
       talentRow = talent;
+    }
     }
 
     // Load agent
