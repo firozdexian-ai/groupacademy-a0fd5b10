@@ -65,6 +65,7 @@ import {
   Receipt,
   Banknote,
   Activity,
+  Radio,
 } from "lucide-react";
 import {
   Sidebar,
