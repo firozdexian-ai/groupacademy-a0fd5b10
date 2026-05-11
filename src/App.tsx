@@ -334,6 +334,14 @@ export default function App() {
                       </ProtectedRoute>
                     }
                   />
+                  <Route
+                    path="/admin/inbox"
+                    element={
+                      <ProtectedRoute requireAnyAdminRole>
+                        <AdminLiveInbox />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="/my-learning" element={<Navigate to="/app/learning/my-courses" replace />} />
 
                   {/* ================= ADMIN ROUTES ================= */}
