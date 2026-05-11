@@ -49,6 +49,24 @@ serve(async (req) => {
     const isServiceCall = !!cronPass && bearer === cronPass;
 
     const body = (await req.json()) as RunRequest;
+
+    // ────────────────────────────────────────────────────────────────────
+    // WaaS (Workforce-as-a-Service) flow — multi-tenant Hired Instances.
+    // Triggered when the caller (typically the workforce-*-router edge
+    // function) provides an `instance_id`. We do NOT touch the legacy
+    // `ai_agents` table here. Auth is implicit: only trusted service-role
+    // callers (other edge functions) can reach this branch in practice
+    // because the router validates channel credentials before dispatch.
+    // ────────────────────────────────────────────────────────────────────
+    if (body?.instance_id) {
+      try {
+        return await runWorkforceInstance(body, admin);
+      } catch (err: any) {
+        console.error("[agent-runtime/waas] fault", err);
+        return json({ error: err?.message || "WAAS_FAULT" }, 500);
+      }
+    }
+
     if (!body?.agent_key || !body?.message) {
       return json({ error: "agent_key and message required" }, 400);
     }
