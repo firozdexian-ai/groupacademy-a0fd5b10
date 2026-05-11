@@ -733,7 +733,7 @@ async function runWorkforceInstance(body: RunRequest, admin: any): Promise<Respo
       .select("id")
       .eq("instance_id", instanceId)
       .eq("subject_kind", subjectKind)
-      .eq("subject_id", subjectId)
+      .eq("external_subject_id", subjectId)
       .order("last_message_at", { ascending: false, nullsFirst: false })
       .limit(1)
       .maybeSingle();
@@ -746,7 +746,7 @@ async function runWorkforceInstance(body: RunRequest, admin: any): Promise<Respo
           instance_id: instanceId,
           agent_key: template.agent_key,
           subject_kind: subjectKind,
-          subject_id: subjectId,
+          external_subject_id: subjectId,
           title: userText.slice(0, 60),
         })
         .select("id")
