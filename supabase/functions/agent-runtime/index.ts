@@ -96,6 +96,7 @@ serve(async (req) => {
       subjectId = talent.id;
       talentRow = talent;
     }
+    }
 
     // Load agent
     const { data: agent, error: agentErr } = await admin
