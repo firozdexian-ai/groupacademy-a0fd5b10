@@ -60,6 +60,7 @@ import QuizManagement from "./pages/QuizManagement";
 import ModuleManagement from "./pages/ModuleManagement";
 import ModuleResourcesManager from "./pages/ModuleResourcesManager";
 import Organization from "./pages/Organization";
+import WorkforceFleet from "./pages/admin/WorkforceFleet";
 
 // App/Dashboard Pages
 import Feed from "./pages/app/Feed";
@@ -307,6 +308,14 @@ export default function App() {
                   <Route path="/professions" element={<Navigate to="/auth?returnTo=/app/learning/tracks" replace />} />
                   <Route path="/my-profile" element={<Navigate to="/app/profile" replace />} />
                   <Route path="/admin" element={<Navigate to="/dashboard" replace />} />
+                  <Route
+                    path="/admin/workforce"
+                    element={
+                      <ProtectedRoute requireAnyAdminRole>
+                        <WorkforceFleet />
+                      </ProtectedRoute>
+                    }
+                  />
                   <Route path="/my-learning" element={<Navigate to="/app/learning/my-courses" replace />} />
 
                   {/* ================= ADMIN ROUTES ================= */}
