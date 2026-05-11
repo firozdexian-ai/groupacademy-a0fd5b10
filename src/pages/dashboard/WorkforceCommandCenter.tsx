@@ -736,15 +736,23 @@ function RoutingPanel() {
     <div className="space-y-6">
       <div className="flex justify-between items-center">
         <h3 className="text-lg font-semibold">Master Routing Switchboard</h3>
-        <button
-          onClick={() => {
-            setEditing(null);
-            setOpen(true);
-          }}
-          className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-md shadow-sm"
-        >
-          New Route
-        </button>
+        <div className="flex gap-2">
+          <button
+            onClick={() => setScannerOpen(true)}
+            className="px-4 py-2 bg-sky-500/10 hover:bg-sky-500/20 text-sky-500 border border-sky-500/30 font-bold text-sm rounded-md"
+          >
+            Telegram Scanner (Debug)
+          </button>
+          <button
+            onClick={() => {
+              setEditing(null);
+              setOpen(true);
+            }}
+            className="px-4 py-2 bg-amber-500 hover:bg-amber-600 text-white font-bold text-sm rounded-md shadow-sm"
+          >
+            New Route
+          </button>
+        </div>
       </div>
 
       <div className="overflow-x-auto border border-border/40 rounded-lg">
