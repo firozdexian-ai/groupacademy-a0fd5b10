@@ -21,10 +21,16 @@ const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY")!;
 const FREE_AGENTS = new Set(["ai-general", "aisha"]);
 
 interface RunRequest {
-  agent_key: string;
+  agent_key?: string;
   thread_id?: string;
-  message: string;
+  message?: string;
   context?: Record<string, unknown>;
+  // WaaS — Workforce-as-a-Service flow
+  instance_id?: string;
+  source?: string; // e.g. "telegram"
+  chat_id?: string | number;
+  from_user_id?: string | number;
+  text?: string;
 }
 
 serve(async (req) => {
