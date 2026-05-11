@@ -458,7 +458,8 @@ export function useAuthChat() {
     handlePasswordSubmit,
     handleForgotPassword,
     updatePhoneData,
-    agentName: "Aisha",
+    agentName: state.agentName,
+    instanceId: state.instanceId,
     // Re-export schema enum for callers that want to assert action types.
     AuthActionSchema,
   };
