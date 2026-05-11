@@ -43,6 +43,36 @@ const AdminSchemas: Record<string, z.ZodTypeAny> = {
     gig_id: idLike.optional().nullable(),
   }).passthrough(),
   archive_expired_jobs: z.object({}).passthrough(),
+  create_agent: z.object({
+    agent_key: z.string().min(2).max(64).regex(/^[a-z0-9_-]+$/i),
+    name: z.string().min(2),
+    description: z.string().min(2),
+    system_prompt: z.string().min(10),
+    category: z.string().optional(),
+    audience: z.enum(["talent", "company", "admin", "public"]).optional(),
+    owner_kind: z.enum(["platform", "company", "user"]).optional(),
+    model: z.string().optional(),
+    is_active: z.boolean().optional(),
+  }).passthrough(),
+  update_agent_prompt: z.object({
+    agent_key: z.string().min(1),
+    system_prompt: z.string().min(10),
+  }).passthrough(),
+  toggle_agent_status: z.object({
+    agent_key: z.string().min(1),
+    is_active: z.boolean().optional(),
+    kill_switch: z.boolean().optional(),
+  }).passthrough(),
+  archive_agent: z.object({
+    agent_key: z.string().min(1),
+  }).passthrough(),
+  notify_admin: z.object({
+    title: z.string().min(2),
+    message: z.string().min(2),
+    type: z.string().optional(),
+    link: z.string().optional().nullable(),
+    metadata: z.record(z.any()).optional(),
+  }).passthrough(),
 };
 
 serve(async (req) => {
@@ -148,6 +178,96 @@ serve(async (req) => {
         const { data, error } = await userClient.rpc("archive_expired_jobs");
         if (error) return j({ ok: false, error: error.message }, 400);
         return j({ ok: true, result: { archived: Number(data ?? 0) } });
+      }
+      case "create_agent": {
+        const payload: Record<string, any> = {
+          agent_key: String(body.agent_key).toLowerCase(),
+          name: body.name,
+          description: body.description,
+          system_prompt: body.system_prompt,
+          category: body.category ?? "career",
+          audience: body.audience ?? "admin",
+          owner_kind: body.owner_kind ?? "platform",
+          model: body.model ?? "google/gemini-3-flash-preview",
+          is_active: body.is_active ?? true,
+          allowed_tools: Array.isArray(body.allowed_tools) ? body.allowed_tools : [],
+        };
+        const { data, error } = await admin.from("ai_agents").insert(payload).select("id, agent_key, name").single();
+        if (error) return j({ ok: false, error: error.message }, 400);
+        return j({ ok: true, result: data });
+      }
+      case "update_agent_prompt": {
+        const { data, error } = await admin
+          .from("ai_agents")
+          .update({ system_prompt: body.system_prompt, updated_at: new Date().toISOString() })
+          .eq("agent_key", body.agent_key)
+          .select("id, agent_key")
+          .maybeSingle();
+        if (error) return j({ ok: false, error: error.message }, 400);
+        if (!data) return j({ ok: false, error: "agent_not_found" }, 404);
+        return j({ ok: true, result: data });
+      }
+      case "toggle_agent_status": {
+        const patch: Record<string, any> = { updated_at: new Date().toISOString() };
+        if (typeof body.is_active === "boolean") patch.is_active = body.is_active;
+        if (typeof body.kill_switch === "boolean") patch.kill_switch = body.kill_switch;
+        if (Object.keys(patch).length === 1) {
+          return j({ ok: false, error: "must_provide_is_active_or_kill_switch" }, 400);
+        }
+        const { data, error } = await admin
+          .from("ai_agents")
+          .update(patch)
+          .eq("agent_key", body.agent_key)
+          .select("id, agent_key, is_active, kill_switch")
+          .maybeSingle();
+        if (error) return j({ ok: false, error: error.message }, 400);
+        if (!data) return j({ ok: false, error: "agent_not_found" }, 404);
+        return j({ ok: true, result: data });
+      }
+      case "archive_agent": {
+        const { data, error } = await admin
+          .from("ai_agents")
+          .update({ is_active: false, kill_switch: true, updated_at: new Date().toISOString() })
+          .eq("agent_key", body.agent_key)
+          .select("id, agent_key")
+          .maybeSingle();
+        if (error) return j({ ok: false, error: error.message }, 400);
+        if (!data) return j({ ok: false, error: "agent_not_found" }, 404);
+        return j({ ok: true, result: { ...data, archived: true } });
+      }
+      case "notify_admin": {
+        // Persist to admin_notifications (in-app inbox) AND best-effort fan-out
+        // to the Telegram bridge so admins get a real-time ping.
+        const { data, error } = await admin
+          .from("admin_notifications")
+          .insert({
+            type: body.type ?? "agent_alert",
+            title: body.title,
+            message: body.message,
+            link: body.link ?? null,
+            metadata: { ...(body.metadata ?? {}), source_user_id: uid },
+          })
+          .select("id")
+          .single();
+        if (error) return j({ ok: false, error: error.message }, 400);
+
+        // Fire-and-forget Telegram ping (won't fail the tool call).
+        try {
+          await fetch(`${SUPABASE_URL}/functions/v1/notify-admin`, {
+            method: "POST",
+            headers: {
+              "Content-Type": "application/json",
+              Authorization: authHeader,
+            },
+            body: JSON.stringify({
+              channel: "telegram",
+              message: `[${body.type ?? "agent_alert"}] ${body.title}\n${body.message}`,
+              context: body.metadata ?? {},
+            }),
+          });
+        } catch (_) { /* swallow */ }
+
+        return j({ ok: true, result: { notification_id: data.id, persisted: true } });
       }
       default:
         return j({ ok: false, error: `unknown_admin_tool:${dispatch}` }, 400);
