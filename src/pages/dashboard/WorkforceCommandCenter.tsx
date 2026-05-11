@@ -467,6 +467,35 @@ function ChannelsPanel() {
     onError: (e: any) => toast.error(e?.message ?? "Failed to remove"),
   });
 
+  async function activateTelegramWebhook(c: ChannelConn) {
+    const botToken = (c.credentials as any)?.bot_token;
+    if (!botToken) {
+      toast.error("This connection has no bot_token in credentials.");
+      return;
+    }
+    const projectRef = (import.meta as any).env?.VITE_SUPABASE_PROJECT_ID;
+    const defaultBase = projectRef ? `https://${projectRef}.supabase.co` : "";
+    const base = window.prompt(
+      "Supabase Functions base URL (leave as-is to use default):",
+      defaultBase,
+    );
+    if (!base) return;
+    const webhookUrl = `${base.replace(/\/$/, "")}/functions/v1/telegram-agent-webhook?agent_key=${encodeURIComponent(c.agent_key)}`;
+    try {
+      const res = await fetch(
+        `https://api.telegram.org/bot${botToken}/setWebhook?url=${encodeURIComponent(webhookUrl)}&allowed_updates=${encodeURIComponent(JSON.stringify(["message", "edited_message"]))}`,
+      );
+      const data = await res.json();
+      if (data.ok) {
+        toast.success(`Webhook activated → ${webhookUrl}`);
+      } else {
+        toast.error(`Telegram rejected: ${data.description ?? "unknown error"}`);
+      }
+    } catch (e: any) {
+      toast.error(`Network error: ${e?.message ?? e}`);
+    }
+  }
+
   return (
     <div className="space-y-6">
       <div className="flex justify-between items-center">
@@ -524,6 +553,15 @@ function ChannelsPanel() {
                       </span>
                     </td>
                     <td className="py-3 px-4 text-right space-x-3">
+                      {c.channel_provider === "telegram" && (
+                        <button
+                          onClick={() => activateTelegramWebhook(c)}
+                          className="text-cyan-400 hover:underline text-xs font-semibold"
+                          title="Register this Edge Function URL with Telegram so the bot delivers messages here."
+                        >
+                          Activate Webhook
+                        </button>
+                      )}
                       <button
                         onClick={() => {
                           setEditing(c);
