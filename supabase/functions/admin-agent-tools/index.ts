@@ -43,6 +43,36 @@ const AdminSchemas: Record<string, z.ZodTypeAny> = {
     gig_id: idLike.optional().nullable(),
   }).passthrough(),
   archive_expired_jobs: z.object({}).passthrough(),
+  create_agent: z.object({
+    agent_key: z.string().min(2).max(64).regex(/^[a-z0-9_-]+$/i),
+    name: z.string().min(2),
+    description: z.string().min(2),
+    system_prompt: z.string().min(10),
+    category: z.string().optional(),
+    audience: z.enum(["talent", "company", "admin", "public"]).optional(),
+    owner_kind: z.enum(["platform", "company", "user"]).optional(),
+    model: z.string().optional(),
+    is_active: z.boolean().optional(),
+  }).passthrough(),
+  update_agent_prompt: z.object({
+    agent_key: z.string().min(1),
+    system_prompt: z.string().min(10),
+  }).passthrough(),
+  toggle_agent_status: z.object({
+    agent_key: z.string().min(1),
+    is_active: z.boolean().optional(),
+    kill_switch: z.boolean().optional(),
+  }).passthrough(),
+  archive_agent: z.object({
+    agent_key: z.string().min(1),
+  }).passthrough(),
+  notify_admin: z.object({
+    title: z.string().min(2),
+    message: z.string().min(2),
+    type: z.string().optional(),
+    link: z.string().optional().nullable(),
+    metadata: z.record(z.any()).optional(),
+  }).passthrough(),
 };
 
 serve(async (req) => {
