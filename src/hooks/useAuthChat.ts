@@ -158,6 +158,15 @@ export function useAuthChat() {
       context: Record<string, unknown>,
       conversationHistory?: Array<{ role: string; content: string }>,
     ) => {
+      const s = stateRef.current;
+      // Always inject WaaS instance binding + visitor country so the
+      // ai-auth-agent function loads the correct persona from
+      // workforce_hired_instances (mkt-seo-01 country variant).
+      const enrichedContext = {
+        ...context,
+        instance_id: s.instanceId,
+        country: context.country ?? s.collected.country,
+      };
       try {
         const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-auth-agent`, {
           method: "POST",
@@ -165,28 +174,73 @@ export function useAuthChat() {
             "Content-Type": "application/json",
             Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
           },
-          body: JSON.stringify({ context, messages: conversationHistory || [] }),
+          body: JSON.stringify({ context: enrichedContext, messages: conversationHistory || [] }),
         });
         if (!res.ok) throw new Error("agent_unreachable");
         const json = await res.json();
         const parsed = AuthAgentReplySchema.safeParse(json);
         if (!parsed.success) {
           console.warn("[Aisha] Agent reply failed validation, using fallback.", parsed.error.flatten());
-          return getFallbackProtocol(context);
+          return getFallbackProtocol(enrichedContext);
         }
           const safeQuiz: QuizData | null =
             parsed.data.quiz && parsed.data.quiz.answer ? { answer: parsed.data.quiz.answer } : null;
           return { reply: parsed.data.reply, action: parsed.data.action, quiz: safeQuiz };
       } catch {
-        return getFallbackProtocol(context);
+        return getFallbackProtocol(enrichedContext);
       }
     },
     [],
   );
 
+  const bootstrapMarketingInstance = useCallback(async () => {
+    try {
+      const res = await fetch(
+        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/marketing-agent-bootstrap`,
+        {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json",
+            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
+          },
+          body: JSON.stringify({}),
+        },
+      );
+      const json = await res.json();
+      const country: string = json?.country || "Bangladesh";
+      const instanceId: string | null = json?.instance_id ?? null;
+      const agentName: string = json?.agent_name || "Aisha";
+      // Pre-seed the user's country (and matching dial code) from geo.
+      const matched = COUNTRIES_WITH_PHONE.find((c) => c.name === country);
+      dispatch({
+        type: "PATCH_COLLECTED",
+        value: {
+          country,
+          countryCode: matched?.phoneCode ?? "+880",
+        },
+      });
+      dispatch({ type: "SET_INSTANCE", instanceId, agentName });
+      stateRef.current = {
+        ...stateRef.current,
+        instanceId,
+        agentName,
+        collected: {
+          ...stateRef.current.collected,
+          country,
+          countryCode: matched?.phoneCode ?? stateRef.current.collected.countryCode,
+        },
+      };
+    } catch (err) {
+      console.warn("[Aisha] marketing-agent-bootstrap failed, using defaults.", err);
+    }
+  }, []);
+
   const initialize = useCallback(async () => {
     dispatch({ type: "SET_LOADING", value: true });
     try {
+      // 1) Bind to a country-specific marketing WaaS instance first.
+      await bootstrapMarketingInstance();
+      // 2) Then greet using that persona.
       const response = await callAgent({ step: "welcome", flow: null });
       dispatch({ type: "ADD_MESSAGE", role: "assistant", content: response.reply });
       dispatch({
@@ -196,7 +250,7 @@ export function useAuthChat() {
     } finally {
       dispatch({ type: "SET_LOADING", value: false });
     }
-  }, [callAgent]);
+  }, [callAgent, bootstrapMarketingInstance]);
 
   const handleUserInput = useCallback(
     async (input: string) => {
