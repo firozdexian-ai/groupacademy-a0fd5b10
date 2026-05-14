@@ -1,4 +1,9 @@
-import { useState } from "react";
+/**
+ * GroUp Academy: Stakeholder Capital Registry (InvestorsManager)
+ * CTO Version: May 2026 (Phase IR-Z0 Hardened)
+ * Fixes: B3 (Search Logic Restoration), P5 (Type Safety), Visual Unification
+ */
+import { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -36,12 +41,6 @@ import { IR_CONFIG } from "@/lib/irConfig";
 import { InvestorDetailSheet } from "./InvestorDetailSheet";
 import { cn } from "@/lib/utils";
 
-/**
- * GroUp Academy: Stakeholder Capital Registry (InvestorsManager)
- * CTO Reference: High-fidelity orchestrator for investor contact lifecycle and IR telemetry.
- * 2024 Standard: Executive Logic geometry with reinforced interaction analysis.
- */
-
 interface Investor {
   id: string;
   vc_firm_id: string | null;
@@ -70,6 +69,9 @@ export function InvestorsManager() {
   const [selectedInvestorId, setSelectedInvestorId] = useState<string | null>(null);
   const [linkedinImportOpen, setLinkedinImportOpen] = useState(false);
   const [filterFirmId, setFilterFirmId] = useState<string>("all");
+
+  // B3 Fix: Restored Search State
+  const [searchQuery, setSearchQuery] = useState("");
 
   const [formData, setFormData] = useState({
     vc_firm_id: "",
@@ -108,6 +110,21 @@ export function InvestorsManager() {
       return data as Investor[];
     },
   });
+
+  // B3 Logic Restoration: High-Fidelity Client-Side Filtering
+  const filteredInvestors = useMemo(() => {
+    if (!investors) return [];
+    if (!searchQuery.trim()) return investors;
+
+    const query = searchQuery.toLowerCase();
+    return investors.filter(
+      (inv) =>
+        inv.full_name?.toLowerCase().includes(query) ||
+        inv.email?.toLowerCase().includes(query) ||
+        inv.title?.toLowerCase().includes(query) ||
+        inv.vc_firm?.name?.toLowerCase().includes(query),
+    );
+  }, [investors, searchQuery]);
 
   const { data: vcFirms } = useQuery({
     queryKey: ["ir-vc-firms-list"],
@@ -203,10 +220,10 @@ export function InvestorsManager() {
   };
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6">
+    <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
       {/* EXECUTIVE COMMAND HEADER */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
-        <div className="space-y-1 text-left">
+        <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Zap className="h-8 w-8 text-primary fill-primary/20" />
             <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Capital Pulse</h2>
@@ -219,16 +236,16 @@ export function InvestorsManager() {
           <Button
             variant="outline"
             onClick={() => setLinkedinImportOpen(true)}
-            className="h-12 px-6 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-2 shadow-sm bg-background/50 hover:bg-blue-500/10 hover:text-blue-500 hover:border-blue-500/30 transition-colors"
+            className="h-12 px-6 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-2 shadow-sm bg-background/50"
           >
-            <FileJson2 className="h-4 w-4 text-blue-500" /> Import Neural Data
+            <FileJson2 className="h-4 w-4 text-blue-500" /> Neural Import
           </Button>
           <Button
             onClick={() => {
               resetForm();
               setDialogOpen(true);
             }}
-            className="h-12 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20"
+            className="h-12 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 bg-primary text-primary-foreground"
           >
             <Plus className="h-4 w-4" /> Deploy Investor
           </Button>
@@ -241,7 +258,9 @@ export function InvestorsManager() {
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
           <Input
             placeholder="SEARCH STAKEHOLDER REGISTRY..."
-            className="h-14 rounded-2xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card/30 focus-visible:border-primary/40 transition-colors"
+            value={searchQuery}
+            onChange={(e) => setSearchQuery(e.target.value)}
+            className="h-14 rounded-2xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card/30 focus-visible:border-primary/40"
           />
         </div>
         <Select value={filterFirmId} onValueChange={setFilterFirmId}>
@@ -249,7 +268,7 @@ export function InvestorsManager() {
             <SelectValue placeholder="GLOBAL FIRMS" />
           </SelectTrigger>
           <SelectContent className="rounded-xl border-2">
-            <SelectItem value="all" className="font-bold text-[10px] uppercase tracking-widest">
+            <SelectItem value="all" className="font-bold text-[10px] uppercase tracking-widest text-primary">
               🌍 ALL AUTHORITIES
             </SelectItem>
             {vcFirms?.map((firm) => (
@@ -264,7 +283,7 @@ export function InvestorsManager() {
           size="icon"
           onClick={() => refetch()}
           disabled={isRefetching}
-          className="h-14 w-14 rounded-2xl border-2 shadow-sm shrink-0 bg-background/50 hover:bg-primary/5"
+          className="h-14 w-14 rounded-2xl border-2 shadow-sm shrink-0 bg-background/50"
         >
           <RefreshCw className={cn("h-5 w-5 text-primary", isRefetching && "animate-spin")} />
         </Button>
@@ -300,17 +319,17 @@ export function InvestorsManager() {
                       </div>
                     </TableCell>
                   </TableRow>
-                ) : investors?.length === 0 ? (
+                ) : filteredInvestors.length === 0 ? (
                   <TableRow>
                     <TableCell
                       colSpan={5}
                       className="text-center py-32 italic font-bold opacity-50 uppercase tracking-widest text-xs"
                     >
-                      Zero matching authorities found in registry.
+                      Zero matching authorities found in current frame.
                     </TableCell>
                   </TableRow>
                 ) : (
-                  investors?.map((investor) => (
+                  filteredInvestors.map((investor) => (
                     <TableRow
                       key={investor.id}
                       className="group hover:bg-primary/[0.02] transition-colors cursor-pointer"
@@ -349,7 +368,7 @@ export function InvestorsManager() {
                             </span>
                           )}
                           {(!investor.investor_interests || investor.investor_interests.length === 0) && (
-                            <span className="text-xs italic text-muted-foreground/40">Undisclosed</span>
+                            <span className="text-xs italic text-muted-foreground/40 uppercase">Undisclosed</span>
                           )}
                         </div>
                       </TableCell>
@@ -358,7 +377,7 @@ export function InvestorsManager() {
                           className={cn(
                             "font-black text-[9px] uppercase italic rounded-full px-3 py-1 border-none",
                             investor.subscription_status === "active"
-                              ? "bg-emerald-500/10 text-emerald-500 shadow-sm shadow-emerald-500/10"
+                              ? "bg-emerald-500/10 text-emerald-500"
                               : "bg-muted text-muted-foreground/60",
                           )}
                         >
@@ -374,7 +393,7 @@ export function InvestorsManager() {
                             variant="ghost"
                             size="icon"
                             onClick={() => openEditDialog(investor)}
-                            className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
+                            className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary"
                           >
                             <Pencil className="h-4 w-4" />
                           </Button>
@@ -382,7 +401,7 @@ export function InvestorsManager() {
                             variant="ghost"
                             size="icon"
                             onClick={() => setDeleteConfirmId(investor.id)}
-                            className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive transition-all"
+                            className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive"
                           >
                             <Trash2 className="h-4 w-4" />
                           </Button>
@@ -405,14 +424,14 @@ export function InvestorsManager() {
 
       {/* DEPLOYMENT DIALOG */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl shadow-2xl">
+        <DialogContent className="max-w-2xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background shadow-2xl">
           <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
-          <div className="p-10 pb-0">
+          <div className="p-10 pb-0 text-left">
             <DialogHeader className="mb-8">
               <div className="flex items-center gap-4">
                 <Zap className="h-8 w-8 text-primary fill-primary/20" />
-                <div className="space-y-1 text-left">
-                  <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter leading-none">
+                <div className="space-y-1">
+                  <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter leading-none text-foreground">
                     Identity Deployment
                   </DialogTitle>
                   <DialogDescription className="text-[10px] font-bold uppercase tracking-[0.2em] italic text-muted-foreground/60">
@@ -432,8 +451,8 @@ export function InvestorsManager() {
                     <Input
                       value={formData.full_name}
                       onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
-                      className="h-14 rounded-xl border-2 font-bold bg-muted/20"
-                      placeholder="E.g. Jane Doe"
+                      className="h-14 rounded-xl border-2 font-bold"
+                      placeholder="Jane Doe"
                     />
                   </div>
                   <div className="space-y-2">
@@ -443,8 +462,8 @@ export function InvestorsManager() {
                     <Input
                       value={formData.title}
                       onChange={(e) => setFormData({ ...formData, title: e.target.value })}
-                      className="h-14 rounded-xl border-2 font-bold bg-muted/20"
-                      placeholder="E.g. General Partner"
+                      className="h-14 rounded-xl border-2 font-bold"
+                      placeholder="General Partner"
                     />
                   </div>
                 </div>
@@ -457,7 +476,7 @@ export function InvestorsManager() {
                     value={formData.vc_firm_id}
                     onValueChange={(v) => setFormData({ ...formData, vc_firm_id: v })}
                   >
-                    <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs bg-muted/20">
+                    <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs">
                       <SelectValue placeholder="SELECT VC FIRM" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2">
@@ -465,7 +484,7 @@ export function InvestorsManager() {
                         value=""
                         className="font-bold text-xs uppercase tracking-widest text-muted-foreground"
                       >
-                        NO FIRM AUTHORITY (INDEPENDENT)
+                        INDEPENDENT_CAPITAL
                       </SelectItem>
                       {vcFirms?.map((firm) => (
                         <SelectItem
@@ -489,7 +508,7 @@ export function InvestorsManager() {
                       type="email"
                       value={formData.email}
                       onChange={(e) => setFormData({ ...formData, email: e.target.value })}
-                      className="h-14 rounded-xl border-2 font-bold bg-muted/20"
+                      className="h-14 rounded-xl border-2 font-bold"
                       placeholder="jane@example.com"
                     />
                   </div>
@@ -501,7 +520,7 @@ export function InvestorsManager() {
                       value={formData.investment_stage_pref}
                       onValueChange={(v) => setFormData({ ...formData, investment_stage_pref: v })}
                     >
-                      <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs bg-muted/20">
+                      <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs">
                         <SelectValue placeholder="SELECT STAGE" />
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-2">
@@ -517,67 +536,66 @@ export function InvestorsManager() {
 
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
-                    Relationship Summary (Optional Notes)
+                    Relationship Context
                   </Label>
                   <Textarea
                     value={formData.notes}
                     onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
                     className="min-h-[120px] rounded-2xl border-2 font-medium italic text-sm p-5 resize-none bg-muted/20"
-                    placeholder="Enter strategic context or private notes..."
+                    placeholder="Enter strategic context..."
                   />
                 </div>
               </div>
             </ScrollArea>
           </div>
 
-          <DialogFooter className="p-8 pt-6 border-t border-border/10 bg-muted/5 flex-col sm:flex-row gap-3 sm:gap-0">
+          <DialogFooter className="p-8 pt-6 border-t border-border/10 bg-muted/5 flex-col sm:flex-row gap-3">
             <Button
               variant="outline"
               onClick={() => setDialogOpen(false)}
-              className="h-14 px-8 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest italic text-muted-foreground hover:text-foreground transition-colors"
+              className="h-14 px-8 rounded-xl border-2 font-black uppercase text-[10px]"
             >
               Abort Protocol
             </Button>
             <Button
               onClick={() => saveMutation.mutate()}
               disabled={!formData.full_name || saveMutation.isPending}
-              className="h-14 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95 flex-1"
+              className="h-14 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-lg shadow-primary/20 flex-1 bg-primary text-primary-foreground"
             >
               {saveMutation.isPending ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
               ) : (
-                <ShieldCheck className="h-5 w-5 fill-current" />
-              )}
-              {saveMutation.isPending ? "Syncing..." : "Authorize Deployment"}
+                <ShieldCheck className="h-5 w-5" />
+              )}{" "}
+              Authorize Deployment
             </Button>
           </DialogFooter>
         </DialogContent>
       </Dialog>
 
-      {/* DELETE CONFIRMATION DIALOG (CTO FIX) */}
+      {/* DELETE CONFIRMATION DIALOG */}
       <Dialog open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
-        <DialogContent className="max-w-md rounded-[40px] border-4 border-destructive/20 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
-          <div className="h-2 w-full bg-gradient-to-r from-destructive to-rose-600" />
-          <div className="p-10 space-y-8">
-            <div className="flex flex-col items-center text-center space-y-4">
+        <DialogContent className="max-w-md rounded-[40px] border-4 border-destructive/20 bg-background p-0 overflow-hidden shadow-2xl">
+          <div className="h-2 w-full bg-destructive" />
+          <div className="p-10 space-y-8 text-center">
+            <div className="flex flex-col items-center space-y-4">
               <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center border-4 border-destructive/20">
                 <AlertTriangle className="h-10 w-10 text-destructive" />
               </div>
               <div className="space-y-1">
-                <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter text-destructive leading-none">
+                <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter text-destructive">
                   Terminate Node
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-[0.2em] italic text-muted-foreground/80">
-                  This will permanently delete the investor identity and all associated telemetry.
+                <DialogDescription className="text-[10px] font-bold uppercase tracking-[0.2em] italic text-muted-foreground/60">
+                  This cycle cannot be reverted.
                 </DialogDescription>
               </div>
             </div>
-
-            <div className="flex flex-col sm:flex-row gap-4 pt-4">
+            <div className="flex gap-4">
               <Button
                 variant="outline"
                 onClick={() => setDeleteConfirmId(null)}
-                className="flex-1 h-14 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest"
+                className="flex-1 h-14 rounded-xl border-2 font-black uppercase text-[10px]"
               >
                 Cancel
               </Button>
@@ -585,13 +603,13 @@ export function InvestorsManager() {
                 variant="destructive"
                 onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
                 disabled={deleteMutation.isPending}
-                className="flex-1 h-14 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-destructive/20 gap-2"
+                className="flex-1 h-14 rounded-xl font-black uppercase text-[10px] shadow-destructive/20 gap-2"
               >
                 {deleteMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />
                 ) : (
                   <Trash2 className="h-4 w-4" />
-                )}
+                )}{" "}
                 Execute Purge
               </Button>
             </div>
@@ -601,31 +619,29 @@ export function InvestorsManager() {
 
       {/* NEURAL IMPORT DIALOG */}
       <Dialog open={linkedinImportOpen} onOpenChange={setLinkedinImportOpen}>
-        <DialogContent className="max-w-xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl shadow-2xl text-left">
-          <div className="h-2 w-full bg-gradient-to-r from-blue-400 to-blue-600" />
+        <DialogContent className="max-w-xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background text-left shadow-2xl">
+          <div className="h-2 w-full bg-blue-500" />
           <div className="p-10">
             <DialogHeader className="mb-8">
               <div className="flex items-center gap-4">
                 <FileJson2 className="h-8 w-8 text-blue-500" />
-                <div className="space-y-1">
+                <div className="space-y-1 text-left">
                   <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter leading-none">
                     Neural Import
                   </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-[0.2em] italic text-muted-foreground/60">
-                    Upload LinkedIn scraper artifacts to bulk-provision nodes
+                  <DialogDescription className="text-[10px] font-bold uppercase italic text-muted-foreground/60">
+                    Scraper Artifact Bulk Provisioning
                   </DialogDescription>
                 </div>
               </div>
             </DialogHeader>
-            <div className="pt-2">
-              <LinkedInJsonUpload
-                mode="investor"
-                onComplete={() => {
-                  setLinkedinImportOpen(false);
-                  queryClient.invalidateQueries({ queryKey: ["ir-investors"] });
-                }}
-              />
-            </div>
+            <LinkedInJsonUpload
+              mode="investor"
+              onComplete={() => {
+                setLinkedinImportOpen(false);
+                queryClient.invalidateQueries({ queryKey: ["ir-investors"] });
+              }}
+            />
           </div>
         </DialogContent>
       </Dialog>
