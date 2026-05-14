@@ -79,7 +79,7 @@ export function useHrGraph() {
   // Vertical Mutations
   const upsertVertical = useMutation({
     mutationFn: async (p: Partial<HrVertical>) =>
-      p.id ? supabase.from("hr_verticals").update(p).eq("id", p.id) : supabase.from("hr_verticals").insert([p]),
+      p.id ? supabase.from("hr_verticals").update(p as any).eq("id", p.id) : supabase.from("hr_verticals").insert([p as any]),
     onSuccess: () => {
       invalidate();
       toast.success("Vertical Node Synchronized");
@@ -96,7 +96,7 @@ export function useHrGraph() {
   // Function Mutations
   const upsertFunction = useMutation({
     mutationFn: async (p: Partial<HrFunction>) =>
-      p.id ? supabase.from("hr_functions").update(p).eq("id", p.id) : supabase.from("hr_functions").insert([p]),
+      p.id ? supabase.from("hr_functions").update(p as any).eq("id", p.id) : supabase.from("hr_functions").insert([p as any]),
     onSuccess: () => {
       invalidate();
       toast.success("Function Node Synchronized");
@@ -113,7 +113,7 @@ export function useHrGraph() {
   // Team Mutations
   const upsertTeam = useMutation({
     mutationFn: async (p: Partial<HrTeam>) =>
-      p.id ? supabase.from("hr_teams").update(p).eq("id", p.id) : supabase.from("hr_teams").insert([p]),
+      p.id ? supabase.from("hr_teams").update(p as any).eq("id", p.id) : supabase.from("hr_teams").insert([p as any]),
     onSuccess: () => {
       invalidate();
       toast.success("Team Node Synchronized");
@@ -130,7 +130,7 @@ export function useHrGraph() {
   // Grade Mutations
   const upsertGrade = useMutation({
     mutationFn: async (p: Partial<HrGrade>) =>
-      p.id ? supabase.from("hr_grades").update(p).eq("id", p.id) : supabase.from("hr_grades").insert([p]),
+      p.id ? supabase.from("hr_grades").update(p as any).eq("id", p.id) : supabase.from("hr_grades").insert([p as any]),
     onSuccess: () => {
       invalidate();
       toast.success("Grade Node Synchronized");
