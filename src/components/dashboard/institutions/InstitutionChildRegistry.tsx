@@ -149,6 +149,20 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
     onError: (e: any) => toast.error(`Sync Fault: ${e.message}`),
   });
 
+  // Restored: actual delete mutation (was reduced to a no-op invalidate)
+  const remove = useMutation({
+    mutationFn: async (id: string) => {
+      const { error } = await supabase.from(table as any).delete().eq("id", id);
+      if (error) throw error;
+    },
+    onSuccess: () => {
+      toast.success("Node Terminated");
+      setPurgeId(null);
+      qc.invalidateQueries({ queryKey: [table] });
+    },
+    onError: (e: any) => toast.error(`Termination Fault: ${e.message}`),
+  });
+
   const handleEdit = (row: any) => {
     setEditingNode(row);
     // B4 Fix: Map null to sentinel for Radix safety
@@ -449,7 +463,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
           <AlertDialogFooter className="mt-8 gap-3">
             <AlertDialogCancel className="h-12 rounded-xl font-black uppercase text-[10px]">Cancel</AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => purgeId && qc.invalidateQueries({ queryKey: [table] })}
+              onClick={() => purgeId && remove.mutate(purgeId)}
               className="h-12 bg-destructive text-white rounded-xl font-black uppercase text-[10px]"
             >
               Confirm Termination
