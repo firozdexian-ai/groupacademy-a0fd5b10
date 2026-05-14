@@ -4,7 +4,7 @@
  * Fixes: A1 (Sequential Query Storm), A2 (Riya Funnel Logic)
  */
 import { useEffect, useState, useCallback } from "react";
-import { Building2, Users, UserCheck, FileText, Globe, Sparkles, AlertCircle, Network, Activity } from "lucide-react";
+import { Building2, Users, UserCheck, FileText, Globe, Sparkles, AlertCircle, Network, Activity, TrendingUp, MessageSquare, UserPlus, Zap } from "lucide-react";
 import StatsCard from "@/components/dashboard/StatsCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -38,7 +38,7 @@ export function CompaniesOverviewTab() {
       const { data: res, error } = await supabase.rpc("get_companies_overview");
 
       if (error) throw error;
-      setData(res as OverviewData);
+      setData(res as unknown as OverviewData);
     } catch (err) {
       console.error("B2B Telemetry Fault:", err);
     } finally {

@@ -112,9 +112,10 @@ export function CompaniesTab() {
       setIndustryOptions(industryRes.data || []);
 
       if (overviewRes.data) {
+        const ov = overviewRes.data as any;
         setKpis({
-          verified: overviewRes.data.verified,
-          pending: overviewRes.data.totals - (overviewRes.data.riya_funnel?.converted || 0),
+          verified: ov.verified,
+          pending: ov.totals - (ov.riya_funnel?.converted || 0),
         });
       }
 
