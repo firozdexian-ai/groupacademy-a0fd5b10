@@ -177,12 +177,29 @@ export function GtmKnowledgeTab() {
 
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Markdown Body</Label>
-              <Textarea
-                placeholder="# Heading&#10;&#10;Body content..."
-                value={draft.body_markdown || ""}
-                onChange={(e) => setDraft({ ...draft, body_markdown: e.target.value })}
-                className="min-h-[300px] rounded-2xl border-2 font-mono text-sm bg-muted/20 p-4"
-              />
+              <Tabs defaultValue="edit">
+                <TabsList className="grid grid-cols-2 w-full max-w-xs">
+                  <TabsTrigger value="edit">Edit</TabsTrigger>
+                  <TabsTrigger value="preview">Preview</TabsTrigger>
+                </TabsList>
+                <TabsContent value="edit" className="mt-2">
+                  <Textarea
+                    placeholder="# Heading&#10;&#10;Body content..."
+                    value={draft.body_markdown || ""}
+                    onChange={(e) => setDraft({ ...draft, body_markdown: e.target.value })}
+                    className="min-h-[300px] rounded-2xl border-2 font-mono text-sm bg-muted/20 p-4"
+                  />
+                </TabsContent>
+                <TabsContent value="preview" className="mt-2">
+                  <div className="min-h-[300px] rounded-2xl border-2 bg-background p-4 prose prose-sm max-w-none dark:prose-invert">
+                    {draft.body_markdown ? (
+                      <ReactMarkdown>{draft.body_markdown}</ReactMarkdown>
+                    ) : (
+                      <p className="text-xs text-muted-foreground italic">Nothing to preview yet.</p>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
 
             <div className="grid grid-cols-2 gap-4">
