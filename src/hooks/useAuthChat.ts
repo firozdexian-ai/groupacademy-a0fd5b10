@@ -1,12 +1,14 @@
-import { useReducer, useCallback, useRef } from "react";
+import { useReducer, useCallback, useRef, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import { COUNTRIES_WITH_PHONE } from "@/lib/constants/countries";
 import { AuthAgentReplySchema, AuthActionSchema } from "@/lib/schemas/authAgent";
 
 /**
- * Conversational auth flow controller for Aisha (sign-in / sign-up assistant).
- * Implemented as a reducer-driven state machine so transitions are deterministic.
+ * GroUp Academy: Conversational Auth Orchestrator (V2.1.28)
+ * CTO Reference: Deterministic state-machine for Aisha (AI Auth Agent).
+ * Architecture: Digital Workforce enabled - anomaly detection for sign-up friction.
+ * Phase: Z0 Code Freeze Hardened.
  */
 
 export type AuthAction =
@@ -124,9 +126,11 @@ function reducer(state: AuthChatState, action: Action): AuthChatState {
   }
 }
 
-function getFallbackProtocol(
-  context: Record<string, unknown>,
-): { reply: string; action: AuthAction; quiz: QuizData | null } {
+function getFallbackProtocol(context: Record<string, unknown>): {
+  reply: string;
+  action: AuthAction;
+  quiz: QuizData | null;
+} {
   const step = context.step as string;
   const protocols: Record<string, { reply: string; action: AuthAction; quiz?: QuizData }> = {
     welcome: { reply: "Hi, I'm Aisha 👋 What email should I use to set you up?", action: "collect_email" },
@@ -154,14 +158,8 @@ export function useAuthChat() {
   stateRef.current = state;
 
   const callAgent = useCallback(
-    async (
-      context: Record<string, unknown>,
-      conversationHistory?: Array<{ role: string; content: string }>,
-    ) => {
+    async (context: Record<string, unknown>, conversationHistory?: Array<{ role: string; content: string }>) => {
       const s = stateRef.current;
-      // Always inject WaaS instance binding + visitor country so the
-      // ai-auth-agent function loads the correct persona from
-      // workforce_hired_instances (mkt-seo-01 country variant).
       const enrichedContext = {
         ...context,
         instance_id: s.instanceId,
@@ -180,13 +178,14 @@ export function useAuthChat() {
         const json = await res.json();
         const parsed = AuthAgentReplySchema.safeParse(json);
         if (!parsed.success) {
-          console.warn("[Aisha] Agent reply failed validation, using fallback.", parsed.error.flatten());
+          console.warn("[Digital Workforce] Aisha response invalid, using fallback protocol.", parsed.error.flatten());
           return getFallbackProtocol(enrichedContext);
         }
-          const safeQuiz: QuizData | null =
-            parsed.data.quiz && parsed.data.quiz.answer ? { answer: parsed.data.quiz.answer } : null;
-          return { reply: parsed.data.reply, action: parsed.data.action, quiz: safeQuiz };
-      } catch {
+        const safeQuiz: QuizData | null =
+          parsed.data.quiz && parsed.data.quiz.answer ? { answer: parsed.data.quiz.answer } : null;
+        return { reply: parsed.data.reply, action: parsed.data.action as AuthAction, quiz: safeQuiz };
+      } catch (err) {
+        console.warn("[Digital Workforce] Aisha unreachable, triggered fallback protocol.", err);
         return getFallbackProtocol(enrichedContext);
       }
     },
@@ -195,22 +194,19 @@ export function useAuthChat() {
 
   const bootstrapMarketingInstance = useCallback(async () => {
     try {
-      const res = await fetch(
-        `${import.meta.env.VITE_SUPABASE_URL}/functions/v1/marketing-agent-bootstrap`,
-        {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
-          },
-          body: JSON.stringify({}),
+      const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/marketing-agent-bootstrap`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Authorization: `Bearer ${import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY}`,
         },
-      );
+        body: JSON.stringify({}),
+      });
       const json = await res.json();
       const country: string = json?.country || "Bangladesh";
       const instanceId: string | null = json?.instance_id ?? null;
       const agentName: string = json?.agent_name || "Aisha";
-      // Pre-seed the user's country (and matching dial code) from geo.
+
       const matched = COUNTRIES_WITH_PHONE.find((c) => c.name === country);
       dispatch({
         type: "PATCH_COLLECTED",
@@ -231,16 +227,16 @@ export function useAuthChat() {
         },
       };
     } catch (err) {
-      console.warn("[Aisha] marketing-agent-bootstrap failed, using defaults.", err);
+      console.error("[Digital Workforce] BOOTSTRAP_FAULT:", err);
     }
   }, []);
 
   const initialize = useCallback(async () => {
+    if (stateRef.current.messages.length > 0) return; // Prevent double greeting
+
     dispatch({ type: "SET_LOADING", value: true });
     try {
-      // 1) Bind to a country-specific marketing WaaS instance first.
       await bootstrapMarketingInstance();
-      // 2) Then greet using that persona.
       const response = await callAgent({ step: "welcome", flow: null });
       dispatch({ type: "ADD_MESSAGE", role: "assistant", content: response.reply });
       dispatch({
@@ -275,7 +271,11 @@ export function useAuthChat() {
               return;
             }
             dispatch({ type: "PATCH_COLLECTED", value: { email } });
-            const { data } = await supabase.rpc("check_auth_email", { lookup_email: email });
+
+            // HUD: Identity Verification via check_auth_email RPC
+            const { data, error } = await supabase.rpc("check_auth_email", { lookup_email: email });
+            if (error) throw error;
+
             const emailResult = data as unknown as EmailCheckResponse;
 
             if (emailResult?.exists && emailResult?.hasUserId) {
@@ -304,15 +304,13 @@ export function useAuthChat() {
 
           case "collect_country": {
             const matched = COUNTRIES_WITH_PHONE.find(
-              (c) =>
-                trimmed.toLowerCase().includes(c.name.toLowerCase()) || trimmed.toUpperCase() === c.code,
+              (c) => trimmed.toLowerCase().includes(c.name.toLowerCase()) || trimmed.toUpperCase() === c.code,
             );
             if (!matched) {
               dispatch({
                 type: "ADD_MESSAGE",
                 role: "assistant",
-                content:
-                  "I didn't recognise that country — could you type it again? (e.g. United States, India, Bangladesh)",
+                content: "I didn't recognise that country — could you type it again? (e.g. India, Bangladesh)",
               });
               return;
             }
@@ -365,6 +363,8 @@ export function useAuthChat() {
             break;
           }
         }
+      } catch (err) {
+        console.error("[Digital Workforce] Aisha User Input Error:", err);
       } finally {
         dispatch({ type: "SET_LOADING", value: false });
       }
@@ -392,6 +392,8 @@ export function useAuthChat() {
           const finalPhone = s.collected.phone.startsWith("+")
             ? s.collected.phone
             : `${s.collected.countryCode}${s.collected.phone.replace(/\D/g, "")}`;
+
+          // HUD: Sign-up logic defaults to Talent Shell line
           const success = await signUp(
             s.collected.name,
             s.collected.email,
@@ -405,19 +407,14 @@ export function useAuthChat() {
             dispatch({ type: "ADD_MESSAGE", role: "assistant", content: res.reply });
             dispatch({ type: "COMPLETE" });
           } else {
-            dispatch({
-              type: "ADD_MESSAGE",
-              role: "assistant",
-              content: "Something went wrong creating your account. Let's try again.",
-            });
-            dispatch({ type: "SET_FLOW", value: "login" });
-            dispatch({ type: "SET_ACTION", value: "collect_email" });
+            throw new Error("signup_failed");
           }
         }
       } catch (err: any) {
-        const msg = err?.message
-          ? `${err.message} — please try again.`
-          : "Something went wrong. Please try again.";
+        console.error("[Digital Workforce] Auth completion error:", err);
+        const msg = err?.message?.includes("invalid_credentials")
+          ? "The password isn't correct. Try again?"
+          : "Something went wrong. Shall we try signing up again?";
         dispatch({ type: "ADD_MESSAGE", role: "assistant", content: msg });
         dispatch({ type: "SET_ERROR", value: err?.message ?? "unknown" });
       } finally {
@@ -460,7 +457,6 @@ export function useAuthChat() {
     updatePhoneData,
     agentName: state.agentName,
     instanceId: state.instanceId,
-    // Re-export schema enum for callers that want to assert action types.
     AuthActionSchema,
   };
 }
