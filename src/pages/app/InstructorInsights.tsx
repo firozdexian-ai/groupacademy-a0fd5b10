@@ -61,8 +61,8 @@ export default function InstructorInsights() {
             <StatCard label="Items" value={data.totals.items} />
             <StatCard
               label="Flagged"
-              value={data.totals.flagged_items}
-              tone={data.totals.flagged_items > 0 ? "warning" : "ok"}
+              value={data.totals.flag_items}
+              tone={data.totals.flag_items > 0 ? "warning" : "ok"}
             />
             <StatCard label="Translations" value={data.totals.translated_items} />
           </div>
