@@ -1,25 +1,54 @@
-import { useMemo, useState } from "react";
+/**
+ * Institutional Child Registry — Phase INST-Z1 Hardened
+ * CTO Version: May 2026
+ * Fixes: B2 (Edit logic), O1 (Club mapping), P1 (Filter), P4 (Event temporal view), P3 (AlertDialog)
+ */
+import { useMemo, useState, useEffect } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plus, Trash2, Building2, Users, Calendar, Network, MapPin, Mail, Phone, Clock } from "lucide-react";
+import {
+  Plus,
+  Trash2,
+  Building2,
+  Calendar,
+  Network,
+  MapPin,
+  Mail,
+  Phone,
+  Clock,
+  Pencil,
+  Filter,
+  AlertTriangle,
+  ChevronRight,
+} from "lucide-react";
 import { toast } from "sonner";
 import {
   Dialog,
   DialogContent,
   DialogHeader,
   DialogTitle,
-  DialogTrigger,
   DialogFooter,
   DialogDescription,
 } from "@/components/ui/dialog";
+import {
+  AlertDialog,
+  AlertDialogAction,
+  AlertDialogCancel,
+  AlertDialogContent,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogHeader,
+  AlertDialogTitle,
+} from "@/components/ui/alert-dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Textarea } from "@/components/ui/textarea";
 import { cn } from "@/lib/utils";
+import { format } from "date-fns";
 
 interface Field {
   key: string;
@@ -40,7 +69,13 @@ interface Props {
 function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon }: Props) {
   const qc = useQueryClient();
   const [open, setOpen] = useState(false);
+  const [purgeId, setPurgeId] = useState<string | null>(null);
+  const [editingNode, setEditingNode] = useState<any | null>(null);
   const [draft, setDraft] = useState<Record<string, any>>({});
+
+  // P1 & P4 States
+  const [instFilter, setInstFilter] = useState<string>("all");
+  const [eventTab, setEventTab] = useState<"upcoming" | "past">("upcoming");
 
   const institutionsQ = useQuery({
     queryKey: ["institutions-min"],
@@ -51,29 +86,60 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
     },
   });
 
-  const listQ = useQuery({
-    queryKey: [table],
+  // O1 Logic: Fetch clubs for representative mapping
+  const clubsQ = useQuery({
+    queryKey: ["clubs-lookup", draft.institution_id],
+    enabled: table === "institution_representatives" && !!draft.institution_id,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from(table as any)
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as any[];
+      const { data } = await supabase
+        .from("institution_clubs")
+        .select("id, name")
+        .eq("institution_id", draft.institution_id);
+      return data ?? [];
     },
   });
 
-  const create = useMutation({
+  const listQ = useQuery({
+    queryKey: [table, instFilter, eventTab],
+    queryFn: async () => {
+      let query = supabase.from(table as any).select("*");
+
+      if (instFilter !== "all") query = query.eq("institution_id", instFilter);
+
+      if (table === "institution_events") {
+        const now = new Date().toISOString();
+        query =
+          eventTab === "upcoming"
+            ? query.gte("starts_at", now).order("starts_at", { ascending: true })
+            : query.lt("starts_at", now).order("starts_at", { ascending: false });
+      } else {
+        query = query.order("created_at", { ascending: false });
+      }
+
+      const { data, error } = await query;
+      if (error) throw error;
+      return data as any[];
+    },
+  });
+
+  // B2 Fix: Unified Save/Update Mutation
+  const saveMutation = useMutation({
     mutationFn: async () => {
-      const payload: any = { ...draft };
-      const { error } = await supabase.from(table as any).insert(payload);
+      const query = editingNode
+        ? supabase
+            .from(table as any)
+            .update(draft)
+            .eq("id", editingNode.id)
+        : supabase.from(table as any).insert([draft]);
+      const { error } = await query;
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Node Synchronized");
+      toast.success("Registry Matrix Updated");
       qc.invalidateQueries({ queryKey: [table] });
-      setDraft({});
       setOpen(false);
+      setEditingNode(null);
+      setDraft({});
     },
     onError: (e: any) => toast.error(`Sync Fault: ${e.message}`),
   });
@@ -87,186 +153,179 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Node Purged");
+      toast.success("Node Terminated");
+      setPurgeId(null);
       qc.invalidateQueries({ queryKey: [table] });
     },
   });
+
+  const handleEdit = (row: any) => {
+    setEditingNode(row);
+    setDraft(row);
+    setOpen(true);
+  };
 
   const institutionsById = useMemo(
     () => Object.fromEntries((institutionsQ.data ?? []).map((i: any) => [i.id, i.name])),
     [institutionsQ.data],
   );
 
-  const rows = listQ.data ?? [];
-
   return (
-    <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
-      {/* Executive Header */}
+    <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
-        <div className="space-y-1 text-left">
+        <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
-            <Icon className="h-8 w-8 text-primary fill-primary/20" />
+            <Icon className="h-8 w-8 text-primary" />
             <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">{title}</h2>
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             {description}
           </p>
         </div>
-        <div className="flex gap-3">
-          <Button
-            onClick={() => setOpen(true)}
-            className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20"
-          >
-            <Plus className="h-4 w-4" /> Inject Node
-          </Button>
-        </div>
+        <Button
+          onClick={() => {
+            setEditingNode(null);
+            setDraft({});
+            setOpen(true);
+          }}
+          className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-xl bg-primary text-primary-foreground"
+        >
+          <Plus className="h-4 w-4" /> Inject Node
+        </Button>
       </header>
 
-      {listQ.isLoading || institutionsQ.isLoading ? (
-        <div className="space-y-4 animate-pulse">
-          {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-24 w-full rounded-[24px] bg-muted/40" />
-          ))}
+      {/* P1 & P4 Filter Controls */}
+      <div className="flex flex-col md:flex-row gap-4">
+        <div className="relative w-full md:w-[300px]">
+          <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
+          <Select value={instFilter} onValueChange={setInstFilter}>
+            <SelectTrigger className="h-12 rounded-xl border-2 pl-10 font-black uppercase text-[10px] bg-card/30">
+              <SelectValue placeholder="FILTER BY INSTITUTION" />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="all">ALL INSTITUTIONS</SelectItem>
+              {institutionsQ.data?.map((i) => (
+                <SelectItem key={i.id} value={i.id} className="uppercase font-bold text-[10px]">
+                  {i.name}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
         </div>
-      ) : rows.length === 0 ? (
-        <Card className="rounded-[40px] border-2 border-dashed border-border/40 bg-transparent shadow-none">
-          <CardContent className="p-20 flex flex-col items-center justify-center text-center space-y-4">
-            <div className="h-20 w-20 rounded-full bg-muted/30 flex items-center justify-center">
-              <Icon className="h-8 w-8 text-muted-foreground/40" />
-            </div>
-            <p className="font-black uppercase tracking-widest text-muted-foreground/50 italic text-sm">
-              Zero records detected.
-            </p>
-          </CardContent>
-        </Card>
-      ) : (
-        <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
-          <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-primary" />
-          <CardContent className="p-0">
-            <div className="divide-y divide-border/5">
-              {rows.map((r) => (
-                <div
-                  key={r.id}
-                  className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-8 hover:bg-primary/[0.02] transition-colors group"
-                >
-                  <div className="flex items-start gap-5 min-w-0">
-                    <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border-2 border-border/20 shadow-sm shrink-0 group-hover:border-primary/30 transition-colors">
-                      <Icon className="h-6 w-6 text-primary" />
+
+        {table === "institution_events" && (
+          <div className="flex p-1 bg-muted/20 rounded-xl border-2 border-border/40">
+            <button
+              onClick={() => setEventTab("upcoming")}
+              className={cn(
+                "px-6 py-2 rounded-lg text-[10px] font-black uppercase transition-all",
+                eventTab === "upcoming" ? "bg-primary text-white shadow-lg" : "text-muted-foreground",
+              )}
+            >
+              Upcoming
+            </button>
+            <button
+              onClick={() => setEventTab("past")}
+              className={cn(
+                "px-6 py-2 rounded-lg text-[10px] font-black uppercase transition-all",
+                eventTab === "past" ? "bg-primary text-white shadow-lg" : "text-muted-foreground",
+              )}
+            >
+              Past
+            </button>
+          </div>
+        )}
+      </div>
+
+      <div className="grid gap-4">
+        {listQ.isLoading ? (
+          <div className="h-48 animate-pulse bg-muted/40 rounded-[32px]" />
+        ) : (
+          listQ.data?.map((r) => (
+            <Card
+              key={r.id}
+              className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm group hover:border-primary/20 transition-all"
+            >
+              <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-6">
+                <div className="flex items-start gap-5 flex-1 min-w-0">
+                  <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border-2 border-border/20 shrink-0 group-hover:border-primary/30 transition-colors">
+                    <Icon className="h-6 w-6 text-primary" />
+                  </div>
+                  <div className="space-y-2 flex-1 min-w-0">
+                    <div className="flex items-center gap-3">
+                      <h4 className="font-black text-xl uppercase italic tracking-tighter truncate">
+                        {r.name ?? r.title}
+                      </h4>
+                      {badgeKey && r[badgeKey] && (
+                        <Badge
+                          variant="outline"
+                          className="font-black text-[8px] uppercase tracking-widest border-2 bg-primary/5"
+                        >
+                          {r[badgeKey].replace("_", " ")}
+                        </Badge>
+                      )}
                     </div>
-                    <div className="space-y-2 min-w-0">
-                      <div className="flex items-center gap-3">
-                        <h4 className="font-black text-xl uppercase italic tracking-tighter truncate group-hover:text-primary transition-colors">
-                          {r.name ?? r.title}
-                        </h4>
-                        {badgeKey && r[badgeKey] && (
-                          <Badge
-                            variant="outline"
-                            className="font-black text-[9px] uppercase tracking-widest border-2 bg-primary/5 text-primary border-primary/20"
-                          >
-                            {r[badgeKey].replace("_", " ")}
-                          </Badge>
-                        )}
-                      </div>
-
-                      <div className="flex items-center gap-2">
-                        <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded-md border border-border/40">
-                          <Building2 className="h-3 w-3" /> {institutionsById[r.institution_id] ?? "Orphaned Node"}
+                    <div className="flex flex-wrap items-center gap-2">
+                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded-md">
+                        <Building2 className="h-3 w-3" /> {institutionsById[r.institution_id] ?? "Independent"}
+                      </span>
+                      {r.starts_at && (
+                        <span className="text-[10px] font-black text-primary uppercase flex items-center gap-1.5 pl-2 border-l border-border/40">
+                          <Clock className="h-3 w-3" /> {format(new Date(r.starts_at), "MMM d, HH:mm")}
                         </span>
-                        {r.department && (
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest border-l border-border/20 pl-2">
-                            {r.department}
-                          </span>
-                        )}
-                        {r.role && (
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest border-l border-border/20 pl-2">
-                            {r.role}
-                          </span>
-                        )}
-                      </div>
-
-                      {(r.email || r.phone || r.location || r.starts_at) && (
-                        <div className="flex flex-wrap gap-4 pt-1">
-                          {r.email && (
-                            <span className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground hover:text-primary transition-colors">
-                              <Mail className="h-3 w-3" /> {r.email}
-                            </span>
-                          )}
-                          {r.phone && (
-                            <span className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
-                              <Phone className="h-3 w-3" /> {r.phone}
-                            </span>
-                          )}
-                          {r.location && (
-                            <span className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground">
-                              <MapPin className="h-3 w-3" /> {r.location}
-                            </span>
-                          )}
-                          {r.starts_at && (
-                            <span className="flex items-center gap-1 text-[10px] font-bold text-primary">
-                              <Clock className="h-3 w-3" />{" "}
-                              {new Date(r.starts_at).toLocaleString(undefined, {
-                                month: "short",
-                                day: "numeric",
-                                hour: "2-digit",
-                                minute: "2-digit",
-                              })}
-                            </span>
-                          )}
-                        </div>
                       )}
                     </div>
                   </div>
-
-                  <div className="flex items-center shrink-0">
-                    <Button
-                      size="icon"
-                      variant="ghost"
-                      onClick={() => {
-                        if (window.confirm("Purge Node?")) remove.mutate(r.id);
-                      }}
-                      className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive transition-all opacity-20 group-hover:opacity-100"
-                    >
-                      <Trash2 className="h-4 w-4" />
-                    </Button>
-                  </div>
                 </div>
-              ))}
-            </div>
-          </CardContent>
-        </Card>
-      )}
 
-      {/* Deployment Dialog */}
+                <div className="flex gap-2">
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => handleEdit(r)}
+                    className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all"
+                  >
+                    <Pencil className="h-4 w-4" />
+                  </Button>
+                  <Button
+                    variant="ghost"
+                    size="icon"
+                    onClick={() => setPurgeId(r.id)}
+                    className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive transition-all"
+                  >
+                    <Trash2 className="h-4 w-4" />
+                  </Button>
+                </div>
+              </CardContent>
+            </Card>
+          ))
+        )}
+      </div>
+
+      {/* Deployment & Recalibration Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl shadow-2xl">
-          <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
-          <div className="p-8 pb-0 max-h-[80vh] overflow-y-auto no-scrollbar text-left">
-            <DialogHeader className="mb-6">
-              <div className="flex items-center gap-4">
-                <Icon className="h-8 w-8 text-primary fill-primary/20" />
-                <div className="space-y-1">
-                  <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter leading-none">
-                    Node Deployment
-                  </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic text-muted-foreground/60">
-                    Bind new entity to the Global Graph
-                  </DialogDescription>
-                </div>
-              </div>
+        <DialogContent className="max-w-md rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background shadow-2xl">
+          <div className="h-2 w-full bg-primary" />
+          <div className="p-8 space-y-6 max-h-[80vh] overflow-y-auto no-scrollbar">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
+                {editingNode ? "Recalibrate Node" : "Node Deployment"}
+              </DialogTitle>
             </DialogHeader>
 
-            <div className="space-y-6 pb-8">
+            <div className="space-y-4">
               <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase ml-1">Parent Institution *</Label>
                 <Select
                   value={draft.institution_id ?? ""}
                   onValueChange={(v) => setDraft({ ...draft, institution_id: v })}
                 >
-                  <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs bg-muted/20">
-                    <SelectValue placeholder="LINK TO INSTITUTION *" />
+                  <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+                    <SelectValue placeholder="LINK TO INSTITUTION" />
                   </SelectTrigger>
-                  <SelectContent className="rounded-xl border-2">
-                    {(institutionsQ.data ?? []).map((i: any) => (
-                      <SelectItem key={i.id} value={i.id} className="font-bold text-xs uppercase tracking-widest">
+                  <SelectContent>
+                    {institutionsQ.data?.map((i) => (
+                      <SelectItem key={i.id} value={i.id}>
                         {i.name}
                       </SelectItem>
                     ))}
@@ -274,68 +333,110 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
                 </Select>
               </div>
 
-              {fields.map((f) => {
-                if (f.type === "select" && f.options) {
-                  return (
-                    <div key={f.key} className="space-y-2">
-                      <Select value={draft[f.key] ?? ""} onValueChange={(v) => setDraft({ ...draft, [f.key]: v })}>
-                        <SelectTrigger className="h-12 rounded-xl border-2 font-bold uppercase text-xs bg-muted/20">
-                          <SelectValue placeholder={f.label} />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border-2">
-                          {f.options.map((o) => (
-                            <SelectItem key={o} value={o} className="font-bold text-xs uppercase tracking-widest">
-                              {o}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  );
-                }
-                if (f.type === "textarea") {
-                  return (
+              {/* O1 Fix: Conditional Club Selection for Representatives */}
+              {table === "institution_representatives" && (
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase ml-1">Linked Club / Society</Label>
+                  <Select
+                    value={draft.club_id ?? ""}
+                    onValueChange={(v) => setDraft({ ...draft, club_id: v })}
+                    disabled={!draft.institution_id}
+                  >
+                    <SelectTrigger className="h-12 rounded-xl border-2">
+                      <SelectValue placeholder="SELECT CLUB (OPTIONAL)" />
+                    </SelectTrigger>
+                    <SelectContent>
+                      <SelectItem value="">NO SPECIFIC CLUB</SelectItem>
+                      {clubsQ.data?.map((c) => (
+                        <SelectItem key={c.id} value={c.id}>
+                          {c.name}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                </div>
+              )}
+
+              {fields.map((f) => (
+                <div key={f.key} className="space-y-2">
+                  <Label className="text-[10px] font-black uppercase ml-1">{f.label}</Label>
+                  {f.type === "textarea" ? (
                     <Textarea
-                      key={f.key}
-                      placeholder={f.label}
-                      rows={3}
                       value={draft[f.key] ?? ""}
                       onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
-                      className="rounded-xl border-2 font-medium italic text-sm bg-muted/20 p-4 resize-none"
+                      className="rounded-xl border-2 h-24"
                     />
-                  );
-                }
-                return (
-                  <Input
-                    key={f.key}
-                    type={f.type ?? "text"}
-                    placeholder={f.label}
-                    value={draft[f.key] ?? ""}
-                    onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
-                    className="h-12 rounded-xl border-2 font-bold bg-muted/20"
-                  />
-                );
-              })}
+                  ) : f.type === "select" ? (
+                    <Select value={draft[f.key] ?? ""} onValueChange={(v) => setDraft({ ...draft, [f.key]: v })}>
+                      <SelectTrigger className="h-12 rounded-xl border-2">
+                        <SelectValue />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {f.options?.map((o) => (
+                          <SelectItem key={o} value={o}>
+                            {o.toUpperCase()}
+                          </SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  ) : (
+                    <Input
+                      type={f.type ?? "text"}
+                      value={draft[f.key] ?? ""}
+                      onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
+                      className="h-12 rounded-xl border-2 font-bold"
+                    />
+                  )}
+                </div>
+              ))}
             </div>
+
+            <DialogFooter className="pt-4 border-t">
+              <Button
+                variant="ghost"
+                onClick={() => setOpen(false)}
+                className="h-12 rounded-xl font-black uppercase text-[10px]"
+              >
+                Abort
+              </Button>
+              <Button
+                onClick={() => saveMutation.mutate()}
+                disabled={!draft.institution_id || saveMutation.isPending}
+                className="h-12 rounded-xl font-black uppercase italic text-[10px] flex-1 shadow-lg"
+              >
+                {saveMutation.isPending ? "Syncing..." : editingNode ? "Commit Calibration" : "Authorize Node"}
+              </Button>
+            </DialogFooter>
           </div>
-          <DialogFooter className="p-6 border-t border-border/10 bg-muted/5 flex-col sm:flex-row gap-3 sm:gap-0">
-            <Button
-              variant="outline"
-              onClick={() => setOpen(false)}
-              className="h-12 px-6 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest italic text-muted-foreground"
-            >
-              Abort
-            </Button>
-            <Button
-              disabled={!draft.institution_id || create.isPending}
-              onClick={() => create.mutate()}
-              className="h-12 px-8 rounded-[20px] font-black uppercase italic tracking-widest text-[10px] gap-2 shadow-lg flex-1"
-            >
-              {create.isPending ? "Syncing..." : "Authorize Deployment"}
-            </Button>
-          </DialogFooter>
         </DialogContent>
       </Dialog>
+
+      {/* P3 Fix: AlertDialog Implementation */}
+      <AlertDialog open={!!purgeId} onOpenChange={() => setPurgeId(null)}>
+        <AlertDialogContent className="rounded-[32px] border-4 border-destructive/20 bg-background/95">
+          <AlertDialogHeader className="items-center text-center">
+            <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border-2 border-destructive/20">
+              <AlertTriangle className="h-8 w-8 text-destructive" />
+            </div>
+            <AlertDialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-destructive">
+              Terminate Node?
+            </AlertDialogTitle>
+            <AlertDialogDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 leading-relaxed">
+              System warning: This protocol permanently purges the entity from the Global Graph. This action is
+              immutable.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter className="mt-8 gap-3">
+            <AlertDialogCancel className="h-12 rounded-xl font-black uppercase text-[10px]">Cancel</AlertDialogCancel>
+            <AlertDialogAction
+              onClick={() => purgeId && remove.mutate(purgeId)}
+              className="h-12 bg-destructive text-white rounded-xl font-black uppercase text-[10px]"
+            >
+              Confirm Termination
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   );
 }
@@ -345,7 +446,7 @@ export function ClubsManager() {
     <ChildRegistry
       table="institution_clubs"
       title="Clubs & Affiliations"
-      description="Student clubs, societies and academic departments mapped to institutions."
+      description="Campus societies and academic department mappings."
       icon={Network}
       fields={[
         { key: "name", label: "Node Name *" },
@@ -360,12 +461,12 @@ export function RepresentativesManager() {
   return (
     <ChildRegistry
       table="institution_representatives"
-      title="Institutional Liaisons"
-      description="Point-of-contact operators inside each institution or club."
+      title="Liaisons"
+      description="Operational points-of-contact within institutions."
       icon={Users}
       fields={[
         { key: "name", label: "Operator Name *" },
-        { key: "role", label: "Authority Level / Title" },
+        { key: "role", label: "Authority / Title" },
         { key: "email", label: "Transmission Email", type: "email" },
         { key: "phone", label: "Comms Link (Phone)" },
         { key: "notes", label: "Telemetry Notes", type: "textarea" },
@@ -378,29 +479,22 @@ export function OrgEventsManager() {
   return (
     <ChildRegistry
       table="institution_events"
-      title="Events & Competitions"
-      description="Events, hackathons, and competitions hosted by the Global Graph."
+      title="Events & Ops"
+      description="Global Graph hosted hackathons and summits."
       icon={Calendar}
-      badgeKey="type"
+      badgeKey="status"
       fields={[
         { key: "title", label: "Operation Title *" },
         {
           key: "type",
-          label: "Event Classification",
+          label: "Classification",
           type: "select",
           options: ["event", "competition", "conference", "workshop"],
         },
-        { key: "starts_at", label: "Initialization Sequence (Start)", type: "datetime-local" },
-        { key: "ends_at", label: "Termination Sequence (End)", type: "datetime-local" },
-        { key: "location", label: "Physical/Digital Vector (Location)" },
-        { key: "url", label: "Comms Link (URL)" },
-        {
-          key: "status",
-          label: "Deployment Status",
-          type: "select",
-          options: ["planned", "live", "completed", "cancelled"],
-        },
-        { key: "notes", label: "Telemetry Notes", type: "textarea" },
+        { key: "starts_at", label: "Start Sequence", type: "datetime-local" },
+        { key: "ends_at", label: "End Sequence", type: "datetime-local" },
+        { key: "location", label: "Vector (Location)" },
+        { key: "status", label: "Status", type: "select", options: ["planned", "live", "completed", "cancelled"] },
       ]}
     />
   );
