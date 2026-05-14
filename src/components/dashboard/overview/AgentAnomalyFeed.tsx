@@ -59,8 +59,7 @@ export function AgentAnomalyFeed() {
     const channel = supabase
       .channel("platform-anomalies")
       .on(
-        // @ts-expect-error postgres_changes is a valid filter at runtime
-        "postgres_changes",
+        "postgres_changes" as any,
         { event: "INSERT", schema: "public", table: "platform_events" },
         () => fetchEvents(),
       )
