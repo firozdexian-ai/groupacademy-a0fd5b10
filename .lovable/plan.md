@@ -1,78 +1,93 @@
-## Investors & IR — Re-audit (Phase IR-Z1)
+## Phase INST-Z2 — Re-Audit of Institutions & Organizations
 
-10 tabs · 23 files · ~4,780 LOC. Since last audit, **4 of 6 fixes landed**; **B1 is still broken**, **2 polish items pending**, and **3 features look ripped/orphaned**.
-
----
-
-### ✅ Already fixed since IR-Z0
-
-| ID | Fix | Verified |
-|---|---|---|
-| B2 | `IRDashboard` now pulls live counts (`ir_vc_firms`, `ir_investors`, `talents`, 30d `ir_outreach_log`) via single `useQuery(["ir-unified-telemetry"])` | IRDashboard.tsx:48-94 |
-| B3 | `InvestorsManager` search input is wired (`searchQuery` + `filteredInvestors` memo over name/email/title/firm) | InvestorsManager.tsx:114-127, 261 |
-| P1 | `EmailComposer` logs to `ir_outreach_log` **and** opens `mailto:` per email memory | EmailComposer.tsx:64-69 |
-| P2 | `KeyInfluencersTab` now has edit + delete (file grew 246 → 327 LOC) | KeyInfluencersTab.tsx:103-121 |
+INST-Z1 fixed real bugs (edit, RPC rollups, club_id wiring, AlertDialog, status filter, event temporal tabs). But during the rewrite we **ripped a chunk of user-facing fields** and shipped one fresh crash. Here's what's still wrong.
 
 ---
 
-### 🔴 Still broken (regression risk)
+### 🔴 Regressions — fields ripped during INST-Z1
 
-**B1 — `IROverviewTab` still queries non-existent tables.** Renders zeros silently behind a swallowed catch.
-```ts
-sb.from("vc_firms")        // ❌  → ir_vc_firms
-sb.from("investors")       // ❌  → ir_investors
-sb.from("ir_mrr_targets")  // ❌  → ir_monthly_targets  (col target_mrr_usd→mrr_target_usd, target_date→month)
+**R1. StakeholderRegistry dialog lost 6 fields.**
+DB columns exist (and are queried back into the row type), but the form only edits **name / type / status**. Missing:
+- `country` (also breaks the `normalize_country_name` trigger value chain)
+- `website`
+- `contact_name`
+- `contact_email`
+- `contact_phone`
+- `notes`
+
+Effect: any institution / partner org created from the current UI has no contact info, no country, no website. Pre-Z1 these were editable.
+
+**R2. Stakeholder card hides those same fields.**
+Cards show name, type, country, status — but never `website` or any contact field. Even rows imported externally look empty.
+
+**R3. Child-registry cards under-display data.**
+- Reps: never shows `role / email / phone / club_id`.
+- Clubs: never shows `department / notes`.
+- Events: never shows `location / url / ends_at / status`.
+
+**R4. Events form missing `url` field.** Column exists in `institution_events` but not in `OrgEventsManager.fields`.
+
+---
+
+### 🔴 Fresh bug introduced in INST-Z1
+
+**B4. Empty-string `SelectItem` crashes Radix.**
+`InstitutionChildRegistry.tsx:351`:
+```tsx
+<SelectItem value="">NO SPECIFIC CLUB</SelectItem>
 ```
-This tab is mounted as `ir-overview` ("IR Overview") and is visible in the sidebar — every visit shows 0/0/0 unless the user happens to have an `ir_influencers` row.
+Radix throws "A `<Select.Item />` must have a value prop that is not an empty string." Opening the rep dialog crashes the tab. Use sentinel `"__none__"` and map to `null` on save.
+
+**B5. Clearing club_id never persists `null`.**
+Combined with B4 there is no way to unset a club association after one is set.
+
+**B6. RPC return cast as `any`.**
+Not a runtime bug, but `get_institution_rollups` isn't in `types.ts` yet. Drop the `(supabase as any)` cast in `StakeholderRegistry.tsx:107` once types regenerate.
 
 ---
 
-### 🟠 Removed / orphaned features (DB tables w/o code paths)
+### 🟠 Polish gaps still open
 
-Database tables exist but no client or edge function reads/writes them — strong candidates for previously-ripped features:
-
-| Table | Status | Likely original purpose |
-|---|---|---|
-| `ir_email_communications` | Zero refs outside `types.ts` | A richer outbound email log (separate from `ir_outreach_log`) — possibly intended for the "Executive Updates" tab's send history. Probably superseded by `ir_outreach_log`. |
-| `ir_pipeline_events` | Zero refs outside `types.ts` | Stage-transition audit log. The `useIRPipeline.moveCard` mutation updates `pipeline_stage` directly with **no event log written** — losing IR history that this table was designed to capture. |
-| `ir_retention_cohorts` | Zero refs outside `types.ts` | Cohort-level NRR/GRR for the Unit Economics tab. `useUnitEconomics` currently only reads `ir_metrics_snapshots` — the cohort grid is gone. |
-
-These three should be either **wired back** or **dropped via migration with a memory note**. Recommend wiring `ir_pipeline_events` (cheap insert in `moveCard`) and re-evaluating the other two.
+- **P1.** Overview still does 4 client `count(*)` queries. Defer to a future RPC pass with leaderboard.
+- **P5.** No empty state on either registry — blank grid when no rows.
+- **D2.** `badgeKey="status"` set on `ClubsManager` but clubs has no status column — cosmetic dead path.
 
 ---
 
-### 🟡 Polish still pending from IR-Z0
+### ✅ What's correct now (don't touch)
 
-**P3 — Folder fragmentation.** `IROverviewTab.tsx` + `KeyInfluencersTab.tsx` still live in `components/dashboard/investors/`; everything else in `components/dashboard/ir/`. Same issue we cleaned up for Companies. Move into `ir/` and update Dashboard imports.
-
-**P4 — Two overview screens.** `ir-overview` (KPI HUD) and `ir-dashboard` (Intelligence Hub) both summarize IR. Now that `IRDashboard` has a full 4-card KPI ribbon plus live counts, `ir-overview` is redundant. Recommend **delete `ir-overview`** from the sidebar and drop the file (after fixing B1 is moot if we're deleting it).
-
-**P5 — `supabase as any` casts.** `IROverviewTab` and `KeyInfluencersTab` still cast through any. If we delete `IROverviewTab` and consolidate Influencers into `ir/`, regenerate types and drop the casts.
+B1/B2 edit handlers, B3 rollup RPC, O1 club_id Select, P2 status filter, P3 AlertDialog, P4 Upcoming/Past tabs, D1 dead-hook removal (already done in `useInstitutionGraph.ts`).
 
 ---
 
-### 🟢 Structural / deferred
+### Phase INST-Z2 work
 
-- **S1** — `InvestorsManager` (650 LOC) and `VCFirmsManager` (585 LOC) are still oversized. Split dialog + delete confirm into siblings. Defer.
-- **S2** — `ir_outreach_log` has no FK to `ir_investors` (composer admits it). Adds clean per-investor outreach history. Defer.
-- **S3** — Memory drift: `mem://admin/investors-stakeholder-structure` lists 9 tabs missing `ir-pipeline`, `ir-dataroom`, `ir-economics`. Update memory to match the 10-tab reality once we resolve P4.
+**Must-fix (this pass):**
+1. **R1** — Restore the 6 fields in StakeholderRegistry dialog. Layout as Identity / Contact / Notes blocks; keep brutalist styling.
+2. **R2** — Surface `website` + `contact_email` (small mono row) on the stakeholder card.
+3. **R3 + R4** — Add missing fields to child-registry cards (role/email/phone for reps, department for clubs, location/status/url for events) and add `url` to event form.
+4. **B4 + B5** — Replace `SelectItem value=""` with `"__none__"` sentinel; convert to `null` in save payload; allow clearing.
+5. **P5** — Empty-state card on both registries.
+6. **D2** — Drop unused `badgeKey` on `ClubsManager`.
+
+**Defer:**
+- P1 (overview RPC + leaderboard).
+- B6 (drop `as any` once types regenerate).
+- CSV import / export.
+- Splitting StakeholderRegistry (419 LOC) and InstitutionChildRegistry (503 LOC).
 
 ---
 
-### Proposed IR-Z1 execution plan
+### Files touched
 
-**Decisions needed:** the lettered options below.
+```text
+src/components/dashboard/institutions/StakeholderRegistry.tsx       (~+80 LOC)
+src/components/dashboard/institutions/InstitutionChildRegistry.tsx  (~+50 LOC)
+mem://admin/institutions-stakeholder-structure                      (note Z2 closure)
+```
 
-1. **Fix B1** — one of:
-   - **(a)** Delete `IROverviewTab.tsx` + remove `ir-overview` entry from `Dashboard.tsx` (resolves P4 too). ← recommended
-   - **(b)** Rewrite queries to use real tables; keep tab.
-2. **Restore `ir_pipeline_events`** — in `useIRPipeline.moveCard`, after the update insert `{ investor_id, from_stage, to_stage, changed_by, changed_at }`. Adds audit trail that downstream IR FP&A agent can read.
-3. **Decide on `ir_email_communications` and `ir_retention_cohorts`:**
-   - **(c)** Wire them back (more work, more product surface).
-   - **(d)** Drop tables via migration and document in memory as deliberately removed.
-4. **P3** — move `IROverviewTab` (or just `KeyInfluencersTab` if we delete the overview) into `ir/`; update Dashboard imports; drop `as any` casts.
-5. **Memory** — update `mem://admin/investors-stakeholder-structure` to reflect the final tab set + Phase IR-Z1 lock note.
+No DB migrations — schema already supports everything; we're just re-exposing existing columns.
 
-**My recommendation:** 1a + 2 + 4 + 5; defer (c/d) until you tell me whether to revive Email Communications and Retention Cohorts. That's the minimum to lock the area cleanly without losing features that are actually orphaned.
+After Z2 ships, Institutions is locked. Next group up: **Group #7 Workforce** (per `mem://admin/groups-7-to-10-stakeholder-structure`).
 
-Tell me which letters you want (1a vs 1b, c vs d) and I'll execute.
+Approve and I'll execute Z2 in a single pass.
