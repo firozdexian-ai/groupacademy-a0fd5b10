@@ -18373,6 +18373,24 @@ export type Database = {
           talent_id: string
         }[]
       }
+      get_workforce_dashboard: {
+        Args: never
+        Returns: {
+          assigned_count: number
+          city: string
+          commission_earned: number
+          created_at: string
+          email: string
+          full_name: string
+          grade_label: string
+          member_id: string
+          role: string
+          specialization: string
+          status: string
+          talent_id: string
+          team_name: string
+        }[]
+      }
       grant_company_welcome_credits: {
         Args: { p_amount?: number; p_company_id: string }
         Returns: boolean
