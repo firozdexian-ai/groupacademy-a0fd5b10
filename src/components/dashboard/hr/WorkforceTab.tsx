@@ -31,7 +31,7 @@ import {
   Coins,
   TrendingUp,
   UserCog,
-  Link2,
+  
   Zap,
   ShieldCheck,
   MapPin,
@@ -135,13 +135,13 @@ export function WorkforceManager() {
         : {};
       const { error } = await supabase.from("workforce_members").insert({
         talent_id: selectedTalent.id,
-        role_type: formData.role_type,
+        role_type: formData.role_type as any,
         status: formData.status,
         city: formData.city || null,
         team_id: formData.team_id,
         grade_id: formData.grade_id,
         specialization: spec,
-      });
+      } as any);
       if (error) throw error;
       toast.success("Identity Deployed to Workforce");
       setShowAddDialog(false);
@@ -240,13 +240,13 @@ export function WorkforceManager() {
               <TableBody>
                 {filtered.map((m) => (
                   <TableRow
-                    key={m.member_id}
+                    key={m.id}
                     className="group border-b border-border/5 hover:bg-muted/10 transition-colors"
                   >
                     <TableCell className="py-6 pl-8">
                       <div className="text-left min-w-[200px]">
-                        <p className="font-black text-sm uppercase italic tracking-tight">{m.full_name}</p>
-                        <p className="text-[9px] font-bold text-muted-foreground uppercase mt-0.5">{m.email}</p>
+                        <p className="font-black text-sm uppercase italic tracking-tight">{m.talent_name || "—"}</p>
+                        <p className="text-[9px] font-bold text-muted-foreground uppercase mt-0.5">{m.talent_email}</p>
                       </div>
                     </TableCell>
                     <TableCell>
@@ -258,7 +258,7 @@ export function WorkforceManager() {
                           {ROLE_LABELS[m.role_type] || m.role_type}
                         </Badge>
                         <p className="text-[9px] font-black text-muted-foreground/60 flex items-center gap-1 uppercase">
-                          <Briefcase className="h-3 w-3" /> {m.team_name || "Unassigned"}
+                          <Briefcase className="h-3 w-3" /> {m.city || "Remote"}
                         </p>
                       </div>
                     </TableCell>
@@ -357,7 +357,7 @@ export function WorkforceManager() {
                   <SelectContent>
                     {gradesQuery.data?.map((g: any) => (
                       <SelectItem key={g.id} value={g.id} className="font-bold text-xs uppercase">
-                        {g.label}
+                        L{g.level} · {g.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
@@ -396,7 +396,17 @@ export function WorkforceManager() {
                 variant="ghost"
                 onClick={() => {
                   setShowAddDialog(false);
-                  resetForm();
+                  setSelectedTalent(null);
+                  setTalentSearch("");
+                  setFormData({
+                    role_type: "talent_executive",
+                    status: "active",
+                    city: "",
+                    team_id: "",
+                    grade_id: "",
+                    specialization_type: "",
+                    specialization_value: "",
+                  });
                 }}
                 className="h-12 rounded-xl font-black uppercase text-[10px]"
               >
