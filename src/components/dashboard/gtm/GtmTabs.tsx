@@ -450,13 +450,9 @@ export function GtmCitiesTab() {
             </TableCell>
             <TableCell className="text-right">
               <RowActions
-                onEdit={() => {
-                  setDraft(row);
-                  setOpen(true);
-                }}
-                onDelete={() => {
-                  deleteCity.mutate(row.id);
-                }}
+                label="city"
+                onEdit={() => { setDraft(row); setOpen(true); }}
+                onDelete={() => deleteCity.mutate(row.id)}
               />
             </TableCell>
           </TableRow>
