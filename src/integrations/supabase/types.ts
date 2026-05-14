@@ -18169,6 +18169,7 @@ export type Database = {
       }
       get_gigs_hub_dashboard: { Args: never; Returns: Json }
       get_global_crm_overview: { Args: never; Returns: Json }
+      get_gtm_dashboard: { Args: never; Returns: Json }
       get_hiring_stats: {
         Args: { p_company_id: string; p_window_days?: number }
         Returns: Json

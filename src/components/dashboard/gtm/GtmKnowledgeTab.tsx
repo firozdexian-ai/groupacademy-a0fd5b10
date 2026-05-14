@@ -1,4 +1,5 @@
 import { useState } from "react";
+import ReactMarkdown from "react-markdown";
 import { useGtmGraph } from "./hooks/useGtmGraph";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -10,7 +11,9 @@ import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@
 import { Plus, Pencil, Trash2, FileText, ShieldAlert, Globe } from "lucide-react";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter, DialogDescription } from "@/components/ui/dialog";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
+import { ConfirmPurge } from "./ConfirmPurge";
 
 export function GtmKnowledgeTab() {
   const { gtmGraphQuery, mutations: { upsertKnowledgePack, deleteKnowledgePack } } = useGtmGraph();
@@ -21,7 +24,7 @@ export function GtmKnowledgeTab() {
   const countries = gtmGraphQuery.data?.countries ?? [];
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Executive Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
@@ -91,9 +94,15 @@ export function GtmKnowledgeTab() {
                         <Button size="icon" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-indigo-500/10 hover:text-indigo-600">
                           <Pencil className="h-4 w-4" />
                         </Button>
-                        <Button size="icon" variant="ghost" onClick={() => { if (confirm("Purge Content?")) deleteKnowledgePack.mutate(row.id); }} className="hover:bg-destructive/10 hover:text-destructive">
-                          <Trash2 className="h-4 w-4" />
-                        </Button>
+                        <ConfirmPurge
+                          title="Purge content?"
+                          description="This will permanently remove the knowledge pack."
+                          onConfirm={() => deleteKnowledgePack.mutate(row.id)}
+                        >
+                          <Button size="icon" variant="ghost" className="hover:bg-destructive/10 hover:text-destructive">
+                            <Trash2 className="h-4 w-4" />
+                          </Button>
+                        </ConfirmPurge>
                       </div>
                     </TableCell>
                   </TableRow>
@@ -168,12 +177,29 @@ export function GtmKnowledgeTab() {
 
             <div className="space-y-2">
               <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Markdown Body</Label>
-              <Textarea
-                placeholder="# Heading&#10;&#10;Body content..."
-                value={draft.body_markdown || ""}
-                onChange={(e) => setDraft({ ...draft, body_markdown: e.target.value })}
-                className="min-h-[300px] rounded-2xl border-2 font-mono text-sm bg-muted/20 p-4"
-              />
+              <Tabs defaultValue="edit">
+                <TabsList className="grid grid-cols-2 w-full max-w-xs">
+                  <TabsTrigger value="edit">Edit</TabsTrigger>
+                  <TabsTrigger value="preview">Preview</TabsTrigger>
+                </TabsList>
+                <TabsContent value="edit" className="mt-2">
+                  <Textarea
+                    placeholder="# Heading&#10;&#10;Body content..."
+                    value={draft.body_markdown || ""}
+                    onChange={(e) => setDraft({ ...draft, body_markdown: e.target.value })}
+                    className="min-h-[300px] rounded-2xl border-2 font-mono text-sm bg-muted/20 p-4"
+                  />
+                </TabsContent>
+                <TabsContent value="preview" className="mt-2">
+                  <div className="min-h-[300px] rounded-2xl border-2 bg-background p-4 prose prose-sm max-w-none dark:prose-invert">
+                    {draft.body_markdown ? (
+                      <ReactMarkdown>{draft.body_markdown}</ReactMarkdown>
+                    ) : (
+                      <p className="text-xs text-muted-foreground italic">Nothing to preview yet.</p>
+                    )}
+                  </div>
+                </TabsContent>
+              </Tabs>
             </div>
 
             <div className="grid grid-cols-2 gap-4">

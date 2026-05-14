@@ -30,6 +30,8 @@ import {
 } from "@/components/ui/select";
 import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
+import { ConfirmPurge } from "./ConfirmPurge";
+import { X } from "lucide-react";
 
 // ───────────────────────── Generic Registry Shell ─────────────────────────
 
@@ -142,20 +144,25 @@ function GtmRegistryShell({
   );
 }
 
-function RowActions({ onEdit, onDelete }: { onEdit: () => void; onDelete: () => void }) {
+function RowActions({ onEdit, onDelete, label = "node" }: { onEdit: () => void; onDelete: () => void; label?: string }) {
   return (
     <div className="flex items-center justify-end gap-1">
       <Button size="icon" variant="ghost" className="h-8 w-8 rounded-lg" onClick={onEdit}>
         <Pencil className="h-3.5 w-3.5" />
       </Button>
-      <Button
-        size="icon"
-        variant="ghost"
-        className="h-8 w-8 rounded-lg text-destructive hover:text-destructive"
-        onClick={onDelete}
+      <ConfirmPurge
+        title={`Purge this ${label}?`}
+        description="This action cannot be undone and will remove the record from the registry."
+        onConfirm={onDelete}
       >
-        <Trash2 className="h-3.5 w-3.5" />
-      </Button>
+        <Button
+          size="icon"
+          variant="ghost"
+          className="h-8 w-8 rounded-lg text-destructive hover:text-destructive"
+        >
+          <Trash2 className="h-3.5 w-3.5" />
+        </Button>
+      </ConfirmPurge>
     </div>
   );
 }
@@ -213,13 +220,9 @@ export function GtmCountriesTab() {
             </TableCell>
             <TableCell className="text-right">
               <RowActions
-                onEdit={() => {
-                  setDraft(row);
-                  setOpen(true);
-                }}
-                onDelete={() => {
-                  if (confirm("Purge this country?")) deleteCountry.mutate(row.id);
-                }}
+                label="country"
+                onEdit={() => { setDraft(row); setOpen(true); }}
+                onDelete={() => deleteCountry.mutate(row.id)}
               />
             </TableCell>
           </TableRow>
@@ -337,13 +340,9 @@ export function GtmStatesTab() {
             </TableCell>
             <TableCell className="text-right">
               <RowActions
-                onEdit={() => {
-                  setDraft(row);
-                  setOpen(true);
-                }}
-                onDelete={() => {
-                  if (confirm("Purge this region?")) deleteRegion.mutate(row.id);
-                }}
+                label="region"
+                onEdit={() => { setDraft(row); setOpen(true); }}
+                onDelete={() => deleteRegion.mutate(row.id)}
               />
             </TableCell>
           </TableRow>
@@ -451,13 +450,9 @@ export function GtmCitiesTab() {
             </TableCell>
             <TableCell className="text-right">
               <RowActions
-                onEdit={() => {
-                  setDraft(row);
-                  setOpen(true);
-                }}
-                onDelete={() => {
-                  if (confirm("Purge this city?")) deleteCity.mutate(row.id);
-                }}
+                label="city"
+                onEdit={() => { setDraft(row); setOpen(true); }}
+                onDelete={() => deleteCity.mutate(row.id)}
               />
             </TableCell>
           </TableRow>
@@ -571,13 +566,9 @@ export function GtmClustersTab() {
             </TableCell>
             <TableCell className="text-right">
               <RowActions
-                onEdit={() => {
-                  setDraft({ countries: [], cities: [], ...row });
-                  setOpen(true);
-                }}
-                onDelete={() => {
-                  if (confirm("Purge this cluster?")) deleteCluster.mutate(row.id);
-                }}
+                label="cluster"
+                onEdit={() => { setDraft({ countries: [], cities: [], ...row }); setOpen(true); }}
+                onDelete={() => deleteCluster.mutate(row.id)}
               />
             </TableCell>
           </TableRow>
@@ -585,7 +576,7 @@ export function GtmClustersTab() {
       />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
           <DialogHeader>
             <DialogTitle className="font-black uppercase tracking-tight">Deploy Cluster</DialogTitle>
           </DialogHeader>
@@ -606,9 +597,38 @@ export function GtmClustersTab() {
                 className="h-12 rounded-xl border-2"
               />
             </div>
-            <p className="text-[11px] text-muted-foreground italic px-1">
-              Node selection UI pending Phase 6.2 update.
-            </p>
+
+            {/* Country picker */}
+            <ClusterCountryPicker
+              countries={gtmGraphQuery.data?.countries ?? []}
+              selected={draft.countries ?? []}
+              onChange={(next) => {
+                // when removing a country, also drop its cities
+                const removed = (draft.countries ?? []).filter((id: string) => !next.includes(id));
+                let nextCities: string[] = draft.cities ?? [];
+                if (removed.length > 0) {
+                  const droppedRegionIds = (gtmGraphQuery.data?.regions ?? [])
+                    .filter((r) => removed.includes(r.country_id))
+                    .map((r) => r.id);
+                  const droppedCityIds = new Set(
+                    (gtmGraphQuery.data?.cities ?? [])
+                      .filter((c) => droppedRegionIds.includes(c.region_id))
+                      .map((c) => c.id),
+                  );
+                  nextCities = nextCities.filter((id) => !droppedCityIds.has(id));
+                }
+                setDraft({ ...draft, countries: next, cities: nextCities });
+              }}
+            />
+
+            {/* City picker (filtered by selected countries) */}
+            <ClusterCityPicker
+              regions={gtmGraphQuery.data?.regions ?? []}
+              cities={gtmGraphQuery.data?.cities ?? []}
+              selectedCountries={draft.countries ?? []}
+              selectedCities={draft.cities ?? []}
+              onChange={(next) => setDraft({ ...draft, cities: next })}
+            />
           </div>
           <DialogFooter>
             <Button
@@ -624,3 +644,161 @@ export function GtmClustersTab() {
     </>
   );
 }
+
+// ───────────────────────── CLUSTER COMPOSITION PICKERS ─────────────────────────
+
+function ClusterCountryPicker({
+  countries,
+  selected,
+  onChange,
+}: {
+  countries: any[];
+  selected: string[];
+  onChange: (next: string[]) => void;
+}) {
+  const toggle = (id: string) => {
+    if (selected.includes(id)) onChange(selected.filter((x) => x !== id));
+    else onChange([...selected, id]);
+  };
+  const selectedSet = new Set(selected);
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-[10px] uppercase tracking-widest font-black">
+        Countries ({selected.length})
+      </Label>
+      {selected.length > 0 && (
+        <div className="flex flex-wrap gap-1.5">
+          {selected.map((id) => {
+            const c = countries.find((x) => x.id === id);
+            if (!c) return null;
+            return (
+              <Badge
+                key={id}
+                variant="outline"
+                className="font-mono text-[10px] gap-1 pr-1 border-amber-500/40"
+              >
+                {c.iso2} · {c.name}
+                <button
+                  onClick={() => toggle(id)}
+                  className="hover:bg-destructive/20 rounded-sm p-0.5"
+                  type="button"
+                >
+                  <X className="h-3 w-3" />
+                </button>
+              </Badge>
+            );
+          })}
+        </div>
+      )}
+      <div className="max-h-40 overflow-y-auto rounded-xl border-2 p-2 grid grid-cols-2 gap-1">
+        {countries.length === 0 ? (
+          <p className="col-span-2 text-xs text-muted-foreground text-center py-3">No countries available</p>
+        ) : (
+          countries.map((c) => (
+            <button
+              key={c.id}
+              type="button"
+              onClick={() => toggle(c.id)}
+              className={cn(
+                "text-left text-xs px-2 py-1.5 rounded-lg font-bold transition-colors",
+                selectedSet.has(c.id)
+                  ? "bg-amber-500/15 text-amber-700"
+                  : "hover:bg-muted",
+              )}
+            >
+              <span className="font-mono mr-2">{c.iso2}</span>
+              {c.name}
+            </button>
+          ))
+        )}
+      </div>
+    </div>
+  );
+}
+
+function ClusterCityPicker({
+  regions,
+  cities,
+  selectedCountries,
+  selectedCities,
+  onChange,
+}: {
+  regions: any[];
+  cities: any[];
+  selectedCountries: string[];
+  selectedCities: string[];
+  onChange: (next: string[]) => void;
+}) {
+  const eligibleRegionIds = new Set(
+    regions.filter((r) => selectedCountries.includes(r.country_id)).map((r) => r.id),
+  );
+  const eligibleCities = cities.filter((c) => eligibleRegionIds.has(c.region_id));
+  const toggle = (id: string) => {
+    if (selectedCities.includes(id)) onChange(selectedCities.filter((x) => x !== id));
+    else onChange([...selectedCities, id]);
+  };
+  const selectedSet = new Set(selectedCities);
+
+  return (
+    <div className="space-y-2">
+      <Label className="text-[10px] uppercase tracking-widest font-black">
+        Cities ({selectedCities.length})
+      </Label>
+      {selectedCountries.length === 0 ? (
+        <p className="text-[11px] text-muted-foreground italic px-1">
+          Select at least one country to enable city selection.
+        </p>
+      ) : eligibleCities.length === 0 ? (
+        <p className="text-[11px] text-muted-foreground italic px-1">
+          No cities deployed under the selected countries yet.
+        </p>
+      ) : (
+        <>
+          {selectedCities.length > 0 && (
+            <div className="flex flex-wrap gap-1.5">
+              {selectedCities.map((id) => {
+                const c = eligibleCities.find((x) => x.id === id) || cities.find((x) => x.id === id);
+                if (!c) return null;
+                return (
+                  <Badge
+                    key={id}
+                    variant="outline"
+                    className="text-[10px] gap-1 pr-1 border-blue-500/40"
+                  >
+                    {c.name}
+                    <button
+                      onClick={() => toggle(id)}
+                      className="hover:bg-destructive/20 rounded-sm p-0.5"
+                      type="button"
+                    >
+                      <X className="h-3 w-3" />
+                    </button>
+                  </Badge>
+                );
+              })}
+            </div>
+          )}
+          <div className="max-h-40 overflow-y-auto rounded-xl border-2 p-2 grid grid-cols-2 gap-1">
+            {eligibleCities.map((c) => (
+              <button
+                key={c.id}
+                type="button"
+                onClick={() => toggle(c.id)}
+                className={cn(
+                  "text-left text-xs px-2 py-1.5 rounded-lg font-bold transition-colors",
+                  selectedSet.has(c.id)
+                    ? "bg-blue-500/15 text-blue-700"
+                    : "hover:bg-muted",
+                )}
+              >
+                {c.name}
+              </button>
+            ))}
+          </div>
+        </>
+      )}
+    </div>
+  );
+}
+
