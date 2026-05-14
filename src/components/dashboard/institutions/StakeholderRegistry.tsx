@@ -1,7 +1,7 @@
 /**
- * Stakeholder Registry Hub — Phase INST-Z1 Hardened
+ * Stakeholder Registry Hub — Phase INST-Z2 Hardened
  * CTO Version: May 2026
- * Fixes: B1 (Edit logic), B3 (RPC Rollups), P2 (Status Filter), P3 (AlertDialog)
+ * Fixes: R1 (Restore 6 dialog fields), R2 (Card metadata surface), P5 (Empty States)
  */
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
@@ -28,6 +28,10 @@ import {
   Pencil,
   Filter,
   AlertTriangle,
+  User,
+  FileText,
+  Phone,
+  ExternalLink,
 } from "lucide-react";
 import {
   Dialog,
@@ -95,26 +99,23 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
         .select("*")
         .order("name", { ascending: true });
       if (error) throw error;
-      return (data as unknown) as StakeholderRow[];
+      return data as StakeholderRow[];
     },
   });
 
-  // B3 Fix: Adoption of High-Performance Rollup RPC
   const { data: rollups } = useQuery({
     queryKey: ["institution_rollups_rpc"],
     enabled: table === "institutions",
     queryFn: async () => {
-      const { data, error } = await (supabase as any).rpc("get_institution_rollups");
+      const { data, error } = await supabase.rpc("get_institution_rollups");
       if (error) throw error;
-      // Convert array to O(1) lookup map
-      return (data as any[])?.reduce((acc: any, curr: any) => {
+      return data?.reduce((acc: any, curr: any) => {
         acc[curr.institution_id] = curr;
         return acc;
       }, {});
     },
   });
 
-  // B1 Fix: Unified Save/Update Mutation
   const saveMutation = useMutation({
     mutationFn: async () => {
       const finalDraft = { ...draft, type: draft.type || typeOptions[0] };
@@ -146,7 +147,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
       if (error) throw error;
     },
     onSuccess: () => {
-      toast.success("Node Purged from Global Graph");
+      toast.success("Node Purged");
       setPurgeId(null);
       qc.invalidateQueries({ queryKey: [table] });
     },
@@ -189,7 +190,6 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
         </Button>
       </header>
 
-      {/* P2 Fix: Status & Search Filter Terminal */}
       <div className="flex flex-col md:flex-row gap-4">
         <div className="relative flex-1 group">
           <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
@@ -219,6 +219,10 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
       <div className="grid gap-4">
         {listQuery.isLoading ? (
           <div className="h-64 animate-pulse bg-muted/40 rounded-[40px]" />
+        ) : rows.length === 0 ? (
+          <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-30 font-black uppercase tracking-widest text-xs italic">
+            No matching nodes detected
+          </Card>
         ) : (
           rows.map((r) => (
             <Card
@@ -227,10 +231,10 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
             >
               <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-start gap-5 flex-1 min-w-0">
-                  <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border-2 border-border/20 shrink-0 group-hover:border-primary/30">
+                  <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border-2 border-border/20 shrink-0 group-hover:border-primary/30 transition-colors">
                     <Building2 className="h-6 w-6 text-primary" />
                   </div>
-                  <div className="space-y-2 flex-1 min-w-0">
+                  <div className="space-y-1 flex-1 min-w-0">
                     <div className="flex items-center gap-3">
                       <h4 className="font-black text-xl uppercase italic tracking-tighter truncate">{r.name}</h4>
                       <Badge
@@ -250,11 +254,33 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
                         </span>
                       )}
                     </div>
+                    {/* R2 Fix: Surface Contact Data on Card */}
+                    <div className="flex flex-wrap items-center gap-4 mt-2 border-t border-border/5 pt-2">
+                      {r.website && (
+                        <a
+                          href={r.website}
+                          target="_blank"
+                          rel="noreferrer"
+                          className="flex items-center gap-1 text-[10px] font-bold text-blue-500 uppercase hover:underline"
+                        >
+                          <ExternalLink className="h-3 w-3" /> Website
+                        </a>
+                      )}
+                      {r.contact_email && (
+                        <span className="flex items-center gap-1 text-[10px] font-mono text-muted-foreground uppercase">
+                          <Mail className="h-3 w-3" /> {r.contact_email}
+                        </span>
+                      )}
+                      {r.contact_name && (
+                        <span className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">
+                          <User className="h-3 w-3" /> {r.contact_name}
+                        </span>
+                      )}
+                    </div>
                   </div>
                 </div>
 
                 <div className="flex items-center gap-4">
-                  {/* B3/P6 Fix: Real-time SQL Rollups */}
                   {table === "institutions" && rollups?.[r.id] && (
                     <div className="flex items-center gap-3 bg-muted/10 px-4 py-2 rounded-xl border border-border/10">
                       <MetricMini icon={Users} val={rollups[r.id].talent_count} color="text-emerald-500" />
@@ -262,7 +288,6 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
                       <MetricMini icon={Activity} val={rollups[r.id].event_count} color="text-amber-500" />
                     </div>
                   )}
-
                   <div className="flex gap-2">
                     <Button
                       variant="ghost"
@@ -288,30 +313,35 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
         )}
       </div>
 
-      {/* Deployment Dialog (B1 Edit Handled) */}
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-2xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background shadow-2xl">
           <div className="h-2 w-full bg-primary" />
-          <div className="p-10 space-y-6">
+          <div className="p-10 space-y-6 max-h-[85vh] overflow-y-auto no-scrollbar">
             <DialogHeader>
               <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter">
                 {editingRow ? "Recalibrate Node" : "Node Deployment"}
               </DialogTitle>
             </DialogHeader>
 
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-6 pb-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Identity Block */}
+              <div className="md:col-span-2 space-y-2 border-b border-border/10 pb-2">
+                <Label className="text-[10px] font-black uppercase italic tracking-widest text-primary">
+                  Identity & Status
+                </Label>
+              </div>
               <div className="space-y-2 md:col-span-2">
                 <Label className="text-[10px] font-black uppercase ml-1">Entity Name *</Label>
                 <Input
                   value={draft.name ?? ""}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
-                  className="h-14 rounded-xl border-2 font-bold"
+                  className="h-12 rounded-xl border-2 font-bold"
                 />
               </div>
               <div className="space-y-2">
                 <Label className="text-[10px] font-black uppercase ml-1">Classification</Label>
                 <Select value={draft.type || typeOptions[0]} onValueChange={(v) => setDraft({ ...draft, type: v })}>
-                  <SelectTrigger className="h-14 rounded-xl border-2 font-bold">
+                  <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -324,9 +354,9 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Status</Label>
+                <Label className="text-[10px] font-black uppercase ml-1">Current Status</Label>
                 <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
-                  <SelectTrigger className="h-14 rounded-xl border-2 font-bold">
+                  <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
@@ -337,6 +367,74 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
                     ))}
                   </SelectContent>
                 </Select>
+              </div>
+
+              {/* R1 Fix: Geolocation & Web */}
+              <div className="md:col-span-2 space-y-2 border-b border-border/10 pb-2 mt-4">
+                <Label className="text-[10px] font-black uppercase italic tracking-widest text-primary">
+                  Reach & Localization
+                </Label>
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase ml-1">Country</Label>
+                <Input
+                  value={draft.country ?? ""}
+                  onChange={(e) => setDraft({ ...draft, country: e.target.value })}
+                  placeholder="e.g. United Kingdom"
+                  className="h-12 rounded-xl border-2"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase ml-1">Website URL</Label>
+                <Input
+                  value={draft.website ?? ""}
+                  onChange={(e) => setDraft({ ...draft, website: e.target.value })}
+                  placeholder="https://"
+                  className="h-12 rounded-xl border-2 font-mono text-xs"
+                />
+              </div>
+
+              {/* R1 Fix: Point of Contact */}
+              <div className="md:col-span-2 space-y-2 border-b border-border/10 pb-2 mt-4">
+                <Label className="text-[10px] font-black uppercase italic tracking-widest text-primary">
+                  Administrative POC
+                </Label>
+              </div>
+              <div className="space-y-2 md:col-span-2">
+                <Label className="text-[10px] font-black uppercase ml-1">Contact Full Name</Label>
+                <Input
+                  value={draft.contact_name ?? ""}
+                  onChange={(e) => setDraft({ ...draft, contact_name: e.target.value })}
+                  className="h-12 rounded-xl border-2"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase ml-1">Email Endpoint</Label>
+                <Input
+                  value={draft.contact_email ?? ""}
+                  onChange={(e) => setDraft({ ...draft, contact_email: e.target.value })}
+                  type="email"
+                  className="h-12 rounded-xl border-2"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase ml-1">Phone Vector</Label>
+                <Input
+                  value={draft.contact_phone ?? ""}
+                  onChange={(e) => setDraft({ ...draft, contact_phone: e.target.value })}
+                  className="h-12 rounded-xl border-2"
+                />
+              </div>
+
+              {/* R1 Fix: Internal Notes */}
+              <div className="md:col-span-2 space-y-2 mt-4">
+                <Label className="text-[10px] font-black uppercase ml-1">Telemetry Notes</Label>
+                <Textarea
+                  value={draft.notes ?? ""}
+                  onChange={(e) => setDraft({ ...draft, notes: e.target.value })}
+                  className="min-h-[120px] rounded-2xl border-2 bg-muted/5"
+                  placeholder="Contextual intelligence..."
+                />
               </div>
             </div>
 
@@ -351,7 +449,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
               <Button
                 onClick={() => saveMutation.mutate()}
                 disabled={saveMutation.isPending}
-                className="h-14 px-10 rounded-2xl font-black uppercase italic text-lg flex-1 shadow-lg"
+                className="h-14 px-10 rounded-2xl font-black uppercase italic text-lg flex-1 shadow-lg bg-primary"
               >
                 {saveMutation.isPending ? "Syncing..." : editingRow ? "Commit Recalibration" : "Authorize Deployment"}
               </Button>
@@ -360,7 +458,6 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
         </DialogContent>
       </Dialog>
 
-      {/* P3 Fix: AlertDialog Restoration */}
       <AlertDialog open={!!purgeId} onOpenChange={() => setPurgeId(null)}>
         <AlertDialogContent className="rounded-[32px] border-4 border-destructive/20 bg-background/95">
           <AlertDialogHeader className="items-center text-center">
@@ -371,7 +468,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
               Terminate Node?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 leading-relaxed">
-              This cycle will permanently purge the stakeholder identity and orphan linked graph dependencies.
+              This action is immutable. Linked graph dependencies will be orphaned.
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8 gap-3">
