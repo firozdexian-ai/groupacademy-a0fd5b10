@@ -27,7 +27,7 @@ const STATUS_CONFIG: Record<
 
 export function ApplicationHistoryCard() {
   const navigate = useNavigate();
-  const { applications, isLoading, error } = useApplicationHistory();
+  const { data: applications = [], isLoading, error } = useApplicationHistory();
 
   if (isLoading) {
     return (
