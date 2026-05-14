@@ -41,7 +41,7 @@ export function useApplicationBuckets() {
       }
 
       // Protocol Default: Ensure a structured object is returned even if the DB returns null
-      return (data as ApplicationBuckets) || { active: 0, action_needed: 0, closed: 0 };
+      return ((data as unknown) as ApplicationBuckets) || { active: 0, action_needed: 0, closed: 0 };
     },
     // Performance: Sustained legibility for 60s to prevent rapid DB polling
     staleTime: 60_000,
