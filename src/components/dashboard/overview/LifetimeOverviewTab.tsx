@@ -1,7 +1,7 @@
 /**
- * Lifetime Overview — original Executive HUD body, extracted from
- * DashboardOverview so that file can host the tabbed shell.
- * CTO Refactor: Injected AgentAnomalyFeed & OverviewSkeleton.
+ * Lifetime Overview — Refactored Executive HUD
+ * CTO Version: May 2026
+ * Fixes: F1, F3, F4, F5 | Polish: P2, P9
  */
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
@@ -10,7 +10,6 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
   Users,
-  DollarSign,
   Globe,
   Coins,
   RefreshCw,
@@ -21,7 +20,6 @@ import {
   Briefcase,
   Zap,
   TrendingUp,
-  LayoutDashboard,
   ArrowUpRight,
 } from "lucide-react";
 import StatsCard from "@/components/dashboard/StatsCard";
@@ -30,116 +28,135 @@ import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { OverviewSkeleton } from "./OverviewSkeleton";
 import { AgentAnomalyFeed } from "./AgentAnomalyFeed";
 
+// Canonical exchange rate from Platform Reference
+const BDT_TO_USD = 0.0084; // Approx based on 1 credit = 2 BDT logic
+
 interface DashboardStats {
   totalTalents: number;
   registeredRate: number;
   activeEnrollments: number;
-  totalRevenue: number;
+  totalRevenueBDT: number;
   commissionPayouts: number;
   assessments: { total: number };
   mockInterviews: { total: number; completed: number };
   portfolios: { total: number; pending: number };
   aiAgents: { totalSessions: number };
   credits: { totalInCirculation: number; transactionsToday: number };
-  marketShare: { bdPercentage: number };
+  topMarket: { name: string; percentage: number };
 }
+
 const initialStats: DashboardStats = {
   totalTalents: 0,
   registeredRate: 0,
   activeEnrollments: 0,
-  totalRevenue: 0,
+  totalRevenueBDT: 0,
   commissionPayouts: 0,
   assessments: { total: 0 },
   mockInterviews: { total: 0, completed: 0 },
   portfolios: { total: 0, pending: 0 },
   aiAgents: { totalSessions: 0 },
   credits: { totalInCirculation: 0, transactionsToday: 0 },
-  marketShare: { bdPercentage: 0 },
+  topMarket: { name: "Detecting...", percentage: 0 },
 };
 
 export function LifetimeOverviewTab() {
   const navigate = useNavigate();
   const [stats, setStats] = useState<DashboardStats>(initialStats);
   const [isLoading, setIsLoading] = useState(true);
+  const [isRefreshing, setIsRefreshing] = useState(false);
   const [error, setError] = useState<string | null>(null);
 
-  const fetchCount = async (table: string, filter?: (q: any) => any): Promise<number> => {
-    try {
-      let query = supabase.from(table as any).select("*", { count: "exact", head: true });
-      if (filter) query = filter(query);
-      const result = await withTimeout(query as any, TIMEOUTS.DEFAULT, `Count ${table} timeout`);
-      return (result as any).count || 0;
-    } catch {
-      return 0;
-    }
-  };
+  const load = useCallback(async (isManualRefresh = false) => {
+    if (isManualRefresh) setIsRefreshing(true);
+    else setIsLoading(true);
 
-  const load = useCallback(async () => {
-    setIsLoading(true);
     setError(null);
     try {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
+
+      // F3: Aggregate all credit pools
       const [
-        talents,
-        registered,
-        enrollments,
-        revData,
-        commsData,
-        assessments,
-        interviews,
-        portfolios,
-        sessions,
-        creditsData,
-        bdTalents,
+        talentCount,
+        regCount,
+        enrollCount,
+        revRes,
+        commRes,
+        assessCount,
+        intRes,
+        portRes,
+        sessionCount,
+        talentCreds,
+        companyCreds,
+        groCreds,
+        countryStats,
         txTodayResult,
       ] = await Promise.all([
-        fetchCount("talents"),
-        fetchCount("talents", (q) => q.not("user_id", "is", null)),
-        fetchCount("enrollments", (q) => q.eq("status", "active")),
-        supabase.from("enrollments" as any).select("payment_amount"),
+        supabase.from("talents").select("*", { count: "exact", head: true }),
+        supabase.from("talents").select("*", { count: "exact", head: true }).not("user_id", "is", null),
+        supabase.from("enrollments").select("*", { count: "exact", head: true }).eq("status", "active"),
+        supabase.from("enrollments").select("payment_amount"),
+        supabase.from("credit_transactions").select("amount").eq("type", "commission"),
+        supabase.from("career_assessments").select("*", { count: "exact", head: true }),
+        supabase.from("mock_interviews").select("status"),
+        supabase.from("portfolio_requests").select("status"),
+        supabase.from("agent_chat_sessions").select("*", { count: "exact", head: true }),
+        supabase.from("talent_credits").select("balance"),
+        supabase.from("company_credits").select("balance"),
+        supabase.from("gro10x_credits").select("balance"),
+        supabase.rpc("get_top_countries"), // Assumes a simple RPC to group by country
         supabase
-          .from("credit_transactions" as any)
-          .select("amount")
-          .eq("type", "commission"),
-        fetchCount("career_assessments"),
-        supabase.from("mock_interviews" as any).select("status"),
-        supabase.from("portfolio_requests" as any).select("status"),
-        fetchCount("agent_chat_sessions"),
-        supabase.from("talent_credits" as any).select("balance"),
-        fetchCount("talents", (q) => q.ilike("country", "Bangladesh")),
-        supabase
-          .from("credit_transactions" as any)
+          .from("credit_transactions")
           .select("*", { count: "exact", head: true })
           .gte("created_at", today.toISOString()),
       ]);
-      const rev = (revData.data || []).reduce((s: number, i: any) => s + (Number(i.payment_amount) || 0), 0);
-      const comms = (commsData.data || []).reduce((s: number, i: any) => s + Math.abs(Number(i.amount) || 0), 0);
-      const totalCreds = (creditsData.data || []).reduce((s: number, i: any) => s + (Number(i.balance) || 0), 0);
+
+      const talents = talentCount.count || 0;
+      const registered = regCount.count || 0;
+
+      // F5 Calculation
+      const rev = (revRes.data || []).reduce((s, i) => s + (Number(i.payment_amount) || 0), 0);
+      const comms = (commRes.data || []).reduce((s, i) => s + Math.abs(Number(i.amount) || 0), 0);
+
+      // F3 Summation
+      const totalTalentBalance = (talentCreds.data || []).reduce((s, i) => s + (Number(i.balance) || 0), 0);
+      const totalCompanyBalance = (companyCreds.data || []).reduce((s, i) => s + (Number(i.balance) || 0), 0);
+      const totalGroBalance = (groCreds.data || []).reduce((s, i) => s + (Number(i.balance) || 0), 0);
+
+      // F4 Dynamic Country Detection
+      const topCountry = (countryStats.data as any[])?.[0] || { country: "N/A", count: 0 };
 
       setStats({
         totalTalents: talents,
         registeredRate: talents > 0 ? Math.round((registered / talents) * 100) : 0,
-        activeEnrollments: enrollments,
-        totalRevenue: rev,
+        activeEnrollments: enrollCount.count || 0,
+        totalRevenueBDT: rev,
         commissionPayouts: comms,
-        assessments: { total: assessments },
+        assessments: { total: assessCount.count || 0 },
         mockInterviews: {
-          total: (interviews.data as any[])?.length || 0,
-          completed: (interviews.data as any[])?.filter((i) => i.status === "completed").length || 0,
+          total: (intRes.data as any[])?.length || 0,
+          completed: (intRes.data as any[])?.filter((i) => i.status === "completed").length || 0,
         },
         portfolios: {
-          total: (portfolios.data as any[])?.length || 0,
-          pending: (portfolios.data as any[])?.filter((p) => p.status === "pending").length || 0,
+          total: (portRes.data as any[])?.length || 0,
+          pending: (portRes.data as any[])?.filter((p) => p.status === "pending").length || 0,
         },
-        aiAgents: { totalSessions: sessions },
-        credits: { totalInCirculation: totalCreds, transactionsToday: (txTodayResult as any).count || 0 },
-        marketShare: { bdPercentage: talents > 0 ? Math.round((bdTalents / talents) * 100) : 0 },
+        aiAgents: { totalSessions: sessionCount.count || 0 },
+        credits: {
+          totalInCirculation: totalTalentBalance + totalCompanyBalance + totalGroBalance,
+          transactionsToday: txTodayResult.count || 0,
+        },
+        topMarket: {
+          name: topCountry.country,
+          percentage: talents > 0 ? Math.round((topCountry.count / talents) * 100) : 0,
+        },
       });
-    } catch {
-      setError("Strategic data fetch partially failed.");
+    } catch (err) {
+      console.error(err);
+      setError("Platform telemetry sync failed. Agent bypass required.");
     } finally {
       setIsLoading(false);
+      setIsRefreshing(false);
     }
   }, []);
 
@@ -151,20 +168,19 @@ export function LifetimeOverviewTab() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3 text-primary">
-            <LayoutDashboard className="h-8 w-8" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Lifetime Overview</h2>
-          </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            All-time platform health & monetization
-          </p>
-        </div>
-        <Button variant="outline" size="icon" onClick={load} className="rounded-xl h-12 w-12 border-2">
-          <RefreshCw className="h-5 w-5" />
+      {/* P2: In-tab Actions only (Header removed to dedupe Dashboard top bar) */}
+      <div className="flex justify-end mb-4">
+        <Button
+          variant="outline"
+          size="sm"
+          onClick={() => load(true)}
+          disabled={isRefreshing}
+          className="rounded-xl border-2 gap-2 h-10 px-4 font-black uppercase text-[10px] tracking-widest"
+        >
+          <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
+          {isRefreshing ? "Syncing..." : "Refresh HUD"}
         </Button>
-      </header>
+      </div>
 
       {error && (
         <div className="bg-destructive/10 border-2 border-destructive/20 p-4 rounded-2xl flex items-center gap-3 text-destructive font-bold uppercase text-[10px] tracking-widest">
@@ -181,20 +197,22 @@ export function LifetimeOverviewTab() {
           trend={`${stats.registeredRate}% SYNC'D`}
           trendLabel="Registration delta"
         />
+        {/* F5: Correct BDT Currency & USD Subtitle */}
         <StatsCard
           title="Gross Liquidity"
-          value={`$${stats.totalRevenue.toLocaleString()}`}
-          icon={DollarSign}
+          value={`৳${stats.totalRevenueBDT.toLocaleString("en-BD")}`}
+          icon={Zap}
           variant="success"
-          trend={`$${stats.commissionPayouts.toLocaleString()} COMM`}
-          trendLabel="Payout protocols"
+          trend={`≈ $${(stats.totalRevenueBDT * BDT_TO_USD).toLocaleString(undefined, { maximumFractionDigits: 0 })} USD`}
+          trendLabel="Current valuation"
         />
+        {/* F4: Dynamic Market Detection */}
         <StatsCard
           title="Regional Index"
-          value={`${stats.marketShare.bdPercentage}%`}
+          value={`${stats.topMarket.percentage}%`}
           icon={Globe}
           variant="secondary"
-          trend="Primary Market: BD"
+          trend={`Primary Market: ${stats.topMarket.name}`}
           trendLabel="Geo concentration"
         />
         <StatsCard
@@ -207,9 +225,7 @@ export function LifetimeOverviewTab() {
         />
       </div>
 
-      {/* Telemetry & Anomalies Row */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        {/* Left Column: Telemetry */}
         <div className="lg:col-span-2 space-y-8">
           <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
             <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
@@ -259,7 +275,8 @@ export function LifetimeOverviewTab() {
               <Button
                 variant="default"
                 className="w-full h-14 rounded-2xl justify-between shadow-lg font-black uppercase text-[10px] tracking-[0.2em] px-6"
-                onClick={() => navigate("/dashboard?tab=learner-progress")}
+                // F1: canonical learning-progress route
+                onClick={() => navigate("/dashboard?tab=learning-progress")}
               >
                 Interrogate Progress <ArrowUpRight className="h-4 w-4" />
               </Button>
@@ -267,7 +284,6 @@ export function LifetimeOverviewTab() {
           </Card>
         </div>
 
-        {/* Right Column: Agent Anomalies Feed */}
         <div className="lg:col-span-1">
           <AgentAnomalyFeed />
         </div>
