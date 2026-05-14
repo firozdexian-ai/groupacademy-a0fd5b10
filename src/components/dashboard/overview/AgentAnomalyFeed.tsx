@@ -35,38 +35,39 @@ export function AgentAnomalyFeed() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let cancelled = false;
+
     const fetchEvents = async () => {
-      setIsLoading(true);
       const twentyFourHoursAgo = new Date(Date.now() - 24 * 60 * 60 * 1000).toISOString();
 
       const { data, error } = await supabase
-        .from("platform_events")
-        .select("*")
+        .from("vw_agent_anomalies" as any)
+        .select("id, severity, agent_key, title, description, created_at")
         .gte("created_at", twentyFourHoursAgo)
-        .in("severity", ["critical", "warning", "opportunity"])
         .order("created_at", { ascending: false })
         .limit(10);
 
-      if (!error && data) {
-        setEvents(data as PlatformEvent[]);
+      if (!cancelled && !error && data) {
+        setEvents(data as unknown as PlatformEvent[]);
       }
-      setIsLoading(false);
+      if (!cancelled) setIsLoading(false);
     };
 
     fetchEvents();
 
-    // Real-time subscription for immediate anomaly awareness
+    // Real-time: refetch whenever a new platform_event lands
     const channel = supabase
       .channel("platform-anomalies")
-      .on("postgres_changes", { event: "INSERT", table: "platform_events" }, (payload) => {
-        const newEvt = payload.new as PlatformEvent;
-        if (["critical", "warning", "opportunity"].includes(newEvt.severity)) {
-          setEvents((prev) => [newEvt, ...prev].slice(0, 10));
-        }
-      })
+      .on(
+        // @ts-expect-error postgres_changes is a valid filter at runtime
+        "postgres_changes",
+        { event: "INSERT", schema: "public", table: "platform_events" },
+        () => fetchEvents(),
+      )
       .subscribe();
 
     return () => {
+      cancelled = true;
       supabase.removeChannel(channel);
     };
   }, []);
