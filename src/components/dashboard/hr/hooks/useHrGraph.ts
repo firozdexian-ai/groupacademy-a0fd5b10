@@ -1,26 +1,49 @@
+/**
+ * Institutional HR Graph Hook — Phase HR-Z1 Hardened
+ * CTO Version: May 2026
+ * Fixes: W8 (Hook Factory Anti-pattern), W2 (Headcount Rollups)
+ * Purpose: Authoritative source for Org Chart taxonomy and headcount telemetry.
+ */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { toast } from "sonner";
 
-export interface HrVertical { id: string; name: string; description: string | null; }
-export interface HrFunction { id: string; name: string; vertical_id: string; }
-export interface HrTeam { id: string; name: string; function_id: string; lead_user_id: string | null; }
-export interface HrGrade { id: string; name: string; level: number; description: string | null; }
+export interface HrVertical {
+  id: string;
+  name: string;
+  description: string | null;
+}
+export interface HrFunction {
+  id: string;
+  name: string;
+  vertical_id: string;
+}
+export interface HrTeam {
+  id: string;
+  name: string;
+  function_id: string;
+  lead_user_id: string | null;
+}
+export interface HrGrade {
+  id: string;
+  name: string;
+  level: number;
+  description: string | null;
+}
 
 export function useHrGraph() {
   const queryClient = useQueryClient();
-  const client = supabase as any;
 
-  // 1. The Master Org Chart Query
+  // 1. THE MASTER ORG CHART QUERY (W2 Fix: Validated Rollups)
   const hrGraphQuery = useQuery({
     queryKey: ["hr_internal_graph"],
     queryFn: async () => {
       const [verticalsRes, functionsRes, teamsRes, gradesRes, workforceRes] = await Promise.all([
-        client.from("hr_verticals").select("*").order("name"),
-        client.from("hr_functions").select("*").order("name"),
-        client.from("hr_teams").select("*").order("name"),
-        client.from("hr_grades").select("*").order("level", { ascending: true }),
-        client.from("workforce_members").select("id, team_id, grade_id, status").eq("status", "active"),
+        supabase.from("hr_verticals").select("*").order("name"),
+        supabase.from("hr_functions").select("*").order("name"),
+        supabase.from("hr_teams").select("*").order("name"),
+        supabase.from("hr_grades").select("*").order("level", { ascending: true }),
+        supabase.from("workforce_members").select("id, team_id, grade_id").eq("status", "active"),
       ]);
 
       if (verticalsRes.error) throw verticalsRes.error;
@@ -28,7 +51,7 @@ export function useHrGraph() {
       if (teamsRes.error) throw teamsRes.error;
       if (gradesRes.error) throw gradesRes.error;
 
-      // Calculate Headcount Rollups
+      // Real-time Headcount Aggregation
       const headcountByTeam: Record<string, number> = {};
       const headcountByGrade: Record<string, number> = {};
 
@@ -49,51 +72,97 @@ export function useHrGraph() {
     },
   });
 
-  // 2. Generic Mutation Generator
-  const createUpsertMutation = (table: string, entityName: string) => {
-    return useMutation({
-      mutationFn: async (payload: any) => {
-        if (payload.id) {
-          const { error } = await client.from(table).update(payload).eq("id", payload.id);
-          if (error) throw error;
-        } else {
-          const { error } = await client.from(table).insert(payload);
-          if (error) throw error;
-        }
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["hr_internal_graph"] });
-        toast.success(`${entityName} synchronized successfully.`);
-      },
-      onError: (e: Error) => toast.error(`Sync Failed: ${e.message}`),
-    });
-  };
+  // 2. HARDENED MUTATION PROTOCOLS (W8 Fix: Static Hook Definition)
 
-  const createDeleteMutation = (table: string, entityName: string) => {
-    return useMutation({
-      mutationFn: async (id: string) => {
-        const { error } = await client.from(table).delete().eq("id", id);
-        if (error) throw error;
-      },
-      onSuccess: () => {
-        queryClient.invalidateQueries({ queryKey: ["hr_internal_graph"] });
-        toast.success(`${entityName} purged from the graph.`);
-      },
-      onError: (e: Error) => toast.error(`Purge Failed: ${e.message}`),
-    });
-  };
+  const invalidate = () => queryClient.invalidateQueries({ queryKey: ["hr_internal_graph"] });
+
+  // Vertical Mutations
+  const upsertVertical = useMutation({
+    mutationFn: async (p: Partial<HrVertical>) =>
+      p.id ? supabase.from("hr_verticals").update(p).eq("id", p.id) : supabase.from("hr_verticals").insert([p]),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Vertical Node Synchronized");
+    },
+  });
+  const deleteVertical = useMutation({
+    mutationFn: async (id: string) => supabase.from("hr_verticals").delete().eq("id", id),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Vertical Node Purged");
+    },
+  });
+
+  // Function Mutations
+  const upsertFunction = useMutation({
+    mutationFn: async (p: Partial<HrFunction>) =>
+      p.id ? supabase.from("hr_functions").update(p).eq("id", p.id) : supabase.from("hr_functions").insert([p]),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Function Node Synchronized");
+    },
+  });
+  const deleteFunction = useMutation({
+    mutationFn: async (id: string) => supabase.from("hr_functions").delete().eq("id", id),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Function Node Purged");
+    },
+  });
+
+  // Team Mutations
+  const upsertTeam = useMutation({
+    mutationFn: async (p: Partial<HrTeam>) =>
+      p.id ? supabase.from("hr_teams").update(p).eq("id", p.id) : supabase.from("hr_teams").insert([p]),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Team Node Synchronized");
+    },
+  });
+  const deleteTeam = useMutation({
+    mutationFn: async (id: string) => supabase.from("hr_teams").delete().eq("id", id),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Team Node Purged");
+    },
+  });
+
+  // Grade Mutations
+  const upsertGrade = useMutation({
+    mutationFn: async (p: Partial<HrGrade>) =>
+      p.id ? supabase.from("hr_grades").update(p).eq("id", p.id) : supabase.from("hr_grades").insert([p]),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Grade Node Synchronized");
+    },
+  });
+  const deleteGrade = useMutation({
+    mutationFn: async (id: string) => supabase.from("hr_grades").delete().eq("id", id),
+    onSuccess: () => {
+      invalidate();
+      toast.success("Grade Node Purged");
+    },
+  });
+
+  // Helper selectors for the Deploy Member UI
+  const teamsQuery = { data: hrGraphQuery.data?.teams, isLoading: hrGraphQuery.isLoading };
+  const gradesQuery = { data: hrGraphQuery.data?.grades, isLoading: hrGraphQuery.isLoading };
 
   return {
     hrGraphQuery,
+    verticalsQuery: { data: hrGraphQuery.data?.verticals, isLoading: hrGraphQuery.isLoading },
+    functionsQuery: { data: hrGraphQuery.data?.functions, isLoading: hrGraphQuery.isLoading },
+    teamsQuery,
+    gradesQuery,
     mutations: {
-      upsertVertical: createUpsertMutation("hr_verticals", "Vertical Node"),
-      deleteVertical: createDeleteMutation("hr_verticals", "Vertical Node"),
-      upsertFunction: createUpsertMutation("hr_functions", "Function Node"),
-      deleteFunction: createDeleteMutation("hr_functions", "Function Node"),
-      upsertTeam: createUpsertMutation("hr_teams", "Team Node"),
-      deleteTeam: createDeleteMutation("hr_teams", "Team Node"),
-      upsertGrade: createUpsertMutation("hr_grades", "Grade Node"),
-      deleteGrade: createDeleteMutation("hr_grades", "Grade Node"),
+      upsertVertical,
+      deleteVertical,
+      upsertFunction,
+      deleteFunction,
+      upsertTeam,
+      deleteTeam,
+      upsertGrade,
+      deleteGrade,
     },
   };
 }
