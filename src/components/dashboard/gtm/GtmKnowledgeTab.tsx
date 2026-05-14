@@ -24,7 +24,7 @@ export function GtmKnowledgeTab() {
   const countries = gtmGraphQuery.data?.countries ?? [];
 
   return (
-    <div className="space-y-6 p-6">
+    <div className="space-y-6">
       {/* Executive Header */}
       <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4">
         <div className="space-y-1">
