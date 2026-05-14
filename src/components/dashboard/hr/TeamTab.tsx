@@ -1,3 +1,8 @@
+/**
+ * GroUp Academy: Internal Workforce Command Center
+ * CTO Version: May 2026 (Hardened & Relocated)
+ * Protocols: Authority Deployment, Detail Interrogation, Security Recalibration
+ */
 import { useState, useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -14,7 +19,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { toast } from "sonner";
@@ -27,14 +32,13 @@ import {
   Mail,
   Phone,
   Calendar,
-  Briefcase,
   KeyRound,
-  Copy,
   Check,
   Activity,
   Zap,
   RefreshCw,
   ShieldCheck,
+  AlertTriangle,
 } from "lucide-react";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import type { Database } from "@/integrations/supabase/types";
@@ -42,12 +46,6 @@ import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { DashboardTableSkeleton, DashboardErrorState } from "../DashboardSkeleton";
 import { cn } from "@/lib/utils";
-
-/**
- * GroUp Academy: Internal Workforce Command Center
- * CTO Reference: Authoritative orchestrator for workforce roles and security protocols.
- * Fixed TS2304 by restoring the handleOpenResetDialog function.
- */
 
 type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -80,6 +78,7 @@ export function TeamManager() {
   const [newRole, setNewRole] = useState<AppRole>("talent_exec");
   const [isSubmitting, setIsSubmitting] = useState(false);
 
+  // Security States
   const [isResetDialogOpen, setIsResetDialogOpen] = useState(false);
   const [resetMember, setResetMember] = useState<TeamMember | null>(null);
   const [resetMethod, setResetMethod] = useState<"email" | "temporary">("email");
@@ -127,7 +126,7 @@ export function TeamManager() {
         return { data: membersWithInfo, error: null };
       };
 
-      const result = (await withTimeout(fetchProtocol(), TIMEOUTS.DEFAULT, "Workforce synchronization timed out")) as {
+      const result = (await withTimeout(fetchProtocol(), TIMEOUTS.DEFAULT, "Registry synchronization timed out")) as {
         data: TeamMember[];
         error: any;
       };
@@ -135,8 +134,7 @@ export function TeamManager() {
       if (result.error) throw result.error;
       setTeamMembers(result.data || []);
     } catch (error: any) {
-      console.error("Workforce Fault:", error);
-      setLoadError(error.message || "Failed to load team members");
+      setLoadError(error.message || "Failed to load workforce registry");
     } finally {
       setIsLoading(false);
     }
@@ -147,44 +145,28 @@ export function TeamManager() {
   }, [fetchTeamMembers]);
 
   const handleAddMember = async () => {
-    if (!newEmail.trim()) {
-      toast.error("Protocol Fault: Email identifier required.");
-      return;
-    }
-
+    if (!newEmail.trim()) return toast.error("Email identifier required.");
     setIsSubmitting(true);
     try {
-      const { data: talent, error: talentError } = await supabase
+      const { data: talent } = await supabase
         .from("talents")
         .select("user_id")
         .ilike("email", newEmail.trim())
         .maybeSingle();
+      if (!talent?.user_id) return toast.error("Identity NotFound: User must register before role assignment.");
 
-      if (talentError) throw talentError;
-      if (!talent?.user_id) {
-        toast.error("Identity NotFound: User must register an account before role assignment.");
-        return;
-      }
-
-      const { data: existingRole } = await supabase
+      const { data: existing } = await supabase
         .from("user_roles")
         .select("id")
         .eq("user_id", talent.user_id)
         .eq("role", newRole)
         .maybeSingle();
+      if (existing) return toast.error("Redundancy Fault: Node already possesses this authority.");
 
-      if (existingRole) {
-        toast.error("Protocol Redundancy: Node already possesses this authority.");
-        return;
-      }
+      const { error } = await supabase.from("user_roles").insert({ user_id: talent.user_id, role: newRole });
+      if (error) throw error;
 
-      const { error: insertError } = await supabase
-        .from("user_roles")
-        .insert({ user_id: talent.user_id, role: newRole });
-
-      if (insertError) throw insertError;
-
-      toast.success(`Protocol Successful: ${newRole.toUpperCase()} authority deployed.`);
+      toast.success(`${newRole.toUpperCase()} authority deployed.`);
       setNewEmail("");
       setIsDialogOpen(false);
       fetchTeamMembers();
@@ -196,18 +178,16 @@ export function TeamManager() {
   };
 
   const handleRemoveRole = async (id: string, role: AppRole) => {
-    if (!confirm(`Are you sure you want to terminate ${role.toUpperCase()} authority?`)) return;
     try {
       const { error } = await supabase.from("user_roles").delete().eq("id", id);
       if (error) throw error;
-      toast.success("Protocol Successful: Authority revoked.");
+      toast.success("Authority revoked successfully.");
       fetchTeamMembers();
     } catch (error) {
       toast.error("Termination Fault: Role removal failed.");
     }
   };
 
-  // RESTORED: Missing function to open reset dialog
   const handleOpenResetDialog = (member: TeamMember) => {
     setResetMember(member);
     setResetMethod("email");
@@ -221,27 +201,25 @@ export function TeamManager() {
     if (!resetMember?.talent) return;
     setIsResetting(true);
     try {
-      const response = await supabase.functions.invoke("admin-reset-password", {
+      const { data, error } = await supabase.functions.invoke("admin-reset-password", {
         body: { targetUserId: resetMember.user_id, targetEmail: resetMember.talent.email, method: resetMethod },
       });
-      if (response.error) throw response.error;
-      const data = response.data;
-      if (data.error) throw new Error(data.error);
+      if (error || data.error) throw new Error(error || data.error);
 
       if (resetMethod === "temporary" && data.temporaryPassword) {
         setTempPassword(data.temporaryPassword);
-        toast.success("Key Deployed: Temporary password generated.");
+        toast.success("Temporal password generated.");
       } else if (resetMethod === "email") {
         if (data.resetLink) {
           setResetLink(data.resetLink);
-          toast.success("Key Deployed: Manual reset link generated.");
+          toast.success("Manual reset link generated.");
         } else {
-          toast.success("Transmission Successful: Reset email dispatched.");
+          toast.success("Reset email dispatched.");
           setIsResetDialogOpen(false);
         }
       }
-    } catch (error: any) {
-      toast.error("Security Fault: Password reset failed.");
+    } catch (error) {
+      toast.error("Security Fault: Password recalibration failed.");
     } finally {
       setIsResetting(false);
     }
@@ -265,15 +243,15 @@ export function TeamManager() {
   if (isLoading)
     return (
       <div className="p-8">
-        <DashboardTableSkeleton rows={8} columns={6} />
+        <DashboardTableSkeleton rows={8} />
       </div>
     );
   if (loadError) return <DashboardErrorState title="Registry Failure" message={loadError} onRetry={fetchTeamMembers} />;
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-700">
+    <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
       {/* EXECUTIVE HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md text-left">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <ShieldCheck className="h-8 w-8" />
@@ -284,78 +262,33 @@ export function TeamManager() {
           </p>
         </div>
         <div className="flex gap-3">
-          <Badge variant="outline" className="h-14 px-6 rounded-2xl border-2 font-black italic gap-2 text-primary">
+          <Badge
+            variant="outline"
+            className="h-14 px-6 rounded-2xl border-2 font-black italic gap-2 text-primary bg-background/50"
+          >
             <Activity className="h-4 w-4" /> {teamMembers.length} ACTIVE NODES
           </Badge>
-          <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-            <DialogTrigger asChild>
-              <Button className="h-14 px-8 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-3 shadow-lg">
-                <UserPlus className="h-5 w-5" /> Deploy Authority
-              </Button>
-            </DialogTrigger>
-            <DialogContent className="max-w-md rounded-[40px] border-4 p-8 overflow-hidden bg-background">
-              <DialogHeader className="text-left">
-                <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
-                  Authority Deployment
-                </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-widest">
-                  Assign workforce permissions to a verified identity.
-                </DialogDescription>
-              </DialogHeader>
-              <div className="space-y-6 pt-4 text-left">
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase text-primary italic">Identity Email</Label>
-                  <Input
-                    placeholder="node@groupacademy.com"
-                    value={newEmail}
-                    onChange={(e) => setNewEmail(e.target.value)}
-                    className="h-14 rounded-2xl border-2 font-bold"
-                  />
-                </div>
-                <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase text-primary italic">Protocol Level</Label>
-                  <Select value={newRole} onValueChange={(v) => setNewRole(v as AppRole)}>
-                    <SelectTrigger className="h-14 rounded-2xl border-2 font-black uppercase text-[10px]">
-                      <SelectValue />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border-2">
-                      <SelectItem value="talent_exec" className="font-bold text-[10px]">
-                        TALENT_SUCCESS_EXECUTIVE
-                      </SelectItem>
-                      <SelectItem value="admin" className="font-bold text-[10px]">
-                        FULL_SYSTEM_ADMIN
-                      </SelectItem>
-                    </SelectContent>
-                  </Select>
-                </div>
-                <Button
-                  onClick={handleAddMember}
-                  disabled={isSubmitting}
-                  className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl"
-                >
-                  {isSubmitting ? <RefreshCw className="animate-spin" /> : <Zap className="fill-current" />} Assign
-                  Authority
-                </Button>
-              </div>
-            </DialogContent>
-          </Dialog>
+          <Button
+            onClick={() => setIsDialogOpen(true)}
+            className="h-14 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-3 shadow-xl bg-primary text-primary-foreground border-none"
+          >
+            <UserPlus className="h-5 w-5" /> Deploy Authority
+          </Button>
         </div>
       </div>
 
       {/* TEAM REGISTRY */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
         <CardContent className="p-0">
           <Table>
-            <TableHeader className="bg-muted/10">
+            <TableHeader className="bg-muted/10 text-[10px] font-black uppercase tracking-widest">
               <TableRow className="hover:bg-transparent border-b-2">
-                <TableHead className="font-black uppercase text-[10px] tracking-widest py-6 pl-8">
-                  Workforce Node
-                </TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Auth Protocol</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Deployment Date</TableHead>
-                <TableHead className="text-right py-6 pr-8"></TableHead>
+                <TableHead className="py-6 pl-8">Workforce Node</TableHead>
+                <TableHead>Auth Protocol</TableHead>
+                <TableHead>Status</TableHead>
+                <TableHead>Deployment Date</TableHead>
+                <TableHead className="text-right pr-8">Interrogate</TableHead>
               </TableRow>
             </TableHeader>
             <TableBody>
@@ -366,17 +299,17 @@ export function TeamManager() {
                 >
                   <TableCell className="py-6 pl-8">
                     <div className="flex items-center gap-4">
-                      <Avatar className="h-10 w-10 border-2 border-primary/20">
+                      <Avatar className="h-10 w-10 border-2 border-primary/20 shadow-inner">
                         <AvatarImage src={member.talent?.profile_photo_url || ""} />
                         <AvatarFallback className="bg-primary/10 text-primary font-black italic">
                           {member.talent?.full_name ? getInitials(member.talent.full_name) : "??"}
                         </AvatarFallback>
                       </Avatar>
-                      <div className="text-left">
+                      <div>
                         <p className="font-black text-sm uppercase italic tracking-tight">
                           {member.talent?.full_name || "NULL_ENTITY"}
                         </p>
-                        <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
+                        <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest">
                           {member.talent?.email}
                         </p>
                       </div>
@@ -385,10 +318,8 @@ export function TeamManager() {
                   <TableCell>
                     <Badge
                       className={cn(
-                        "font-black text-[9px] uppercase italic border-2",
-                        member.role === "admin"
-                          ? "bg-primary/10 text-primary border-primary/20"
-                          : "bg-muted text-muted-foreground",
+                        "font-black text-[9px] uppercase italic px-3",
+                        member.role === "admin" ? "bg-primary text-white" : "bg-muted text-muted-foreground",
                       )}
                     >
                       {member.role.replace("_", " ")}
@@ -397,9 +328,7 @@ export function TeamManager() {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <div className="h-2 w-2 rounded-full bg-green-500 animate-pulse" />
-                      <span className="text-[10px] font-black uppercase italic text-muted-foreground/60 tracking-tighter">
-                        Verified
-                      </span>
+                      <span className="text-[10px] font-black uppercase italic opacity-60">Verified</span>
                     </div>
                   </TableCell>
                   <TableCell className="text-[10px] font-black italic text-muted-foreground/40">
@@ -444,9 +373,132 @@ export function TeamManager() {
         </CardContent>
       </Card>
 
-      {/* MEMBER DETAIL DIALOG */}
+      {/* DIALOGS */}
+      <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
+        <DialogContent className="max-w-md rounded-[40px] border-4 p-10 bg-background">
+          <div className="space-y-6 text-left">
+            <DialogHeader>
+              <DialogTitle className="text-2xl font-black uppercase italic">Authority Deployment</DialogTitle>
+            </DialogHeader>
+            <div className="space-y-4">
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase text-primary italic">Identity Email</Label>
+                <Input
+                  placeholder="node@groupacademy.com"
+                  value={newEmail}
+                  onChange={(e) => setNewEmail(e.target.value)}
+                  className="h-14 rounded-2xl border-2 font-bold bg-muted/5"
+                />
+              </div>
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black uppercase text-primary italic">Protocol Level</Label>
+                <Select value={newRole} onValueChange={(v) => setNewRole(v as AppRole)}>
+                  <SelectTrigger className="h-14 rounded-xl border-2 font-black uppercase text-[10px]">
+                    <SelectValue />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="talent_exec" className="font-bold text-[10px]">
+                      TALENT_SUCCESS_EXECUTIVE
+                    </SelectItem>
+                    <SelectItem value="admin" className="font-bold text-[10px]">
+                      FULL_SYSTEM_ADMIN
+                    </SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+              <Button
+                onClick={handleAddMember}
+                disabled={isSubmitting}
+                className="w-full h-16 rounded-[24px] font-black uppercase italic text-xl gap-3 shadow-xl"
+              >
+                {isSubmitting ? <Loader2 className="animate-spin" /> : <Zap className="fill-current h-5 w-5" />}{" "}
+                Authorize Node
+              </Button>
+            </div>
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* SECURITY DIALOG */}
+      <Dialog
+        open={isResetDialogOpen}
+        onOpenChange={(o) => {
+          if (!o) {
+            setTempPassword(null);
+            setResetLink(null);
+          }
+          setIsResetDialogOpen(o);
+        }}
+      >
+        <DialogContent className="max-w-md rounded-[40px] border-4 p-10 bg-background text-left">
+          <DialogHeader>
+            <DialogTitle className="text-2xl font-black uppercase italic flex items-center gap-3">
+              <KeyRound className="text-primary h-6 w-6" /> Security Recalibration
+            </DialogTitle>
+          </DialogHeader>
+          <div className="space-y-6 pt-6">
+            {tempPassword ? (
+              <div className="p-6 bg-amber-500/5 border-2 border-amber-500/20 rounded-3xl space-y-4 animate-in zoom-in-95">
+                <code className="block p-4 bg-background rounded-2xl border-2 font-mono text-center text-lg font-black">
+                  {tempPassword}
+                </code>
+                <Button
+                  onClick={() => handleCopy(tempPassword)}
+                  className="w-full h-12 rounded-xl border-2"
+                  variant="outline"
+                >
+                  Copy Temporal Key
+                </Button>
+              </div>
+            ) : resetLink ? (
+              <div className="p-6 bg-primary/5 border-2 border-primary/20 rounded-3xl space-y-4">
+                <code className="block p-4 bg-background rounded-2xl border-2 text-[10px] font-mono truncate">
+                  {resetLink}
+                </code>
+                <Button
+                  onClick={() => handleCopy(resetLink)}
+                  className="w-full h-12 rounded-xl border-2"
+                  variant="outline"
+                >
+                  Copy Reset Link
+                </Button>
+              </div>
+            ) : (
+              <div className="space-y-4">
+                <RadioGroup
+                  value={resetMethod}
+                  onValueChange={(v) => setResetMethod(v as "email" | "temporary")}
+                  className="grid gap-3"
+                >
+                  <div className="flex items-center space-x-3 p-4 border-2 rounded-2xl cursor-pointer hover:bg-muted/10">
+                    <RadioGroupItem value="email" id="email" />
+                    <Label htmlFor="email" className="font-black uppercase text-xs cursor-pointer">
+                      Dispatch Reset Email
+                    </Label>
+                  </div>
+                  <div className="flex items-center space-x-3 p-4 border-2 rounded-2xl cursor-pointer hover:bg-muted/10">
+                    <RadioGroupItem value="temporary" id="temp" />
+                    <Label htmlFor="temp" className="font-black uppercase text-xs cursor-pointer">
+                      Generate Temporal Password
+                    </Label>
+                  </div>
+                </RadioGroup>
+                <Button
+                  onClick={handleResetPassword}
+                  disabled={isResetting}
+                  className="w-full h-14 rounded-[20px] font-black uppercase italic shadow-lg"
+                >
+                  {isResetting ? <Loader2 className="animate-spin" /> : "Authorize Recalibration"}
+                </Button>
+              </div>
+            )}
+          </div>
+        </DialogContent>
+      </Dialog>
+
+      {/* DETAIL DIALOG */}
       <Dialog open={isDetailDialogOpen} onOpenChange={setIsDetailDialogOpen}>
-        <DialogContent className="max-w-md rounded-[40px] border-4 p-10 bg-background overflow-hidden text-left">
+        <DialogContent className="max-w-md rounded-[40px] border-4 p-10 bg-background text-left relative overflow-hidden">
           <div className="h-2 w-full bg-primary absolute top-0 left-0" />
           {selectedMember && (
             <div className="space-y-8">
@@ -454,12 +506,12 @@ export function TeamManager() {
                 <Avatar className="h-20 w-20 border-4 border-primary/10 shadow-xl">
                   <AvatarImage src={selectedMember.talent?.profile_photo_url || ""} />
                   <AvatarFallback className="bg-primary/5 text-primary text-2xl font-black italic">
-                    {selectedMember.talent?.full_name ? getInitials(selectedMember.talent.full_name) : "??"}
+                    {getInitials(selectedMember.talent?.full_name || "??")}
                   </AvatarFallback>
                 </Avatar>
                 <div>
                   <h3 className="text-2xl font-black uppercase italic tracking-tighter">
-                    {selectedMember.talent?.full_name || "NULL_NODE"}
+                    {selectedMember.talent?.full_name || "AGENT_IDENTITY"}
                   </h3>
                   <Badge className="bg-primary/10 text-primary border-none font-black italic text-[10px] mt-2 uppercase">
                     {selectedMember.role}
@@ -468,120 +520,18 @@ export function TeamManager() {
               </div>
               <div className="space-y-4">
                 <StatNode icon={Mail} label="Transmission Email" value={selectedMember.talent?.email || "-"} />
-                <StatNode icon={Phone} label="Contact String" value={selectedMember.talent?.phone || "NOT_PROVIDED"} />
                 <StatNode
                   icon={Calendar}
                   label="Deployment Date"
                   value={new Date(selectedMember.created_at).toLocaleDateString()}
                 />
               </div>
-              <div className="pt-4 border-t opacity-40">
-                <p className="text-[9px] font-black uppercase tracking-widest italic">Global Instance ID</p>
+              <div className="pt-4 opacity-30 border-t">
+                <p className="text-[9px] font-black uppercase tracking-widest">Instance UUID</p>
                 <code className="text-[10px] font-mono">{selectedMember.user_id}</code>
               </div>
             </div>
           )}
-        </DialogContent>
-      </Dialog>
-
-      {/* PASSWORD RESET DIALOG */}
-      <Dialog
-        open={isResetDialogOpen}
-        onOpenChange={(open) => {
-          if (!open) {
-            setTempPassword(null);
-            setResetLink(null);
-          }
-          setIsResetDialogOpen(open);
-        }}
-      >
-        <DialogContent className="max-w-md rounded-[40px] border-4 p-10 bg-background text-left">
-          <DialogHeader>
-            <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
-              <KeyRound className="text-primary h-6 w-6" /> Security Recalibration
-            </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
-              Reset workforce access key for {resetMember?.talent?.full_name}
-            </DialogDescription>
-          </DialogHeader>
-
-          <div className="space-y-6 pt-6">
-            {tempPassword ? (
-              <div className="p-6 bg-amber-500/5 border-2 border-amber-500/20 rounded-3xl space-y-4 animate-in zoom-in-95">
-                <p className="text-[10px] font-black uppercase text-amber-600 italic">Temporal Key Generated</p>
-                <div className="flex gap-2">
-                  <code className="flex-1 p-4 bg-background rounded-2xl border-2 font-mono text-lg font-black tracking-widest">
-                    {tempPassword}
-                  </code>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handleCopy(tempPassword)}
-                    className="h-14 w-14 rounded-2xl border-2"
-                  >
-                    <Check className="h-6 w-6 text-green-500" />
-                  </Button>
-                </div>
-                <p className="text-[9px] font-bold text-muted-foreground italic">
-                  Share this key securely. Force change required on ingress.
-                </p>
-              </div>
-            ) : resetLink ? (
-              <div className="p-6 bg-primary/5 border-2 border-primary/20 rounded-3xl space-y-4">
-                <p className="text-[10px] font-black uppercase text-primary italic">External Reset Protocol</p>
-                <div className="flex gap-2">
-                  <code className="flex-1 p-4 bg-background rounded-2xl border-2 text-[10px] font-mono truncate">
-                    {resetLink}
-                  </code>
-                  <Button
-                    variant="outline"
-                    size="icon"
-                    onClick={() => handleCopy(resetLink)}
-                    className="h-14 w-14 rounded-2xl border-2"
-                  >
-                    <Check className="h-6 w-6 text-green-500" />
-                  </Button>
-                </div>
-              </div>
-            ) : (
-              <>
-                <RadioGroup
-                  value={resetMethod}
-                  onValueChange={(v) => setResetMethod(v as "email" | "temporary")}
-                  className="grid gap-4"
-                >
-                  <div className="flex items-center space-x-3 p-4 border-2 rounded-2xl cursor-pointer hover:bg-muted/10 transition-all">
-                    <RadioGroupItem value="email" id="email" />
-                    <Label htmlFor="email" className="font-black uppercase italic text-xs cursor-pointer">
-                      Dispatch Reset Email
-                    </Label>
-                  </div>
-                  <div className="flex items-center space-x-3 p-4 border-2 rounded-2xl cursor-pointer hover:bg-muted/10 transition-all">
-                    <RadioGroupItem value="temporary" id="temp" />
-                    <Label htmlFor="temp" className="font-black uppercase italic text-xs cursor-pointer">
-                      Generate Temporal Password
-                    </Label>
-                  </div>
-                </RadioGroup>
-                <Button
-                  onClick={handleResetPassword}
-                  disabled={isResetting}
-                  className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl"
-                >
-                  {isResetting ? <RefreshCw className="animate-spin" /> : <Zap className="fill-current" />} Recalibrate
-                  Keys
-                </Button>
-              </>
-            )}
-            {(tempPassword || resetLink) && (
-              <Button
-                className="w-full h-14 rounded-2xl font-black uppercase italic"
-                onClick={() => setIsResetDialogOpen(false)}
-              >
-                Protocol Finalized
-              </Button>
-            )}
-          </div>
         </DialogContent>
       </Dialog>
     </div>
@@ -590,7 +540,7 @@ export function TeamManager() {
 
 function StatNode({ icon: Icon, label, value }: any) {
   return (
-    <div className="p-5 bg-muted/20 rounded-2xl border-2 border-border/5 space-y-1">
+    <div className="p-5 bg-muted/10 rounded-2xl border-2 border-border/5 space-y-1">
       <p className="text-[9px] font-black uppercase text-muted-foreground/60 italic flex items-center gap-2">
         <Icon className="h-3 w-3 text-primary" /> {label}
       </p>
