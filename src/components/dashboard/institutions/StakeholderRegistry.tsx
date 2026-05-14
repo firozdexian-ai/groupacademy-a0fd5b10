@@ -95,7 +95,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
         .select("*")
         .order("name", { ascending: true });
       if (error) throw error;
-      return data as StakeholderRow[];
+      return (data as unknown) as StakeholderRow[];
     },
   });
 
@@ -104,10 +104,10 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
     queryKey: ["institution_rollups_rpc"],
     enabled: table === "institutions",
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_institution_rollups");
+      const { data, error } = await (supabase as any).rpc("get_institution_rollups");
       if (error) throw error;
       // Convert array to O(1) lookup map
-      return data?.reduce((acc: any, curr: any) => {
+      return (data as any[])?.reduce((acc: any, curr: any) => {
         acc[curr.institution_id] = curr;
         return acc;
       }, {});
@@ -386,6 +386,26 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
         </AlertDialogContent>
       </AlertDialog>
     </div>
+  );
+}
+
+export function InstitutionsManager() {
+  return (
+    <StakeholderRegistry
+      table="institutions"
+      title="Institutions"
+      fallbackTypeOptions={["university", "college", "school", "training_center"]}
+    />
+  );
+}
+
+export function PartnerOrgsManager() {
+  return (
+    <StakeholderRegistry
+      table="partner_organizations"
+      title="Partner Organizations"
+      fallbackTypeOptions={["ngo", "association", "company", "government"]}
+    />
   );
 }
 
