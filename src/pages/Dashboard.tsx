@@ -451,6 +451,7 @@ const TAB_TITLES: Record<string, string> = {
   "inst-reps": "Representatives",
   "inst-events": "Events & Competitions",
   "hr-overview": "Team & Workforce",
+  "hr-workforce": "Workforce",
   "hr-grades": "Grades & Levels",
   "hr-verticals": "Verticals",
   "hr-functions": "Functions",
