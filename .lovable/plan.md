@@ -1,88 +1,65 @@
-## Phase HR-Z2 — Close-out audit for Team & Workforce
+# GTM (Group #8 — Geography) Deep Audit
 
-Re-audit of `/dashboard?tab=hr-*` after HR-Z1. Most fixes landed; three issues remain plus one missing piece I want to confirm before locking the group.
+Scope: 6 sidebar tabs (Dashboard, Countries, States/Regions, Cities, Clusters, Knowledge Packs) — 4 files, ~1,151 LOC, 5 tables (`gtm_countries`, `gtm_regions`, `gtm_cities`, `gtm_clusters`, `country_knowledge_packs`).
 
----
+DB state: 7 countries, **0 regions, 0 cities, 0 clusters, 0 knowledge packs**, 2,670 talents with `country` set.
 
-### ✅ What HR-Z1 already fixed
-- **W2** — `useHrGraph` headcount rollup now reads `workforce_members.team_id` / `grade_id`, and the Deploy Member form actually sets them → Org Tree, Team headcount, and Grade Distribution bars now light up with real data.
-- **W4** — `HrOnboardingTab` and `HrPayrollTab` now join `workforce_members.user_id → talents(full_name)` and the dropdowns filter to members where `user_id` is populated. (Backed by trigger that mirrors `talents.user_id` onto `workforce_members.user_id`.)
-- **W5** — The `{/* Rest of dialog components remain the same */}` stub in WorkforceTab is gone.
-- **W6** — All four `confirm()` calls in HrSimpleTabs replaced (file grew 474 → 552 LOC, consistent with AlertDialog refactor).
-- **W8** — `useHrGraph` mutations are now defined statically (no factory anti-pattern).
+## Findings
 
----
+### 🔴 Critical bugs
 
-### 🔴 Still open
+- **G1 — Cluster composition UI is a stub.** `GtmTabs.tsx:610` reads *"Node selection UI pending Phase 6.2 update."* The `countries[]` and `cities[]` arrays of `gtm_clusters` cannot be edited from the dashboard at all. The Clusters tab can create a name + description shell but the cluster is functionally empty. This is the same family of bug as HR's stripped Assign-Talent dialog.
+- **G2 — `useGtmGraph` mutation factory anti-pattern.** Same Rules-of-Hooks violation we just fixed in `useHrGraph`. `createUpsertMutation` / `createDeleteMutation` call `useMutation` inside non-hook helpers, then are invoked 10× in the return block (lines 91–100). Works today but: (a) hook order is fragile, (b) React 18 strict-mode/Suspense will surface warnings, (c) any conditional call breaks. Inline the 10 mutations directly.
+- **G3 — Talent-density string bridge is silently lossy.** `gtmGraphQuery` aggregates `talents.country` (free text) against `gtm_countries.name`. Memory says `normalize_country_name` trigger exists, but: legacy rows, casing drift, "Bangladesh " vs "Bangladesh", or talents whose country is NOT in `gtm_countries` all silently disappear from the Overview. Should aggregate by iso2 via a server-side RPC and surface an "Unmapped" bucket.
+- **G4 — N+1-style client aggregation in Overview.** `GtmOverviewTab` reads all talents (`talents.select("country")` — currently 2,670 rows, will scale to 50k+) just to count by country. Plus the `Active Deployment Zones` block re-filters `data.regions` per country in render. Move both rollups into one `get_gtm_dashboard()` RPC returning `{country_id, iso2, name, tier, is_active, region_count, city_count, talent_count}` plus an `unmapped_talent_count` and a `top_talent_countries` array.
 
-**Z2-1 — Assign Talent dialog still ripped (was W1 partial).**
-WorkforceTab row Action button (`Link2` icon) still calls `setAssignMemberId(m.id); setShowAssignDialog(true);`, but there is **no `<Dialog open={showAssignDialog}>` JSX in the file** (grep returned only the `showAddDialog` dialog). The Assign action is a dead click. State `assignMemberId` / `assignTalentSearch` / `assignTalentOptions` is wired but unused.
+### 🟠 Warnings
 
-Fix: re-add the Assign Talent dialog (talent search input → results list → click row → `handleAssignTalent(talent.id)`). ~80 LOC.
+- **G5 — `confirm()` browser dialog × 5** (countries, regions, cities, clusters, knowledge packs). Breaks the brutalist theme. Replace with `AlertDialog` like HR-Z1.
+- **G6 — No search / no tier filter on registries.** Tables are flat. Fine at 7 countries; unusable when we seed the full ISO list or thousands of cities. Need a top-bar search + a Tier filter on Countries, a Country filter on Regions, a Region+Country filter on Cities.
+- **G7 — No bulk-seed path.** With only manual `Deploy Node` dialogs and 0 regions/cities in DB, the team cannot realistically populate the global geography. Need a CSV import (or one-shot ISO seed migration) for `gtm_countries` (full ISO list), and a "Seed regions/cities for country" action that pulls from a static dataset or admin-pasted CSV.
+- **G8 — `country_knowledge_packs.country_code` is text, not an FK to `gtm_countries.iso2`.** Lookup in UI works, but nothing prevents orphan packs. Add FK or normalize via trigger.
+- **G9 — Knowledge pack body has no markdown preview.** Admin types markdown blind. Add a tabbed preview using existing `react-markdown` (already in app).
+- **G10 — `gtm_countries.tier` is unconstrained text** populated by a 3-value Select. Add a check constraint (`'Tier 1' | 'Tier 2' | 'Tier 3'`) so direct DB writes can't drift.
+- **G11 — Region/city tabs show no talent or operational rollup.** Counts only exist at country level. Add a "talent count" / "city count" column at region level once the RPC exists.
+- **G12 — `GtmKnowledgeTab` wraps in `p-6`** while the other tabs don't — double padding inside the dashboard shell. Drop the wrapper padding for visual parity.
+- **G13 — `gtm_clusters.owner_user_id` is captured but never set or shown.** Either wire it (auto-set to `auth.uid()` on insert + show owner badge) or drop it from the type.
 
-**Z2-2 — TeamTab.tsx (550 LOC) is dead code.**
-Not imported anywhere in `Dashboard.tsx` (the registry uses `HrSimpleTabs.HrTeamsTab` for `hr-teams`). Delete the file.
+### ✅ What works
 
-**Z2-3 — Workforce N+1 query storm (was W3).**
-`WorkforceTab.fetchMembers` still issues 1 base query + 3 sub-queries per row (`talents`, `talent_assignments` count, `credit_transactions` sum). 100 members ≈ 300+ round-trips. Replace with a single `get_workforce_dashboard()` RPC returning the enriched rows + KPI rollups.
+Country/Region/City CRUD plumbing is correct; brutalist styling matches the rest of the dashboard; Overview KPI tiles render cleanly; Knowledge Pack dialog form is complete (title, country, kind, status, markdown body, source URL, sort order).
 
-Migration:
-```sql
-create or replace function public.get_workforce_dashboard()
-returns table (
-  id uuid, talent_id uuid, role_type text, status text,
-  city text, country text, hired_at timestamptz,
-  team_id uuid, grade_id uuid,
-  talent_name text, talent_email text,
-  assigned_count bigint, commission_earned numeric
-) language sql stable security definer set search_path = public as $$
-  select w.id, w.talent_id, w.role_type::text, w.status,
-         w.city, w.country, w.hired_at,
-         w.team_id, w.grade_id,
-         t.full_name, t.email,
-         coalesce((select count(*) from talent_assignments ta where ta.assigned_to = w.id), 0),
-         coalesce((select sum(amount) from credit_transactions ct
-                   where ct.talent_id = w.talent_id and ct.transaction_type = 'commission'), 0)
-  from workforce_members w
-  left join talents t on t.id = w.talent_id
-  order by w.created_at desc;
-$$;
-grant execute on function public.get_workforce_dashboard() to authenticated;
-```
+## Did we strip anything in prior passes?
 
-Hook rewrite swaps the loop for `supabase.rpc("get_workforce_dashboard")` and computes the 4 KPIs locally.
+Checked: `GtmTabs.tsx` is intact end-to-end (no `{/* ... */}` placeholder fragments, all 4 tab components export their full Dialog). `GtmKnowledgeTab.tsx` likewise complete. The single intentional gap is **G1 (cluster composition)** — that one is explicitly marked "pending Phase 6.2", not stripped. No regressions to restore.
 
----
+## Phase GTM-Z1 plan (must-fix this pass)
 
-### 🟠 Stretch (same pass if approved)
+| ID | Fix | Files |
+|---|---|---|
+| G1 | Build cluster composition UI: multi-select countries chip-picker + multi-select cities chip-picker (filtered by selected countries), with selected pills showing remove × | `GtmTabs.tsx` (~+120) |
+| G2 | Inline 10 mutations directly in `useGtmGraph`, drop the factory helpers | `hooks/useGtmGraph.ts` (rewrite, same LOC) |
+| G3 + G4 | New `get_gtm_dashboard()` RPC (SECURITY DEFINER, search_path public) returning enriched country rows + `unmapped_talent_count`. Overview switches to RPC; Talent Density block keys off iso2; "Unmapped" appears as a final amber row when > 0 | DB migration; `GtmOverviewTab.tsx` (~−40/+30) |
+| G5 | Swap all 5 `confirm()` calls for the existing `AlertDialog` pattern from HR-Z1 | `GtmTabs.tsx`, `GtmKnowledgeTab.tsx` |
+| G10 | Add check constraint on `gtm_countries.tier` | DB migration |
+| G12 | Drop `p-6` wrapper in `GtmKnowledgeTab` | `GtmKnowledgeTab.tsx` |
 
-**Z2-4 — Onboarding overdue grouping.** Tabs Pending / Overdue / Done with badge counts; "Overdue" derived from `due_date < today() and status <> 'done'`.
+## Stretch (same pass if time allows)
 
-**Z2-5 — Payroll period grouping + CSV export.** Group runs by `to_char(period_end, 'YYYY-MM')`; "Export CSV" button serializes visible runs.
+- **G6** — search + Tier filter on Countries, Country filter on Regions, Region filter on Cities (~+40 each)
+- **G9** — markdown preview tab in Knowledge Pack dialog using `react-markdown` (~+30)
+- **G11** — once RPC lands, surface `talent_count` column on Regions tab and `talent_count` on Cities tab (rolled up from talents → city via region join, or left null if no city link exists yet)
 
-**Z2-6 — HrOverview KPI tiles clickable.** `Active Headcount` → `hr-workforce`, `Verticals/Functions/Teams` → respective subtab.
+## Defer
 
----
+- **G7 (bulk seed / CSV import)** — meaningful work; better as its own phase once we know the canonical dataset (Countries-States-Cities JSON vs admin upload).
+- **G8 (FK on `country_knowledge_packs.country_code`)** — needs a one-time data cleanup of any orphan rows first; safer in a follow-up.
+- **G13 (owner_user_id)** — product call: do we want clusters scoped per-owner? Park until product confirms.
 
-### 🟡 Defer (cosmetic / cross-cutting)
+## Memory updates
 
-- W9/W11 already covered by Z2-4/Z2-5 above.
-- W10 — Targets scope-aware picker (needs richer 3-step UI; defer to a Targets-only pass).
-- W12 — Mobile table polish; cross-cutting sweep across all admin groups later.
+After ship: append "GTM-Z1 closed" line to `mem://admin/groups-7-to-10-stakeholder-structure`. No new memory files needed.
 
----
+## Out of scope
 
-### Files touched
-
-```text
-src/components/dashboard/hr/WorkforceTab.tsx              (~+80 LOC Assign dialog, ~-60 LOC fetch loop)
-src/components/dashboard/hr/TeamTab.tsx                   DELETE  (550 LOC)
-+ migration: get_workforce_dashboard()
-[stretch]
-src/components/dashboard/hr/HrOnboardingTab.tsx           (~+60 LOC tabs)
-src/components/dashboard/hr/HrPayrollTab.tsx              (~+80 LOC groups + CSV)
-src/components/dashboard/hr/HrOverviewTab.tsx             (~+10 LOC KPI nav)
-mem://admin/groups-7-to-10-stakeholder-structure          (note HR-Z2 closure)
-```
-
-Approve "Z2 must-fix" for items 1–3, or "Z2 with stretch" to bundle 4–6 in the same pass. After that the HR group is locked and we move to **Group #8 GTM**.
+`AdminSidebar` group title rename, any changes to `talents.country` source-of-truth, real `MapView` visualization (separate phase).
