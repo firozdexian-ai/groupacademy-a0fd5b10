@@ -6,8 +6,9 @@ import { toast } from "sonner";
 import { handleAIError } from "@/lib/aiErrorHandler";
 
 /**
- * GroUp Academy: Neural Chat Orchestrator (V2.0.29)
- * CTO Audit: Bulletproof stream parser syntax and enforced Pre-Flight Credit Checks.
+ * GroUp Academy: Neural Chat Orchestrator (V2.0.31)
+ * CTO Reference: Authoritative sensor for AI Agent interactions and credit sync.
+ * Architecture: Phase Z0 Hardened. Fractional Credit (numeric 12,1) aware.
  */
 
 export interface AgentMessage {
@@ -62,7 +63,7 @@ export function useAgentChat(): UseAgentChatReturn {
       };
 
       if (additionalCredits > 0) {
-        updatePayload.credits_charged = (session.credits_charged || 0) + additionalCredits;
+        updatePayload.credits_charged = (Number(session.credits_charged) || 0) + additionalCredits;
       }
 
       await supabase.from("agent_chat_sessions").update(updatePayload).eq("id", session.id);
@@ -92,7 +93,7 @@ export function useAgentChat(): UseAgentChatReturn {
         })),
       );
     } catch (err) {
-      console.error("SESSION_REGISTRY_FAULT:", err);
+      console.error("[Digital Workforce] SESSION_REGISTRY_FAULT:", err);
     } finally {
       setIsLoadingSessions(false);
     }
@@ -120,7 +121,7 @@ export function useAgentChat(): UseAgentChatReturn {
 
       if (agentConfig) setPerResponseCost(agentConfig.credit_cost);
     } catch (err) {
-      console.error("SESSION_INGRESS_FAULT:", err);
+      console.error("[Digital Workforce] SESSION_INGRESS_FAULT:", err);
     } finally {
       setIsLoading(false);
     }
@@ -181,7 +182,7 @@ export function useAgentChat(): UseAgentChatReturn {
         setMessages([]);
         return newSession;
       } catch (err) {
-        console.error("AGENT_INITIALIZATION_FAULT:", err);
+        console.error("[Digital Workforce] AGENT_INITIALIZATION_FAULT:", err);
         return null;
       } finally {
         setIsLoading(false);
@@ -200,7 +201,7 @@ export function useAgentChat(): UseAgentChatReturn {
       setIsStreaming(true);
 
       try {
-        // Pre-Flight Credit Check
+        // Enforce Pre-Flight Credit Check (Digital Workforce Protocol)
         if (perResponseCost > 0) {
           const { data: creditData } = await supabase
             .from("talent_credits")
@@ -209,8 +210,8 @@ export function useAgentChat(): UseAgentChatReturn {
             .single();
 
           if (!creditData || creditData.balance < perResponseCost) {
-            toast.error(`FISCAL_DEFICIT: ${perResponseCost} CR required to process. Please recharge.`);
-            setMessages(messages);
+            toast.error(`FISCAL_DEFICIT: ${perResponseCost} CR required. Re-charge from Wallet.`);
+            setMessages(messages); // Rollback optimistic UI
             setIsStreaming(false);
             return;
           }
@@ -245,6 +246,7 @@ export function useAgentChat(): UseAgentChatReturn {
         const decoder = new TextDecoder();
         if (!reader) throw new Error("STREAM_TRANSMISSION_FAULT");
 
+        // Optimistic Assistant Message placeholder
         setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
 
         let assistantBuffer = "";
@@ -263,14 +265,16 @@ export function useAgentChat(): UseAgentChatReturn {
               if (payload === "[DONE]") break;
               try {
                 const parsed = JSON.parse(payload);
-                // Tool-driven cache invalidation hint frame from ai-agent-chat
+
+                // SWARM TRIGGER: Automatic cache invalidation bridge
                 if (parsed?.type === "invalidations" && Array.isArray(parsed.keys)) {
                   for (const k of parsed.keys) invalidationKeys.add(String(k));
                   continue;
                 }
-                // BULLETPROOF PARSER SYNTAX HERE - No optional chaining
-                const token =
-                  parsed.choices && parsed.choices && parsed.choices.delta ? parsed.choices.delta.content : null;
+
+                // BULLETPROOF PARSER SYNTAX
+                const token = parsed.choices?.[0]?.delta?.content || null;
+
                 if (token) {
                   assistantBuffer += token;
                   setMessages((prev) => {
@@ -280,21 +284,22 @@ export function useAgentChat(): UseAgentChatReturn {
                   });
                 }
               } catch (e) {
-                /* Fragmented JSON handling */
+                // Ignore fragmented JSON lines during stream
               }
             }
           }
         }
 
-        // Refresh affected lists after Swarm tool mutations
+        // Execution of Tool-driven Invalidation
         if (invalidationKeys.size > 0) {
           for (const k of invalidationKeys) {
             queryClient.invalidateQueries({ queryKey: [k] });
           }
         }
 
+        // Post-Response Credit Settlement
         if (perResponseCost > 0 && assistantBuffer) {
-          const { data: creditHandshake, error: deductionError } = await supabase.rpc("deduct_credits" as any, {
+          const { data: handshake, error: deductionError } = await supabase.rpc("deduct_credits", {
             p_amount: perResponseCost,
             p_service_type: "AI_AGENT_CHAT",
             p_reference_id: session.id,
@@ -303,16 +308,16 @@ export function useAgentChat(): UseAgentChatReturn {
           });
 
           if (deductionError) {
-            console.warn("Post-stream deduction delayed or failed", deductionError);
-          } else if (creditHandshake && !(creditHandshake as any).success) {
-            toast.error("FISCAL_DEFICIT: Credits exhausted during sync.");
+            console.warn("[Digital Workforce] Credit deduction delay/failure", deductionError);
+          } else if (handshake && !(handshake as any).success) {
+            toast.error("FISCAL_DEFICIT: Session suspended due to exhausted credits.");
           }
         }
 
         await saveTrajectory([...currentTrajectory, { role: "assistant", content: assistantBuffer }], perResponseCost);
       } catch (err) {
-        console.error("NEURAL_SYNC_FAULT:", err);
-        setMessages((prev) => prev.slice(0, -1));
+        console.error("[Digital Workforce] NEURAL_SYNC_FAULT:", err);
+        setMessages((prev) => prev.slice(0, -1)); // Remove failed optimistic assistant bubble
       } finally {
         setIsStreaming(false);
       }
