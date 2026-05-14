@@ -53,7 +53,7 @@ export function CompaniesOverviewTab() {
       const { data: res, error } = await supabase.rpc("get_companies_overview");
 
       if (error) throw error;
-      setData(res as OverviewData);
+      setData(res as unknown as OverviewData);
     } catch (err) {
       console.error("B2B Telemetry Fault:", err);
     } finally {
