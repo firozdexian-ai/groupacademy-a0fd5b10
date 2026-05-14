@@ -6,6 +6,7 @@
 import { useEffect, useState, useCallback } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Loader2, Search, Lock, TrendingUp, Coins, KeyRound, RefreshCw } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
@@ -32,7 +33,7 @@ export function ContactUnlocksTab() {
           .limit(500),
       ]);
 
-      if (statsRes.data) setStats(statsRes.data);
+      if (statsRes.data) setStats(statsRes.data as any);
 
       if (ledgerRes.data) {
         // Enrichment Logic: Map IDs to human-readable identities
