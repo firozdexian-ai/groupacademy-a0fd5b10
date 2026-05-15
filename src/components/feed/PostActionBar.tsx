@@ -115,6 +115,24 @@ export function PostActionBar({ postId, initialHypeCount = 0, postTitle, postUrl
 
   return (
     <>
+      {totalReactions > 0 && (
+        <div className="flex items-center justify-between gap-2 pt-2 text-[11px] text-muted-foreground">
+          <span>
+            {totalReactions.toLocaleString()} {totalReactions === 1 ? "reaction" : "reactions"}
+          </span>
+        </div>
+      )}
+
+      <div className="pt-1">
+        <ReactionBar
+          reactions={reactions}
+          userReaction={userReaction}
+          onReact={(t) => toggleReaction(t)}
+          disabled={reactionsLoading}
+          inline
+        />
+      </div>
+
       <div className="flex items-center justify-between gap-1 pt-2 border-t border-border/40">
         <Button
           type="button"
