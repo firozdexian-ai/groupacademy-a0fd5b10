@@ -2,14 +2,15 @@ import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * GroUp Academy: Fiscal Gateway Orchestrator
- * CTO Reference: Authoritative controller for platform-wide payment infrastructure.
- * Logic: Implements bimodal gateway toggling and Stripe environment hydration.
+ * GroUp Academy: Fiscal Gateway Orchestrator (V5.6.0)
+ * CTO Reference: Authoritative controller for bimodal checkout infrastructure.
+ * Architecture: Digital Workforce enabled - logs fiscal config drops to Admin OS.
+ * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
  */
 
 export type PaymentGateway = "whatsapp" | "stripe" | "both";
 
-interface PaymentConfig {
+export interface PaymentConfig {
   gateway: PaymentGateway;
   stripePublishableKey: string | null;
   stripeMode: "test" | "live";
@@ -18,11 +19,17 @@ interface PaymentConfig {
   isStripeConfigured: boolean;
 }
 
+/**
+ * Orchestrates platform-wide payment infrastructure parameters.
+ * Implements 5-minute cache stability to minimize repetitive configuration fetches.
+ */
 export function usePaymentConfig() {
   const { data, isLoading } = useQuery({
     queryKey: ["payment-config"],
+    // Performance Baseline: 5-minute cache residency for institutional settings
+    staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<PaymentConfig> => {
-      // HUD: Fetch institutional platform settings artifacts
+      // HUD: FETCH_INSTITUTIONAL_SETTINGS_REGISTRY
       const { data: settings, error } = await supabase
         .from("platform_settings")
         .select("key, value")
@@ -34,25 +41,38 @@ export function usePaymentConfig() {
           "whatsapp_purchase_enabled",
         ]);
 
-      if (error) throw error;
+      if (error) {
+        // Digital Workforce Anomaly Trigger:
+        // Essential for monitoring fiscal pipeline accessibility.
+        console.error("[Digital Workforce] ANOMALY: platform_settings ingress failure.", error);
+        throw error;
+      }
 
-      // SYNC: Map generic key-value artifacts into institutional configuration
+      // SYNC: ATOMIC_REGISTRY_MAPPING
       const registry = new Map(settings?.map((s) => [s.key, s.value]) || []);
       const stripeKey = registry.get("stripe_publishable_key") || null;
+      const rawGateway = registry.get("payment_gateway");
+      const rawMode = registry.get("stripe_mode");
+
+      // HUD: FISCAL_PARAMETER_NORMALIZATION
+      const gateway: PaymentGateway =
+        rawGateway === "stripe" || rawGateway === "both" || rawGateway === "whatsapp" ? rawGateway : "whatsapp";
+
+      const stripeMode: "test" | "live" = rawMode === "live" ? "live" : "test";
 
       return {
-        gateway: (registry.get("payment_gateway") as PaymentGateway) || "whatsapp",
+        gateway,
         stripePublishableKey: stripeKey,
-        stripeMode: (registry.get("stripe_mode") as "test" | "live") || "test",
+        stripeMode,
         currency: registry.get("currency") || "USD",
         whatsappEnabled: registry.get("whatsapp_purchase_enabled") !== "false",
         isStripeConfigured: !!stripeKey,
       };
     },
-    staleTime: 5 * 60 * 1000, // 5m Cache Residency
   });
 
-  // PHASE: Viewport_Diagnostic_API
+  // --- HUD: VIEWPORT_DIAGNOSTIC_API ---
+  // Provides high-velocity access flags for conditional checkout rendering.
   return {
     config: data,
     isLoading,
