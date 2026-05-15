@@ -192,7 +192,7 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
             </SelectContent>
           </Select>
         </div>
-        <Button size="sm" disabled={loading} onClick={() => generate(itemId, kind, lang)}>
+        <Button size="sm" disabled={loading} onClick={() => generate({ item_id: itemId, item_type: kind, target_language: lang })}>
           {loading ? "Generating…" : draft ? "Regenerate" : "Generate"}
         </Button>
       </div>
@@ -219,7 +219,7 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
               className="text-xs font-mono min-h-[180px]"
             />
             <div className="flex justify-end pt-2 border-t border-border/40">
-              <Button size="sm" disabled={applying} onClick={() => apply(itemId, kind, draft.language_code, edited, "ai")}>
+              <Button size="sm" disabled={applying} onClick={() => apply({ item_id: itemId, item_type: kind, language_code: draft.language_code, payload: edited, source: "ai" })}>
                 <Check className="h-3.5 w-3.5 mr-1.5" />
                 {applying ? "Saving…" : `Save ${draft.language_code} translation`}
               </Button>
