@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { acceptOffer, declineOffer } from "@/hooks/useOffers";
+import { useAcceptOffer, useDeclineOffer } from "@/hooks/useOffers";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -38,21 +38,26 @@ export default function AppOfferDecision() {
 
   useEffect(() => { if (offerId) void load(); }, [offerId]);
 
+  const acceptM = useAcceptOffer();
+  const declineM = useDeclineOffer();
+
   const onAccept = async () => {
     if (signedName.trim().length < 2) { toast.error("Please type your full name to sign"); return; }
     setBusy("accept");
-    const ok = await acceptOffer(offerId!, signedName.trim());
+    try {
+      await acceptM.mutateAsync({ offerId: offerId!, signedName: signedName.trim(), applicationId: applicationId! });
+      void load();
+    } catch { /* handled */ }
     setBusy(null);
-    if (ok) { toast.success("Offer accepted! Welcome aboard."); void load(); }
-    else toast.error("Could not accept");
   };
 
   const onDecline = async () => {
     setBusy("decline");
-    const ok = await declineOffer(offerId!, declineNote);
+    try {
+      await declineM.mutateAsync({ offerId: offerId!, note: declineNote, applicationId: applicationId! });
+      void load();
+    } catch { /* handled */ }
     setBusy(null);
-    if (ok) { toast.success("Offer declined"); void load(); }
-    else toast.error("Could not decline");
   };
 
   if (loading) return <div className="p-8 flex justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;

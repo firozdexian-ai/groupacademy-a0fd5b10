@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { createOffer, sendOffer } from "@/hooks/useOffers";
+import { useCreateOffer, useSendOffer } from "@/hooks/useOffers";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -47,29 +47,32 @@ export default function Gro10xOfferComposer() {
     })();
   }, [applicationId]);
 
+  const createOfferM = useCreateOffer();
+  const sendOfferM = useSendOffer();
+
   const submit = async (sendNow: boolean) => {
     if (!companyId || !talentId) return;
     setSaving(true);
-    const id = await createOffer({
-      application_id: applicationId!,
-      company_id: companyId,
-      talent_id: talentId,
-      title: form.title,
-      start_date: form.start_date || null,
-      currency: form.currency,
-      base_amount: Number(form.base_amount) || 0,
-      variable_amount: form.variable_amount === "" ? null : Number(form.variable_amount),
-      equity_note: form.equity_note || null,
-      benefits: form.benefits || null,
-      custom_note: form.custom_note || null,
-      expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
-    } as any);
-    if (id && sendNow) await sendOffer(id);
-    setSaving(false);
-    if (id) {
-      toast.success(sendNow ? "Offer sent to candidate" : "Draft saved");
-      nav(`/gro10x/work/applications`);
-    } else toast.error("Could not create offer");
+    try {
+      const id = await createOfferM.mutateAsync({
+        application_id: applicationId!,
+        company_id: companyId,
+        talent_id: talentId,
+        title: form.title,
+        start_date: form.start_date || null,
+        currency: form.currency,
+        base_amount: Number(form.base_amount) || 0,
+        variable_amount: form.variable_amount === "" ? null : Number(form.variable_amount),
+        equity_note: form.equity_note || null,
+        benefits: form.benefits || null,
+        custom_note: form.custom_note || null,
+        expires_at: form.expires_at ? new Date(form.expires_at).toISOString() : null,
+      } as any);
+      if (id && sendNow) await sendOfferM.mutateAsync({ offerId: id, applicationId: applicationId! });
+      if (id) nav(`/gro10x/work/applications`);
+    } finally {
+      setSaving(false);
+    }
   };
 
   if (loading) return <div className="p-8 flex justify-center"><Loader2 className="h-6 w-6 animate-spin" /></div>;
