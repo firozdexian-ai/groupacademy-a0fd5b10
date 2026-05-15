@@ -65,7 +65,7 @@ export function ReactionBar({ reactions, userReaction, onReact, disabled, inline
           <Icon
             className={cn("h-4 w-4 transition-all duration-500", isActive && "fill-current scale-110 drop-shadow-sm")}
           />
-          <span className={cn("hidden md:inline uppercase tracking-widest")}>{config.label}</span>
+          <span className="hidden md:inline">{config.label}</span>
         </Button>
       );
     },
