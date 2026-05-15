@@ -107,7 +107,7 @@ export function useCohortHealth(cohortId?: string) {
         throw error;
       }
 
-      const results = Array.isArray(data) ? data[0] : data;
+      const results: any = Array.isArray(data) ? data[0] : data;
 
       // AUTOMATED NUDGE: Detect at-risk performance levels immediately at data sync layer
       if (results && results.health_status === "critical") {
