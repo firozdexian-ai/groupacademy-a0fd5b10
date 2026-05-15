@@ -6,7 +6,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2 } from "lucide-react";
 import { toast } from "sonner";
-import { inviteToApply } from "@/hooks/useJobInvitations";
+import { useInviteToApply } from "@/hooks/useJobInvitations";
 import { useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 
@@ -18,6 +18,7 @@ interface Props {
 }
 
 export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }: Props) {
+  const inviteMutation = useInviteToApply();
   const [jobs, setJobs] = useState<{ id: string; title: string }[]>([]);
   const [jobId, setJobId] = useState<string>("");
   const [note, setNote] = useState("");
@@ -39,10 +40,14 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
   const submit = async () => {
     if (!jobId) { toast.error("Pick a job"); return; }
     setSaving(true);
-    const id = await inviteToApply({ job_id: jobId, company_id: companyId, talent_id: talentId, note });
-    setSaving(false);
-    if (id) { toast.success("Invitation sent"); onOpenChange(false); }
-    else toast.error("Could not send invitation");
+    try {
+      await inviteMutation.mutateAsync({ job_id: jobId, company_id: companyId, talent_id: talentId, note });
+      onOpenChange(false);
+    } catch {
+      // toast handled by hook
+    } finally {
+      setSaving(false);
+    }
   };
 
   return (
