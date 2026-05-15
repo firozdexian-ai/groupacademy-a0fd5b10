@@ -19,6 +19,7 @@ interface Props {
 }
 
 export function ScheduleInterviewSheet({ open, onOpenChange, applicationId, companyId, talentId, onCreated }: Props) {
+  const createInterview = useCreateInterview();
   const [mode, setMode] = useState<InterviewMode>("video");
   const [duration, setDuration] = useState(30);
   const [link, setLink] = useState("");
