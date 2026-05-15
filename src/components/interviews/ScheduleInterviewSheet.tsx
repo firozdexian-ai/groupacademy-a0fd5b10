@@ -7,7 +7,7 @@ import { Textarea } from "@/components/ui/textarea";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Loader2, Plus, Trash2 } from "lucide-react";
 import { toast } from "sonner";
-import { createInterview, type InterviewMode } from "@/hooks/useInterviews";
+import { useCreateInterview, type InterviewMode } from "@/hooks/useInterviews";
 
 interface Props {
   open: boolean;
