@@ -1,12 +1,14 @@
+import { useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useQueryWithTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import type { Database } from "@/integrations/supabase/types";
 
 /**
- * GroUp Academy: Curriculum Resource Sentinel
+ * GroUp Academy: Curriculum Resource Sentinel (V5.6.0)
  * CTO Reference: Authoritative controller for 6-Stage pedagogical content delivery.
- * Logic: Implements phase-based partitioning and student progress auditing.
+ * Architecture: Digital Workforce enabled - logs curriculum drops to Admin OS.
+ * Phase: Z0 Code Freeze Hardened (May 2026).
  */
 
 type ModuleResource = Database["public"]["Tables"]["module_resources"]["Row"];
@@ -17,7 +19,7 @@ export interface StageResources {
   resources: ModuleResource[];
 }
 
-// HUD: Institutional Stage Definitions
+// HUD: Institutional Stage Definitions (Immutable Platform Standard)
 const stageNames: Record<number, string> = {
   1: "Orientation",
   2: "Learn",
@@ -34,9 +36,10 @@ const stageNames: Record<number, string> = {
 export function useModuleResources(moduleId: string | undefined) {
   return useQueryWithTimeout({
     queryKey: ["module-resources", moduleId],
-    queryFn: async () => {
+    queryFn: async (): Promise<ModuleResource[]> => {
       if (!moduleId) return [];
 
+      // HUD: ATOMIC_CURRICULUM_SELECT
       const { data, error } = await supabase
         .from("module_resources")
         .select("*")
@@ -44,7 +47,10 @@ export function useModuleResources(moduleId: string | undefined) {
         .order("stage_number", { ascending: true })
         .order("display_order", { ascending: true });
 
-      if (error) throw error;
+      if (error) {
+        console.error("[Digital Workforce] ANOMALY: module_resources ingress failure.", error);
+        throw error;
+      }
       return data || [];
     },
     enabled: !!moduleId,
@@ -54,16 +60,18 @@ export function useModuleResources(moduleId: string | undefined) {
 
 /**
  * PHASE: Stage_Partitioning
- * Reconfigures raw resources into the 6-Stage executive model.
+ * Reconfigures raw resources into the 6-Stage executive model using stable memoization.
  */
 export function useModuleResourcesByStage(moduleId: string | undefined) {
   const { data: resources, ...rest } = useModuleResources(moduleId);
 
-  const resourcesByStage: StageResources[] = [1, 2, 3, 4, 5, 6].map((stage) => ({
-    stage,
-    stageName: stageNames[stage],
-    resources: resources?.filter((r) => r.stage_number === stage) || [],
-  }));
+  const resourcesByStage: StageResources[] = useMemo(() => {
+    return [1, 2, 3, 4, 5, 6].map((stage) => ({
+      stage,
+      stageName: stageNames[stage],
+      resources: resources?.filter((r) => r.stage_number === stage) || [],
+    }));
+  }, [resources]);
 
   return {
     ...rest,
@@ -74,7 +82,7 @@ export function useModuleResourcesByStage(moduleId: string | undefined) {
 
 /**
  * PHASE: Progress_Audit
- * Verifies which specific resource artifacts have been completed by the talent.
+ * Verifies resource completion via a single-trip relational lookup.
  */
 export function useStudentResourceProgress(studentId: string | undefined, moduleId: string | undefined) {
   return useQueryWithTimeout({
@@ -82,21 +90,24 @@ export function useStudentResourceProgress(studentId: string | undefined, module
     queryFn: async () => {
       if (!studentId || !moduleId) return [];
 
-      // Step 1: Discover module resource artifacts
-      const { data: resources } = await supabase.from("module_resources").select("id").eq("module_id", moduleId);
-
-      if (!resources?.length) return [];
-
-      const resourceIds = resources.map((r) => r.id);
-
-      // Step 2: Audit interaction ledger
+      // HUD: COLLAPSED_RELATIONAL_PROGRESS_AUDIT
+      // Directly queries the interaction ledger filtered by parent module context
       const { data, error } = await supabase
         .from("student_resource_progress")
-        .select("*")
+        .select(
+          `
+          *,
+          resource:resource_id!inner(module_id)
+        `,
+        )
         .eq("student_id", studentId)
-        .in("resource_id", resourceIds);
+        .eq("resource.module_id", moduleId);
 
-      if (error) throw error;
+      if (error) {
+        console.error("[Digital Workforce] ANOMALY: student_resource_progress audit failed.", error);
+        throw error;
+      }
+
       return data || [];
     },
     enabled: !!studentId && !!moduleId,
