@@ -63,10 +63,9 @@ export function useRankedJobs(talentId: string | undefined) {
           company_logo_url: rawJob.company_logo_url ?? null,
           location: String(rawJob.location ?? "Remote / Flexible"),
           job_type: String(rawJob.job_type ?? "Full-time"),
-          salary_min: rawJob.salary_min !== undefined && rawJob.salary_min !== null ? Number(rawJob.salary_min) : null,
-          salary_max: rawJob.salary_max !== undefined && rawJob.salary_max !== null ? Number(rawJob.salary_max) : null,
-          currency: String(rawJob.currency ?? "USD"),
-          skills: Array.isArray(rawJob.skills) ? rawJob.skills.map(String) : [],
+          salary_range_min: rawJob.salary_min ?? rawJob.salary_range_min ?? null,
+          salary_range_max: rawJob.salary_max ?? rawJob.salary_range_max ?? null,
+          salary_currency: rawJob.currency ?? rawJob.salary_currency ?? "USD",
           created_at: String(rawJob.created_at ?? new Date().toISOString()),
         };
 
