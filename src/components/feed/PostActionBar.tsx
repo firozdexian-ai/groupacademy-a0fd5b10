@@ -35,6 +35,8 @@ const HOLD_MS = 450;
 
 export function PostActionBar({ postId, initialHypeCount = 0, postTitle, postUrl, postDescription }: Props) {
   const { count, hype, isHyping } = useHype(postId, initialHypeCount);
+  const { reactions, userReaction, toggleReaction, isLoading: reactionsLoading } = usePostReactions(postId);
+  const totalReactions = Object.values(reactions).reduce((s, n) => s + n, 0);
   const [hasHyped, setHasHyped] = useState(false);
   const [boostOpen, setBoostOpen] = useState(false);
   const [commentsOpen, setCommentsOpen] = useState(false);
