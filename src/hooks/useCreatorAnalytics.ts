@@ -10,20 +10,29 @@ import { supabase } from "@/integrations/supabase/client";
  */
 
 export interface CreatorScorecard {
-  totals: {
+  totals?: {
     total_views: number;
     total_shares: number;
     total_hype: number;
     earned_credits: number;
   };
-  growth_pct: Record<string, number>;
+  growth_pct?: Record<string, number>;
+  current?: any;
+  previous?: any;
+  post_count?: number;
+  [key: string]: any;
 }
 
 export interface PostInsightData {
-  views_count: number;
-  shares_count: number;
-  hype_count: number;
-  engagement_rate: number;
+  views_count?: number;
+  shares_count?: number;
+  hype_count?: number;
+  engagement_rate?: number;
+  totals?: any;
+  credits_earned?: number;
+  daily?: any[];
+  top_hypers?: any[];
+  [key: string]: any;
 }
 
 /**
