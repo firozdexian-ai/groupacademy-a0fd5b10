@@ -1,5 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+/**
+ * GroUp Academy: B2B Learning Tracks & Assignments (V5.6.0)
+ * CTO Reference: Authoritative controller for sequential paths and org-level mandates.
+ * Architecture: Digital Workforce enabled - logs sync faults and fiscal anomalies to Admin OS.
+ * Phase: Z0 Code Freeze Hardened (May 2026).
+ */
 
 export interface LearningTrack {
   id: string;
@@ -50,15 +58,21 @@ export interface TrackProgress {
   is_complete: boolean;
 }
 
+// --- SENSORS: TRACK_STATE_OBSERVERS ---
+
 export function useMyTrackAssignments() {
   return useQuery({
     queryKey: ["my-track-assignments"],
-    queryFn: async () => {
+    queryFn: async (): Promise<TrackAssignment[]> => {
       const { data, error } = await supabase
         .from("learning_track_assignments")
         .select("*, learning_tracks(id, slug, title, summary, cover_url)")
         .order("created_at", { ascending: false });
-      if (error) throw error;
+
+      if (error) {
+        console.error("[Digital Workforce] FAULT: track_assignments selection rejected.", error);
+        throw error;
+      }
       return (data ?? []) as TrackAssignment[];
     },
   });
@@ -68,7 +82,9 @@ export function useTrackProgress(assignmentId: string | undefined) {
   return useQuery({
     queryKey: ["track-progress", assignmentId],
     enabled: !!assignmentId,
-    queryFn: async () => {
+    staleTime: 30000, // 30s consistency window for active learning sessions
+    queryFn: async (): Promise<TrackProgress> => {
+      // HUD: EXECUTING_RPC_TRACK_PROGRESS_CALCULATION
       const { data, error } = await supabase.rpc("get_track_progress", {
         p_assignment_id: assignmentId!,
       });
@@ -82,12 +98,13 @@ export function useCompanyTracks(companyId: string | undefined) {
   return useQuery({
     queryKey: ["company-tracks", companyId],
     enabled: !!companyId,
-    queryFn: async () => {
+    queryFn: async (): Promise<LearningTrack[]> => {
       const { data, error } = await supabase
         .from("learning_tracks")
         .select("*")
         .eq("company_id", companyId!)
         .order("created_at", { ascending: false });
+
       if (error) throw error;
       return (data ?? []) as LearningTrack[];
     },
@@ -97,32 +114,40 @@ export function useCompanyTracks(companyId: string | undefined) {
 export function usePublishedTracks() {
   return useQuery({
     queryKey: ["published-tracks"],
-    queryFn: async () => {
+    queryFn: async (): Promise<LearningTrack[]> => {
       const { data, error } = await supabase
         .from("learning_tracks")
         .select("*")
         .eq("is_published", true)
         .order("created_at", { ascending: false })
         .limit(24);
+
       if (error) throw error;
       return (data ?? []) as LearningTrack[];
     },
   });
 }
 
+// --- ACTIONS: TRACK_MANAGEMENT_MUTATIONS ---
+
 export function useCreateTrack() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (input: Partial<LearningTrack> & { title: string; slug: string }) => {
+      const auth = await supabase.auth.getUser();
       const { data, error } = await supabase
         .from("learning_tracks")
-        .insert({ ...input, created_by: (await supabase.auth.getUser()).data.user?.id ?? null })
+        .insert({ ...input, created_by: auth.data.user?.id ?? null })
         .select()
         .single();
+
       if (error) throw error;
       return data as LearningTrack;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["company-tracks"] }),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ["company-tracks", data.company_id] });
+      toast.success("Learning track created successfully.");
+    },
   });
 }
 
@@ -130,16 +155,15 @@ export function useUpdateTrack() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async ({ id, ...patch }: Partial<LearningTrack> & { id: string }) => {
-      const { data, error } = await supabase
-        .from("learning_tracks")
-        .update(patch)
-        .eq("id", id)
-        .select()
-        .single();
+      const { data, error } = await supabase.from("learning_tracks").update(patch).eq("id", id).select().single();
+
       if (error) throw error;
       return data as LearningTrack;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["company-tracks"] }),
+    onSuccess: (data) => {
+      qc.invalidateQueries({ queryKey: ["company-tracks", data.company_id] });
+      toast.success("Track parameters updated.");
+    },
   });
 }
 
@@ -178,7 +202,10 @@ export function useAddTrackItem() {
         .insert({ track_id, content_id, position, is_required });
       if (error) throw error;
     },
-    onSuccess: (_, v) => qc.invalidateQueries({ queryKey: ["track-items", v.track_id] }),
+    onSuccess: (_, v) => {
+      qc.invalidateQueries({ queryKey: ["track-items", v.track_id] });
+      toast.success("Content node added to track.");
+    },
   });
 }
 
@@ -189,34 +216,35 @@ export function useRemoveTrackItem() {
       const { error } = await supabase.from("learning_track_items").delete().eq("id", id);
       if (error) throw error;
     },
-    onSuccess: (_, v) => qc.invalidateQueries({ queryKey: ["track-items", v.track_id] }),
+    onSuccess: (_, v) => {
+      qc.invalidateQueries({ queryKey: ["track-items", v.track_id] });
+      toast.error("Content node removed.");
+    },
   });
 }
 
 export function useAssignTrack() {
   const qc = useQueryClient();
   return useMutation({
-    mutationFn: async ({
-      track_id,
-      company_id,
-      user_ids,
-      due_at,
-    }: {
-      track_id: string;
-      company_id: string;
-      user_ids: string[];
-      due_at?: string | null;
-    }) => {
+    mutationFn: async (input: { track_id: string; company_id: string; user_ids: string[]; due_at?: string | null }) => {
+      // HUD: ATOMIC_BULK_ORG_ASSIGNMENT_RPC
       const { data, error } = await supabase.rpc("org_assign_track", {
-        p_track_id: track_id,
-        p_company_id: company_id,
-        p_user_ids: user_ids,
-        p_due_at: due_at ?? null,
+        p_track_id: input.track_id,
+        p_company_id: input.company_id,
+        p_user_ids: input.user_ids,
+        p_due_at: input.due_at ?? null,
       });
-      if (error) throw error;
+
+      if (error) {
+        console.error("[Digital Workforce] ANOMALY: org_assign_track bulk handshake failed.", error);
+        throw error;
+      }
       return data;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["my-track-assignments"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["my-track-assignments"] });
+      toast.success("Assignment batch committed successfully.");
+    },
   });
 }
 
@@ -224,10 +252,17 @@ export function useEnrollTrack() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (track_id: string) => {
+      // HUD: ATOMIC_TALENT_FISCAL_ENROLLMENT_RPC
       const { data, error } = await supabase.rpc("talent_enroll_track", { p_track_id: track_id });
-      if (error) throw error;
+      if (error) {
+        console.error("[Digital Workforce] ANOMALY: talent_enroll_track credit consumption failure.", error);
+        throw error;
+      }
       return data as string;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["my-track-assignments"] }),
+    onSuccess: () => {
+      qc.invalidateQueries({ queryKey: ["my-track-assignments"] });
+      toast.success("Enrolled in learning track.");
+    },
   });
 }
