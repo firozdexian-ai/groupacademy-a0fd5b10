@@ -1,13 +1,15 @@
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
 
-export type OfferStatus =
-  | "draft"
-  | "sent"
-  | "accepted"
-  | "declined"
-  | "countered"
-  | "expired"
-  | "withdrawn";
+/**
+ * GroUp Academy: Legal & Offer Finality Suite (V5.6.0)
+ * CTO Reference: Authoritative transactional interface for binding employment contracts.
+ * Architecture: Digital Workforce enabled - logs fiscal state failures to Admin OS.
+ * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
+ */
+
+export type OfferStatus = "draft" | "sent" | "accepted" | "declined" | "countered" | "expired" | "withdrawn";
 
 export interface Offer {
   id: string;
@@ -33,62 +35,165 @@ export interface Offer {
   updated_at: string;
 }
 
-export async function createOffer(input: Partial<Offer> & {
-  application_id: string;
-  company_id: string;
-  talent_id: string;
-  title: string;
-}): Promise<string | null> {
-  const { data: u } = await supabase.auth.getUser();
-  const { data, error } = await supabase
-    .from("offers")
-    .insert({
-      ...input,
-      base_amount: input.base_amount ?? 0,
-      currency: input.currency ?? "USD",
-      created_by: u.user?.id,
-    })
-    .select("id")
-    .single();
-  if (error) return null;
-  return data.id;
-}
+// --- MUTATION: CREATE_OFFER_LEDGER ---
+export function useCreateOffer() {
+  const qc = useQueryClient();
 
-export async function sendOffer(offerId: string) {
-  const { error } = await supabase
-    .from("offers")
-    .update({ status: "sent" })
-    .eq("id", offerId);
-  if (!error) {
-    await supabase.functions.invoke("notify-hiring-event", {
-      body: { kind: "offer_sent", ref: { offer_id: offerId } },
-    });
-  }
-  return !error;
-}
+  return useMutation({
+    mutationFn: async (
+      input: Partial<Offer> & {
+        application_id: string;
+        company_id: string;
+        talent_id: string;
+        title: string;
+      },
+    ): Promise<string> => {
+      const { data: u, error: authError } = await supabase.auth.getUser();
+      if (authError || !u.user) throw new Error("Authentication session required.");
 
-export async function acceptOffer(offerId: string, signedName: string) {
-  const { error } = await supabase.rpc("accept_offer", {
-    p_offer_id: offerId,
-    p_signed_name: signedName,
+      // HUD: EXECUTING_OFFER_DOCUMENT_INSERT
+      const { data, error } = await supabase
+        .from("offers")
+        .insert({
+          ...input,
+          base_amount: input.base_amount ?? 0,
+          currency: input.currency ?? "USD",
+          created_by: u.user.id,
+        })
+        .select("id")
+        .single();
+
+      if (error) {
+        console.error("[Digital Workforce] FAULT: offers registry insertion rejected.", error);
+        throw error;
+      }
+      return data.id;
+    },
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: ["application-hire-state", variables.application_id] });
+      toast.success("Offer document draft formalized successfully.");
+    },
+    onError: (err: any) => {
+      toast.error(err.message ?? "Failed to initialize offer ledger record.");
+    },
   });
-  if (!error) {
-    await supabase.functions.invoke("notify-hiring-event", {
-      body: { kind: "offer_accepted", ref: { offer_id: offerId } },
-    });
-  }
-  return !error;
 }
 
-export async function declineOffer(offerId: string, note?: string) {
-  const { error } = await supabase.rpc("decline_offer", {
-    p_offer_id: offerId,
-    p_note: note ?? null,
+// --- MUTATION: SEND_OFFER_DISPATCH ---
+export function useSendOffer() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ offerId, applicationId }: { offerId: string; applicationId: string }) => {
+      // HUD: ATOMIC_OFFER_STATUS_SENT_TRANSITION
+      const { error } = await supabase.from("offers").update({ status: "sent" }).eq("id", offerId);
+
+      if (error) throw error;
+
+      // HUD: EDGE_NOTIFY_DISPATCH_HANDSHAKE
+      const { error: funcError } = await supabase.functions.invoke("notify-hiring-event", {
+        body: { kind: "offer_sent", ref: { offer_id: offerId } },
+      });
+
+      if (funcError) {
+        console.error("[Digital Workforce] ANOMALY: notify-hiring-event failed for offer_sent.", {
+          offerId,
+          message: funcError.message,
+        });
+      }
+    },
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: ["application-hire-state", variables.applicationId] });
+      toast.success("Offer letter systematically dispatched to candidate.");
+    },
+    onError: (err: any) => {
+      console.error("[Digital Workforce] FAULT: sendOffer dispatch rejected.", err);
+      toast.error(err.message ?? "Failed to dispatch contract.");
+    },
   });
-  if (!error) {
-    await supabase.functions.invoke("notify-hiring-event", {
-      body: { kind: "offer_declined", ref: { offer_id: offerId } },
-    });
-  }
-  return !error;
+}
+
+// --- MUTATION: ACCEPT_OFFER_SIGNATURE ---
+export function useAcceptOffer() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({
+      offerId,
+      signedName,
+      applicationId,
+    }: {
+      offerId: string;
+      signedName: string;
+      applicationId: string;
+    }) => {
+      // HUD: EXECUTING_RPC_OFFER_SIGNATURE_ACCEPT
+      const { error } = await supabase.rpc("accept_offer", {
+        p_offer_id: offerId,
+        p_signed_name: signedName,
+      });
+
+      if (error) {
+        console.error("[Digital Workforce] FAULT: accept_offer transaction verification failed.", error);
+        throw error;
+      }
+
+      const { error: funcError } = await supabase.functions.invoke("notify-hiring-event", {
+        body: { kind: "offer_accepted", ref: { offer_id: offerId } },
+      });
+
+      if (funcError) {
+        console.error("[Digital Workforce] ANOMALY: notify-hiring-event failed for offer_accepted.", {
+          offerId,
+          message: funcError.message,
+        });
+      }
+    },
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: ["application-hire-state", variables.applicationId] });
+      qc.invalidateQueries({ queryKey: ["instructor-summary"] }); // Force synchronization if partner onboarding
+      toast.success("Contract signed and executed successfully! Welcome aboard.");
+    },
+    onError: (err: any) => {
+      toast.error(err.message ?? "Signature mapping handshake failed.");
+    },
+  });
+}
+
+// --- MUTATION: DECLINE_OFFER_DISMISSAL ---
+export function useDeclineOffer() {
+  const qc = useQueryClient();
+
+  return useMutation({
+    mutationFn: async ({ offerId, note, applicationId }: { offerId: string; note?: string; applicationId: string }) => {
+      // HUD: EXECUTING_RPC_OFFER_DECLINE
+      const { error } = await supabase.rpc("decline_offer", {
+        p_offer_id: offerId,
+        p_note: note ?? null,
+      });
+
+      if (error) {
+        console.error("[Digital Workforce] FAULT: decline_offer transaction rejected by schema rules.", error);
+        throw error;
+      }
+
+      const { error: funcError } = await supabase.functions.invoke("notify-hiring-event", {
+        body: { kind: "offer_declined", ref: { offer_id: offerId } },
+      });
+
+      if (funcError) {
+        console.error("[Digital Workforce] ANOMALY: notify-hiring-event failed for offer_declined.", {
+          offerId,
+          message: funcError.message,
+        });
+      }
+    },
+    onSuccess: (_, variables) => {
+      qc.invalidateQueries({ queryKey: ["application-hire-state", variables.applicationId] });
+      toast.error("Offer declined. Pipeline record localized.");
+    },
+    onError: (err: any) => {
+      toast.error(err.message ?? "Declination registration failed.");
+    },
+  });
 }
