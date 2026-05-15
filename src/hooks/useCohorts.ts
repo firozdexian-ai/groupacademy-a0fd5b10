@@ -107,7 +107,7 @@ export function useCohortHealth(cohortId?: string) {
         throw error;
       }
 
-      const results = Array.isArray(data) ? data[0] : data;
+      const results: any = Array.isArray(data) ? data[0] : data;
 
       // AUTOMATED NUDGE: Detect at-risk performance levels immediately at data sync layer
       if (results && results.health_status === "critical") {
@@ -246,7 +246,7 @@ export function useSaveSession() {
         const { error } = await supabase.from("course_sessions").update(rest).eq("id", id);
         if (error) throw error;
       } else {
-        const { error } = await supabase.from("course_sessions").insert(rest);
+        const { error } = await supabase.from("course_sessions").insert(rest as any);
         if (error) throw error;
       }
     },
