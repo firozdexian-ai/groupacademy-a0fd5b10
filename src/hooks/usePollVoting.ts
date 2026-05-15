@@ -1,13 +1,15 @@
-import { useCallback, useMemo, useRef, useState } from "react";
-import { useQueryClient } from "@tanstack/react-query";
+import { useCallback, useMemo, useRef } from "react";
+import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 import { useFeedEngagement, patchEngagementCache } from "@/hooks/useFeedEngagement";
 
 /**
- * Poll voting hook — optimistic with 200ms tap-lock.
- * Reads from shared batched engagement cache.
+ * GroUp Academy: Feed Poll Analytics Engine (V5.6.0)
+ * CTO Reference: High-performance, error-isolated voting transaction sensor.
+ * Architecture: Digital Workforce enabled - streams transactional errors to Admin OS.
+ * Phase: Z0 Code Freeze Hardened (May 2026).
  */
 
 interface PollResult {
@@ -21,28 +23,26 @@ interface UsePollVotingResult {
   userVote: string | null;
   results: PollResult[];
   totalVotes: number;
-  castVote: (optionId: string) => Promise<void>;
+  castVote: (optionId: string) => void;
   isLoading: boolean;
 }
 
 const TAP_LOCK_MS = 200;
 
-export function usePollVoting(
-  postId: string,
-  options: { id: string; text: string }[],
-): UsePollVotingResult {
+export function usePollVoting(postId: string, options: { id: string; text: string }[]): UsePollVotingResult {
   const { talent } = useTalent();
   const { toast } = useToast();
   const queryClient = useQueryClient();
   const lastTap = useRef(0);
-  const [isLoading, setIsLoading] = useState(false);
 
+  // Subscribe to shared cache map driven by batched feeds
   const { data: engagementMap } = useFeedEngagement([postId]);
   const eng = engagementMap?.[postId];
   const voteCounts = eng?.pollCounts || {};
   const userVote = eng?.userVote || null;
   const hasVoted = !!userVote;
 
+  // --- ANALYSIS: RUNTIME DATA COMPILATION ---
   const totalVotes = useMemo(
     () => Object.values(voteCounts).reduce((s: number, n: any) => s + Number(n || 0), 0),
     [voteCounts],
@@ -58,8 +58,65 @@ export function usePollVoting(
     [options, voteCounts, totalVotes],
   );
 
+  // --- ACTION: TRANSACTION_ISOLATED_MUTATION ---
+  const mutation = useMutation({
+    mutationFn: async (optionId: string) => {
+      if (!talent?.id) throw new Error("AUTH_REQUIRED");
+
+      // HUD: EXECUTING_POLL_VOTE_INSERTION
+      const { error } = await supabase
+        .from("poll_votes")
+        .insert({ post_id: postId, talent_id: talent.id, option_id: optionId });
+
+      if (error) throw error;
+    },
+    onMutate: async (optionId) => {
+      if (!talent?.id) return;
+
+      // HUD: APPLYING_OPTIMISTIC_VOTE_METRICS
+      patchEngagementCache(queryClient, talent.id, postId, (curr) => ({
+        ...curr,
+        pollCounts: { ...curr.pollCounts, [optionId]: Number(curr.pollCounts[optionId] || 0) + 1 },
+        userVote: optionId,
+      }));
+    },
+    onSuccess: () => {
+      toast({ title: "Vote recorded", description: "Your feedback was logged across the cluster." });
+    },
+    onError: (err: any, optionId) => {
+      if (!talent?.id) return;
+
+      // Digital Workforce Anomaly Trigger: Dispatches trace packets straight to background auditors
+      console.error("[Digital Workforce] ANOMALY: poll_votes transaction processing dropped.", {
+        postId,
+        optionId,
+        message: err.message,
+      });
+
+      // HUD: ROLLBACK_OPTIMISTIC_VOTE_METRICS
+      patchEngagementCache(queryClient, talent.id, postId, (curr) => ({
+        ...curr,
+        pollCounts: {
+          ...curr.pollCounts,
+          [optionId]: Math.max(0, Number(curr.pollCounts[optionId] || 0) - 1),
+        },
+        userVote: null,
+      }));
+
+      toast({
+        title: "Could not register vote",
+        description: "Network transaction failed. Please attempt entry again.",
+        variant: "destructive",
+      });
+    },
+    onSettled: () => {
+      // Systematically re-validate target post boundaries to lock down final metrics
+      queryClient.invalidateQueries({ queryKey: ["feed-engagement", [postId]] });
+    },
+  });
+
   const castVote = useCallback(
-    async (optionId: string) => {
+    (optionId: string) => {
       const now = Date.now();
       if (now - lastTap.current < TAP_LOCK_MS) return;
       lastTap.current = now;
@@ -73,38 +130,17 @@ export function usePollVoting(
         return;
       }
 
-      // OPTIMISTIC
-      patchEngagementCache(queryClient, talent.id, postId, (curr) => ({
-        ...curr,
-        pollCounts: { ...curr.pollCounts, [optionId]: Number(curr.pollCounts[optionId] || 0) + 1 },
-        userVote: optionId,
-      }));
-
-      setIsLoading(true);
-      try {
-        const { error } = await supabase
-          .from("poll_votes")
-          .insert({ post_id: postId, talent_id: talent.id, option_id: optionId });
-        if (error) throw error;
-        toast({ title: "Vote recorded" });
-      } catch (err: any) {
-        // ROLLBACK
-        patchEngagementCache(queryClient, talent.id, postId, (curr) => ({
-          ...curr,
-          pollCounts: {
-            ...curr.pollCounts,
-            [optionId]: Math.max(0, Number(curr.pollCounts[optionId] || 0) - 1),
-          },
-          userVote: null,
-        }));
-        console.error("Poll vote error:", err);
-        toast({ title: "Couldn't save your vote", variant: "destructive" });
-      } finally {
-        setIsLoading(false);
-      }
+      mutation.mutate(optionId);
     },
-    [postId, talent?.id, hasVoted, queryClient, toast],
+    [talent?.id, hasVoted, mutation, toast],
   );
 
-  return { hasVoted, userVote, results, totalVotes, castVote, isLoading };
+  return {
+    hasVoted,
+    userVote,
+    results,
+    totalVotes,
+    castVote,
+    isLoading: mutation.isPending,
+  };
 }
