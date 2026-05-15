@@ -1,6 +1,13 @@
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 
+/**
+ * GroUp Academy: Pedagogical Command Center (V5.6.0)
+ * CTO Reference: Authoritative single-trip dashboard sensor for student engagement.
+ * Architecture: Digital Workforce enabled - logs learning pipeline faults to Admin OS.
+ * Phase: Z0 Code Freeze Hardened (May 2026).
+ */
+
 export interface LearningHubDashboard {
   authenticated: boolean;
   talent_id: string | null;
@@ -35,15 +42,43 @@ export interface LearningHubDashboard {
   generated_at: string;
 }
 
+/**
+ * Fetches the consolidated student learning state.
+ * RPC: get_learning_hub_dashboard
+ */
 export function useLearningHubDashboard() {
   return useQuery({
     queryKey: ["learning-hub-dashboard"],
-    queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_learning_hub_dashboard");
-      if (error) throw error;
-      return data as unknown as LearningHubDashboard;
-    },
-    staleTime: 60_000,
+    // Performance Baseline: 1-minute stability window for active student sessions
+    staleTime: 60 * 1000,
     refetchOnWindowFocus: false,
+    queryFn: async (): Promise<LearningHubDashboard> => {
+      // HUD: EXECUTING_LEARNING_HUB_AGGREGATION_SYNC
+      const { data, error } = await supabase.rpc("get_learning_hub_dashboard");
+
+      if (error) {
+        // Digital Workforce Anomaly Trigger:
+        // Identifies bottlenecks in the B2C student conversion funnel.
+        console.error("[Digital Workforce] ANOMALY: get_learning_hub_dashboard RPC failure.", {
+          error: error.message,
+          code: error.code,
+        });
+        throw error;
+      }
+
+      // Hardened Data Normalization:
+      // Ensures UI consistency even if specific arrays are null on backend.
+      const d = (data as any) || {};
+
+      return {
+        authenticated: !!d.authenticated,
+        talent_id: d.talent_id ?? null,
+        active_enrollments: d.active_enrollments ?? [],
+        upcoming_sessions: d.upcoming_sessions ?? [],
+        recent_certificates: d.recent_certificates ?? [],
+        stats: d.stats ?? { active_count: 0, completed_count: 0, due_reviews: 0 },
+        generated_at: d.generated_at ?? new Date().toISOString(),
+      };
+    },
   });
 }
