@@ -1,5 +1,13 @@
-import { useState, useCallback } from "react";
+import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+/**
+ * GroUp Academy: AI Pedagogical Refactor Engine (V5.6.0)
+ * CTO Reference: Authoritative controller for item rewrites and automated version patching.
+ * Architecture: Digital Workforce enabled - logs AI pipeline exceptions to Admin OS.
+ * Phase: Z0 Code Freeze Hardened.
+ */
 
 export type RewriteKind = "quiz" | "scenario";
 
@@ -13,6 +21,7 @@ export interface QuizSuggestion {
   change_summary: string;
   rationale: string;
 }
+
 export interface ScenarioSuggestion {
   label: string;
   title: string;
@@ -31,41 +40,84 @@ export interface RewriteResult {
   suggestions: (QuizSuggestion | ScenarioSuggestion)[];
 }
 
+/**
+ * Orchestrates the AI-driven refactoring of pedagogical assets.
+ * Leverages TanStack Mutations for transactional state management.
+ */
 export function useItemRewrite() {
-  const [loading, setLoading] = useState(false);
-  const [error, setError] = useState<string | null>(null);
-  const [data, setData] = useState<RewriteResult | null>(null);
+  const queryClient = useQueryClient();
 
-  const generate = useCallback(async (
-    kind: RewriteKind, itemId: string, flags: string[], notes?: string,
-  ) => {
-    setLoading(true); setError(null); setData(null);
-    try {
+  // --- ACTION: GENERATE_REWRITE_SUGGESTIONS ---
+  const generateMutation = useMutation({
+    mutationFn: async (input: {
+      kind: RewriteKind;
+      itemId: string;
+      flags: string[];
+      notes?: string;
+    }): Promise<RewriteResult> => {
+      // HUD: INVOKING_AI_REWRITE_AGENT
       const { data: res, error: e } = await supabase.functions.invoke("ai-item-rewrite", {
-        body: { kind, item_id: itemId, flags, notes },
+        body: {
+          kind: input.kind,
+          item_id: input.itemId,
+          flags: input.flags,
+          notes: input.notes,
+        },
       });
-      if (e) throw new Error(e.message);
+
+      if (e) throw e;
       if ((res as any)?.error) throw new Error((res as any).error);
-      setData(res as RewriteResult);
-    } catch (err: any) {
-      setError(err?.message ?? "Failed to generate rewrite");
-    } finally {
-      setLoading(false);
-    }
-  }, []);
 
-  const apply = useCallback(async (
-    kind: RewriteKind, itemId: string, patch: any, flagsAddressed: string[],
-  ) => {
-    const { data: res, error: e } = await supabase.functions.invoke("ai-item-apply", {
-      body: { kind, item_id: itemId, patch, flags_addressed: flagsAddressed },
-    });
-    if (e) throw new Error(e.message);
-    if ((res as any)?.error) throw new Error((res as any).error);
-    return res as { ok: boolean; item_id: string; revision_id: string | null };
-  }, []);
+      return res as RewriteResult;
+    },
+    onError: (err: any) => {
+      // Digital Workforce Anomaly Trigger:
+      // Critical for monitoring LLM semantic drift or edge function timeouts.
+      console.error("[Digital Workforce] ANOMALY: ai-item-rewrite execution failed.", {
+        message: err.message,
+        timestamp: new Date().toISOString(),
+      });
+      toast.error(`Refactor engine timeout: ${err.message}`);
+    },
+  });
 
-  const reset = useCallback(() => { setData(null); setError(null); }, []);
+  // --- ACTION: APPLY_CHOSEN_REFACTOR ---
+  const applyMutation = useMutation({
+    mutationFn: async (input: { kind: RewriteKind; itemId: string; patch: any; flagsAddressed: string[] }) => {
+      // HUD: EXECUTING_REVISION_PATCH_handshake
+      const { data: res, error: e } = await supabase.functions.invoke("ai-item-apply", {
+        body: {
+          kind: input.kind,
+          item_id: input.itemId,
+          patch: input.patch,
+          flags_addressed: input.flagsAddressed,
+        },
+      });
 
-  return { loading, error, data, generate, apply, reset };
+      if (e) throw e;
+      if ((res as any)?.error) throw new Error((res as any).error);
+
+      return res as { ok: boolean; item_id: string; revision_id: string | null };
+    },
+    onSuccess: (res, variables) => {
+      // Automatic Cache Invalidation:
+      // Ensures psychometric sensors immediately reflect the refactored state.
+      queryClient.invalidateQueries({ queryKey: ["item-analytics", variables.itemId] });
+      toast.success("Item refactored and version-patched successfully.");
+    },
+    onError: (err: any) => {
+      console.error("[Digital Workforce] ANOMALY: ai-item-apply mutation rejected.", err);
+      toast.error("Handshake failed. Database revision not committed.");
+    },
+  });
+
+  return {
+    generate: generateMutation.mutate,
+    apply: applyMutation.mutateAsync,
+    reset: generateMutation.reset,
+    data: generateMutation.data || null,
+    loading: generateMutation.isPending,
+    applying: applyMutation.isPending,
+    error: generateMutation.error?.message || null,
+  };
 }
