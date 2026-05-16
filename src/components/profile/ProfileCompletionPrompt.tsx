@@ -332,7 +332,7 @@ export function ProfileCompletionPrompt({
             return (
               <div
                 key={fieldItem.key}
-                type="button"
+                role="button"
                 onClick={handleActionProtocolTrigger}
                 className="group/node flex items-center justify-between gap-4 p-3 rounded-xl border border-border/40 bg-background/50 hover:bg-primary/[0.01] hover:border-primary/10 transition-all cursor-pointer transform-gpu w-full min-w-0 select-none leading-none"
               >
