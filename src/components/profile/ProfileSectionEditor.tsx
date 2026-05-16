@@ -13,6 +13,11 @@ import { SkillsEditor } from "@/components/profile/SkillsEditor";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { Save, Loader2, Plus, X, Zap, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { toast } from "sonner";
+
+const DialogFooter = ({ className, ...props }: React.HTMLAttributes<HTMLDivElement>) => (
+  <div className={className} {...props} />
+);
 
 type SectionType = "about" | "experience" | "education" | "skills" | "achievements" | "languages" | null;
 
@@ -412,6 +417,6 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
           </Button>
         </DialogFooter>
       </SheetContent>
-    </Dialog>
+    </Sheet>
   );
 }
