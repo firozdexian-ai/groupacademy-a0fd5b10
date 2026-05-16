@@ -150,7 +150,7 @@ export function CVUploadSection() {
 
       const { error: storageUploadRegistryError } = await supabase.storage
         .from("portfolio-uploads")
-        .upload(fullTargetObjectStoragePathStr, selectedFileNode, { cacheControl: "3600", upsert: true });
+        .upload(fullTargetStoragePathStr, selectedFileNode, { cacheControl: "3600", upsert: true });
 
       if (storageUploadRegistryError) throw new Error(`Transmission Fault: ${storageUploadRegistryError.message}`);
 
