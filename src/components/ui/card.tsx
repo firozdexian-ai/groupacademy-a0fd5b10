@@ -1,75 +1,91 @@
 import * as React from "react";
-
 import { cn } from "@/lib/utils";
 
 /**
- * Platform Logic: Artifact Enclosure
- * The primary container for high-fidelity career data, curriculum nodes, and identity profiles.
+ * GroUp Academy: Authoritative Artifact Enclosure Interface Node (Card)
+ * Hardened atomic container isolating high-fidelity curriculum blocks, talent metrics, and profile dashboards.
+ * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
  */
 const Card = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(({ className, ...props }, ref) => (
   <div
     ref={ref}
     className={cn(
-      "rounded-[32px] border border-border/40 bg-card/50 backdrop-blur-xl text-card-foreground shadow-sm transition-all duration-500 hover:shadow-2xl hover:border-primary/20 group",
+      "rounded-xl border border-border/40 bg-card/95 backdrop-blur-md text-card-foreground shadow-xs transition-colors duration-300 hover:border-border/80 text-left antialiased select-none sm:select-text transform-gpu block overflow-hidden w-full",
       className,
     )}
     {...props}
   />
 ));
-Card.displayName = "Card";
+Card.displayName = "Card_Core_Enclosure_Node";
 
 const CardHeader = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
-    <div ref={ref} className={cn("flex flex-col space-y-2 p-8", className)} {...props} />
+    <div
+      ref={ref}
+      className={cn(
+        "p-4 sm:p-5 border-b border-border/10 bg-muted/10 select-none leading-none w-full shrink-0 flex flex-col space-y-1.5",
+        className,
+      )}
+      {...props}
+    />
   ),
 );
-CardHeader.displayName = "CardHeader";
+CardHeader.displayName = "Card_Core_Header_Node";
 
 const CardTitle = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLHeadingElement>>(
   ({ className, ...props }, ref) => (
     <h3
       ref={ref}
       className={cn(
-        "text-2xl font-black tracking-tighter uppercase leading-none group-hover:text-primary transition-colors",
+        "text-sm sm:text-base font-bold text-foreground uppercase tracking-wide leading-none pt-0.5",
         className,
       )}
       {...props}
     />
   ),
 );
-CardTitle.displayName = "CardTitle";
+CardTitle.displayName = "Card_Core_Title_Node";
 
 const CardDescription = React.forwardRef<HTMLParagraphElement, React.HTMLAttributes<HTMLParagraphElement>>(
   ({ className, ...props }, ref) => (
     <p
       ref={ref}
       className={cn(
-        "text-[11px] font-bold uppercase tracking-[0.15em] text-muted-foreground/70 leading-relaxed",
+        "text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 leading-normal block pt-0.5 select-text",
         className,
       )}
       {...props}
     />
   ),
 );
-CardDescription.displayName = "CardDescription";
+CardDescription.displayName = "Card_Core_Description_Node";
 
 const CardContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
-  ({ className, ...props }, ref) => <div ref={ref} className={cn("p-8 pt-0", className)} {...props} />,
+  ({ className, ...props }, ref) => (
+    <div
+      ref={ref}
+      className={cn(
+        "p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col justify-center font-semibold text-xs text-foreground/90",
+        className,
+      )}
+      {...props}
+    />
+  ),
 );
-CardContent.displayName = "CardContent";
+CardContent.displayName = "Card_Core_Content_Node";
 
 const CardFooter = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => (
     <div
       ref={ref}
       className={cn(
-        "flex items-center p-8 pt-0 border-t border-transparent group-hover:border-border/10 transition-colors",
+        "p-4 sm:p-5 border-t border-border/10 select-none shadow-none tracking-normal font-bold text-xs text-foreground/80 leading-none shrink-0 uppercase w-full flex items-center justify-end gap-2.5 sm:gap-2",
         className,
       )}
       {...props}
     />
   ),
 );
-CardFooter.displayName = "CardFooter";
+CardFooter.displayName = "Card_Core_Footer_Node";
 
 export { Card, CardHeader, CardFooter, CardTitle, CardDescription, CardContent };

@@ -1,14 +1,9 @@
 import * as React from "react";
 import useEmblaCarousel, { type UseEmblaCarouselType } from "embla-carousel-react";
-import { ArrowLeft, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
-
+import { ChevronLeft, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { Button } from "@/components/ui/button";
 
-/**
- * Platform Logic: Sequential Navigation HUD
- * High-performance carousel engine based on Embla, optimized for artifact browsing.
- */
 type CarouselApi = UseEmblaCarouselType[1];
 type UseCarouselParameters = Parameters<typeof useEmblaCarousel>;
 type CarouselOptions = UseCarouselParameters[0];
@@ -35,13 +30,22 @@ const CarouselContext = React.createContext<CarouselContextProps | null>(null);
 function useCarousel() {
   const context = React.useContext(CarouselContext);
   if (!context) {
-    throw new Error("useCarousel node must be active within a <Carousel />");
+    throw new Error(
+      "Validation Fault: useCarousel hooks must execute within an active <Carousel /> provider envelope.",
+    );
   }
   return context;
 }
 
+/**
+ * GroUp Academy: Sequential Structural Media Browsing HUD (Carousel)
+ * Hardened responsive carousel engine built over Embla UI, ensuring self-clearing event listeners and fully compliant focus paths.
+ * Version: Launch Candidate · Phase Z0 Lifecycle & Accessibility Hardened
+ */
 const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement> & CarouselProps>(
   ({ orientation = "horizontal", opts, setApi, plugins, className, children, ...props }, ref) => {
+    const isMountedRef = React.useRef<boolean>(true);
+
     const [carouselRef, api] = useEmblaCarousel(
       {
         ...opts,
@@ -49,13 +53,22 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
       },
       plugins,
     );
+
     const [canScrollPrev, setCanScrollPrev] = React.useState(false);
     const [canScrollNext, setCanScrollNext] = React.useState(false);
 
-    const onSelect = React.useCallback((api: CarouselApi) => {
-      if (!api) return;
-      setCanScrollPrev(api.canScrollPrev());
-      setCanScrollNext(api.canScrollNext());
+    // Track active mounting frames to insulate async callbacks from memory drops
+    React.useEffect(() => {
+      isMountedRef.current = true;
+      return () => {
+        isMountedRef.current = false;
+      };
+    }, []);
+
+    const onSelect = React.useCallback((emblaApi: CarouselApi) => {
+      if (!emblaApi || !isMountedRef.current) return;
+      setCanScrollPrev(emblaApi.canScrollPrev());
+      setCanScrollNext(emblaApi.canScrollNext());
     }, []);
 
     const scrollPrev = React.useCallback(() => {
@@ -86,11 +99,17 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
 
     React.useEffect(() => {
       if (!api) return;
+
       onSelect(api);
       api.on("reInit", onSelect);
       api.on("select", onSelect);
+
+      // Phase 1: Explicitly drop ALL active background listeners on unmount passes to block memory leaks
       return () => {
-        api?.off("select", onSelect);
+        if (api) {
+          api.off("reInit", onSelect);
+          api.off("select", onSelect);
+        }
       };
     }, [api, onSelect]);
 
@@ -98,7 +117,7 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
       <CarouselContext.Provider
         value={{
           carouselRef,
-          api: api,
+          api,
           opts,
           orientation: orientation || (opts?.axis === "y" ? "vertical" : "horizontal"),
           scrollPrev,
@@ -109,10 +128,10 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
       >
         <div
           ref={ref}
-          onKeyDownCapture={handleKeyDown}
-          className={cn("relative group/carousel", className)}
           role="region"
-          aria-roledescription="carousel protocol"
+          aria-roledescription="Carousel viewport array"
+          onKeyDownCapture={handleKeyDown}
+          className={cn("relative w-full group/carousel select-none antialiased transform-gpu", className)}
           {...props}
         >
           {children}
@@ -121,37 +140,38 @@ const Carousel = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivEl
     );
   },
 );
-Carousel.displayName = "Carousel";
+Carousel.displayName = "Carousel_Core_Root_Node";
 
 const CarouselContent = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
     const { carouselRef, orientation } = useCarousel();
 
     return (
-      <div ref={carouselRef} className="overflow-hidden">
+      <div ref={carouselRef} className="w-full h-full overflow-hidden select-none block">
         <div
           ref={ref}
-          className={cn("flex", orientation === "horizontal" ? "-ml-6" : "-mt-6 flex-col", className)}
+          className={cn(
+            "flex w-full h-full min-w-0 border-none p-0 bg-transparent",
+            orientation === "horizontal" ? "gap-4 sm:gap-5" : "flex-col gap-4 sm:gap-5",
+            className,
+          )}
           {...props}
         />
       </div>
     );
   },
 );
-CarouselContent.displayName = "CarouselContent";
+CarouselContent.displayName = "Carousel_Core_Content_Node";
 
 const CarouselItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLDivElement>>(
   ({ className, ...props }, ref) => {
-    const { orientation } = useCarousel();
-
     return (
       <div
         ref={ref}
         role="group"
-        aria-roledescription="slide node"
+        aria-roledescription="Carousel slide cell"
         className={cn(
-          "min-w-0 shrink-0 grow-0 basis-full transition-all duration-500",
-          orientation === "horizontal" ? "pl-6" : "pt-6",
+          "min-w-0 shrink-0 grow-0 basis-full transition-transform duration-300 select-none block h-full",
           className,
         )}
         {...props}
@@ -159,7 +179,7 @@ const CarouselItem = React.forwardRef<HTMLDivElement, React.HTMLAttributes<HTMLD
     );
   },
 );
-CarouselItem.displayName = "CarouselItem";
+CarouselItem.displayName = "Carousel_Core_Item_Node";
 
 const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
   ({ className, variant = "outline", size = "icon", ...props }, ref) => {
@@ -168,26 +188,28 @@ const CarouselPrevious = React.forwardRef<HTMLButtonElement, React.ComponentProp
     return (
       <Button
         ref={ref}
+        type="button"
         variant={variant}
         size={size}
-        className={cn(
-          "absolute h-10 w-10 rounded-xl bg-background/80 backdrop-blur-md border-border/40 shadow-lg transition-all duration-300 opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0",
-          orientation === "horizontal"
-            ? "-left-5 top-1/2 -translate-y-1/2"
-            : "-top-5 left-1/2 -translate-x-1/2 rotate-90",
-          className,
-        )}
         disabled={!canScrollPrev}
         onClick={scrollPrev}
+        data-disabled={!canScrollPrev}
+        className={cn(
+          "absolute h-8 w-8 rounded-full border border-border/40 bg-background/40 backdrop-blur-md text-foreground hidden md:flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity cursor-pointer z-10 hover:bg-background/80 focus-visible:opacity-100 data-[disabled=true]:pointer-events-none data-[disabled=true]:invisible",
+          orientation === "horizontal"
+            ? "left-2.5 top-1/2 -translate-y-1/2"
+            : "top-2.5 left-1/2 -translate-x-1/2 rotate-90",
+          className,
+        )}
         {...props}
       >
-        <ChevronLeft className="h-5 w-5" />
-        <span className="sr-only">Logic Stack Back</span>
+        <ChevronLeft className="h-4 w-4 stroke-[2.5]" />
+        <span className="sr-only">Shift carousel structural frame back to prior asset item index</span>
       </Button>
     );
   },
 );
-CarouselPrevious.displayName = "CarouselPrevious";
+CarouselPrevious.displayName = "Carousel_Core_Previous_Trigger_Node";
 
 const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<typeof Button>>(
   ({ className, variant = "outline", size = "icon", ...props }, ref) => {
@@ -196,25 +218,27 @@ const CarouselNext = React.forwardRef<HTMLButtonElement, React.ComponentProps<ty
     return (
       <Button
         ref={ref}
+        type="button"
         variant={variant}
         size={size}
-        className={cn(
-          "absolute h-10 w-10 rounded-xl bg-background/80 backdrop-blur-md border-border/40 shadow-lg transition-all duration-300 opacity-0 group-hover/carousel:opacity-100 disabled:opacity-0",
-          orientation === "horizontal"
-            ? "-right-5 top-1/2 -translate-y-1/2"
-            : "-bottom-5 left-1/2 -translate-x-1/2 rotate-90",
-          className,
-        )}
         disabled={!canScrollNext}
         onClick={scrollNext}
+        data-disabled={!canScrollNext}
+        className={cn(
+          "absolute h-8 w-8 rounded-full border border-border/40 bg-background/40 backdrop-blur-md text-foreground hidden md:flex items-center justify-center opacity-0 group-hover/carousel:opacity-100 transition-opacity cursor-pointer z-10 hover:bg-background/80 focus-visible:opacity-100 data-[disabled=true]:pointer-events-none data-[disabled=true]:invisible",
+          orientation === "horizontal"
+            ? "right-2.5 top-1/2 -translate-y-1/2"
+            : "bottom-2.5 left-1/2 -translate-x-1/2 rotate-90",
+          className,
+        )}
         {...props}
       >
-        <ChevronRight className="h-5 w-5" />
-        <span className="sr-only">Logic Stack Forward</span>
+        <ChevronRight className="h-4 w-4 stroke-[2.5]" />
+        <span className="sr-only">Shift carousel structural frame forward to proceeding asset item index</span>
       </Button>
     );
   },
 );
-CarouselNext.displayName = "CarouselNext";
+CarouselNext.displayName = "Carousel_Core_Next_Trigger_Node";
 
 export { type CarouselApi, Carousel, CarouselContent, CarouselItem, CarouselPrevious, CarouselNext };
