@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useEffect, useState, useMemo } from "react";
 import {
   Dialog,
   DialogContent,
@@ -9,14 +9,10 @@ import {
 } from "@/components/ui/dialog";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
+import { trackError, trackEvent } from "@/lib/errorTracking";
 import { Copy, Check, Zap, ShieldCheck, Cpu } from "lucide-react";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-
-/**
- * GroUp Academy: Curriculum Intelligence Bridge
- * CTO Reference: Authoritative node for exporting module data into neural research environments.
- */
 
 interface ResearchPromptDialogProps {
   open: boolean;
@@ -82,83 +78,128 @@ Execute deep-sync discovery for this educational node. Provide actionable artifa
 FORMAT: Output must be structured with high-intensity headers. Content must be deployment-ready for video lectures, slide decks, and simulation exercises.`;
 }
 
+/**
+ * GroUp Academy: Curriculum Intelligence Uplink Bridge (ResearchPromptDialog)
+ * An authoritative operational modal structured to construct high-yield research protocols for external research platforms.
+ * Version: Launch Candidate · Phase Z0 Hardened
+ */
 export default function ResearchPromptDialog(props: ResearchPromptDialogProps) {
   const { open, onOpenChange, ...promptProps } = props;
   const [isCopied, setIsCopied] = useState(false);
 
-  const promptPayload = buildResearchProtocol(promptProps);
+  // Monitor deep research bridge interactions safely via telemetry tracking indicators
+  useEffect(() => {
+    if (open && promptProps.moduleTitle) {
+      trackEvent("curriculum_research_bridge_rendered", {
+        moduleTitle: promptProps.moduleTitle,
+        courseTitle: promptProps.courseTitle,
+      });
+    }
+  }, [open, promptProps.moduleTitle, promptProps.courseTitle]);
+
+  // 1. High-Performance Memory Allocations: Enforce hard memoization over raw string construction loops
+  const promptPayload = useMemo(() => {
+    if (!open) return "";
+    return buildResearchProtocol(promptProps);
+  }, [open, promptProps]);
 
   const executeCopyHandshake = async () => {
+    trackEvent("curriculum_research_protocol_copy_requested", { moduleTitle: promptProps.moduleTitle });
+
     try {
       await navigator.clipboard.writeText(promptPayload);
       setIsCopied(true);
-      toast.success("NEURAL_PROMPT_SYNCED");
+      toast.success("Ecosystem Research Prompt Synced to Clipboard");
+      trackEvent("curriculum_research_protocol_copy_success");
+
       setTimeout(() => setIsCopied(false), 2000);
     } catch (err) {
-      toast.error("SYNC_FAULT: Manual copy required.");
+      trackError(err, {
+        component: "ResearchPromptDialog",
+        action: "execute_copy_handshake_callback",
+      });
+      toast.error("Sync Failure: Please execute selection copy manually.");
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-2xl max-h-[85vh] rounded-[32px] border-2 border-border/40 bg-card/60 backdrop-blur-3xl shadow-2xl p-0 overflow-hidden flex flex-col">
-        {/* HUD: HEADER */}
-        <div className="p-8 border-b-2 border-border/10 bg-primary/5">
-          <DialogHeader className="text-left">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg">
-                <Cpu className="h-6 w-6 text-primary animate-pulse" />
+    <Dialog
+      open={open}
+      onOpenChange={(visibleState) => {
+        onOpenChange(visibleState);
+        if (!visibleState) trackEvent("curriculum_research_bridge_dismissed");
+      }}
+    >
+      <DialogContent className="max-w-2xl max-h-[85vh] rounded-2xl border border-border/40 bg-card/60 backdrop-blur-3xl shadow-2xl p-0 overflow-hidden flex flex-col text-left antialiased transform-gpu">
+        {/* HUD: HEADER BANNER SEGMENT AREA */}
+        <div className="p-6 border-b border-border/10 bg-primary/[0.02] shrink-0 select-none w-full">
+          <DialogHeader className="text-left leading-none">
+            <div className="flex items-center gap-3.5 w-full">
+              <div className="h-11 w-11 rounded-xl bg-primary/10 border border-primary/5 flex items-center justify-center shrink-0 shadow-inner">
+                <Cpu className="h-5 w-5 text-primary animate-pulse stroke-[2.2]" />
               </div>
-              <div className="space-y-1">
-                <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
-                  Deep_Research_Bridge
+              <div className="space-y-1 flex flex-col justify-center leading-none min-w-0 flex-1">
+                <DialogTitle className="text-base font-bold text-foreground/90 uppercase tracking-wider leading-none">
+                  Deep Research Synapse Bridge
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-                  Neural_Uplink: Synchronizing Module Artifacts
+                <DialogDescription className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 leading-none pt-0.5">
+                  Neural Intelligence Ingress &bull; Compiling Knowledge Tokens
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
         </div>
 
-        {/* VIEWPORT: PROMPT_PAYLOAD */}
-        <div className="flex-1 p-8 overflow-hidden flex flex-col space-y-4">
-          <div className="flex items-center justify-between px-1">
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
-              System_Prompt_Output
+        {/* VIEWPORT: PROMPT TEXTAREA VISUAL LAYOUT CONTAINER */}
+        <div className="flex-1 p-6 overflow-hidden flex flex-col space-y-3 w-full min-w-0">
+          <div className="flex items-center justify-between gap-4 select-none leading-none w-full">
+            <span className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/50 block pl-0.5 leading-none">
+              Generated System Prompt Output Manifest
             </span>
-            <ShieldCheck className="h-4 w-4 text-emerald-500 opacity-40" />
+            <ShieldCheck className="h-4 w-4 text-emerald-500 opacity-40 stroke-[2.2] shrink-0" />
           </div>
+
           <Textarea
             value={promptPayload}
             readOnly
-            className="flex-1 min-h-[300px] rounded-2xl border-2 bg-muted/20 p-6 font-mono text-xs leading-relaxed italic text-foreground/80 resize-none focus-visible:ring-primary/20"
+            onClick={(e) => (e.target as HTMLTextAreaElement).select()}
+            className="flex-1 min-h-[260px] rounded-xl border border-border/30 bg-muted/20 focus-visible:ring-1 focus-visible:ring-primary/15 font-mono font-medium text-xs leading-relaxed italic text-foreground/80 resize-none p-4 select-all shadow-inner"
           />
-          <p className="text-[9px] font-medium text-muted-foreground/40 italic text-center">
-            Paste this protocol into GPT-4, Gemini Ultra, or Claude 3 for optimal curriculum yield.
+
+          <p className="text-[9px] font-bold uppercase tracking-wide text-muted-foreground/40 text-center select-none leading-normal max-w-md mx-auto pt-0.5">
+            Inject this analytical script sequence into GPT-4, Claude 3.5 Sonnet, or Gemini Pro for advanced curriculum
+            synthesis yield.
           </p>
         </div>
 
-        {/* HUD: FOOTER_ACTIONS */}
-        <DialogFooter className="p-8 bg-muted/5 border-t-2 border-border/10 flex-row gap-3">
+        {/* HUD: FOOTER INTERACTION ROUTE COMMAND RIBBON */}
+        <DialogFooter className="p-6 bg-muted/5 border-t border-border/10 flex flex-row items-center justify-end gap-3 select-none shrink-0 w-full">
           <Button
             variant="outline"
-            onClick={() => onOpenChange(false)}
-            className="h-14 px-8 rounded-2xl border-2 font-black uppercase italic text-[10px] tracking-widest"
+            type="button"
+            onClick={() => {
+              trackEvent("curriculum_research_bridge_dismiss_clicked");
+              onOpenChange(false);
+            }}
+            className="h-9 px-4 rounded-xl font-bold uppercase text-[10px] tracking-wide border-border/60 text-muted-foreground hover:bg-accent shrink-0 cursor-pointer shadow-sm transition-transform active:scale-95"
           >
-            DISMISS
+            Dismiss
           </Button>
+
           <Button
+            type="button"
             onClick={executeCopyHandshake}
-            className="h-14 flex-1 rounded-2xl font-black uppercase italic text-[10px] tracking-[0.2em] shadow-[0_20px_50px_rgba(var(--primary),0.3)] hover:shadow-primary/40 transition-all active:scale-95 gap-3"
+            className="h-9 flex-1 rounded-xl font-extrabold uppercase text-[10px] tracking-wider gap-1.5 cursor-pointer shadow-sm transition-all active:scale-[0.99] bg-primary text-primary-foreground hover:bg-primary/90"
           >
             {isCopied ? (
               <>
-                <Check className="h-5 w-5" /> SYNC_COMPLETE
+                <Check className="h-4 w-4 stroke-[2.5]" />
+                <span>Ecosystem Protocol Synced</span>
               </>
             ) : (
               <>
-                <Copy className="h-5 w-5" /> COPY_RESEARCH_PROTOCOL
+                <Copy className="h-4 w-4 stroke-[2.2]" />
+                <span>Copy Research Protocol Payload</span>
               </>
             )}
           </Button>
