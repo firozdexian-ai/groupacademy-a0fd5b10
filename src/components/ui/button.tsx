@@ -1,34 +1,35 @@
 import * as React from "react";
 import { Slot } from "@radix-ui/react-slot";
 import { cva, type VariantProps } from "class-variance-authority";
-
 import { cn } from "@/lib/utils";
 
 /**
- * Platform Logic: Interaction Nodes
- * Standardized button system with kinetic scaling and technical typography.
+ * GroUp Academy: Technical Interactive Action Trigger Nodes (Button)
+ * Hardened action control terminal enforcing kinetic scale feedback, uniform stroke depths, and semantic color balance.
+ * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
  */
 const buttonVariants = cva(
-  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-2xl text-[10px] font-black uppercase tracking-[0.15em] ring-offset-background transition-all duration-300 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2 disabled:pointer-events-none disabled:opacity-30 [&_svg]:pointer-events-none [&_svg]:size-4 [&_svg]:shrink-0 active:scale-[0.97] selection:bg-transparent",
+  "inline-flex items-center justify-center gap-2 whitespace-nowrap rounded-xl text-[10px] sm:text-xs font-mono font-extrabold uppercase tracking-wider select-none antialiased transition-all duration-200 focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring disabled:pointer-events-none disabled:opacity-30 [&_svg]:pointer-events-none [&_svg]:h-4 [&_svg]:w-4 [&_svg]:shrink-0 transform-gpu cursor-pointer active:scale-[0.995] selection:bg-transparent tracking-wide shrink-0",
   {
     variants: {
       variant: {
-        default:
-          "bg-primary text-primary-foreground shadow-xl shadow-primary/20 hover:bg-primary/90 hover:shadow-primary/30",
-        destructive: "bg-rose-500 text-white shadow-lg shadow-rose-500/20 hover:bg-rose-600",
+        default: "border border-transparent bg-primary text-primary-foreground shadow-sm hover:bg-primary/90",
+        destructive:
+          "border border-transparent bg-destructive text-destructive-foreground shadow-sm hover:bg-destructive/90",
         outline:
-          "border-2 border-border/60 bg-transparent hover:bg-muted/50 hover:border-primary/40 hover:text-primary",
-        secondary: "bg-muted/50 text-foreground border border-border/40 hover:bg-muted hover:border-border",
-        ghost: "hover:bg-primary/10 hover:text-primary border border-transparent",
-        link: "text-primary underline-offset-8 hover:underline lowercase tracking-normal text-sm font-bold",
-        glass: "bg-white/5 backdrop-blur-xl border border-white/10 text-white hover:bg-white/10 shadow-2xl",
+          "border border-border/60 bg-transparent text-muted-foreground hover:text-foreground hover:bg-accent hover:border-border/100",
+        secondary: "border border-border/40 bg-muted/40 text-muted-foreground/80 hover:bg-muted hover:text-foreground",
+        ghost:
+          "border border-transparent bg-transparent text-muted-foreground/80 hover:text-foreground hover:bg-accent",
+        link: "border border-transparent bg-transparent text-primary hover:underline underline-offset-4 normal-case font-bold p-0 h-auto tracking-normal",
+        glass: "border border-white/10 bg-white/5 backdrop-blur-md text-white hover:bg-white/10 shadow-sm",
       },
       size: {
-        default: "h-12 px-8 py-2",
-        sm: "h-10 rounded-xl px-4",
-        lg: "h-14 rounded-[20px] px-10 text-[11px]",
-        xl: "h-16 rounded-[24px] px-12 text-[12px] tracking-[0.2em]",
-        icon: "h-12 w-12 rounded-xl",
+        default: "h-10 px-5",
+        sm: "h-8 px-3 rounded-lg text-[9px]",
+        lg: "h-11 px-6 rounded-xl text-xs",
+        xl: "h-12 px-8 rounded-xl text-xs tracking-widest",
+        icon: "h-10 w-10 p-0 rounded-xl",
       },
     },
     defaultVariants: {
@@ -45,10 +46,16 @@ export interface ButtonProps
 
 const Button = React.forwardRef<HTMLButtonElement, ButtonProps>(
   ({ className, variant, size, asChild = false, ...props }, ref) => {
-    const Comp = asChild ? Slot : "button";
-    return <Comp className={cn(buttonVariants({ variant, size, className }))} ref={ref} {...props} />;
+    const TargetComponentCompositionNode = asChild ? Slot : "button";
+    return (
+      <TargetComponentCompositionNode
+        ref={ref}
+        className={cn(buttonVariants({ variant, size, className }))}
+        {...props}
+      />
+    );
   },
 );
-Button.displayName = "Button";
+Button.displayName = "Button_Core_Interaction_Node";
 
 export { Button, buttonVariants };
