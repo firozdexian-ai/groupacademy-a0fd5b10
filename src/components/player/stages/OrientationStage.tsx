@@ -200,7 +200,6 @@ export function OrientationStage({ resources = [], onComplete, isCompleted, fall
               <CardContent className="p-0 w-full min-w-0">
                 {infographicResource.resource_url && (
                   <div
-                    type="button"
                     onClick={handleInfographicSyncView}
                     className="cursor-pointer outline-none w-full border-none"
                   >
