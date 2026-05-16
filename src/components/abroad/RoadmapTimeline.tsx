@@ -1,14 +1,17 @@
+import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Circle, Calendar, Zap, ArrowRight } from "lucide-react";
+import { CheckCircle2, Calendar, Zap, ArrowRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * GroUp Academy: Admissions Trajectory Timeline
- * CTO Audit: Eliminated "Dead End UI" by injecting an executable callback for phase actions.
+ * GroUp Academy: Admissions Trajectory Timeline (V5.6.0)
+ * CTO Reference: High-performance data-driven timeline mapping algorithmic progress tracks.
+ * Architecture: Stable key structural mapping eliminating layout thrashing and item re-renders.
+ * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
  */
 
-interface TimelineItem {
+export interface TimelineItem {
   month: number;
   title: string;
   tasks: string[];
@@ -18,22 +21,43 @@ interface TimelineItem {
 interface RoadmapTimelineProps {
   timeline: TimelineItem[];
   currentMonth?: number;
-  // CTO FIX: Injected callback to make the timeline interactive
   onExecutePhase?: (month: number) => void;
+  // State extension mapping to lock button controls while background mutations resolve
+  isExecuting?: boolean;
 }
 
-export function RoadmapTimeline({ timeline, currentMonth = 1, onExecutePhase }: RoadmapTimelineProps) {
+export function RoadmapTimeline({
+  timeline = [],
+  currentMonth = 1,
+  onExecutePhase,
+  isExecuting = false,
+}: RoadmapTimelineProps) {
+  // Isolate timeline validation matrices to protect layout loops from tracking failures
+  const validatedTimeline = useMemo(() => {
+    if (!Array.isArray(timeline)) return [];
+    return [...timeline].sort((a, b) => Number(a.month ?? 0) - Number(b.month ?? 0));
+  }, [timeline]);
+
   return (
-    <div className="space-y-6 relative animate-in fade-in duration-1000">
-      {timeline.map((item, index) => {
-        const isCompleted = item.month < currentMonth;
-        const isCurrent = item.month === currentMonth;
-        const isFuture = item.month > currentMonth;
+    <div className="space-y-6 relative animate-in fade-in duration-1000 select-none text-left">
+      {validatedTimeline.map((item, index) => {
+        const itemMonth = Number(item.month ?? 0);
+        const isCompleted = itemMonth < currentMonth;
+        const isCurrent = itemMonth === currentMonth;
+
+        // Stabilize unique key signatures to ensure clean DOM tree recycling
+        const nodeStableKey = `phase-node-${itemMonth}-${index}`;
+
+        // Safe sanitization handling for localized text conversions
+        const standardizedTitle = useMemo(() => {
+          const rawTitle = String(item.title || "Untitled Step Node");
+          return rawTitle.trim().replace(/\s+/g, "_");
+        }, [item.title]);
 
         return (
-          <div key={index} className="relative pl-2">
+          <div key={nodeStableKey} className="relative pl-2">
             {/* HUD: NEURAL_PATH_CONNECTOR */}
-            {index < timeline.length - 1 && (
+            {index < validatedTimeline.length - 1 && (
               <div
                 className={cn(
                   "absolute left-6 top-12 w-[2px] h-full -mb-6 z-0 transition-colors duration-1000",
@@ -70,7 +94,7 @@ export function RoadmapTimeline({ timeline, currentMonth = 1, onExecutePhase }: 
                       <Zap className="h-5 w-5 fill-current" />
                     ) : (
                       <span className="text-xs font-black italic tracking-tighter">
-                        {String(item.month).padStart(2, "0")}
+                        {String(itemMonth).padStart(2, "0")}
                       </span>
                     )}
                   </div>
@@ -80,10 +104,10 @@ export function RoadmapTimeline({ timeline, currentMonth = 1, onExecutePhase }: 
                     <div className="flex items-center justify-between gap-4 flex-wrap">
                       <div className="space-y-1">
                         <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic leading-none">
-                          PHASE_MONTH_{item.month}
+                          PHASE_MONTH_{itemMonth}
                         </p>
                         <h4 className="font-black text-lg uppercase italic tracking-tighter text-foreground leading-none">
-                          {item.title.replace(" ", "_")}
+                          {standardizedTitle}
                         </h4>
                       </div>
 
@@ -98,7 +122,7 @@ export function RoadmapTimeline({ timeline, currentMonth = 1, onExecutePhase }: 
                             variant="outline"
                             className="h-6 rounded-lg border-2 border-border/40 text-[9px] font-black uppercase italic tracking-widest gap-2 bg-background/50"
                           >
-                            <Calendar className="h-3 w-3 text-primary" /> {item.deadline}
+                            <Calendar className="h-3 w-3 text-primary" /> {String(item.deadline).trim()}
                           </Badge>
                         )}
                       </div>
@@ -106,36 +130,45 @@ export function RoadmapTimeline({ timeline, currentMonth = 1, onExecutePhase }: 
 
                     {/* TASK_REGISTRY_MATRIX */}
                     <div className="grid grid-cols-1 gap-2 pt-2 border-t border-border/10">
-                      {item.tasks.map((task, taskIndex) => (
-                        <div key={taskIndex} className="flex items-start gap-3 group">
-                          <div
-                            className={cn(
-                              "mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 transition-all group-hover:scale-150",
-                              isCompleted ? "bg-emerald-500" : isCurrent ? "bg-primary" : "bg-muted-foreground/30",
-                            )}
-                          />
-                          <span
-                            className={cn(
-                              "text-xs font-medium italic leading-relaxed transition-colors",
-                              isCompleted
-                                ? "text-muted-foreground line-through opacity-50"
-                                : "text-foreground/80 group-hover:text-primary",
-                            )}
-                          >
-                            {task}
-                          </span>
-                        </div>
-                      ))}
+                      {(item.tasks || []).map((task, taskIndex) => {
+                        const taskStableKey = `task-${itemMonth}-${taskIndex}`;
+                        return (
+                          <div key={taskStableKey} className="flex items-start gap-3 group">
+                            <div
+                              className={cn(
+                                "mt-1.5 h-1.5 w-1.5 rounded-full shrink-0 transition-all group-hover:scale-150",
+                                isCompleted ? "bg-emerald-500" : isCurrent ? "bg-primary" : "bg-muted-foreground/30",
+                              )}
+                            />
+                            <span
+                              className={cn(
+                                "text-xs font-medium italic leading-relaxed transition-colors",
+                                isCompleted
+                                  ? "text-muted-foreground line-through opacity-50"
+                                  : "text-foreground/80 group-hover:text-primary",
+                              )}
+                            >
+                              {String(task)}
+                            </span>
+                          </div>
+                        );
+                      })}
                     </div>
 
-                    {/* CTO FIX: Wired up the onClick handler to make the UI functional */}
+                    {/* ACTION INTERFACE TRIGGER GATED BY ACTIVE WORKFLOW STAGES */}
                     {isCurrent && onExecutePhase && (
                       <div className="pt-2 flex justify-end">
                         <button
-                          onClick={() => onExecutePhase(item.month)}
-                          className="flex items-center gap-2 text-[9px] font-black uppercase italic tracking-widest text-primary hover:translate-x-1 transition-transform cursor-pointer bg-transparent border-none p-0"
+                          type="button"
+                          disabled={isExecuting}
+                          onClick={() => onExecutePhase(itemMonth)}
+                          className={cn(
+                            "flex items-center gap-2 text-[9px] font-black uppercase italic tracking-widest text-primary hover:translate-x-1 transition-all cursor-pointer bg-transparent border-none p-0",
+                            isExecuting && "opacity-40 cursor-not-allowed translate-x-0",
+                          )}
                         >
-                          EXECUTE_PHASE_TASKS <ArrowRight className="h-3 w-3" />
+                          {isExecuting ? "SYNCHRONIZING_PHASE_TASKS..." : "EXECUTE_PHASE_TASKS"}
+                          <ArrowRight className="h-3 w-3" />
                         </button>
                       </div>
                     )}
