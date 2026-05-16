@@ -1,221 +1,331 @@
-import { useState } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { createStudentProfile } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
-import { Dialog, DialogContent, DialogDescription, DialogHeader, DialogTitle } from "@/components/ui/dialog";
+import {
+  Dialog,
+  DialogContent,
+  DialogHeader,
+  DialogTitle,
+  DialogDescription,
+  DialogFooter,
+} from "@/components/ui/dialog";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { toast } from "sonner";
-import { Loader2, Zap, ShieldCheck, MessageSquare } from "lucide-react";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
+import { trackError, trackEvent } from "@/lib/errorTracking";
+import { toast } from "sonner";
+import { Loader2, Zap, ShieldCheck, MessageSquare } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-/**
- * GroUp Academy: Institutional Enrollment Gateway
- * CTO Reference: Authoritative node for validating alphanumeric curriculum keys.
- * Note: Uses 'as any' on RPC calls to bypass stale local type definitions.
- */
 
 interface AccessCodeDialogProps {
   open: boolean;
-  onOpenChange: (open: boolean) => void;
+  onOpenChange: (openStateBool: boolean) => void;
   contentId: string;
   contentTitle: string;
   onSuccess: () => void;
 }
 
+/**
+ * GroUp Academy: Authoritative Curriculum Ingress Enrollment Gateway (AccessCodeDialog)
+ * An operational sandbox orchestrating multi-phase code token registry checks, temporal volume audits, and profile verification tasks.
+ * Version: Launch Candidate · Phase Z0 Hardened
+ */
 export const AccessCodeDialog = ({ open, onOpenChange, contentId, contentTitle, onSuccess }: AccessCodeDialogProps) => {
+  const queryClient = useQueryClient();
+  const isMountedRef = useRef<boolean>(true);
+
   const [code, setCode] = useState("");
   const [isValidating, setIsValidating] = useState(false);
 
+  // Synchronize component lifecycles to safely drop background thread state writes
+  useEffect(() => {
+    isMountedRef.current = true;
+    if (open) {
+      trackEvent("access_code_gateway_opened", { contentId });
+    }
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [open, contentId]);
+
+  const sanitizedCodeTokenStr = useMemo(() => {
+    return code
+      .trim()
+      .toUpperCase()
+      .replace(/[^A-Z0-9-]/g, "");
+  }, [code]);
+
   const executeEnrollmentHandshake = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (!code.trim()) return;
+    if (!sanitizedCodeTokenStr || isValidating) return;
 
     setIsValidating(true);
+    trackEvent("access_code_validation_handshake_initiated", { contentId });
+    const dynamicToastTrackerId = toast.loading(
+      "Verifying network credentials parameter records with global index ledgers…",
+    );
+
     try {
-      // PHASE 1: Code Registry Validation
-      const { data: accessCode, error: codeError } = await withTimeout(
-        Promise.resolve(
-          supabase
-            .from("access_codes")
-            .select("*")
-            .eq("code", code.trim().toUpperCase())
-            .eq("content_id", contentId)
-            .eq("is_active", true)
-            .maybeSingle(),
-        ),
+      // PHASE 1: Code Registry Validation Pass
+      const { data: accessCodePayloadData, error: codeQueryRegistryError } = await withTimeout(
+        supabase
+          .from("access_codes")
+          .select("*")
+          .eq("code", sanitizedCodeTokenStr)
+          .eq("content_id", contentId)
+          .eq("is_active", true)
+          .maybeSingle(),
         TIMEOUTS.DEFAULT,
         "CODE_SYNC_TIMEOUT",
       );
 
-      if (codeError) throw codeError;
-      if (!accessCode) {
-        toast.error("INVALID_ACCESS_KEY: Verify code and try again.");
+      if (codeQueryRegistryError) throw codeQueryRegistryError;
+
+      if (!accessCodePayloadData) {
+        toast.error("Access Validation Rejected: Specified lookup alphanumeric key is invalid or un-assigned.", {
+          id: dynamicToastTrackerId,
+        });
+        if (isMountedRef.current) setIsValidating(false);
         return;
       }
 
-      // PHASE 2: Temporal & Volume Audits
-      if (accessCode.expires_at && new Date(accessCode.expires_at) < new Date()) {
-        toast.error("KEY_EXPIRED: Temporal validity window closed.");
-        return;
-      }
-      if (accessCode.current_uses >= accessCode.max_uses) {
-        toast.error("QUOTA_EXCEEDED: Key use limit reached.");
+      // PHASE 2: Temporal & Volume Audits Checks
+      if (accessCodePayloadData.expires_at && new Date(accessCodePayloadData.expires_at) < new Date()) {
+        toast.error("Validation Aborted: The temporal validity window for this access token has closed.", {
+          id: dynamicToastTrackerId,
+        });
+        if (isMountedRef.current) setIsValidating(false);
         return;
       }
 
-      // PHASE 3: Identity Artifact Sync
+      if (Number(accessCodePayloadData.current_uses) >= Number(accessCodePayloadData.max_uses)) {
+        toast.error("Validation Aborted: Key quota threshold overflow. Allocation capacity maximized.", {
+          id: dynamicToastTrackerId,
+        });
+        if (isMountedRef.current) setIsValidating(false);
+        return;
+      }
+
+      // PHASE 3: Identity Artifact Verification & Sync
       const {
         data: { user },
-      } = await withTimeout(Promise.resolve(supabase.auth.getUser()), TIMEOUTS.AUTH, "IDENTITY_CHECK_TIMEOUT");
+        error: identityCheckError,
+      } = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "IDENTITY_CHECK_TIMEOUT");
+
+      if (identityCheckError) throw identityCheckError;
+
       if (!user) {
-        toast.error("AUTH_REQUIRED: Initialize login session.");
+        toast.error("Authentication Matrix Required: Initialize your active browser user login session.", {
+          id: dynamicToastTrackerId,
+        });
+        if (isMountedRef.current) setIsValidating(false);
         return;
       }
 
-      let student;
-      const { data: existingStudent } = await supabase
+      let targetStudentContextNode: { id: string };
+      const { data: existingStudentRowData, error: studentQueryError } = await supabase
         .from("students")
         .select("id")
         .eq("user_id", user.id)
         .maybeSingle();
 
-      if (existingStudent) {
-        student = existingStudent;
+      if (studentQueryError) throw studentQueryError;
+
+      if (existingStudentRowData) {
+        targetStudentContextNode = existingStudentRowData;
       } else {
-        const profileCreated = await createStudentProfile(
+        // Fallback profile creation pass if relational records live disconnected down database tables
+        const profileInitializationCreatedBool = await createStudentProfile(
           user.id,
-          user.email?.split("@")[0] || "Talent_Node",
+          user.email?.split("@")[0] || "Learner_Node",
           user.email || "",
           "",
           "free_learner",
         );
 
-        if (!profileCreated) {
-          toast.error("IDENTITY_FAULT: Failed to initialize student profile.");
-          return;
+        if (!profileInitializationCreatedBool) {
+          throw new Error("Identity Pipeline Fault: Remote engine failed to establish raw student profile references.");
         }
 
-        const { data: newStudent } = await supabase.from("students").select("id").eq("user_id", user.id).single();
+        const { data: newlyAllocatedStudentData, error: targetRequeryError } = await supabase
+          .from("students")
+          .select("id")
+          .eq("user_id", user.id)
+          .single();
 
-        student = newStudent;
+        if (targetRequeryError) throw targetRequeryError;
+        targetStudentContextNode = newlyAllocatedStudentData;
       }
 
-      // PHASE 4: Transactional Enrollment commit
-      const { error: enrollError } = await supabase.from("enrollments").insert({
-        student_id: student.id,
+      // PHASE 4: Transactional Enrollment Ingest Commit
+      const { error: insertEnrollmentRegistryError } = await supabase.from("enrollments").insert({
+        student_id: targetStudentContextNode.id,
         content_id: contentId,
         status: "active",
         payment_amount: 0,
       });
 
-      if (enrollError) {
-        if (enrollError.code === "23505") {
-          toast.error("ALREADY_SYNCED: Enrollment already active.");
-        } else {
-          throw enrollError;
+      if (insertEnrollmentRegistryError) {
+        if (insertEnrollmentRegistryError.code === "23505") {
+          toast.error("Ecosystem Bypass: Relational indices mirror this enrollment track as already active.", {
+            id: dynamicToastTrackerId,
+          });
+          if (isMountedRef.current) {
+            setIsValidating(false);
+            onOpenChange(false);
+          }
+          return;
         }
-        return;
+        throw insertEnrollmentRegistryError;
       }
 
-      // PHASE 5: Counter Incrementation
-      // CTO Audit: 'as any' used to bypass stale local database types
-      await supabase.rpc("increment_access_code_use" as any, { row_id: accessCode.id });
-      await supabase.rpc("increment_content_enrollment" as any, { row_id: contentId });
+      // PHASE 5: Concurrent Counter Incrementation RPC Passes
+      await Promise.allSettled([
+        supabase.rpc("increment_access_code_use" as any, { row_id: accessCodePayloadData.id }),
+        supabase.rpc("increment_content_enrollment" as any, { row_id: contentId }),
+      ]);
 
-      toast.success("CURRICULUM_SYNC_COMPLETE");
-      onSuccess();
-      onOpenChange(false);
-      setCode("");
-    } catch (err: any) {
-      console.error("GATEWAY_FAULT:", err);
-      toast.error("ACCESS_SYNC_FAULT: Please retry or contact Faculty.");
+      // Automated Efficiency: Synchronize cache tracking layers to avoid state drift split viewports
+      await queryClient.invalidateQueries({ queryKey: ["enrollments"] });
+      await queryClient.invalidateQueries({ queryKey: ["student-courses"] });
+      await queryClient.invalidateQueries({ queryKey: ["talent-profile"] });
+
+      if (isMountedRef.current) {
+        toast.success("Curriculum verification sync complete. Classroom trajectory authorized.", {
+          id: dynamicToastTrackerId,
+        });
+        trackEvent("access_code_validation_handshake_success", { contentId });
+        onSuccess();
+        setCode("");
+        onOpenChange(false);
+      }
+    } catch (caughtPipelineExceptionErr: any) {
+      const formattedExceptionMsgStr =
+        caughtPipelineExceptionErr instanceof Error
+          ? caughtPipelineExceptionErr.message
+          : String(caughtPipelineExceptionErr);
+
+      trackError(formattedExceptionMsgStr, {
+        component: "AccessCodeDialog",
+        action: "execute_enrollment_handshake",
+        contentId,
+      });
+      toast.error(`Ingress gateway setup sync fault: ${formattedExceptionMsgStr}`, { id: dynamicToastTrackerId });
     } finally {
-      setIsValidating(false);
+      if (isMountedRef.current) {
+        setIsValidating(false);
+      }
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="rounded-[32px] border-2 border-border/40 bg-card/60 backdrop-blur-2xl shadow-2xl overflow-hidden p-0 max-w-md">
-        {/* HUD: HEADER_INGRESS */}
-        <div className="p-8 border-b-2 border-border/10 bg-primary/5">
-          <DialogHeader className="text-left">
-            <div className="flex items-center gap-4">
-              <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg">
-                <Zap className="h-6 w-6 text-primary animate-pulse" />
+    <Dialog
+      open={open}
+      onOpenChange={(vOpenState) => {
+        if (!isValidating) {
+          onOpenChange(vOpenState);
+          if (!vOpenState) trackEvent("access_code_dialog_closed");
+        }
+      }}
+    >
+      <DialogContent className="sm:max-w-md rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-0 text-left antialiased overflow-hidden transform-gpu select-none sm:select-text flex flex-col justify-center">
+        {/* HUD LEVEL 1: GATEWAY DIALOG HEADER SECTION CONTAINER */}
+        <div className="p-5 sm:p-6 border-b border-border/10 bg-muted/10 select-none leading-none w-full shrink-0">
+          <DialogHeader className="text-left leading-none">
+            <div className="flex items-center gap-3 leading-none w-full">
+              <div className="h-9 w-9 rounded-xl bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
+                <Zap className="h-4 w-4 text-primary fill-primary/10 stroke-[2.2] animate-pulse" />
               </div>
-              <div className="space-y-1">
-                <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">Key_Ingress</DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
-                  Initialize_Curriculum_Handshake
+              <div className="min-w-0 flex flex-col justify-center leading-none flex-1">
+                <DialogTitle className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide leading-none">
+                  Syllabus Key Code Ingress Terminal
+                </DialogTitle>
+                <DialogDescription className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 leading-none pt-1">
+                  Authorize structural user workspace synchronization handshake sequence
                 </DialogDescription>
               </div>
             </div>
           </DialogHeader>
         </div>
 
-        <div className="p-8 space-y-6">
-          <div className="bg-muted/10 p-5 rounded-2xl border-2 border-border/10 space-y-2">
-            <p className="text-[11px] font-black uppercase italic text-foreground/80 leading-none">Target_Node</p>
-            <p className="text-sm font-medium text-muted-foreground truncate">{contentTitle}</p>
+        {/* HUD LEVEL 2: COMPOSITE SECTOR TRACK TARGET CONTAINER BLOCK */}
+        <div className="p-5 sm:p-6 space-y-4 w-full min-w-0 flex flex-col justify-center font-bold text-xs text-foreground/90">
+          <div className="p-3.5 border border-border/40 bg-background/50 rounded-xl space-y-1 w-full min-w-0 flex flex-col justify-center leading-none text-left select-none">
+            <span className="text-[9px] font-mono font-extrabold uppercase tracking-wider text-muted-foreground/50 block leading-none">
+              Target Classroom Node
+            </span>
+            <p className="text-xs sm:text-sm font-bold text-foreground/90 truncate text-ellipsis block pr-1 leading-none select-text pt-0.5">
+              {contentTitle || "Unspecified Curriculum Track Address"}
+            </p>
           </div>
 
-          <form onSubmit={executeEnrollmentHandshake} className="space-y-6 text-left">
-            <div className="space-y-3">
+          {/* HUD LEVEL 3: INPUT KEY SUBMISSION STRUCTURAL FORM PANEL */}
+          <form
+            onSubmit={executeEnrollmentHandshake}
+            className="space-y-4 w-full text-left font-bold text-xs flex flex-col justify-center"
+          >
+            <div className="space-y-1.5 text-left w-full min-w-0">
               <Label
                 htmlFor="code"
-                className="text-[10px] font-black uppercase italic tracking-widest text-muted-foreground ml-1"
+                className="text-[10px] font-extrabold uppercase tracking-wide text-primary block pl-0.5 leading-none select-none"
               >
-                Registry_Access_Key
+                Registry Access Code Parameter Key
               </Label>
               <Input
                 id="code"
                 value={code}
-                onChange={(e) => setCode(e.target.value.toUpperCase())}
-                placeholder="XXXX-XXXX-XXXX"
-                maxLength={12}
+                maxLength={14}
                 disabled={isValidating}
-                className="h-14 rounded-2xl border-2 bg-muted/20 text-center font-mono text-xl font-black tracking-[0.3em] focus-visible:ring-primary/20 transition-all uppercase"
+                autoComplete="off"
+                placeholder="XXXX-XXXX-XXXX"
+                onChange={(e) => setCode(e.target.value)}
+                className="h-12 rounded-xl border border-border/40 bg-background/50 text-center font-mono text-lg sm:text-xl font-black tracking-[0.25em] text-foreground p-3 shadow-inner w-full block uppercase focus-visible:ring-1 focus-visible:ring-ring"
                 autoFocus
               />
-              <div className="flex items-start gap-2 p-3 bg-primary/5 rounded-xl border border-primary/10">
-                <MessageSquare className="h-4 w-4 text-primary shrink-0 mt-0.5" />
-                <p className="text-[9px] font-medium text-muted-foreground italic leading-relaxed">
-                  Contact administrative faculty via encrypted WhatsApp channel to receive your unique artifact key
-                  after payment verification.
+
+              {/* HELP NOTICE RIBBON SLAT */}
+              <div className="flex gap-2.5 items-start p-3 bg-primary/[0.01] border border-primary/10 rounded-xl select-none leading-none shadow-sm w-full shrink-0">
+                <MessageSquare className="h-4 w-4 text-primary shrink-0 stroke-[2.2]" />
+                <p className="text-[9px] font-semibold text-muted-foreground uppercase leading-relaxed tracking-wide pt-0.5">
+                  Guidance: Connect with administrative faculty channels to request your non-colliding artifact key
+                  variables on payment completion verification events.
                 </p>
               </div>
             </div>
 
-            <div className="flex gap-3 pt-2">
+            {/* HUD LEVEL 4: INTERFACE ACTION DECISION COMMAND BUTTON SLOTS FOOTER */}
+            <DialogFooter className="pt-3 gap-2.5 sm:gap-0 select-none border-t border-border/10 w-full shrink-0 flex items-center justify-end">
+              <Button
+                variant="ghost"
+                type="button"
+                disabled={isValidating}
+                onClick={() => onOpenChange(false)}
+                className="h-9 px-4 rounded-xl text-muted-foreground hover:text-foreground font-bold uppercase text-[10px] tracking-wide shrink-0 transition-colors cursor-pointer"
+              >
+                Abort Handshake
+              </Button>
+
               <Button
                 type="submit"
-                size="xl"
-                disabled={isValidating || !code.trim()}
-                className="flex-1 h-14 rounded-2xl font-black uppercase italic text-[10px] tracking-[0.2em] shadow-lg shadow-primary/20 transition-all active:scale-95 gap-3"
+                disabled={isValidating || !sanitizedCodeTokenStr}
+                className="h-9 px-5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md transform-gpu active:scale-[0.995] transition-transform flex items-center justify-center cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5 min-w-[155px]"
               >
                 {isValidating ? (
                   <>
-                    <Loader2 className="h-5 w-5 animate-spin" /> VALIDATING...
+                    <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
+                    <span>Syncing Key…</span>
                   </>
                 ) : (
                   <>
-                    <ShieldCheck className="h-5 w-5" /> VALIDATE_&_SYNC
+                    <ShieldCheck className="h-4 w-4 stroke-[2.5]" />
+                    <span>Validate & Ingress</span>
                   </>
                 )}
               </Button>
-              <Button
-                type="button"
-                variant="outline"
-                onClick={() => onOpenChange(false)}
-                className="h-14 px-6 rounded-2xl border-2 font-black uppercase italic text-[10px] tracking-widest"
-              >
-                ABORT
-              </Button>
-            </div>
+            </DialogFooter>
           </form>
         </div>
       </DialogContent>
