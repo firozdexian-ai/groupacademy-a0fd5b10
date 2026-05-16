@@ -248,7 +248,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                         <Button
                           size="sm"
                           type="button"
-                          onClick={() => handleSelectedSuggestionNode(index)}
+                          onClick={() => handlePickSuggestionNode(index)}
                           className="h-7 px-3 text-[10px] font-bold tracking-wide uppercase rounded-xl shadow-sm active:scale-95 transition-transform cursor-pointer shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
                         >
                           <span>Select Option Model</span>
