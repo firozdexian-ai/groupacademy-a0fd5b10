@@ -1,8 +1,10 @@
 import { useEffect, useState } from "react";
-import { ArrowRight, Loader2 } from "lucide-react";
+import { useQueryClient } from "@tanstack/react-query";
+import { ArrowRight, Loader2, Target, Compass } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { useTalent } from "@/hooks/useTalent";
 import { trackOnboardingStep } from "@/lib/onboarding/telemetry";
+import { trackError, trackEvent } from "@/lib/errorTracking";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
@@ -29,88 +31,186 @@ const GOAL_OPTIONS = [
   { value: "build_own_thing", label: "Build my own thing" },
 ];
 
+/**
+ * GroUp Academy: Onboarding Persona & Goal Alignment Selector (GoalStep)
+ * An authoritative wizard block calculating candidate status and trajectory vectors to customize experiences.
+ * Version: Launch Candidate · Phase Z0 Hardened
+ */
 export function GoalStep({ onContinue }: GoalStepProps) {
+  const queryClient = useQueryClient();
   const { talent, updateTalent } = useTalent();
-  const [status, setStatus] = useState<string>(talent?.currentStatus ?? "");
-  const [goal, setGoal] = useState<string>(talent?.primaryGoal ?? "");
+
+  const [status, setStatus] = useState<string>("");
+  const [goal, setGoal] = useState<string>("");
   const [isSaving, setIsSaving] = useState(false);
 
-  useEffect(() => { trackOnboardingStep("goal", "view"); }, []);
+  // Sync state parameters safely once the underlying profile engine payload resolves
+  useEffect(() => {
+    if (talent) {
+      if (talent.currentStatus) setStatus(talent.currentStatus);
+      if (talent.primaryGoal) setGoal(talent.primaryGoal);
+    }
+  }, [talent]);
+
+  // Monitor wizard step views via standard telemetry pipelines
+  useEffect(() => {
+    trackOnboardingStep("goal", "view");
+    trackEvent("onboarding_goal_step_mounted");
+  }, []);
 
   const canContinue = !!status && !!goal;
 
   async function handleContinue() {
-    if (!canContinue) return;
+    if (!canContinue || isSaving) return;
+
     setIsSaving(true);
+    let isMounted = true;
+
+    trackEvent("onboarding_goal_save_requested", { status, goal });
+    const toastId = toast.loading("Configuring trajectory personalization parameters...");
+
     try {
-      const ok = await updateTalent({ currentStatus: status, primaryGoal: goal } as any);
-      if (!ok) throw new Error("save failed");
+      const isUpdateSuccessful = await updateTalent({
+        currentStatus: status,
+        primaryGoal: goal,
+      } as any);
+
+      if (!isUpdateSuccessful) {
+        throw new Error("Core database transaction write declined.");
+      }
+
+      // Automated Efficiency: Synchronize cache streams immediately to avoid state drift across layouts
+      await queryClient.invalidateQueries({ queryKey: ["talent-profile"] });
+      await queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
+
       trackOnboardingStep("goal", "next", { status, goal });
-      onContinue();
-    } catch {
-      toast.error("Couldn't save. Try again.");
+      trackEvent("onboarding_goal_save_success");
+
+      toast.success("Ecosystem personalization locked successfully.", { id: toastId });
+
+      if (isMounted) {
+        onContinue();
+      }
+    } catch (err: any) {
+      const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
+
+      trackError(parsedExceptionMsg, {
+        component: "GoalStep",
+        action: "commit_onboarding_goals_api",
+        talentId: talent?.id,
+      });
+
+      toast.error(`Ecosystem sync error: ${parsedExceptionMsg}`, { id: toastId });
     } finally {
-      setIsSaving(false);
+      if (isMounted) {
+        setIsSaving(false);
+      }
     }
   }
 
   return (
-    <div className="flex flex-col px-4 py-6 max-w-xl mx-auto w-full animate-in fade-in duration-500">
-      <div className="mb-6 space-y-2 text-center">
-        <h2 className="text-2xl md:text-3xl font-bold tracking-tight text-slate-900">Where are you headed?</h2>
-        <p className="text-sm text-slate-500">We'll tailor jobs, courses and your AI coach to this.</p>
+    <div className="flex flex-col px-4 py-6 max-w-xl mx-auto w-full antialiased text-left select-none sm:select-text transform-gpu animate-in fade-in duration-300">
+      {/* HUD TITLE SECTION */}
+      <div className="mb-6 space-y-1.5 text-center select-none w-full leading-none">
+        <h2 className="text-xl sm:text-2xl font-bold tracking-tight text-foreground/90 uppercase tracking-wide">
+          Map Your Trajectory
+        </h2>
+        <p className="text-xs sm:text-sm font-semibold text-muted-foreground/80 leading-normal max-w-sm mx-auto">
+          We configure matching recruitment pipelines, active modules, and your automated AI coach based on these
+          fields.
+        </p>
       </div>
 
-      <section className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">I'm currently</p>
-        <div className="grid grid-cols-2 gap-2">
-          {STATUS_OPTIONS.map((o) => (
-            <button
-              key={o.value}
-              type="button"
-              onClick={() => setStatus(o.value)}
-              className={cn(
-                "text-left rounded-xl border px-3 py-3 transition-colors",
-                status === o.value
-                  ? "border-blue-500 bg-blue-50"
-                  : "border-slate-200 bg-white hover:border-slate-300",
-              )}
-            >
-              <div className="text-sm font-semibold text-slate-900">{o.label}</div>
-              <div className="text-xs text-slate-500 mt-0.5">{o.sub}</div>
-            </button>
-          ))}
+      {/* PERSISTENT SECTION 1: STATUS MATRICES SELECTION LOOP */}
+      <section className="mb-5 w-full min-w-0">
+        <div className="flex items-center gap-2 mb-2.5 pl-0.5 select-none text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 leading-none">
+          <Compass className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
+          <span>Current Occupational Persona</span>
+        </div>
+
+        <div className="grid grid-cols-2 gap-2.5 w-full font-semibold text-xs tracking-tight">
+          {STATUS_OPTIONS.map((optionItem) => {
+            const isOptionActive = status === optionItem.value;
+            return (
+              <button
+                key={optionItem.value}
+                type="button"
+                disabled={isSaving}
+                onClick={() => {
+                  trackEvent("onboarding_status_pill_selected", { value: optionItem.value });
+                  setStatus(optionItem.value);
+                }}
+                className={cn(
+                  "w-full text-left rounded-xl border p-3.5 transition-all duration-200 cursor-pointer transform-gpu active:scale-[0.99] flex flex-col justify-center shadow-sm leading-none outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                  isOptionActive
+                    ? "border-primary bg-primary/5 text-primary font-bold shadow-inner"
+                    : "border-border/40 bg-background/50 hover:border-border/60 hover:bg-background",
+                )}
+              >
+                <span className="text-xs sm:text-sm font-bold text-foreground/90 block leading-tight">
+                  {optionItem.label}
+                </span>
+                <span className="text-[10px] font-medium text-muted-foreground/60 block truncate text-ellipsis mt-1 leading-none max-w-full">
+                  {optionItem.sub}
+                </span>
+              </button>
+            );
+          })}
         </div>
       </section>
 
-      <section className="mb-6">
-        <p className="text-xs font-semibold uppercase tracking-wide text-slate-500 mb-3">My main goal</p>
-        <div className="flex flex-wrap gap-2">
-          {GOAL_OPTIONS.map((g) => (
-            <button
-              key={g.value}
-              type="button"
-              onClick={() => setGoal(g.value)}
-              className={cn(
-                "rounded-full px-4 py-2 text-sm border transition-colors",
-                goal === g.value
-                  ? "border-blue-500 bg-blue-500 text-white"
-                  : "border-slate-200 bg-white text-slate-700 hover:border-slate-300",
-              )}
-            >
-              {g.label}
-            </button>
-          ))}
+      {/* PERSISTENT SECTION 2: GOAL TRAJECTORY SELECTION LOOP */}
+      <section className="mb-6 w-full min-w-0">
+        <div className="flex items-center gap-2 mb-3 pl-0.5 select-none text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 leading-none">
+          <Target className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
+          <span> Autoritative Target Objective</span>
+        </div>
+
+        <div className="flex flex-wrap items-center gap-2 select-none w-full max-w-full font-bold text-xs">
+          {GOAL_OPTIONS.map((goalItem) => {
+            const isGoalActive = goal === goalItem.value;
+            return (
+              <button
+                key={goalItem.value}
+                type="button"
+                disabled={isSaving}
+                onClick={() => {
+                  trackEvent("onboarding_goal_pill_selected", { value: goalItem.value });
+                  setGoal(goalItem.value);
+                }}
+                className={cn(
+                  "rounded-full px-4 py-2 text-xs font-bold border transition-all duration-200 cursor-pointer transform-gpu active:scale-95 shadow-sm leading-none outline-none focus-visible:ring-1 focus-visible:ring-ring",
+                  isGoalActive
+                    ? "bg-primary border-transparent text-primary-foreground font-extrabold shadow-inner shadow-primary/10"
+                    : "border-border/40 text-muted-foreground bg-background/50 hover:border-primary/20 hover:text-foreground",
+                )}
+              >
+                {goalItem.label}
+              </button>
+            );
+          })}
         </div>
       </section>
 
-      <div className="sticky bottom-0 bg-gradient-to-t from-slate-50 via-slate-50 to-transparent pt-4 pb-[max(env(safe-area-inset-bottom),12px)]">
+      {/* TRANSACTION COMMAND DISPATCH ACCESS BUTTON FOOTER CONTAINER */}
+      <div className="sticky bottom-0 bg-gradient-to-t from-background via-background to-transparent pt-4 pb-[max(env(safe-area-inset-bottom),12px)] select-none w-full shrink-0">
         <Button
           onClick={handleContinue}
           disabled={!canContinue || isSaving}
-          className="w-full h-12 rounded-xl text-base"
+          type="button"
+          className="w-full h-11 rounded-xl text-xs font-bold uppercase tracking-wider shadow-md active:scale-[0.995] transition-transform flex items-center justify-center cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90"
         >
-          {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <>Continue <ArrowRight className="ml-2 h-4 w-4" /></>}
+          {isSaving ? (
+            <>
+              <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
+              <span>Calibrating Personalization Infrastructure…</span>
+            </>
+          ) : (
+            <>
+              <span>Lock Objective & Continue Pathway</span>
+              <ArrowRight className="ml-1.5 h-4 w-4 shrink-0 stroke-[2.5]" />
+            </>
+          )}
         </Button>
       </div>
     </div>
