@@ -1,8 +1,11 @@
-import { format } from "date-fns";
+import { useMemo } from "react";
+import { format, isValid } from "date-fns";
 
 /**
- * GroUp Academy: Institutional Completion Artifact
- * CTO Reference: Authoritative landscape template for high-fidelity certificate generation.
+ * GroUp Academy: Institutional Completion Artifact Blueprint (V5.6.0)
+ * CTO Reference: High-fidelity landscape printable DOM template optimized for background pdf canvas captures.
+ * Architecture: Reference-stable temporal anchoring guaranteeing copyright and data token continuity.
+ * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
  */
 
 interface CertificateData {
@@ -29,20 +32,63 @@ const BRAND = {
 };
 
 export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
-  const verifyUrl = `${window.location.origin}/verify/${data.verify_code}`;
+  // Create reference-stable base verification urls derived safely from window constraints
+  const verifyUrl = useMemo(() => {
+    const originHost = window?.location?.origin || "https://group.academy";
+    return `${originHost}/verify/${String(data?.verify_code || "UNKNOWN_NODE")}`;
+  }, [data?.verify_code]);
+
+  // --- PHASE: SAFE_TEMPORAL_LEDGER_RESOLUTION ---
+  const normalizedTemporalContext = useMemo(() => {
+    const rawIssuedAtString = data?.issued_at;
+    if (!rawIssuedAtString) {
+      return { formattedDate: "00_JAN_0000", structuralYear: "2026" };
+    }
+
+    const parsedDateInstance = new Date(rawIssuedAtString);
+    if (!isValid(parsedDateInstance)) {
+      return { formattedDate: "SYNC_ERROR", structuralYear: "2026" };
+    }
+
+    try {
+      return {
+        formattedDate: String(format(parsedDateInstance, "dd_MMM_yyyy")).toUpperCase(),
+        // Architecture Fix: Anchor structural copyright parameters to immutable record timestamps, never client wall-clocks
+        structuralYear: String(parsedDateInstance.getFullYear()),
+      };
+    } catch (err) {
+      console.error("[Digital Workforce] FAULT: Failed to process document temporal markers.", err);
+      return { formattedDate: "COMPILATION_ERROR", structuralYear: "2026" };
+    }
+  }, [data?.issued_at]);
+
+  // --- PHASE: LAYOUT_TEXT_NORMALIZATION ---
+  const sanitizedStringsLedger = useMemo(() => {
+    return {
+      holderNameUppercase: String(data?.holder_name || "Anonymous Talent Node")
+        .trim()
+        .toUpperCase(),
+      courseTitleUppercase: String(data?.course_title || "Core General Curriculum")
+        .trim()
+        .toUpperCase(),
+      verifyCodeClean: String(data?.verify_code || "N/A")
+        .trim()
+        .toUpperCase(),
+    };
+  }, [data?.holder_name, data?.course_title, data?.verify_code]);
 
   return (
     <div
       id="certificate-pdf-content"
       style={{
-        width: "1122px", // A4 Landscape Resolution Node
+        width: "1122px", // Authoritative A4 Dimensions Landscape pixel boundary bounds
         height: "794px",
         padding: "0",
         backgroundColor: "#ffffff",
         fontFamily: "Inter, system-ui, -apple-system, sans-serif",
         color: BRAND.dark,
         position: "absolute",
-        left: "-9999px",
+        left: "-9999px", // Placed cleanly outside regular viewer space for off-screen canvas rendering calls
         top: 0,
         overflow: "hidden",
         boxSizing: "border-box",
@@ -75,16 +121,16 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
         { top: 0, right: 0, borderRadius: "0 0 0 100px" },
         { bottom: 0, left: 0, borderRadius: "0 100px 0 0" },
         { bottom: 0, right: 0, borderRadius: "100px 0 0 0" },
-      ].map((style, i) => (
+      ].map((cornerStyle, idx) => (
         <div
-          key={i}
+          key={`corner-geometry-${idx}`}
           style={
             {
               position: "absolute",
               width: "120px",
               height: "120px",
               background: `linear-gradient(135deg, ${BRAND.primary}10, ${BRAND.secondary}15)`,
-              ...style,
+              ...cornerStyle,
             } as any
           }
         />
@@ -161,7 +207,7 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
             letterSpacing: "-2px",
           }}
         >
-          {data.holder_name.toUpperCase()}
+          {sanitizedStringsLedger.holderNameUppercase}
         </h2>
 
         <p style={{ margin: "0 0 16px", fontSize: "16px", color: BRAND.muted }}>
@@ -180,7 +226,7 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
             letterSpacing: "-0.5px",
           }}
         >
-          {data.course_title}
+          {sanitizedStringsLedger.courseTitleUppercase}
         </h3>
 
         {/* HUD: METRIC_SYNC */}
@@ -204,9 +250,10 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
                 fontWeight: 800,
                 textTransform: "uppercase",
                 letterSpacing: "1px",
+                fontFamily: "monospace",
               }}
             >
-              ✓ Diagnostic_Yield: {data.score}/{data.total_questions} ({data.percentage}%)
+              ✓ Diagnostic_Yield: {Number(data.score)}/{Number(data.total_questions)} ({Number(data.percentage)}%)
             </span>
           </div>
         )}
@@ -248,13 +295,21 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
             >
               Issuing_Authority
             </p>
-            <p style={{ margin: "4px 0 0", fontSize: "11px", fontWeight: 600, color: BRAND.primary }}>
-              {format(new Date(data.issued_at), "dd_MMM_yyyy").toUpperCase()}
+            <p
+              style={{
+                margin: "4px 0 0",
+                fontSize: "11px",
+                fontWeight: 700,
+                color: BRAND.primary,
+                fontFamily: "monospace",
+              }}
+            >
+              {normalizedTemporalContext.formattedDate}
             </p>
           </div>
         </div>
 
-        {/* FOOTER: VERIFICATION_LEDGER */}
+        {/* HUD: VERIFICATION_LEDGER */}
         <div
           style={{
             position: "absolute",
@@ -269,15 +324,16 @@ export function CertificatePDFTemplate({ data }: CertificatePDFTemplateProps) {
             color: BRAND.muted,
             textTransform: "uppercase",
             letterSpacing: "1px",
+            fontFamily: "monospace",
           }}
         >
           <div style={{ textAlign: "left" }}>
             <span style={{ display: "block", marginBottom: "4px" }}>System_Verify: {verifyUrl}</span>
-            <span>Artifact_ID: {data.verify_code}</span>
+            <span>Artifact_ID: {sanitizedStringsLedger.verifyCodeClean}</span>
           </div>
           <div style={{ textAlign: "right" }}>
             <span style={{ display: "block", marginBottom: "4px" }}>Verification_Status: LEVEL_1_VERIFIED</span>
-            <span>© {new Date().getFullYear()} GroUp_Academy_Neural_Registry</span>
+            <span>© {normalizedTemporalContext.structuralYear} GroUp_Academy_Neural_Registry</span>
           </div>
         </div>
       </div>
