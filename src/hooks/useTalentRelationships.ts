@@ -1,5 +1,13 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { toast } from "sonner";
+
+/**
+ * GroUp Academy: Enterprise CRM & Talent Pipeline Lifecycle Funnel (V5.6.0)
+ * CTO Reference: Authoritative transactional interface managing candidate staging states.
+ * Architecture: Optimized via TanStack Query v5 with targeted eviction and protective boundaries.
+ * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
+ */
 
 export type TalentRelStage =
   | "prospect"
@@ -34,7 +42,7 @@ export interface TalentRelationship {
   notes: string | null;
   created_at: string;
   updated_at: string;
-  talent?: {
+  talent: {
     id: string;
     full_name: string;
     profile_photo_url: string | null;
@@ -43,32 +51,67 @@ export interface TalentRelationship {
   } | null;
 }
 
+// --- SENSORS: PIPELINE STATUS OBSERVERS ---
+
+/**
+ * Fetches all candidate relationship logs associated with a specific enterprise company.
+ */
 export function useTalentRelationships(companyId?: string | null) {
   return useQuery({
     queryKey: ["talent-relationships", companyId],
     enabled: !!companyId,
-    queryFn: async () => {
-      const { data } = await supabase
+    staleTime: 30 * 1000, // 30-second pipeline cache consistency boundary
+    queryFn: async (): Promise<TalentRelationship[]> => {
+      // HUD: EXECUTING_TALENT_RELATIONSHIPS_INGRESS_SELECT
+      const { data, error } = await supabase
         .from("talent_relationships")
-        .select(
-          "*, talent:talents(id, full_name, profile_photo_url, custom_profession, public_handle)",
-        )
+        .select("*, talent:talents(id, full_name, profile_photo_url, custom_profession, public_handle)")
         .eq("company_id", companyId!)
         .order("updated_at", { ascending: false });
-      return (data ?? []) as TalentRelationship[];
+
+      if (error) {
+        console.error("[Digital Workforce] FAULT: talent_relationships query pipeline dropped.", error);
+        throw error;
+      }
+
+      // Hardened Data Normalization Layer: Sanitizes child nodes against relational schema drift
+      return (data || []).map((row: any) => ({
+        id: String(row.id),
+        company_id: String(row.company_id),
+        talent_id: String(row.talent_id),
+        stage: (TALENT_REL_STAGES.some((s) => s.id === row.stage) ? row.stage : "prospect") as TalentRelStage,
+        owner_id: row.owner_id ? String(row.owner_id) : null,
+        source: row.source ? String(row.source) : null,
+        next_step: row.next_step ? String(row.next_step) : null,
+        next_step_at: row.next_step_at ? String(row.next_step_at) : null,
+        notes: row.notes ? String(row.notes) : null,
+        created_at: String(row.created_at),
+        updated_at: String(row.updated_at),
+        talent: row.talent
+          ? {
+              id: String(row.talent.id),
+              full_name: String(row.talent.full_name ?? "Candidate Profile"),
+              profile_photo_url: row.talent.profile_photo_url ?? null,
+              custom_profession: row.talent.custom_profession ?? null,
+              public_handle: row.talent.public_handle ?? null,
+            }
+          : null,
+      }));
     },
   });
 }
 
+// --- ACTIONS: PIPELINE MUTATION WORKFLOWS ---
+
+/**
+ * Appends or initializes a candidate relationship log row inside a company pipeline.
+ */
 export function useUpsertRelationship() {
   const qc = useQueryClient();
+
   return useMutation({
-    mutationFn: async (input: {
-      companyId: string;
-      talentId: string;
-      stage?: TalentRelStage;
-      source?: string;
-    }) => {
+    mutationFn: async (input: { companyId: string; talentId: string; stage?: TalentRelStage; source?: string }) => {
+      // HUD: COMMITTING_TALENT_RELATIONSHIP_UPSERT_HANDSHAKE
       const { data, error } = await supabase
         .from("talent_relationships")
         .upsert(
@@ -82,23 +125,55 @@ export function useUpsertRelationship() {
         )
         .select()
         .single();
-      if (error) throw error;
+
+      if (error) {
+        console.error("[Digital Workforce] FAULT: talent_relationships upsert transaction rejected.", error);
+        throw error;
+      }
       return data;
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["talent-relationships"] }),
+    onSuccess: (_, variables) => {
+      // Evict targeted query line cleanly to maintain corporate dashboard load balance
+      void qc.invalidateQueries({
+        queryKey: ["talent-relationships", variables.companyId],
+        exact: true,
+      });
+      toast.success("Pipeline status committed successfully.");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to finalize pipeline tracking record.");
+    },
   });
 }
 
-export function useMoveRelationshipStage() {
+/**
+ * Updates the structural pipeline stage tracking flag for a designated relationship id link.
+ */
+export function useMoveRelationshipStage(companyId?: string | null) {
   const qc = useQueryClient();
+
   return useMutation({
     mutationFn: async (input: { id: string; stage: TalentRelStage }) => {
-      const { error } = await supabase
-        .from("talent_relationships")
-        .update({ stage: input.stage })
-        .eq("id", input.id);
-      if (error) throw error;
+      // HUD: COMMITTING_PIPELINE_STAGE_UPDATE_TRANSACTION
+      const { error } = await supabase.from("talent_relationships").update({ stage: input.stage }).eq("id", input.id);
+
+      if (error) {
+        // Digital Workforce Anomaly Trigger: Crucial for auditing pipeline stage drops
+        console.error("[Digital Workforce] ANOMALY: talent_relationships update operation rejected.", {
+          relationshipId: input.id,
+          targetStage: input.stage,
+          message: error.message,
+        });
+        throw error;
+      }
     },
-    onSuccess: () => qc.invalidateQueries({ queryKey: ["talent-relationships"] }),
+    onSuccess: () => {
+      // Clear specific cache branches explicitly to refresh pipeline boards instantly
+      void qc.invalidateQueries({ queryKey: ["talent-relationships", companyId] });
+      toast.success("Candidate migrated smoothly across your funnel grid.");
+    },
+    onError: (err: any) => {
+      toast.error(err.message || "Failed to commit stage advancement transaction.");
+    },
   });
 }
