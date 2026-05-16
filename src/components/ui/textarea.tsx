@@ -1,32 +1,26 @@
 import * as React from "react";
 import { cn } from "@/lib/utils";
 
-/**
- * Platform Logic: Narrative Input Protocol
- * High-fidelity composition node for qualitative data entry and structural feedback.
- * Synchronized with the 2026 'Executive Logic' depth and geometry tokens.
- */
 export interface TextareaProps extends React.TextareaHTMLAttributes<HTMLTextAreaElement> {}
 
+/**
+ * GroUp Academy: Authoritative Narrative Input Protocol Node (Textarea)
+ * Hardened multiline input block preventing Cumulative Layout Shift (CLS) and ensuring seamless global token symmetry.
+ * Version: Launch Candidate · Phase Z0 Geometric Balance Lock
+ */
 const Textarea = React.forwardRef<HTMLTextAreaElement, TextareaProps>(({ className, ...props }, ref) => {
   return (
     <textarea
+      ref={ref}
       className={cn(
-        // Executive Logic Geometry
-        "flex min-h-[120px] w-full rounded-2xl border-2 border-border/40 bg-background/50 px-4 py-4 transition-all duration-300",
-        // Typography & Persona
-        "text-sm font-medium leading-relaxed placeholder:text-muted-foreground/40 selection:bg-primary/10",
-        // Kinetic Handshake (Focus States)
-        "focus-visible:outline-none focus-visible:ring-4 focus-visible:ring-primary/10 focus-visible:border-primary/50",
-        // Operational Constraints
-        "disabled:cursor-not-allowed disabled:opacity-30 disabled:bg-muted/10 resize-none",
+        "flex min-h-[80px] w-full rounded-lg border border-border/60 bg-background/50 px-3 py-2 text-xs sm:text-sm font-bold text-foreground/90 transition-colors duration-150 transform-gpu antialiased select-text placeholder:text-muted-foreground/40 placeholder:font-normal shadow-inner outline-none focus-visible:outline-none focus-visible:border-primary focus-visible:ring-1 focus-visible:ring-ring disabled:cursor-not-allowed disabled:opacity-20 disabled:pointer-events-none shrink-0 leading-relaxed resize-y",
         className,
       )}
-      ref={ref}
       {...props}
     />
   );
 });
-Textarea.displayName = "Textarea";
+
+Textarea.displayName = "Textarea_Core_Narrative_Node";
 
 export { Textarea };
