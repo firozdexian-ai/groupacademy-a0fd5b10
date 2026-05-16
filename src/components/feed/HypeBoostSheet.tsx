@@ -2,7 +2,7 @@ import { useState, useEffect } from "react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
 import { Flame, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";
@@ -61,23 +61,6 @@ export function HypeBoostSheet({ open, onOpenChange, onConfirm, contextData }: P
 
       toast.success(`Post successfully boosted by ${picked} hypes!`);
 
-      // Digital Workforce: Signal the Admin Cockpit on massive economic interactions
-      if (picked >= 25 && contextData?.postId) {
-        supabase
-          .from("admin_chat_messages")
-          .insert([
-            {
-              sender_type: "system_agent",
-              agent_key: "ugc-feed", // Directly targets our automated content and feed coordinator persona
-              message_text: `🔥 **High Velocity UGC Boost Detected** 🔥\n\nPost ID has been boosted with **${picked} hypes**.\n**Economic Split Matrix:** ${picked * 0.8} credits allocated to creator profile ledger.\n\n*Funnel monitoring validation active.*`,
-              metadata: { ...contextData, quantity: picked, timestamp: new Date().toISOString() },
-            },
-          ])
-          .then(({ error: agentErr }) => {
-            if (agentErr)
-              console.warn("[HypeBoostSheet] Failed to stream transaction signal to ugc-feed agent:", agentErr.message);
-          });
-      }
 
       onOpenChange(false);
     } catch (err: any) {
@@ -91,15 +74,6 @@ export function HypeBoostSheet({ open, onOpenChange, onConfirm, contextData }: P
         attemptedQuantity: picked,
       });
 
-      // Forward transactional anomalies directly to our central credit management desk
-      supabase.from("admin_chat_messages").insert([
-        {
-          sender_type: "system_agent",
-          agent_key: "fin-credits-ops", // Routes error frame natively into our Credits Operations desk
-          message_text: `❌ **Hype Multiplier Transaction Fault** ❌\n\nFailed to finalize monetization split ledger for ${picked} hypes.\n**Exception Context:** ${parsedError}\n**Sender Talent ID:** ${contextData?.senderTalentId || "Unknown"}`,
-          metadata: { error: parsedError, ...contextData },
-        },
-      ]);
 
       toast.error("Ledger settlement delayed. Please verify your credit balance.");
     } finally {
