@@ -130,7 +130,7 @@ export function PersonalizedPromptCard() {
 
       try {
         // Enforce upper-case billing mapping keys consistently across the transactional ledger
-        const transactionServiceKey = prompt.type === "portfolio" ? "PORTFOLIO_BUILDER" : "CAREER_ASSESSMENT";
+        const transactionServiceKey = prompt.type === "portfolio" ? "PORTFOLIO" : "CAREER_ASSESSMENT";
 
         const success = await deductCredits(
           transactionServiceKey,
