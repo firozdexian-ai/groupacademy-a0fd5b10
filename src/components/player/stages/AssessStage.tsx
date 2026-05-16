@@ -1,19 +1,27 @@
-import { useState } from "react";
-import { useQuery } from "@tanstack/react-query";
+import { useEffect, useState, useMemo, useRef } from "react";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { RadioGroup, RadioGroupItem } from "@/components/ui/radio-group";
 import { Label } from "@/components/ui/label";
-import { CheckCircle, ClipboardCheck, XCircle, AlertCircle, Trophy, RefreshCw, Zap, Target } from "lucide-react";
+import { Badge } from "@/components/ui/badge";
+import { Progress } from "@/components/ui/progress";
+import { toast } from "sonner";
+import { trackError, trackEvent } from "@/lib/errorTracking";
+import {
+  CheckCircle,
+  ClipboardCheck,
+  XCircle,
+  AlertCircle,
+  Trophy,
+  RefreshCw,
+  Zap,
+  Target,
+  Loader2,
+} from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { cn } from "@/lib/utils";
 
-/**
- * GroUp Academy: Knowledge Validation Node (AssessStage)
- * CTO Reference: Authoritative gatekeeper for skill-node mastery.
- */
-
-// REGISTRY_INTERFACES: Explicitly defined to resolve TS2304
 export interface QuizQuestion {
   id: string;
   question_text: string;
@@ -35,6 +43,11 @@ export interface AssessStageProps {
   isCompleted: boolean;
 }
 
+/**
+ * GroUp Academy: Adaptive Knowledge Validation Engine Node (AssessStage)
+ * An authoritative operational gatekeeper testing skill-node mastery and persisting verification scores.
+ * Version: Launch Candidate · Phase Z0 Hardened
+ */
 export function AssessStage({
   contentId,
   moduleId,
@@ -44,12 +57,24 @@ export function AssessStage({
   onComplete,
   isCompleted,
 }: AssessStageProps) {
+  const queryClient = useQueryClient();
+  const isMountedRef = useRef<boolean>(true);
+
   const [answers, setAnswers] = useState<Record<string, string>>({});
   const [submitted, setSubmitted] = useState(false);
   const [score, setScore] = useState(0);
   const [showExplanations, setShowExplanations] = useState(false);
 
-  // REGISTRY_SYNC: Adaptive sampler first; fall back to curated quiz_questions
+  // Synchronize component mounting bounds cleanly to catch dangling thread mutations
+  useEffect(() => {
+    isMountedRef.current = true;
+    trackEvent("assessment_node_mounted", { moduleId, contentId });
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, [moduleId, contentId]);
+
+  // REGISTRY_SYNC: Adaptive item sampler first; cascades down to curated question tables on dropout
   const {
     data: questions = [],
     isLoading,
@@ -57,45 +82,49 @@ export function AssessStage({
     refetch,
   } = useQuery<QuizQuestion[]>({
     queryKey: ["quiz-questions-adaptive", moduleId, contentId],
+    refetchOnWindowFocus: false,
     queryFn: async () => {
-      // 1) Try adaptive sampler (skill-aware)
       try {
-        const { data: adaptive, error: adaptiveErr } = await supabase.functions.invoke(
-          "learner-adaptive-sample",
-          { body: { module_id: moduleId, count: 10 } },
-        );
+        const { data: adaptive, error: adaptiveErr } = await supabase.functions.invoke("learner-adaptive-sample", {
+          body: { module_id: moduleId, count: 10 },
+        });
+
         if (!adaptiveErr && (adaptive as any)?.items?.length) {
-          const letters = ["A", "B", "C", "D"] as const;
-          return ((adaptive as any).items as Array<{
-            id: string;
-            question: string;
-            options: unknown;
-            correct_index: number;
-            explanation: string | null;
-          }>).map((it) => {
+          const alphabetLetters = ["A", "B", "C", "D"] as const;
+          trackEvent("assessment_adaptive_sampler_success", { count: (adaptive as any).items.length });
+
+          return (
+            (adaptive as any).items as Array<{
+              id: string;
+              question: string;
+              options: unknown;
+              correct_index: number;
+              explanation: string | null;
+            }>
+          ).map((it) => {
             const opts = Array.isArray(it.options)
               ? it.options
               : it.options && typeof it.options === "object"
                 ? Object.values(it.options as Record<string, unknown>)
                 : [];
-            const padded = [...opts, "", "", "", ""].slice(0, 4).map((o) => String(o));
+            const padded = [...opts, "", "", "", ""].slice(0, 4).map((o) => String(o).trim());
             return {
               id: it.id,
-              question_text: it.question,
+              question_text: it.question.trim(),
               option_a: padded[0],
               option_b: padded[1],
               option_c: padded[2],
               option_d: padded[3],
-              correct_answer: letters[Math.max(0, Math.min(3, it.correct_index))],
-              explanation: it.explanation,
+              correct_answer: alphabetLetters[Math.max(0, Math.min(3, it.correct_index))],
+              explanation: it.explanation ? it.explanation.trim() : null,
             } satisfies QuizQuestion;
           });
         }
       } catch (e) {
-        console.warn("[AssessStage] adaptive sampler failed, falling back", e);
+        trackError(e, { component: "AssessStage", action: "adaptive_sampler_invoke_fallback" });
       }
 
-      // 2) Fallback to curated quiz_questions (module → content)
+      // Fallback Strategy: Extract static matching records directly from default repositories
       let { data, error } = await supabase
         .from("quiz_questions")
         .select("*")
@@ -115,19 +144,28 @@ export function AssessStage({
       }
 
       if (error) throw error;
+      trackEvent("assessment_fallback_repository_hydrated", { count: data?.length || 0 });
       return (data as QuizQuestion[]) ?? [];
     },
     enabled: !!moduleId && !!contentId,
   });
 
-  const totalQuestions = questions.length;
-  const answeredCount = Object.keys(answers).length;
-  const allAnswered = answeredCount === totalQuestions && totalQuestions > 0;
-  const percentage = totalQuestions > 0 ? Math.round((score / totalQuestions) * 100) : 0;
-  const passed = percentage >= passThreshold;
+  const totalQuestions = useMemo(() => questions.length, [questions]);
+  const answeredCount = useMemo(() => Object.keys(answers).length, [answers]);
+  const allAnswered = useMemo(
+    () => answeredCount === totalQuestions && totalQuestions > 0,
+    [answeredCount, totalQuestions],
+  );
 
-  // PROTOCOL: Attempt Reset Handler
+  const percentage = useMemo(() => {
+    if (totalQuestions <= 0) return 0;
+    return Math.round((score / totalQuestions) * 100);
+  }, [score, totalQuestions]);
+
+  const passed = useMemo(() => percentage >= passThreshold, [percentage, passThreshold]);
+
   const handleRetry = () => {
+    trackEvent("assessment_retry_initiated", { moduleId });
     setAnswers({});
     setSubmitted(false);
     setScore(0);
@@ -135,18 +173,20 @@ export function AssessStage({
   };
 
   const handleExecutiveSubmit = async () => {
-    if (!allAnswered) return;
+    if (!allAnswered || submitted) return;
 
     const correctCount = questions.reduce((acc, q) => (answers[q.id] === q.correct_answer ? acc + 1 : acc), 0);
+    const attemptPassed = Math.round((correctCount / totalQuestions) * 100) >= passThreshold;
 
     setScore(correctCount);
     setSubmitted(true);
 
-    if (studentId && enrollmentId) {
-      const attemptPassed = Math.round((correctCount / totalQuestions) * 100) >= passThreshold;
+    trackEvent("assessment_submission_requested", { correctCount, totalQuestions, attemptPassed });
+    const toastId = toast.loading("Processing validation entries over profile ledger index...");
 
+    if (studentId && enrollmentId) {
       try {
-        const { error } = await supabase.from("quiz_attempts").insert({
+        const { error: insertError } = await supabase.from("quiz_attempts").insert({
           student_id: studentId,
           content_id: contentId,
           enrollment_id: enrollmentId,
@@ -155,22 +195,37 @@ export function AssessStage({
           total_questions: totalQuestions,
           passed: attemptPassed,
         });
-        if (error) throw error;
-      } catch (error) {
-        console.error("[AssessNode Sync Error]:", error);
-      }
 
-      onComplete(attemptPassed, correctCount);
+        if (insertError) throw insertError;
+
+        // Automated Efficiency: Evaporate stale query structures across dashboard summaries instantly
+        await queryClient.invalidateQueries({ queryKey: ["quiz-questions-adaptive", moduleId] });
+        await queryClient.invalidateQueries({ queryKey: ["talent-stats"] });
+        await queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
+
+        toast.success("Verification metrics logged cleanly into trajectory history.", { id: toastId });
+        trackEvent("assessment_submission_persisted_success");
+      } catch (err: any) {
+        const exceptionMsg = err instanceof Error ? err.message : String(err);
+        trackError(exceptionMsg, {
+          component: "AssessStage",
+          action: "persist_quiz_attempt_transaction_api",
+          moduleId,
+        });
+        toast.error(`Ledger transaction dropped: ${exceptionMsg}`, { id: toastId });
+      }
     }
+
+    onComplete(attemptPassed, correctCount);
   };
 
   if (isLoading) {
     return (
-      <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-md">
-        <CardContent className="p-12 text-center space-y-4">
-          <RefreshCw className="h-8 w-8 animate-spin text-primary mx-auto" />
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground italic">
-            Initializing_Assessment_Matrix...
+      <Card className="border border-border/40 bg-card/40 backdrop-blur-md rounded-2xl select-none w-full animate-in scale-in duration-200">
+        <CardContent className="p-12 flex flex-col items-center justify-center gap-3 text-center w-full">
+          <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
+          <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5 animate-pulse">
+            Assembling Knowledge Verification Matrix…
           </p>
         </CardContent>
       </Card>
@@ -179,18 +234,25 @@ export function AssessStage({
 
   if (loadError) {
     return (
-      <Card className="rounded-[32px] border-2 border-dashed border-destructive/20 bg-destructive/5">
-        <CardContent className="p-12 text-center space-y-4">
-          <AlertCircle className="h-10 w-10 text-destructive mx-auto" />
-          <p className="text-[10px] font-black uppercase text-destructive tracking-widest italic">
-            SYNC_FAULT: REGISTRY_OFFLINE
-          </p>
+      <Card className="border border-dashed border-rose-500/20 bg-rose-500/5 rounded-2xl text-left w-full">
+        <CardContent className="p-8 text-center space-y-4 select-none w-full">
+          <AlertCircle className="h-10 w-10 text-rose-500 mx-auto stroke-[2.2]" />
+          <div className="space-y-1">
+            <p className="text-xs font-bold uppercase tracking-wider text-rose-600 dark:text-rose-400 leading-none">
+              Synapse Ledger Disconnected
+            </p>
+            <p className="text-[11px] font-semibold italic text-muted-foreground/70 mt-1 pl-1">
+              Registry interface lookup failed. Server data synchronization dropped.
+            </p>
+          </div>
           <Button
             onClick={() => refetch()}
             variant="outline"
-            className="rounded-xl font-black uppercase text-[10px] border-destructive/20"
+            type="button"
+            className="h-8 rounded-xl border-border/60 font-bold uppercase text-[10px] tracking-wide shadow-sm hover:bg-accent gap-1.5 cursor-pointer"
           >
-            Re_Initialize_Node
+            <RefreshCw className="h-3.5 w-3.5 stroke-[2.5]" />
+            <span>Re-establish Ingress Sync</span>
           </Button>
         </CardContent>
       </Card>
@@ -198,136 +260,157 @@ export function AssessStage({
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      {/* HUD: ASSESSMENT_HEADER */}
-      <div className="flex items-center justify-between px-1">
-        <div className="space-y-1 text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
-            <Target className="h-6 w-6 text-primary" /> Stage_05: Knowledge_Validation
+    <div className="space-y-5 text-left max-w-full w-full transform-gpu antialiased">
+      {/* HUD LEVEL 1: ASSESSMENT CALIBRATION HEADER */}
+      <div className="flex items-center justify-between gap-4 px-0.5 select-none w-full leading-none">
+        <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1">
+          <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide flex items-center gap-2">
+            <Target className="h-4 w-4 text-primary stroke-[2.2] shrink-0 animate-pulse" />
+            <span>Knowledge Validation Protocol</span>
           </h2>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
-            Pass Threshold: {passThreshold}% | Minimum Accuracy Required
+          <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 mt-1 leading-none">
+            Target Verification Curve: <span className="text-primary font-black">{passThreshold}% Accuracy Scale</span>{" "}
+            &bull; Minimum Passing Threshold
           </p>
         </div>
         {isCompleted && (
-          <div className="px-4 py-2 rounded-xl bg-emerald-500/10 border border-emerald-500/20 flex items-center gap-2 text-emerald-500">
-            <CheckCircle className="h-4 w-4" />
-            <span className="text-[10px] font-black uppercase tracking-widest">Node_Verified</span>
-          </div>
+          <Badge
+            variant="outline"
+            className="text-[9px] font-extrabold tracking-wider uppercase px-2 h-5.5 rounded bg-emerald-500/10 border border-emerald-500/15 text-emerald-600 dark:text-emerald-400 leading-none shadow-sm shrink-0"
+          >
+            Node Verified
+          </Badge>
         )}
       </div>
 
       {submitted ? (
-        /* COMPONENT: RESULTS_DASHBOARD */
-        <div className="space-y-6">
+        /* COMPONENT MATRIX: RESULTS GRAPHIC HUD DASHBOARD */
+        <div className="space-y-4 text-left w-full animate-in fade-in duration-300">
           <Card
             className={cn(
-              "rounded-[40px] border-4 overflow-hidden transition-all duration-1000",
-              passed
-                ? "border-emerald-500 bg-emerald-500/5 shadow-[0_0_50px_-12px_rgba(16,185,129,0.3)]"
-                : "border-orange-500 bg-orange-500/5",
+              "rounded-2xl border backdrop-blur-md shadow-sm overflow-hidden transition-all duration-500 w-full min-w-0 text-center flex flex-col justify-center",
+              passed ? "border-emerald-500/20 bg-emerald-500/[0.015]" : "border-rose-500/20 bg-rose-500/[0.015]",
             )}
           >
-            <CardContent className="p-10 text-center space-y-6">
-              <div className="relative inline-block">
+            <CardContent className="p-8 text-center flex flex-col items-center justify-center space-y-4 w-full">
+              <div className="h-14 w-14 rounded-full flex items-center justify-center select-none shrink-0 shadow-inner">
                 {passed ? (
-                  <Trophy className="h-20 w-20 text-emerald-500 animate-bounce" />
+                  <Trophy className="h-6 w-6 text-emerald-500 stroke-[2.2] animate-bounce" />
                 ) : (
-                  <AlertCircle className="h-20 w-20 text-orange-500 animate-pulse" />
+                  <AlertCircle className="h-6 w-6 text-rose-500 stroke-[2.2] animate-pulse" />
                 )}
-                <div className="absolute inset-0 blur-2xl opacity-20 bg-current" />
               </div>
 
-              <div className="space-y-2">
-                <h3 className="text-3xl font-black uppercase italic tracking-tighter">
-                  {passed ? "PROTOCOL_PASSED" : "ACCURACY_INSUFFICIENT"}
+              <div className="space-y-1 leading-none w-full">
+                <h3 className="text-sm font-extrabold uppercase tracking-widest text-foreground/90 leading-none">
+                  {passed ? "Trajectory Cleared Passthrough" : "Accuracy Target Deficit"}
                 </h3>
-                <p className="text-5xl font-black tabular-nums tracking-tighter">
+                <p className="text-4xl sm:text-5xl font-black tabular-nums tracking-tighter leading-none pt-1">
                   {score}
-                  <span className="text-xl text-muted-foreground/40 mx-2">/</span>
+                  <span className="text-lg font-normal text-muted-foreground/30 mx-2">/</span>
                   {totalQuestions}
                 </p>
-                <div className="flex items-center justify-center gap-2">
-                  <div className="h-1.5 w-1.5 rounded-full bg-primary" />
-                  <p className="text-sm font-bold text-muted-foreground uppercase tracking-widest italic">
-                    {percentage}% AGGREGATE_ACCURACY
-                  </p>
+                <div className="flex items-center justify-center gap-1.5 pt-1 text-[10px] font-bold uppercase tracking-wider text-muted-foreground/70 select-none leading-none font-mono">
+                  <span>{percentage}% aggregate alignment scale</span>
                 </div>
               </div>
 
-              <p className="text-xs font-medium text-muted-foreground max-w-sm mx-auto leading-relaxed">
+              <p className="text-[11px] font-semibold text-muted-foreground/80 leading-relaxed max-w-sm mx-auto italic select-text">
                 {passed
-                  ? "Identity credentials updated. You are cleared for next-stage trajectory."
-                  : `Requirement not met (${passThreshold}%). Re-initiate learning node artifacts and try again.`}
+                  ? "Identity credentials updated successfully. Target evaluation completed. You are authorized for next-stage tracks."
+                  : `Minimum verification curves not reached (${passThreshold}% required). Re-initialize core module study units and launch a new attempt.`}
               </p>
             </CardContent>
           </Card>
 
-          <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 w-full font-bold text-xs select-none">
             <Button
               variant="outline"
-              onClick={() => setShowExplanations(!showExplanations)}
-              className="h-14 rounded-2xl border-2 font-black uppercase italic text-xs tracking-widest gap-3"
+              type="button"
+              onClick={() => {
+                trackEvent("assessment_explanations_toggled", { currentState: !showExplanations });
+                setShowExplanations(!showExplanations);
+              }}
+              className="h-10 rounded-xl border border-border/60 text-muted-foreground hover:text-foreground font-bold uppercase text-[10px] tracking-wide shrink-0 shadow-sm cursor-pointer transition-colors"
             >
-              {showExplanations ? "Hide" : "Audit"} Knowledge_Explanations
+              {showExplanations ? "Collapse Rationale Explanations" : "Audit Rationale Explanations"}
             </Button>
             {!passed && (
               <Button
+                type="button"
                 onClick={handleRetry}
-                className="h-14 rounded-2xl font-black uppercase italic text-xs tracking-widest gap-3 shadow-xl"
+                className="h-10 rounded-xl font-extrabold uppercase text-[10px] tracking-wider gap-1.5 cursor-pointer shadow-md transform-gpu active:scale-[0.99] transition-transform bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                <RefreshCw className="h-4 w-4" /> Re_Initialize_Attempt
+                <RefreshCw className="h-3.5 w-3.5 stroke-[2.5]" />
+                <span>Re-Initialize Calibration Sync</span>
               </Button>
             )}
           </div>
 
+          {/* HUD SUB-TRACK LAYER: RATIONALE AUDIT EXPLANATIONS FLOW */}
           {showExplanations && (
-            <div className="space-y-4 animate-in slide-in-from-top-4 duration-500">
-              {questions.map((q, index) => {
-                const isCorrect = answers[q.id] === q.correct_answer;
+            <div className="space-y-2 w-full min-w-0 animate-in slide-in-from-top-2 duration-200">
+              {questions.map((questionRecord, idx) => {
+                const isUserChoiceValid = answers[questionRecord.id] === questionRecord.correct_answer;
                 return (
                   <Card
-                    key={q.id}
+                    key={questionRecord.id}
                     className={cn(
-                      "rounded-2xl border-l-8 transition-all text-left",
-                      isCorrect ? "border-l-emerald-500 bg-emerald-500/5" : "border-l-red-500 bg-red-500/5",
+                      "rounded-xl border border-border/40 backdrop-blur-sm overflow-hidden transition-all text-left w-full min-w-0 shadow-sm",
+                      isUserChoiceValid ? "bg-emerald-500/[0.01]" : "bg-rose-500/[0.01]",
                     )}
                   >
-                    <CardContent className="p-6">
-                      <div className="flex items-start gap-4">
-                        <div
-                          className={cn(
-                            "h-8 w-8 rounded-lg flex items-center justify-center shrink-0 border-2",
-                            isCorrect
-                              ? "bg-emerald-500/10 border-emerald-500/20 text-emerald-500"
-                              : "bg-red-500/10 border-red-500/20 text-red-500",
-                          )}
-                        >
-                          {isCorrect ? <CheckCircle className="h-4 w-4" /> : <XCircle className="h-4 w-4" />}
+                    <CardContent className="p-4 flex gap-3.5 items-start w-full min-w-0 leading-normal">
+                      <div
+                        className={cn(
+                          "h-7 w-7 rounded-lg flex items-center justify-center shrink-0 border shadow-inner select-none mt-0.5",
+                          isUserChoiceValid
+                            ? "bg-emerald-500/10 border-emerald-500/15 text-emerald-600"
+                            : "bg-rose-500/10 border-rose-500/15 text-rose-500",
+                        )}
+                      >
+                        {isUserChoiceValid ? (
+                          <CheckCircle className="h-4 w-4 stroke-[2.5]" />
+                        ) : (
+                          <XCircle className="h-4 w-4 stroke-[2.5]" />
+                        )}
+                      </div>
+
+                      <div className="space-y-2 flex-1 min-w-0 text-left leading-relaxed font-semibold text-xs sm:text-sm text-foreground/90">
+                        <p className="font-bold text-foreground/90 select-text break-words pr-1">
+                          <span className="font-mono text-[10px] font-black text-primary border rounded px-1 py-0.5 bg-muted/40 mr-1.5 select-none shadow-sm">
+                            NODE {String(idx + 1).padStart(2, "0")}
+                          </span>
+                          <span>{questionRecord.question_text}</span>
+                        </p>
+
+                        <div className="flex flex-wrap items-center gap-3 text-[10px] font-extrabold uppercase tracking-wide select-none font-mono leading-none pt-0.5 opacity-70">
+                          <span>
+                            Provided Input:{" "}
+                            <span
+                              className={
+                                isUserChoiceValid
+                                  ? "text-emerald-600 dark:text-emerald-400"
+                                  : "text-rose-600 dark:text-rose-400"
+                              }
+                            >
+                              {answers[questionRecord.id] || "NULL"}
+                            </span>
+                          </span>
+                          <span>&bull;</span>
+                          <span>
+                            Target Lock Value:{" "}
+                            <span className="text-emerald-600 dark:text-emerald-400">
+                              {questionRecord.correct_answer}
+                            </span>
+                          </span>
                         </div>
-                        <div className="space-y-3">
-                          <p className="font-black text-sm uppercase italic tracking-tight text-foreground">
-                            NODE_{index + 1}: {q.question_text}
-                          </p>
-                          <div className="flex flex-wrap gap-4 text-[10px] font-bold uppercase tracking-widest opacity-60 italic">
-                            <span>
-                              Input:{" "}
-                              <span className={cn(isCorrect ? "text-emerald-600" : "text-red-600")}>
-                                {answers[q.id] || "NONE"}
-                              </span>
-                            </span>
-                            <span>
-                              Target: <span className="text-emerald-600">{q.correct_answer}</span>
-                            </span>
+
+                        {questionRecord.explanation && (
+                          <div className="p-3 rounded-lg border border-border/20 bg-background/50 text-[11px] font-medium leading-relaxed italic text-muted-foreground select-text selection:bg-primary/10">
+                            &ldquo;{questionRecord.explanation.trim()}&rdquo;
                           </div>
-                          {q.explanation && (
-                            <div className="p-4 rounded-xl bg-background/50 border border-border/40">
-                              <p className="text-xs font-medium leading-relaxed italic text-muted-foreground">
-                                {q.explanation}
-                              </p>
-                            </div>
-                          )}
-                        </div>
+                        )}
                       </div>
                     </CardContent>
                   </Card>
@@ -337,78 +420,91 @@ export function AssessStage({
           )}
         </div>
       ) : (
-        /* COMPONENT: QUIZ_INTERFACE */
-        <div className="space-y-8">
-          <div className="p-6 rounded-[28px] bg-muted/20 border-2 border-border/10 flex items-center justify-between">
-            <div className="space-y-1 text-left">
-              <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-                Synchronized_Questions
-              </p>
-              <p className="text-xl font-black italic tracking-tighter text-foreground">
+        /* COMPONENT MATRIX: COGNITIVE ACTIVE EVALUATION QUIZ QUESTION FLOW INTERFACE */
+        <div className="space-y-4 w-full animate-in fade-in duration-300 text-left">
+          <div className="p-3.5 px-4 rounded-xl bg-muted/20 border border-border/40 backdrop-blur-sm flex items-center justify-between gap-4 select-none leading-none w-full">
+            <div className="space-y-1.5 text-left flex flex-col justify-center min-w-0 flex-1 leading-none">
+              <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block pl-0.5 leading-none">
+                Synchronized Ingress Progression
+              </span>
+              <p className="text-base sm:text-lg font-black tracking-tight text-foreground tabular-nums leading-none pt-0.5">
                 {answeredCount}
-                <span className="text-muted-foreground/30 mx-2">/</span>
-                {totalQuestions}
+                <span className="text-muted-foreground/30 font-normal mx-1.5">/</span>
+                {totalQuestions} inputs calibrated
               </p>
             </div>
-            <div className="w-32 h-2 rounded-full bg-primary/10 overflow-hidden">
+            <div className="w-28 sm:w-36 h-2 rounded-full bg-primary/10 border border-border/5 overflow-hidden shadow-inner shrink-0 relative flex">
               <div
-                className="h-full bg-primary transition-all duration-500"
+                className="h-full bg-primary rounded-full transition-all duration-300 ease-out shrink-0 border-none"
                 style={{ width: `${(answeredCount / totalQuestions) * 100}%` }}
               />
             </div>
           </div>
 
-          <div className="space-y-6">
-            {questions.map((q, index) => (
+          <div className="space-y-3.5 w-full min-w-0 text-left">
+            {questions.map((questionItem, index) => (
               <Card
-                key={q.id}
-                className="rounded-[32px] border-2 border-border/40 overflow-hidden hover:border-primary/20 transition-colors text-left"
+                key={questionItem.id}
+                className="rounded-2xl border border-border/40 bg-card/30 backdrop-blur-md shadow-sm overflow-hidden text-left w-full min-w-0 flex flex-col justify-center group"
               >
-                <CardHeader className="bg-muted/5 border-b border-border/10 p-6">
-                  <div className="flex items-center gap-3">
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-primary text-xs font-black">
+                <CardHeader className="bg-muted/10 border-b border-border/10 p-3.5 px-4 select-none leading-none w-full">
+                  <div className="flex items-center gap-2.5 min-w-0 w-full leading-none">
+                    <div className="h-6.5 w-6.5 rounded-md bg-primary/10 border border-primary/5 text-primary text-[10px] font-mono font-black flex items-center justify-center shrink-0 shadow-sm leading-none">
                       {String(index + 1).padStart(2, "0")}
                     </div>
-                    <CardTitle className="text-base font-black uppercase italic tracking-tighter text-foreground">
-                      DATA_NODE_REQUEST
-                    </CardTitle>
+                    <span className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground/70 truncate block pt-0.5 leading-none">
+                      Trajectory Evaluation Node Target
+                    </span>
                   </div>
                 </CardHeader>
-                <CardContent className="p-8 space-y-6">
-                  <p className="text-lg font-bold leading-tight text-foreground/90 italic">{q.question_text}</p>
+
+                <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0 flex flex-col justify-center">
+                  <p className="text-xs sm:text-sm font-bold leading-relaxed text-foreground/90 break-words select-text pr-1 italic">
+                    {questionItem.question_text}
+                  </p>
+
                   <RadioGroup
-                    value={answers[q.id] || ""}
-                    onValueChange={(value) => setAnswers({ ...answers, [q.id]: value })}
-                    className="grid grid-cols-1 md:grid-cols-2 gap-3"
+                    value={answers[questionItem.id] || ""}
+                    onValueChange={(chosenOptionValueStr) =>
+                      setAnswers((prev) => ({ ...prev, [questionItem.id]: chosenOptionValueStr }))
+                    }
+                    className="grid grid-cols-1 sm:grid-cols-2 gap-2.5 w-full select-none font-bold text-xs"
                   >
-                    {["A", "B", "C", "D"].map((option) => {
-                      const optionKey = `option_${option.toLowerCase()}` as keyof QuizQuestion;
-                      const isSelected = answers[q.id] === option;
+                    {["A", "B", "C", "D"].map((optionTokenStr) => {
+                      const computedKeyName = `option_${optionTokenStr.toLowerCase()}` as keyof QuizQuestion;
+                      const isOptionCheckedStr = answers[questionItem.id] === optionTokenStr;
+
                       return (
                         <div
-                          key={option}
+                          key={optionTokenStr}
                           className={cn(
-                            "relative flex items-center p-4 rounded-2xl border-2 transition-all cursor-pointer hover:bg-primary/5",
-                            isSelected ? "border-primary bg-primary/5 shadow-inner" : "border-border/40",
+                            "relative flex items-center p-3.5 rounded-xl border transition-all duration-200 cursor-pointer transform-gpu active:scale-[0.995] w-full min-w-0 shadow-sm hover:border-primary/20 hover:bg-background/30",
+                            isOptionCheckedStr
+                              ? "border-primary bg-primary/5 shadow-inner text-primary font-bold"
+                              : "border-border/40 bg-background/50",
                           )}
                         >
-                          <RadioGroupItem value={option} id={`${q.id}-${option}`} className="sr-only" />
+                          <RadioGroupItem
+                            value={optionTokenStr}
+                            id={`${questionItem.id}-${optionTokenStr}`}
+                            className="sr-only"
+                          />
                           <Label
-                            htmlFor={`${q.id}-${option}`}
-                            className="cursor-pointer flex-1 flex items-center gap-3"
+                            htmlFor={`${questionItem.id}-${optionTokenStr}`}
+                            className="cursor-pointer flex-1 flex items-start gap-3 w-full min-w-0 leading-tight font-semibold"
                           >
                             <span
                               className={cn(
-                                "h-6 w-6 rounded-lg flex items-center justify-center font-black text-[10px] border-2",
-                                isSelected
-                                  ? "bg-primary text-white border-primary"
-                                  : "bg-muted text-muted-foreground border-border/40",
+                                "h-5 w-5 rounded-md flex items-center justify-center font-mono font-bold text-[10px] border shrink-0 select-none mt-0.5 transition-colors",
+                                isOptionCheckedStr
+                                  ? "bg-primary text-primary-foreground border-transparent shadow-sm"
+                                  : "bg-muted text-muted-foreground/80 border-border/40",
                               )}
                             >
-                              {option}
+                              {optionTokenStr}
                             </span>
-                            <span className="text-sm font-bold uppercase tracking-tight text-foreground">
-                              {q[optionKey] as string}
+                            <span className="text-xs sm:text-sm font-semibold text-foreground/80 flex-1 min-w-0 break-words select-text leading-snug pt-0.5">
+                              {questionItem[computedKeyName] as string}
                             </span>
                           </Label>
                         </div>
@@ -423,10 +519,22 @@ export function AssessStage({
           <Button
             onClick={handleExecutiveSubmit}
             disabled={!allAnswered}
-            className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-widest text-sm shadow-2xl active:scale-95 transition-all gap-3"
+            type="button"
+            className="w-full h-11 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md transform-gpu active:scale-[0.99] transition-transform gap-1.5 flex items-center justify-center cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 mt-2"
           >
-            {allAnswered ? <Zap className="h-5 w-5 fill-current" /> : <Target className="h-5 w-5" />}
-            {allAnswered ? "Finalize_Identity_Sync" : `Awaiting_Inputs (${answeredCount}/${totalQuestions})`}
+            {allAnswered ? (
+              <>
+                <Zap className="h-4 w-4 fill-primary-foreground/10 stroke-[2.2] animate-pulse shrink-0" />
+                <span>Commit & Finalize Accuracy Ledger</span>
+              </>
+            ) : (
+              <>
+                <Target className="h-4 w-4 stroke-[2.5] shrink-0" />
+                <span>
+                  Awaiting Inputs Matrix ({answeredCount} / {totalQuestions})
+                </span>
+              </>
+            )}
           </Button>
         </div>
       )}
