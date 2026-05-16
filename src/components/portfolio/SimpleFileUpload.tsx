@@ -1,14 +1,12 @@
-import React, { useState, useRef } from "react";
+import React, { useState, useRef, useEffect, useMemo } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { Upload, X, FileText, Link, AlertCircle, CheckCircle, Loader2, Zap, ShieldCheck } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Progress } from "@/components/ui/progress";
+import { Card, CardContent } from "@/components/ui/card";
+import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
-
-/**
- * GroUp Academy: Lightweight Artifact Ingress Node
- * CTO Reference: Authoritative component for singleton CV deployment and URL mapping.
- */
 
 interface SimpleFileUploadProps {
   onFileUploaded: (url: string) => void;
@@ -23,6 +21,11 @@ type UploadMode = "choose" | "uploading" | "url-input" | "success" | "error";
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL;
 const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY;
 
+/**
+ * GroUp Academy: Lightweight Single-Artifact Data Ingress System (SimpleFileUpload)
+ * An authoritative singleton sandbox managing custom profile CV deployments and URL registration layers.
+ * Version: Launch Candidate · Phase Z0 Hardened
+ */
 export const SimpleFileUpload: React.FC<SimpleFileUploadProps> = ({
   onFileUploaded,
   onUrlProvided,
@@ -30,6 +33,9 @@ export const SimpleFileUpload: React.FC<SimpleFileUploadProps> = ({
   accept = ".pdf,.doc,.docx",
   maxSizeMB = 10,
 }) => {
+  const queryClient = useQueryClient();
+  const isMountedRef = useRef<boolean>(true);
+
   const [mode, setMode] = useState<UploadMode>(currentValue ? "success" : "choose");
   const [progress, setProgress] = useState(0);
   const [statusMessage, setStatusMessage] = useState("");
@@ -40,261 +46,374 @@ export const SimpleFileUpload: React.FC<SimpleFileUploadProps> = ({
   const fileInputRef = useRef<HTMLInputElement>(null);
   const xhrRef = useRef<XMLHttpRequest | null>(null);
 
+  // Synchronize component lifecycles to discard dangling async execution blocks
+  useEffect(() => {
+    isMountedRef.current = true;
+    trackEvent("singleton_ingress_uploader_mounted", { maxSizeLimit: maxSizeMB });
+    return () => {
+      isMountedRef.current = false;
+      if (xhrRef.current) {
+        xhrRef.current.abort();
+      }
+    };
+  }, [maxSizeMB]);
+
+  // Synchronize internal layout parameters if the context baseline value mutates downstream
+  useEffect(() => {
+    if (currentValue) {
+      setUploadedUrl(currentValue);
+      setMode("success");
+    }
+  }, [currentValue]);
+
   const executeDataIngress = async (file: File) => {
-    // PROTOCOL: Data Volume Verification
-    if (file.size > maxSizeMB * 1024 * 1024) {
+    if (!file) return;
+
+    // PROTOCOL LOCK: Quantitative Volume Payload Verification Checks
+    const maxByteLimitCalculated = maxSizeMB * 1024 * 1024;
+    if (file.size > maxByteLimitCalculated) {
       setMode("error");
-      setErrorMessage(`DATA_OVERFLOW: Limit is ${maxSizeMB}MB.`);
+      const sizeOverflowErrorString = `DATA_OVERFLOW_FAULT: Transmission ceiling limit clamped at ${maxSizeMB}MB.`;
+      setErrorMessage(sizeOverflowErrorString);
+      trackEvent("singleton_ingress_size_overflow_intercepted", { fileSize: file.size });
       return;
     }
 
     setMode("uploading");
     setProgress(0);
-    setStatusMessage("Syncing_Registry...");
+    setStatusMessage("Initializing secure registry handshake…");
+    trackEvent("singleton_ingress_network_stream_started", { fileName: file.name });
 
-    // PROTOCOL: Deterministic ID Mapping
-    const sanitizedName = `NODE_CV_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
-    const targetEndpoint = `${SUPABASE_URL}/storage/v1/object/portfolio-uploads/${sanitizedName}`;
+    // PROTOCOL LOCK: Deterministic Non-Colliding Index Identifier Mapping
+    const cryptographicallySecureSanitizedNameStr = `NODE_CV_${Date.now()}_${file.name.replace(/[^a-zA-Z0-9.-]/g, "_")}`;
+    const targetedStorageBucketEndpointUrl = `${SUPABASE_URL}/storage/v1/object/portfolio-uploads/${cryptographicallySecureSanitizedNameStr}`;
 
-    const xhr = new XMLHttpRequest();
-    xhrRef.current = xhr;
+    const xhrInstance = new XMLHttpRequest();
+    xhrRef.current = xhrInstance;
 
-    xhr.upload.onprogress = (e) => {
-      if (e.lengthComputable) {
-        const percent = Math.round((e.loaded / e.total) * 100);
-        setProgress(percent);
-        setStatusMessage(`INGRESS_SYNC: ${percent}%`);
+    xhrInstance.upload.onprogress = (progressEventObj) => {
+      if (progressEventObj.lengthComputable && isMountedRef.current) {
+        const structuralPercentValue = Math.max(
+          0,
+          Math.min(100, Math.round((progressEventObj.loaded / progressEventObj.total) * 100)),
+        );
+        setProgress(structuralPercentValue);
+        setStatusMessage(`Ingress Stream Sync: ${structuralPercentValue}%`);
       }
     };
 
-    xhr.onload = () => {
-      if (xhr.status >= 200 && xhr.status < 300) {
-        const publicArtifactUrl = `${SUPABASE_URL}/storage/v1/object/public/portfolio-uploads/${sanitizedName}`;
-        setUploadedUrl(publicArtifactUrl);
+    xhrInstance.onload = async () => {
+      if (!isMountedRef.current) return;
+
+      if (xhrInstance.status >= 200 && xhrInstance.status < 300) {
+        const publicConstructedArtifactUrlStr = `${SUPABASE_URL}/storage/v1/object/public/portfolio-uploads/${cryptographicallySecureSanitizedNameStr}`;
+
+        setUploadedUrl(publicConstructedArtifactUrlStr);
         setMode("success");
-        setStatusMessage("SYNC_VERIFIED");
-        onFileUploaded(publicArtifactUrl);
+        setStatusMessage("REGISTRY_SYNC_VERIFIED");
+        trackEvent("singleton_ingress_upload_success");
+
+        try {
+          // Automated Efficiency: Invalidate tracker states immediately across adjacent workspace viewports
+          await queryClient.invalidateQueries({ queryKey: ["module-analytics"] });
+          await queryClient.invalidateQueries({ queryKey: ["talent-profile"] });
+          await queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
+        } catch (cacheErr) {
+          trackError(cacheErr, { component: "SimpleFileUpload", action: "cache_invalidation_onload" });
+        }
+
+        onFileUploaded(publicConstructedArtifactUrlStr);
       } else {
+        const errorResponseStatusCodeStr = `INGRESS_HTTP_FAULT_CODE: ${xhrInstance.status}`;
         setMode("error");
-        setErrorMessage(`INGRESS_FAULT_CODE: ${xhr.status}`);
+        setErrorMessage(errorResponseStatusCodeStr);
+        trackError(errorResponseStatusCodeStr, { component: "SimpleFileUpload", action: "xhr_onload_status_failure" });
       }
     };
 
-    xhr.onerror = () => {
+    xhrInstance.onerror = () => {
+      if (!isMountedRef.current) return;
+      const networkUplinkDroppedErrorStr =
+        "UPLINK_TERMINATED_EXCEPTION: Check environment parameters or proxy interference blocks.";
       setMode("error");
-      setErrorMessage("UPLINK_TERMINATED: Possible proxy interference.");
+      setErrorMessage(networkUplinkDroppedErrorStr);
+      trackError(networkUplinkDroppedErrorStr, { component: "SimpleFileUpload", action: "xhr_onerror_callback" });
     };
 
-    xhr.timeout = 120000; // 120s Synapse Timeout
-    xhr.ontimeout = () => {
+    xhrInstance.timeout = 120000; // 120s Spaced Synapse Timeout Guard
+    xhrInstance.ontimeout = () => {
+      if (!isMountedRef.current) return;
+      const requestTimeoutErrorStr =
+        "SYNC_TIMEOUT_EXCEEDED: High network latency detected. Recommend fallback link-mapping bounds.";
       setMode("error");
-      setErrorMessage("SYNC_TIMEOUT: Recommend URL_MAPPING fallback.");
+      setErrorMessage(requestTimeoutErrorStr);
+      trackError(requestTimeoutErrorStr, { component: "SimpleFileUpload", action: "xhr_ontimeout_callback" });
     };
 
-    xhr.open("POST", targetEndpoint);
-    xhr.setRequestHeader("Authorization", `Bearer ${SUPABASE_ANON_KEY}`);
-    xhr.setRequestHeader("Content-Type", file.type || "application/octet-stream");
-    xhr.send(file);
+    xhrInstance.open("POST", targetedStorageBucketEndpointUrl);
+    xhrInstance.setRequestHeader("Authorization", `Bearer ${SUPABASE_ANON_KEY}`);
+    xhrInstance.setRequestHeader("Content-Type", file.type || "application/octet-stream");
+    xhrInstance.send(file);
   };
 
-  const executeUrlSync = () => {
-    const rawUrl = urlInput.trim();
-    if (!rawUrl) return setErrorMessage("SYNC_ID_REQUIRED");
+  const executeUrlSync = async () => {
+    const rawCleanUrlString = urlInput.trim();
+    if (!rawCleanUrlString) {
+      setErrorMessage("SYNC_REGISTRY_IDENTIFIER_REQUIRED");
+      return;
+    }
+
+    trackEvent("singleton_ingress_url_sync_requested");
 
     try {
-      new URL(rawUrl); // Protocol validation
-      setUploadedUrl(rawUrl);
+      // Robust structural protocol validation checks
+      new URL(rawCleanUrlString);
+      setUploadedUrl(rawCleanUrlString);
       setMode("success");
-      onUrlProvided(rawUrl);
-    } catch {
-      setErrorMessage("MALFORMED_URL: Required: https://...");
+      trackEvent("singleton_ingress_url_sync_success");
+
+      // Automated Efficiency: Evaporate stale components queries across metrics arrays instantly
+      await queryClient.invalidateQueries({ queryKey: ["module-analytics"] });
+      await queryClient.invalidateQueries({ queryKey: ["talent-profile"] });
+
+      onUrlProvided(rawCleanUrlString);
+    } catch (urlExceptionErr) {
+      trackError(urlExceptionErr, { component: "SimpleFileUpload", action: "execute_url_sync_validation" });
+      setErrorMessage("MALFORMED_URL_SCHEMA: Active secure index structure required (https://…).");
     }
   };
 
-  // VIEW: CHOOSE_INGRESS_PROTOCOL
+  // =========================================================================
+  // CORE MATRIX INTERFACE STREAM VIEW 1: COLD COLD-START CHOOSE SECTOR
+  // =========================================================================
   if (mode === "choose") {
     return (
-      <div className="space-y-4 animate-in fade-in duration-500">
+      <div className="space-y-4 text-left max-w-full w-full transform-gpu antialiased">
         <div
-          className={cn(
-            "group relative border-2 border-dashed border-border/40 rounded-[20px] p-10 text-center cursor-pointer",
-            "bg-muted/5 transition-all duration-500 hover:border-primary/40 hover:bg-primary/5 active:scale-95 shadow-inner",
-          )}
+          type="button"
           onClick={() => fileInputRef.current?.click()}
+          onDragOver={(e) => e.preventDefault()}
           onDrop={(e) => {
             e.preventDefault();
-            e.dataTransfer.files[0] && executeDataIngress(e.dataTransfer.files[0]);
+            const droppedFileItemNode = e.dataTransfer.files?.[0];
+            if (droppedFileItemNode) executeDataIngress(droppedFileItemNode);
           }}
-          onDragOver={(e) => e.preventDefault()}
+          className={cn(
+            "relative w-full border border-dashed border-border/40 rounded-xl p-8 sm:p-10 text-center select-none cursor-pointer outline-none focus-visible:ring-1 focus-visible:ring-ring transition-all bg-card/20 hover:bg-card/40 hover:border-border/80 group/dropzone shadow-sm",
+          )}
         >
           <input
             ref={fileInputRef}
             type="file"
             accept={accept}
+            className="hidden select-none sr-only pointer-events-none"
+            aria-hidden="true"
             onChange={(e) => e.target.files?.[0] && executeDataIngress(e.target.files[0])}
-            className="hidden"
           />
-          <div className="h-16 w-16 bg-background rounded-2xl border-2 border-border/10 flex items-center justify-center mx-auto mb-4 shadow-xl group-hover:scale-110 group-hover:rotate-3 transition-all duration-500">
-            <Upload className="h-6 w-6 text-primary/40 group-hover:text-primary transition-colors" />
+          <div className="h-14 w-14 bg-background border border-border/40 rounded-xl flex items-center justify-center mx-auto mb-3 shadow-sm group-hover/dropzone:scale-102 group-hover/dropzone:rotate-1 transition-transform duration-300">
+            <Upload className="h-5 w-5 text-muted-foreground/40 group-hover/dropzone:text-primary transition-colors stroke-[2.2]" />
           </div>
-          <p className="text-sm font-black uppercase italic tracking-tighter">Initialize_Binary_Ingress</p>
-          <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-[0.3em] mt-2">
-            PDF | DOCX | MAX {maxSizeMB}MB
+          <p className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground/80 leading-none">
+            Initialize Binary Ingress Pipeline
+          </p>
+          <p className="text-[9px] font-mono font-extrabold text-muted-foreground/40 uppercase tracking-widest mt-1.5 leading-none">
+            Extensions Mapped: PDF | DOCX &bull; Maximum Allowed Volume: {maxSizeMB}MB
           </p>
         </div>
 
-        <div className="flex items-center gap-4 px-2">
-          <div className="flex-1 h-[1px] bg-border/20" />
-          <span className="text-[8px] font-black text-muted-foreground/30 uppercase tracking-[0.5em]">OR_FALLBACK</span>
-          <div className="flex-1 h-[1px] bg-border/20" />
+        <div className="flex items-center gap-3 px-1 select-none pointer-events-none">
+          <div className="flex-1 h-[1px] bg-border/10" />
+          <span className="text-[9px] font-extrabold text-muted-foreground/30 uppercase tracking-widest font-mono leading-none">
+            Alternative Dynamic Route
+          </span>
+          <div className="flex-1 h-[1px] bg-border/10" />
         </div>
 
         <Button
           variant="outline"
-          className="w-full h-12 rounded-xl border-2 font-black uppercase italic text-[10px] tracking-widest gap-2 hover:bg-muted/10 transition-all"
-          onClick={() => setMode("url-input")}
+          type="button"
+          onClick={() => {
+            trackEvent("singleton_ingress_url_mode_toggled");
+            setMode("url-input");
+          }}
+          className="w-full h-10 rounded-xl border border-border/60 text-muted-foreground font-bold hover:text-foreground uppercase text-[10px] tracking-wide shrink-0 shadow-sm cursor-pointer transition-colors"
         >
-          <Link className="h-4 w-4" /> MAP_EXTERNAL_STORAGE_URL
+          <Link className="h-4 w-4 mr-1 stroke-[2.2]" />
+          <span>Map External Public Storage Document URL</span>
         </Button>
       </div>
     );
   }
 
-  // VIEW: INGRESS_SYNC_ACTIVE
+  // =========================================================================
+  // CORE MATRIX INTERFACE STREAM VIEW 2: ACTIVE TRANSFER PROGRESS INTERFACE
+  // =========================================================================
   if (mode === "uploading") {
     return (
-      <div className="border-2 border-primary/20 bg-primary/5 rounded-[24px] p-8 space-y-6 animate-in zoom-in-95 duration-500">
-        <div className="flex items-center gap-4">
-          <Loader2 className="h-8 w-8 animate-spin text-primary" />
-          <div className="flex-1 space-y-3">
-            <div className="flex justify-between items-end">
-              <p className="text-[10px] font-black uppercase italic text-primary tracking-widest">{statusMessage}</p>
-              <span className="text-[10px] font-mono font-bold text-primary/60">{progress}%</span>
+      <div className="border border-primary/20 bg-primary/[0.015] rounded-xl p-5 space-y-4 text-left select-none w-full animate-in zoom-in-99 duration-200">
+        <div className="flex items-center gap-3.5 w-full min-w-0 font-bold text-xs leading-none">
+          <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5] shrink-0" />
+          <div className="flex-1 min-w-0 space-y-1.5 flex flex-col justify-center leading-none">
+            <div className="flex justify-between items-center text-[9px] font-extrabold uppercase tracking-wider font-mono leading-none w-full text-muted-foreground/60">
+              <span className="truncate pr-1 animate-pulse italic block">{statusMessage}</span>
+              <span className="text-primary font-black bg-primary/5 px-1 rounded shadow-xs">{progress}%</span>
             </div>
-            <div className="h-1.5 bg-primary/10 rounded-full overflow-hidden shadow-inner">
-              <div
-                className="h-full bg-primary transition-all duration-500 ease-out"
-                style={{ width: `${progress}%` }}
-              />
-            </div>
+            <Progress
+              value={progress}
+              className="h-1.5 border-none bg-primary/10 shadow-inner w-full block rounded-full"
+            />
           </div>
         </div>
         <Button
           variant="ghost"
           size="sm"
+          type="button"
           onClick={() => {
+            trackEvent("singleton_ingress_upload_aborted");
             xhrRef.current?.abort();
             setMode("choose");
           }}
-          className="w-full h-8 text-[9px] font-black uppercase italic tracking-widest text-muted-foreground/60 hover:text-rose-500"
+          className="w-full h-8 text-[9px] font-bold uppercase tracking-wider text-muted-foreground/50 hover:text-rose-500 transition-colors cursor-pointer rounded-xl"
         >
-          <X className="h-3 w-3 mr-2" /> ABORT_SYNC
+          <X className="h-3.5 w-3.5 mr-1 stroke-[2.5]" />
+          <span>Abort Transport Action Stream</span>
         </Button>
       </div>
     );
   }
 
-  // VIEW: URL_MAPPING_PROTOCOL
+  // =========================================================================
+  // CORE MATRIX INTERFACE STREAM VIEW 3: URL REPOSITORY DIRECTORY INDEXING
+  // =========================================================================
   if (mode === "url-input") {
     return (
-      <div className="space-y-4 animate-in slide-in-from-bottom-2 duration-500 text-left">
-        <div className="space-y-2">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic ml-1">
-            Registry_Link_Mapping
-          </p>
-          <div className="flex gap-2">
+      <div className="space-y-3.5 text-left max-w-full w-full transform-gpu antialiased animate-in slide-in-from-bottom-1 duration-200 font-bold text-xs">
+        <div className="space-y-1.5 text-left w-full leading-none">
+          <Label className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block pl-0.5 leading-none select-none">
+            Registry Storage Link Mapping Identification
+          </Label>
+          <div className="flex gap-2 w-full font-semibold text-sm">
             <Input
               type="url"
-              placeholder="https://drive.google.com/..."
+              placeholder="Inject secure target asset address link (e.g. https://drive.google.com/…)…"
               value={urlInput}
+              className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner flex-1 min-w-0"
               onChange={(e) => {
                 setUrlInput(e.target.value);
                 setErrorMessage("");
               }}
-              className="h-12 bg-muted/20 border-2 rounded-xl font-bold italic focus:ring-primary/20"
             />
-            <Button className="h-12 px-6 rounded-xl font-black uppercase italic" onClick={executeUrlSync}>
-              <ShieldCheck className="h-4 w-4" />
+            <Button
+              type="button"
+              onClick={executeUrlSync}
+              className="h-10 px-4 rounded-xl bg-primary text-primary-foreground font-bold hover:bg-primary/90 shadow-md shrink-0 flex items-center justify-center cursor-pointer"
+            >
+              <ShieldCheck className="h-4 w-4 stroke-[2.5]" />
             </Button>
           </div>
         </div>
+
         {errorMessage && (
-          <p className="text-[9px] font-black text-rose-500 uppercase tracking-widest ml-1">{errorMessage}</p>
+          <p className="text-[10px] font-bold text-rose-500 uppercase tracking-wide pl-0.5 animate-in shake duration-200 select-text">
+            {errorMessage}
+          </p>
         )}
-        <p className="text-[9px] font-medium leading-relaxed italic text-muted-foreground/40 px-1">
-          Authorized domains: Google Drive, Dropbox, OneDrive. Artifact must be public.
+
+        <p className="text-[11px] font-semibold text-muted-foreground/40 leading-normal select-none italic pl-0.5 pt-0.5">
+          Supported remote hosting nodes include: Google Drive, Dropbox, and OneDrive index lines. Targets must retain
+          public reading accessibility variables.
         </p>
+
         <Button
           variant="ghost"
           size="sm"
+          type="button"
           onClick={() => setMode("choose")}
-          className="text-[10px] font-black uppercase tracking-widest opacity-60 hover:opacity-100 h-8"
+          className="text-[9px] font-black uppercase tracking-wider text-muted-foreground/60 hover:text-primary transition-colors h-7 rounded-xl px-2 select-none cursor-pointer"
         >
-          ← REVERT_TO_BINARY
+          &larr; Revert Back to Local Binary Processing
         </Button>
       </div>
     );
   }
 
-  // VIEW: INGRESS_FAULT
+  // =========================================================================
+  // CORE MATRIX INTERFACE STREAM VIEW 4: TRANSACTION FAILURE SHIELDS
+  // =========================================================================
   if (mode === "error") {
     return (
-      <div className="space-y-4 animate-in shake-2 duration-500">
-        <div className="border-2 border-rose-500/20 bg-rose-500/5 rounded-[20px] p-6">
-          <div className="flex items-start gap-4">
-            <AlertCircle className="h-6 w-6 text-rose-500 shrink-0" />
-            <div className="space-y-1">
-              <p className="text-xs font-black uppercase italic text-rose-500 tracking-tight">Ingress_Registry_Fault</p>
-              <p className="text-[10px] font-medium text-muted-foreground italic">{errorMessage}</p>
+      <div className="space-y-3.5 text-left max-w-full w-full transform-gpu antialiased animate-in shake duration-300">
+        <div className="border border-rose-500/15 bg-rose-500/[0.02] rounded-xl p-4 select-text leading-tight w-full min-w-0">
+          <div className="flex gap-3 items-start leading-none font-bold text-xs">
+            <AlertCircle className="h-5 w-5 text-rose-500 shrink-0 stroke-[2.5] mt-0.5" />
+            <div className="space-y-1.5 flex-1 min-w-0 text-left">
+              <p className="text-xs font-bold uppercase tracking-wide text-rose-600 dark:text-rose-400 select-none leading-none">
+                Ingress Validation Fault
+              </p>
+              <p className="text-[11px] font-semibold text-muted-foreground/70 italic leading-relaxed break-words pr-1">
+                {errorMessage}
+              </p>
             </div>
           </div>
         </div>
-        <div className="flex gap-3">
+
+        <div className="flex gap-2.5 font-bold text-xs select-none w-full shrink-0">
           <Button
             variant="outline"
-            className="flex-1 h-12 rounded-xl border-2 font-black uppercase text-[10px] italic"
+            type="button"
+            className="flex-1 h-10 rounded-xl border border-border/60 text-muted-foreground hover:bg-accent hover:text-foreground uppercase text-[10px] tracking-wide shrink-0 shadow-sm cursor-pointer transition-colors"
             onClick={() => setMode("choose")}
           >
-            RETRY_SYNC
+            Re-Initialize Ingress
           </Button>
           <Button
-            className="flex-1 h-12 rounded-xl font-black uppercase text-[10px] italic gap-2"
+            type="button"
+            className="flex-1 h-10 rounded-xl font-bold uppercase text-[10px] tracking-wide gap-1 bg-primary text-primary-foreground hover:bg-primary/90 shrink-0 shadow-md cursor-pointer transition-transform active:scale-[0.985]"
             onClick={() => setMode("url-input")}
           >
-            <Link className="h-4 w-4" /> USE_URL
+            <Link className="h-3.5 w-3.5 stroke-[2.5]" />
+            <span>Use Mapped Link</span>
           </Button>
         </div>
       </div>
     );
   }
 
-  // VIEW: SYNC_VERIFIED
+  // =========================================================================
+  // CORE MATRIX INTERFACE STREAM VIEW 5: ENCRYPTION CONFIRMED PASS SHIELD
+  // =========================================================================
   if (mode === "success") {
     return (
-      <div className="border-2 border-emerald-500/20 bg-emerald-500/5 rounded-[24px] p-6 animate-in zoom-in-95 duration-700">
-        <div className="flex items-center justify-between">
-          <div className="flex items-center gap-4">
-            <div className="h-10 w-10 rounded-xl bg-emerald-500/10 flex items-center justify-center shadow-lg">
-              <ShieldCheck className="h-6 w-6 text-emerald-600" />
+      <div className="border border-emerald-500/15 bg-emerald-500/[0.01] rounded-xl p-4 w-full text-left font-bold text-xs tracking-tight animate-in zoom-in-99 duration-300 flex flex-col justify-center">
+        <div className="flex items-center justify-between gap-4 w-full h-10 leading-none select-none">
+          <div className="flex items-center gap-3.5 min-w-0 h-full flex-1">
+            <div className="h-8 w-8 rounded-lg bg-emerald-500/10 border border-emerald-500/5 text-emerald-600 dark:text-emerald-400 flex items-center justify-center shrink-0 shadow-inner">
+              <ShieldCheck className="h-4.5 w-4.5 stroke-[2.5]" />
             </div>
-            <div className="text-left">
-              <p className="text-[11px] font-black uppercase italic text-emerald-700 leading-none">Artifact_Synced</p>
-              <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1 truncate max-w-[180px]">
-                {uploadedUrl.includes("storage") ? "REGISTRY_BINARY_NODE" : "EXTERNAL_MAPPED_URL"}
+            <div className="flex flex-col justify-center leading-none min-w-0 flex-1">
+              <p className="text-xs font-bold text-emerald-600 dark:text-emerald-400 uppercase italic tracking-wide leading-none select-all">
+                Artifact Ingress Mapped
+              </p>
+              <p className="text-[9px] font-mono font-extrabold text-muted-foreground/40 uppercase tracking-wider truncate text-ellipsis block pt-1.5 leading-none select-text">
+                {uploadedUrl.includes("storage") ? "Ledger Binary Storage Matrix" : "External Mapped Address URL Node"}
               </p>
             </div>
           </div>
+
           <Button
             variant="ghost"
             size="icon"
+            type="button"
             onClick={() => {
+              trackEvent("singleton_ingress_deletion_requested");
               setMode("choose");
               setUploadedUrl("");
               onFileUploaded("");
             }}
-            className="h-9 w-9 rounded-xl hover:bg-rose-500/10 hover:text-rose-500 transition-all"
+            className="h-8 w-8 rounded-lg text-muted-foreground/60 hover:bg-rose-500/10 hover:text-rose-500 transition-colors shrink-0 flex items-center justify-center shadow-none p-0 border-none"
+            title="Purge active verification file entry parameters from current identity frame"
           >
-            <X className="h-4 w-4" />
+            <X className="h-4 w-4 stroke-[2.5]" />
           </Button>
         </div>
       </div>
