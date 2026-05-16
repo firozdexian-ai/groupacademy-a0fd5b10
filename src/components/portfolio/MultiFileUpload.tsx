@@ -272,7 +272,6 @@ export default function MultiFileUpload({
       {/* HUD LEVEL 2: COMPONENT CORE DRAG AND DROP INGRESS GATEWAY SLOT */}
       {normalizedArtifactsCount < maxFiles && (
         <div
-          type="button"
           onDragEnter={(e) => handleDragEventsHandshakePass(e, true)}
           onDragLeave={() => setDragActive(false)}
           onDragOver={(e) => e.preventDefault()}
