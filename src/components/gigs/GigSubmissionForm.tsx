@@ -1,16 +1,19 @@
+import { useEffect } from "react";
 import { useTalent } from "@/hooks/useTalent";
 import { useQueryClient } from "@tanstack/react-query";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogDescription } from "@/components/ui/dialog";
-import { Coins, Sparkles, AlertCircle, Zap, ShieldCheck } from "lucide-react";
+import { Coins, Sparkles, AlertCircle, Zap } from "lucide-react";
 import { CVUploadGigForm } from "./CVUploadGigForm";
 import { JobPostingGigForm } from "./JobPostingGigForm";
 import { JobSharingGigForm } from "./JobSharingGigForm";
 import { CourseSharingGigForm } from "./CourseSharingGigForm";
+import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 
 /**
  * GroUp Academy: Gig Submission Orchestrator
  * CTO Reference: Authoritative factory for polymorphic gig payload ingestion.
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 
 interface Gig {
@@ -30,95 +33,134 @@ export function GigSubmissionForm({ gig, open, onOpenChange }: GigSubmissionForm
   const { talent } = useTalent();
   const queryClient = useQueryClient();
 
+  // Monitor orchestrator modal lifecycles across active analytics channels
+  useEffect(() => {
+    if (open && gig?.id) {
+      trackEvent("gig_orchestrator_modal_opened", {
+        gigId: gig.id,
+        category: gig.category,
+        talentId: talent?.id,
+      });
+    }
+  }, [open, gig, talent?.id]);
+
+  if (!talent?.id) {
+    if (open) {
+      trackError("GigSubmissionForm triggered while talent session state is un-authenticated.", {
+        component: "GigSubmissionForm",
+        action: "security_context_assertion_fault",
+      });
+    }
+    return null;
+  }
+
   // PROTOCOL: Robust cache invalidation sequence for ledger synchronization
   const handleExecutiveSubmission = () => {
-    queryClient.invalidateQueries({ queryKey: ["gig-submission-counts"] });
-    queryClient.invalidateQueries({ queryKey: ["my-gig-submissions"] });
-    queryClient.invalidateQueries({ queryKey: ["talent-stats"] }); // Synchronize global wallet balance
+    trackEvent("gig_orchestrator_submission_completed", { gigId: gig.id, talentId: talent.id });
+
+    // Automated Efficiency: Synchronize cache pools instantly across viewports
+    queryClient.invalidateQueries({ queryKey: ["gig-submission-counts", talent.id] });
+    queryClient.invalidateQueries({ queryKey: ["my-gig-submissions", talent.id] });
+    queryClient.invalidateQueries({ queryKey: ["talent-stats", talent.id] });
+    queryClient.invalidateQueries({ queryKey: ["credits-balance"] });
+    queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
+
     onOpenChange(false);
   };
 
-  if (!talent?.id) return null;
-
-  // ROUTER: Specialized Form Ingress
+  // ROUTER: Specialized Form Ingress Factory
   const renderSpecializedProtocol = () => {
-    const props = { gig, talentId: talent.id, onSubmitted: handleExecutiveSubmission };
+    const functionalProps = { gig, talentId: talent.id, onSubmitted: handleExecutiveSubmission };
 
     switch (gig.category) {
       case "cv_upload":
-        return <CVUploadGigForm {...props} />;
+        return <CVUploadGigForm {...functionalProps} />;
       case "job_posting":
-        return <JobPostingGigForm {...props} />;
+        return <JobPostingGigForm {...functionalProps} />;
       case "job_sharing":
-        return <JobSharingGigForm {...props} />;
+        return <JobSharingGigForm {...functionalProps} />;
       case "course_resell":
-        return <CourseSharingGigForm {...props} />;
+        return <CourseSharingGigForm {...functionalProps} />;
       default:
+        trackError(`Polymorphic factory hit an unmapped workflow key segment: [${gig.category}]`, {
+          component: "GigSubmissionForm",
+          action: "factory_switch_fallback",
+          gigId: gig.id,
+        });
         return (
-          <div className="py-16 text-center space-y-4 animate-pulse">
-            <AlertCircle className="h-12 w-12 text-muted-foreground/20 mx-auto" />
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 italic">
-              PROTOCOL_NODE_OFFLINE
+          <div className="py-12 text-center space-y-3.5 select-none">
+            <AlertCircle className="h-10 w-10 text-destructive/40 mx-auto animate-bounce" />
+            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/80 italic">
+              Protocol Node Offline
             </p>
           </div>
         );
     }
   };
 
-  // DYNAMIC_GEOMETRY: Adaptive dialog widths based on task complexity
+  // DYNAMIC_GEOMETRY: Adaptive layout widths mapped precisely to input form sizes
   const getExecutiveWidth = () => {
-    if (["content_creation", "job_posting"].includes(gig.category)) return "max-w-xl";
-    if (gig.category === "job_sharing") return "max-w-lg";
-    return "max-w-md";
+    if (["course_resell", "job_posting"].includes(gig.category)) return "sm:max-w-xl";
+    if (gig.category === "job_sharing") return "sm:max-w-lg";
+    return "sm:max-w-md";
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
+    <Dialog
+      open={open}
+      onOpenChange={(visibleState) => {
+        onOpenChange(visibleState);
+        if (!visibleState) {
+          trackEvent("gig_orchestrator_modal_dismissed", { gigId: gig.id });
+        }
+      }}
+    >
       <DialogContent
         className={cn(
-          "rounded-[40px] border-2 border-border/40 bg-card/60 backdrop-blur-3xl shadow-2xl no-scrollbar",
+          "rounded-3xl border border-border/40 bg-background/98 backdrop-blur-xl shadow-2xl overflow-hidden w-[94vw] sm:w-full select-none sm:select-text transform-gpu",
           getExecutiveWidth(),
-          "max-h-[92vh] overflow-y-auto p-0", // Zero padding on content for custom form spacing
+          "max-h-[90vh] max-h-[90svh] overflow-y-auto p-0 pt-safe pb-safe-bottom", // Zero padding rules handled dynamically
         )}
+        style={{ contentVisibility: "auto" }}
       >
-        {/* HEADER_SYNC: Industrial metadata display */}
-        <DialogHeader className="p-8 pb-4 space-y-6 text-left">
-          <div className="flex items-center gap-4">
-            <div className="h-12 w-12 rounded-2xl bg-primary/10 border border-primary/20 flex items-center justify-center shadow-lg shadow-primary/5">
-              <Sparkles className="h-6 w-6 text-primary fill-current" />
+        {/* HEADER_SYNC: High-fidelity metadata display panel layout */}
+        <DialogHeader className="p-6 sm:p-7 pb-3 space-y-4 text-left border-b border-border/20 select-none">
+          <div className="flex items-center gap-3 w-full min-w-0">
+            <div className="h-11 w-11 rounded-xl bg-primary/10 border border-primary/5 flex items-center justify-center shrink-0 shadow-sm">
+              <Sparkles className="h-5 w-5 text-primary fill-primary/10 animate-pulse" />
             </div>
-            <div className="space-y-1">
-              <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter leading-none">
-                {gig.title.replace("_", " ")}
+            <div className="min-w-0 flex-1 flex flex-col justify-center">
+              <DialogTitle className="text-base sm:text-lg font-bold tracking-tight text-foreground line-clamp-1 truncate w-full break-all">
+                {gig.title ? gig.title.replace(/_/g, " ") : "Task Update Ingress"}
               </DialogTitle>
-              <div className="flex items-center gap-2 text-[9px] font-bold text-muted-foreground uppercase tracking-widest italic opacity-60">
-                <Zap className="h-3 w-3" /> Protocol_V2.0_Ingress
+              <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/80 uppercase tracking-wide mt-0.5 leading-none">
+                <Zap className="h-3 w-3 text-primary stroke-[2.2]" />
+                <span>Orchestration Node Ingress</span>
               </div>
             </div>
           </div>
 
-          <DialogDescription className="bg-amber-500/5 border-2 border-amber-500/10 rounded-[24px] p-5 flex items-center justify-between shadow-inner">
-            <div className="flex flex-col">
-              <span className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/40 mb-1">
-                YIELD_POTENTIAL
+          <DialogDescription className="bg-amber-500/5 border border-amber-500/10 rounded-2xl p-4 flex items-center justify-between shadow-inner w-full gap-4">
+            <div className="flex flex-col text-left">
+              <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80">
+                Yield Potential Status
               </span>
-              <div className="flex items-center gap-2">
-                <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
-                <span className="text-sm font-black text-amber-600 uppercase italic">Verification_Required</span>
+              <div className="flex items-center gap-1.5 mt-0.5">
+                <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse shrink-0" />
+                <span className="text-xs font-bold text-amber-600 dark:text-amber-500 tracking-tight">
+                  Verification Auditing Required
+                </span>
               </div>
             </div>
-            <div className="flex items-center gap-2 bg-amber-500 text-white px-4 py-2.5 rounded-2xl shadow-[0_10px_20px_rgba(245,158,11,0.3)] scale-105">
-              <Coins className="h-5 w-5 fill-white/20" />
-              <span className="text-sm font-black italic tracking-tighter">+{gig.credit_reward} CR</span>
+            <div className="flex items-center gap-1.5 bg-amber-500 text-white px-3.5 py-1.5 rounded-xl shadow-md shadow-amber-500/10 shrink-0 select-none border border-white/5 tabular-nums">
+              <Coins className="h-4 w-4 fill-white/10 text-white stroke-[2.2]" />
+              <span className="text-xs font-black tracking-tight">+{gig.credit_reward || 0} CR</span>
             </div>
           </DialogDescription>
         </DialogHeader>
 
-        {/* INGRESS: Task Specific Forms */}
-        <div className="px-8 pb-10">
-          <div className="h-px bg-border/40 mb-8" />
-          {renderSpecializedProtocol()}
-        </div>
+        {/* INGRESS: Task Specific Forms Inject Section Frame */}
+        <div className="p-6 sm:p-7 pt-4 w-full min-w-0">{renderSpecializedProtocol()}</div>
       </DialogContent>
     </Dialog>
   );
