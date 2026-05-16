@@ -35,6 +35,7 @@ export interface PipelineApplication {
   cover_letter: string | null;
   sourced?: boolean | null;
   sourced_relationship_id?: string | null;
+  external_notes?: string | null;
 }
 
 export interface PipelineDashboardPayload {
