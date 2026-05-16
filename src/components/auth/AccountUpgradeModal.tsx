@@ -1,56 +1,73 @@
-import { Sparkles } from "lucide-react";
+import { useMemo } from "react";
 import { Dialog, DialogPortal, DialogOverlay } from "@/components/ui/dialog";
 import * as DialogPrimitive from "@radix-ui/react-dialog";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
+import { Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * Full-screen, uncloseable upgrade gate for legacy users who are missing
- * the new reference-table FKs (career_stage_id / institution_id).
- *
- * - No close button (X) is rendered.
- * - Outside-click & Escape are intercepted so the user cannot dismiss.
- * - The `OnboardingWizard` paints its own full-screen surface inside.
- */
-export function AccountUpgradeModal({
-  open,
-  onComplete,
-}: {
+interface AccountUpgradeModalProps {
   open: boolean;
   onComplete: () => void;
-}) {
+}
+
+/**
+ * GroUp Academy: Hardened Infrastructure Upgrade Gate (V5.6.0)
+ * CTO Reference: Absolute full-screen uncloseable viewport gate enforcing relational data hydration hooks.
+ * Architecture: Isolated modal container preventing element composition clipping or focus traps.
+ * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
+ */
+export function AccountUpgradeModal({ open, onComplete }: AccountUpgradeModalProps) {
+  // Guard interface event routing options defensively to ensure total user focus lock
+  const handleElementInteractionBlocker = useMemo(() => {
+    return (e: Event) => {
+      // HUD: ENFORCING_IMMUTABLE_ONBOARDING_GATEWAY_LOCK
+      e.preventDefault();
+    };
+  }, []);
+
   return (
     <Dialog open={open}>
       <DialogPortal>
-        <DialogOverlay className="bg-slate-900/70 backdrop-blur-md" />
+        {/* HUD: FIXED_BACKDROP_BLUR_SHIELD */}
+        <DialogOverlay className="bg-slate-950/80 backdrop-blur-xl transition-all duration-500 z-40" />
+
+        {/* COMPONENT: FULL_SCREEN_MIGRATION_TERMINAL */}
         <DialogPrimitive.Content
-          onPointerDownOutside={(e) => e.preventDefault()}
-          onEscapeKeyDown={(e) => e.preventDefault()}
-          onInteractOutside={(e) => e.preventDefault()}
+          onPointerDownOutside={handleElementInteractionBlocker}
+          onEscapeKeyDown={handleElementInteractionBlocker}
+          onInteractOutside={handleElementInteractionBlocker}
           className={cn(
-            "fixed inset-0 z-50 flex h-screen w-screen flex-col bg-slate-50 p-0 outline-none",
-            "data-[state=open]:animate-in data-[state=open]:fade-in-0",
+            "fixed inset-0 z-50 flex h-screen w-screen flex-col bg-background p-0 outline-none overflow-hidden select-none",
+            "data-[state=open]:animate-in data-[state=open]:fade-in-0 data-[state=open]:zoom-in-100 duration-500",
           )}
         >
-          <DialogPrimitive.Title className="sr-only">
-            Confirm your details to unlock your Campus Agent
-          </DialogPrimitive.Title>
+          {/* ACCESSIBILITY: AUTHENTICATED_ARIA_DOM_DESCRIPTIONS */}
+          <DialogPrimitive.Title className="sr-only">Account Infrastructure Upgrade Protocol</DialogPrimitive.Title>
           <DialogPrimitive.Description className="sr-only">
-            We&apos;ve upgraded our AI infrastructure. Please confirm a few details to unlock
-            your Campus Agent and 250 credits.
+            We have upgraded our deep learning core infrastructure pipelines. Legacy accounts must commit updated
+            profile parameters to unlock multi-agent compute environments.
           </DialogPrimitive.Description>
 
-          {/* Welcome banner above the wizard (the wizard itself paints fixed inset-0,
-              so it will overlay this banner; we keep the banner here for accessibility
-              labels and a brief flash before the wizard mounts). */}
-          <div className="pointer-events-none absolute left-1/2 top-6 z-[60] -translate-x-1/2 rounded-full border border-blue-200 bg-blue-50/95 px-4 py-1.5 text-xs font-semibold text-blue-700 shadow-sm">
-            <span className="inline-flex items-center gap-1.5">
-              <Sparkles className="h-3.5 w-3.5" />
-              Quick upgrade · unlock your Campus Agent + 250 credits
-            </span>
-          </div>
+          {/* HUD: STANDARDIZED_TOP_BORDER_ACCENT_LINE */}
+          <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary shrink-0" />
 
-          <OnboardingWizard onComplete={onComplete} />
+          {/* WORKSPACE_SURFACE: METADATA_CONTAINER */}
+          <div className="relative flex-1 w-full h-full">
+            {/* CTO Architecture Note: The welcome message is passed down inside an explicit layout block 
+              to guarantee standard linear rendering passes without dynamic text menu overlapping splits.
+            */}
+            <div className="absolute top-6 left-1/2 -translate-x-1/2 z-10 w-full max-w-md px-4 pointer-events-none">
+              <div className="rounded-full border-2 border-primary/20 bg-card/90 backdrop-blur-md px-4 py-2 shadow-xl flex items-center justify-center gap-2">
+                <Sparkles className="h-4 w-4 text-primary animate-pulse shrink-0" />
+                <span className="text-[10px] font-black uppercase tracking-widest text-primary italic font-mono leading-none">
+                  Infrastructure Upgrade Active
+                </span>
+              </div>
+            </div>
+
+            {/* CORE WORKFLOW SYSTEM MULTI_STEP STEPPER ENGINE */}
+            <OnboardingWizard onComplete={onComplete} />
+          </div>
         </DialogPrimitive.Content>
       </DialogPortal>
     </Dialog>
