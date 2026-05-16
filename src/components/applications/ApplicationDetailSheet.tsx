@@ -57,7 +57,7 @@ export function ApplicationDetailSheet({
   useEffect(() => {
     if (application) {
       // Hydrate notes cleanly from historical ledger parameters or fall back to an empty canvas string safely
-      setInternalNotesText((application as any).external_notes || "");
+      setInternalNotesText(application.external_notes || "");
       setActiveTabValue("overview"); // Reset workspace tabs systematically to protect recruiter layout tracking
     }
   }, [application]);
@@ -327,7 +327,7 @@ export function ApplicationDetailSheet({
                 type="button"
                 size="sm"
                 variant="outline"
-                disabled={isMoving || isSavingNotes || internalNotesText.trim() === ((application as any).external_notes || "")}
+                disabled={isMoving || isSavingNotes || internalNotesText.trim() === (application.external_notes || "")}
                 onClick={() => saveNotesMutation.mutate(internalNotesText)}
                 className="w-full h-10 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest transition-all active:scale-[0.99] disabled:cursor-not-allowed"
               >
