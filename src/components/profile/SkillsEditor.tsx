@@ -50,8 +50,7 @@ export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
     if (!sanitizedInputToken) return;
 
     if (safeSkillsCollection.includes(sanitizedInputToken)) {
-      toast({
-        title: "DUPLICATE_NODE_REJECTED",
+      toast("DUPLICATE_NODE_REJECTED", {
         description: "This proficiency token is already mapped to your matrix.",
       });
       setInputValue("");
