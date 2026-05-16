@@ -1,6 +1,7 @@
-import { useState, useEffect } from "react";
-import { TalentProfile } from "@/contexts/TalentContext";
+import { useEffect, useRef, useState } from "react";
+import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { useTalent } from "@/hooks/useTalent";
 import {
   Dialog,
   DialogContent,
@@ -14,18 +15,14 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import { trackError, trackEvent } from "@/lib/errorTracking";
 import { Loader2, User, GraduationCap, Briefcase, Sparkles, Camera, ShieldCheck, Zap } from "lucide-react";
 import { toast } from "sonner";
 import { EducationEditor, EducationEntry } from "./EducationEditor";
 import { ExperienceEditor, ExperienceEntry } from "./ExperienceEditor";
 import { SkillsEditor } from "./SkillsEditor";
 import { ProfilePhotoUpload } from "./ProfilePhotoUpload";
-
-/**
- * GroUp Academy: Profile Management Node (Hardened Type Version)
- * CTO Reference: Authoritative identity editor for talent professional nodes.
- * Fixes: TS2345 (Json incompatibility via explicit cast).
- */
+import type { TalentProfile } from "@/contexts/TalentContext";
 
 interface ProfileEditDialogProps {
   open: boolean;
@@ -33,14 +30,23 @@ interface ProfileEditDialogProps {
   talent: TalentProfile;
 }
 
+/**
+ * GroUp Academy: Authoritative Professional Identity Gateway Master Editor (ProfileEditDialog)
+ * An operational sandbox orchestrating academic records, career histories, skill matrices, and profile hydration tasks.
+ * Version: Launch Candidate · Phase Z0 Hardened
+ */
 export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDialogProps) {
-  // IDENTITY_LEDGER: State Management
-  const [fullName, setFullName] = useState(talent.fullName || "");
-  const [phone, setPhone] = useState(talent.phone || "");
-  const [linkedinUrl, setLinkedinUrl] = useState(talent.linkedinUrl || "");
-  const [portfolioUrl, setPortfolioUrl] = useState(talent.portfolioUrl || "");
-  const [customProfession, setCustomProfession] = useState(talent.customProfession || "");
-  const [profilePhotoUrl, setProfilePhotoUrl] = useState(talent.profilePhotoUrl || "");
+  const queryClient = useQueryClient();
+  const { refreshTalent } = useTalent();
+  const isMountedRef = useRef<boolean>(true);
+
+  // IDENTITY_LEDGER: State Configuration Management
+  const [fullName, setFullName] = useState("");
+  const [phone, setPhone] = useState("");
+  const [linkedinUrl, setLinkedinUrl] = useState("");
+  const [portfolioUrl, setPortfolioUrl] = useState("");
+  const [customProfession, setCustomProfession] = useState("");
+  const [profilePhotoUrl, setProfilePhotoUrl] = useState("");
 
   const [education, setEducation] = useState<EducationEntry[]>([]);
   const [experience, setExperience] = useState<ExperienceEntry[]>([]);
@@ -49,7 +55,15 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
   const [isSaving, setIsSaving] = useState(false);
   const [activeTab, setActiveTab] = useState("basic");
 
-  // HYDRATION: Synchronize from talent prop
+  // Synchronize component lifecycles to safely drop background thread state writes
+  useEffect(() => {
+    isMountedRef.current = true;
+    return () => {
+      isMountedRef.current = false;
+    };
+  }, []);
+
+  // HYDRATION LIFECYCLE: Safe structural data mapping from parent talent prop variables
   useEffect(() => {
     if (talent && open) {
       setFullName(talent.fullName || "");
@@ -62,45 +76,51 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
       const eduData = Array.isArray(talent.education) ? talent.education : [];
       setEducation(
         eduData.map((edu: any) => ({
-          institution: edu.institution || "",
-          degree: edu.degree || "",
-          fieldOfStudy: edu.fieldOfStudy || edu.field_of_study || "",
-          startYear: edu.startYear || edu.start_year || "",
-          endYear: edu.endYear || edu.end_year || "",
+          institution: String(edu?.institution || ""),
+          degree: String(edu?.degree || ""),
+          fieldOfStudy: String(edu?.fieldOfStudy || edu?.field_of_study || ""),
+          startYear: String(edu?.startYear || edu?.start_year || ""),
+          endYear: String(edu?.endYear || edu?.end_year || ""),
         })),
       );
 
       const expData = Array.isArray(talent.experience) ? talent.experience : [];
       setExperience(
         expData.map((exp: any) => ({
-          company: exp.company || "",
-          position: exp.position || exp.title || "",
-          startDate: exp.startDate || exp.start_date || "",
-          endDate: exp.endDate || exp.end_date || "",
-          description: exp.description || "",
+          company: String(exp?.company || ""),
+          position: String(exp?.position || exp?.title || ""),
+          startDate: String(exp?.startDate || exp?.start_date || ""),
+          endDate: String(exp?.endDate || exp?.end_date || ""),
+          description: String(exp?.description || ""),
         })),
       );
 
       const skillData = Array.isArray(talent.skills) ? talent.skills : [];
       setSkills(
-        skillData.map((skill: any) => (typeof skill === "string" ? skill : skill.name || skill.skill || String(skill))),
+        skillData.map((skill: any) =>
+          typeof skill === "string" ? skill : String(skill?.name || skill?.skill || skill),
+        ),
       );
+
+      trackEvent("profile_editor_hydration_complete");
     }
   }, [talent, open]);
 
   const handleExecutiveSave = async () => {
-    if (!fullName.trim()) {
-      toast.error("Identity Fault: Full name is required.");
+    const sanitizedFullName = fullName.trim();
+    if (!sanitizedFullName) {
+      toast.error("Identity Validation Fault: Full profile name cannot be left blank.");
       return;
     }
 
     setIsSaving(true);
-    const toastId = toast.loading("Synchronizing identity with global ledger...");
+    trackEvent("profile_editor_save_requested");
+    const dynamicToastTrackerId = toast.loading("Synchronizing identity properties across database index ledgers...");
 
     try {
-      // CTO FIX: Use 'as any' to bypass Json incompatibility for complex arrays
-      const updateData = {
-        full_name: fullName.trim(),
+      // Pack parameters defensively with explicit cast schema configurations
+      const compiledNextUpdateData = {
+        full_name: sanitizedFullName,
         phone: phone.trim() || null,
         linkedin_url: linkedinUrl.trim() || null,
         portfolio_url: portfolioUrl.trim() || null,
@@ -111,73 +131,118 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
         skills: skills.filter((s) => s.trim()) as any,
       };
 
-      const { error } = await supabase.from("talents").update(updateData).eq("id", talent.id);
+      const { error: patchRegistryUpdateError } = await supabase
+        .from("talents")
+        .update(compiledNextUpdateData)
+        .eq("id", talent.id);
 
-      if (error) throw error;
+      if (patchRegistryUpdateError) throw patchRegistryUpdateError;
 
-      toast.success("Identity Synced: Profile updated.", { id: toastId });
-      onOpenChange(false);
+      // Automated Efficiency: Evaporate user cache indexes across dependent panels instantly
+      await queryClient.invalidateQueries({ queryKey: ["talent-profile"] });
+      await queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
+      if (refreshTalent) {
+        await refreshTalent();
+      }
 
-      // OPTIONAL: Using reload for absolute state sync,
-      // Replace with context refresh if available.
-      window.location.reload();
-    } catch (error: any) {
-      console.error("[Registry Fault]:", error);
-      toast.error("Transmission Error: Failed to sync identity.", { id: toastId });
+      if (isMountedRef.current) {
+        toast.success("Identity variables successfully validated down profile rows.", { id: dynamicToastTrackerId });
+        trackEvent("profile_editor_save_success");
+        onOpenChange(false);
+      }
+    } catch (caughtPipelineExceptionErr: any) {
+      const formattedExceptionMsgStr =
+        caughtPipelineExceptionErr instanceof Error
+          ? caughtPipelineExceptionErr.message
+          : String(caughtPipelineExceptionErr);
+
+      trackError(formattedExceptionMsgStr, {
+        component: "ProfileEditDialog",
+        action: "commit_profile_editor_save_api",
+      });
+
+      toast.error(`Ecosystem write validation error: ${formattedExceptionMsgStr}`, { id: dynamicToastTrackerId });
     } finally {
-      setIsSaving(false);
+      if (isMountedRef.current) {
+        setIsSaving(false);
+      }
     }
   };
 
   return (
-    <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="sm:max-w-xl rounded-[32px] border-2 border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-8">
-        <DialogHeader className="mb-6">
-          <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3 text-foreground">
-            <Zap className="h-6 w-6 text-primary fill-current" /> Profile_Editor
-          </DialogTitle>
-          <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
-            Authorized identity management and credential synchronization
-          </DialogDescription>
+    <Dialog
+      open={open}
+      onOpenChange={(vState) => {
+        if (!isSaving) {
+          onOpenChange(vState);
+          if (!vState) trackEvent("profile_editor_dialog_closed");
+        }
+      }}
+    >
+      <DialogContent className="sm:max-w-xl rounded-xl border border-border/40 bg-card/95 backdrop-blur-xl shadow-2xl p-5 sm:p-6 text-left antialiased overflow-hidden transform-gpu select-none sm:select-text flex flex-col justify-center">
+        {/* HUD LEVEL 1: GATEWAY DIALOG ROW HEADER CONTAINER */}
+        <DialogHeader className="mb-4 text-left select-none shrink-0 leading-none w-full">
+          <div className="flex items-center gap-2.5 leading-none w-full">
+            <div className="h-7 w-7 rounded-lg bg-primary/10 border border-primary/5 text-primary flex items-center justify-center shrink-0 shadow-inner">
+              <Zap className="h-4 w-4 text-primary fill-primary/10 stroke-[2.2] animate-pulse" />
+            </div>
+            <div className="min-w-0 flex flex-col justify-center leading-none flex-1">
+              <DialogTitle className="text-sm sm:text-base font-bold text-foreground uppercase tracking-wide leading-none">
+                Authorized Profile Identity Configuration Terminal
+              </DialogTitle>
+              <DialogDescription className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 leading-none pt-1">
+                Authorized tracking credentials synchronization panel interface
+              </DialogDescription>
+            </div>
+          </div>
         </DialogHeader>
 
-        <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-          <TabsList className="grid w-full grid-cols-5 h-12 bg-muted/20 rounded-2xl p-1 gap-1 border border-border/10">
+        {/* HUD LEVEL 2: COMPOSITE SELECTION TABS TRIGGER DECK PANEL LIST */}
+        <Tabs
+          value={activeTab}
+          onValueChange={(tab) => {
+            trackEvent("profile_editor_tab_swapped", { activeTab: tab });
+            setActiveTab(tab);
+          }}
+          className="w-full min-w-0 font-bold text-xs tracking-tight"
+        >
+          <TabsList className="grid w-full grid-cols-5 h-9 bg-muted/20 border border-border/40 p-0.5 rounded-xl gap-0.5 select-none leading-none items-center font-mono">
             <TabsTrigger
               value="photo"
-              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-lg text-[10px] font-bold uppercase tracking-wider py-1 cursor-pointer text-muted-foreground transition-all flex items-center justify-center gap-1"
             >
-              <Camera className="h-3 w-3 mr-1" /> Photo
+              <Camera className="h-3.5 w-3.5 stroke-[2.2]" /> <span>Photo</span>
             </TabsTrigger>
             <TabsTrigger
               value="basic"
-              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-lg text-[10px] font-bold uppercase tracking-wider py-1 cursor-pointer text-muted-foreground transition-all flex items-center justify-center gap-1"
             >
-              <User className="h-3 w-3 mr-1" /> Basic
+              <User className="h-3.5 w-3.5 stroke-[2.2]" /> <span>Basic</span>
             </TabsTrigger>
             <TabsTrigger
               value="education"
-              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-lg text-[10px] font-bold uppercase tracking-wider py-1 cursor-pointer text-muted-foreground transition-all flex items-center justify-center gap-1"
             >
-              <GraduationCap className="h-3 w-3 mr-1" /> EDU
+              <GraduationCap className="h-3.5 w-3.5 stroke-[2.2]" /> <span>Edu</span>
             </TabsTrigger>
             <TabsTrigger
               value="experience"
-              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-lg text-[10px] font-bold uppercase tracking-wider py-1 cursor-pointer text-muted-foreground transition-all flex items-center justify-center gap-1"
             >
-              <Briefcase className="h-3 w-3 mr-1" /> EXP
+              <Briefcase className="h-3.5 w-3.5 stroke-[2.2]" /> <span>Exp</span>
             </TabsTrigger>
             <TabsTrigger
               value="skills"
-              className="rounded-xl text-[10px] font-black uppercase italic tracking-widest data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-lg text-[10px] font-bold uppercase tracking-wider py-1 cursor-pointer text-muted-foreground transition-all flex items-center justify-center gap-1"
             >
-              <Sparkles className="h-3 w-3 mr-1" /> Skills
+              <Sparkles className="h-3.5 w-3.5 stroke-[2.2]" /> <span>Skills</span>
             </TabsTrigger>
           </TabsList>
 
-          <ScrollArea className="h-[450px] mt-6 pr-4">
-            <div className="animate-in fade-in slide-in-from-bottom-2 duration-500">
-              <TabsContent value="photo" className="mt-0 pb-6">
+          {/* HUD LEVEL 3: SCROLL LAYOUT INTERFACE CANVAS CONTENT FRAME */}
+          <ScrollArea className="h-[400px] sm:h-[450px] mt-4 pr-1.5 w-full min-w-0 text-left">
+            <div className="w-full min-w-0 select-text font-bold text-xs flex flex-col justify-center animate-in fade-in duration-200">
+              <TabsContent value="photo" className="mt-0 pb-2 w-full outline-none focus-visible:ring-0">
                 <ProfilePhotoUpload
                   currentPhotoUrl={profilePhotoUrl}
                   fullName={fullName}
@@ -185,94 +250,123 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
                 />
               </TabsContent>
 
-              <TabsContent value="basic" className="space-y-6 mt-0 text-left">
-                <div className="grid gap-5">
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">Identity_Name *</Label>
+              <TabsContent
+                value="basic"
+                className="space-y-4 mt-0 w-full outline-none focus-visible:ring-0 text-left font-bold text-xs text-foreground"
+              >
+                <div className="grid grid-cols-1 gap-4 w-full">
+                  <div className="space-y-1.5 text-left w-full min-w-0">
+                    <Label className="text-[10px] font-extrabold uppercase tracking-wide text-primary block pl-0.5 leading-none select-none">
+                      Identity Track Profile Name *
+                    </Label>
                     <Input
                       value={fullName}
+                      disabled={isSaving}
                       onChange={(e) => setFullName(e.target.value)}
-                      placeholder="Full Node Name"
-                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                      placeholder="Specify comprehensive index legal name parameters…"
+                      className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner w-full block"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">
-                      Communication_Line
+
+                  <div className="space-y-1.5 text-left w-full min-w-0">
+                    <Label className="text-[10px] font-extrabold uppercase tracking-wide text-primary block pl-0.5 leading-none select-none">
+                      Communication Phone Line
                     </Label>
                     <Input
                       type="tel"
                       value={phone}
+                      disabled={isSaving}
                       onChange={(e) => setPhone(e.target.value)}
-                      placeholder="+880..."
-                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                      placeholder="E.g. +8801XXXXXXXXX"
+                      className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner font-mono block select-text tracking-wide"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">Functional_Role</Label>
+
+                  <div className="space-y-1.5 text-left w-full min-w-0">
+                    <Label className="text-[10px] font-extrabold uppercase tracking-wide text-primary block pl-0.5 leading-none select-none">
+                      Functional Vocational Role
+                    </Label>
                     <Input
                       value={customProfession}
+                      disabled={isSaving}
                       onChange={(e) => setCustomProfession(e.target.value)}
-                      placeholder="E.G. SOFTWARE_ARCHITECT"
-                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                      placeholder="E.g. Principal Cloud Systems Infrastructure Engineer"
+                      className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner w-full block"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">
-                      LinkedIn_Sync_Node
+
+                  <div className="space-y-1.5 text-left w-full min-w-0">
+                    <Label className="text-[10px] font-extrabold uppercase tracking-wide text-primary block pl-0.5 leading-none select-none">
+                      LinkedIn Network Sync Node URL
                     </Label>
                     <Input
                       value={linkedinUrl}
+                      disabled={isSaving}
                       onChange={(e) => setLinkedinUrl(e.target.value)}
-                      placeholder="HTTPS://LINKEDIN.COM/IN/..."
-                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                      placeholder="https://linkedin.com/in/profile-identification-string"
+                      className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner font-mono text-primary/80 block select-text w-full"
                     />
                   </div>
-                  <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase italic text-primary ml-1">
-                      Portfolio_Artifact
+
+                  <div className="space-y-1.5 text-left w-full min-w-0">
+                    <Label className="text-[10px] font-extrabold uppercase tracking-wide text-primary block pl-0.5 leading-none select-none">
+                      Digital Portfolio Repository Artifact Link
                     </Label>
                     <Input
                       value={portfolioUrl}
+                      disabled={isSaving}
                       onChange={(e) => setPortfolioUrl(e.target.value)}
-                      placeholder="HTTPS://..."
-                      className="h-12 rounded-xl border-2 font-bold bg-background/50"
+                      placeholder="https://domain-name.com/portfolio-address-registry"
+                      className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner font-mono text-primary/80 block select-text w-full"
                     />
                   </div>
                 </div>
               </TabsContent>
 
-              <TabsContent value="education" className="mt-0">
+              <TabsContent value="education" className="mt-0 w-full outline-none focus-visible:ring-0">
                 <EducationEditor education={education} onChange={setEducation} />
               </TabsContent>
 
-              <TabsContent value="experience" className="mt-0">
+              <TabsContent value="experience" className="mt-0 w-full outline-none focus-visible:ring-0">
                 <ExperienceEditor experience={experience} onChange={setExperience} />
               </TabsContent>
 
-              <TabsContent value="skills" className="mt-0">
+              <TabsContent value="skills" className="mt-0 w-full outline-none focus-visible:ring-0">
                 <SkillsEditor skills={skills} onChange={setSkills} />
               </TabsContent>
             </div>
           </ScrollArea>
         </Tabs>
 
-        <DialogFooter className="mt-8 gap-3 sm:gap-0">
+        {/* HUD LEVEL 4: FOOTER ACTION CONFIRMATION OVERLAY TRACK BUTTON ROW */}
+        <DialogFooter className="mt-5 gap-2.5 sm:gap-0 select-none border-t border-border/10 pt-4 w-full shrink-0 flex items-center justify-end font-bold text-xs">
           <Button
             variant="ghost"
+            type="button"
             onClick={() => onOpenChange(false)}
             disabled={isSaving}
-            className="h-12 rounded-xl font-black uppercase italic text-[10px] tracking-widest text-muted-foreground hover:bg-muted/10"
+            className="h-9 px-4 rounded-xl text-muted-foreground hover:text-foreground font-bold uppercase text-[10px] tracking-wide shrink-0 transition-colors cursor-pointer"
           >
-            Abort_Changes
+            Abort Changes
           </Button>
+
           <Button
+            type="button"
             onClick={handleExecutiveSave}
             disabled={isSaving}
-            className="h-12 px-8 rounded-xl font-black uppercase italic text-[10px] tracking-widest gap-2 shadow-2xl active:scale-95 transition-all"
+            className="h-9 px-5 rounded-xl font-bold text-xs uppercase tracking-wider shadow-md transform-gpu active:scale-[0.995] transition-transform flex items-center justify-center cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 gap-1.5"
           >
-            {isSaving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-            {isSaving ? "Syncing_Ledger..." : "Authorize_Sync"}
+            {isSaving ? (
+              <>
+                <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
+                <span>Syncing Ledger Node…</span>
+              </>
+            ) : (
+              <>
+                <ShieldCheck className="h-4 w-4 stroke-[2.5]" />
+                <span>Authorize Ledger Sync</span>
+              </>
+            )}
           </Button>
         </DialogFooter>
       </DialogContent>
