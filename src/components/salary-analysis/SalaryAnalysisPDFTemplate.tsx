@@ -160,7 +160,6 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
             style={{
               margin: 0,
               fontSize: "26px",
-              className: "tracking-tight",
               fontWeight: 900,
               color: BRAND.dark,
               textTransform: "uppercase",
@@ -220,7 +219,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
             style={{
               margin: 0,
               fontSize: "8.5px",
-              fontMono: true,
+              fontFamily: "monospace",
               fontWeight: 800,
               color: BRAND.muted,
               textTransform: "uppercase",
@@ -230,7 +229,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
             Identity Mapping Record
           </span>
           <h2
-            style={{ fontSize: "20px", fontWeight: 800, color: BRAND.dark, margin: "2px 0 10px 0", tracking: "tight" }}
+            style={{ fontSize: "20px", fontWeight: 800, color: BRAND.dark, margin: "2px 0 10px 0", letterSpacing: "-0.025em" }}
           >
             {secureAnalyticsModel.fullName}
           </h2>
@@ -301,7 +300,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
             flexDirection: "column",
             justifyContent: "center",
             boxSizing: "border-box",
-            shrink: 0,
+            flexShrink: 0,
           }}
         >
           <span
@@ -363,7 +362,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
             textTransform: "uppercase",
             letterSpacing: "2.5px",
             opacity: 0.7,
-            fontMono: true,
+            fontFamily: "monospace",
           }}
         >
           Overall Trajectory Readiness Index Coefficient
@@ -467,8 +466,8 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
                   color: BRAND.muted,
                   margin: "0 0 6px 0",
                   textTransform: "uppercase",
-                  block: true,
-                  leading: "none",
+                  display: "block",
+                  lineHeight: 1,
                 }}
               >
                 {nodeBlock.label}
@@ -479,8 +478,8 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
                   fontWeight: 900,
                   color: BRAND.dark,
                   margin: 0,
-                  fontMono: true,
-                  tabularNums: true,
+                  fontFamily: "monospace",
+                  fontVariantNumeric: "tabular-nums",
                 }}
               >
                 ${formatCurrency(nodeBlock.val)}
@@ -488,12 +487,12 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
               <span
                 style={{
                   fontSize: "8.5px",
-                  fontMono: true,
+                  fontFamily: "monospace",
                   fontWeight: 700,
                   color: BRAND.muted,
                   margin: "4px 0 0 0",
-                  block: true,
-                  leading: "none",
+                  display: "block",
+                  lineHeight: 1,
                 }}
               >
                 USD / MONTHLY PAY
@@ -505,7 +504,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
         <p
           style={{
             fontSize: "9px",
-            fontMono: true,
+            fontFamily: "monospace",
             fontWeight: 800,
             color: BRAND.muted,
             textAlign: "center",
@@ -546,13 +545,13 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
               color: BRAND.accent,
               marginBottom: "10px",
               textTransform: "uppercase",
-              block: true,
-              fontMono: true,
+              display: "block",
+              fontFamily: "monospace",
             }}
           >
             [+] Verified Matching Core Skills
           </span>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", pt: "2px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", paddingTop: "2px" }}>
             {secureAnalyticsModel.matchingSkillsArray.length === 0 ? (
               <span style={{ fontSize: "11px", color: BRAND.muted, fontStyle: "italic" }}>
                 No clean matching markers computed.
@@ -569,7 +568,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
                     border: "1px solid #dcfce7",
                     borderRadius: "4px",
                     textTransform: "uppercase",
-                    fontMono: true,
+                    fontFamily: "monospace",
                     color: BRAND.dark,
                   }}
                 >
@@ -598,13 +597,13 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
               color: BRAND.error,
               marginBottom: "10px",
               textTransform: "uppercase",
-              block: true,
-              fontMono: true,
+              display: "block",
+              fontFamily: "monospace",
             }}
           >
             [△] Targeted Infrastructure Optimization Gaps
           </span>
-          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", pt: "2px" }}>
+          <div style={{ display: "flex", flexWrap: "wrap", gap: "6px", paddingTop: "2px" }}>
             {secureAnalyticsModel.missingSkillsArray.length === 0 ? (
               <span style={{ fontSize: "11px", color: BRAND.accent, fontStyle: "italic" }}>
                 Matrix equilibrium reached. Gaps zeroed out.
@@ -621,7 +620,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
                     border: "1px solid #fee2e2",
                     borderRadius: "4px",
                     textTransform: "uppercase",
-                    fontMono: true,
+                    fontFamily: "monospace",
                     color: BRAND.dark,
                   }}
                 >
@@ -720,7 +719,7 @@ export function SalaryAnalysisPDFTemplate({ analysis }: Props) {
                     lineHeight: 1.35,
                   }}
                 >
-                  <span style={{ color: BRAND.dark, fontFamily: "monospace", fontWeight: 900, shrink: 0 }}>
+                  <span style={{ color: BRAND.dark, fontFamily: "monospace", fontWeight: 900, flexShrink: 0 }}>
                     0{i + 1}.
                   </span>
                   <span style={{ color: BRAND.dark }}>{actionStr}</span>
