@@ -1,4 +1,4 @@
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { PlayCircle, Clock, ChevronRight, BookOpen, Sparkles, Zap, GraduationCap } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
