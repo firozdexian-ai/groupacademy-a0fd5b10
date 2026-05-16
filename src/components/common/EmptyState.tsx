@@ -16,6 +16,7 @@ interface EmptyStateProps {
   description?: string;
   actionLabel?: string; // Decomposed parameter shields component against object inline literals references
   onActionClick?: () => void; // Isolated click callback preventing child element layout loops
+  action?: { label: string; onClick: () => void }; // Convenience grouped action prop
   className?: string;
 }
 
@@ -25,8 +26,11 @@ export function EmptyState({
   description,
   actionLabel,
   onActionClick,
+  action,
   className,
 }: EmptyStateProps) {
+  const resolvedActionLabel = actionLabel ?? action?.label;
+  const resolvedActionClick = onActionClick ?? action?.onClick;
   // Clean string title normalization ensures crisp typography alignment natively
   const standardizedTitleToken = useMemo(() => {
     return String(title || "").trim();
@@ -57,14 +61,14 @@ export function EmptyState({
       </div>
 
       {/* ACTION TRIGGER SECTOR: DEFENSIVE EXPLICIT BEHAVIOR LOOKUPS */}
-      {actionLabel && onActionClick && (
+      {resolvedActionLabel && resolvedActionClick && (
         <Button
           size="sm"
-          type="button" // Enforces explicit protection blocking parental form submission triggers
-          onClick={onActionClick}
+          type="button"
+          onClick={resolvedActionClick}
           className="h-9 rounded-xl text-[10px] font-black uppercase tracking-widest px-6 shadow-md shadow-primary/10 hover:shadow-primary/20 transition-all active:scale-[0.98]"
         >
-          {String(actionLabel).trim()}
+          {String(resolvedActionLabel).trim()}
         </Button>
       )}
     </div>
