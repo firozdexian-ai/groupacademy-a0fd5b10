@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import { Button } from "./ui/button";
 import { useToast } from "@/hooks/use-toast";
 import { cn } from "@/lib/utils";
+import { trackEvent, trackError } from "@/lib/errorTracking";
 
 interface ImageUploadProps {
   value?: string;
