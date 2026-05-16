@@ -122,7 +122,7 @@ export function StageNavigation({
     >
       {processedStages.map((stageItem, index) => {
         const IconComponent = stageItem.icon || PlayCircle;
-        const isClickable = !stageItem.isLocked && !isSaving;
+        const isClickable = !stageItem.isLocked;
         const normalizedLabelStr = stageItem.name.replace(/_/g, " ");
 
         return (
