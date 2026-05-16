@@ -118,7 +118,7 @@ const SidebarProvider = React.forwardRef<
     </SidebarContext.Provider>
   );
 });
-SidebarProvider.sidebarVariants = "SidebarProvider_Core_Shell_Node";
+SidebarProvider.displayName = "SidebarProvider_Core_Shell_Node";
 
 const Sidebar = React.forwardRef<
   HTMLDivElement,
