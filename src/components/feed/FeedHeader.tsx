@@ -7,7 +7,7 @@ import { useTalent } from "@/hooks/useTalent";
 import { useCareerLevel } from "@/hooks/useCareerLevel";
 import { ProfileCardBackdrop } from "./ProfileCardBackdrop";
 import { trackError, trackEvent } from "@/lib/errorTracking";
-import { supabase } from "@/integrations/supabase/client";
+
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
 import { cn } from "@/lib/utils";
 
@@ -47,21 +47,6 @@ export function FeedHeader({ talentName, talentPhoto, talentProfession, onRefres
       // Digital Workforce: Notify Admin Chat on level up milestones asynchronously
       if (career?.level >= 5) {
         trackEvent("elite_talent_header_mounted", { talentId: talent.id, currentLevel: career.level });
-
-        supabase
-          .from("admin_chat_messages")
-          .insert([
-            {
-              sender_type: "system_agent",
-              agent_key: "talent-aisha", // Forwards insights back to our Aisha Success tracker node
-              message_text: `📈 **Elite Talent Lifecycle Signal**\n\nTalent **${talentName || "User"}** mapped on feed with Career Level **${career.level}** (${career.label}). Volume: ${Math.round(volume)} cr.`,
-              metadata: { talentId: talent.id, level: career.level, totalVolume: volume },
-            },
-          ])
-          .then(({ error: agentErr }) => {
-            if (agentErr)
-              console.warn("[FeedHeader] Failed to stream volume metric into Aisha console:", agentErr.message);
-          });
       }
     }
   }, [talent, career, volume, talentName]);
