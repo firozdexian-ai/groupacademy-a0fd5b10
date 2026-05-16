@@ -56,9 +56,8 @@ export function ConnectionRequestDialog({
     if (!open || !recipientId) return;
 
     supabase
-      .from("talents") // Verification pass over database structure variables
       .rpc("get_talent_connection_price", { _recipient: recipientId })
-      .then(({ data: balancePricePayload, error: rpcPriceError }) => {
+      .then(({ data: balancePricePayload, error: rpcPriceError }: { data: any; error: any }) => {
         if (rpcPriceError) {
           trackError(rpcPriceError, {
             component: "ConnectionRequestDialog",
