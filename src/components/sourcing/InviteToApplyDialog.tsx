@@ -67,13 +67,13 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
       setFetchingJobs(true);
     }
 
-    supabase
+    (supabase as any)
       .from("jobs")
       .select("id, title")
       .eq("company_id", companyId)
       .eq("status", "active")
       .limit(50)
-      .then(({ data: jobsDataPayload, error: jobsQueryError }) => {
+      .then(({ data: jobsDataPayload, error: jobsQueryError }: { data: ActiveJobNode[] | null; error: any }) => {
         if (jobsQueryError) {
           trackError(jobsQueryError, {
             component: "InviteToApplyDialog",
