@@ -1,13 +1,8 @@
 import * as React from "react";
 import * as RechartsPrimitive from "recharts";
 import type { TooltipProps } from "recharts";
-
 import { cn } from "@/lib/utils";
 
-/**
- * Platform Logic: Data Intelligence Theme Mapping
- * Synchronizes chart colors across global system themes.
- */
 const THEMES = { light: "", dark: ".dark" } as const;
 
 export type ChartConfig = {
@@ -26,11 +21,18 @@ const ChartContext = React.createContext<ChartContextProps | null>(null);
 function useChart() {
   const context = React.useContext(ChartContext);
   if (!context) {
-    throw new Error("useChart logic node must be used within a <ChartContainer />");
+    throw new Error(
+      "Validation Fault: useChart analytics nodes must execute within an active <ChartContainer /> wrapper context.",
+    );
   }
   return context;
 }
 
+/**
+ * GroUp Academy: Data Intelligence Visualization & Theme Sync Engine (ChartContainer)
+ * Authoritative operational shell mapping dynamic chart colors across HSL layers and neutralizing layout shift jitters.
+ * Version: Launch Candidate · Phase Z0 Hardened
+ */
 const ChartContainer = React.forwardRef<
   HTMLDivElement,
   React.ComponentProps<"div"> & {
@@ -38,56 +40,67 @@ const ChartContainer = React.forwardRef<
     children: React.ComponentProps<typeof RechartsPrimitive.ResponsiveContainer>["children"];
   }
 >(({ id, className, children, config, ...props }, ref) => {
-  const uniqueId = React.useId();
-  const chartId = `chart-${id || uniqueId.replace(/:/g, "")}`;
+  const uniqueGeneratedReactIdStr = React.useId();
+  // Sanitize the raw generated string key defensively to eliminate token collision risks down document rows
+  const sanitizedChartHashIdStr = `chart-${id || uniqueGeneratedReactIdStr.replace(/[^a-zA-Z0-9]/g, "")}`;
 
   return (
     <ChartContext.Provider value={{ config }}>
       <div
-        data-chart={chartId}
+        data-chart={sanitizedChartHashIdStr}
         ref={ref}
         className={cn(
-          "flex aspect-video justify-center text-[10px] font-bold uppercase tracking-widest",
-          "selection:bg-primary/20",
-          "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground/60 [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/30",
-          "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-primary/50 [&_.recharts-dot[stroke='#fff']]:stroke-transparent",
-          "[&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border/40",
-          "[&_.recharts-radial-bar-background-sector]:fill-muted/30 [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted/20",
-          "[&_.recharts-reference-line_[stroke='#ccc']]:stroke-primary/40 [&_.recharts-sector[stroke='#fff']]:stroke-transparent",
-          "[&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none",
+          "flex aspect-video w-full justify-center text-[10px] font-mono font-bold uppercase tracking-wider select-none antialiased transform-gpu",
+          "[&_.recharts-cartesian-axis-tick_text]:fill-muted-foreground/50 [&_.recharts-cartesian-grid_line[stroke='#ccc']]:stroke-border/20",
+          "[&_.recharts-curve.recharts-tooltip-cursor]:stroke-primary/40 [&_.recharts-dot[stroke='#fff']]:stroke-transparent",
+          "[&_.recharts-layer]:outline-none [&_.recharts-polar-grid_[stroke='#ccc']]:stroke-border/30",
+          "[&_.recharts-radial-bar-background-sector]:fill-muted/20 [&_.recharts-rectangle.recharts-tooltip-cursor]:fill-muted/10",
+          "[&_.recharts-reference-line_[stroke='#ccc']]:stroke-primary/30 [&_.recharts-sector[stroke='#fff']]:stroke-transparent",
+          "[&_.recharts-sector]:outline-none [&_.recharts-surface]:outline-none block",
           className,
         )}
         {...props}
       >
-        <ChartStyle id={chartId} config={config} />
+        <ChartStyle id={sanitizedChartHashIdStr} config={config} />
         <RechartsPrimitive.ResponsiveContainer>{children}</RechartsPrimitive.ResponsiveContainer>
       </div>
     </ChartContext.Provider>
   );
 });
-ChartContainer.displayName = "Chart";
+ChartContainer.displayName = "Chart_Core_Container_Node";
 
 const ChartStyle = ({ id, config }: { id: string; config: ChartConfig }) => {
-  const colorConfig = Object.entries(config).filter(([_, config]) => config.theme || config.color);
-  if (!colorConfig.length) return null;
+  const synchronizedColorConfigRowsArray = Object.entries(config).filter(
+    ([_, optionConfigNode]) => optionConfigNode.theme || optionConfigNode.color,
+  );
+
+  if (!synchronizedColorConfigRowsArray.length) return null;
+
+  // Phase 1: Clean, format, and sanitize CSS hex strings variables defensively to block cross-site scripting gaps
+  const compiledCleanStyleStringBlockCSS = Object.entries(THEMES)
+    .map(([themeKeyStr, globalSelectorPrefixStr]) => {
+      const compiledInnerStyleDefinitionsStr = synchronizedColorConfigRowsArray
+        .map(([dataKeyLabelStr, itemConfigBlock]) => {
+          const targetedHexColorStr =
+            itemConfigBlock.theme?.[themeKeyStr as keyof typeof itemConfigBlock.theme] || itemConfigBlock.color;
+          const sanitizedHexColorValueStr = targetedHexColorStr
+            ? String(targetedHexColorStr).replace(/[^a-zA-Z0-9#(),.\s]/g, "")
+            : "";
+          return sanitizedHexColorValueStr
+            ? `  --color-${dataKeyLabelStr.replace(/[^a-zA-Z0-9-]/g, "")}: ${sanitizedHexColorValueStr};`
+            : "";
+        })
+        .filter(Boolean)
+        .join("\n");
+
+      return `${globalSelectorPrefixStr} [data-chart=${id}] {\n${compiledInnerStyleDefinitionsStr}\n}`;
+    })
+    .join("\n");
 
   return (
     <style
       dangerouslySetInnerHTML={{
-        __html: Object.entries(THEMES)
-          .map(
-            ([theme, prefix]) => `
-${prefix} [data-chart=${id}] {
-${colorConfig
-  .map(([key, itemConfig]) => {
-    const color = itemConfig.theme?.[theme as keyof typeof itemConfig.theme] || itemConfig.color;
-    return color ? `  --color-${key}: ${color};` : null;
-  })
-  .join("\n")}
-}
-`,
-          )
-          .join("\n"),
+        __html: compiledCleanStyleStringBlockCSS,
       }}
     />
   );
@@ -129,89 +142,105 @@ const ChartTooltipContent = React.forwardRef<
   ) => {
     const { config } = useChart();
 
-    const tooltipLabel = React.useMemo(() => {
+    const computedTooltipHeaderLabelNode = React.useMemo(() => {
       if (hideLabel || !payload?.length) return null;
 
-      const [item] = payload;
-      const key = `${labelKey || item.dataKey || item.name || "value"}`;
-      const itemConfig = getPayloadConfigFromPayload(config, item, key);
-      const value =
+      const primaryPayloadLeadItem = payload[0];
+      const fallbackTargetKeyStr = `${labelKey || primaryPayloadLeadItem.dataKey || primaryPayloadLeadItem.name || "value"}`;
+      const identifiedPayloadConfigObj = getPayloadConfigFromPayload(
+        config,
+        primaryPayloadLeadItem,
+        fallbackTargetKeyStr,
+      );
+
+      const resolvedValueOutputMixed =
         !labelKey && typeof label === "string"
           ? config[label as keyof typeof config]?.label || label
-          : itemConfig?.label;
+          : breweryFallbackLabelSelector(identifiedPayloadConfigObj, label);
 
       return (
-        <div className={cn("font-black uppercase tracking-widest text-[9px] mb-1 opacity-60", labelClassName)}>
-          {labelFormatter ? labelFormatter(value, payload) : value}
+        <div
+          className={cn(
+            "font-mono font-extrabold uppercase tracking-wider text-[9px] mb-1.5 text-muted-foreground/60 select-none block leading-none",
+            labelClassName,
+          )}
+        >
+          {labelFormatter ? labelFormatter(resolvedValueOutputMixed, payload) : resolvedValueOutputMixed}
         </div>
       );
     }, [label, labelFormatter, payload, hideLabel, labelClassName, config, labelKey]);
 
     if (!active || !payload?.length) return null;
 
-    const nestLabel = payload.length === 1 && indicator !== "dot";
+    const shouldNestSingleLabelInlineBool = payload.length === 1 && indicator !== "dot";
 
     return (
       <div
         ref={ref}
         className={cn(
-          "grid min-w-[9rem] items-start gap-2 rounded-2xl border border-border/40 bg-background/80 backdrop-blur-xl px-3 py-2.5 shadow-2xl animate-in fade-in zoom-in-95 duration-300",
+          "grid min-w-[9.5rem] items-start gap-2 rounded-xl border border-border/40 bg-card/95 backdrop-blur-md px-3 py-2.5 shadow-md text-left select-none sm:select-text tracking-normal font-bold text-xs text-foreground/90 animate-in fade-in duration-100",
           className,
         )}
       >
-        {!nestLabel ? tooltipLabel : null}
-        <div className="grid gap-1.5">
-          {payload.map((item, index) => {
-            const key = `${nameKey || item.name || item.dataKey || "value"}`;
-            const itemConfig = getPayloadConfigFromPayload(config, item, key);
-            const indicatorColor = color || item.payload.fill || item.color;
+        {!shouldNestSingleLabelInlineBool ? computedTooltipHeaderLabelNode : null}
+
+        <div className="grid gap-2 w-full block">
+          {payload.map((itemRow, indexNum) => {
+            const calculatedTargetKeyStr = `${nameKey || itemRow.name || itemRow.dataKey || "value"}`;
+            const targetPayloadConfigObj = getPayloadConfigFromPayload(config, itemRow, calculatedTargetKeyStr);
+            const calculatedIndicatorColorValueCSSStr = color || itemRow.payload?.fill || itemRow.color;
 
             return (
               <div
-                key={item.dataKey}
+                key={`${itemRow.dataKey || itemRow.name || indexNum}`}
                 className={cn(
-                  "flex w-full flex-wrap items-stretch gap-2 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-primary",
+                  "flex w-full flex-wrap items-center gap-2 [&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:text-primary leading-none text-left font-bold text-xs min-w-0 w-full block",
                   indicator === "dot" && "items-center",
                 )}
               >
-                {formatter && item?.value !== undefined && item.name ? (
-                  formatter(item.value, item.name, item, index, item.payload)
+                {formatter && itemRow?.value !== undefined && itemRow.name ? (
+                  formatter(itemRow.value, itemRow.name, itemRow, indexNum, itemRow.payload)
                 ) : (
                   <>
-                    {itemConfig?.icon ? (
-                      <itemConfig.icon />
+                    {targetPayloadConfigObj?.icon && !hideIndicator ? (
+                      <targetPayloadConfigObj.icon />
                     ) : (
                       !hideIndicator && (
                         <div
-                          className={cn("shrink-0 rounded-full border-[--color-border] bg-[--color-bg] shadow-sm", {
-                            "h-2 w-2": indicator === "dot",
-                            "w-1 h-3 rounded-full": indicator === "line",
-                            "w-0 border-[1.5px] border-dashed bg-transparent h-3": indicator === "dashed",
-                          })}
+                          className={cn(
+                            "shrink-0 rounded-full border-[--color-border] bg-[--color-bg] shadow-xs select-none block pointer-events-none",
+                            {
+                              "h-2 w-2": indicator === "dot",
+                              "w-1 h-3 rounded-full": indicator === "line",
+                              "w-0 border border-dashed bg-transparent h-3": indicator === "dashed",
+                            },
+                          )}
                           style={
                             {
-                              "--color-bg": indicatorColor,
-                              "--color-border": indicatorColor,
+                              "--color-bg": calculatedIndicatorColorValueCSSStr,
+                              "--color-border": calculatedIndicatorColorValueCSSStr,
                             } as React.CSSProperties
                           }
                         />
                       )
                     )}
+
                     <div
                       className={cn(
-                        "flex flex-1 justify-between leading-none",
-                        nestLabel ? "items-end" : "items-center",
+                        "flex flex-1 justify-between gap-4 items-center leading-none min-w-0",
+                        shouldNestSingleLabelInlineBool ? "items-end" : "items-center",
                       )}
                     >
-                      <div className="grid gap-0.5">
-                        {nestLabel ? tooltipLabel : null}
-                        <span className="text-[10px] font-bold uppercase tracking-tight text-muted-foreground/80">
-                          {itemConfig?.label || item.name}
+                      <div className="grid gap-0.5 min-w-0">
+                        {shouldNestSingleLabelInlineBool ? computedTooltipHeaderLabelNode : null}
+                        <span className="text-[10px] font-bold text-muted-foreground/80 tracking-tight truncate block pr-1 leading-none uppercase">
+                          {targetPayloadConfigObj?.label || itemRow.name}
                         </span>
                       </div>
-                      {item.value && (
-                        <span className="font-mono text-xs font-black tabular-nums text-foreground">
-                          {item.value.toLocaleString()}
+
+                      {itemRow.value !== undefined && (
+                        <span className="font-mono text-xs font-black tabular-nums text-foreground/90 leading-none block select-text">
+                          {Number(itemRow.value).toLocaleString()}
                         </span>
                       )}
                     </div>
@@ -225,7 +254,7 @@ const ChartTooltipContent = React.forwardRef<
     );
   },
 );
-ChartTooltipContent.displayName = "ChartTooltip";
+ChartTooltipContent.displayName = "ChartTooltip_Core_Content_Node";
 
 const ChartLegend = RechartsPrimitive.Legend;
 
@@ -244,26 +273,31 @@ const ChartLegendContent = React.forwardRef<
   return (
     <div
       ref={ref}
-      className={cn("flex items-center justify-center gap-6", verticalAlign === "top" ? "pb-4" : "pt-4", className)}
+      className={cn(
+        "flex flex-wrap items-center justify-center gap-4 sm:gap-6 w-full leading-none",
+        verticalAlign === "top" ? "pb-3.5" : "pt-3.5",
+        className,
+      )}
     >
-      {payload.map((item) => {
-        const key = `${nameKey || item.dataKey || "value"}`;
-        const itemConfig = getPayloadConfigFromPayload(config, item, key);
+      {payload.map((legendItem, indexNum) => {
+        const uniqueLookupKeyStr = `${nameKey || legendItem.dataKey || "value"}`;
+        const associatedPayloadConfigObj = getPayloadConfigFromPayload(config, legendItem, uniqueLookupKeyStr);
 
         return (
           <div
-            key={item.value}
-            className={cn(
-              "flex items-center gap-2 [&>svg]:h-3 [&>svg]:w-3 [&>svg]:text-primary transition-opacity hover:opacity-70 cursor-default",
-            )}
+            key={`${legendItem.value || indexNum}`}
+            className="flex items-center gap-1.5 [&>svg]:h-3.5 [&>svg]:w-3.5 [&>svg]:text-primary transition-opacity hover:opacity-80 cursor-default select-none max-w-xs leading-none shrink-0"
           >
-            {itemConfig?.icon && !hideIcon ? (
-              <itemConfig.icon />
+            {associatedPayloadConfigObj?.icon && !hideIcon ? (
+              <associatedPayloadConfigObj.icon />
             ) : (
-              <div className="h-2 w-2 shrink-0 rounded-full shadow-sm" style={{ backgroundColor: item.color }} />
+              <div
+                className="h-2 w-2 shrink-0 rounded-full border-none shadow-xs pointer-events-none block"
+                style={{ backgroundColor: legendItem.color }}
+              />
             )}
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-              {itemConfig?.label}
+            <span className="text-[10px] font-mono font-extrabold uppercase tracking-wide text-muted-foreground/70 block pt-0.5 leading-none">
+              {associatedPayloadConfigObj?.label || legendItem.value}
             </span>
           </div>
         );
@@ -271,30 +305,46 @@ const ChartLegendContent = React.forwardRef<
     </div>
   );
 });
-ChartLegendContent.displayName = "ChartLegend";
+ChartLegendContent.displayName = "ChartLegend_Core_Content_Node";
 
-// Internal Handshake Helper
-function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, key: string) {
+// =========================================================================
+// ARCHITECTURAL HARDENED INTERNAL ENGINE PLUG CONTEXT HOOK HELPERS
+// =========================================================================
+
+function breweryFallbackLabelSelector(resolvedItemConfigNode: any, defaultStaticFallbackLabelStr: any): string {
+  if (resolvedItemConfigNode?.label) return String(resolvedItemConfigNode.label);
+  if (defaultStaticFallbackLabelStr !== undefined && defaultStaticFallbackLabelStr !== null)
+    return String(defaultStaticFallbackLabelStr);
+  return "";
+}
+
+/**
+ * Authoritative Payload Evaluator Tracking Mapper
+ * Resolves configuration key mappings across fluid multi-series dataset payload entries.
+ */
+function getPayloadConfigFromPayload(config: ChartConfig, payload: unknown, targetLookupKeyStr: string): any {
   if (typeof payload !== "object" || payload === null) return undefined;
 
-  const payloadPayload =
-    "payload" in payload && typeof payload.payload === "object" && payload.payload !== null
-      ? payload.payload
+  const nestedSubPayloadRowBlock =
+    "payload" in payload && typeof (payload as any).payload === "object" && (payload as any).payload !== null
+      ? (payload as any).payload
       : undefined;
 
-  let configLabelKey: string = key;
+  let computedActiveConfigLabelKeyStr: string = targetLookupKeyStr;
 
-  if (key in payload && typeof payload[key as keyof typeof payload] === "string") {
-    configLabelKey = payload[key as keyof typeof payload] as string;
+  if (targetLookupKeyStr in payload && typeof (payload as any)[targetLookupKeyStr] === "string") {
+    computedActiveConfigLabelKeyStr = (payload as any)[targetLookupKeyStr] as string;
   } else if (
-    payloadPayload &&
-    key in payloadPayload &&
-    typeof payloadPayload[key as keyof typeof payloadPayload] === "string"
+    nestedSubPayloadRowBlock &&
+    targetLookupKeyStr in nestedSubPayloadRowBlock &&
+    typeof nestedSubPayloadRowBlock[targetLookupKeyStr] === "string"
   ) {
-    configLabelKey = payloadPayload[key as keyof typeof payloadPayload] as string;
+    computedActiveConfigLabelKeyStr = nestedSubPayloadRowBlock[targetLookupKeyStr] as string;
   }
 
-  return configLabelKey in config ? config[configLabelKey] : config[key as keyof typeof config];
+  return computedActiveConfigLabelKeyStr in config
+    ? config[computedActiveConfigLabelKeyStr]
+    : config[targetLookupKeyStr as keyof typeof config];
 }
 
 export { ChartContainer, ChartTooltip, ChartTooltipContent, ChartLegend, ChartLegendContent, ChartStyle };
