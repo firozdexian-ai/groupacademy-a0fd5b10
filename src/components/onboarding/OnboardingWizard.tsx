@@ -311,6 +311,7 @@ export function OnboardingWizard({
       if (authErr || !authData?.user?.id) throw new Error("Authentication index token lost. Please log in.");
       const userId = authData.user.id;
 
+      const isFreeform = institution.id.startsWith("freeform:");
       const { error: updateErr } = await supabase
         .from("talents")
         .update({
@@ -318,7 +319,7 @@ export function OnboardingWizard({
           country_code: country.iso2,
           country: country.name,
           career_stage_id: stage.id,
-          institution_id: institution.id,
+          institution_id: isFreeform ? null : institution.id,
           institution: institution.name,
           school_id: school.id,
           onboarding_step: 4,
