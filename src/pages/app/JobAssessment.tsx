@@ -58,7 +58,7 @@ export default function JobAssessment() {
   const navigateHook = useNavigate();
   const { talent: talentProfileRecord } = useTalent();
 
-  const [assessmentRecordState, setAssessmentRecordState] = React.useRef<JobAssessmentRecord | null>(null);
+  const assessmentRecordState = React.useRef<JobAssessmentRecord | null>(null);
   const [assessmentData, setAssessmentData] = React.useState<JobAssessmentRecord | null>(null);
   const [isLoading, setIsLoading] = React.useState<boolean>(true);
   const [isSubmissionPending, setIsSubmissionPending] = React.useState<boolean>(false);
