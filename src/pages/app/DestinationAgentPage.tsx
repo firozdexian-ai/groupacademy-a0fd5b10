@@ -311,9 +311,9 @@ export default function DestinationAgentPage() {
                       : "bg-muted border border-border/20 text-foreground/90 rounded-bl-none",
                   )}
                 >
-                  <ReactMarkdown className="prose prose-sm max-w-none dark:prose-invert text-inherit leading-relaxed font-sans block">
-                    {messageNodeItem.content}
-                  </ReactMarkdown>
+                  <div className="prose prose-sm max-w-none dark:prose-invert text-inherit leading-relaxed font-sans block">
+                    <ReactMarkdown>{messageNodeItem.content}</ReactMarkdown>
+                  </div>
                 </div>
               </div>
             );
