@@ -13,7 +13,7 @@ import { cn } from "@/lib/utils";
 // =========================================================================
 interface MessageThread {
   id: string;
-  agentName: string | null;
+  agentName?: string | null;
   agent_key: string | null;
   thread_type: "agent" | "system" | string;
   last_message_preview: string | null;
