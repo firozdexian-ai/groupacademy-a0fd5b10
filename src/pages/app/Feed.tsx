@@ -1,301 +1,254 @@
-import { useState, useEffect, useRef, useMemo, useCallback } from "react";
-import { useNavigate, useSearchParams } from "react-router-dom";
-import { Inbox, RefreshCw, WifiOff } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { Card, CardContent } from "@/components/ui/card";
-import { Skeleton } from "@/components/ui/skeleton";
-import { useTalent } from "@/hooks/useTalent";
-import { useFeedRecommendations, FeedItem } from "@/hooks/useFeedRecommendations";
-import { useFeedEngagement } from "@/hooks/useFeedEngagement";
-
-import { FeedCardRedesigned } from "@/components/feed/FeedCardRedesigned";
-import { PostCard } from "@/components/feed/PostCard";
-import { FeedFilters } from "@/components/feed/FeedFilters";
-import { FeedSkeleton } from "@/components/feed/FeedSkeleton";
-import { CareerInsightsStack } from "@/components/feed/CareerInsightsStack";
-import { FeedHeader } from "@/components/feed/FeedHeader";
-import { FloatingWhatsAppButton } from "@/components/feed/FloatingWhatsAppButton";
-import { PersonalizedPromptCard } from "@/components/feed/PersonalizedPromptCard";
-import { BannerCarousel } from "@/components/BannerCarousel";
-import { QuickActionsGrid } from "@/components/feed/QuickActionsGrid";
-import { ComposePost } from "@/components/feed/ComposePost";
-import { WeeklyLeaderboardWidget } from "@/components/feed/WeeklyLeaderboardWidget";
-import { NewPostsPill } from "@/components/feed/NewPostsPill";
+import * as React from "react";
+import { useParams, Link } from "react-router-dom";
+import { ArrowLeft, BookOpen, CheckCircle2, Lock, Clock, Award, Loader2, ShieldAlert } from "lucide-react";
+import { useMyTrackAssignments, useTrackProgress } from "@/hooks/useLearningTracks";
+import { TrackProgressRing } from "@/components/learning/TrackProgressRing";
+import { GRO10X_PANEL, GRO10X_MUTED } from "@/gro10x/lib/tokens";
+import { IS_GRO10X } from "@/lib/host";
 import { cn } from "@/lib/utils";
 
+// =========================================================================
+// DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
+// =========================================================================
+interface TrackDetails {
+  id: string;
+  title: string | null;
+  summary: string | null;
+}
+
+interface TrackAssignment {
+  id: string;
+  track_id: string;
+  due_at: string | null;
+  learning_tracks: TrackDetails | null;
+}
+
+interface ProgressItemNode {
+  content_id: string;
+  title: string;
+  position: number;
+  is_required: boolean;
+  status: string | null;
+  completed_at: string | null;
+}
+
+interface TrackProgressPayload {
+  required_done: number;
+  required_total: number;
+  is_complete: boolean;
+  items: ProgressItemNode[];
+}
+
+const ACADEMY_LEARN_HOME_ROUTER_PATH = IS_GRO10X ? "/gro10x/learn" : "/app/learning";
+
 /**
- * Feed — personalized stream of posts, courses, videos and articles
- * for the signed-in talent. Mobile-first; supports pull-to-refresh.
+ * GroUp Academy: Personal Career Track Progress Monitor (AppTrackDetail)
+ * Hardened roadmap portal calculating structural course milestone dependencies and locking date intervals against localization drifts.
+ * Version: Launch Candidate · Phase Z1 Production Contract Locked
  */
+export default function AppTrackDetail() {
+  const { trackId: unverifiedTrackIdStr } = useParams<{ trackId: string }>();
 
-export default function Feed() {
-  const navigate = useNavigate();
-  const [searchParams] = useSearchParams();
-  useEffect(() => {
-    const legacyId = searchParams.get("post");
-    if (legacyId) navigate(`/app/feed/post/${legacyId}`, { replace: true });
-  }, [searchParams, navigate]);
-  const { talent } = useTalent();
+  const { data: trackAssignmentsPayload, isLoading: isAssignmentsCacheResolving } = useMyTrackAssignments();
 
-  // Pull-to-refresh state
-  const [startY, setStartY] = useState(0);
-  const [pullDistance, setPullDistance] = useState(0);
-  const [isPulling, setIsPulling] = useState(false);
-  const containerRef = useRef<HTMLDivElement>(null);
+  // Cast incoming query vectors securely to shield child components from type decay
+  const typedAssignmentsArray = trackAssignmentsPayload as unknown as TrackAssignment[] | undefined;
 
-  const {
-    items = [],
-    insights = [],
-    isLoading,
-    isRefreshing,
-    isFetchingNextPage,
-    hasNextPage,
-    error,
-    filters,
-    setFilters,
-    refresh,
-    loadMore,
-    markInterested,
-    markNotInterested,
-  } = useFeedRecommendations();
+  // Isolate current active track assignment using an isolated memo checkpoint
+  const contextualActiveAssignment = React.useMemo(() => {
+    if (!typedAssignmentsArray || !unverifiedTrackIdStr) return null;
+    return typedAssignmentsArray.find((assignmentItem) => assignmentItem.track_id === unverifiedTrackIdStr) || null;
+  }, [typedAssignmentsArray, unverifiedTrackIdStr]);
 
-  // Prefetch engagement for visible posts in a single batched RPC (kills N+1)
-  const postIds = useMemo(
-    () => items.filter((i) => i.type === "post").map((i) => i.id),
-    [items],
+  const { data: progressPayloadResponse, isLoading: isProgressCacheResolving } = useTrackProgress(
+    contextualActiveAssignment?.id,
   );
-  useFeedEngagement(postIds);
+  const typedProgressPayload = progressPayloadResponse as unknown as TrackProgressPayload | undefined;
 
-  // IntersectionObserver-driven infinite scroll
-  const sentinelRef = useRef<HTMLDivElement>(null);
-  const handleLoadMore = useCallback(() => loadMore(), [loadMore]);
-  useEffect(() => {
-    const node = sentinelRef.current;
-    if (!node || !hasNextPage) return;
-    const obs = new IntersectionObserver(
-      (entries) => {
-        if (entries[0].isIntersecting) handleLoadMore();
-      },
-      { rootMargin: "400px 0px" },
-    );
-    obs.observe(node);
-    return () => obs.disconnect();
-  }, [hasNextPage, handleLoadMore, items.length]);
+  // =========================================================================
+  // MEMOIZED PARAMETER SECTOR: PROGRAMMATIC LEVEL MAP VECTOR PREREQUISITES
+  // =========================================================================
+  const calculatedPrerequisiteLocksArray = React.useMemo<boolean[]>(() => {
+    if (!typedProgressPayload?.items || typedProgressPayload.items.length === 0) return [];
 
-  const handleInterested = async (item: FeedItem) => {
-    await markInterested(item);
-    if (!item.slug && !item.youtubeUrl) return;
+    const itemsCollection = typedProgressPayload.items;
+    return itemsCollection.map((_, indexPosition) => {
+      if (indexPosition === 0) return true; // Foundation block step initialization is consistently un-locked
 
-    switch (item.type) {
-      case "blog":
-        if (item.slug) navigate(`/app/blog/${item.slug}`);
-        break;
-      case "course":
-      case "video":
-        if (item.slug) navigate(`/app/learning/courses/${item.slug}`);
-        else if (item.youtubeUrl) window.open(item.youtubeUrl, "_blank");
-        break;
-    }
-  };
+      const upstreamSiblingNode = itemsCollection[indexPosition - 1];
+      const isCompletedFlag = upstreamSiblingNode.status === "completed" || upstreamSiblingNode.completed_at !== null;
+      return isCompletedFlag;
+    });
+  }, [typedProgressPayload]);
 
-  /**
-   * CTO Logic: Tracking List
-   * Synchronized counts to satisfy FeedFilters interface requirements.
-   */
-  const counts = useMemo(
-    () => ({
-      all: items.length,
-      course: items.filter((i) => i.type === "course").length,
-      video: items.filter((i) => i.type === "video").length,
-      blog: items.filter((i) => i.type === "blog").length,
-      post: items.filter((i) => i.type === "post").length,
-      poll: items.filter((i) => i.type === "post" && i.contentType === "poll").length,
-    }),
-    [items],
-  );
-
-  // Pull-to-refresh handlers: Kinetic Protocol
-  const handleTouchStart = (e: React.TouchEvent) => {
-    if (window.scrollY === 0) {
-      setStartY(e.touches[0].clientY);
-      setIsPulling(true);
-    }
-  };
-
-  const handleTouchMove = (e: React.TouchEvent) => {
-    if (!isPulling) return;
-    const currentY = e.touches[0].clientY;
-    const diff = currentY - startY;
-    if (diff > 0 && window.scrollY === 0) {
-      setPullDistance(Math.min(diff * 0.4, 80));
-    } else {
-      setPullDistance(0);
-    }
-  };
-
-  const handleTouchEnd = async () => {
-    if (!isPulling) return;
-    setIsPulling(false);
-    if (pullDistance > 60) await refresh();
-    setPullDistance(0);
-  };
-
-  if (isLoading && !isRefreshing)
+  if (isAssignmentsCacheResolving || isProgressCacheResolving) {
     return (
-      <div className="max-w-7xl mx-auto px-3 py-2 md:px-6 md:py-10 grid lg:grid-cols-12 gap-4 md:gap-10 animate-pulse">
-        <div className="lg:col-span-8 space-y-3 md:space-y-8">
-          <FeedSkeleton />
-        </div>
-        <div className="hidden lg:block lg:col-span-4 space-y-8">
-          <Skeleton className="h-40 w-full rounded-3xl bg-muted/40" />
-          <Skeleton className="h-64 w-full rounded-3xl bg-muted/40" />
+      <div
+        role="status"
+        className="min-h-[60vh] w-full grid place-items-center font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground/50 select-none antialiased"
+      >
+        <div className="flex items-center gap-2.5">
+          <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0" />
+          <span>Syncing Milestone Logs Matrix...</span>
         </div>
       </div>
     );
+  }
+
+  if (!contextualActiveAssignment) {
+    return (
+      <div
+        role="alert"
+        className="min-h-[50vh] grid place-items-center text-center p-6 antialiased select-none transform-gpu"
+      >
+        <div className="max-w-xs block space-y-4 leading-none">
+          <div className="h-9 w-9 rounded-lg bg-muted/40 border border-border/40 flex items-center justify-center text-muted-foreground/50 mx-auto pointer-events-none">
+            <ShieldAlert className="h-4 w-4 stroke-[2.2]" />
+          </div>
+          <div className="space-y-1 block leading-none">
+            <p className="text-xs font-bold text-foreground uppercase tracking-wide">Assignment Allocation Absent</p>
+            <p className="text-[11px] font-semibold text-muted-foreground/60 leading-normal mt-1">
+              No continuous verification student ledger assignments were matched to this professional track parameter
+              index.
+            </p>
+          </div>
+          <Button
+            type="button"
+            asChild
+            variant="outline"
+            className="h-8 rounded-lg font-mono text-[10px] font-bold uppercase tracking-wider px-3 shadow-2xs cursor-pointer"
+          >
+            <Link to={ACADEMY_LEARN_HOME_ROUTER_PATH}>Back to Learn Hub</Link>
+          </Button>
+        </div>
+      </div>
+    );
+  }
+
+  const targetedTrackNodeDetails = contextualActiveAssignment.learning_tracks;
 
   return (
-    <div
-      className="max-w-7xl mx-auto px-3 md:px-6 py-2 md:py-10 pb-32 md:pb-16 min-h-screen relative"
-      ref={containerRef}
-      onTouchStart={handleTouchStart}
-      onTouchMove={handleTouchMove}
-      onTouchEnd={handleTouchEnd}
-    >
-      {/* Pull-to-refresh indicator */}
-      <div
-        className="absolute left-0 right-0 flex justify-center z-50 pointer-events-none transition-all duration-300"
-        style={{
-          top: isRefreshing ? "30px" : `${pullDistance - 50}px`,
-          opacity: pullDistance > 15 || isRefreshing ? 1 : 0,
-        }}
-      >
-        <div className="bg-primary shadow-lg rounded-2xl p-2.5 border-2 border-background">
-          <RefreshCw className={cn("h-5 w-5 text-primary-foreground", isRefreshing && "animate-spin")} />
-        </div>
-      </div>
+    <div className="max-w-md md:max-w-3xl mx-auto px-4 py-4 pb-32 text-left antialiased block transform-gpu w-full">
+      {/* HUD LEVEL 1: HUB INTEGRATION TRACK DIRECTORY NAVIGATION HEADER */}
+      <header className="block w-full select-none pb-3 border-b border-border/10 leading-none">
+        <Link
+          to={ACADEMY_LEARN_HOME_ROUTER_PATH}
+          className="inline-flex items-center gap-1.5 text-xs font-semibold text-muted-foreground hover:text-foreground transition-colors leading-none"
+        >
+          <ArrowLeft className="h-3 w-3 stroke-[2.5]" /> <span>Return to Matrix Index</span>
+        </Link>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-4 md:gap-10">
-        {/* Main feed column */}
-        <div className="lg:col-span-8 space-y-3 md:space-y-8">
-          <FeedHeader
-            talentName={talent?.fullName}
-            talentPhoto={talent?.profilePhotoUrl}
-            talentProfession={talent?.customProfession}
-            onRefresh={() => refresh()}
-            isRefreshing={isRefreshing}
-          />
-
-          <BannerCarousel placement="carousel" />
-
-          <QuickActionsGrid />
-
-          <div className="rounded-2xl overflow-hidden border border-border/40 bg-card">
-            <ComposePost onPostCreated={() => refresh()} />
+        <div className="mt-4 flex items-center gap-4 block w-full leading-none">
+          <div className="shrink-0 pointer-events-none select-none">
+            <TrackProgressRing
+              done={typedProgressPayload?.required_done ?? 0}
+              total={typedProgressPayload?.required_total ?? 0}
+              size={56}
+            />
           </div>
 
-          <FeedFilters filters={filters} onChange={setFilters} counts={counts} />
-
-          <NewPostsPill onTap={() => refresh()} />
-
-          {error ? (
-            <Card className="border-destructive/20 bg-destructive/5 rounded-3xl py-10 md:py-16 text-center animate-in zoom-in-95">
-              <CardContent className="space-y-5">
-                <WifiOff className="h-12 w-12 text-destructive mx-auto opacity-40" />
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold">Couldn't load your feed</h3>
-                  <p className="text-sm text-muted-foreground">Check your connection and try again.</p>
-                </div>
-                <Button onClick={() => refresh()} className="rounded-xl h-10 px-6 font-semibold text-sm">
-                  Try again
-                </Button>
-              </CardContent>
-            </Card>
-          ) : items.length === 0 ? (
-            <Card className="rounded-3xl border border-dashed border-border/40 bg-muted/5 py-12 md:py-20 text-center">
-              <CardContent className="flex flex-col items-center space-y-5">
-                <div className="h-16 w-16 rounded-2xl bg-muted/20 flex items-center justify-center border border-dashed border-border/60">
-                  <Inbox className="h-7 w-7 text-muted-foreground/40" />
-                </div>
-                <div className="space-y-1">
-                  <h3 className="text-lg font-bold">
-                    {filters.scope !== "global" ? "Nothing here yet" : "You're all caught up"}
-                  </h3>
-                  <p className="text-sm text-muted-foreground">
-                    {filters.scope !== "global"
-                      ? "Be the first to post in this community."
-                      : "Check back later for new posts and recommendations."}
-                  </p>
-                </div>
-                {filters.scope !== "global" && (
-                  <Button
-                    variant="outline"
-                    onClick={() => setFilters({ ...filters, scope: "global", type: "all" })}
-                    className="rounded-xl h-9 px-5 text-sm font-semibold"
-                  >
-                    Switch to Global
-                  </Button>
+          <div className="flex-1 min-w-0 space-y-1 block">
+            <h1 className="text-base sm:text-lg md:text-xl font-bold uppercase tracking-wide text-foreground truncate block pt-0.5 select-text">
+              {targetedTrackNodeDetails?.title ?? "Specialty Curriculum Path"}
+            </h1>
+            {targetedTrackNodeDetails?.summary && (
+              <p
+                className={cn(
+                  "text-xs leading-normal block select-text font-medium text-muted-foreground/80 line-clamp-2",
+                  !IS_GRO10X && "text-muted-foreground/70",
+                  GRO10X_MUTED,
                 )}
-              </CardContent>
-            </Card>
-          ) : (
-            <div className="space-y-3 md:space-y-6 pb-32">
-              {items.map((item, index) => (
-                <div key={item.id || index} className="animate-in fade-in slide-in-from-bottom-4 duration-500">
-                  {item.type === "post" ? (
-                    <PostCard
-                      post={
-                        {
-                          ...item,
-                          authorName: item.authorName || "Community member",
-                          authorTitle: item.authorTitle || "",
-                          createdAt: item.createdAt || new Date().toISOString(),
-                          textContent: item.textContent || item.description || "",
-                        } as any
-                      }
-                    />
-                  ) : (
-                    <FeedCardRedesigned
-                      item={item}
-                      onInterested={() => handleInterested(item)}
-                      onNotInterested={() => markNotInterested(item.id)}
-                    />
-                  )}
-                </div>
-              ))}
+              >
+                {targetedTrackNodeDetails.summary}
+              </p>
+            )}
+            {contextualActiveAssignment.due_at && (
+              <p className="font-mono text-[9px] sm:text-[10px] font-extrabold text-amber-500 uppercase tracking-wide flex items-center gap-1 leading-none pt-0.5">
+                <Clock className="h-3.5 w-3.5 stroke-[2] shrink-0" />
+                <span>
+                  Syllabus Dead-Line:{" "}
+                  {new Date(contextualActiveAssignment.due_at)
+                    .toLocaleDateString("en-US", { timeZone: "UTC" })
+                    .toUpperCase()}
+                </span>
+              </p>
+            )}
+          </div>
+        </div>
+      </header>
 
-              <div ref={sentinelRef} className="flex flex-col items-center py-8 min-h-[60px]">
-                {isFetchingNextPage ? (
-                  <div className="flex items-center gap-2 text-sm text-muted-foreground">
-                    <RefreshCw className="h-4 w-4 animate-spin" />
-                    <span>Loading more…</span>
+      {/* HUD LEVEL 2: DYNAMIC MINTED CREDENTIAL STATUS INDICATOR BANNER */}
+      {typedProgressPayload?.is_complete && (
+        <div className="rounded-lg border border-emerald-500/20 bg-emerald-500/[0.01] p-3 flex items-start gap-2.5 mt-4 select-none pointer-events-none leading-none w-full block animate-in fade-in duration-200">
+          <Award className="h-5 w-5 text-emerald-600 stroke-[2.2] shrink-0 mt-0.5 animate-bounce" />
+          <div className="flex-1 leading-none space-y-0.5 block">
+            <p className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-wide">
+              Professional Track Fully Finalized
+            </p>
+            <p className="font-mono text-[9px] font-bold text-emerald-600/80 uppercase tracking-tight block leading-none">
+              Your cryptographically signed completion certificate block has been minted.
+            </p>
+          </div>
+        </div>
+      )}
+
+      {/* HUD LEVEL 3: DYNAMIC ROADMAP INSTRUCTIONAL PROGRESSION BLOCKS */}
+      <section className="mt-6 space-y-3 block w-full">
+        <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5">
+          Syllabus Execution Milestones
+        </h2>
+
+        <div className="space-y-2 block w-full pt-1">
+          {(typedProgressPayload?.items ?? []).map((itemNode, itemIndexNum) => {
+            const isItemCompletedFlag = !!itemNode.completed_at;
+            const isStepSequenceAccessibleFlag = calculatedPrerequisiteLocksArray[itemIndexNum] !== false;
+
+            return (
+              <div
+                key={`track-sequence-item-node-${itemNode.content_id}`}
+                className={cn(
+                  "rounded-lg border border-border/60 bg-card/40 p-3 flex items-center justify-between gap-4 leading-none w-full block transform-gpu transition-colors duration-100 shadow-2xs",
+                  !isStepSequenceAccessibleFlag && "opacity-50 bg-muted/10 border-border/20",
+                  GRO10X_PANEL,
+                )}
+              >
+                <div className="flex items-center gap-3.5 leading-none flex-1 min-w-0 block">
+                  {/* Status Indicator Structural Icons Slots */}
+                  <div className="h-9 w-9 rounded bg-background border border-border/40 grid place-items-center shrink-0 select-none pointer-events-none shadow-3xs">
+                    {isItemCompletedFlag ? (
+                      <CheckCircle2 className="h-4 w-4 text-emerald-600 stroke-[2.5]" />
+                    ) : !isStepSequenceAccessibleFlag ? (
+                      <Lock className="h-4 w-4 text-muted-foreground/30 stroke-[2]" />
+                    ) : (
+                      <BookOpen className="h-4 w-4 text-primary stroke-[2.2]" />
+                    )}
                   </div>
-                ) : hasNextPage ? (
-                  <Button
-                    variant="ghost"
-                    onClick={handleLoadMore}
-                    className="rounded-xl font-semibold text-sm gap-2"
-                  >
-                    Load more
-                  </Button>
-                ) : (
-                  <span className="text-xs text-muted-foreground">You're all caught up</span>
-                )}
+
+                  <div className="flex-1 min-w-0 space-y-1 block leading-none">
+                    <p className="text-xs sm:text-sm font-bold text-foreground truncate block uppercase tracking-wide pt-0.5 select-text">
+                      {itemNode.title}
+                    </p>
+                    <div className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight flex items-center gap-2 select-none pointer-events-none leading-none h-4">
+                      <span>Syllabus Rank Step {(itemNode.position + 1).toString()}</span>
+                      {!itemNode.is_required && (
+                        <Badge
+                          variant="secondary"
+                          className="font-mono text-[8px] font-extrabold px-1 h-3.5 bg-muted/60 text-muted-foreground/50 border border-transparent tracking-tight rounded-xs pt-0"
+                        >
+                          OPTIONAL DRAW
+                        </Badge>
+                      )}
+                      {isItemCompletedFlag && (
+                        <span className="text-emerald-600 font-extrabold font-mono select-none">✓ Verified Passed</span>
+                      )}
+                    </div>
+                  </div>
+                </div>
               </div>
-            </div>
-          )}
+            );
+          })}
         </div>
-
-        {/* Sidebar (desktop only) */}
-        <aside className="hidden lg:block lg:col-span-4">
-          <div className="sticky top-24 space-y-6">
-            <PersonalizedPromptCard />
-            <WeeklyLeaderboardWidget />
-            <CareerInsightsStack insights={insights || []} />
-          </div>
-        </aside>
-      </div>
-
-      <FloatingWhatsAppButton showPrompt={items.length > 0} />
+      </section>
     </div>
   );
 }
