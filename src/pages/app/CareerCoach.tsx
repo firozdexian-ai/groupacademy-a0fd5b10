@@ -1,11 +1,31 @@
-import { useEffect, useState } from "react";
-import { Loader2 } from "lucide-react";
+import * as React from "react";
+import { Loader2, Bot, UserX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
 import { useTalent } from "@/hooks/useTalent";
 import { AIChatPanel } from "@/components/ai-instructor/AIChatPanel";
 import { trackCoachEvent } from "@/lib/onboarding/telemetry";
+import { cn } from "@/lib/utils";
 
-const GOAL_LABEL: Record<string, string> = {
+// =========================================================================
+// DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
+// =========================================================================
+interface CoachInstructor {
+  id: string;
+  name: string;
+  profession_line_id: string;
+  avatar_url: string | null;
+}
+
+interface TalentCoachBindingRecord {
+  career_coach_instructor_id: string | null;
+}
+
+interface StarterChipConfig {
+  label: string;
+  prompt: string;
+}
+
+const STRATEGIC_GOALS_DIRECTORY: Record<string, string> = {
   first_job: "land your first job",
   switch_role: "switch to a new role",
   get_promoted: "get promoted",
@@ -15,110 +35,209 @@ const GOAL_LABEL: Record<string, string> = {
   build_own_thing: "build your own thing",
 };
 
-interface CoachInstructor {
-  id: string;
-  name: string;
-  profession_line_id: string;
-  avatar_url: string | null;
-}
-
+/**
+ * GroUp Academy: Personalized AI Career Coach Dashboard (CareerCoach)
+ * Hardened communications portal executing automated coach-to-talent bindings and isolating inference panels from layout shifting.
+ * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ */
 export default function CareerCoach() {
-  const { talent } = useTalent();
-  const [coach, setCoach] = useState<CoachInstructor | null>(null);
-  const [loading, setLoading] = useState(true);
+  const { talent: talentProfileRecord } = useTalent();
 
-  useEffect(() => {
-    if (!talent?.id) return;
-    let cancelled = false;
-    (async () => {
-      setLoading(true);
+  const [activeCoachInstructor, setActiveCoachInstructor] = React.useState<CoachInstructor | null>(null);
+  const [isCoachCacheResolving, setIsCoachCacheResolving] = React.useState<boolean>(true);
+
+  // =========================================================================
+  // LIFECYCLE SECTOR 1: PROGRAMMATIC HANDSHAKE & COACH ALLOCATION LOOP
+  // =========================================================================
+  React.useEffect(() => {
+    if (!talentProfileRecord?.id) return;
+
+    let isThreadActive = true;
+    setIsCoachCacheResolving(true);
+
+    const executeCoachAssignmentAndDossierLookup = async () => {
       try {
-        // 1. Read current binding
-        const { data: t } = await supabase
+        // Step 1: Read active relational coach-to-talent bindings tracking row
+        const { data: bindingQueryPayload } = await supabase
           .from("talents")
           .select("career_coach_instructor_id")
-          .eq("id", talent.id)
+          .eq("id", talentProfileRecord.id)
           .maybeSingle();
 
-        let coachId: string | null = (t as any)?.career_coach_instructor_id ?? null;
+        const castBindingRecord = bindingQueryPayload as unknown as TalentCoachBindingRecord | null;
+        let evaluatedCoachIdUUID = castBindingRecord?.career_coach_instructor_id ?? null;
 
-        // 2. Auto-assign if missing
-        if (!coachId) {
-          const { data: assigned } = await supabase.rpc("assign_career_coach" as any, {
-            _talent_id: talent.id,
+        // Step 2: Programmatically trigger remote atomic allocation RPC procedure if mapping is unassigned
+        if (!evaluatedCoachIdUUID) {
+          const { data: rpcAssignmentPayload, error: rpcExecutionError } = await supabase.rpc("assign_career_coach", {
+            _talent_id: talentProfileRecord.id,
           });
-          coachId = (assigned as any) ?? null;
+
+          if (!rpcExecutionError && rpcAssignmentPayload) {
+            evaluatedCoachIdUUID = String(rpcAssignmentPayload);
+          }
         }
 
-        if (!coachId) {
-          if (!cancelled) setCoach(null);
+        if (!evaluatedCoachIdUUID) {
+          if (isThreadActive) {
+            setActiveCoachInstructor(null);
+            setIsCoachCacheResolving(false);
+          }
           return;
         }
 
-        const { data: ai } = await supabase
+        // Step 3: Gather lead artificial intelligence instructor biography specifications
+        const { data: instructorQueryPayload } = await supabase
           .from("ai_instructors")
           .select("id, name, profession_line_id, avatar_url")
-          .eq("id", coachId)
+          .eq("id", evaluatedCoachIdUUID)
           .maybeSingle();
-        if (!cancelled) setCoach((ai as any) ?? null);
-        trackCoachEvent("opened", { coachId });
+
+        if (isThreadActive) {
+          if (instructorQueryPayload) {
+            setActiveCoachInstructor(instructorQueryPayload as unknown as CoachInstructor);
+            trackCoachEvent("opened", { coachId: evaluatedCoachIdUUID });
+          } else {
+            setActiveCoachInstructor(null);
+          }
+        }
+      } catch (fatalHandshakeException) {
+        console.error("Critical Coach Telemetry Assignment Loop Exception:", fatalHandshakeException);
       } finally {
-        if (!cancelled) setLoading(false);
+        if (isThreadActive) {
+          setIsCoachCacheResolving(false);
+        }
       }
-    })();
-    return () => {
-      cancelled = true;
     };
-  }, [talent?.id]);
 
-  const firstName = talent?.fullName?.split(" ")[0] || "there";
-  const goalLabel = talent?.primaryGoal ? GOAL_LABEL[talent.primaryGoal] || talent.primaryGoal : null;
-  const seed = coach
-    ? `Hi ${firstName}, I'm ${coach.name} — your Career Coach.${
-        goalLabel ? ` You said your goal is to ${goalLabel}.` : ""
-      } Want to start with a 30-day plan, fix your CV, or find roles you'd actually land?`
-    : undefined;
+    executeCoachAssignmentAndDossierLookup();
 
-  const starterChips = [
-    { label: "Plan my next 30 days", prompt: `Build me a focused 30-day plan to ${goalLabel || "move forward in my career"}.` },
-    { label: "Review my CV", prompt: "Review my CV and give me 3 specific improvements." },
-    { label: "Find me jobs", prompt: "What kind of roles should I be applying to right now, and why?" },
-    { label: "What skill should I learn?", prompt: "Given my profile and goal, what is the single most valuable skill I should learn next?" },
-  ];
+    return () => {
+      isThreadActive = false;
+    };
+  }, [talentProfileRecord?.id]);
+
+  // =========================================================================
+  // MEMOIZED PARAMETER SECTOR: TEXT CONTEXT PRE-COMPILATIONS
+  // =========================================================================
+  const resolvedGivenNameStr = React.useMemo<string>(() => {
+    if (!talentProfileRecord?.fullName) return "there";
+    // Sanitize multi-space entries and clean name string allocations defensively
+    const scrubbedNomenclatureArray = talentProfileRecord.fullName.trim().replace(/\s+/g, " ").split(" ");
+    const candidatePrimaryToken = scrubbedNomenclatureArray[0] || "there";
+
+    const operationalNomenclatureBlocklists = ["MR.", "MRS.", "MS.", "DR.", "MD.", "PROF."];
+    if (
+      operationalNomenclatureBlocklists.includes(candidatePrimaryToken.toUpperCase()) &&
+      scrubbedNomenclatureArray.length > 1
+    ) {
+      return scrubbedNomenclatureArray[1];
+    }
+    return candidatePrimaryToken;
+  }, [talentProfileRecord?.fullName]);
+
+  const resolvedGoalLabelStr = React.useMemo<string | null>(() => {
+    if (!talentProfileRecord?.primaryGoal) return null;
+    return STRATEGIC_GOALS_DIRECTORY[talentProfileRecord.primaryGoal] || talentProfileRecord.primaryGoal;
+  }, [talentProfileRecord?.primaryGoal]);
+
+  const synthesizedSeedAssistantPrompt = React.useMemo<string | undefined>(() => {
+    if (!activeCoachInstructor) return undefined;
+    const coreGoalClauseStr = resolvedGoalLabelStr
+      ? ` You indicated your current target landmark objective is to ${resolvedGoalLabelStr}.`
+      : "";
+    return `Hi ${resolvedGivenNameStr}, I am ${activeCoachInstructor.name} — your specialized performance Career Coach.${coreGoalClauseStr} Shall we construct a milestone 30-day advancement sprint, calibrate structural resume formatting errors, or map corporate positions aligned with your capabilities?`;
+  }, [activeCoachInstructor, resolvedGivenNameStr, resolvedGoalLabelStr]);
+
+  const contextStarterChips = React.useMemo<StarterChipConfig[]>(() => {
+    return [
+      {
+        label: "Plan My Next 30 Days",
+        prompt: `Build me an authoritative, milestone-oriented 30-day execution plan to ${resolvedGoalLabelStr || "advance my operational positioning boundaries"} safely.`,
+      },
+      {
+        label: "Audit My CV Architecture",
+        prompt:
+          "Perform a structural code review on my current CV document and isolate 3 critical optimization refactors.",
+      },
+      {
+        label: "Target Open Market Roles",
+        prompt:
+          "Identify targeted organizational placement opportunities suited to my skill metrics, along with an entry rationale map.",
+      },
+      {
+        label: "Isolate High-Value Competencies",
+        prompt:
+          "Cross-reference my active skill portfolio data against market demands to determine the highest value educational node to unlock next.",
+      },
+    ];
+  }, [resolvedGoalLabelStr]);
 
   return (
-    <div className="flex flex-col h-[calc(100dvh-64px)] max-w-3xl mx-auto w-full px-2 sm:px-4 py-2">
-      <div className="px-2 pb-2">
-        <h1 className="text-xl font-bold text-slate-900">Career Coach</h1>
-        <p className="text-xs text-slate-500">
-          {coach ? `${coach.name} • here to help you ${goalLabel || "grow your career"}` : "Personal coaching for your career"}
-        </p>
-      </div>
-
-      <div className="flex-1 min-h-0">
-        {loading ? (
-          <div className="h-full flex items-center justify-center">
-            <Loader2 className="h-6 w-6 animate-spin text-slate-400" />
+    <div className="flex flex-col h-[calc(100dvh-64px)] max-w-3xl mx-auto w-full px-4 py-3 antialiased transform-gpu">
+      {/* HUD LEVEL 1: ADMINISTRATIVE HUB TITLE BLOCK METADATA */}
+      <header className="px-1 pb-3 block select-none pointer-events-none leading-none w-full shrink-0 border-b border-border/10 mb-3">
+        <div className="flex items-center gap-2.5 leading-none w-full block">
+          <div className="p-1.5 bg-primary/5 border border-primary/10 rounded-md text-primary shrink-0 block shadow-3xs">
+            <Bot className="h-4 w-4 stroke-[2.2]" />
           </div>
-        ) : !coach ? (
-          <div className="h-full flex items-center justify-center text-center px-6">
-            <div>
-              <p className="text-sm text-slate-600 mb-2">We couldn't bind a Career Coach yet.</p>
-              <p className="text-xs text-slate-500">Finish setting your profession in your profile, then come back.</p>
+          <h1 className="text-sm sm:text-base font-bold uppercase tracking-wide text-slate-900 pt-0.5">
+            Personal Intelligence Career Coach
+          </h1>
+        </div>
+        <p className="font-mono text-[10px] font-bold text-muted-foreground/50 uppercase tracking-tight block leading-none pt-1.5">
+          {activeCoachInstructor
+            ? `OPERATIONAL MODERATOR: ${activeCoachInstructor.name.toUpperCase()} • ASSIGNED TO TARGET LANDMARK: ${resolvedGoalLabelStr ? resolvedGoalLabelStr.toUpperCase() : "GENERAL IMPROVEMENT PROTOCOL"}`
+            : "Continuous AI guidance counseling for systemic professional track transitions."}
+        </p>
+      </header>
+
+      {/* HUD LEVEL 2: CONSOLE WORKSPACE VIEWPORT LAYOUT GATEWAYS */}
+      <main className="flex-1 min-h-0 block w-full relative">
+        {isCoachCacheResolving ? (
+          <div
+            role="status"
+            className="absolute inset-0 grid place-items-center bg-background/50 backdrop-blur-3xs select-none pointer-events-none font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground/40 leading-none"
+          >
+            <div className="flex items-center gap-2.5">
+              <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0 stroke-[2.5]" />
+              <span>Initializing Interactive Coach Container...</span>
+            </div>
+          </div>
+        ) : !activeCoachInstructor ? (
+          <div
+            role="alert"
+            className="absolute inset-0 grid place-items-center text-center p-6 antialiased select-none transform-gpu"
+          >
+            <div className="max-w-xs block space-y-4 leading-none">
+              <div className="h-9 w-9 rounded-lg bg-muted/40 border border-border/40 flex items-center justify-center text-muted-foreground/40 mx-auto pointer-events-none">
+                <UserX className="h-4 w-4 stroke-[2.2]" />
+              </div>
+              <div className="space-y-1 block leading-none">
+                <p className="text-xs font-bold text-foreground uppercase tracking-wide">Coach Allocation Restricted</p>
+                <p className="text-[11px] font-semibold text-muted-foreground/50 leading-normal mt-1">
+                  We could not map an automated career coach instructor node to your workspace profile settings.
+                </p>
+                <p className="font-mono text-[10px] font-black uppercase text-primary pt-2 block">
+                  Complete discipline settings inside your dossier.
+                </p>
+              </div>
             </div>
           </div>
         ) : (
-          <AIChatPanel
-            professionLineId={coach.profession_line_id}
-            mode="career_coach"
-            instructorName={coach.name}
-            placeholder="Ask anything about your career…"
-            seedAssistantMessage={seed}
-            starterChips={starterChips}
-            className="h-full"
-          />
+          <div className="h-full block w-full animate-in fade-in duration-200">
+            <AIChatPanel
+              professionLineId={activeCoachInstructor.profession_line_id}
+              mode="career_coach"
+              instructorName={activeCoachInstructor.name}
+              placeholder="Query your personal performance counselor regarding capability tracks,CV improvements, or milestone plans..."
+              seedAssistantMessage={synthesizedSeedAssistantPrompt}
+              starterChips={contextStarterChips}
+              className="h-full rounded-lg border border-border/60 bg-background/30 shadow-none overflow-hidden block w-full"
+            />
+          </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
