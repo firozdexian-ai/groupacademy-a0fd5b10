@@ -11,6 +11,7 @@ import { Loader2, Bot, TrendingUp, Coins, Wallet, PlusCircle, Rocket, Sparkles }
 import { toast } from "sonner";
 import { CreatorOnboardingDialog } from "@/components/agents/CreatorOnboardingDialog";
 import { PayoutDialog } from "@/components/agents/PayoutDialog"; // Recommended extraction
+import { cn } from "@/lib/utils";
 
 // =========================================================================
 // DETERMINISTIC CONTRACTS
