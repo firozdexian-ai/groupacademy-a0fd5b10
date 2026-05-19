@@ -1,4 +1,4 @@
-import { useState } from "react";
+import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -16,6 +16,7 @@ import {
   Zap,
   Target,
   ShieldCheck,
+  Loader2
 } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -31,12 +32,53 @@ import { cn } from "@/lib/utils";
 import { EmptyState } from "@/components/common/EmptyState";
 import { PAGE_SHELL, PAGE_TITLE, SECTION_TITLE, META_TEXT, CARD } from "@/lib/uiTokens";
 
-const STATUS_CONFIG: Record<string, { label: string; color: string; icon: any }> = {
-  upcoming: { label: "Upcoming", color: "bg-blue-500/10 text-blue-600 border-blue-500/20", icon: Calendar },
-  active: { label: "Live", color: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20", icon: Zap },
-  judging: { label: "Judging", color: "bg-amber-500/10 text-amber-600 border-amber-500/20", icon: Target },
-  completed: { label: "Completed", color: "bg-muted text-muted-foreground border-border", icon: CheckCircle },
-  cancelled: { label: "Cancelled", color: "bg-destructive/10 text-destructive border-destructive/20", icon: ShieldCheck },
+// =========================================================================
+// DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
+// =========================================================================
+interface PrizeConfigItem {
+  name?: string;
+  description?: string;
+}
+
+interface CompetitionRecord {
+  id: string;
+  title: string;
+  slug: string;
+  description: string | null;
+  rules: string | null;
+  featured_image: string | null;
+  is_featured: boolean | null;
+  status: string;
+  start_date: string;
+  end_date: string;
+  submission_deadline: string;
+  max_participants: number | null;
+  prizes: string[] | PrizeConfigItem[] | unknown;
+}
+
+interface CompetitionSubmission {
+  id: string;
+  competition_id: string;
+  talent_id: string;
+  submission_url: string;
+  description: string | null;
+  status: string;
+  feedback: string | null;
+  created_at: string;
+}
+
+interface StatusConfigItem {
+  label: string;
+  color: string;
+  icon: React.ComponentType<{ className?: string }>;
+}
+
+const STATUS_PRESETS_DIRECTORY: Record<string, StatusConfigItem> = {
+  upcoming: { label: "Upcoming Run", color: "bg-blue-500/5 text-blue-600 border-blue-500/10", icon: Calendar },
+  active: { label: "Live Active Arena", color: "bg-emerald-500/5 text-emerald-600 border-emerald-500/10", icon: Zap },
+  judging: { label: "Evaluation Underway", color: "bg-amber-500/5 text-amber-600 border-amber-500/10", icon: Target },
+  completed: { label: "Completed Manifest", color: "bg-muted text-muted-foreground border-border/40", icon: CheckCircle },
+  cancelled: { label: "Terminated Operation", color: "bg-destructive/5 text-destructive border-destructive/10", icon: ShieldCheck },
 };
 
 interface CompetitionDetailProps {
@@ -44,184 +86,274 @@ interface CompetitionDetailProps {
   onBack?: () => void;
 }
 
+/**
+ * GroUp Academy: Authoritative Arena Challenge Dashboard (CompetitionDetail)
+ * Hardened responsive environment processing portfolio entry updates and locking temporal interval calculations defensively.
+ * Version: Launch Candidate · Phase Z1 Integration Stability Locked
+ */
 export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDetailProps) {
-  const params = useParams();
-  const slug = inlineSlug || params.slug;
-  const navigate = useNavigate();
-  const { talent } = useTalent();
+  const { slug: urlSlugStr } = useParams<{ slug: string }>();
+  const navigateHook = useNavigate();
   const queryClient = useQueryClient();
-  const [submissionUrl, setSubmissionUrl] = useState("");
-  const [submissionDescription, setSubmissionDescription] = useState("");
-  const [isSubmitDialogOpen, setIsSubmitDialogOpen] = useState(false);
+  const { talent: talentProfileRecord } = useTalent();
 
-  const handleBack = onBack || (() => navigate("/app/learning/competitions"));
+  const activeChallengeSlug = inlineSlug || urlSlugStr;
 
-  const { data: competition, isLoading } = useQuery({
-    queryKey: ["competition", slug],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("competitions").select("*").eq("slug", slug).single();
-      if (error) throw error;
-      return data;
+  const [textSubmissionUrlInput, setTextSubmissionUrlInput] = React.useState<string>("");
+  const [textDescriptionInput, setTextDescriptionInput] = React.useState<string>("");
+  const [isSubmitSheetOpen, setIsSubmitSheetOpen] = React.useState<boolean>(false);
+
+  const handleReturnToDirectoryTrigger = React.useCallback(() => {
+    if (onBack) {
+      onBack();
+    } else {
+      navigateHook("/app/learning/competitions");
+    }
+  }, [onBack, navigateHook]);
+
+  // =========================================================================
+  // DATA ACQUISITION PIPELINE SECURED VIA TANSTACK CACHE CHANNEL
+  // =========================================================================
+  const { data: competitionChallengeQueryPayload, isLoading: isChallengeCacheResolving } = useQuery({
+    queryKey: ["app-competition-specification-detail", activeChallengeSlug],
+    queryFn: async (): Promise<CompetitionRecord> => {
+      const { data: dbChallengePayload, error: queryHandshakeError } = await supabase
+        .from("competitions")
+        .select("*")
+        .eq("slug", activeChallengeSlug!)
+        .single();
+
+      if (queryHandshakeError) throw queryHandshakeError;
+      return dbChallengePayload as unknown as CompetitionRecord;
     },
-    enabled: !!slug,
+    enabled: !!activeChallengeSlug,
+    staleTime: 4 * 60 * 1000,
   });
 
-  const { data: mySubmission } = useQuery({
-    queryKey: ["my-competition-submission", competition?.id, talent?.id],
-    queryFn: async () => {
-      if (!competition?.id || !talent?.id) return null;
-      const { data, error } = await supabase
+  const activeChallengeItem = competitionChallengeQueryPayload;
+
+  const { data: candidateSubmissionPayload } = useQuery({
+    queryKey: ["my-competition-submission-node", activeChallengeItem?.id, talentProfileRecord?.id],
+    queryFn: async (): Promise<CompetitionSubmission | null> => {
+      if (!activeChallengeItem?.id || !talentProfileRecord?.id) return null;
+      const { data: dbSubmissionPayload, error: queryHandshakeError } = await supabase
         .from("competition_submissions")
         .select("*")
-        .eq("competition_id", competition.id)
-        .eq("talent_id", talent.id)
+        .eq("competition_id", activeChallengeItem.id)
+        .eq("talent_id", talentProfileRecord.id)
         .maybeSingle();
-      if (error && error.code !== "PGRST116") throw error;
-      return data;
+
+      if (queryHandshakeError) throw queryHandshakeError;
+      return dbSubmissionPayload as unknown as CompetitionSubmission | null;
     },
-    enabled: !!competition?.id && !!talent?.id,
+    enabled: !!activeChallengeItem?.id && !&talentProfileRecord?.id,
   });
 
-  const submitMutation = useMutation({
+  // =========================================================================
+  // TRANSACTION MUTATION LANE: ENTRY SUBMISSION DISPATCH CORE
+  // =========================================================================
+  const executeSubmitMutationTrigger = useMutation({
     mutationFn: async () => {
-      if (!competition || !talent) throw new Error("Sign in required");
-      const { error } = await supabase.from("competition_submissions").upsert({
-        competition_id: competition.id,
-        talent_id: talent.id,
-        submission_url: submissionUrl,
-        description: submissionDescription,
+      if (!activeChallengeItem || !talentProfileRecord) {
+        throw new Error("Authorization signature expired. Authenticate container profile.");
+      }
+      const { error: mutationRpcHandshakeError } = await supabase.from("competition_submissions").upsert({
+        competition_id: activeChallengeItem.id,
+        talent_id: talentProfileRecord.id,
+        submission_url: textSubmissionUrlInput.trim(),
+        description: textDescriptionInput.trim() || null,
         status: "submitted",
       });
-      if (error) throw error;
+      if (mutationRpcHandshakeError) throw mutationRpcHandshakeError;
     },
     onSuccess: () => {
-      toast.success("Entry submitted");
-      setIsSubmitDialogOpen(false);
-      queryClient.invalidateQueries({ queryKey: ["my-competition-submission"] });
+      toast.success("Operational challenge entry portfolio successfully locked.");
+      setIsSubmitSheetOpen(false);
+      setTextSubmissionUrlInput("");
+      setTextDescriptionInput("");
+      queryClient.invalidateQueries({ queryKey: ["my-competition-submission-node"] });
     },
-    onError: (error: Error) => toast.error(error.message || "Submission failed"),
+    onError: (mutationRejectionPayload: Error) => {
+      toast.error(mutationRejectionPayload.message || "Failed to finalize project entry transmission parameters.");
+    },
   });
 
-  if (isLoading)
+  // =========================================================================
+  // MEMOIZED PARAMETER SECTOR: SECURE TIMELINE RANGE EVALUATION OVERHEADS
+  // =========================================================================
+  const calculatedChronoMetrics = React.useMemo(() => {
+    if (!activeChallengeItem) return { deadlinePassed: true, daysLeft: null, dateRangeLabel: "", deadlineLabel: "" };
+    
+    const onsetDate = new Date(activeChallengeItem.start_date);
+    const ceilingDate = new Date(activeChallengeItem.end_date);
+    const targetDeadlineDate = new Date(activeChallengeItem.submission_deadline);
+    const currentSystemDate = new Date();
+
+    const rangeStr = `${format(onsetDate, "MMM d")} – ${format(ceilingDate, "MMM d")}`;
+    const deadlineStr = format(targetDeadlineDate, "MMM d");
+    const deltaDays = differenceInDays(targetDeadlineDate, currentSystemDate);
+
+    return {
+      daysLeft: deltaDays,
+      dateRangeLabel: rangeStr,
+      deadlineLabel: deadlineStr,
+    };
+  }, [activeChallengeItem]);
+
+  const resolvedPrizesListArray = React.useMemo<string[]>(() => {
+    if (!activeChallengeItem?.prizes || !Array.isArray(activeChallengeItem.prizes)) return [];
+    return activeChallengeItem.prizes.map((prizeNodeItem: unknown) => {
+      if (typeof prizeNodeItem === "string") return prizeNodeItem;
+      const castPrize = prizeNodeItem as PrizeConfigItem;
+      return castPrize?.name || castPrize?.description || "Specialty Corporate Allocation Bundle";
+    });
+  }, [activeChallengeItem?.prizes]);
+
+  if (isChallengeCacheResolving) {
     return (
-      <div className={PAGE_SHELL}>
-        <Skeleton className="h-8 w-32 rounded-xl" />
-        <Skeleton className="h-48 w-full rounded-2xl" />
+      <div className={cn(PAGE_SHELL, "space-y-4 text-left antialiased block transform-gpu w-full select-none pointer-events-none")}>
+        <Skeleton className="h-8 w-32 rounded-lg block" />
+        <Skeleton className="h-44 w-full rounded-xl bg-card/10 block shadow-none border border-transparent" />
+        <div className="space-y-2 block w-full">
+          <Skeleton className="h-4 w-full rounded-xs block" />
+          <Skeleton className="h-4 w-2/3 rounded-xs block" />
+        </div>
       </div>
     );
+  }
 
-  if (!competition)
+  if (!activeChallengeItem) {
     return (
-      <div className={PAGE_SHELL}>
+      <div className={cn(PAGE_SHELL, "w-full text-left block antialiased")}>
         <EmptyState
           icon={Target}
-          title="Competition not found"
-          action={{ label: "Back to competitions", onClick: handleBack }}
+          title="Challenge Arena Closed"
+          description="The requested continuous capability screening competition parameters could not be gathered from tracking registries."
+          action={{ label: "Return to All Arenas", onClick: handleReturnToDirectoryTrigger }}
         />
       </div>
     );
+  }
 
-  const status = STATUS_CONFIG[competition.status] || STATUS_CONFIG.upcoming;
-  const prizes = Array.isArray(competition.prizes) ? competition.prizes : [];
-  const canSubmit = competition.status === "active" && talent && !mySubmission;
-  const daysLeft = competition.submission_deadline
-    ? differenceInDays(new Date(competition.submission_deadline), new Date())
-    : null;
+  const resolvedStatusPreset = STATUS_PRESETS_DIRECTORY[activeChallengeItem.status] || STATUS_PRESETS_DIRECTORY.upcoming;
+  const isChallengeActiveToSubmit = activeChallengeItem.status === "active" && talentProfileRecord && !candidateSubmissionPayload;
 
   return (
-    <div className={PAGE_SHELL}>
-      {/* Header */}
-      <div className="flex items-center gap-2">
-        <Button variant="ghost" size="icon" className="h-9 w-9" onClick={handleBack}>
-          <ArrowLeft className="h-4 w-4" />
+    <div className={cn(PAGE_SHELL, "text-left antialiased block transform-gpu w-full space-y-4 pb-32")}>
+      
+      {/* HUD LEVEL 1: APPLICATION HEADER NAVIGATION ACTIONS BAR */}
+      <header className="flex items-center gap-2 select-none leading-none w-full shrink-0">
+        <Button 
+          type="button"
+          variant="ghost" 
+          size="icon" 
+          className="h-8 w-8 rounded-lg cursor-pointer transition-transform active:scale-95 shrink-0 border border-border/5" 
+          onClick={handleReturnToDirectoryTrigger}
+        >
+          <ArrowLeft className="h-4 w-4 stroke-[2.5]" />
         </Button>
-        <span className={META_TEXT}>Back</span>
-      </div>
+        <span className={cn(META_TEXT, "font-mono font-bold uppercase tracking-wider select-none pointer-events-none pt-0.5 text-muted-foreground/50")}>
+          Return
+        </span>
+      </header>
 
-      {/* Hero image */}
-      {competition.featured_image && (
-        <div className="aspect-[16/9] relative rounded-2xl overflow-hidden bg-muted border border-border/40">
-          <img src={competition.featured_image} alt={competition.title} className="w-full h-full object-cover" />
+      {/* HUD LEVEL 2: DETAILED CHALLENGE MEDIA CANVAS MATRICES */}
+      {activeChallengeItem.featured_image && (
+        <div className="aspect-[16/9] relative rounded-xl overflow-hidden bg-muted border border-border/40 w-full block select-none shadow-2xs shrink-0 pointer-events-none">
+          <img src={activeChallengeItem.featured_image} alt="" className="w-full h-full object-cover block" />
         </div>
       )}
 
-      {/* Title */}
-      <div className="space-y-2">
-        <div className="flex items-center gap-2 flex-wrap">
-          <Badge variant="outline" className={cn("text-[10px] h-5", status.color)}>
-            <status.icon className="h-3 w-3 mr-1" /> {status.label}
+      {/* HUD LEVEL 3: SYLLABUS DIRECTORY DATA OVERVIEW BLOCK */}
+      <div className="space-y-1 block w-full leading-none">
+        <div className="flex items-center gap-2 flex-wrap select-none pointer-events-none leading-none">
+          <Badge 
+            variant="outline" 
+            className={cn("font-mono text-[8px] font-black uppercase px-1.5 h-4.5 rounded-sm pt-0.5 leading-none shrink-0 border shadow-3xl", resolvedStatusPreset.color)}
+          >
+            <resolvedStatusPreset.icon className="h-3 w-3 mr-0.5 stroke-[2.2] inline-block" /> 
+            <span>{resolvedStatusPreset.label.toUpperCase()}</span>
           </Badge>
-          {competition.is_featured && (
-            <Badge variant="secondary" className="text-[10px] h-5">
-              <Trophy className="h-3 w-3 mr-1" /> Featured
+          
+          {activeChallengeItem.is_featured && (
+            <Badge 
+              variant="secondary" 
+              className="font-mono text-[8px] font-black uppercase px-1.5 h-4.5 rounded-sm bg-amber-500/5 border border-amber-500/10 text-amber-600 tracking-wide pt-0.5 shrink-0 leading-none"
+            >
+              <Trophy className="h-3 w-3 mr-0.5 text-amber-500 fill-amber-500 inline-block" /> FLAG_FEATURED
             </Badge>
           )}
         </div>
-        <h1 className={PAGE_TITLE}>{competition.title}</h1>
+        
+        <h1 className={cn(PAGE_TITLE, "text-base sm:text-lg md:text-xl font-bold uppercase tracking-wide text-foreground leading-tight block select-text pt-0.5")}>
+          {activeChallengeItem.title}
+        </h1>
       </div>
 
-      {/* Stats grid */}
-      <div className="grid grid-cols-3 gap-2">
-        {[
-          {
-            icon: Calendar,
-            label: "Duration",
-            val: `${format(new Date(competition.start_date), "MMM d")} – ${format(new Date(competition.end_date), "MMM d")}`,
-          },
-          {
-            icon: Clock,
-            label: "Deadline",
-            val: format(new Date(competition.submission_deadline), "MMM d"),
-            sub: daysLeft !== null && daysLeft >= 0 ? (daysLeft === 0 ? "Today" : `${daysLeft}d left`) : null,
-          },
-          { icon: Users, label: "Slots", val: competition.max_participants ? String(competition.max_participants) : "∞" },
-        ].map((item, idx) => (
-          <div key={idx} className="rounded-xl border border-border/40 p-2.5 bg-muted/20">
-            <div className="flex items-center gap-1 text-[10px] uppercase tracking-wide text-muted-foreground">
-              <item.icon className="h-3 w-3" />
-              {item.label}
-            </div>
-            <p className="text-sm font-semibold mt-1 leading-tight truncate">{item.val}</p>
-            {item.sub && <p className="text-[10px] text-amber-600 mt-0.5">{item.sub}</p>}
+      {/* HUD LEVEL 4: TABULAR TIME METRICS BLOCK GRID ELEMENTS */}
+      <div className="grid grid-cols-3 gap-2 select-none pointer-events-none leading-none w-full block shrink-0 pt-0.5">
+        <div className="rounded-lg border border-border/60 p-2.5 bg-muted/20 leading-none space-y-1 block flex-1 min-w-0">
+          <div className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide flex items-center gap-1 leading-none">
+            <Calendar className="h-3.5 w-3.5 stroke-[2] shrink-0 text-primary" /> <span>Interval Scope</span>
           </div>
-        ))}
+          <p className="text-xs font-bold text-foreground truncate block pt-0.5 tabular-nums uppercase">{calculatedChronoMetrics.dateRangeLabel}</p>
+        </div>
+        
+        <div className="rounded-lg border border-border/60 p-2.5 bg-muted/20 leading-none space-y-1 block flex-1 min-w-0">
+          <div className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide flex items-center gap-1 leading-none">
+            <Clock className="h-3.5 w-3.5 stroke-[2] shrink-0 text-primary" /> <span>Submission Lock</span>
+          </div>
+          <p className="text-xs font-bold text-foreground truncate block pt-0.5 tabular-nums uppercase">{calculatedChronoMetrics.deadlineLabel}</p>
+          {calculatedChronoMetrics.daysLeft !== null && calculatedChronoMetrics.daysLeft >= 0 && (
+            <p className="font-mono text-[8px] font-black text-amber-600 uppercase tracking-tight block leading-none pt-0.5 animate-pulse">
+              [TRACK: {calculatedChronoMetrics.daysLeft === 0 ? "CLOSES TODAY" : `${calculatedChronoMetrics.daysLeft.toString()} DAYS RESIDUAL`}]
+            </p>
+          )}
+        </div>
+        
+        <div className="rounded-lg border border-border/60 p-2.5 bg-muted/20 leading-none space-y-1 block flex-1 min-w-0">
+          <div className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide flex items-center gap-1 leading-none">
+            <Users className="h-3.5 w-3.5 stroke-[2] shrink-0 text-primary" /> <span>Participant Cap</span>
+          </div>
+          <p className="text-xs font-bold text-foreground truncate block pt-0.5 tabular-nums">{activeChallengeItem.max_participants ? activeChallengeItem.max_participants.toLocaleString() : "OPEN FLUID POOL"}</p>
+        </div>
       </div>
 
-      {/* Description */}
-      <div className="space-y-2">
-        <h3 className={SECTION_TITLE}>About</h3>
-        <p className="text-sm text-foreground/80 leading-relaxed whitespace-pre-wrap">
-          {competition.description || "No description provided yet."}
+      {/* HUD LEVEL 5: CORE ASSIGNMENT INTRO TEXT SPECIFICATIONS */}
+      <div className="space-y-1.5 block w-full leading-none">
+        <h3 className={cn(SECTION_TITLE, "text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-1.5 border-b border-border/5")}>About Challenge Target</h3>
+        <p className="text-xs sm:text-sm text-foreground/80 font-medium leading-relaxed block select-text whitespace-pre-wrap tracking-normal">
+          {activeChallengeItem.description || "No strategic summary blueprint parameters loaded yet under this track record."}
         </p>
       </div>
 
-      {/* Rules */}
-      {competition.rules && (
-        <div className="space-y-2">
-          <h3 className={SECTION_TITLE}>Rules</h3>
-          <Card className={CARD}>
-            <CardContent className="p-3">
-              <p className="text-xs text-foreground/80 leading-relaxed whitespace-pre-wrap">{competition.rules}</p>
+      {/* HUD LEVEL 6: COMPLIANCE CODE COMPILATION PREREQUISITES RULES */}
+      {activeChallengeItem.rules && (
+        <div className="space-y-1.5 block w-full leading-none">
+          <h3 className={cn(SECTION_TITLE, "text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-1.5 border-b border-border/5")}>Evaluation Boundaries & Rules</h3>
+          <Card className={cn(CARD, "rounded-lg border border-border/60 bg-card/20 shadow-none overflow-hidden block w-full")}>
+            <CardContent className="p-3 block w-full leading-none">
+              <p className="text-xs text-foreground/70 font-medium leading-relaxed block select-text whitespace-pre-wrap tracking-normal">{activeChallengeItem.rules}</p>
             </CardContent>
           </Card>
         </div>
       )}
 
-      {/* Prizes */}
-      {prizes.length > 0 && (
-        <div className="space-y-2">
-          <h3 className={`${SECTION_TITLE} flex items-center gap-1.5`}>
-            <Gift className="h-4 w-4 text-primary" /> Prizes
+      {/* HUD LEVEL 7: CRITERIA ALLOCATION INCENTIVE DRAWING ROWS */}
+      {resolvedPrizesListArray.length > 0 && (
+        <div className="space-y-1.5 block w-full leading-none">
+          <h3 className={cn(SECTION_TITLE, "text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-1.5 border-b border-border/5 flex items-center gap-1.5")}>
+            <Gift className="h-3.5 w-3.5 stroke-[2] text-primary shrink-0" /> <span>Bounty Distribution Index</span>
           </h3>
-          <Card className={`${CARD} bg-primary/5 border-primary/20`}>
-            <CardContent className="p-3 space-y-2">
-              {prizes.map((prize: any, index: number) => (
-                <div key={index} className="flex items-center gap-2.5">
-                  <div className="h-7 w-7 rounded-lg bg-primary/10 text-primary flex items-center justify-center text-xs font-bold shrink-0">
-                    {index + 1}
+          <Card className={cn(CARD, "rounded-lg bg-primary/[0.01] border-primary/20 shadow-none overflow-hidden block w-full")}>
+            <CardContent className="p-3.5 space-y-2 block w-full leading-none">
+              {resolvedPrizesListArray.map((prizeNameLabelStr, indexIdx) => (
+                <div key={`prize-payout-row-item-${indexIdx}`} className="flex items-center gap-3 leading-none w-full block select-text">
+                  <div className="h-7 w-7 rounded bg-primary/5 border border-primary/10 text-primary flex items-center justify-center font-mono text-[10px] font-black shrink-0 select-none pointer-events-none shadow-3xs pt-0.5">
+                    {(indexIdx + 1).toString().padStart(2, "0")}
                   </div>
-                  <span className="text-sm font-medium leading-tight">
-                    {typeof prize === "string" ? prize : prize.name || prize.description}
+                  <span className="text-xs sm:text-sm font-bold text-foreground/80 leading-tight uppercase tracking-wide pt-0.5">
+                    {prizeNameLabelStr}
                   </span>
                 </div>
               ))}
@@ -230,82 +362,96 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
         </div>
       )}
 
-      {/* My submission */}
-      {mySubmission && (
-        <Card className={`${CARD} border-emerald-500/30 bg-emerald-500/5`}>
-          <CardContent className="p-3 space-y-2">
-            <div className="flex items-center justify-between">
-              <span className="text-sm font-semibold flex items-center gap-1.5">
-                <CheckCircle className="h-4 w-4 text-emerald-600" /> Your entry
+      {/* HUD LEVEL 8: SUBMISSION ARTIFACT MANIFEST RESPONSE STATUS BOX */}
+      {candidateSubmissionPayload && (
+        <Card className={cn(CARD, "rounded-lg border border-emerald-500/20 bg-emerald-500/[0.01] shadow-none overflow-hidden block w-full animate-in fade-in duration-200")}>
+          <CardContent className="p-3.5 space-y-2.5 block w-full leading-none">
+            <div className="flex items-center justify-between gap-4 leading-none w-full block shrink-0 select-none pointer-events-none">
+              <span className="text-xs sm:text-sm font-bold text-foreground uppercase tracking-wide flex items-center gap-1.5 pt-0.5">
+                <CheckCircle className="h-4 w-4 text-emerald-600 stroke-[2.5]" /> <span>Portfolio Entry Verified & Hashed</span>
               </span>
-              <Badge variant="outline" className="text-[10px] h-5">
-                {mySubmission.status}
+              <Badge variant="outline" className="font-mono text-[8px] font-black uppercase px-1.5 h-4.5 rounded-sm bg-background border-emerald-500/20 text-emerald-600 tracking-wide pt-0.5 leading-none">
+                STATE: {candidateSubmissionPayload.status.toUpperCase()}
               </Badge>
             </div>
+            
             <a
-              href={mySubmission.submission_url}
+              href={candidateSubmissionPayload.submission_url}
               target="_blank"
               rel="noopener noreferrer"
-              className="text-emerald-600 hover:underline flex items-center gap-1 text-xs"
+              className="font-mono text-[10px] font-black uppercase text-emerald-600 hover:underline inline-flex items-center gap-1 leading-none select-text pl-0.5"
             >
-              View submission <ExternalLink className="h-3 w-3" />
+              <span>Inspect Submitted Credentials Manifest</span> 
+              <ExternalLink className="h-3 w-3 stroke-[2.5] shrink-0 pt-0.5" />
             </a>
-            {mySubmission.feedback && (
-              <div className="rounded-xl bg-background/50 border border-border/40 p-2.5">
-                <p className="text-[10px] uppercase tracking-wide text-primary font-semibold mb-1">Feedback</p>
-                <p className="text-xs text-foreground/80 leading-relaxed">{mySubmission.feedback}</p>
+            
+            {candidateSubmissionPayload.feedback && (
+              <div className="rounded-lg border border-border/60 bg-background/50 p-2.5 block w-full leading-none mt-1 select-text">
+                <p className="font-mono text-[9px] font-black uppercase text-primary tracking-wide block mb-1 select-none pointer-events-none leading-none">Reviewer Evaluation Feedback Notes</p>
+                <p className="text-xs text-muted-foreground/80 font-medium leading-relaxed block tracking-normal">{candidateSubmissionPayload.feedback}</p>
               </div>
             )}
           </CardContent>
         </Card>
       )}
 
-      {/* Submit dialog */}
-      {canSubmit && (
-        <Dialog open={isSubmitDialogOpen} onOpenChange={setIsSubmitDialogOpen}>
+      {/* HUD LEVEL 9: COMPLIANCE INTERACTIVE DIALOG MODAL TRANSITIONS GATEWAY */}
+      {isChallengeActiveToSubmit && (
+        <Dialog open={isSubmitSheetOpen} onOpenChange={setIsSubmitSheetOpen}>
           <DialogTrigger asChild>
-            <div
-              className="fixed bottom-16 left-0 right-0 p-3 bg-background/95 backdrop-blur border-t border-border/40 z-30"
-              style={{ paddingBottom: "calc(0.75rem + env(safe-area-inset-bottom))" }}
-            >
-              <div className="max-w-2xl mx-auto">
-                <Button className="w-full h-11 rounded-xl text-sm">
-                  <Upload className="mr-2 h-4 w-4" /> Submit entry
+            <div className="fixed bottom-0 inset-x-0 z-40 border-t border-border/40 bg-background/95 backdrop-blur-md select-none pb-[max(env(safe-area-inset-bottom),0.75rem)] px-4 py-3 shadow-[0_-12px_40px_rgba(0,0,0,0.03)] animate-in fade-in duration-300">
+              <div className="max-w-2xl mx-auto block w-full leading-none">
+                <Button type="button" className="w-full h-11 rounded-lg font-bold uppercase tracking-widest text-xs gap-1.5 cursor-pointer shadow-xs transform-gpu active:scale-[0.99] block text-center">
+                  <Upload className="h-4 w-4 stroke-[2.5] inline-block shrink-0 align-middle" /> 
+                  <span className="inline-block align-middle pt-0.5">Authorize Entry Project Submission</span>
                 </Button>
               </div>
             </div>
           </DialogTrigger>
-          <DialogContent className="rounded-2xl max-w-md">
-            <DialogHeader>
-              <DialogTitle className="text-lg font-bold">Submit your entry</DialogTitle>
+          
+          <DialogContent className="rounded-lg max-w-md border border-border/60 bg-popover text-popover-foreground shadow-2xl select-none leading-none p-5">
+            <DialogHeader className="text-left leading-none pb-2 border-b border-border/5">
+              <DialogTitle className="text-sm font-bold uppercase tracking-wide text-foreground leading-none m-0">Lock Challenge Entry Specs</DialogTitle>
             </DialogHeader>
-            <div className="space-y-3 pt-2">
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Submission URL</Label>
+            
+            <div className="space-y-4 pt-4 block w-full leading-none">
+              <div className="space-y-1 block leading-none">
+                <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">Operational Project Repository URL Address</Label>
                 <Input
-                  placeholder="https://..."
-                  value={submissionUrl}
-                  onChange={(e) => setSubmissionUrl(e.target.value)}
-                  className="h-10 rounded-xl text-sm"
+                  type="url"
+                  placeholder="e.g., https://github.com/profile-identity/arena-challenge-code-specs"
+                  value={textSubmissionUrlInput}
+                  onChange={(e) => setTextSubmissionUrlInput(e.target.value)}
+                  className="h-10 text-xs sm:text-sm bg-background border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none"
                 />
-                <p className={META_TEXT}>Portfolio, GitHub, or any public link.</p>
+                <p className={cn(META_TEXT, "font-sans text-[10px] font-medium text-muted-foreground/40 block pt-0.5 leading-none")}>Provide public access point link, functional GitHub pipeline repository or portfolio container address.</p>
               </div>
-              <div className="space-y-1.5">
-                <Label className="text-xs font-semibold">Description (optional)</Label>
+              
+              <div className="space-y-1 block leading-none pt-1">
+                <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">Implementation Context Notes (Optional)</Label>
                 <Textarea
-                  placeholder="Brief context about your work..."
-                  value={submissionDescription}
-                  onChange={(e) => setSubmissionDescription(e.target.value)}
+                  placeholder="Outline explicit technical choices, code layout attributes or abstraction summaries..."
+                  value={textDescriptionInput}
+                  onChange={(e) => setTextDescriptionInput(e.target.value)}
                   rows={4}
-                  className="rounded-xl text-sm"
+                  className="bg-background border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg text-xs sm:text-sm font-sans leading-relaxed resize-none p-2.5"
                 />
               </div>
+              
               <Button
-                className="w-full h-11 rounded-xl text-sm"
-                onClick={() => submitMutation.mutate()}
-                disabled={!submissionUrl || submitMutation.isPending}
+                type="button"
+                onClick={() => executeSubmitMutationTrigger.mutate()}
+                disabled={!textSubmissionUrlInput.trim() || executeSubmitMutationTrigger.isPending}
+                className="w-full h-10 rounded-lg font-bold uppercase text-xs tracking-wider gap-1.5 cursor-pointer shadow-xs transform-gpu active:scale-[0.985] block text-center"
               >
-                {submitMutation.isPending ? "Submitting..." : "Submit"}
+                {executeSubmitMutationTrigger.isPending ? (
+                  <div className="flex items-center justify-center gap-1.5 mx-auto leading-none">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-primary-foreground stroke-[2.5]" /> 
+                    <span className="pt-0.5">Transmitting Allocation...</span>
+                  </div>
+                ) : (
+                  <span>Commit Arena Submission</span>
+                )}
               </Button>
             </div>
           </DialogContent>
