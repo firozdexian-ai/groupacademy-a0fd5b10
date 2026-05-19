@@ -164,16 +164,14 @@ export default function AppCohortDiscussions() {
                     <div className="flex flex-col gap-1.5 items-end shrink-0 select-none pointer-events-none leading-none">
                       <div className="flex items-center gap-1.5 h-4 block shrink-0">
                         {threadItemNode.is_pinned && (
-                          <Pin
-                            className="h-3.5 w-3.5 text-amber-500 fill-amber-500 stroke-[1.5]"
-                            title="Topic pinned by administrator"
-                          />
+                          <span title="Topic pinned by administrator">
+                            <Pin className="h-3.5 w-3.5 text-amber-500 fill-amber-500 stroke-[1.5]" />
+                          </span>
                         )}
                         {threadItemNode.is_locked && (
-                          <Lock
-                            className="h-3.5 w-3.5 text-muted-foreground/40 stroke-[2.2]"
-                            title="Conversation parameters locked"
-                          />
+                          <span title="Conversation parameters locked">
+                            <Lock className="h-3.5 w-3.5 text-muted-foreground/40 stroke-[2.2]" />
+                          </span>
                         )}
                       </div>
                       <Badge
