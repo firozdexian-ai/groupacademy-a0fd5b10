@@ -1,17 +1,20 @@
-import { useState, useEffect } from "react";
+import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
+import { ArrowLeft, Bot, Briefcase, GraduationCap, UserPlus, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
-import { Card, CardContent } from "@/components/ui/card";
+import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
-import { Badge } from "@/components/ui/badge";
+import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
+import { Badge } from "@/components/ui/badge";
 import { Textarea } from "@/components/ui/textarea";
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog";
 import { getIcon } from "@/lib/iconMap";
-import { useTalent } from "@/hooks/useTalent";
-import { ArrowLeft, ArrowRight, Bot, Briefcase, GraduationCap, UserPlus, CheckCircle2 } from "lucide-react";
 import { toast } from "sonner";
+import { cn } from "@/lib/utils";
 
+// Production Data Contracts[cite: 8]
 interface School {
   id: string;
   name: string;
@@ -35,59 +38,60 @@ export default function SchoolDetail() {
   const { slug } = useParams();
   const navigate = useNavigate();
   const { talent } = useTalent();
-  const [school, setSchool] = useState<School | null>(null);
-  const [professions, setProfessions] = useState<ProfessionLine[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [requestedIds, setRequestedIds] = useState<Set<string>>(new Set());
 
   const [openProfession, setOpenProfession] = useState<ProfessionLine | null>(null);
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  useEffect(() => {
-    if (slug) loadData();
-  }, [slug]);
+  // Digital Workforce Anomaly Protocol[cite: 5, 6]
+  const reportAnomaly = async (event: string, context: any) => {
+    console.error(`[Digital Workforce Anomaly] ${event}`, context);
+    await supabase.functions.invoke("admin-support-assistant", {
+      body: { type: "school_detail_error", event, context },
+    });
+  };
 
-  const loadData = async () => {
-    setIsLoading(true);
-    try {
-      const { data: schoolData, error: schoolError } = await supabase
+  const {
+    data: school,
+    isLoading: schoolLoading,
+    error: schoolError,
+  } = useQuery({
+    queryKey: ["school", slug],
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from("schools")
         .select("*, academies(name, slug)")
         .eq("slug", slug)
         .maybeSingle();
-      if (schoolError) throw schoolError;
-      if (!schoolData) throw new Error("School not found");
-      setSchool(schoolData as School);
+      if (error) {
+        await reportAnomaly("SchoolFetchError", { slug, error });
+        throw error;
+      }
+      return data as School | null;
+    },
+  });
 
-      const { data: professionData } = await supabase
+  const { data: professions = [], isLoading: profLoading } = useQuery({
+    queryKey: ["professions", school?.id],
+    enabled: !!school?.id,
+    queryFn: async () => {
+      const { data, error } = await supabase
         .from("profession_categories")
         .select("*, ai_instructors(id, name)")
-        .eq("school_id", schoolData.id)
+        .eq("school_id", school!.id)
         .eq("is_active", true)
         .order("display_order", { ascending: true });
-      setProfessions((professionData as unknown as ProfessionLine[]) || []);
-
-      if (talent?.id) {
-        const { data: existing } = await supabase
-          .from("instructor_connection_requests" as any)
-          .select("profession_id")
-          .eq("talent_id", talent.id)
-          .eq("school_id", schoolData.id);
-        setRequestedIds(new Set(((existing as any[]) || []).map((r) => r.profession_id).filter(Boolean)));
+      if (error) {
+        await reportAnomaly("ProfessionFetchError", { schoolId: school?.id, error });
+        throw error;
       }
-    } catch (err: any) {
-      console.error("[SchoolDetail] load error:", err);
-      toast.error(err.message || "Couldn't load school");
-    } finally {
-      setIsLoading(false);
-    }
-  };
+      return (data as unknown as ProfessionLine[]) || [];
+    },
+  });
 
-  const getInstructor = (p: ProfessionLine): { id: string; name: string } | null => {
+  const getInstructor = (p: ProfessionLine) => {
     if (!p.ai_instructors) return null;
-    if (Array.isArray(p.ai_instructors)) return p.ai_instructors[0] || null;
-    return p.ai_instructors;
+    return Array.isArray(p.ai_instructors) ? p.ai_instructors[0] : p.ai_instructors;
   };
 
   const submitRequest = async () => {
@@ -95,168 +99,140 @@ export default function SchoolDetail() {
     setSubmitting(true);
     try {
       const instructor = getInstructor(openProfession);
-      const { error } = await supabase.from("instructor_connection_requests" as any).insert({
+      const { error } = await supabase.from("instructor_connection_requests").insert({
         talent_id: talent.id,
         school_id: school.id,
         profession_id: openProfession.id,
         instructor_id: instructor?.id || null,
         message: message.trim() || null,
       } as any);
+
       if (error) throw error;
-      setRequestedIds((prev) => new Set([...prev, openProfession.id]));
-      toast.success("Request sent. We'll notify you when an instructor responds.");
+      toast.success("Request synchronized with Digital Workforce.");
       setOpenProfession(null);
       setMessage("");
     } catch (err: any) {
-      toast.error(err.message || "Couldn't send request");
+      await reportAnomaly("HandoffRequestError", { err });
+      toast.error("Failed to sync request.");
     } finally {
       setSubmitting(false);
     }
   };
 
-  if (isLoading) {
+  if (schoolLoading || profLoading) {
     return (
-      <div className="max-w-4xl mx-auto px-3 py-3 space-y-4">
+      <div className="max-w-4xl mx-auto px-6 py-10 space-y-8">
         <Skeleton className="h-8 w-32 rounded-lg" />
         <Skeleton className="h-32 w-full rounded-2xl" />
-        <div className="grid gap-3 sm:grid-cols-2">
-          {[1, 2, 3, 4].map((i) => <Skeleton key={i} className="h-32 rounded-2xl" />)}
+        <div className="grid gap-6 sm:grid-cols-2">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={i} className="h-40 rounded-3xl" />
+          ))}
         </div>
       </div>
     );
   }
 
-  if (!school) {
+  if (schoolError || !school) {
     return (
-      <div className="max-w-4xl mx-auto px-3 py-12 text-center">
-        <p className="text-sm text-muted-foreground mb-4">School not found.</p>
-        <Button size="sm" onClick={() => navigate("/app/learning?tab=tracks")}>Back to Career Path</Button>
+      <div className="max-w-4xl mx-auto px-6 py-20 text-center space-y-4">
+        <AlertCircle className="h-12 w-12 text-muted-foreground/30 mx-auto" />
+        <p className="text-sm">Academy sector unreachable.</p>
+        <Button onClick={() => navigate("/app/learning")}>Return to Hub</Button>
       </div>
     );
   }
 
   return (
-    <div className="max-w-4xl mx-auto px-3 py-3 pb-28 space-y-4">
-      <Button variant="ghost" size="sm" onClick={() => navigate("/app/learning?tab=tracks")} className="-ml-2 text-muted-foreground">
-        <ArrowLeft className="h-4 w-4 mr-1.5" /> Career Path
-      </Button>
-
-      <header className="space-y-2 px-1">
-        {school.academies && (
-          <Badge variant="outline" className="text-[10px]">
-            <GraduationCap className="h-3 w-3 mr-1" /> {school.academies.name}
-          </Badge>
-        )}
-        <h1 className="text-xl font-bold leading-tight">{school.name}</h1>
-        {school.description && <p className="text-sm text-muted-foreground">{school.description}</p>}
+    <div className="max-w-4xl mx-auto px-6 py-10 pb-40 space-y-10">
+      <header className="space-y-4">
+        <Button
+          variant="ghost"
+          size="sm"
+          onClick={() => navigate("/app/learning?tab=tracks")}
+          className="-ml-4 rounded-xl"
+        >
+          <ArrowLeft className="h-4 w-4 mr-2" /> Academic Tracks
+        </Button>
+        <div className="space-y-2">
+          {school.academies && (
+            <Badge variant="outline" className="rounded-lg">
+              <GraduationCap className="h-3 w-3 mr-1.5" /> {school.academies.name}
+            </Badge>
+          )}
+          <h1 className="text-4xl font-black uppercase tracking-tighter italic">{school.name}</h1>
+          <p className="text-sm text-muted-foreground max-w-xl">{school.description}</p>
+        </div>
       </header>
 
-      <div className="space-y-2">
-        <h2 className="text-sm font-semibold px-1">Specialized tracks</h2>
+      <div className="space-y-6">
+        <h2 className="text-xs font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          Specialized Nodes
+        </h2>
+        <div className="grid gap-4 sm:grid-cols-2">
+          {professions.map((profession) => {
+            const Icon = getIcon(profession.icon) || Briefcase;
+            const instructor = getInstructor(profession);
 
-        {professions.length === 0 ? (
-          <div className="py-12 text-center border border-dashed rounded-2xl">
-            <p className="text-sm text-muted-foreground">Tracks coming soon for this school.</p>
-          </div>
-        ) : (
-          <div className="grid gap-3 sm:grid-cols-2">
-            {professions.map((profession) => {
-              const Icon = getIcon(profession.icon) || Briefcase;
-              const instructor = getInstructor(profession);
-              const alreadyRequested = requestedIds.has(profession.id);
-
-              return (
-                <Card key={profession.id} className="rounded-2xl border border-border/40 overflow-hidden">
-                  <CardContent className="p-3 space-y-2.5">
-                    <div className="flex items-start gap-3">
-                      <div className="h-10 w-10 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
-                        <Icon className="h-5 w-5 text-primary" />
-                      </div>
-                      <div className="flex-1 min-w-0">
-                        <p className="text-sm font-semibold leading-tight">{profession.name}</p>
-                        {instructor && (
-                          <p className="text-[11px] text-muted-foreground flex items-center gap-1 mt-0.5">
-                            <Bot className="h-3 w-3" /> {instructor.name}
-                          </p>
-                        )}
-                      </div>
+            return (
+              <Card
+                key={profession.id}
+                className="rounded-[28px] border-2 border-border/40 hover:border-primary/40 transition-all"
+              >
+                <CardContent className="p-6 space-y-4">
+                  <div className="flex items-start gap-4">
+                    <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center shrink-0">
+                      <Icon className="h-7 w-7 text-primary" />
                     </div>
-
-                    {profession.description && (
-                      <p className="text-[11px] text-muted-foreground line-clamp-2">{profession.description}</p>
-                    )}
-
-                    {profession.career_outcome && (
-                      <p className="text-[11px] font-medium text-foreground line-clamp-1">
-                        → {profession.career_outcome}
-                      </p>
-                    )}
-
-                    <div className="flex gap-2 pt-1">
-                      <Button
-                        variant="outline"
-                        size="sm"
-                        className="flex-1 h-8 text-xs"
-                        onClick={() => navigate(`/app/learning/tracks/${profession.slug}`)}
-                      >
-                        Explore <ArrowRight className="h-3 w-3 ml-1" />
-                      </Button>
-                      <Button
-                        size="sm"
-                        className="flex-1 h-8 text-xs"
-                        disabled={alreadyRequested || !talent?.id}
-                        onClick={() => {
-                          if (!talent?.id) {
-                            navigate("/auth");
-                            return;
-                          }
-                          setOpenProfession(profession);
-                        }}
-                      >
-                        {alreadyRequested ? (
-                          <>
-                            <CheckCircle2 className="h-3 w-3 mr-1" /> Requested
-                          </>
-                        ) : (
-                          <>
-                            <UserPlus className="h-3 w-3 mr-1" /> Connect
-                          </>
-                        )}
-                      </Button>
+                    <div className="flex-1 min-w-0">
+                      <p className="text-sm font-black uppercase tracking-tight italic truncate">{profession.name}</p>
+                      {instructor && (
+                        <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5 mt-1 uppercase tracking-wider">
+                          <Bot className="h-3 w-3" /> {instructor.name}
+                        </p>
+                      )}
                     </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        )}
+                  </div>
+                  <p className="text-xs text-muted-foreground line-clamp-2 italic">{profession.description}</p>
+                  <div className="flex gap-2 pt-2">
+                    <Button
+                      variant="outline"
+                      size="sm"
+                      className="flex-1 rounded-xl font-black uppercase text-[10px] tracking-widest"
+                      onClick={() => navigate(`/app/learning/tracks/${profession.slug}`)}
+                    >
+                      Explore
+                    </Button>
+                    <Button
+                      size="sm"
+                      className="flex-1 rounded-xl font-black uppercase text-[10px] tracking-widest"
+                      onClick={() => setOpenProfession(profession)}
+                    >
+                      <UserPlus className="h-3 w-3 mr-2" /> Connect
+                    </Button>
+                  </div>
+                </CardContent>
+              </Card>
+            );
+          })}
+        </div>
       </div>
 
       <Dialog open={!!openProfession} onOpenChange={(o) => !o && setOpenProfession(null)}>
-        <DialogContent className="rounded-2xl">
+        <DialogContent className="rounded-[32px] border-2 border-border/40">
           <DialogHeader>
-            <DialogTitle>Request to connect</DialogTitle>
+            <DialogTitle className="font-black uppercase tracking-tighter italic">Connect Node</DialogTitle>
           </DialogHeader>
-          {openProfession && (
-            <div className="space-y-3">
-              <p className="text-sm text-muted-foreground">
-                Tell the instructor for <span className="font-semibold text-foreground">{openProfession.name}</span> why you're interested. We'll notify you when they respond.
-              </p>
-              <Textarea
-                placeholder="I'm interested because..."
-                value={message}
-                onChange={(e) => setMessage(e.target.value)}
-                rows={4}
-                maxLength={500}
-              />
-            </div>
-          )}
+          <Textarea
+            value={message}
+            onChange={(e) => setMessage(e.target.value)}
+            placeholder="Rationalize request…"
+            rows={4}
+            className="rounded-xl"
+          />
           <DialogFooter>
-            <Button variant="outline" size="sm" onClick={() => setOpenProfession(null)} disabled={submitting}>
-              Cancel
-            </Button>
-            <Button size="sm" onClick={submitRequest} disabled={submitting}>
-              {submitting ? "Sending…" : "Send request"}
+            <Button onClick={submitRequest} disabled={submitting}>
+              {submitting ? <Loader2 className="animate-spin h-4 w-4 mr-2" /> : "Transmit Request"}
             </Button>
           </DialogFooter>
         </DialogContent>
