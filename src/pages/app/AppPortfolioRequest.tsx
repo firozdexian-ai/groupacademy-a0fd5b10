@@ -224,7 +224,7 @@ export default function AppPortfolioRequest() {
         if (formDataState.cvInputMode === "url") {
           return !!formDataState.cvExternalUrl.trim() && formDataState.cvExternalUrl.trim().startsWith("http");
         }
-        if (formDataState.cvInputMode === "existing") return !&talentProfileRecord?.cvUrl;
+        if (formDataState.cvInputMode === "existing") return !!talentProfileRecord?.cvUrl;
         return formDataState.profileData.education.length > 0;
       default:
         return true;
