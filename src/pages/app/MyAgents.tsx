@@ -105,12 +105,11 @@ export default function MyAgents() {
       <div className="flex flex-wrap gap-2">
         <CreatorOnboardingDialog
           onCreated={() => queryClient.invalidateQueries({ queryKey: ["talent-agent-dashboard"] })}
-        >
-          <Button>
-            <Rocket className="h-4 w-4 mr-2" />
-            Become a builder
-          </Button>
-        </CreatorOnboardingDialog>
+        />
+        <Button>
+          <Rocket className="h-4 w-4 mr-2" />
+          Become a builder
+        </Button>
         <PayoutDialog
           available={summary.available}
           onCreated={() => queryClient.invalidateQueries({ queryKey: ["talent-agent-dashboard"] })}
