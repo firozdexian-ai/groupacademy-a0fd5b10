@@ -23,7 +23,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { useTalent } from "@/hooks/useTalent";
 import { ConnectionRequestDialog } from "@/components/talents/ConnectionRequestDialog";
-import { PAGE_SHELL, PAGE_TITLE, PAGE_SUBTITLE, CARD, META_TEXT } from "@/lib/uiTokens";
+import { PAGE_SHELL, PAGE_TITLE, PAGE_SUBTITLE, CARD, META_TEXT, SECTION_TITLE } from "@/lib/uiTokens";
 
 // Production Data Contracts[cite: 8]
 interface TalentDetail {
