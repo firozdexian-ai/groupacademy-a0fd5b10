@@ -1,59 +1,144 @@
-import { useQuery } from "@tanstack/react-query";
+import * as React from "react";
 import { Link } from "react-router-dom";
+import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Card } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
-import { MessageCircle, Users } from "lucide-react";
+import { Headphones, Users, MessageCircle, Sparkles, Brain } from "lucide-react";
+import { cn } from "@/lib/utils";
+import { PAGE_SHELL, PAGE_TITLE, PAGE_SUBTITLE, CARD } from "@/lib/uiTokens";
 
+// =========================================================================
+// DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
+// =========================================================================
+interface LanguageRecord {
+  code: string;
+  name: string;
+  flag_emoji: string;
+  is_active: boolean;
+  display_order: number;
+}
+
+interface TalentLanguageLevel {
+  language_code: string;
+  cefr_level: string;
+  source: string;
+}
+
+/**
+ * GroUp Academy: Language Acquisition Hub (LanguagesHub)
+ * Hardened responsive directory mapping language proficiency levels to practice channels and instructor conduits.
+ * Version: Launch Candidate · Phase Z1 Production Contract Sealed
+ */
 export default function LanguagesHub() {
-  const { data: languages, isLoading } = useQuery({
-    queryKey: ["languages"],
+  // =========================================================================
+  // DATA ACQUISITION PIPELINE SECURED VIA TANSTACK CACHE CHANNEL
+  // =========================================================================
+  const { data: languagesRegistry = [], isLoading: isRegistryLoading } = useQuery<LanguageRecord[]>({
+    queryKey: ["app-languages-registry"],
     queryFn: async () => {
-      const { data } = await supabase.from("languages").select("*").eq("is_active", true).order("display_order");
-      return data ?? [];
+      const { data, error } = await supabase
+        .from("languages")
+        .select("code, name, flag_emoji, is_active, display_order")
+        .eq("is_active", true)
+        .order("display_order");
+
+      if (error) throw error;
+      return (data as unknown as LanguageRecord[]) ?? [];
+    },
+    staleTime: 10 * 60 * 1000,
+  });
+
+  const { data: talentProficiencyLevels = [] } = useQuery<TalentLanguageLevel[]>({
+    queryKey: ["app-talent-language-proficiency-levels"],
+    queryFn: async () => {
+      const { data, error } = await supabase.from("talent_language_levels").select("language_code, cefr_level, source");
+
+      if (error) throw error;
+      return (data as unknown as TalentLanguageLevel[]) ?? [];
     },
   });
 
-  const { data: myLevels } = useQuery({
-    queryKey: ["my-language-levels"],
-    queryFn: async () => {
-      const { data } = await supabase.from("talent_language_levels").select("language_code, cefr_level, source");
-      return data ?? [];
-    },
-  });
+  // =========================================================================
+  // MEMOIZED PARAMETER SECTOR: SECURE O(1) LOOKUP MATRICES
+  // =========================================================================
+  const proficiencyLookupMap = React.useMemo(() => {
+    return new Map(talentProficiencyLevels.map((lvl) => [lvl.language_code, lvl]));
+  }, [talentProficiencyLevels]);
 
   return (
-    <div className="px-4 py-4 space-y-3 max-w-3xl mx-auto">
-      <div>
-        <h1 className="text-2xl font-bold">Language Lab</h1>
-        <p className="text-sm text-muted-foreground">Practice with an AI partner or book live sessions with native instructors.</p>
-      </div>
+    <div className={cn(PAGE_SHELL, "max-w-3xl mx-auto space-y-6 antialiased block transform-gpu w-full")}>
+      {/* HUD LEVEL 1: HUB HEADER BLOCK */}
+      <header className="space-y-1 block border-b border-border/10 pb-4">
+        <div className="flex items-center gap-2">
+          <Brain className="h-5 w-5 text-primary" />
+          <h1 className={PAGE_TITLE}>Language Lab</h1>
+        </div>
+        <p className={PAGE_SUBTITLE}>
+          Engage with AI communication partners or book high-fidelity sessions with native instructional faculty.
+        </p>
+      </header>
 
-      {isLoading
-        ? Array.from({ length: 4 }).map((_, i) => <Skeleton key={i} className="h-20 w-full" />)
-        : languages?.map((l) => {
-            const myLevel = myLevels?.find((m: any) => m.language_code === l.code);
+      {/* HUD LEVEL 2: DIRECTORY GRID ITERATOR */}
+      {isRegistryLoading ? (
+        <div className="space-y-2.5 block w-full">
+          {[1, 2, 3, 4].map((i) => (
+            <Skeleton key={`skeleton-row-${i}`} className="h-24 w-full rounded-lg bg-card/10 block" />
+          ))}
+        </div>
+      ) : (
+        <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 block w-full">
+          {languagesRegistry.map((langItem) => {
+            const userProficiency = proficiencyLookupMap.get(langItem.code);
+
             return (
-              <Card key={l.code} className="p-3">
-                <div className="flex items-center gap-3">
-                  <div className="text-3xl">{l.flag_emoji}</div>
-                  <div className="flex-1 min-w-0">
-                    <div className="font-bold">{l.name}</div>
-                    {myLevel && <Badge variant="secondary" className="text-[10px]">{myLevel.cefr_level} {myLevel.source !== "self" && "✓"}</Badge>}
+              <Card
+                key={`language-card-${langItem.code}`}
+                className={cn(CARD, "rounded-lg border border-border/60 p-3.5 shadow-none block w-full")}
+              >
+                <div className="flex items-center gap-3.5 leading-none w-full block mb-4">
+                  <div className="text-3xl shrink-0 select-none pointer-events-none">{langItem.flag_emoji}</div>
+                  <div className="flex-1 min-w-0 leading-none">
+                    <div className="text-sm font-bold text-foreground block truncate">{langItem.name}</div>
+                    {userProficiency && (
+                      <Badge
+                        variant="secondary"
+                        className="font-mono text-[9px] font-black uppercase mt-1 px-1.5 h-4.5 rounded-xs select-none"
+                      >
+                        {userProficiency.cefr_level} {userProficiency.source !== "self" && "✓"}
+                      </Badge>
+                    )}
                   </div>
                 </div>
-                <div className="grid grid-cols-2 gap-2 mt-2">
-                  <Link to={`/app/languages/${l.code}/practice`}>
-                    <button className="w-full text-xs bg-primary text-primary-foreground rounded px-2 py-1.5 flex items-center justify-center gap-1"><MessageCircle className="h-3 w-3" />AI Partner</button>
-                  </Link>
-                  <Link to={`/app/languages/${l.code}/instructors`}>
-                    <button className="w-full text-xs border rounded px-2 py-1.5 flex items-center justify-center gap-1"><Users className="h-3 w-3" />Instructors</button>
-                  </Link>
+
+                <div className="grid grid-cols-2 gap-2 w-full block">
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="default"
+                    className="h-8 rounded-lg font-mono text-[10px] font-extrabold uppercase tracking-widest gap-1.5 shadow-2xs"
+                  >
+                    <Link to={`/app/languages/${langItem.code}/practice`}>
+                      <MessageCircle className="h-3 w-3" /> AI Partner
+                    </Link>
+                  </Button>
+                  <Button
+                    asChild
+                    size="sm"
+                    variant="outline"
+                    className="h-8 rounded-lg font-mono text-[10px] font-extrabold uppercase tracking-widest gap-1.5 shadow-2xs border-border/60"
+                  >
+                    <Link to={`/app/languages/${langItem.code}/instructors`}>
+                      <Users className="h-3 w-3" /> Instructors
+                    </Link>
+                  </Button>
                 </div>
               </Card>
             );
           })}
+        </div>
+      )}
     </div>
   );
 }
