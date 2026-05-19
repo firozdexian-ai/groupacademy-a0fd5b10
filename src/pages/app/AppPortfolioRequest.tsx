@@ -120,7 +120,7 @@ export default function AppPortfolioRequest() {
 
   const remainingFreePromoSlots = globalPortfolioCount !== null ? Math.max(0, FREE_PORTFOLIO_LIMIT - globalPortfolioCount) : 0;
   const isFreePromotionActive = remainingFreePromoSlots > 0;
-  const isCandidateCvOnS3Bucket = !&talentProfileRecord?.cvUrl;
+  const isCandidateCvOnS3Bucket = !!talentProfileRecord?.cvUrl;
 
   const [formDataState, setFormDataState] = React.useState<FormData>({
     fullName: "",
@@ -224,7 +224,7 @@ export default function AppPortfolioRequest() {
         if (formDataState.cvInputMode === "url") {
           return !!formDataState.cvExternalUrl.trim() && formDataState.cvExternalUrl.trim().startsWith("http");
         }
-        if (formDataState.cvInputMode === "existing") return !&talentProfileRecord?.cvUrl;
+        if (formDataState.cvInputMode === "existing") return !!talentProfileRecord?.cvUrl;
         return formDataState.profileData.education.length > 0;
       default:
         return true;
@@ -539,7 +539,7 @@ export default function AppPortfolioRequest() {
                 </Button>
                 <Button
                   type="button"
-                  variant="formDataState.cvInputMode"
+                  
                   variant={formDataState.cvInputMode === "url" ? "default" : "outline"}
                   className="rounded-lg font-mono text-[9px] font-extrabold uppercase tracking-wide h-9 cursor-pointer"
                   onClick={() => setFormDataState((prev) => ({ ...prev, cvInputMode: "url" }))}
