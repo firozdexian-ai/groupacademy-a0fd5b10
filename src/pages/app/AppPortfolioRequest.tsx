@@ -120,7 +120,7 @@ export default function AppPortfolioRequest() {
 
   const remainingFreePromoSlots = globalPortfolioCount !== null ? Math.max(0, FREE_PORTFOLIO_LIMIT - globalPortfolioCount) : 0;
   const isFreePromotionActive = remainingFreePromoSlots > 0;
-  const isCandidateCvOnS3Bucket = !&talentProfileRecord?.cvUrl;
+  const isCandidateCvOnS3Bucket = !!talentProfileRecord?.cvUrl;
 
   const [formDataState, setFormDataState] = React.useState<FormData>({
     fullName: "",
