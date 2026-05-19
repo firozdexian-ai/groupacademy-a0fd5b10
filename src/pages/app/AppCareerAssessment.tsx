@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { ProfessionSelector } from "@/components/assessment/ProfessionSelector";
@@ -9,28 +9,29 @@ import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Progress } from "@/components/ui/progress";
-import { ArrowLeft, Target, TrendingUp, CheckCircle, Sparkles, Zap } from "lucide-react";
+import { ArrowLeft, Target, TrendingUp, Sparkles, Zap } from "lucide-react";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
 import { recordToolRun } from "@/hooks/useToolRuns";
 import { useToast } from "@/hooks/use-toast";
-
-/**
- * Platform Logic: Career Readiness Connection
- * Orchestrates high-fidelity career diagnostics with AI-powered telemetry.
- */
-
-const ASSESSMENT_PROCESSING_STAGES = [
-  { progress: 0, message: "Connecting..." },
-  { progress: 15, message: "Parsing Logic Artifacts..." },
-  { progress: 35, message: "AI evaluation in progress..." },
-  { progress: 55, message: "Mapping Competency Gaps..." },
-  { progress: 75, message: "Generating Executive Report..." },
-  { progress: 90, message: "Saving..." },
-];
+import { cn } from "@/lib/utils";
 
 export type AssessmentStep = "intro" | "profession" | "questions" | "lead-capture" | "processing";
+
+interface ProcessingStage {
+  progress: number;
+  message: string;
+}
+
+const ASSESSMENT_PROCESSING_STAGES: ProcessingStage[] = [
+  { progress: 0, message: "Connecting Secure Node..." },
+  { progress: 15, message: "Parsing Logic Artifacts..." },
+  { progress: 35, message: "AI Evaluation Run In Progress..." },
+  { progress: 55, message: "Mapping Competency Gap Vectors..." },
+  { progress: 75, message: "Compiling Executive Report Summary..." },
+  { progress: 90, message: "Committing Data Ledger Maps..." },
+];
 
 const STEP_PROGRESS: Record<AssessmentStep, number> = {
   intro: 5,
@@ -42,233 +43,349 @@ const STEP_PROGRESS: Record<AssessmentStep, number> = {
 
 const ASSESSMENT_COST = 50;
 
+/**
+ * GroUp Academy: AI Career Readiness Telemetry Orchestrator (AppCareerAssessment)
+ * Hardened responsive wizard interface tracking candidate telemetry, insulating credit transactions, and preventing dangling abort signal memory leaks.
+ * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
+ */
 export default function AppCareerAssessment() {
-  const navigate = useNavigate();
+  const navigateHook = useNavigate();
   const { toast } = useToast();
-  const { talent, user, addServiceUsed } = useTalent();
+  const { talent: talentProfileRecord, user: userAuthRecord, addServiceUsed } = useTalent();
   const { canAfford, deductCredits } = useCredits();
-  const [searchParams] = useSearchParams();
+  const [urlSearchParamsMap] = useSearchParams();
 
-  const [step, setStep] = useState<AssessmentStep>("intro");
-  const [email, setEmail] = useState("");
-  const [categories, setCategories] = useState<any[]>([]);
-  const [selectedCategory, setSelectedCategory] = useState<any | null>(null);
-  const [answers, setAnswers] = useState<Record<string, any>>({});
-  const [isProcessing, setIsProcessing] = useState(false);
+  const [assessmentStepState, setAssessmentStepState] = React.useState<AssessmentStep>("intro");
+  const [candidateEmailState, setCandidateEmailState] = React.useState<string>("");
+  const [professionCategoriesArray, setProfessionCategoriesArray] = React.useState<any[]>([]);
+  const [selectedCategoryRecord, setSelectedCategoryRecord] = React.useState<any | null>(null);
+  const [accumulatedAnswersState, setAccumulatedAnswersState] = React.useState<Record<string, any>>({});
+  const [isMutationProcessing, setIsMutationProcessing] = React.useState<boolean>(false);
 
-  const hasProcessedRef = useRef(false);
+  const hasFormProcessedRefFlag = React.useRef<boolean>(false);
 
-  useEffect(() => {
-    if (talent?.email || user?.email) {
-      setEmail(talent?.email || user?.email || "");
+  // =========================================================================
+  // LIFECYCLE SECTOR 1: IDENTITY RECONCILIATION SYNCHRONIZATION
+  // =========================================================================
+  React.useEffect(() => {
+    const verifiedResolutionEmail = talentProfileRecord?.email || userAuthRecord?.email || "";
+    if (verifiedResolutionEmail) {
+      setCandidateEmailState(verifiedResolutionEmail);
     }
-  }, [talent, user]);
+  }, [talentProfileRecord, userAuthRecord]);
 
-  useEffect(() => {
-    loadCategories();
+  // =========================================================================
+  // LIFECYCLE SECTOR 2: PARSE REPOS DIRECTORIES WITH INSULATED ABORT GATES
+  // =========================================================================
+  React.useEffect(() => {
+    const macroAbortControllerInstance = new AbortController();
+    const networkSchedulingTimerToken = setTimeout(() => {
+      macroAbortControllerInstance.abort();
+    }, TIMEOUTS.CATEGORY_LOAD || 10000);
+
+    const loadProfessionCategoriesInventory = async () => {
+      try {
+        const { data: dbCategoriesPayload, error: queryHandshakeError } = await supabase
+          .from("profession_categories")
+          .select("id, name, display_order, is_active")
+          .eq("is_active", true)
+          .order("display_order")
+          .abortSignal(macroAbortControllerInstance.signal);
+
+        clearTimeout(networkSchedulingTimerToken);
+
+        if (queryHandshakeError) throw queryHandshakeError;
+        if (dbCategoriesPayload) {
+          setProfessionCategoriesArray(dbCategoriesPayload);
+        }
+      } catch (pipelineException: any) {
+        clearTimeout(networkSchedulingTimerToken);
+        if (pipelineException?.name !== "AbortError") {
+          console.error("Diagnostic Failure: Category Grid Load Exception:", pipelineException);
+        }
+      }
+    };
+
+    loadProfessionCategoriesInventory();
+
+    return () => {
+      clearTimeout(networkSchedulingTimerToken);
+      macroAbortControllerInstance.abort();
+    };
   }, []);
 
-  useEffect(() => {
-    if (step === "processing" && !isProcessing && !hasProcessedRef.current) {
-      processAssessment();
-    }
-  }, [step]);
+  // =========================================================================
+  // LIFECYCLE SECTOR 3: MUTATION EXECUTION CONTROL LAYER
+  // =========================================================================
+  const processCareerAssessmentDiagnosticSequence = React.useCallback(async () => {
+    if (!selectedCategoryRecord || hasFormProcessedRefFlag.current) return;
 
-  const loadCategories = async () => {
-    const controller = new AbortController();
-    const timeoutId = setTimeout(() => controller.abort(), TIMEOUTS.CATEGORY_LOAD);
-
-    try {
-      const { data, error } = await supabase
-        .from("profession_categories")
-        .select("*")
-        .eq("is_active", true)
-        .order("display_order")
-        .abortSignal(controller.signal);
-
-      clearTimeout(timeoutId);
-      if (error) throw error;
-      if (data) setCategories(data);
-    } catch (error: any) {
-      clearTimeout(timeoutId);
-      console.error("Diagnostic Failure: Category Load", error);
-    }
-  };
-
-  const processAssessment = async () => {
-    if (!selectedCategory || hasProcessedRef.current) return;
-
-    setIsProcessing(true);
-    hasProcessedRef.current = true;
+    setIsMutationProcessing(true);
+    hasFormProcessedRefFlag.current = true;
 
     try {
       if (!canAfford("CAREER_ASSESSMENT")) {
         toast({
-          title: "Insufficient Credits",
-          description: `This diagnostic requires ${ASSESSMENT_COST} credits.`,
+          title: "Insufficient Wallet Volume",
+          description: `This automated cognitive diagnostic requires ${ASSESSMENT_COST.toString()} active system credits.`,
           variant: "destructive",
         });
-        setStep("lead-capture");
-        hasProcessedRef.current = false;
+        setAssessmentStepState("lead-capture");
+        hasFormProcessedRefFlag.current = false;
         return;
       }
 
-      const paid = await deductCredits("CAREER_ASSESSMENT", undefined, "Career Assessment Diagnostic");
-      if (!paid) throw new Error("Credit handshake failed.");
+      const isCreditHandshakeSettled = await deductCredits(
+        "CAREER_ASSESSMENT",
+        undefined,
+        "Career Assessment Diagnostic Evaluation",
+      );
+      if (!isCreditHandshakeSettled) throw new Error("Credit transaction verification loop timeout.");
 
-      const { data, error } = await supabase.functions.invoke("analyze-career-assessment", {
-        body: { answers, professionCategoryId: selectedCategory.id, email, talentId: talent?.id },
+      const { data: edgeFunctionResponseData, error: edgeFunctionInvokeError } = await supabase.functions.invoke(
+        "analyze-career-assessment",
+        {
+          body: {
+            answers: accumulatedAnswersState,
+            professionCategoryId: selectedCategoryRecord.id,
+            email: candidateEmailState,
+            talentId: talentProfileRecord?.id,
+          },
+        },
+      );
+
+      if (edgeFunctionInvokeError) throw edgeFunctionInvokeError;
+
+      if (talentProfileRecord?.id) {
+        await addServiceUsed("CAREER_ASSESSMENT");
+      }
+
+      toast({
+        title: "Telemetry Finalized",
+        description: "Your technical evaluation executive mapping dossier is now online.",
       });
 
-      if (error) throw error;
+      recordToolRun({
+        toolKey: "assessment",
+        costCredits: 100,
+        payload: { assessment_id: edgeFunctionResponseData?.assessmentId },
+      });
 
-      if (talent?.id) await addServiceUsed("CAREER_ASSESSMENT");
-
-      toast({ title: "Analysis Finalized", description: "Your executive report is now active." });
-
-      recordToolRun({ toolKey: "assessment", costCredits: 100, payload: { assessment_id: data?.assessmentId } });
-      if (data?.assessmentId) navigate(`/assessment-results/${data.assessmentId}`);
-      else navigate("/app/jobs?tab=tools");
-    } catch (error: any) {
+      if (edgeFunctionResponseData?.assessmentId) {
+        navigateHook(`/assessment-results/${edgeFunctionResponseData.assessmentId}`);
+      } else {
+        navigateHook("/app/jobs?tab=tools");
+      }
+    } catch (fatalMutationExceptionPayload: any) {
       toast({
-        title: "Failed",
-        description: "Network logic error. Re-initialize sequence.",
+        title: "Sequence Refused",
+        description: "The evaluation pipeline rejected your transaction string parameters. Please re-initialize.",
         variant: "destructive",
       });
-      setStep("lead-capture");
-      hasProcessedRef.current = false;
+      setAssessmentStepState("lead-capture");
+      hasFormProcessedRefFlag.current = false;
     } finally {
-      setIsProcessing(false);
+      setIsMutationProcessing(false);
     }
-  };
+  }, [
+    selectedCategoryRecord,
+    accumulatedAnswersState,
+    candidateEmailState,
+    talentProfileRecord?.id,
+    canAfford,
+    deductCredits,
+    addServiceUsed,
+    navigateHook,
+    toast,
+  ]);
+
+  React.useEffect(() => {
+    if (assessmentStepState === "processing" && !isMutationProcessing && !hasFormProcessedRefFlag.current) {
+      processCareerAssessmentDiagnosticSequence();
+    }
+  }, [assessmentStepState, isMutationProcessing, processCareerAssessmentDiagnosticSequence]);
+
+  const handleStepRevertAction = React.useCallback(() => {
+    setAssessmentStepState((currentStep) => {
+      if (currentStep === "intro") {
+        navigateHook("/app/services");
+        return "intro";
+      }
+      if (currentStep === "profession") return "intro";
+      if (currentStep === "questions") return "profession";
+      if (currentStep === "lead-capture") return "questions";
+      return currentStep;
+    });
+  }, [navigateHook]);
+
+  const handleProfessionSelectionComplete = React.useCallback((categoryNode: any) => {
+    setSelectedCategoryRecord(categoryNode);
+    setAssessmentStepState("questions");
+  }, []);
+
+  const handleAssessmentQuestionsComplete = React.useCallback((answersPayload: Record<string, any>) => {
+    setAnswers(answersPayload);
+    setAssessmentStepState("lead-capture");
+  }, []);
+
+  const handleLeadCaptureComplete = React.useCallback(() => {
+    setAssessmentStepState("processing");
+  }, []);
 
   return (
-    <div className="max-w-4xl mx-auto px-6 py-10 min-h-svh space-y-10">
-      <header className="space-y-4">
-        <div className="flex justify-between items-end px-1">
-          <div>
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-primary">Assessment Sequence</p>
-            <h2 className="text-sm font-bold uppercase tracking-tight text-muted-foreground/60">
-              {step.replace("-", " ")}
+    <div className="max-w-3xl mx-auto px-4 sm:px-6 py-8 min-h-svh space-y-8 text-left antialiased block transform-gpu w-full">
+      {/* HUD LEVEL 1: TRACKING SEQUENCE HUD BAR HEADER */}
+      <header className="space-y-3 block select-none pointer-events-none w-full shrink-0">
+        <div className="flex justify-between items-end px-0.5 leading-none w-full block">
+          <div className="leading-none space-y-1 block">
+            <p className="font-mono text-[10px] font-extrabold uppercase tracking-widest text-primary">
+              Cognitive Diagnostic Run
+            </p>
+            <h2 className="text-sm font-bold uppercase tracking-wide text-muted-foreground/60 block truncate max-w-[180px] sm:max-w-xs pt-0.5">
+              Phase: {assessmentStepState.replace("-", " ")}
             </h2>
           </div>
-          <span className="text-[10px] font-mono text-muted-foreground/40">{STEP_PROGRESS[step]}% Completion</span>
+          <span className="font-mono text-[10px] font-bold text-muted-foreground/40 tabular-nums">
+            {STEP_PROGRESS[assessmentStepState].toString()}% Unified Matrix Completion
+          </span>
         </div>
-        <Progress value={STEP_PROGRESS[step]} className="h-1.5 rounded-full bg-primary/10" />
+        <Progress
+          value={STEP_PROGRESS[assessmentStepState]}
+          className="h-1.5 rounded-full bg-primary/10 w-full block shadow-none"
+        />
       </header>
 
-      {step !== "processing" && (
-        <Button
-          variant="ghost"
-          className="rounded-xl h-10 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 group"
-          onClick={() => {
-            if (step === "intro") navigate("/app/services");
-            else if (step === "profession") setStep("intro");
-            else if (step === "questions") setStep("profession");
-            else if (step === "lead-capture") setStep("questions");
-          }}
-        >
-          <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" />
-          Terminate / Revert
-        </Button>
+      {/* HUD LEVEL 2: REVERT TERMINATE PIPELINE CONSOLE BUTTON */}
+      {assessmentStepState !== "processing" && (
+        <div className="block shrink-0 select-none">
+          <Button
+            type="button"
+            variant="ghost"
+            onClick={handleStepRevertAction}
+            className="rounded-lg h-9 px-3 text-[10px] font-mono font-black uppercase tracking-wider hover:bg-muted group cursor-pointer border border-border/5"
+          >
+            <ArrowLeft className="mr-1.5 h-3.5 w-3.5 stroke-[2.5] transition-transform group-hover:-translate-x-0.5 shrink-0" />
+            <span>Terminate / Revert Parameters</span>
+          </Button>
+        </div>
       )}
 
-      <main className="relative">
-        {step === "intro" && (
-          <div className="space-y-10 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <div className="text-center space-y-4">
+      {/* HUD LEVEL 3: DYNAMIC TRACK CONTAINER WIZARD VIEWS */}
+      <main className="relative block w-full">
+        {assessmentStepState === "intro" && (
+          <div className="space-y-6 block w-full animate-in fade-in duration-200">
+            <div className="text-center space-y-2 select-none pointer-events-none block leading-none max-w-lg mx-auto pb-2">
               <Badge
                 variant="outline"
-                className="rounded-lg px-4 py-1 border-primary/20 text-primary font-black uppercase tracking-widest text-[9px]"
+                className="rounded font-mono text-[9px] font-extrabold uppercase tracking-widest px-2.5 h-5 bg-primary/5 text-primary border-primary/20 shrink-0 pointer-events-none leading-none pt-0.5"
               >
-                Diagnostic Protocol 2.0
+                Diagnostic Protocol Gateway 2.0
               </Badge>
-              <h1 className="text-5xl font-black uppercase tracking-tighter leading-none">Career Readiness</h1>
-              <p className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 italic max-w-lg mx-auto">
-                AI-powered skill mapping and neural career intelligence.
+              <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-tight text-foreground leading-none pt-1">
+                Career Readiness Evaluation
+              </h1>
+              <p className="text-[11px] sm:text-xs font-semibold text-muted-foreground/60 leading-normal block max-w-sm mx-auto">
+                AI-powered algorithmic competency telemetry mapping and matching profile matrix architectures.
               </p>
             </div>
 
-            <Card className="rounded-[40px] border-2 border-dashed border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
-              <CardContent className="p-12">
-                <div className="grid gap-12 md:grid-cols-3 mb-12">
+            <Card className="rounded-xl border border-dashed border-border/80 bg-card/30 backdrop-blur-md shadow-2xs block overflow-hidden w-full">
+              <CardContent className="p-6 sm:p-8 block w-full space-y-8">
+                <div className="grid grid-cols-1 md:grid-cols-3 gap-6 block w-full select-none pointer-events-none align-top">
                   {[
-                    { icon: Target, title: "Precision Mapping", desc: "Role-specific telemetry." },
-                    { icon: Sparkles, title: "AI Logic", desc: "Deep gap analysis." },
-                    { icon: TrendingUp, title: "Strategic Plan", desc: "Executive roadmap." },
-                  ].map((item, idx) => (
-                    <div key={idx} className="flex flex-col items-center text-center space-y-4">
-                      <div className="p-5 bg-primary/10 rounded-[24px] rotate-3 shadow-xl">
-                        <item.icon className="h-8 w-8 text-primary" />
+                    {
+                      icon: Target,
+                      title: "Precision Mapping",
+                      desc: "Role-specific telemetry parameter configurations.",
+                    },
+                    {
+                      icon: Sparkles,
+                      title: "AI Inference Logic",
+                      desc: "Deep programmatic structural gap vector analysis.",
+                    },
+                    {
+                      icon: TrendingUp,
+                      title: "Executive Syllabus",
+                      desc: "Target output career roadmap data listings.",
+                    },
+                  ].map((itemNode, itemIdx) => {
+                    const VectorIconComponent = itemNode.icon;
+
+                    return (
+                      <div
+                        key={`intro-feature-element-${itemIdx}`}
+                        className="flex flex-col items-center text-center space-y-2.5 block flex-1"
+                      >
+                        <div className="p-3.5 bg-primary/5 border border-primary/10 rounded-lg shrink-0 block text-primary shadow-2xs">
+                          <VectorIconComponent className="h-5 w-5 stroke-[2.2]" />
+                        </div>
+                        <div className="space-y-0.5 block leading-none">
+                          <h3 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground block">
+                            {itemNode.title}
+                          </h3>
+                          <p className="text-[11px] font-medium text-muted-foreground/60 leading-normal block max-w-[200px] mx-auto">
+                            {itemNode.desc}
+                          </p>
+                        </div>
                       </div>
-                      <div className="space-y-1">
-                        <h3 className="font-black uppercase tracking-tighter text-lg">{item.title}</h3>
-                        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase leading-relaxed">
-                          {item.desc}
-                        </p>
-                      </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
 
                 <Button
-                  className="w-full rounded-2xl h-14 text-[11px] font-black uppercase tracking-[0.2em] shadow-2xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
-                  onClick={() => setStep("profession")}
+                  type="button"
+                  onClick={() => setAssessmentStepState("profession")}
+                  className="w-full h-11 px-5 rounded-lg font-bold uppercase text-xs tracking-wider gap-2 bg-primary text-primary-foreground hover:bg-primary/90 transition-all cursor-pointer shadow-xs transform-gpu active:scale-[0.99] select-none block text-center"
                 >
-                  <Zap className="mr-3 h-5 w-5" />
-                  Initialize Assessment
+                  <Zap className="h-4 w-4 stroke-[2.5] inline-block align-middle shrink-0" />
+                  <span className="inline-block align-middle pt-0.5">Initialize Diagnostic Sequence</span>
                 </Button>
               </CardContent>
             </Card>
           </div>
         )}
 
-        {step === "profession" && (
-          <div className="animate-in zoom-in-95 duration-500">
+        {/* Phase A: Specialty Category Mapping Selector Rigs */}
+        {assessmentStepState === "profession" && (
+          <div className="block w-full animate-in fade-in duration-200">
             <ProfessionSelector
-              categories={categories}
-              onSelect={(c) => {
-                setSelectedCategory(c);
-                setStep("questions");
-              }}
-              onBack={() => setStep("intro")}
+              categories={professionCategoriesArray}
+              onSelect={handleProfessionSelectionComplete}
+              onBack={handleStepRevertAction}
             />
           </div>
         )}
 
-        {step === "questions" && selectedCategory && (
-          <div className="animate-in slide-in-from-right-10 duration-500">
+        {/* Phase B: Programmatic Interrogation Flow Step Blocks */}
+        {assessmentStepState === "questions" && selectedCategoryRecord && (
+          <div className="block w-full animate-in fade-in duration-200">
             <AssessmentStepper
-              categoryId={selectedCategory.id}
-              categoryName={selectedCategory.name}
-              onComplete={(a) => {
-                setAnswers(a);
-                setStep("lead-capture");
-              }}
-              onBack={() => setStep("profession")}
+              categoryId={selectedCategoryRecord.id}
+              categoryName={selectedCategoryRecord.name}
+              onComplete={handleAssessmentQuestionsComplete}
+              onBack={handleStepRevertAction}
             />
           </div>
         )}
 
-        {step === "lead-capture" && selectedCategory && (
-          <div className="animate-in fade-in zoom-in-95 duration-500">
+        {/* Phase C: Operator Capture Credential Ingress Form Blocks */}
+        {assessmentStepState === "lead-capture" && selectedCategoryRecord && (
+          <div className="block w-full animate-in fade-in duration-200">
             <LeadCaptureForm
-              categoryId={selectedCategory.id}
-              categoryName={selectedCategory.name}
-              answers={answers}
-              email={email}
-              // FIX: Connection aligned with () => void signature
-              onComplete={() => {
-                setStep("processing");
-              }}
-              onBack={() => setStep("questions")}
+              categoryId={selectedCategoryRecord.id}
+              categoryName={selectedCategoryRecord.name}
+              answers={accumulatedAnswersState}
+              email={candidateEmailState}
+              onComplete={handleLeadCaptureComplete}
+              onBack={handleStepRevertAction}
             />
           </div>
         )}
 
-        {step === "processing" && (
-          <div className="py-20 animate-in fade-in duration-1000">
-            <ProcessingCard stages={ASSESSMENT_PROCESSING_STAGES} title="Profile Sync" />
+        {/* Phase D: Processing Async Computation Evaluation Cards */}
+        {assessmentStepState === "processing" && (
+          <div className="py-12 block w-full animate-in fade-in duration-300">
+            <ProcessingCard stages={ASSESSMENT_PROCESSING_STAGES} title="Synchronizing System Profile" />
           </div>
         )}
       </main>
