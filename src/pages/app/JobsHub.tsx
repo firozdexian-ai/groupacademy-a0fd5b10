@@ -2,7 +2,7 @@ import * as React from "react";
 import { useSearchParams } from "react-router-dom";
 import { useTalent } from "@/hooks/useTalent";
 import { useJobsHubDashboard } from "@/hooks/useJobsHubDashboard";
-import { Tabs, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Loader2, Layers, Building2, Globe, Zap } from "lucide-react";
 import { JobsHubHeader } from "@/components/jobs/JobsHubHeader";
 import { BrowseView } from "@/components/jobs/views/BrowseView";
