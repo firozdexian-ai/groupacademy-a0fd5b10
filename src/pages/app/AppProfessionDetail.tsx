@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { AIChatPanel } from "@/components/ai-instructor/AIChatPanel";
@@ -9,28 +9,26 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
   Bot,
-  BookOpen,
-  Target,
-  Clock,
   ArrowLeft,
-  GraduationCap,
-  Briefcase,
   MessageSquare,
-  Play,
   RefreshCw,
   AlertCircle,
   ClipboardCheck,
   Coins,
   Zap,
   ChevronRight,
+  Clock,
+  Inbox,
 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-/**
- * Platform Logic: Career Track Blueprint
- * Orchestrates profession-specific curricula with real-time credit telemetry.
- * 2026 Standard: Executive Logic geometry and high-fidelity AI-instructor handshakes.
- */
+// =========================================================================
+// DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
+// =========================================================================
+interface SchoolRelation {
+  name: string;
+  academies: { name: string } | null;
+}
 
 interface ProfessionLine {
   id: string;
@@ -40,7 +38,7 @@ interface ProfessionLine {
   target_audience: string;
   career_outcome: string;
   credit_cost: number | null;
-  schools: { name: string; academies: { name: string } };
+  schools: SchoolRelation | null;
 }
 
 interface AIInstructor {
@@ -48,6 +46,11 @@ interface AIInstructor {
   name: string;
   persona: string;
   expertise_areas: string[];
+}
+
+interface CourseLevelRelation {
+  name: string;
+  slug: string;
 }
 
 interface Course {
@@ -58,321 +61,442 @@ interface Course {
   estimated_hours: number;
   modules_count: number;
   credit_cost: number | null;
-  profession_levels: { name: string; slug: string };
+  profession_levels: CourseLevelRelation | null;
 }
 
+/**
+ * GroUp Academy: Specialist Profession Career Track Cockpit (AppProfessionDetail)
+ * Hardened track hub managing concurrent instructor chats, compiling segmented course arrays, and anchoring credit allocation HUD metrics.
+ * Version: Launch Candidate · Phase Z1 Architecture Matrix Sealed
+ */
 export default function AppProfessionDetail() {
-  const { slug } = useParams();
-  const navigate = useNavigate();
-  const [profession, setProfession] = useState<ProfessionLine | null>(null);
-  const [aiInstructor, setAIInstructor] = useState<AIInstructor | null>(null);
-  const [courses, setCourses] = useState<Course[]>([]);
-  const [isLoading, setIsLoading] = useState(true);
-  const [showChat, setShowChat] = useState(false);
-  const [loadingError, setLoadingError] = useState<string | null>(null);
+  const { slug: unverifiedTrackSlugStr } = useParams<{ slug: string }>();
+  const navigateHook = useNavigate();
 
-  useEffect(() => {
-    if (slug) loadProfessionData();
-  }, [slug]);
+  const [professionRecordState, setProfessionRecordState] = React.useState<ProfessionLine | null>(null);
+  const [aiInstructorState, setAIInstructorState] = React.useState<AIInstructor | null>(null);
+  const [coursesRegistryPayload, setCoursesRegistryPayload] = React.useState<Course[]>([]);
 
-  const loadProfessionData = async () => {
-    setLoadingError(null);
-    try {
-      const { data: professionData, error } = await supabase
-        .from("profession_categories")
-        .select(`*, schools(name, academies(name))`)
-        .eq("slug", slug)
-        .maybeSingle();
+  const [isDataLayerLoading, setIsDataLayerLoading] = React.useState<boolean>(true);
+  const [isInstructorChatOpen, setIsInstructorChatOpen] = React.useState<boolean>(false);
+  const [synchronizationErrorStr, setSynchronizationErrorStr] = React.useState<string | null>(null);
 
-      if (error) throw error;
-      if (professionData) {
-        setProfession(professionData);
-        const { data: instructorData } = await supabase
-          .from("ai_instructors")
-          .select("*")
-          .eq("profession_line_id", professionData.id)
-          .eq("is_active", true)
-          .maybeSingle();
-        setAIInstructor(instructorData);
+  // =========================================================================
+  // LIFECYCLE SECTOR 1: RELATIONAL HANDSHAKE WATERFALL CONTEXT CLEANUP HOOKS
+  // =========================================================================
+  const synchronizeProfessionTrackInventory = React.useCallback(
+    async (isThreadActiveFlag: { current: boolean }) => {
+      if (!unverifiedTrackSlugStr) return;
 
-        const { data: coursesData } = await supabase
-          .from("content")
+      setSynchronizationErrorStr(null);
+      setIsDataLayerLoading(true);
+
+      try {
+        const { data: professionQueryPayload, error: professionHandshakeError } = await supabase
+          .from("profession_categories")
           .select(
-            `id, title, slug, description, estimated_hours, modules_count, credit_cost, profession_levels(name, slug)`,
+            `id, name, slug, description, target_audience, career_outcome, credit_cost, schools(name, academies(name))`,
           )
-          .eq("profession_line_id", professionData.id)
-          .eq("is_published", true)
-          .order("display_order");
-        setCourses(coursesData || []);
+          .eq("slug", unverifiedTrackSlugStr)
+          .maybeSingle();
+
+        if (professionHandshakeError) throw professionHandshakeError;
+
+        if (!professionQueryPayload) {
+          if (isThreadActiveFlag.current) {
+            setProfessionRecordState(null);
+            setIsDataLayerLoading(false);
+          }
+          return;
+        }
+
+        if (!isThreadActiveFlag.current) return;
+        const castProfessionNode = professionQueryPayload as unknown as ProfessionLine;
+        setProfessionRecordState(castProfessionNode);
+
+        // Perform downstream secondary entity lookups simultaneously to prevent execution blocking
+        const [instructorQueryResponse, coursesQueryResponse] = await Promise.all([
+          supabase
+            .from("ai_instructors")
+            .select("id, name, persona, expertise_areas")
+            .eq("profession_line_id", castProfessionNode.id)
+            .eq("is_active", true)
+            .maybeSingle(),
+          supabase
+            .from("content")
+            .select(
+              `id, title, slug, description, estimated_hours, modules_count, credit_cost, profession_levels(name, slug)`,
+            )
+            .eq("profession_line_id", castProfessionNode.id)
+            .eq("is_published", true)
+            .order("display_order"),
+        ]);
+
+        if (!isThreadActiveFlag.current) return;
+
+        if (instructorQueryResponse.data) {
+          setAIInstructorState(instructorQueryResponse.data as unknown as AIInstructor);
+        } else {
+          setAIInstructorState(null);
+        }
+
+        setCoursesRegistryPayload((coursesQueryResponse.data as unknown as Course[]) || []);
+      } catch (fatalHandshakeException) {
+        if (isThreadActiveFlag.current) {
+          setSynchronizationErrorStr("Track Metadata Synchronization Aborted.");
+        }
+      } finally {
+        if (isThreadActiveFlag.current) {
+          setIsDataLayerLoading(false);
+        }
       }
-    } catch (error: any) {
-      setLoadingError("Track Synchronization Failed.");
-    } finally {
-      setIsLoading(false);
-    }
-  };
-
-  if (isLoading)
-    return (
-      <div className="max-w-5xl mx-auto px-6 py-10 space-y-8 animate-pulse">
-        <Skeleton className="h-10 w-32 rounded-xl bg-muted/40" />
-        <Skeleton className="h-[400px] w-full rounded-[40px] bg-muted/40" />
-      </div>
-    );
-
-  if (loadingError || !profession)
-    return (
-      <div className="max-w-4xl mx-auto px-6 py-20 text-center animate-in fade-in zoom-in-95">
-        <div className="h-20 w-20 rounded-[32px] bg-destructive/10 flex items-center justify-center mx-auto mb-6 border-2 border-dashed border-destructive/40">
-          <AlertCircle className="h-10 w-10 text-destructive" />
-        </div>
-        <h1 className="text-3xl font-black uppercase tracking-tighter mb-4">List Error</h1>
-        <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/40 mb-8 italic">
-          {loadingError || "Blueprint not found"}
-        </p>
-        <div className="flex gap-4 justify-center">
-          <Button
-            onClick={loadProfessionData}
-            className="rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest border-2"
-          >
-            <RefreshCw className="h-4 w-4 mr-2" /> Re-sync
-          </Button>
-          <Button
-            variant="outline"
-            onClick={() => navigate("/app/learning/tracks")}
-            className="rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest border-2"
-          >
-            Return to Catalog
-          </Button>
-        </div>
-      </div>
-    );
-
-  const coursesByLevel = courses.reduce(
-    (acc, course) => {
-      const level = course.profession_levels?.slug || "foundation";
-      if (!acc[level]) acc[level] = [];
-      acc[level].push(course);
-      return acc;
     },
-    {} as Record<string, Course[]>,
+    [unverifiedTrackSlugStr],
   );
 
-  const entryCost = profession.credit_cost || 0;
-  const courseCreditsTotal = courses.reduce((sum, c) => sum + (c.credit_cost || 0), 0);
-  const totalInvestment = entryCost + courseCreditsTotal;
+  React.useEffect(() => {
+    const isThreadActiveFlag = { current: true };
+    synchronizeProfessionTrackInventory(isThreadActiveFlag);
+
+    return () => {
+      isThreadActiveFlag.current = false;
+    };
+  }, [unverifiedTrackSlugStr, synchronizeProfessionTrackInventory]);
+
+  // =========================================================================
+  // MEMOIZED PARAMETER SECTOR: SECURE CURRICULUM CLASSIFICATION MATRIX
+  // =========================================================================
+  const coursesCategorizedByLevelMap = React.useMemo<Record<string, Course[]>>(() => {
+    const internalAccumulatorMap: Record<string, Course[]> = { foundation: [], intermediate: [], executive: [] };
+    if (coursesRegistryPayload.length === 0) return internalAccumulatorMap;
+
+    return coursesRegistryPayload.reduce((accMap, courseNodeItem) => {
+      const compiledLevelSlugKeyStr = courseNodeItem.profession_levels?.slug || "foundation";
+      if (!accMap[compiledLevelSlugKeyStr]) {
+        accMap[compiledLevelSlugKeyStr] = [];
+      }
+      accMap[compiledLevelSlugKeyStr].push(courseNodeItem);
+      return accMap;
+    }, internalAccumulatorMap);
+  }, [coursesRegistryPayload]);
+
+  const financialInvestmentMetricsHUD = React.useMemo(() => {
+    const baseEntryCostFeeInt = professionRecordState?.credit_cost || 0;
+    const modularUnitsCostSumInt = coursesRegistryPayload.reduce(
+      (accumulatedSum, courseNode) => accumulatedSum + (courseNode.credit_cost || 0),
+      0,
+    );
+    return {
+      entryCost: baseEntryCostFeeInt,
+      unitCost: modularUnitsCostSumInt,
+      totalInvestment: baseEntryCostFeeInt + modularUnitsCostSumInt,
+    };
+  }, [professionRecordState, coursesRegistryPayload]);
+
+  const handleReturnToCatalogTrigger = React.useCallback(() => {
+    navigateHook("/app/learning/tracks");
+  }, [navigateHook]);
+
+  const handleInitializeAssessmentRedirect = React.useCallback(() => {
+    if (professionRecordState?.id) {
+      navigateHook(`/career-assessment?profession=${professionRecordState.id}`);
+    }
+  }, [professionRecordState, navigateHook]);
+
+  const handleToggleInstructorChatPanel = React.useCallback(() => {
+    setIsInstructorChatOpen((prev) => !prev);
+  }, []);
+
+  // =========================================================================
+  // CONDITION RENDERING SKELETON GATES AND CHECKS
+  // =========================================================================
+  if (isDataLayerLoading) {
+    return (
+      <div className="max-w-5xl mx-auto px-4 py-8 space-y-6 text-left antialiased block w-full select-none pointer-events-none animate-pulse">
+        <Skeleton className="h-9 w-36 rounded-lg block" />
+        <Skeleton className="h-64 w-full rounded-xl bg-card/20 block shadow-none" />
+        <Skeleton className="h-24 w-full rounded-xl block" />
+      </div>
+    );
+  }
+
+  if (synchronizationErrorStr || !professionRecordState) {
+    return (
+      <div
+        role="alert"
+        className="min-h-[50vh] grid place-items-center text-center p-6 antialiased select-none transform-gpu"
+      >
+        <div className="max-w-xs block space-y-4 leading-none">
+          <div className="h-9 w-9 rounded-lg bg-muted/40 border border-border/40 flex items-center justify-center text-muted-foreground/50 mx-auto pointer-events-none">
+            <AlertCircle className="h-4 w-4 stroke-[2.2]" />
+          </div>
+          <div className="space-y-1 block leading-none">
+            <p className="text-xs font-bold text-foreground uppercase tracking-wide">Track Synchronization Failure</p>
+            <p className="text-[11px] font-semibold text-muted-foreground/60 leading-normal mt-1">
+              {synchronizationErrorStr ||
+                "The targeted specialized curriculum tracking configuration parameters could not be parsed."}
+            </p>
+          </div>
+          <div className="flex gap-2 w-full block shrink-0 select-none pt-2">
+            <Button
+              type="button"
+              size="sm"
+              onClick={() => synchronizeProfessionTrackInventory({ current: true })}
+              className="flex-1 h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider gap-1 cursor-pointer"
+            >
+              <RefreshCw className="h-3 w-3 stroke-[2.5]" /> <span>Re-Sync</span>
+            </Button>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={handleReturnToCatalogTrigger}
+              className="flex-1 h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider cursor-pointer border border-border/60 bg-background/50"
+            >
+              Catalog Index
+            </Button>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
-    <div className="max-w-5xl mx-auto px-6 py-10 pb-40 space-y-12 animate-in fade-in slide-in-from-bottom-4 duration-700">
-      {/* Navigation Connection */}
-      <header className="flex items-center">
+    <div className="max-w-5xl mx-auto px-4 py-6 pb-32 space-y-8 text-left antialiased block transform-gpu w-full">
+      {/* HUD LEVEL 1: APPLICATION HEADER SUB-TRACK NAVIGATION CONTROL GRID */}
+      <header className="block w-full select-none pb-2 border-b border-border/10">
         <Button
+          type="button"
           variant="ghost"
           size="sm"
-          onClick={() => navigate("/app/learning/tracks")}
-          className="group rounded-xl px-4 h-11 font-black text-[10px] uppercase tracking-[0.3em] hover:bg-primary/5 transition-all"
+          onClick={handleReturnToCatalogTrigger}
+          className="group rounded-lg h-9 px-3 font-mono text-[10px] font-extrabold uppercase tracking-wide border border-border/5 bg-background hover:bg-muted cursor-pointer"
         >
-          <ArrowLeft className="mr-3 h-4 w-4 transition-transform group-hover:-translate-x-1" /> Revert to Catalog
+          <ArrowLeft className="mr-1.5 h-3.5 w-3.5 stroke-[2.5] transition-transform group-hover:-translate-x-0.5" />
+          <span>Return to Catalog Runway</span>
         </Button>
       </header>
 
-      {/* Hero List Section */}
-      <section className="space-y-6">
-        <div className="flex items-center gap-3">
-          <Badge className="bg-primary/10 text-primary border-primary/20 px-3 py-1 rounded-lg text-[9px] font-black uppercase tracking-widest">
-            {profession.schools?.name}
-          </Badge>
-          <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-          <p className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-[0.2em] italic">
-            Track Blueprint v2.6
+      {/* HUD LEVEL 2: COMPOSITE PATH HERO DESCRIPTION SHELL */}
+      <section className="space-y-2 block w-full leading-none">
+        <div className="flex items-center gap-2 select-none pointer-events-none leading-none w-full block">
+          {professionRecordState.schools?.name && (
+            <Badge className="font-mono text-[8px] font-black uppercase px-2 h-4.5 rounded border border-primary/20 bg-primary/5 text-primary tracking-wide pt-0.5 shrink-0 leading-none">
+              {professionRecordState.schools.name}
+            </Badge>
+          )}
+          <span className="h-1 w-1 rounded-full bg-border/80 shrink-0" />
+          <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide block pt-0.5">
+            Track Blueprint Allocation Matrix: v2.6
           </p>
         </div>
-        <h1 className="text-6xl font-black tracking-tighter uppercase italic leading-[0.9]">{profession.name}</h1>
-        <p className="text-xl text-muted-foreground font-bold leading-relaxed tracking-tight max-w-2xl">
-          {profession.description}
+        <h1 className="text-2xl sm:text-3xl md:text-4xl font-black uppercase tracking-tight text-foreground leading-tight block select-text">
+          {professionRecordState.name}
+        </h1>
+        <p className="text-xs sm:text-sm font-semibold text-muted-foreground/80 leading-relaxed max-w-3xl block select-text pt-1">
+          {professionRecordState.description}
         </p>
       </section>
 
-      {/* Strategic Metadata Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-        {/* Investment HUD */}
-        <Card className="md:col-span-2 rounded-[32px] border-2 border-primary/10 bg-primary/5 shadow-2xl overflow-hidden">
-          <CardContent className="p-8">
-            <div className="flex items-center justify-between mb-8">
-              <div className="flex items-center gap-3">
-                <div className="p-2.5 bg-primary/20 rounded-xl rotate-3">
-                  <Coins className="h-5 w-5 text-primary" />
+      {/* HUD LEVEL 3: MODULAR RESOURCE COMMITMENT AND DIAGNOSTIC HUD ROW */}
+      <div className="grid grid-cols-1 md:grid-cols-3 gap-4 block w-full">
+        {/* INVESTMENT BALANCE OVERVIEW CARD */}
+        <Card className="md:col-span-2 rounded-xl border border-border/60 bg-card/30 shadow-none overflow-hidden block w-full select-none pointer-events-none">
+          <CardContent className="p-4 sm:p-5 space-y-4 block w-full leading-none">
+            <div className="flex items-center justify-between gap-4 leading-none block w-full shrink-0">
+              <div className="flex items-center gap-2 max-w-[200px] sm:max-w-xs truncate leading-none block">
+                <div className="p-2 bg-primary/5 border border-primary/10 rounded text-primary shrink-0 block shadow-3xs">
+                  <Coins className="h-4 w-4 stroke-[2.2]" />
                 </div>
-                <h4 className="font-black uppercase tracking-[0.3em] text-[11px] text-primary">Resource Commitment</h4>
+                <h4 className="font-mono text-[10px] font-extrabold uppercase tracking-wide text-primary pt-0.5 truncate block">
+                  Computational Resource Ledger
+                </h4>
               </div>
               <Badge
                 variant="outline"
-                className="font-mono text-primary border-primary/40 text-[10px] tracking-tighter"
+                className="font-mono text-[9px] font-bold text-muted-foreground/50 uppercase tracking-tight px-1.5 h-4.5 rounded-sm bg-background border-border/40 tabular-nums shrink-0 pt-0.5 leading-none"
               >
-                TOTAL_ALLOCATION: {totalInvestment}
+                CUMULATIVE_DRAW: {financialInvestmentMetricsHUD.totalInvestment.toLocaleString()} UNITS
               </Badge>
             </div>
-            <div className="grid grid-cols-3 gap-8">
-              {[
-                { val: entryCost, label: "Entry Fee" },
-                { val: courseCreditsTotal, label: "Unit Credits" },
-                { val: totalInvestment, label: "Net Investment", highlight: true },
-              ].map((item, idx) => (
-                <div key={idx} className="space-y-1 text-center md:text-left">
-                  <p
-                    className={cn(
-                      "text-3xl font-black italic tracking-tighter",
-                      item.highlight ? "text-primary" : "text-foreground",
-                    )}
-                  >
-                    {item.val}
-                  </p>
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest italic">
-                    {item.label}
-                  </p>
-                </div>
-              ))}
+
+            <div className="grid grid-cols-3 gap-4 pt-2 border-t border-border/5 text-center sm:text-left block w-full tracking-tight font-mono uppercase text-[9px] font-bold text-muted-foreground/40 leading-none">
+              <div className="space-y-1 block">
+                <p className="text-foreground text-sm sm:text-base md:text-lg font-black tracking-tight tabular-nums leading-none">
+                  {financialInvestmentMetricsHUD.entryCost.toLocaleString()}
+                </p>
+                <p className="italic block leading-none">Pipeline Ingress Fee</p>
+              </div>
+              <div className="space-y-1 block">
+                <p className="text-foreground text-sm sm:text-base md:text-lg font-black tracking-tight tabular-nums leading-none">
+                  {financialInvestmentMetricsHUD.unitCost.toLocaleString()}
+                </p>
+                <p className="italic block leading-none">Segment Course Units</p>
+              </div>
+              <div className="space-y-1 block">
+                <p className="text-primary text-sm sm:text-base md:text-lg font-black tracking-tight tabular-nums leading-none">
+                  {financialInvestmentMetricsHUD.totalInvestment.toLocaleString()}
+                </p>
+                <p className="text-primary font-extrabold block leading-none">Net Track Matrix Charge</p>
+              </div>
             </div>
           </CardContent>
         </Card>
 
-        {/* Diagnostic CTA */}
+        {/* NEURAL DIAGNOSTIC SELECTION ENTRY CONTROL POINT CARD */}
         <Card
-          className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl group cursor-pointer hover:border-primary/40 transition-all shadow-xl"
-          onClick={() => navigate(`/career-assessment?profession=${profession.id}`)}
+          onClick={handleInitializeAssessmentRedirect}
+          className="rounded-xl border border-border/60 bg-card/40 hover:border-border-foreground/10 transition-colors duration-100 group cursor-pointer shadow-none overflow-hidden block w-full flex flex-col justify-between"
         >
-          <CardContent className="p-8 flex flex-col justify-between h-full">
-            <div className="space-y-4">
-              <div className="p-2.5 bg-muted/50 rounded-xl w-fit group-hover:bg-primary/10 transition-colors">
-                <ClipboardCheck className="h-5 w-5 text-muted-foreground group-hover:text-primary" />
+          <CardContent className="p-4 sm:p-5 flex flex-col justify-between h-full gap-4 block w-full leading-none">
+            <div className="space-y-2 block leading-none w-full select-none pointer-events-none">
+              <div className="p-2 bg-muted/60 border border-border/40 rounded group-hover:bg-primary/5 transition-colors w-fit block shadow-3xs text-muted-foreground group-hover:text-primary">
+                <ClipboardCheck className="h-4 w-4 stroke-[2.2]" />
               </div>
-              <div>
-                <h4 className="font-black uppercase tracking-widest text-[11px] leading-tight">
-                  Neural Fit Diagnostic
+              <div className="space-y-0.5 block leading-none">
+                <h4 className="text-xs font-bold uppercase tracking-wide text-foreground block">
+                  Neural Fit Alignment Diagnostic
                 </h4>
-                <p className="text-[9px] font-bold text-muted-foreground/60 uppercase mt-1 italic">
-                  Verify track alignment
+                <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight block leading-none italic">
+                  Verify specialized baseline capabilities
                 </p>
               </div>
             </div>
+
             <Button
+              type="button"
               size="sm"
-              className="mt-6 rounded-xl font-black uppercase text-[9px] tracking-[0.2em] shadow-lg group-hover:scale-105 transition-transform"
+              className="w-full h-8 px-4 rounded-lg font-mono text-[10px] font-extrabold uppercase tracking-wider gap-1 shadow-2xs group-hover:bg-primary/90 transition-transform transform-gpu group-hover:scale-[1.01] active:scale-95 block text-center"
             >
-              Initialize Assessment <Zap className="ml-2 h-3 w-3 fill-current" />
+              <span>Initialize Assessment</span>{" "}
+              <Zap className="h-3 w-3 stroke-[2] fill-current text-primary-foreground inline-block shrink-0" />
             </Button>
           </CardContent>
         </Card>
       </div>
 
-      {/* AI Interface & Path Orchestration */}
-      <div className="grid grid-cols-1 lg:grid-cols-[380px,1fr] gap-12 items-start">
-        {/* Instructor List */}
-        <aside className="space-y-8 sticky top-10">
-          {aiInstructor && (
-            <Card className="rounded-[40px] border-2 border-border/40 overflow-hidden shadow-2xl bg-card/50 backdrop-blur-md">
-              <CardHeader className="p-10 border-b border-border/10">
-                <div className="flex items-center gap-5">
-                  <div className="h-16 w-16 rounded-[24px] bg-primary/10 flex items-center justify-center border-2 border-primary/20 rotate-3 group overflow-hidden">
-                    <Bot className="h-8 w-8 text-primary" />
+      {/* HUD LEVEL 4: INSTRUCTOR INTERFACE MATRIX WITH PATH UNITS LISTING */}
+      <div className="grid grid-cols-1 lg:grid-cols-[280px,1fr] gap-6 items-start block w-full">
+        {/* INSTRUCTOR ASIDE CONTROL CONSOLE PROFILE CORES */}
+        <aside className="space-y-4 lg:sticky lg:top-4 block w-full shrink-0">
+          {aiInstructorState && (
+            <Card className="rounded-xl border border-border/60 bg-card/30 shadow-none overflow-hidden block w-full">
+              <CardHeader className="p-4 border-b border-border/5 bg-muted/20 select-none pointer-events-none leading-none block w-full">
+                <div className="flex items-center gap-3 leading-none w-full block">
+                  <div className="h-10 w-10 rounded-lg bg-primary/5 border border-primary/10 flex items-center justify-center text-primary stroke-[2] shadow-3xs shrink-0 select-none pointer-events-none">
+                    <Bot className="h-5 w-5 animate-pulse" />
                   </div>
-                  <div>
-                    <CardTitle className="text-xl font-black uppercase tracking-tighter italic leading-none">
-                      {aiInstructor.name}
+                  <div className="leading-none space-y-1 block flex-1 min-w-0">
+                    <CardTitle className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground truncate block pt-0.5">
+                      {aiInstructorState.name}
                     </CardTitle>
-                    <CardDescription className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic mt-1.5">
-                      Lead Instructor Node
+                    <CardDescription className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight block leading-none">
+                      Lead AI Instructor Core Node
                     </CardDescription>
                   </div>
                 </div>
               </CardHeader>
-              <CardContent className="p-10 space-y-8">
-                <p className="text-sm font-medium leading-relaxed italic text-foreground/80">
-                  "{aiInstructor.persona}"
+              <CardContent className="p-4 space-y-4 block w-full leading-none">
+                <p className="text-xs font-semibold text-muted-foreground/80 leading-relaxed italic block select-text pr-1 pt-0.5">
+                  &ldquo;{aiInstructorState.persona}&rdquo;
                 </p>
                 <Button
+                  type="button"
                   variant="outline"
-                  className="w-full h-14 rounded-2xl border-2 font-black uppercase tracking-widest text-[10px] hover:bg-primary/5 transition-all shadow-xl"
-                  onClick={() => setShowChat(!showChat)}
+                  onClick={handleToggleInstructorChatPanel}
+                  className="w-full h-9 rounded-lg font-mono text-[10px] font-extrabold uppercase tracking-wider border border-border/60 bg-background/50 hover:bg-accent cursor-pointer transition-colors shadow-2xs gap-1.5 pt-0.5 flex items-center justify-center block text-center"
                 >
-                  <MessageSquare className="h-4 w-4 mr-3" />
-                  {showChat ? "Terminate Session" : "Establish Link"}
+                  <MessageSquare className="h-3.5 w-3.5 text-muted-foreground/60 stroke-[2.2] shrink-0" />
+                  <span>{isInstructorChatOpen ? "Terminate Communication Session" : "Establish Encrypted Link"}</span>
                 </Button>
               </CardContent>
             </Card>
           )}
 
-          {showChat && aiInstructor && (
-            <div className="animate-in slide-in-from-top-4 duration-500">
+          {isInstructorChatOpen && aiInstructorState && (
+            <div className="block w-full animate-in fade-in duration-200">
               <AIChatPanel
-                professionLineId={profession.id}
-                instructorName={aiInstructor.name}
-                placeholder={`Query ${aiInstructor.name} on logic parameters...`}
-                className="rounded-[32px] h-[400px] border-2 border-primary/20 shadow-2xl overflow-hidden"
+                professionLineId={professionRecordState.id}
+                instructorName={aiInstructorState.name}
+                placeholder={`Query ${aiInstructorState.name} regarding curriculum matrices or tracking parameters...`}
+                className="rounded-xl h-[380px] border border-border/60 shadow-none overflow-hidden block w-full bg-background"
               />
             </div>
           )}
         </aside>
 
-        {/* Path Orchestration List */}
-        <div className="space-y-10">
-          <div className="flex items-center justify-between border-b border-border/40 pb-4">
-            <h2 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary">Curriculum Architecture</h2>
-            <Badge className="bg-primary/5 text-primary text-[9px] font-black uppercase tracking-widest">
-              {courses.length} Integrated Units
+        {/* INTEGRATED CHAPTER UNITS SYLLABUS DIRECTORY GRID CORES */}
+        <div className="space-y-4 block flex-1 min-w-0 w-full">
+          <div className="flex items-center justify-between border-b border-border/5 pb-2 select-none pointer-events-none leading-none w-full block shrink-0">
+            <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 leading-none pb-0.5">
+              Curriculum Architectural Roadmaps
+            </h2>
+            <Badge
+              variant="secondary"
+              className="font-mono text-[9px] font-extrabold uppercase px-1.5 h-4.5 rounded border border-border/5 text-muted-foreground/60 leading-none tracking-wide tabular-nums shrink-0 rounded-xs"
+            >
+              {coursesRegistryPayload.length.toString()} Syllabus Units Resolved
             </Badge>
           </div>
 
-          <Tabs defaultValue="foundation" className="w-full">
-            <TabsList className="grid w-full grid-cols-3 p-1.5 h-14 bg-muted/30 rounded-2xl mb-10 border border-border/40">
-              {["foundation", "intermediate", "executive"].map((lvl, idx) => (
+          <Tabs defaultValue="foundation" className="w-full block">
+            <TabsList className="grid w-full grid-cols-3 p-1 h-10 bg-muted/40 rounded-lg border border-border/10 select-none mb-6">
+              {["foundation", "intermediate", "executive"].map((levelKeyItem, levelIdxNum) => (
                 <TabsTrigger
-                  key={lvl}
-                  value={lvl}
-                  className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2"
+                  key={`curriculum-tab-trigger-item-${levelKeyItem}`}
+                  value={levelKeyItem}
+                  className="rounded-md font-mono text-[9px] font-extrabold uppercase tracking-wider h-8 border border-transparent data-[state=active]:bg-background data-[state=active]:border-border/10 data-[state=active]:text-foreground data-[state=active]:shadow-2xs transition-all cursor-pointer outline-none pt-0.5"
                 >
-                  Level {(idx + 1).toString().padStart(2, "0")}
+                  Phase {(levelIdxNum + 1).toString().padStart(2, "0")}
                 </TabsTrigger>
               ))}
             </TabsList>
 
-            {["foundation", "intermediate", "executive"].map((level) => (
-              <TabsContent key={level} value={level} className="space-y-4 outline-none">
-                {coursesByLevel[level]?.length ? (
-                  <div className="grid gap-4">
-                    {coursesByLevel[level].map((course, index) => (
+            {["foundation", "intermediate", "executive"].map((levelScopeStr) => (
+              <TabsContent
+                key={`tab-panel-viewport-scope-${levelScopeStr}`}
+                value={levelScopeStr}
+                className="space-y-2 outline-none focus:outline-none block w-full mt-2"
+              >
+                {coursesCategorizedByLevelMap[levelScopeStr]?.length ? (
+                  <div className="space-y-2 block w-full align-top">
+                    {coursesCategorizedByLevelMap[levelScopeStr].map((courseRecordNode, arrayIdx) => (
                       <Card
-                        key={course.id}
-                        className="group rounded-[28px] border-border/40 hover:border-primary/40 bg-card/30 backdrop-blur-sm transition-all duration-300 cursor-pointer overflow-hidden shadow-sm"
-                        onClick={() => navigate(`/app/learning/courses/${course.slug}`)}
+                        key={`curriculum-course-node-card-row-${courseRecordNode.id}`}
+                        onClick={() => navigateHook(`/app/learning/courses/${courseRecordNode.slug}`)}
+                        className="group rounded-lg border border-border/60 bg-card/40 hover:border-border-foreground/10 transition-colors duration-100 cursor-pointer overflow-hidden shadow-none block w-full"
                       >
-                        <CardContent className="p-6 flex items-center gap-6">
-                          <div className="h-14 w-14 rounded-2xl bg-muted/50 border border-border/20 flex items-center justify-center text-sm font-black group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-3 transition-all duration-500">
-                            {(index + 1).toString().padStart(2, "0")}
+                        <CardContent className="p-4 flex items-center gap-4 block w-full leading-none">
+                          <div className="h-10 w-10 rounded bg-muted border border-border/5 flex items-center justify-center font-mono text-[10px] sm:text-xs font-black text-muted-foreground/60 select-none pointer-events-none shrink-0 pt-0.5 group-hover:bg-primary group-hover:text-primary-foreground group-hover:rotate-2 transition-all duration-150 shadow-3xs">
+                            {(arrayIdx + 1).toString().padStart(2, "0")}
                           </div>
-                          <div className="flex-1 space-y-1.5">
-                            <h4 className="font-black uppercase tracking-tight text-lg transition-colors group-hover:text-primary">
-                              {course.title}
+
+                          <div className="flex-1 min-w-0 leading-none space-y-1 block pr-2">
+                            <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground leading-tight truncate block pt-0.5 transition-colors group-hover:text-primary">
+                              {courseRecordNode.title}
                             </h4>
-                            <div className="flex items-center gap-4 text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest italic">
-                              <span className="flex items-center gap-1.5">
-                                <Clock className="h-3 w-3" /> {course.estimated_hours}h
+                            <div className="flex items-center gap-3 font-mono text-[9px] sm:text-[10px] font-bold text-muted-foreground/40 uppercase tracking-tight leading-none select-none pointer-events-none tabular-nums block truncate">
+                              <span className="flex items-center gap-1 shrink-0">
+                                <Clock className="h-3 w-3 stroke-[2.2]" />{" "}
+                                <span>{courseRecordNode.estimated_hours.toString()} Hours</span>
                               </span>
-                              <span className="h-1 w-1 rounded-full bg-muted-foreground/30" />
-                              <span className="flex items-center gap-1.5">
-                                <Coins className="h-3 w-3" /> {course.credit_cost} Credits
+                              <span className="opacity-30 block shrink-0 select-none">•</span>
+                              <span className="flex items-center gap-1 shrink-0">
+                                <Coins className="h-3 w-3 stroke-[2.2]" />{" "}
+                                <span>{(courseRecordNode.credit_cost || 0).toLocaleString()} Unit Cost</span>
                               </span>
                             </div>
                           </div>
-                          <ChevronRight className="h-5 w-5 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-1 transition-all" />
+
+                          <ChevronRight className="h-4 w-4 text-muted-foreground/30 stroke-[2.5] group-hover:text-primary group-hover:translate-x-0.5 transition-all select-none pointer-events-none shrink-0" />
                         </CardContent>
                       </Card>
                     ))}
                   </div>
                 ) : (
-                  <div className="p-20 border-2 border-dashed border-border/40 rounded-[32px] text-center bg-muted/5">
-                    <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/30">
-                      Level Protocol Pending Sync
+                  <div className="rounded-lg border border-dashed border-border/80 bg-card/20 p-12 text-center select-none block mt-1">
+                    <p className="font-mono text-[10px] font-black uppercase tracking-wide text-muted-foreground/30">
+                      Phase Unit Protocol Configuration Pending Sync
                     </p>
                   </div>
                 )}
