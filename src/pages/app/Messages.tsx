@@ -1,6 +1,6 @@
-import { useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
-import { Search, MessageCircle, Bot } from "lucide-react";
+import * as React from "react";
+import { useNavigate, useSearchParams } from "react-router-dom";
+import { Search, Bot, MessageCircle } from "lucide-react";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
@@ -8,117 +8,161 @@ import { ThreadListItem } from "@/components/messages/ThreadListItem";
 import { useMessageThreads } from "@/hooks/useMessageThreads";
 import { cn } from "@/lib/utils";
 
+// =========================================================================
+// DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
+// =========================================================================
+interface MessageThread {
+  id: string;
+  agentName: string | null;
+  agent_key: string | null;
+  thread_type: "agent" | "system" | string;
+  last_message_preview: string | null;
+  unread_count: number;
+  updated_at: string;
+}
+
+type FilterKey = "all" | "unread" | "agents" | "system";
+
+const FILTER_CONFIG: { id: FilterKey; label: string }[] = [
+  { id: "all", label: "All" },
+  { id: "unread", label: "Unread" },
+  { id: "agents", label: "Agents" },
+  { id: "system", label: "System" },
+];
+
 /**
- * Messenger Inbox — WhatsApp-style unified chat list.
- * Every notification + agent conversation appears here as a thread.
+ * GroUp Academy: Unified Messenger Inbox
+ * Hardened responsive communication center with filtered thread ingestion.
+ * Version: Launch Candidate · Phase Z1 Production Contract Sealed
  */
 export default function Messages() {
-  const navigate = useNavigate();
-  const { threads, isLoading } = useMessageThreads();
-  const [filter, setFilter] = useState<"all" | "unread" | "agents" | "system">("all");
-  const [search, setSearch] = useState("");
+  const navigateHook = useNavigate();
+  const { threads = [], isLoading: isRegistryLoading } = useMessageThreads();
 
-  const filtered = useMemo(() => {
-    let list = threads;
-    if (filter === "unread") list = list.filter((t) => t.unread_count > 0);
-    if (filter === "agents") list = list.filter((t) => t.thread_type === "agent");
-    if (filter === "system") list = list.filter((t) => t.thread_type === "system");
-    if (search.trim()) {
-      const q = search.toLowerCase();
-      list = list.filter(
-        (t) =>
-          (t.agentName || "").toLowerCase().includes(q) ||
-          (t.last_message_preview || "").toLowerCase().includes(q),
-      );
-    }
-    return list;
-  }, [threads, filter, search]);
+  const [activeFilterKey, setActiveFilterKey] = React.useState<FilterKey>("all");
+  const [textSearchQueryStr, setTextSearchInputStr] = React.useState<string>("");
 
-  const filterChips: { id: typeof filter; label: string }[] = [
-    { id: "all", label: "All" },
-    { id: "unread", label: "Unread" },
-    { id: "agents", label: "Agents" },
-    { id: "system", label: "System" },
-  ];
+  // =========================================================================
+  // MEMOIZED PARAMETER SECTOR: O(n) FILTERING & SEARCH
+  // =========================================================================
+  const filteredThreadsList = React.useMemo(() => {
+    const normalizedQuery = textSearchQueryStr.trim().toLowerCase();
 
-  const goToThread = (t: (typeof threads)[number]) => {
-    if (t.thread_type === "system") navigate(`/app/messages/system`);
-    else navigate(`/app/messages/${t.agent_key}`);
-  };
+    return threads.filter((t) => {
+      const matchesFilter =
+        activeFilterKey === "all"
+          ? true
+          : activeFilterKey === "unread"
+            ? t.unread_count > 0
+            : t.thread_type === activeFilterKey;
+
+      const matchesSearch =
+        !normalizedQuery ||
+        t.agentName?.toLowerCase().includes(normalizedQuery) ||
+        t.last_message_preview?.toLowerCase().includes(normalizedQuery);
+
+      return matchesFilter && matchesSearch;
+    });
+  }, [threads, activeFilterKey, textSearchQueryStr]);
+
+  const handleNavigateToThread = React.useCallback(
+    (thread: MessageThread) => {
+      if (thread.thread_type === "system") {
+        navigateHook("/app/messages/system");
+      } else if (thread.agent_key) {
+        navigateHook(`/app/messages/${thread.agent_key}`);
+      }
+    },
+    [navigateHook],
+  );
 
   return (
-    <div className="max-w-2xl mx-auto pb-24">
-      {/* Header */}
-      <header className="sticky top-0 z-10 bg-background/95 backdrop-blur-md border-b border-border/40 px-3 py-2.5 space-y-2">
-        <div className="flex items-center justify-between gap-2">
-          <h1 className="text-xl font-bold tracking-tight">Messages</h1>
+    <div className="max-w-2xl mx-auto pb-24 antialiased block transform-gpu w-full">
+      {/* HUD LEVEL 1: MESSENGER COMMAND HEADER */}
+      <header className="sticky top-0 z-30 bg-background/95 backdrop-blur-md border-b border-border/40 px-4 py-3 space-y-3">
+        <div className="flex items-center justify-between gap-4">
+          <h1 className="text-xl font-black uppercase tracking-tight text-foreground">Messenger</h1>
           <Button
             size="sm"
             variant="outline"
-            className="h-8 text-xs gap-1.5"
-            onClick={() => navigate("/app/agents")}
+            className="h-8 text-[10px] font-bold uppercase tracking-widest gap-2 shadow-xs"
+            onClick={() => navigateHook("/app/agents")}
           >
-            <Bot className="h-3.5 w-3.5" /> Discover Agents
+            <Bot className="h-3.5 w-3.5" /> Discovery
           </Button>
         </div>
+
         <div className="relative">
-          <Search className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+          <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50" />
           <Input
-            placeholder="Search conversations…"
-            value={search}
-            onChange={(e) => setSearch(e.target.value)}
-            className="h-9 pl-9 bg-muted/40 border-none"
+            placeholder="Search active correspondence threads..."
+            value={textSearchQueryStr}
+            onChange={(e) => setTextSearchInputStr(e.target.value)}
+            className="h-9 pl-9 bg-muted/30 border-transparent focus-visible:bg-background rounded-lg shadow-none text-xs"
           />
         </div>
-        <div className="flex gap-1.5 overflow-x-auto no-scrollbar -mx-1 px-1">
-          {filterChips.map((c) => (
+
+        <div className="flex gap-2 overflow-x-auto no-scrollbar pb-1">
+          {FILTER_CONFIG.map((chip) => (
             <button
-              key={c.id}
-              onClick={() => setFilter(c.id)}
+              key={`filter-chip-${chip.id}`}
+              onClick={() => setActiveFilterKey(chip.id)}
               className={cn(
-                "shrink-0 px-3 h-7 rounded-full text-xs font-semibold transition-colors",
-                filter === c.id
-                  ? "bg-primary text-primary-foreground"
-                  : "bg-muted/60 text-muted-foreground hover:bg-muted",
+                "shrink-0 px-4 h-7 rounded-full text-[10px] font-black uppercase tracking-widest transition-all",
+                activeFilterKey === chip.id
+                  ? "bg-primary text-primary-foreground shadow-xs"
+                  : "bg-muted/50 text-muted-foreground hover:bg-muted",
               )}
             >
-              {c.label}
+              {chip.label}
             </button>
           ))}
         </div>
       </header>
 
-      {/* List */}
-      <div>
-        {isLoading ? (
+      {/* HUD LEVEL 2: THREAD LISTING VIEWPORT */}
+      <main className="mt-2 block w-full">
+        {isRegistryLoading ? (
           <div className="space-y-px">
             {[...Array(6)].map((_, i) => (
-              <div key={i} className="flex items-center gap-3 px-3 py-3">
-                <Skeleton className="h-12 w-12 rounded-full" />
+              <div key={`skeleton-row-${i}`} className="flex items-center gap-4 px-4 py-4">
+                <Skeleton className="h-12 w-12 rounded-full shrink-0 bg-muted/60" />
                 <div className="flex-1 space-y-2">
-                  <Skeleton className="h-3 w-32" />
-                  <Skeleton className="h-3 w-48" />
+                  <Skeleton className="h-3 w-32 bg-muted/60" />
+                  <Skeleton className="h-3 w-48 bg-muted/40" />
                 </div>
               </div>
             ))}
           </div>
-        ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-24 px-6 text-center">
-            <div className="h-16 w-16 rounded-full bg-muted/40 flex items-center justify-center mb-4">
-              <MessageCircle className="h-7 w-7 text-muted-foreground" />
+        ) : filteredThreadsList.length === 0 ? (
+          <div className="flex flex-col items-center justify-center py-24 px-6 text-center animate-in fade-in duration-300">
+            <div className="h-16 w-16 rounded-full bg-muted/30 flex items-center justify-center mb-6">
+              <MessageCircle className="h-8 w-8 text-muted-foreground/30" />
             </div>
-            <h2 className="text-lg font-bold mb-1">No conversations</h2>
-            <p className="text-sm text-muted-foreground mb-4">
-              Visit the Agent Marketplace to start chatting with an AI agent.
+            <h2 className="text-sm font-bold uppercase tracking-tight mb-2">No active conversation nodes</h2>
+            <p className="text-xs text-muted-foreground mb-6 max-w-[200px]">
+              Initialize connection with an AI agent via the Discovery portal.
             </p>
-            <Button onClick={() => navigate("/app/agents")} className="gap-2">
-              <Bot className="h-4 w-4" /> Browse Agents
+            <Button
+              onClick={() => navigateHook("/app/agents")}
+              size="sm"
+              className="gap-2 text-xs font-bold uppercase tracking-widest rounded-lg"
+            >
+              <Bot className="h-4 w-4" /> Discovery Portal
             </Button>
           </div>
         ) : (
-          filtered.map((t) => <ThreadListItem key={t.id} thread={t} onClick={() => goToThread(t)} />)
+          <div className="animate-in fade-in duration-200">
+            {filteredThreadsList.map((thread) => (
+              <ThreadListItem
+                key={`thread-item-${thread.id}`}
+                thread={thread}
+                onClick={() => handleNavigateToThread(thread)}
+              />
+            ))}
+          </div>
         )}
-      </div>
+      </main>
     </div>
   );
 }
