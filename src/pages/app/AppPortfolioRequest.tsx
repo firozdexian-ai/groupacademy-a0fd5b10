@@ -1,4 +1,4 @@
-import { useState, useEffect } from "react";
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { Button } from "@/components/ui/button";
@@ -24,9 +24,9 @@ import {
   FileUp,
   PenLine,
   Gift,
-  FileCheck,
   Zap,
   ShieldCheck,
+  Inbox
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTalent } from "@/hooks/useTalent";
@@ -36,12 +36,9 @@ import { ExistingCVCard } from "@/components/cv/ExistingCVCard";
 import { ProfileCompletionPrompt } from "@/components/profile/ProfileCompletionPrompt";
 import { cn } from "@/lib/utils";
 
-/**
- * Platform Logic: Digital Asset Synthesis Node
- * High-fidelity portfolio request orchestration with automated credit/promo routing.
- * 2026 Standard: Executive Logic geometry and transaction-hardening.
- */
-
+// =========================================================================
+// DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
+// =========================================================================
 const FREE_PORTFOLIO_LIMIT = 1000;
 const PORTFOLIO_COST = 500;
 
@@ -51,14 +48,13 @@ const isValidUUID = (str: string): boolean => {
 };
 
 type Step = "personal" | "cv" | "certificates" | "social" | "review";
+type CvInputMode = "upload" | "url" | "profile" | "existing";
 
 interface ProfessionCategory {
   id: string;
   name: string;
   slug: string;
 }
-
-type CvInputMode = "upload" | "url" | "profile" | "existing";
 
 interface FormData {
   fullName: string;
@@ -75,11 +71,17 @@ interface FormData {
   socialLinks: {
     linkedin?: string;
     github?: string;
-    twitter?: string;
     website?: string;
+    twitter?: string;
     youtube?: string;
   };
   additionalNotes: string;
+}
+
+interface StepConfig {
+  id: Step;
+  label: string;
+  icon: React.ReactNode;
 }
 
 const emptyProfileData: ProfileData = {
@@ -90,32 +92,37 @@ const emptyProfileData: ProfileData = {
   achievements: [],
 };
 
-const steps: { id: Step; label: string; icon: React.ReactNode }[] = [
+const steps: StepConfig[] = [
   { id: "personal", label: "Identity", icon: <User className="h-4 w-4" /> },
-  { id: "cv", label: "List", icon: <FileText className="h-4 w-4" /> },
+  { id: "cv", label: "Curriculum", icon: <FileText className="h-4 w-4" /> },
   { id: "certificates", label: "Artifacts", icon: <Award className="h-4 w-4" /> },
   { id: "social", label: "Uplinks", icon: <Globe className="h-4 w-4" /> },
-  { id: "review", label: "Connection", icon: <CheckCircle className="h-4 w-4" /> },
+  { id: "review", label: "Verification", icon: <CheckCircle className="h-4 w-4" /> },
 ];
 
+/**
+ * GroUp Academy: Digital Asset Portfolio Request Setup (AppPortfolioRequest)
+ * Hardened multi-stage collection wizard executing credit validation checks and isolating concurrent database queries.
+ * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
+ */
 export default function AppPortfolioRequest() {
-  const navigate = useNavigate();
+  const navigateHook = useNavigate();
   const { toast } = useToast();
-  const { talent, addServiceUsed } = useTalent();
+  const { talent: talentProfileRecord, addServiceUsed } = useTalent();
   const { deductCredits, canAfford } = useCredits();
 
-  const [currentStep, setCurrentStep] = useState<Step>("personal");
-  const [isSubmitting, setIsSubmitting] = useState(false);
-  const [isSuccess, setIsSuccess] = useState(false);
-  const [requestId, setRequestId] = useState<string>("");
-  const [professionCategories, setProfessionCategories] = useState<ProfessionCategory[]>([]);
-  const [portfolioCount, setPortfolioCount] = useState<number | null>(null);
+  const [currentStep, setCurrentStep] = React.useState<Step>("personal");
+  const [isSubmissionPending, setIsSubmissionPending] = React.useState<boolean>(false);
+  const [isWizardSuccess, setIsWizardSuccess] = React.useState<boolean>(false);
+  const [generatedRequestId, setGeneratedRequestId] = React.useState<string>("");
+  const [professionCategoriesArray, setProfessionCategoriesArray] = React.useState<ProfessionCategory[]>([]);
+  const [globalPortfolioCount, setGlobalPortfolioCount] = React.useState<number | null>(null);
 
-  const remainingFree = portfolioCount !== null ? Math.max(0, FREE_PORTFOLIO_LIMIT - portfolioCount) : 0;
-  const isFreePromotion = remainingFree > 0;
-  const hasExistingCv = !!talent?.cvUrl;
+  const remainingFreePromoSlots = globalPortfolioCount !== null ? Math.max(0, FREE_PORTFOLIO_LIMIT - globalPortfolioCount) : 0;
+  const isFreePromotionActive = remainingFreePromoSlots > 0;
+  const isCandidateCvOnS3Bucket = !&talentProfileRecord?.cvUrl;
 
-  const [formData, setFormData] = useState<FormData>({
+  const [formDataState, setFormDataState] = React.useState<FormData>({
     fullName: "",
     email: "",
     phone: "",
@@ -131,184 +138,214 @@ export default function AppPortfolioRequest() {
     additionalNotes: "",
   });
 
-  useEffect(() => {
-    if (talent) {
-      setFormData((prev) => ({
+  // Synchronize dynamic model parameters onto active client local form buffers safely
+  React.useEffect(() => {
+    if (talentProfileRecord) {
+      setFormDataState((prev) => ({
         ...prev,
-        fullName: prev.fullName || talent.fullName || "",
-        email: prev.email || talent.email || "",
-        phone: prev.phone || talent.phone || "",
-        professionCategoryId: prev.professionCategoryId || talent.professionCategoryId || "",
-        cvUrl: prev.cvUrl || talent.cvUrl || "",
-        socialLinks: { ...prev.socialLinks, linkedin: prev.socialLinks.linkedin || talent.linkedinUrl || "" },
-        cvInputMode: talent.cvUrl ? "existing" : prev.cvInputMode,
+        fullName: prev.fullName || talentProfileRecord.fullName || "",
+        email: prev.email || talentProfileRecord.email || "",
+        phone: prev.phone || talentProfileRecord.phone || "",
+        professionCategoryId: prev.professionCategoryId || talentProfileRecord.professionCategoryId || "",
+        cvUrl: prev.cvUrl || talentProfileRecord.cvUrl || "",
+        socialLinks: { ...prev.socialLinks, linkedin: prev.socialLinks.linkedin || talentProfileRecord.linkedinUrl || "" },
+        cvInputMode: talentProfileRecord.cvUrl ? "existing" : prev.cvInputMode,
       }));
     }
-  }, [talent]);
+  }, [talentProfileRecord]);
 
-  useEffect(() => {
-    loadProfessionCategories();
-    loadPortfolioCount();
+  // =========================================================================
+  // LIFECYCLE SECTOR 1: CONCURRENT LOOKUPS EQUIPPED WITH UNMOUNT SAFEGUARDS
+  // =========================================================================
+  React.useEffect(() => {
+    let isThreadActive = true;
+
+    const executeParallelRegistryCompilation = async () => {
+      try {
+        const [countResponseData, categoriesResponseData] = await Promise.all([
+          supabase.from("portfolio_requests").select("*", { count: "exact", head: true }),
+          supabase.from("profession_categories").select("id, name, slug").eq("is_active", true).order("display_order")
+        ]);
+
+        if (!isThreadActive) return;
+
+        if (!countResponseData.error) {
+          setGlobalPortfolioCount(countResponseData.count || 0);
+        } else {
+          setGlobalPortfolioCount(FREE_PORTFOLIO_LIMIT + 1);
+        }
+
+        if (!categoriesResponseData.error && categoriesResponseData.data) {
+          setProfessionCategoriesArray(categoriesResponseData.data as unknown as ProfessionCategory[]);
+        }
+      } catch (fatalHandshakeException) {
+        console.error("Dossier Setup Telemetry Disrupted:", fatalHandshakeException);
+      }
+    };
+
+    executeParallelRegistryCompilation();
+
+    return () => {
+      isThreadActive = false;
+    };
   }, []);
 
-  const loadPortfolioCount = async () => {
-    try {
-      const { count, error } = await supabase.from("portfolio_requests").select("*", { count: "exact", head: true });
-      if (!error) setPortfolioCount(count || 0);
-      else setPortfolioCount(FREE_PORTFOLIO_LIMIT + 1);
-    } catch (err) {
-      console.error("Tracking failure: Portfolio Count", err);
-    }
-  };
+  const currentStepIndexNum = React.useMemo<number>(() => {
+    return steps.findIndex((stepNode) => stepNode.id === currentStep);
+  }, [currentStep]);
 
-  const loadProfessionCategories = async () => {
-    try {
-      const { data, error } = await supabase
-        .from("profession_categories")
-        .select("id, name, slug")
-        .eq("is_active", true)
-        .order("display_order");
-      if (!error && data) setProfessionCategories(data);
-    } catch (err) {
-      console.error("Tracking failure: Categories", err);
-    }
-  };
+  const activeSelectedCategoryNode = React.useMemo<ProfessionCategory | undefined>(() => {
+    return professionCategoriesArray.find((catItem) => catItem.id === formDataState.professionCategoryId);
+  }, [professionCategoriesArray, formDataState.professionCategoryId]);
 
-  const currentStepIndex = steps.findIndex((s) => s.id === currentStep);
-  const selectedCategory = professionCategories.find((c) => c.id === formData.professionCategoryId);
-  const isOtherCategory = selectedCategory?.slug === "other";
+  const isOtherCategoryFlag = activeSelectedCategoryNode?.slug === "other";
 
-  const effectiveCvUrl =
-    formData.cvInputMode === "url"
-      ? formData.cvExternalUrl
-      : formData.cvInputMode === "existing"
-        ? talent?.cvUrl || formData.cvUrl
-        : formData.cvUrl;
+  const resolvedEffectiveCvUrlStr = React.useMemo<string>(() => {
+    if (formDataState.cvInputMode === "url") return formDataState.cvExternalUrl.trim();
+    if (formDataState.cvInputMode === "existing") return talentProfileRecord?.cvUrl || formDataState.cvUrl;
+    return formDataState.cvUrl;
+  }, [formDataState.cvInputMode, formDataState.cvExternalUrl, formDataState.cvUrl, talentProfileRecord?.cvUrl]);
 
-  const canProceed = (): boolean => {
+  // =========================================================================
+  // WIZARD CONTROLLERS: DYNAMIC INTERACTION TRANSITION PATHWAYS
+  // =========================================================================
+  const checkCurrentPhaseRequirementsSufficient = React.useCallback((): boolean => {
     switch (currentStep) {
       case "personal":
         return !!(
-          formData.fullName &&
-          formData.email &&
-          formData.phone &&
-          formData.professionCategoryId &&
-          (!isOtherCategory || formData.customProfession)
+          formDataState.fullName.trim() &&
+          formDataState.email.trim() &&
+          formDataState.phone.trim() &&
+          formDataState.professionCategoryId &&
+          (!isOtherCategoryFlag || formDataState.customProfession.trim())
         );
       case "cv":
-        if (formData.cvInputMode === "upload") return !!formData.cvUrl;
-        if (formData.cvInputMode === "url")
-          return !!formData.cvExternalUrl && formData.cvExternalUrl.startsWith("http");
-        if (formData.cvInputMode === "existing") return !!talent?.cvUrl;
-        return formData.profileData.education.length > 0;
+        if (formDataState.cvInputMode === "upload") return !!formDataState.cvUrl;
+        if (formDataState.cvInputMode === "url") {
+          return !!formDataState.cvExternalUrl.trim() && formDataState.cvExternalUrl.trim().startsWith("http");
+        }
+        if (formDataState.cvInputMode === "existing") return !&talentProfileRecord?.cvUrl;
+        return formDataState.profileData.education.length > 0;
       default:
         return true;
     }
-  };
+  }, [currentStep, formDataState, isOtherCategoryFlag, talentProfileRecord?.cvUrl]);
 
-  const handleNext = () => {
-    const nextIndex = currentStepIndex + 1;
-    if (nextIndex < steps.length) setCurrentStep(steps[nextIndex].id);
-  };
+  const handleAdvanceStepPhase = React.useCallback(() => {
+    const nextTargetIndex = currentStepIndexNum + 1;
+    if (nextTargetIndex < steps.length) {
+      setCurrentStep(steps[nextTargetIndex].id);
+    }
+  }, [currentStepIndexNum]);
 
-  const handleBack = () => {
-    const prevIndex = currentStepIndex - 1;
-    if (prevIndex >= 0) setCurrentStep(steps[prevIndex].id);
-  };
+  const handleRevertStepPhase = React.useCallback(() => {
+    const previousTargetIndex = currentStepIndexNum - 1;
+    if (previousTargetIndex >= 0) {
+      setCurrentStep(steps[previousTargetIndex].id);
+    }
+  }, [currentStepIndexNum]);
 
-  const handleSubmit = async () => {
-    if (!talent?.id) {
-      toast({ title: "Auth Required", description: "Node access denied. Please login.", variant: "destructive" });
+  // =========================================================================
+  // WRITING LANE CONSOLE: HARDENED SUBMISSION PIPELINE CORE RESOLUTION
+  // =========================================================================
+  const handleCommitPortfolioRequestSequence = React.useCallback(async () => {
+    if (!talentProfileRecord?.id) {
+      toast({ title: "Authorization Denied", description: "Vetting access denied. Please re-authenticate account.", variant: "destructive" });
       return;
     }
 
-    if (!isFreePromotion && !canAfford("PORTFOLIO")) {
+    if (!isFreePromotionActive && !canAfford("PORTFOLIO")) {
       toast({
-        title: "Low",
-        description: `This logic synthesis requires ${PORTFOLIO_COST} credits.`,
+        title: "Deduction Layer Rejected",
+        description: `This automated digital canvas build requires ${PORTFOLIO_COST.toString()} active matrix credits.`,
         variant: "destructive",
       });
       return;
     }
 
-    setIsSubmitting(true);
-    const professionCategoryId =
-      formData.professionCategoryId && isValidUUID(formData.professionCategoryId)
-        ? formData.professionCategoryId
+    setIsSubmissionPending(true);
+    const validatedCleanCategoryId = 
+      formDataState.professionCategoryId && isValidUUID(formDataState.professionCategoryId)
+        ? formDataState.professionCategoryId
         : null;
 
     try {
-      if (!isFreePromotion) {
-        const success = await deductCredits("PORTFOLIO", undefined, "Digital Portfolio Synthesis");
-        if (!success) throw new Error("Credit transaction failed.");
+      if (!isFreePromotionActive) {
+        const isPaymentSettled = await deductCredits("PORTFOLIO", undefined, "Digital Custom Portfolio Synthesis Construction");
+        if (!isPaymentSettled) throw new Error("Credit wallet deduction loop exception framework timeout.");
       }
 
-      const tempRequestId = crypto.randomUUID();
-      const { error } = await supabase.from("portfolio_requests").insert({
-        full_name: formData.fullName,
-        email: formData.email,
-        phone: formData.phone,
-        profession_category_id: professionCategoryId,
-        custom_profession: isOtherCategory ? formData.customProfession : null,
-        cv_url: effectiveCvUrl || null,
-        profile_data: (formData.cvInputMode === "profile" ? formData.profileData : {}) as any,
-        certificates: formData.certificates as any,
-        achievements: formData.achievements,
-        social_links: formData.socialLinks as any,
-        additional_notes: formData.additionalNotes,
-        talent_id: talent.id,
-        payment_status: isFreePromotion ? "free_promo" : "paid_credits",
+      const assignmentUuidKeyStr = crypto.randomUUID();
+      const { error: insertPipelineHandshakeError } = await supabase.from("portfolio_requests").insert({
+        full_name: formDataState.fullName.trim(),
+        email: formDataState.email.toLowerCase().trim(),
+        phone: formDataState.phone.trim(),
+        profession_category_id: validatedCleanCategoryId,
+        custom_profession: isOtherCategoryFlag ? formDataState.customProfession.trim() : null,
+        cv_url: resolvedEffectiveCvUrlStr || null,
+        profile_data: (formDataState.cvInputMode === "profile" ? formDataState.profileData : {}) as any,
+        certificates: formDataState.certificates as any,
+        achievements: formDataState.achievements.trim(),
+        social_links: formDataState.socialLinks as any,
+        additional_notes: formDataState.additionalNotes.trim(),
+        talent_id: talentProfileRecord.id,
+        payment_status: isFreePromotionActive ? "free_promo" : "paid_credits",
       });
 
-      if (error) throw error;
+      if (insertPipelineHandshakeError) throw insertPipelineHandshakeError;
       await addServiceUsed("portfolio");
 
-      setRequestId(tempRequestId);
-      setIsSuccess(true);
-      recordToolRun({ toolKey: "portfolio", costCredits: isFreePromotion ? 0 : 0, payload: { request_id: tempRequestId } });
-      toast({ title: "Synthesis Initialized", description: "Our team will sync via WhatsApp shortly." });
-    } catch (error: any) {
-      toast({ title: "Failed", description: error.message || "Retry protocol.", variant: "destructive" });
+      setGeneratedRequestId(assignmentUuidKeyStr);
+      setIsWizardSuccess(true);
+      recordToolRun({ toolKey: "portfolio", costCredits: isFreePromotionActive ? 0 : 500, payload: { request_id: assignmentUuidKeyStr } });
+      toast({ title: "Synthesis Initialized", description: "Dossier variables submitted. Coordination track online." });
+    } catch (mutationFailurePayload: any) {
+      toast({ title: "Pipeline Refused", description: mutationFailurePayload.message || "Failed to commit allocation records.", variant: "destructive" });
     } finally {
-      setIsSubmitting(false);
+      setIsSubmissionPending(false);
     }
-  };
+  }, [talentProfileRecord, formDataState, isFreePromotionActive, isOtherCategoryFlag, resolvedEffectiveCvUrlStr, canAfford, deductCredits, addServiceUsed, toast]);
 
-  if (isSuccess) {
+  const handleNavigateToServicesDirectory = React.useCallback(() => {
+    navigateHook("/app/services");
+  }, [navigateHook]);
+
+  const handleNavigateToStatusMonitor = React.useCallback(() => {
+    navigateHook("/portfolio-status");
+  }, [navigateHook]);
+
+  // =========================================================================
+  // CONDITION RENDERING LAYOUT CONTROL CHECKPOINTS
+  // =========================================================================
+  if (isWizardSuccess) {
     return (
-      <div className="max-w-2xl mx-auto px-6 py-12 animate-in zoom-in-95 duration-700">
-        <Card className="text-center py-12 bg-card/30 backdrop-blur-xl border-emerald-500/20 shadow-2xl rounded-[40px]">
-          <CardHeader>
-            <div className="mx-auto w-24 h-24 bg-emerald-500/10 rounded-[32px] flex items-center justify-center mb-6 rotate-3 border border-emerald-500/20">
-              <CheckCircle className="h-12 w-12 text-emerald-500" />
+      <div className="max-w-2xl mx-auto px-4 py-12 text-left antialiased block transform-gpu w-full">
+        <Card className="rounded-xl border border-border/60 bg-card/30 backdrop-blur-md shadow-none overflow-hidden block w-full">
+          <CardHeader className="text-center select-none pointer-events-none pb-4 block leading-none border-b border-border/5">
+            <div className="mx-auto w-16 h-16 bg-emerald-500/5 rounded-xl border border-emerald-500/20 flex items-center justify-center mb-4 text-emerald-600 stroke-[2] shadow-3xs rotate-3 animate-in fade-in duration-200">
+              <CheckCircle className="h-8 w-8" />
             </div>
-            <CardTitle className="text-3xl font-black uppercase tracking-tighter italic">Connection Finalized</CardTitle>
-            <CardDescription className="text-[11px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
-              Synthesis request active. Contact established in 24-48h.
+            <CardTitle className="text-sm sm:text-base font-bold uppercase tracking-wide text-foreground leading-none">Synthesis Pipeline Finalized</CardTitle>
+            <CardDescription className="font-mono text-[9px] font-bold text-muted-foreground/50 uppercase tracking-wider block mt-1.5 leading-none">
+              Asset tracking record successfully added onto global processing queues.
             </CardDescription>
           </CardHeader>
-          <CardContent className="space-y-8 px-10">
-            <div className="bg-muted/50 p-6 rounded-2xl border-2 border-dashed border-border/40">
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/40 mb-2">
-                Request List ID
+          <CardContent className="p-6 text-center space-y-6 block w-full leading-none">
+            <div className="bg-muted/40 p-4 rounded-lg border border-border/60 block leading-none w-full">
+              <p className="font-mono text-[9px] font-bold uppercase tracking-wide text-muted-foreground/40 mb-1 select-none pointer-events-none">
+                Assigned Verification Reference ID
               </p>
-              <p className="font-mono text-xl font-bold tracking-tighter text-primary">
-                {requestId.slice(0, 8).toUpperCase()}
+              <p className="font-mono text-base font-black text-primary tracking-wide select-text tabular-nums uppercase">
+                {generatedRequestId.slice(0, 8).toUpperCase()}-CORE-NODE
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-4">
-              <Button
-                variant="outline"
-                className="rounded-xl h-12 font-black uppercase text-[10px]"
-                onClick={() => navigate("/app/services")}
-              >
+            
+            <div className="grid grid-cols-2 gap-3 select-none leading-none block w-full shrink-0">
+              <Button type="button" variant="outline" className="h-10 rounded-lg font-mono text-[10px] font-extrabold uppercase tracking-wider border border-border/60 bg-background/50 cursor-pointer" onClick={handleNavigateToServicesDirectory}>
                 Close Session
               </Button>
-              <Button
-                className="rounded-xl h-12 font-black uppercase text-[10px] shadow-lg shadow-primary/20"
-                onClick={() => navigate("/portfolio-status")}
-              >
-                Track Node
+              <Button type="button" className="h-10 rounded-lg font-mono text-[10px] font-extrabold uppercase tracking-wider cursor-pointer shadow-2xs" onClick={handleNavigateToStatusMonitor}>
+                Track Environment Node
               </Button>
             </div>
           </CardContent>
@@ -318,77 +355,77 @@ export default function AppPortfolioRequest() {
   }
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10 min-h-svh space-y-10 animate-in fade-in duration-700">
-      <header className="flex items-center justify-between">
+    <div className="max-w-3xl mx-auto px-4 py-6 space-y-6 text-left antialiased block transform-gpu w-full">
+      
+      {/* HUD LEVEL 1: APP SHELL TOP BAR HUD INTERFACES CONTROL CONSOLE */}
+      <header className="flex items-center justify-between select-none leading-none w-full shrink-0">
         <Button
+          type="button"
           variant="ghost"
-          className="rounded-xl h-10 text-[10px] font-black uppercase tracking-widest hover:bg-primary/5 group"
-          onClick={() => navigate("/app/services")}
+          className="rounded-lg h-9 px-3 font-mono text-[10px] font-extrabold uppercase tracking-wider border border-border/5 bg-background hover:bg-muted group cursor-pointer"
+          onClick={handleNavigateToServicesDirectory}
         >
-          <ArrowLeft className="mr-2 h-4 w-4 transition-transform group-hover:-translate-x-1" /> Terminate Request
+          <ArrowLeft className="mr-1 h-3.5 w-3.5 stroke-[2.5] transition-transform group-hover:-translate-x-0.5" /> 
+          <span>Abort Sequence Request</span>
         </Button>
         <Badge
           variant="outline"
-          className="rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] tracking-widest italic"
+          className="font-mono text-[9px] font-extrabold uppercase px-2 h-5 tracking-wide rounded bg-primary/5 text-primary border-primary/20 shrink-0 pointer-events-none leading-none pt-0.5"
         >
-          Portfolio Sync v2.6
+          Syllabus Indexing Node: v2.6 Matrix
         </Badge>
       </header>
 
-      <ProfileCompletionPrompt variant="banner" className="rounded-[24px] border-2 border-dashed border-primary/20" />
+      <ProfileCompletionPrompt variant="banner" className="rounded-xl border border-dashed border-primary/20 bg-card/10 block w-full shadow-none" />
 
-      {/* Promotion Logic Viewport */}
-      {isFreePromotion ? (
-        <Card className="rounded-[28px] border-2 border-primary/20 bg-primary/5 shadow-2xl overflow-hidden animate-pulse">
-          <CardContent className="py-5 px-8 flex items-center justify-between">
-            <div className="flex items-center gap-4">
-              <div className="p-3 bg-primary/10 rounded-2xl rotate-3 shadow-lg">
-                <Gift className="h-6 w-6 text-primary" />
+      {/* HUD LEVEL 2: CHROMATIC PROMOTION VALIDATION SYSTEM VIEWPORTS */}
+      {isFreePromotionActive ? (
+        <Card className="rounded-xl border border-primary/20 bg-primary/[0.01] shadow-none overflow-hidden block w-full select-none pointer-events-none">
+          <CardContent className="p-3.5 flex items-center justify-between gap-4 leading-none w-full block animate-pulse">
+            <div className="flex items-center gap-3LEADING-NONE block min-w-0">
+              <div className="p-2.5 bg-primary/5 border border-primary/10 rounded-lg shrink-0 text-primary block shadow-3xs">
+                <Gift className="h-5 w-5 stroke-[2.2]" />
               </div>
-              <div>
-                <p className="text-[11px] font-black uppercase tracking-[0.2em] text-primary">
-                  Promotional Logic Active
-                </p>
-                <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
-                  {remainingFree} Nodes remaining for 0.00 Credits
+              <div className="leading-none space-y-0.5 block min-w-0">
+                <p className="font-mono text-[10px] font-black uppercase tracking-wide text-primary">Automated Promotional Matrix Active</p>
+                <p className="font-mono text-[9px] font-bold text-muted-foreground/50 uppercase tracking-tight block truncate tabular-nums">
+                  Allocation Available: {remainingFreePromoSlots.toLocaleString()} System Nodes Residuals for 0.00 Credits draw
                 </p>
               </div>
             </div>
           </CardContent>
         </Card>
       ) : (
-        <Card className="rounded-[28px] border-border/40 bg-muted/20">
-          <CardContent className="py-5 px-8 flex items-center justify-between">
-            <div className="flex items-center gap-3">
-              <Briefcase className="h-5 w-5 text-muted-foreground/40" />
-              <span className="text-[11px] font-black uppercase tracking-[0.2em] text-muted-foreground/60">
-                Synthesis Execution Cost
-              </span>
+        <Card className="rounded-xl border border-border/60 bg-card/20 shadow-none overflow-hidden block w-full select-none pointer-events-none">
+          <CardContent className="p-3.5 flex items-center justify-between gap-4 leading-none w-full block">
+            <div className="flex items-center gap-2 font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none">
+              <Briefcase className="h-4 w-4 text-muted-foreground/30 stroke-[2.2]" />
+              <span className="pt-0.5">Synthesis Execution Resource Fee Cost Charge</span>
             </div>
-            <span className="text-xl font-black italic tracking-tighter">{PORTFOLIO_COST} CREDITS</span>
+            <span className="font-mono text-xs font-black italic text-foreground tracking-tight tabular-nums">{PORTFOLIO_COST.toLocaleString()} CREDITS</span>
           </CardContent>
         </Card>
       )}
 
-      {/* Logic Stepper Hud */}
-      <div className="flex items-center justify-between px-2">
-        {steps.map((s, i) => (
-          <div key={s.id} className="flex flex-1 items-center gap-4 group">
+      {/* HUD LEVEL 3: DYNAMIC TIMELINE DISCLOSURE WIZARD STEPPER TRACK */}
+      <div className="flex items-center justify-between px-1 select-none pointer-events-none leading-none w-full block shrink-0">
+        {steps.map((stepItem, indexPos) => (
+          <div key={`stepper-node-indicator-item-${stepItem.id}`} className="flex flex-1 items-center gap-2 block shrink-0 leading-none">
             <div
               className={cn(
-                "p-3 rounded-xl transition-all duration-500 border-2",
-                i <= currentStepIndex
-                  ? "bg-primary text-primary-foreground border-primary shadow-lg shadow-primary/20 scale-110"
-                  : "bg-muted text-muted-foreground/30 border-transparent",
+                "h-7 w-7 rounded border grid place-items-center transition-all duration-300 text-xs shadow-3xs shrink-0 rounded-sm",
+                indexPos <= currentStepIndexNum
+                  ? "bg-primary text-primary-foreground border-primary font-black scale-105"
+                  : "bg-muted text-muted-foreground/20 border-transparent",
               )}
             >
-              {s.icon}
+              {stepItem.icon}
             </div>
-            {i < steps.length - 1 && (
+            {indexPos < steps.length - 1 && (
               <div
                 className={cn(
-                  "h-[2px] flex-1 rounded-full transition-all duration-700",
-                  i < currentStepIndex ? "bg-primary" : "bg-muted",
+                  "h-px flex-1 rounded-full transition-all duration-300 mx-1",
+                  indexPos < currentStepIndexNum ? "bg-primary" : "bg-border/60",
                 )}
               />
             )}
@@ -396,143 +433,161 @@ export default function AppPortfolioRequest() {
         ))}
       </div>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
-        <CardHeader className="p-10 border-b border-border/10 bg-muted/20">
-          <div className="flex justify-between items-center">
-            <CardTitle className="text-3xl font-black uppercase tracking-tighter italic">
-              {steps[currentStepIndex].label}
+      {/* HUD LEVEL 4: CORE SUBMISSION COMPOSER ENTRY DIALOG FORMS */}
+      <Card className="rounded-xl border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
+        <CardHeader className="p-4 border-b border-border/5 bg-muted/20 flex flex-row items-center justify-between w-full select-none shrink-0 leading-none">
+          <div className="space-y-0.5 block leading-none select-none pointer-events-none">
+            <CardTitle className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground leading-none m-0">
+              {steps[currentStepIndexNum].label} Setup Configuration
             </CardTitle>
-            <span className="text-[10px] font-mono font-bold text-muted-foreground/40 italic">
-              NODE_{currentStep.toUpperCase()}
-            </span>
           </div>
+          <span className="font-mono text-[9px] font-bold text-muted-foreground/30 uppercase tracking-tight select-none pointer-events-none tabular-nums">
+            INDEX: NODE_{currentStep.toUpperCase()}
+          </span>
         </CardHeader>
-        <CardContent className="p-10 space-y-8">
+        
+        <CardContent className="p-4 sm:p-6 block w-full space-y-5 leading-none">
           {currentStep === "personal" && (
-            <div className="grid gap-6">
-              <div className="grid gap-2">
-                <Label className="text-[11px] font-black uppercase tracking-widest text-primary ml-1">
-                  Full Name List
-                </Label>
+            <div className="space-y-4 block w-full">
+              <div className="space-y-1 block leading-none">
+                <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">Full Nomenclature Real Identity</Label>
                 <Input
-                  className="h-12 rounded-xl border-2 bg-background/50"
-                  value={formData.fullName}
-                  onChange={(e) => setFormData((p) => ({ ...p, fullName: e.target.value }))}
-                  placeholder="Executive Identity"
+                  type="text"
+                  value={formDataState.fullName}
+                  onChange={(e) => setFormDataState((prev) => ({ ...prev, fullName: e.target.value }))}
+                  placeholder="Input executive structural profiling nomenclature moniker..."
+                  className="h-10 text-xs sm:text-sm bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none"
                 />
               </div>
-              <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="grid gap-2">
-                  <Label className="text-[11px] font-black uppercase tracking-widest ml-1">Email Node</Label>
+              
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 block w-full">
+                <div className="space-y-1 block leading-none">
+                  <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">Electronic Mail Endpoint</Label>
                   <Input
                     type="email"
-                    className="h-12 rounded-xl border-2 bg-background/50"
-                    value={formData.email}
-                    onChange={(e) => setFormData((p) => ({ ...p, email: e.target.value }))}
-                    placeholder="uplink@domain.com"
+                    value={formDataState.email}
+                    onChange={(e) => setFormDataState((prev) => ({ ...prev, email: e.target.value }))}
+                    placeholder="uplink@domain-network.com"
+                    className="h-10 text-xs sm:text-sm bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none"
                   />
                 </div>
-                <div className="grid gap-2">
-                  <Label className="text-[11px] font-black uppercase tracking-widest ml-1">WhatsApp Tracking</Label>
+                <div className="space-y-1 block leading-none">
+                  <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">WhatsApp Communication Tracking Pipeline</Label>
                   <Input
-                    className="h-12 rounded-xl border-2 bg-background/50"
-                    value={formData.phone}
-                    onChange={(e) => setFormData((p) => ({ ...p, phone: e.target.value }))}
-                    placeholder="+880..."
+                    type="tel"
+                    value={formDataState.phone}
+                    onChange={(e) => setFormDataState((prev) => ({ ...prev, phone: e.target.value }))}
+                    placeholder="+8801..."
+                    className="h-10 text-xs sm:text-sm bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none"
                   />
                 </div>
               </div>
-              <div className="grid gap-2">
-                <Label className="text-[11px] font-black uppercase tracking-widest ml-1">Sector Architecture</Label>
+              
+              <div className="space-y-1 block leading-none">
+                <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">Professional Line Sector Architecture Focus</Label>
                 <Select
-                  value={formData.professionCategoryId}
-                  onValueChange={(v) => setFormData((p) => ({ ...p, professionCategoryId: v }))}
+                  value={formDataState.professionCategoryId}
+                  onValueChange={(extractedId) => setFormDataState((prev) => ({ ...prev, professionCategoryId: extractedId }))}
                 >
-                  <SelectTrigger className="h-12 rounded-xl border-2 bg-background/50 font-bold">
-                    <SelectValue placeholder="Select Professional Line" />
+                  <SelectTrigger className="h-10 font-sans text-xs sm:text-sm rounded-lg border border-border/40 bg-background/50 shadow-none">
+                    <SelectValue placeholder="Identify targeted vertical computational stream context line..." />
                   </SelectTrigger>
-                  <SelectContent>
-                    {professionCategories.map((cat) => (
-                      <SelectItem key={cat.id} value={cat.id} className="font-bold">
-                        {cat.name}
+                  <SelectContent className="rounded-lg border border-border/60 bg-popover text-popover-foreground">
+                    {professionCategoriesArray.map((catNode) => (
+                      <SelectItem key={`category-select-option-${catNode.id}`} value={catNode.id} className="text-xs font-semibold">
+                        {catNode.name}
                       </SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
               </div>
-              {isOtherCategory && (
-                <Input
-                  className="h-12 rounded-xl border-2 bg-background/50 italic"
-                  value={formData.customProfession}
-                  onChange={(e) => setFormData((p) => ({ ...p, customProfession: e.target.value }))}
-                  placeholder="Define Custom Logic Profession"
-                />
+              
+              {isOtherCategoryFlag && (
+                <div className="space-y-1 block leading-none animate-in fade-in duration-100">
+                  <Input
+                    type="text"
+                    value={formDataState.customProfession}
+                    onChange={(e) => setFormDataState((prev) => ({ ...prev, customProfession: e.target.value }))}
+                    placeholder="Provide detailed descriptor specification string mapping parameters..."
+                    className="h-10 text-xs sm:text-sm bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none"
+                  />
+                </div>
               )}
             </div>
           )}
 
           {currentStep === "cv" && (
-            <div className="space-y-6">
-              <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
-                {hasExistingCv && (
+            <div className="space-y-4 block w-full leading-none">
+              <div className="grid grid-cols-2 sm:grid-cols-4 gap-2 w-full block layout select-none h-9">
+                {isCandidateCvOnS3Bucket && (
                   <Button
-                    variant={formData.cvInputMode === "existing" ? "default" : "outline"}
-                    className="rounded-xl font-black uppercase text-[9px] h-11"
-                    onClick={() => setFormData((p) => ({ ...p, cvInputMode: "existing" }))}
+                    type="button"
+                    variant={formDataState.cvInputMode === "existing" ? "default" : "outline"}
+                    className="rounded-lg font-mono text-[9px] font-extrabold uppercase tracking-wide h-9 cursor-pointer"
+                    onClick={() => setFormDataState((prev) => ({ ...prev, cvInputMode: "existing" }))}
                   >
-                    <ShieldCheck className="h-4 w-4 mr-2" /> REUSE
+                    <ShieldCheck className="h-3.5 w-3.5 mr-1.5 stroke-[2.2] shrink-0" /> <span>Reuse File</span>
                   </Button>
                 )}
                 <Button
-                  variant={formData.cvInputMode === "upload" ? "default" : "outline"}
-                  className="rounded-xl font-black uppercase text-[9px] h-11"
-                  onClick={() => setFormData((p) => ({ ...p, cvInputMode: "upload" }))}
+                  type="button"
+                  variant={formDataState.cvInputMode === "upload" ? "default" : "outline"}
+                  className="rounded-lg font-mono text-[9px] font-extrabold uppercase tracking-wide h-9 cursor-pointer"
+                  onClick={() => setFormDataState((prev) => ({ ...prev, cvInputMode: "upload" }))}
                 >
-                  <FileUp className="h-4 w-4 mr-2" /> UPLOAD
+                  <FileUp className="h-3.5 w-3.5 mr-1.5 stroke-[2.2] shrink-0" /> <span>Upload Disk</span>
                 </Button>
                 <Button
-                  variant={formData.cvInputMode === "url" ? "default" : "outline"}
-                  className="rounded-xl font-black uppercase text-[9px] h-11"
-                  onClick={() => setFormData((p) => ({ ...p, cvInputMode: "url" }))}
+                  type="button"
+                  variant="formDataState.cvInputMode"
+                  variant={formDataState.cvInputMode === "url" ? "default" : "outline"}
+                  className="rounded-lg font-mono text-[9px] font-extrabold uppercase tracking-wide h-9 cursor-pointer"
+                  onClick={() => setFormDataState((prev) => ({ ...prev, cvInputMode: "url" }))}
                 >
-                  <Globe className="h-4 w-4 mr-2" /> URL
+                  <Globe className="h-3.5 w-3.5 mr-1.5 stroke-[2.2] shrink-0" /> <span>URL Link</span>
                 </Button>
                 <Button
-                  variant={formData.cvInputMode === "profile" ? "default" : "outline"}
-                  className="rounded-xl font-black uppercase text-[9px] h-11"
-                  onClick={() => setFormData((p) => ({ ...p, cvInputMode: "profile" }))}
+                  type="button"
+                  variant={formDataState.cvInputMode === "profile" ? "default" : "outline"}
+                  className="rounded-lg font-mono text-[9px] font-extrabold uppercase tracking-wide h-9 cursor-pointer"
+                  onClick={() => setFormDataState((prev) => ({ ...prev, cvInputMode: "profile" }))}
                 >
-                  <PenLine className="h-4 w-4 mr-2" /> SYNTH
+                  <PenLine className="h-3.5 w-3.5 mr-1.5 stroke-[2.2] shrink-0" /> <span>Synth Profile</span>
                 </Button>
               </div>
-              <div className="p-6 rounded-2xl bg-muted/20 border-2 border-dashed border-border/40">
-                {formData.cvInputMode === "existing" && (
+              
+              <div className="p-4 rounded-lg bg-muted/20 border border-dashed border-border/60 block leading-none w-full min-h-[140px]">
+                {formDataState.cvInputMode === "existing" && (
                   <ExistingCVCard
-                    talent={talent}
-                    onUseExisting={() => setFormData((p) => ({ ...p, cvUrl: talent?.cvUrl || "" }))}
-                    onUploadNew={() => setFormData((p) => ({ ...p, cvInputMode: "upload" }))}
+                    talent={talentProfileRecord}
+                    onUseExisting={() => setFormDataState((prev) => ({ ...prev, cvUrl: talentProfileRecord?.cvUrl || "" }))}
+                    onUploadNew={() => setFormDataState((prev) => ({ ...prev, cvInputMode: "upload" }))}
                   />
                 )}
-                {formData.cvInputMode === "upload" && (
+                {formDataState.cvInputMode === "upload" && (
                   <SimpleFileUpload
                     accept=".pdf,.doc,.docx"
-                    onFileUploaded={(url) => setFormData((p) => ({ ...p, cvUrl: url }))}
-                    onUrlProvided={(url) => setFormData((p) => ({ ...p, cvUrl: url }))}
-                    currentValue={formData.cvUrl}
+                    onFileUploaded={(extractedUrl) => setFormDataState((prev) => ({ ...prev, cvUrl: extractedUrl }))}
+                    onUrlProvided={(extractedUrl) => setFormDataState((prev) => ({ ...prev, cvUrl: extractedUrl }))}
+                    currentValue={formDataState.cvUrl}
                   />
                 )}
-                {formData.cvInputMode === "url" && (
-                  <Input
-                    className="h-12 rounded-xl border-2"
-                    value={formData.cvExternalUrl}
-                    onChange={(e) => setFormData((p) => ({ ...p, cvExternalUrl: e.target.value }))}
-                    placeholder="https://registry-link.com/..."
-                  />
+                {formDataState.cvInputMode === "url" && (
+                  <div className="space-y-1 block w-full pt-1.5 animate-in fade-in duration-100">
+                    <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">Secure Document Asset Absolute URL Address</Label>
+                    <Input
+                      type="url"
+                      value={formDataState.cvExternalUrl}
+                      onChange={(e) => setFormDataState((prev) => ({ ...prev, cvExternalUrl: e.target.value }))}
+                      placeholder="e.g., https://storage-network.domain.com/credentials-specs/file-hash.pdf"
+                      className="h-10 text-xs sm:text-sm bg-background border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none"
+                    />
+                  </div>
                 )}
-                {formData.cvInputMode === "profile" && (
+                {formDataState.cvInputMode === "profile" && (
                   <ProfileBuilderForm
-                    value={formData.profileData}
-                    onChange={(data) => setFormData((p) => ({ ...p, profileData: data }))}
+                    value={formDataState.profileData}
+                    onChange={(calculatedProfileNode) => setFormDataState((prev) => ({ ...prev, profileData: calculatedProfileNode }))}
                   />
                 )}
               </div>
@@ -540,123 +595,131 @@ export default function AppPortfolioRequest() {
           )}
 
           {currentStep === "certificates" && (
-            <div className="space-y-8">
+            <div className="space-y-5 block w-full">
               <MultiFileUpload
                 bucket="portfolio-uploads"
-                value={formData.certificates}
-                onChange={(files) => setFormData((p) => ({ ...p, certificates: files }))}
-                label="Files"
-                description="Upload verified credentials and certifications."
+                value={formDataState.certificates}
+                onChange={(filesPayloadCollection) => setFormDataState((prev) => ({ ...prev, certificates: filesPayloadCollection }))}
+                label="Files Ledger Track"
+                description="Upload confirmed training achievements, technical awards records, and verifiable credentials."
               />
-              <div className="grid gap-2">
-                <Label className="text-[11px] font-black uppercase tracking-widest text-primary">
-                  Strategic Achievements
-                </Label>
+              
+              <div className="space-y-1 block leading-none pt-1">
+                <Label className="font-mono text-[10px] font-extrabold uppercase text-primary tracking-wide block leading-none ml-0.5">Strategic Enterprise Milestones & Career Achievements</Label>
                 <Textarea
-                  className="min-h-[160px] rounded-2xl bg-muted/10 border-2"
-                  value={formData.achievements}
-                  onChange={(e) => setFormData((p) => ({ ...p, achievements: e.target.value }))}
-                  placeholder="Log key milestones and executive wins..."
+                  value={formDataState.achievements}
+                  onChange={(e) => setFormDataState((prev) => ({ ...prev, achievements: e.target.value }))}
+                  placeholder="Outline key high-fidelity operational targets, corporate records broken, and project delivery metrics won..."
+                  className="min-h-[140px] font-sans text-xs sm:text-sm font-medium leading-relaxed bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none p-3 resize-none"
                 />
               </div>
             </div>
           )}
 
           {currentStep === "social" && (
-            <div className="grid gap-8">
-              <div className="grid gap-4">
-                {["linkedin", "github", "website"].map((field) => (
-                  <div key={field} className="grid gap-2">
-                    <Label className="text-[11px] font-black uppercase tracking-widest ml-1">{field} Uplink</Label>
+            <div className="space-y-5 block w-full">
+              <div className="space-y-4 block w-full">
+                {["linkedin", "github", "website"].map((fieldKeyStr) => (
+                  <div key={`social-link-input-row-${fieldKeyStr}`} className="space-y-1 block leading-none">
+                    <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5 capitalize">{fieldKeyStr} Endpoint Uplink Link</Label>
                     <Input
-                      className="h-12 rounded-xl border-2 bg-background/50"
-                      value={formData.socialLinks[field as keyof typeof formData.socialLinks] || ""}
+                      type="url"
+                      value={formDataState.socialLinks[fieldKeyStr as keyof typeof formDataState.socialLinks] || ""}
                       onChange={(e) =>
-                        setFormData((p) => ({ ...p, socialLinks: { ...p.socialLinks, [field]: e.target.value } }))
+                        setFormDataState((prev) => ({ ...prev, socialLinks: { ...prev.socialLinks, [fieldKeyStr]: e.target.value } }))
                       }
-                      placeholder={`https://${field}.com/...`}
+                      placeholder={`https://${fieldKeyStr}.com/profile-identity-block-spec`}
+                      className="h-10 text-xs sm:text-sm bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none"
                     />
                   </div>
                 ))}
               </div>
-              <div className="grid gap-2">
-                <Label className="text-[11px] font-black uppercase tracking-widest text-primary">
-                  Upload Notes
-                </Label>
+              
+              <div className="space-y-1 block leading-none pt-1">
+                <Label className="font-mono text-[10px] font-extrabold uppercase text-primary tracking-wide block leading-none ml-0.5">Design Team Execution Directives & Upload Notes</Label>
                 <Textarea
-                  className="min-h-[100px] rounded-2xl bg-muted/10 border-2"
-                  value={formData.additionalNotes}
-                  onChange={(e) => setFormData((p) => ({ ...p, additionalNotes: e.target.value }))}
-                  placeholder="Any specific logic parameters for our design team?"
+                  value={formDataState.additionalNotes}
+                  onChange={(e) => setFormDataState((prev) => ({ ...prev, additionalNotes: e.target.value }))}
+                  placeholder="Input custom structural interface variables, themes, or alignment traits intended for our developers..."
+                  className="min-h-[100px] font-sans text-xs sm:text-sm font-medium leading-relaxed bg-background/50 border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none p-3 resize-none"
                 />
               </div>
             </div>
           )}
 
           {currentStep === "review" && (
-            <div className="space-y-8 animate-in fade-in slide-in-from-bottom-2">
-              <div className="p-8 rounded-[32px] bg-muted/30 border-2 border-border/40 space-y-4 font-medium italic">
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground uppercase text-[10px] font-black">Entity</span>
-                  <span className="text-foreground">{formData.fullName}</span>
+            <div className="space-y-5 block w-full animate-in fade-in duration-200 leading-none">
+              <div className="p-4 rounded-lg bg-muted/30 border border-border/60 space-y-3.5 font-medium block select-text leading-none w-full shadow-3xs">
+                <div className="flex justify-between items-center leading-none w-full block">
+                  <span className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide select-none pointer-events-none">Candidate Legal Entity Identity</span>
+                  <span className="text-foreground text-xs font-bold uppercase tracking-wide">{formDataState.fullName}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground uppercase text-[10px] font-black">List</span>
-                  <span className="text-foreground">{effectiveCvUrl ? "Artifact Provided" : "Pending Synthesis"}</span>
+                <div className="flex justify-between items-center leading-none w-full block">
+                  <span className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide select-none pointer-events-none">Transmitted Curriculum Record Log</span>
+                  <span className="text-foreground text-xs font-bold uppercase tracking-wide">{resolvedEffectiveCvUrlStr ? "Artifact Document Track Attached" : "Pending Manual Core Synthesis"}</span>
                 </div>
-                <div className="flex justify-between items-center">
-                  <span className="text-muted-foreground uppercase text-[10px] font-black">Sector</span>
-                  <span className="text-foreground">{selectedCategory?.name}</span>
+                <div className="flex justify-between items-center leading-none w-full block">
+                  <span className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide select-none pointer-events-none">Specialty Vertical Target Sector</span>
+                  <span className="text-foreground text-xs font-bold uppercase tracking-wide">{activeSelectedCategoryNode?.name || "UNASSIGNED VARIANT"}</span>
                 </div>
-                <div className="pt-6 mt-6 border-t-2 border-dashed border-border/40 flex justify-between items-center">
-                  <span className="text-primary uppercase text-[11px] font-black tracking-widest">Connection Cost</span>
-                  <span className="text-xl font-black tracking-tighter text-foreground">
-                    {isFreePromotion ? "0.00 (PROMO)" : `${PORTFOLIO_COST} CREDITS`}
+                
+                <div className="pt-4 mt-2 border-t border-dashed border-border/40 flex justify-between items-center leading-none w-full block">
+                  <span className="font-mono text-[10px] font-black tracking-widest text-primary uppercase select-none pointer-events-none">Total Pipeline Procurement Charge</span>
+                  <span className="text-base font-mono font-black tracking-tight text-foreground uppercase tabular-nums">
+                    {isFreePromotionActive ? "0.00 (AUTOMATED PROMO DRAW)" : `${PORTFOLIO_COST.toLocaleString()} CREDITS DRAW`}
                   </span>
                 </div>
               </div>
-              <div className="flex items-center gap-3 p-4 rounded-xl bg-emerald-500/5 border border-emerald-500/20">
-                <ShieldCheck className="h-5 w-5 text-emerald-500" />
-                <p className="text-[10px] font-bold text-emerald-600 uppercase tracking-widest">
-                  Transaction Security Enabled • 256-bit Encryption
+              
+              <div className="flex items-center gap-3 p-3 rounded-lg bg-emerald-500/5 border border-emerald-500/20 select-none pointer-events-none leading-none w-full block">
+                <ShieldCheck className="h-4.5 w-4.5 text-emerald-600 stroke-[2.2] shrink-0" />
+                <p className="font-mono text-[9px] font-bold text-emerald-600 uppercase tracking-wider block pt-0.5">
+                  Secure Operational Cryptography Tunnel Enabled • 256-Bit SHA Transport Matrix Assured
                 </p>
               </div>
             </div>
           )}
 
-          <div className="flex gap-4 pt-6">
-            {currentStepIndex > 0 && (
+          {/* LOWER GRID: STEP TRANSITION ACTION TRIGGERS CONTROLLER BAR */}
+          <div className="flex gap-3 pt-4 select-none leading-none w-full block mt-2 shrink-0">
+            {currentStepIndexNum > 0 && (
               <Button
+                type="button"
                 variant="outline"
-                className="rounded-2xl h-14 px-8 border-2 font-black uppercase text-[10px] tracking-widest"
-                onClick={handleBack}
+                className="rounded-lg h-10 px-4 border border-border/60 font-mono text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground/60 hover:text-foreground cursor-pointer"
+                onClick={handleRevertStepPhase}
               >
-                <ArrowLeft className="mr-3 h-4 w-4" /> Revert
+                <ArrowLeft className="mr-1 h-3.5 w-3.5 stroke-[2.5]" /> <span>Revert Phase</span>
               </Button>
             )}
+            
             {currentStep !== "review" ? (
               <Button
-                className="flex-1 rounded-2xl h-14 font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-primary/20"
-                onClick={handleNext}
-                disabled={!canProceed()}
+                type="button"
+                disabled={!checkCurrentPhaseRequirementsSufficient()}
+                className="flex-1 h-10 rounded-lg font-bold uppercase text-xs tracking-wider cursor-pointer shadow-2xs transform-gpu active:scale-[0.985] disabled:opacity-50"
+                onClick={handleAdvanceStepPhase}
               >
-                Next Phase <ArrowRight className="ml-3 h-4 w-4" />
+                <span>Advance Parameters Step</span> 
+                <ArrowRight className="ml-1.5 h-4 w-4 stroke-[2.5]" />
               </Button>
             ) : (
               <Button
-                className="flex-1 rounded-2xl h-14 font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-primary/30 group"
-                onClick={handleSubmit}
-                disabled={isSubmitting}
+                type="button"
+                disabled={isSubmissionPending}
+                className="flex-1 h-10 rounded-lg font-bold uppercase text-xs tracking-wider bg-primary text-primary-foreground hover:bg-primary/90 cursor-pointer shadow-xs transform-gpu active:scale-[0.985] group"
+                onClick={handleCommitPortfolioRequestSequence}
               >
-                {isSubmitting ? (
-                  <>
-                    <Loader2 className="mr-3 h-5 w-5 animate-spin" /> Transmitting...
-                  </>
+                {isSubmissionPending ? (
+                  <div className="flex items-center justify-center gap-1.5 mx-auto leading-none">
+                    <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0" />
+                    <span className="truncate block pt-0.5">Transmitting Allocation...</span>
+                  </div>
                 ) : (
-                  <>
-                    <Zap className="mr-3 h-5 w-5 fill-current transition-transform group-hover:scale-125" /> Finalize
-                    Connection & Submit
-                  </>
+                  <div className="flex items-center justify-center gap-1.5 mx-auto leading-none">
+                    <Zap className="h-4 w-4 fill-current stroke-[1.5] transition-transform group-hover:scale-110 shrink-0 text-primary-foreground" />
+                    <span>Authorize Transaction Parameters & Commit</span>
+                  </div>
                 )}
               </Button>
             )}
