@@ -13,7 +13,7 @@ export interface AIContext {
 }
 
 export async function callContentAI<T = any>(mode: AIMode, context: AIContext): Promise<T> {
-  const data: any = await adminContentAi({ mode, context });
+  const data: any = await adminContentAi({ mode, context: context as unknown as Record<string, unknown> });
   if (data?.error) throw new Error(data.error);
   return data.result as T;
 }
