@@ -154,15 +154,19 @@ function MockInterviewSetupContent() {
         };
       }
 
-      const { data, error } = await supabase.functions.invoke("generate-interview-questions", {
-        body: {
+      let data: any = null;
+      let error: any = null;
+      try {
+        data = await generateInterviewQuestions({
           jobDescription,
           questionCount: config.questionCount,
           difficulty: config.difficulty,
           professionCategoryId: config.professionCategoryId,
           additionalNotes: config.additionalNotes,
           candidateProfile,
-        },
+        });
+      } catch (e) { error = e; }
+      const _stub_removed_block_marker = ({
       });
 
       if (error) throw error;
