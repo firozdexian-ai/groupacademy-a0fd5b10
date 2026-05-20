@@ -66,3 +66,16 @@ Phase 7  shells/*/routes.tsx + React.lazy
 Phase 8  retire barrel re-exports
 Phase 9  edge/contracts/ for every domain
 ```
+
+---
+
+## Phase 5.5 — COMPLETE
+
+- 2 talent components → `src/domains/messaging/components/talent/` (+ barrels)
+- 1 admin tab → `src/domains/messaging/components/admin/` (+ barrel)
+- 2 hooks (`useMessageThreads`, `useDirectMessages`) → `src/domains/messaging/hooks/` (+ barrels)
+- `src/edge/contracts/messaging.ts` + `src/domains/messaging/api/manifest.ts` (`messagingApi.unipileConnect`)
+- F3 sweep: 4 `unipile-connect` invokes replaced; none remain outside manifest
+- Intra-domain `MessageThread` type import rewritten
+
+Progress ~46%. Next: 5.6 companies.
