@@ -159,13 +159,11 @@ export function LeadHunterManager() {
   const startHunt = async () => {
     setIsSearching(true);
     try {
-      const { data, error: huntError } = await supabase.functions.invoke("lead-hunt-match", {
-        body: {
-          jobTitle: huntMode === "select" ? jobTitle : "External Hunt",
-          companyName: huntMode === "select" ? companyName : "Manual",
-          jobDescription: huntMode === "select" ? jobDescription : rawJD,
-          leadsRequested,
-        },
+      const { error: huntError } = await marketingApi.leadHuntMatch({
+        jobTitle: huntMode === "select" ? jobTitle : "External Hunt",
+        companyName: huntMode === "select" ? companyName : "Manual",
+        jobDescription: huntMode === "select" ? jobDescription : rawJD,
+        leadsRequested,
       });
       if (huntError) throw huntError;
       toast.success("AI extraction complete!");
