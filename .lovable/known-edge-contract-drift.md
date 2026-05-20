@@ -1,6 +1,6 @@
 # Known edge-function contract drift
 
-Surfaced during Phase 9a/9b/9c (typed wrapper migration). These are
+Surfaced during Phase 9a/9b/9c/9d (typed wrapper migration). These are
 **pre-existing** runtime bugs where a call site passes a body shape the
 edge function rejects. Phase 9 does not fix them — wrappers preserve
 exact runtime behavior. Fix in a dedicated follow-up.
@@ -49,6 +49,14 @@ exact runtime behavior. Fix in a dedicated follow-up.
   call-site shape verbatim to preserve runtime behavior.
 - **Fix sketch:** rename `source_type → source_kind` and `url → source_ref`
   in the call site (and update the wrapper request type to match).
+
+## 5. `score-job-match` — request shape
+
+- **Call sites:** all in-domain jobs callers send camelCase
+  `{ jobId, talentId }`. Edge function and DB also accept `job_id`,
+  `talent_id`. The `ScoreJobMatchRequest` type accepts both spellings
+  with an index signature; consumers should standardize on camelCase.
+- **No user-visible effect** — both forms work.
 
 ---
 
