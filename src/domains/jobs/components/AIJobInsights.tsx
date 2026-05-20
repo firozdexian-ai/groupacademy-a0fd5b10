@@ -20,7 +20,7 @@ import {
   AlertCircle,
 } from "lucide-react";
 import { ProcessingCard, type ProcessingStage } from "@/components/ui/processing-card";
-import { supabase } from "@/integrations/supabase/client";
+import { analyzeJobMarket, scoreJobMatch } from "@/domains/jobs/api/jobsApi";
 import { useCredits } from "@/hooks/useCredits";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { toast } from "sonner";
@@ -93,11 +93,7 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
       if (!transactionSuccess) throw new Error("Ledger balance reservation processing fault.");
 
       // Direct edge routing pass executing predictive competency profiling
-      const { data, error: edgeError } = await supabase.functions.invoke("score-job-match", {
-        body: { jobId, talentId },
-      });
-
-      if (edgeError) throw edgeError;
+      const data = await scoreJobMatch({ jobId, talentId });
       if (!data) throw new Error("AI alignment node returned an empty telemetry matrix.");
 
       setMatchResult(data);
@@ -143,11 +139,7 @@ export function AIJobInsights({ jobId, talentId }: AIJobInsightsProps) {
       if (!transactionSuccess) throw new Error("Ledger balance reservation processing fault.");
 
       // Direct edge routing pass querying macro workforce aggregates
-      const { data, error: edgeError } = await supabase.functions.invoke("analyze-job-market", {
-        body: { jobId },
-      });
-
-      if (edgeError) throw edgeError;
+      const data = await analyzeJobMarket({ jobId });
       if (!data) throw new Error("AI market intelligence node returned an empty telemetry matrix.");
 
       setMarketInsight(data);
