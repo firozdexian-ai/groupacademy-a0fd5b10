@@ -97,7 +97,7 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
       if (error || !(data as { url?: string } | null)?.url) {
         throw new Error("GATEWAY_SYNC_FAULT");
       }
-      return String(data.url);
+      return String((data as { url: string }).url);
     },
     onSuccess: (checkoutRedirectUrl) => {
       // Execute absolute hard redirect to unified payment gate canvas
