@@ -76,6 +76,16 @@ export const learningApi = {
     invoke<GetTrackProgressRequest, GetTrackProgressResponse>("get_track_progress", body),
   orgLearningHealth: (body: OrgLearningHealthRequest) =>
     invoke<OrgLearningHealthRequest, OrgLearningHealthResponse>("org_learning_health", body),
+
+  // Quiz / scenario runners (loose contracts — see edge/contracts/learning.ts)
+  quizPool: (body: LearnerQuizPoolRequest) =>
+    invoke<LearnerQuizPoolRequest, LearnerQuizPoolResponse>("learner-quiz-pool", body),
+  scenarioPool: (body: LearnerScenarioPoolRequest) =>
+    invoke<LearnerScenarioPoolRequest, LearnerScenarioPoolResponse>("learner-scenario-pool", body),
+  scenarioEvaluate: (body: LearnerScenarioEvaluateRequest) =>
+    invoke<LearnerScenarioEvaluateRequest, LearnerScenarioEvaluateResponse>("learner-scenario-evaluate", body),
+  adaptiveSample: (body: LearnerAdaptiveSampleRequest) =>
+    invoke<LearnerAdaptiveSampleRequest, LearnerAdaptiveSampleResponse>("learner-adaptive-sample", body),
 };
 
 export type LearningApi = typeof learningApi;
