@@ -204,3 +204,115 @@ export async function notifyHiringEvent(
     data ?? {},
   );
 }
+
+// Phase 9h additions --------------------------------------------------------
+export async function sendJobApplication(
+  req: SendJobApplicationRequest,
+): Promise<SendJobApplicationResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "send-job-application",
+    { body: req },
+  );
+  if (error) throw new EdgeFunctionError("send-job-application", error);
+  return parseEdgeResponse(
+    "send-job-application",
+    SendJobApplicationResponseSchema,
+    data ?? {},
+  );
+}
+
+export async function generateInterviewQuestions(
+  req: GenerateInterviewQuestionsRequest,
+): Promise<GenerateInterviewQuestionsResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "generate-interview-questions",
+    { body: req },
+  );
+  if (error) throw new EdgeFunctionError("generate-interview-questions", error);
+  return parseEdgeResponse(
+    "generate-interview-questions",
+    GenerateInterviewQuestionsResponseSchema,
+    data ?? {},
+  );
+}
+
+export async function analyzeMockInterview(
+  req: AnalyzeMockInterviewRequest,
+): Promise<AnalyzeMockInterviewResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "analyze-mock-interview",
+    { body: req },
+  );
+  if (error) throw new EdgeFunctionError("analyze-mock-interview", error);
+  return parseEdgeResponse(
+    "analyze-mock-interview",
+    AnalyzeMockInterviewResponseSchema,
+    data ?? {},
+  );
+}
+
+export async function analyzeJobAssessment(
+  req: AnalyzeJobAssessmentRequest,
+): Promise<AnalyzeJobAssessmentResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "analyze-job-assessment",
+    { body: req },
+  );
+  if (error) throw new EdgeFunctionError("analyze-job-assessment", error);
+  return parseEdgeResponse(
+    "analyze-job-assessment",
+    AnalyzeJobAssessmentResponseSchema,
+    data ?? {},
+  );
+}
+
+export async function generateJobAssessment(
+  req: GenerateJobAssessmentRequest,
+): Promise<GenerateJobAssessmentResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "generate-job-assessment",
+    { body: req },
+  );
+  if (error) throw new EdgeFunctionError("generate-job-assessment", error);
+  return parseEdgeResponse(
+    "generate-job-assessment",
+    GenerateJobAssessmentResponseSchema,
+    data ?? {},
+  );
+}
+
+export async function generateApplicationAnswers(
+  req: GenerateApplicationAnswersRequest,
+  options?: { accessToken?: string },
+): Promise<GenerateApplicationAnswersResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "generate-application-answers",
+    {
+      body: req,
+      headers: options?.accessToken
+        ? { Authorization: `Bearer ${options.accessToken}` }
+        : undefined,
+    },
+  );
+  if (error) throw new EdgeFunctionError("generate-application-answers", error);
+  return parseEdgeResponse(
+    "generate-application-answers",
+    GenerateApplicationAnswersResponseSchema,
+    data ?? {},
+  );
+}
+
+export async function enhanceCoverLetter(
+  req: EnhanceCoverLetterRequest,
+): Promise<EnhanceCoverLetterResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "enhance-cover-letter",
+    { body: req },
+  );
+  if (error) throw new EdgeFunctionError("enhance-cover-letter", error);
+  return parseEdgeResponse(
+    "enhance-cover-letter",
+    EnhanceCoverLetterResponseSchema,
+    data ?? {},
+  );
+}
