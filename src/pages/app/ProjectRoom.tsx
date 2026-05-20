@@ -12,6 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 import { adminGigOps } from "@/domains/gigs/api/gigsApi";
+import { getProjectRoomBundle, insertProjectMessage } from "@/domains/gigs/repo/gigsRepo";
 
 // Production Type Definitions[cite: 8]
 interface Project {
