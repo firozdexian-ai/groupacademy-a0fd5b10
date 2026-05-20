@@ -12,6 +12,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { adminGigOps, aiReviewerBrief } from "@/domains/gigs/api/gigsApi";
+import { getReviewerCockpit } from "@/domains/gigs/repo/gigsRepo";
 
 // Production Data Contracts[cite: 8]
 interface ReviewerProfile {
