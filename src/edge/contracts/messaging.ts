@@ -1,8 +1,13 @@
 /**
- * Edge function contracts for the messaging domain.
+ * Messaging domain — edge function contracts (Phase 9g).
  */
+import { z } from "zod";
 
-export type UnipileAction = "start_hosted_auth" | "verify_and_save" | "delete" | "reconcile";
+export type UnipileAction =
+  | "start_hosted_auth"
+  | "verify_and_save"
+  | "delete"
+  | "reconcile";
 
 export interface UnipileConnectRequest {
   action: UnipileAction;
@@ -14,11 +19,15 @@ export interface UnipileConnectRequest {
   [key: string]: unknown;
 }
 
-export interface UnipileConnectResponse {
-  ok?: boolean;
-  url?: string;
-  channel_id?: string;
-  phone?: string;
-  error?: string;
-  [key: string]: unknown;
-}
+export const UnipileConnectResponseSchema = z
+  .object({
+    ok: z.boolean().optional(),
+    url: z.string().optional(),
+    channel_id: z.string().optional(),
+    phone: z.string().optional(),
+    error: z.string().optional(),
+  })
+  .passthrough();
+export type UnipileConnectResponse = z.infer<
+  typeof UnipileConnectResponseSchema
+>;
