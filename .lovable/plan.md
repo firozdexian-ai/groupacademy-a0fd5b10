@@ -73,3 +73,11 @@ Phase 7  shells/*/routes.tsx + React.lazy
 Phase 8  retire barrel re-exports
 Phase 9  edge/contracts/ for every domain
 ```
+
+
+## Phase 5.9 finance — DONE
+- 9 admin tabs + 1 admin hook + 6 talent components + 3 talent hooks migrated to src/domains/finance/
+- Edge contracts: update-stripe-secret, process-withdrawal, create-checkout
+- F3 swaps: PaymentSettingsTab (3), WithdrawalsTab (1), CreditPurchaseSheet (1)
+- All originals replaced with barrels
+- Progress ~62
