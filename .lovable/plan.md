@@ -67,3 +67,16 @@ Phase 7  shells/*/routes.tsx + React.lazy
 Phase 8  retire barrel re-exports
 Phase 9  edge/contracts/ for every domain
 ```
+
+---
+
+## Phase 5.7 — completed
+
+- 13 admin tabs + 5 leads moved to `src/domains/marketing/components/admin[/leads]/`; `useMarketingGraph` to `.../hooks/`.
+- Barrels at `src/components/dashboard/marketing/*`, `.../leads/*`, and `.../hooks/useMarketingGraph.ts`.
+- `CommunityMessagingChannelTab` retargeted to `@/domains/messaging/components/admin/MessagingChannelsTab`.
+- Relative `../DashboardSkeleton`, `../../DashboardSkeleton`, `../../talent/TalentDetailDialog` rewritten to absolute `@/...` paths.
+- `src/edge/contracts/marketing.ts` (`LeadHuntMatchRequest`/`Response`) + `src/domains/marketing/api/manifest.ts` (`marketingApi.leadHuntMatch`).
+- `LeadHunterManager` F3 sweep: `supabase.functions.invoke("lead-hunt-match")` → `marketingApi.leadHuntMatch(...)`.
+- `src/domains/marketing/index.ts` re-exports all.
+- Verified zero `functions.invoke` in domain.
