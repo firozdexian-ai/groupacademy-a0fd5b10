@@ -5,6 +5,8 @@
  */
 import { useEffect, useState, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { generateOutreachMessage } from "@/domains/talent/api/talentApi";
+import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -108,15 +110,13 @@ export function TalentOutreachConsoleTab() {
     if (!selectedTalent) return toast.error("Select target talent");
     setGenerating(true);
     try {
-      const { data, error } = await supabase.functions.invoke("generate-outreach-message", {
-        body: {
-          talent_id: selectedTalent.id,
-          product_context: TALENT_PRODUCTS.find((p) => p.value === "digital-portfolio")?.label,
-        },
+      const data = await generateOutreachMessage({
+        talent_id: selectedTalent.id,
+        product_context: TALENT_PRODUCTS.find((p) => p.value === "digital-portfolio")?.label,
       });
-      if (error) throw error;
       setDraft(data?.message || "");
-    } catch (e: any) {
+    } catch (e: unknown) {
+      if (e instanceof EdgeFunctionError) console.error(e);
       toast.error("Generation failed");
     } finally {
       setGenerating(false);
