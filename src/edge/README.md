@@ -23,6 +23,12 @@ owner's `api/<owner>Api.ts` — never re-wrap the same function elsewhere.
 | `score-job-match`, `suggest-jobs-for-talent`, `cron-rebuild-job-recs`, `analyze-job-market`, `enhance-job-description`, `parse-cv`, `parse-job-post`, `generate-job-share-caption`, `notify-application-status`, `notify-hiring-event` | jobs |
 | `ai-destination-agent`, `generate-study-roadmap`, `book-language-session`, `ai-language-partner`, `ai-ielts-evaluate` | abroad |
 | `ai-instructor-chat`, `ai-item-apply`, `ai-item-rewrite`, `ai-item-translate`, `ai-item-translate-apply`, `authoring-review-digest`, `create-instructor-job-from-brief`, `instructor-item-analytics`, `issue-skill-credentials`, `learner-adaptive-sample`, `learner-mastery-summary`, `learner-next-actions`, `learner-quiz-pool`, `learner-review-queue`, `learner-scenario-evaluate`, `learner-scenario-pool`, `learner-talent-mirror` | learning |
+| `ai-bid-coach` | gigs |
+| `claim-public-handle` | profile |
+| `update-stripe-secret`, `process-withdrawal`, `create-checkout` | finance |
+| `unipile-connect` | messaging |
+| `lead-hunt-match` | marketing |
+| `admin-report-builder` | analytics |
 
 ## Convention
 

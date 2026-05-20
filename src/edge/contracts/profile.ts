@@ -1,24 +1,25 @@
 /**
- * Typed request/response contracts for profile-domain edge functions.
+ * Profile domain — edge function contracts (Phase 9g).
+ *
+ * Only `claim-public-handle` is owned by profile. `parse-cv` is owned by
+ * jobs — see `src/domains/jobs/api/jobsApi.ts` and import from there.
  */
+import { z } from "zod";
 
-// claim-public-handle
 export interface ClaimPublicHandleRequest {
   handle: string;
   is_public?: boolean;
-}
-export interface ClaimPublicHandleResponse {
-  ok: boolean;
-  handle?: string;
-  error?: string;
+  [k: string]: unknown;
 }
 
-// parse-cv
-export interface ParseCvRequest {
-  cvUrl: string;
-}
-export interface ParseCvResponse {
-  success?: boolean;
-  data?: Record<string, unknown>;
-  error?: string;
-}
+export const ClaimPublicHandleResponseSchema = z
+  .object({
+    ok: z.boolean().optional(),
+    handle: z.string().optional(),
+    message: z.string().optional(),
+    error: z.string().optional(),
+  })
+  .passthrough();
+export type ClaimPublicHandleResponse = z.infer<
+  typeof ClaimPublicHandleResponseSchema
+>;

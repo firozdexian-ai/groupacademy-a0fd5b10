@@ -9,6 +9,7 @@ import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { supabase } from "@/integrations/supabase/client";
+import { adminReportBuilder } from "@/domains/analytics/api/analyticsApi";
 import { toast } from "@/hooks/use-toast";
 import {
   ResponsiveContainer,
@@ -78,11 +79,7 @@ export function ReportsBuilderTab() {
     setSpec(null);
     setData({});
     try {
-      const { data: res, error } = await supabase.functions.invoke("admin-report-builder", {
-        body: { brief: text },
-      });
-      if (error) throw error;
-      const payload = res as any;
+      const payload = (await adminReportBuilder({ brief: text })) as any;
       if (payload?.error) {
         const detail = payload.detail
           ? ` — ${typeof payload.detail === "string" ? payload.detail : JSON.stringify(payload.detail)}`

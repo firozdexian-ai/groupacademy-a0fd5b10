@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { unipileConnect } from "@/domains/messaging/api/messagingApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
@@ -79,10 +80,13 @@ export function MessagingChannelsTab({
     if (!label.trim()) return toast.error("Label is required");
     setCreating(true);
     try {
-      const { data, error } = await supabase.functions.invoke("unipile-connect", {
-        body: { action: "start_hosted_auth", agent_key: agentKey, label, region, provider: "whatsapp" },
+      const data = await unipileConnect({
+        action: "start_hosted_auth",
+        agent_key: agentKey,
+        label,
+        region,
+        provider: "whatsapp",
       });
-      if (error) throw error;
       if (data?.url) {
         window.open(data.url, "_blank", "noopener");
         setHasStarted(true);
@@ -101,10 +105,11 @@ export function MessagingChannelsTab({
     if (!accountId.trim()) return toast.error("Paste the Unipile account_id first");
     setVerifying(true);
     try {
-      const { data, error } = await supabase.functions.invoke("unipile-connect", {
-        body: { action: "verify_and_save", agent_key: agentKey, account_id: accountId.trim() },
+      const data = await unipileConnect({
+        action: "verify_and_save",
+        agent_key: agentKey,
+        account_id: accountId.trim(),
       });
-      if (error) throw error;
       if (data?.ok) {
         toast.success(`Connected${data.phone ? ` · ${data.phone}` : ""}`);
         setAccountId("");
@@ -126,21 +131,20 @@ export function MessagingChannelsTab({
 
   const removeChannel = async () => {
     if (!confirm("Disconnect this channel? The Unipile account will be removed.")) return;
-    const { data, error } = await supabase.functions.invoke("unipile-connect", {
-      body: { action: "delete", agent_key: agentKey },
-    });
-    if (error || data?.error) toast.error(error?.message || data?.error);
-    else toast.success("Channel removed");
+    try {
+      const data = await unipileConnect({ action: "delete", agent_key: agentKey });
+      if (data?.error) toast.error(data.error);
+      else toast.success("Channel removed");
+    } catch (e: any) {
+      toast.error(e.message);
+    }
   };
 
   const [reconciling, setReconciling] = useState(false);
   const reconcile = async () => {
     setReconciling(true);
     try {
-      const { data, error } = await supabase.functions.invoke("unipile-connect", {
-        body: { action: "reconcile", agent_key: agentKey },
-      });
-      if (error) throw error;
+      const data = await unipileConnect({ action: "reconcile", agent_key: agentKey });
       if (data?.ok) toast.success(`Reconciled${data.phone ? ` · ${data.phone}` : ""}`);
       else toast.error(data?.error || "Reconcile failed");
     } catch (e: any) {
