@@ -73,17 +73,17 @@ export default function ProjectRoom() {
   const sendMessage = async () => {
     if (!body.trim()) return;
     const { data: u } = await supabase.auth.getUser();
-    const { error } = await supabase.from("gig_project_messages").insert({
-      project_id: projectId,
-      sender_id: u.user!.id,
-      body,
-    });
-    if (error) {
-      await reportAnomaly("MessageDeliveryError", { error });
-      toast.error("Delivery failed.");
-    } else {
+    try {
+      await insertProjectMessage({
+        projectId: projectId!,
+        senderId: u.user!.id,
+        body,
+      });
       setBody("");
       load();
+    } catch (error) {
+      await reportAnomaly("MessageDeliveryError", { error });
+      toast.error("Delivery failed.");
     }
   };
 
