@@ -82,7 +82,7 @@ export function SupportAITab() {
       });
       if (data?.error) throw new Error(data.error);
 
-      setResponse(data);
+      setResponse(data as AIResponse);
       toast.success("Intelligence: Conversation analyzed.");
     } catch (err: any) {
       console.error("Analysis Fault:", err);
