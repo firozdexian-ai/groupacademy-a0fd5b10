@@ -32,6 +32,7 @@ import { useTalent } from "@/hooks/useTalent";
 import { ProfileCompletionPrompt } from "@/components/profile/ProfileCompletionPrompt";
 import { RetryErrorCard, getErrorType } from "@/components/ui/retry-error-card";
 import { cn } from "@/lib/utils";
+import { generateInterviewQuestions } from "@/domains/jobs/api/jobsApi";
 
 interface ProfessionCategory {
   id: string;
