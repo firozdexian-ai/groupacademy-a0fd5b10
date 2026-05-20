@@ -1,5 +1,5 @@
 import { supabase } from "@/integrations/supabase/client";
-import { sendTransactionalEmail } from "@/domains/messaging/api/messagingApi";
+import { sendTransactionalEmail as invokeTransactionalEmail } from "@/domains/messaging/api/messagingApi";
 
 /**
  * GroUp Academy: Institutional Notification Dispatcher
