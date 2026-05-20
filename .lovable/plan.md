@@ -68,3 +68,15 @@ This makes regressions impossible without an explicit override.
 ## Execution order
 
 Suggest landing batches A → B → C → D → E → F → G sequentially in a single turn (they are independent files), then ESLint guard, then docs, then verification. If any batch surfaces an unexpected polymorphic body, stop and extend the contract before continuing.
+
+---
+
+# Phase 9h — ✅ COMPLETE
+
+Executed: all ~60 raw `supabase.functions.invoke` call sites migrated
+to typed wrappers across batches A–G. ESLint `no-restricted-syntax`
+guard installed in `eslint.config.js` (scoped allowlist:
+`src/domains/*/api/*Api.ts` + `src/components/ai-instructor/AIChatPanel.tsx`
+for SSE streaming). `tsc --noEmit` clean; `eslint src` reports zero
+guard violations; `rg "supabase.functions.invoke"` returns only the
+permitted files. Drift log updated (entry 11).
