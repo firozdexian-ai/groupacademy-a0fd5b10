@@ -1,5 +1,6 @@
 import { useState, useEffect, useCallback, useMemo } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { marketingApi } from "@/domains/marketing/api/manifest";
 import { DashboardTableSkeleton, DashboardErrorState } from "@/components/dashboard/DashboardSkeleton";
 import { TalentDetailDialog } from "@/components/dashboard/talent/TalentDetailDialog";
 import { Button } from "@/components/ui/button";
