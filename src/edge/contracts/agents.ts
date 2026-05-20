@@ -53,22 +53,42 @@ export type AiGeneralChatResponse = z.infer<typeof AiGeneralChatResponseSchema>;
 
 // admin-support-assistant ----------------------------------------------------
 /**
- * Canonical body shape per the edge function. Some legacy call sites send
- * `{ type, error/event, context }` instead — that drift is logged separately
- * and rerouted to a console no-op in the agents-domain shell pages.
+ * Fire-and-forget telemetry sink used by various admin/talent pages to
+ * report client-side anomalies. Legacy call sites send
+ * `{ type, error/event, context }`; the underlying edge function may not
+ * exist on disk in all deployments and these calls are expected to fail
+ * silently. Wrapper preserves runtime behavior and is documented in
+ * `.lovable/known-edge-contract-drift.md`.
  */
 export interface AdminSupportAssistantRequest {
-  image?: string;
-  context?: string;
-  /** Legacy anomaly-reporting fields tolerated by older call sites. */
   type?: string;
+  severity?: string;
   error?: string;
   event?: string;
-  severity?: string;
+  context?: string | Record<string, unknown>;
   [k: string]: unknown;
 }
 
 export const AdminSupportAssistantResponseSchema = z
+  .object({ ok: z.boolean().optional(), error: z.string().optional() })
+  .passthrough();
+export type AdminSupportAssistantResponse = z.infer<
+  typeof AdminSupportAssistantResponseSchema
+>;
+
+// ai-support-assistant -------------------------------------------------------
+/**
+ * Image-OCR-driven CRM support assistant. Canonical body is
+ * `{ image, context }` with `image` required.
+ */
+export interface AiSupportAssistantRequest {
+  /** Data URL of the chat screenshot to analyze. */
+  image: string;
+  /** Optional natural-language context for grounding. */
+  context?: string;
+}
+
+export const AiSupportAssistantResponseSchema = z
   .object({
     reply: z.string().optional(),
     tone: z.string().optional(),
@@ -77,8 +97,8 @@ export const AdminSupportAssistantResponseSchema = z
     error: z.string().optional(),
   })
   .passthrough();
-export type AdminSupportAssistantResponse = z.infer<
-  typeof AdminSupportAssistantResponseSchema
+export type AiSupportAssistantResponse = z.infer<
+  typeof AiSupportAssistantResponseSchema
 >;
 
 // agent-blueprint ------------------------------------------------------------

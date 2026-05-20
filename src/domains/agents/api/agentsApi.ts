@@ -16,6 +16,7 @@ import {
   AgentEventDispatcherResponseSchema,
   AgentRuntimeResponseSchema,
   AiGeneralChatResponseSchema,
+  AiSupportAssistantResponseSchema,
   IngestAgentKnowledgeResponseSchema,
   type AdminSupportAssistantRequest,
   type AdminSupportAssistantResponse,
@@ -27,6 +28,8 @@ import {
   type AgentRuntimeResponse,
   type AiGeneralChatRequest,
   type AiGeneralChatResponse,
+  type AiSupportAssistantRequest,
+  type AiSupportAssistantResponse,
   type IngestAgentKnowledgeRequest,
   type IngestAgentKnowledgeResponse,
 } from "@/edge/contracts/agents";
@@ -63,6 +66,21 @@ export async function adminSupportAssistant(
     "admin-support-assistant",
     AdminSupportAssistantResponseSchema,
     data ?? {},
+  );
+}
+
+export async function aiSupportAssistant(
+  req: AiSupportAssistantRequest,
+): Promise<AiSupportAssistantResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "ai-support-assistant",
+    { body: req },
+  );
+  if (error) throw new EdgeFunctionError("ai-support-assistant", error);
+  return parseEdgeResponse(
+    "ai-support-assistant",
+    AiSupportAssistantResponseSchema,
+    data ?? { reply: "" },
   );
 }
 
