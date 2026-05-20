@@ -56,11 +56,13 @@ export function WithdrawalsTab() {
   async function processWithdrawal(id: string, action_status: Row["status"]) {
     setProcessingId(id);
     try {
-      const { data, error } = await supabase.functions.invoke("process-withdrawal", {
-        body: { withdrawal_id: id, action: action_status, admin_notes: noteDraft[id] ?? null },
+      const { data, error } = await financeApi.processWithdrawal({
+        withdrawal_id: id,
+        action: action_status,
+        admin_notes: noteDraft[id] ?? null,
       });
       if (error) throw error;
-      if (data?.error) throw new Error(data.error);
+      if ((data as { error?: string } | null)?.error) throw new Error((data as { error?: string }).error);
 
       toast.success(`Withdrawal securely marked as ${action_status}`);
       setNoteDraft((prev) => ({ ...prev, [id]: "" }));
