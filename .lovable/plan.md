@@ -58,3 +58,15 @@ Phase 7  shells/*/routes.tsx + React.lazy
 Phase 8  retire barrel re-exports
 Phase 9  edge/contracts/ for every domain
 ```
+
+---
+
+## Phase 5.4 — COMPLETE
+
+- 3 talent components → `src/domains/abroad/components/talent/` (+ barrels)
+- 8 admin tabs + `useAbroadGraph` → `src/domains/abroad/components/admin/[hooks/]` (+ barrels)
+- `src/edge/contracts/abroad.ts` + `src/domains/abroad/api/manifest.ts` (`abroadApi.{aiDestinationAgent, generateStudyRoadmap}`)
+- F3 sweep: 2 direct invokes replaced (RoadmapBuilderSheet, RoadmapIntakeForm)
+- Verification: no remaining `functions.invoke` outside manifest; intra-imports clean
+
+Progress ~43%. Next: 5.5 messaging.
