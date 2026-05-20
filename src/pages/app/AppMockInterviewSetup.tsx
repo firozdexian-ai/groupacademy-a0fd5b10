@@ -261,7 +261,7 @@ export default function AppMockInterviewSetup() {
           difficulty: interviewConfigState.difficulty,
           professionCategoryId: interviewConfigState.professionCategoryId,
           additionalNotes: interviewConfigState.additionalNotes,
-          candidateProfile: calculatedCandidateProfile,
+          candidateProfile: calculatedCandidateProfile as unknown as Record<string, unknown>,
         }).then((data) => ({ data, error: null })).catch((error) => ({ data: null, error })),
         aiInferenceTimeoutPromise,
       ]);
