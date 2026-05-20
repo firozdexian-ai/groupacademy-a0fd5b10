@@ -6,6 +6,7 @@ import { useAccountType } from "@/hooks/useAccountType";
 import { resolvePostAuthRoute } from "@/lib/postAuthRoute";
 import { supabase } from "@/integrations/supabase/client";
 import { finalizePendingOnboarding } from "@/lib/finalizePendingOnboarding";
+import { sendTransactionalEmail } from "@/domains/messaging/api/messagingApi";
 
 const WELCOME_KEY_PREFIX = "ga_welcome_sent_";
 

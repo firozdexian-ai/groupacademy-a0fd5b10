@@ -5,6 +5,7 @@ import { lovable } from "@/integrations/lovable";
 import { User, Session } from "@supabase/supabase-js";
 import { toast } from "sonner";
 import { isPhoneNumber } from "@/lib/validations";
+import { sendTransactionalEmail } from "@/domains/messaging/api/messagingApi";
 
 /**
  * Identity & session orchestrator.
