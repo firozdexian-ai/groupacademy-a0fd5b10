@@ -2,6 +2,7 @@ import { useState, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { abroadApi } from "@/domains/abroad/api/manifest";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
 import { toast } from "sonner";
@@ -126,22 +127,20 @@ export function RoadmapIntakeForm() {
       if (insertError) throw insertError;
 
       // HUD: STEP_4_SERVERLESS_EDGE_ORCHESTRATOR_SWARM_INVOCATION
-      const { error: edgeError } = await supabase.functions.invoke("generate-study-roadmap", {
-        body: {
-          roadmapId: roadmap.id,
-          targetCountries: formData.targetCountries,
-          degreeLevel: formData.degreeLevel,
-          fieldOfStudy: formData.fieldOfStudy.trim(),
-          targetIntake: formData.targetIntake,
-          budgetLevel: formData.budgetLevel,
-          ieltsScore: formData.hasTakenIelts ? parseFloat(formData.ieltsScore) : null,
-          fullName: talent.fullName,
-          email: talent.email,
-          currentProfession: talent.profession || "Student",
-          currentSkills: talent.skills || [],
-          originCountry: talent.country || "International",
-          yearsExperience: talent.experience_years || 0,
-        },
+      const { error: edgeError } = await abroadApi.generateStudyRoadmap({
+        roadmapId: roadmap.id,
+        targetCountries: formData.targetCountries,
+        degreeLevel: formData.degreeLevel,
+        fieldOfStudy: formData.fieldOfStudy.trim(),
+        targetIntake: formData.targetIntake,
+        budgetLevel: formData.budgetLevel,
+        ieltsScore: formData.hasTakenIelts ? parseFloat(formData.ieltsScore) : null,
+        fullName: talent.fullName,
+        email: talent.email,
+        currentProfession: talent.profession || "Student",
+        currentSkills: talent.skills || [],
+        originCountry: talent.country || "International",
+        yearsExperience: talent.experience_years || 0,
       });
 
       if (edgeError) throw edgeError;

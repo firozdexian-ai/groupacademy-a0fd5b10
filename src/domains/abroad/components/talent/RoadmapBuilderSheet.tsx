@@ -94,8 +94,8 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
         throw error;
       }
 
-      if (data?.error) {
-        throw new Error(data.error);
+      if (data && (data as { error?: unknown }).error) {
+        throw new Error(String((data as { error?: unknown }).error));
       }
 
       return data as { roadmap_id: string };
