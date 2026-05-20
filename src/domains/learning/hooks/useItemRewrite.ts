@@ -83,19 +83,16 @@ export function useItemRewrite() {
   const applyMutation = useMutation({
     mutationFn: async (input: { kind: RewriteKind; itemId: string; patch: any; flagsAddressed: string[] }) => {
       // HUD: EXECUTING_REVISION_PATCH_handshake
-      const { data: res, error: e } = await supabase.functions.invoke("ai-item-apply", {
-        body: {
-          kind: input.kind,
-          item_id: input.itemId,
-          patch: input.patch,
-          flags_addressed: input.flagsAddressed,
-        },
+      const res = await aiItemApply({
+        kind: input.kind,
+        item_id: input.itemId,
+        patch: input.patch,
+        flags_addressed: input.flagsAddressed,
       });
 
-      if (e) throw e;
-      if ((res as any)?.error) throw new Error((res as any).error);
+      if (res?.error) throw new Error(res.error);
 
-      return res as { ok: boolean; item_id: string; revision_id: string | null };
+      return res as unknown as { ok: boolean; item_id: string; revision_id: string | null };
     },
     onSuccess: (res, variables) => {
       // Automatic Cache Invalidation:
