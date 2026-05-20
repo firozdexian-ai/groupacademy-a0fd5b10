@@ -115,3 +115,19 @@ export interface OrgLearningHealthResponse {
   seats_total: number;
   [k: string]: unknown;
 }
+
+// ---------- Quiz / scenario runners ----------
+// Loose contracts — runners carry many flavors of input/output. Tighten in a
+// follow-up when the runner UI is migrated to call these typed wrappers.
+export type LearnerQuizPoolRequest = Record<string, unknown>;
+export type LearnerQuizPoolResponse = Record<string, unknown>;
+
+export type LearnerScenarioPoolRequest = Record<string, unknown>;
+export type LearnerScenarioPoolResponse = Record<string, unknown>;
+
+export type LearnerScenarioEvaluateRequest = Record<string, unknown>;
+export type LearnerScenarioEvaluateResponse = Record<string, unknown>;
+
+export type LearnerAdaptiveSampleRequest = Record<string, unknown>;
+export type LearnerAdaptiveSampleResponse = Record<string, unknown>;
+
