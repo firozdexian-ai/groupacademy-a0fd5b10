@@ -57,3 +57,8 @@ Phase 7  shells/*/routes.tsx + React.lazy
 Phase 8  retire barrel re-exports (incl. hr/)
 Phase 9  edge/contracts/ for every domain
 ```
+
+## Phase 5.11 workforce - DONE
+- 6 admin tabs + 1 hook migrated to src/domains/workforce/ (legacy hr/ kept as barrels)
+- WorkforceTab DashboardSkeleton import rewritten to @/components alias
+- Progress ~68%. Next: 5.12 ugc.
