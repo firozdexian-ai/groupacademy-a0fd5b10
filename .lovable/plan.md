@@ -1,62 +1,62 @@
-## Phase 5.7 — `marketing` domain vertical slice
+## Phase 5.8 — `ir` domain vertical slice
 
-Pure admin domain — no talent-facing routes. Extract 13 admin tabs + 5 lead-management subviews + 1 graph hook + 1 typed edge contract for the only edge invoke in the area (`lead-hunt-match`).
+Admin-only domain (Investor Relations). No edge functions, no talent-facing UI, single external consumer (`src/pages/Dashboard.tsx`). 23 files in four buckets.
 
 ### Scope
 
-**Admin UI → `src/domains/marketing/components/admin/` (+ barrels at `src/components/dashboard/marketing/*`)** — 13 files
-- `AccessCodesTab`, `AdminsRepsTab`, `BannersTab`
-- `CommunityMessagingChannelTab` (wrapper around `MessagingChannelsTab` — re-import from `@/domains/messaging`)
-- `ContentOutreachTab`, `LeadsActivitiesTab`, `MarketingAnalyticsTab`, `MktSimpleTabs`
-- `ServiceOutreachTab`, `TalentOutreachTab`, `ThemesTab`
-- `StandaloneMockInterviewCodeGenerator`, `StandaloneSalaryCodeGenerator`
+**Admin UI → `src/domains/ir/components/admin/` (+ barrels at `src/components/dashboard/ir/*`)** — 9 top-level files
+- `IRDashboard`, `IRPipelineBoard`
+- `InvestorsManager`, `InvestorDetailSheet`, `InteractionLogger`
+- `EmailComposer`
+- `KeyInfluencersTab`
+- `MRRTargetManager`, `VCFirmsManager`
 
-**Admin leads → `src/domains/marketing/components/admin/leads/` (+ barrels at `src/components/dashboard/marketing/leads/*`)** — 5 files
-- `LeadHunterManager`, `MockInterviewCodeGenerator`, `MockInterviewLeadsManager`
-- `SalaryAnalysisCodeGenerator`, `SalaryAnalysisLeadsManager`
+**Dataroom → `src/domains/ir/components/admin/dataroom/` (+ barrels at `src/components/dashboard/ir/dataroom/*`)** — 4 files
+- `DataRoomManager`, `DocumentTelemetryDrawer`, `ShareLinkDialog`, `UploadDocumentDialog`
 
-**Hooks → `src/domains/marketing/components/admin/hooks/` (+ barrel at `src/components/dashboard/marketing/hooks/useMarketingGraph.ts`)** — 1 file
-- `useMarketingGraph`
+**Economics → `src/domains/ir/components/admin/economics/` (+ barrels at `src/components/dashboard/ir/economics/*`)** — 6 files
+- `UnitEconomics`, `CohortRetentionCard`, `RetentionCard`, `RevPerEmployeeCard`, `HitLCogsCard`, `MetricEntrySheet`
 
-**Edge contract → `src/edge/contracts/marketing.ts`**
-- `LeadHuntMatchRequest`: `{ jobTitle, companyName, jobDescription, leadsRequested }`
-- `LeadHuntMatchResponse`: `Record<string, unknown>` (permissive — UI reads `data` opaquely)
+**Pipeline → `src/domains/ir/components/admin/pipeline/` (+ barrels at `src/components/dashboard/ir/pipeline/*`)** — 2 files
+- `PipelineCard`, `PipelineColumn`
 
-**API manifest → `src/domains/marketing/api/manifest.ts`**
-- `marketingApi.leadHuntMatch(body)` wraps `supabase.functions.invoke("lead-hunt-match", { body })` and returns the typed envelope.
+**Hooks → `src/domains/ir/components/admin/hooks/` (+ barrels at `src/components/dashboard/ir/hooks/*`)** — 2 files
+- `useDataRoom`, `useIRPipeline`
 
-**Domain index → `src/domains/marketing/index.ts`**
-- Re-export all admin tabs, leads, hook, `marketingApi`.
+**Edge contract → `src/edge/contracts/ir.ts`**
+- Reserved namespace, no invokes today. All persistence is direct table writes / RPCs.
+
+**API manifest → `src/domains/ir/api/manifest.ts`**
+- Empty `irApi = {}` stub.
+
+**Domain index → `src/domains/ir/index.ts`**
+- Re-export all components, hooks, `irApi`.
 
 **F3 sweep**
-- Replace the single `supabase.functions.invoke("lead-hunt-match", …)` in `LeadHunterManager` with `marketingApi.leadHuntMatch(…)`.
-- Fix the internal import in `CommunityMessagingChannelTab` to point at `@/domains/messaging/components/admin/MessagingChannelsTab` (matches Phase 5.5 + 5.6 pattern).
-- Rewrite any `../hooks/useMarketingGraph` or `../DashboardSkeleton` relative imports to absolute `@/` paths after copy.
+- No edge invokes. Only mechanical rewrites of relative imports (`../DashboardSkeleton`, `./hooks/...`, intra-folder siblings) to absolute `@/...` paths where needed after copy.
 
 ### Importers that keep working via barrels
-- `src/pages/Dashboard.tsx` — sole external consumer of `components/dashboard/marketing/*`.
+- `src/pages/Dashboard.tsx` (sole external consumer).
 
 ### Verification
 - Type-check passes.
-- `/dashboard` Marketing group tabs (Overview / Banners / Themes / Content / Service / Talent / Community Messaging / Analytics / Access Codes / Leads / Admins) all mount.
-- Lead Hunter "Hunt leads" action still fires through `marketingApi.leadHuntMatch`.
-- `rg "functions.invoke" src/domains/marketing/` returns 0.
+- `/dashboard` Investors group tabs (Pipeline / Investors / VC Firms / Key Influencers / Dataroom / Unit Economics / MRR Targets) all mount.
+- Dataroom upload + share-link flows still open.
+- `rg "functions.invoke" src/domains/ir/` returns 0.
 
 ### Out of scope
-- `useOffers`, `useOnboarding` (those belong to `talent`/`onboarding` domains — not marketing).
-- Public marketing landing pages (`/`, `/about`, `/pricing`) — owned by the marketing shell, separate from this admin extraction.
-- `src/components/marketing/` (does not exist).
+- IR-side chat agents (`FP&A`, `Relationship Exec`) — already part of `agents` domain.
+- Public investor landing pages — not present.
 - Phases 6–9.
 
 ### Risk
-- Low/medium. 19 files, 1 edge fn, 1 cross-domain (messaging) import to retarget. No talent UI to retest.
+- Low. 23 files, 0 edge fns, 1 external importer.
 
-### Progress after 5.7
-~53%. Next: 5.8 ir (Investor Relations admin group).
+### Progress after 5.8
+~57%. Next: 5.9 finance.
 
 ### Roadmap remainder
 ```text
-5.8  ir
 5.9  finance
 5.10 institutions
 5.11 workforce
@@ -67,16 +67,3 @@ Phase 7  shells/*/routes.tsx + React.lazy
 Phase 8  retire barrel re-exports
 Phase 9  edge/contracts/ for every domain
 ```
-
----
-
-## Phase 5.7 — completed
-
-- 13 admin tabs + 5 leads moved to `src/domains/marketing/components/admin[/leads]/`; `useMarketingGraph` to `.../hooks/`.
-- Barrels at `src/components/dashboard/marketing/*`, `.../leads/*`, and `.../hooks/useMarketingGraph.ts`.
-- `CommunityMessagingChannelTab` retargeted to `@/domains/messaging/components/admin/MessagingChannelsTab`.
-- Relative `../DashboardSkeleton`, `../../DashboardSkeleton`, `../../talent/TalentDetailDialog` rewritten to absolute `@/...` paths.
-- `src/edge/contracts/marketing.ts` (`LeadHuntMatchRequest`/`Response`) + `src/domains/marketing/api/manifest.ts` (`marketingApi.leadHuntMatch`).
-- `LeadHunterManager` F3 sweep: `supabase.functions.invoke("lead-hunt-match")` → `marketingApi.leadHuntMatch(...)`.
-- `src/domains/marketing/index.ts` re-exports all.
-- Verified zero `functions.invoke` in domain.
