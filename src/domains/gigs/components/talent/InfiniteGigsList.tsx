@@ -3,7 +3,7 @@ import { Loader2, Briefcase, Coins, Clock, Sparkles, ChevronRight } from "lucide
 import { useNavigate } from "react-router-dom";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { useRankedGigs } from "@/hooks/useRankedGigs";
+import { useRankedGigs } from "@/domains/gigs/hooks/useRankedGigs";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 
