@@ -2,7 +2,7 @@ import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
-import { DashboardTableSkeleton, DashboardErrorState } from "../../DashboardSkeleton";
+import { DashboardTableSkeleton, DashboardErrorState } from "@/components/dashboard/DashboardSkeleton";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -25,7 +25,7 @@ import {
 import { toast } from "sonner";
 import { format } from "date-fns";
 import { MockInterviewCodeGenerator } from "./MockInterviewCodeGenerator";
-import { TalentDetailDialog } from "../../talent/TalentDetailDialog";
+import { TalentDetailDialog } from "@/components/dashboard/talent/TalentDetailDialog";
 import { useNavigate } from "react-router-dom";
 import { cn } from "@/lib/utils";
 
