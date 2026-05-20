@@ -119,8 +119,8 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
         throw new Error(msgErr?.message || "Ecosystem copywriting message generation failed.");
       }
 
-      if (msgErr || !msgRes?.success) {
-        throw new Error(msgErr?.message || "Ecosystem copywriting message generation failed.");
+      if (!msgRes?.success) {
+        throw new Error("Ecosystem copywriting message generation failed.");
       }
 
       setOutreachMessage(msgRes.message);
