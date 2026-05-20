@@ -1,36 +1,91 @@
 /**
  * Typed edge-function client surface for the Learning domain.
  * Wraps `supabase.functions.invoke` so UI never references function names directly.
+ *
+ * Request/response shapes live in `@/edge/contracts/learning`. Update those
+ * contracts when an underlying edge function changes — `tsc` will then flag
+ * every caller in the domain.
  */
 import { supabase } from "@/integrations/supabase/client";
+import type {
+  AiInstructorChatRequest,
+  AiInstructorChatResponse,
+  AiItemApplyRequest,
+  AiItemApplyResponse,
+  AiItemRewriteRequest,
+  AiItemRewriteResponse,
+  AiItemTranslateRequest,
+  AiItemTranslateResponse,
+  AuthoringReviewDigestRequest,
+  AuthoringReviewDigestResponse,
+  GetTrackProgressRequest,
+  GetTrackProgressResponse,
+  GetTutorMasteryContextRequest,
+  GetTutorMasteryContextResponse,
+  InstructorItemAnalyticsRequest,
+  InstructorItemAnalyticsResponse,
+  LearnerAdaptiveSampleRequest,
+  LearnerAdaptiveSampleResponse,
+  LearnerNextActionsRequest,
+  LearnerNextActionsResponse,
+  LearnerQuizPoolRequest,
+  LearnerQuizPoolResponse,
+  LearnerScenarioEvaluateRequest,
+  LearnerScenarioEvaluateResponse,
+  LearnerScenarioPoolRequest,
+  LearnerScenarioPoolResponse,
+  LearnerTalentMirrorRequest,
+  LearnerTalentMirrorResponse,
+  OrgLearningHealthRequest,
+  OrgLearningHealthResponse,
+} from "@/edge/contracts/learning";
 
-type InvokeBody = Record<string, unknown> | undefined;
-
-async function invoke<T = unknown>(name: string, body?: InvokeBody): Promise<T> {
-  const { data, error } = await supabase.functions.invoke(name, { body });
+async function invoke<TReq, TRes>(name: string, body?: TReq): Promise<TRes> {
+  const { data, error } = await supabase.functions.invoke(name, { body: body as Record<string, unknown> | undefined });
   if (error) throw error;
-  return data as T;
+  return data as TRes;
 }
 
 export const learningApi = {
   // Tutor / mastery
-  tutorChat: (body: InvokeBody) => invoke("ai-instructor-chat", body),
-  tutorMastery: (body: InvokeBody) => invoke("get_tutor_mastery_context", body),
+  tutorChat: (body: AiInstructorChatRequest) =>
+    invoke<AiInstructorChatRequest, AiInstructorChatResponse>("ai-instructor-chat", body),
+  tutorMastery: (body: GetTutorMasteryContextRequest) =>
+    invoke<GetTutorMasteryContextRequest, GetTutorMasteryContextResponse>("get_tutor_mastery_context", body),
 
   // Authoring & item bank
-  itemRewrite: (body: InvokeBody) => invoke("ai-item-rewrite", body),
-  itemRewriteApply: (body: InvokeBody) => invoke("ai-item-apply", body),
-  itemTranslate: (body: InvokeBody) => invoke("ai-item-translate", body),
-  itemAnalytics: (body: InvokeBody) => invoke("instructor-item-analytics", body),
-  authoringDigest: (body: InvokeBody) => invoke("authoring-review-digest", body),
+  itemRewrite: (body: AiItemRewriteRequest) =>
+    invoke<AiItemRewriteRequest, AiItemRewriteResponse>("ai-item-rewrite", body),
+  itemRewriteApply: (body: AiItemApplyRequest) =>
+    invoke<AiItemApplyRequest, AiItemApplyResponse>("ai-item-apply", body),
+  itemTranslate: (body: AiItemTranslateRequest) =>
+    invoke<AiItemTranslateRequest, AiItemTranslateResponse>("ai-item-translate", body),
+  itemAnalytics: (body: InstructorItemAnalyticsRequest) =>
+    invoke<InstructorItemAnalyticsRequest, InstructorItemAnalyticsResponse>("instructor-item-analytics", body),
+  authoringDigest: (body: AuthoringReviewDigestRequest) =>
+    invoke<AuthoringReviewDigestRequest, AuthoringReviewDigestResponse>("authoring-review-digest", body),
 
   // Learner-facing
-  nextActions: (body: InvokeBody) => invoke("learner-next-actions", body),
-  talentMirror: (body: InvokeBody) => invoke("learner-talent-mirror", body),
+  nextActions: (body: LearnerNextActionsRequest) =>
+    invoke<LearnerNextActionsRequest, LearnerNextActionsResponse>("learner-next-actions", body),
+  talentMirror: (body: LearnerTalentMirrorRequest) =>
+    invoke<LearnerTalentMirrorRequest, LearnerTalentMirrorResponse>("learner-talent-mirror", body),
 
   // Tracks / cohorts / orgs
-  trackProgress: (body: InvokeBody) => invoke("get_track_progress", body),
-  orgLearningHealth: (body: InvokeBody) => invoke("org_learning_health", body),
+  trackProgress: (body: GetTrackProgressRequest) =>
+    invoke<GetTrackProgressRequest, GetTrackProgressResponse>("get_track_progress", body),
+  orgLearningHealth: (body: OrgLearningHealthRequest) =>
+    invoke<OrgLearningHealthRequest, OrgLearningHealthResponse>("org_learning_health", body),
+
+  // Quiz / scenario runners (loose contracts — see edge/contracts/learning.ts)
+  quizPool: (body: LearnerQuizPoolRequest) =>
+    invoke<LearnerQuizPoolRequest, LearnerQuizPoolResponse>("learner-quiz-pool", body),
+  scenarioPool: (body: LearnerScenarioPoolRequest) =>
+    invoke<LearnerScenarioPoolRequest, LearnerScenarioPoolResponse>("learner-scenario-pool", body),
+  scenarioEvaluate: (body: LearnerScenarioEvaluateRequest) =>
+    invoke<LearnerScenarioEvaluateRequest, LearnerScenarioEvaluateResponse>("learner-scenario-evaluate", body),
+  adaptiveSample: (body: LearnerAdaptiveSampleRequest) =>
+    invoke<LearnerAdaptiveSampleRequest, LearnerAdaptiveSampleResponse>("learner-adaptive-sample", body),
 };
 
 export type LearningApi = typeof learningApi;
