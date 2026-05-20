@@ -8,7 +8,7 @@ import { Button } from "@/components/ui/button";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import { usePublicProfileSettings } from "@/hooks/usePublicProfileSettings";
+import { usePublicProfileSettings } from "@/domains/profile/hooks/usePublicProfileSettings";
 import { Globe, Copy, ExternalLink, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
