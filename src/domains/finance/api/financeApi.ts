@@ -59,3 +59,25 @@ export async function createCheckout(
     data ?? {},
   );
 }
+
+// Phase 9h additions --------------------------------------------------------
+import {
+  RequestInstructorPayoutResponseSchema,
+  type RequestInstructorPayoutRequest,
+  type RequestInstructorPayoutResponse,
+} from "@/edge/contracts/finance";
+
+export async function requestInstructorPayout(
+  req: RequestInstructorPayoutRequest,
+): Promise<RequestInstructorPayoutResponse> {
+  const { data, error } = await supabase.functions.invoke(
+    "request-instructor-payout",
+    { body: req },
+  );
+  if (error) throw new EdgeFunctionError("request-instructor-payout", error);
+  return parseEdgeResponse(
+    "request-instructor-payout",
+    RequestInstructorPayoutResponseSchema,
+    data ?? {},
+  );
+}
