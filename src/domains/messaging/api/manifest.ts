@@ -1,10 +1,10 @@
-import { supabase } from "@/integrations/supabase/client";
-import type { UnipileConnectRequest, UnipileConnectResponse } from "@/edge/contracts/messaging";
-
-export const messagingApi = {
-  async unipileConnect(body: UnipileConnectRequest): Promise<UnipileConnectResponse> {
-    const { data, error } = await supabase.functions.invoke("unipile-connect", { body });
-    if (error) throw error;
-    return (data ?? {}) as UnipileConnectResponse;
-  },
-};
+/**
+ * Messaging domain — barrel re-exporting typed edge wrappers (Phase 9g).
+ * Legacy `messagingApi` const removed.
+ */
+export { unipileConnect } from "./messagingApi";
+export type {
+  UnipileConnectRequest,
+  UnipileConnectResponse,
+  UnipileAction,
+} from "@/edge/contracts/messaging";
