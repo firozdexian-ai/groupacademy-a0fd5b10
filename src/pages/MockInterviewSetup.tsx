@@ -155,7 +155,7 @@ function MockInterviewSetupContent() {
         };
       }
 
-      const data = await generateInterviewQuestions({
+      const data: any = await generateInterviewQuestions({
         jobDescription,
         questionCount: config.questionCount,
         difficulty: config.difficulty,
