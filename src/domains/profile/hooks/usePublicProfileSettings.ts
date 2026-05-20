@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { claimPublicHandle } from "@/domains/profile/api/profileApi";
 import { useTalent } from "@/hooks/useTalent";
 import { toast } from "sonner";
 
@@ -73,26 +74,18 @@ export function usePublicProfileSettings() {
   const claimHandle = useMutation({
     mutationFn: async (handle: string): Promise<{ handle: string }> => {
       // HUD: INVOKING_HANDLE_CLAIM_EDGE_ORCHESTRATOR
-      const { data, error } = await supabase.functions.invoke("claim-public-handle", {
-        body: { handle },
-      });
-
-      if (error) {
+      let res: { error?: string; message?: string; handle?: string };
+      try {
+        res = await claimPublicHandle({ handle });
+      } catch (error: any) {
         // Digital Workforce Anomaly Trigger: Essential for catching routing or gateway timeouts
         console.error("[Digital Workforce] ANOMALY: claim-public-handle infrastructure failure.", {
           talentId: talent?.id,
-          message: error.message,
+          message: error?.message,
         });
         throw error;
       }
 
-      interface EdgeResponse {
-        error?: string;
-        message?: string;
-        handle?: string;
-      }
-
-      const res = data as EdgeResponse | null;
       if (res?.error) {
         throw new Error(res.message || res.error);
       }
