@@ -1,50 +1,58 @@
-## Phase 5.4 — `abroad` domain vertical slice
+## Phase 5.5 — `messaging` domain vertical slice
 
-Small, clean phase: 3 talent components + 8 admin tabs + 1 admin hook + 2 edge contracts. No talent-side hooks live in `src/hooks/` for this domain.
+Compact phase covering peer DM threads, agent inbox, and the Unipile WhatsApp/SMS channel admin tab. Application-thread messaging already lives in `domains/jobs` (Phase J pipeline) and stays there.
 
 ### Scope
 
-**Talent UI → `src/domains/abroad/components/talent/` (+ barrels at `src/components/abroad/*`)** — 3 files
-- `RoadmapBuilderSheet`
-- `RoadmapIntakeForm`
-- `RoadmapTimeline`
+**Talent UI → `src/domains/messaging/components/talent/` (+ barrels at `src/components/messages/*`)** — 2 files
+- `ChatBubble`
+- `ThreadListItem`
 
-**Admin UI → `src/domains/abroad/components/admin/` (+ barrels at `src/components/dashboard/abroad/*`)** — 8 files + 1 hook
-- `AbroadApplicationsTab`, `AbroadDestinationsTab`, `AbroadIELTSPromptsTab`, `AbroadIELTSResourcesTab`, `AbroadLanguageLabTab`, `AbroadOverviewTab`, `AbroadProgramsTab`, `AbroadRoadmapLeadsTab`
-- `hooks/useAbroadGraph.ts`
+**Admin UI → `src/domains/messaging/components/admin/` (+ barrels at `src/components/dashboard/messaging/*`)** — 1 file
+- `MessagingChannelsTab` (already consumed by Talent/Employer/Community channel tabs via re-export — those wrappers keep their current paths and simply re-import from the new domain location)
 
-**Typed edge contracts → `src/edge/contracts/abroad.ts`**
-- `ai-destination-agent`
-- `generate-study-roadmap`
+**Hooks → `src/domains/messaging/hooks/` (+ barrels at `src/hooks/*`)** — 2 files
+- `useMessageThreads`
+- `useDirectMessages` (incl. `ensureDirectThread` helper)
+- Note: `useApplicationMessages` already lives in `domains/jobs/hooks/`; leave it there.
 
-**API manifest → `src/domains/abroad/api/manifest.ts`**
-- `abroadApi.{aiDestinationAgent, generateStudyRoadmap}`
+**Typed edge contract → `src/edge/contracts/messaging.ts`**
+- `unipile-connect` — request `{ agent_key, region, label }`, response `{ url, channel_id }` (permissive `Record<string, unknown>`)
 
-**Domain index → `src/domains/abroad/index.ts`**
-Re-export the 3 talent components + `abroadApi`.
+**API manifest → `src/domains/messaging/api/manifest.ts`**
+- `messagingApi.{ unipileConnect }`
+
+**Domain index → `src/domains/messaging/index.ts`**
+Re-export the 2 talent components, the admin tab, both hooks, and `messagingApi`.
 
 **F3 sweep**
-Replace 2 direct `supabase.functions.invoke` calls in `RoadmapBuilderSheet` and `RoadmapIntakeForm` with `abroadApi.*`.
+Replace the 1 direct `supabase.functions.invoke('unipile-connect', …)` call inside `MessagingChannelsTab` with `messagingApi.unipileConnect`.
+
+### Importers that keep working via barrels
+- `src/pages/app/Messages.tsx`, `MessageThread.tsx` → `useMessageThreads`, `useDirectMessages`, `ThreadListItem`, `ChatBubble`
+- `src/pages/AdminLiveInbox.tsx` → `useMessageThreads`
+- `TalentMessagingChannelTab`, `EmployerMessagingChannelTab`, `CommunityMessagingChannelTab` → `MessagingChannelsTab` (their import path `@/components/dashboard/messaging/MessagingChannelsTab` resolves to the barrel)
 
 ### Verification
 - Type-check passes.
-- `/app/study-abroad`, `/app/study-abroad/roadmap`, `/dashboard/abroad` tabs still mount.
+- `/app/messages`, `/app/messages/:agentKey`, `/dashboard` Talent/Employer/Community channel tabs still mount.
+- No remaining `functions.invoke('unipile-connect'` outside the manifest.
+- Realtime subscriptions in `useDirectMessages` and `useMessageThreads` still bind (no path-sensitive logic).
 
 ### Out of scope
-- IELTS/coach page logic stays in `src/pages/app/`; only components/api move.
-- `admin-support-assistant` cross-cutting anomaly invokes from page files (not abroad-specific) stay as-is.
-- Hooks: none currently live under `src/hooks/` for abroad.
+- `useApplicationMessages` (already in `domains/jobs`).
+- Agent chat hooks (`useAgentChat`, `useAIGeneralChat`) — they belong to the `agents` domain and are already extracted.
+- Notification ledger (`useNotifications`) — separate domain (`platform/notifications` in Phase 6).
 - Phases 6–9 still deferred.
 
 ### Risk
-- Low. 12 files, 2 edge fns, no `useTalent`-style shared hook entanglement.
+- Low. 6 files, 1 edge fn, no shared-hook entanglement. Realtime channels untouched.
 
-### Progress after 5.4
-~43%. Next: 5.5 messaging.
+### Progress after 5.5
+~46%. Next: 5.6 companies.
 
 ### Roadmap remainder
 ```text
-5.5  messaging
 5.6  companies
 5.7  marketing
 5.8  ir
@@ -53,20 +61,8 @@ Replace 2 direct `supabase.functions.invoke` calls in `RoadmapBuilderSheet` and 
 5.11 workforce
 5.12 ugc
 5.13 dashboard residuals (jobs admin, agents admin, etc.)
-Phase 6  platform/ extraction
+Phase 6  platform/ extraction (notifications, credits, payments)
 Phase 7  shells/*/routes.tsx + React.lazy
 Phase 8  retire barrel re-exports
 Phase 9  edge/contracts/ for every domain
 ```
-
----
-
-## Phase 5.4 — COMPLETE
-
-- 3 talent components → `src/domains/abroad/components/talent/` (+ barrels)
-- 8 admin tabs + `useAbroadGraph` → `src/domains/abroad/components/admin/[hooks/]` (+ barrels)
-- `src/edge/contracts/abroad.ts` + `src/domains/abroad/api/manifest.ts` (`abroadApi.{aiDestinationAgent, generateStudyRoadmap}`)
-- F3 sweep: 2 direct invokes replaced (RoadmapBuilderSheet, RoadmapIntakeForm)
-- Verification: no remaining `functions.invoke` outside manifest; intra-imports clean
-
-Progress ~43%. Next: 5.5 messaging.
