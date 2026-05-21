@@ -184,10 +184,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
         for (let i = 0; i < mappedData.length; i += batchSize) {
           const batch = mappedData.slice(i, i + batchSize);
-          const { error } = await supabase.from("talents").upsert(batch, {
-            onConflict: "phone",
-            ignoreDuplicates: true,
-          });
+          const { error } = await talentRepo.upsertTalentsBatch(batch);
 
           if (error) {
             console.error("Batch insert error:", error);
