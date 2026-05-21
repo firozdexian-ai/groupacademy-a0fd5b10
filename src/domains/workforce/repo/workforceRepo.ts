@@ -176,3 +176,45 @@ export async function deleteWorkforceRoutingRule(id: string): Promise<void> {
   const { error } = await (supabase as any).from("workforce_routing_rules").delete().eq("id", id);
   if (error) throw error;
 }
+
+// ─── Phase 10j.5f: command center channel + rule CRUD ──────────────────────
+export async function listWorkforceChannelConnections(): Promise<any[]> {
+  const { data, error } = await (supabase as any)
+    .from("workforce_channel_connections")
+    .select("*")
+    .order("updated_at", { ascending: false });
+  if (error) throw error;
+  return (data ?? []) as any[];
+}
+
+export async function deleteWorkforceChannelConnection(id: string): Promise<void> {
+  const { error } = await (supabase as any).from("workforce_channel_connections").delete().eq("id", id);
+  if (error) throw error;
+}
+
+export async function upsertWorkforceChannelConnection(
+  payload: Record<string, any>,
+  id?: string,
+): Promise<void> {
+  const q = (supabase as any).from("workforce_channel_connections");
+  const { error } = id ? await q.update(payload).eq("id", id) : await q.insert(payload);
+  if (error) throw error;
+}
+
+export async function listWorkforceRoutingRules(): Promise<any[]> {
+  const { data, error } = await (supabase as any)
+    .from("workforce_routing_rules")
+    .select("*")
+    .order("event_topic");
+  if (error) throw error;
+  return (data ?? []) as any[];
+}
+
+export async function upsertWorkforceRoutingRule(
+  payload: Record<string, any>,
+  id?: string,
+): Promise<void> {
+  const q = (supabase as any).from("workforce_routing_rules");
+  const { error } = id ? await q.update(payload).eq("id", id) : await q.insert(payload);
+  if (error) throw error;
+}

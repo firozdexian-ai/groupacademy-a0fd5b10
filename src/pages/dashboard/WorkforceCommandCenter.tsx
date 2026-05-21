@@ -1,10 +1,10 @@
 import React, { useState, useMemo } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import {
   countAiAgentsByTemplateFlag,
   listAiAgentsForFleet,
   listAiAgentsCompact,
+  listAiAgentInstancesMinimal,
   getAiAgentById,
   cloneAiAgentInstance,
 } from "@/domains/agents/repo/agentsRepo";
@@ -13,6 +13,11 @@ import {
   countActiveWorkforceChannelConnections,
   countActiveWorkforceRoutingRules,
   deleteWorkforceRoutingRule,
+  listWorkforceChannelConnections,
+  deleteWorkforceChannelConnection,
+  upsertWorkforceChannelConnection,
+  listWorkforceRoutingRules,
+  upsertWorkforceRoutingRule,
 } from "@/domains/workforce/repo/workforceRepo";
 import { toast } from "sonner";
 import { useAdminScope } from "@/hooks/useAdminScope";
@@ -422,34 +427,17 @@ function ChannelsPanel() {
 
   const listQ = useQuery({
     queryKey: ["wcc-channels"],
-    queryFn: async () => {
-      // FIX 2: Changed .select("") to .select("*")
-      const { data, error } = await (supabase as any)
-        .from("workforce_channel_connections")
-        .select("*")
-        .order("updated_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as ChannelConn[];
-    },
+    queryFn: async () => (await listWorkforceChannelConnections()) as ChannelConn[],
   });
 
   const instancesQ = useQuery({
     queryKey: ["wcc-instances"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("ai_agents")
-        .select("agent_key,name")
-        .eq("is_template", false)
-        .order("name");
-      if (error) throw error;
-      return (data ?? []) as { agent_key: string; name: string }[];
-    },
+    queryFn: async () => await listAiAgentInstancesMinimal(),
   });
 
   const delMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("workforce_channel_connections").delete().eq("id", id);
-      if (error) throw error;
+      await deleteWorkforceChannelConnection(id);
     },
     onSuccess: () => {
       toast.success("Connection removed");
@@ -622,16 +610,7 @@ function ChannelDialog({ editing, instances, onClose, onDone }: any) {
         updated_at: new Date().toISOString(),
       };
 
-      if (editing?.id) {
-        const { error } = await (supabase as any)
-          .from("workforce_channel_connections")
-          .update(payload)
-          .eq("id", editing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await (supabase as any).from("workforce_channel_connections").insert(payload);
-        if (error) throw error;
-      }
+      await upsertWorkforceChannelConnection(payload, editing?.id);
     },
     onSuccess: () => {
       toast.success(editing ? "Updated!" : "Connected!");
@@ -733,27 +712,17 @@ function RoutingPanel() {
 
   const listQ = useQuery({
     queryKey: ["wcc-rules"],
-    queryFn: async () => {
-      // FIX 3: Changed .select("") to .select("*")
-      const { data, error } = await (supabase as any).from("workforce_routing_rules").select("*").order("event_topic");
-      if (error) throw error;
-      return (data ?? []) as RoutingRule[];
-    },
+    queryFn: async () => (await listWorkforceRoutingRules()) as RoutingRule[],
   });
 
   const agentsQ = useQuery({
     queryKey: ["wcc-agents-min"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("ai_agents").select("agent_key,name,is_template").order("name");
-      if (error) throw error;
-      return (data ?? []) as { agent_key: string; name: string; is_template: boolean }[];
-    },
+    queryFn: async () => await listAiAgentsCompact(),
   });
 
   const delMut = useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await (supabase as any).from("workforce_routing_rules").delete().eq("id", id);
-      if (error) throw error;
+      await deleteWorkforceRoutingRule(id);
     },
     onSuccess: () => {
       toast.success("Rule deleted");
@@ -1019,13 +988,7 @@ function RoutingDialog({ editing, agents, onClose, onDone }: any) {
         is_active: active,
       };
 
-      if (editing?.id) {
-        const { error } = await (supabase as any).from("workforce_routing_rules").update(payload).eq("id", editing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await (supabase as any).from("workforce_routing_rules").insert(payload);
-        if (error) throw error;
-      }
+      await upsertWorkforceRoutingRule(payload, editing?.id);
     },
     onSuccess: () => {
       toast.success(editing ? "Rule updated" : "Rule created");
