@@ -553,3 +553,8 @@ export async function getIndustryRollup() {
   if (error) throw error;
   return (data ?? []) as any[];
 }
+
+export async function mergeIndustries(sources: string[], target: string): Promise<void> {
+  const { error } = await supabase.rpc("merge_industries", { p_sources: sources, p_target: target });
+  if (error) throw error;
+}
