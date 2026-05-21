@@ -1,6 +1,11 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  getTalentReferralIdentityByUser,
+  countTalentsReferredBy,
+} from "@/domains/talent/repo/talentRepo";
+import { sumReferralBonusCredits } from "@/domains/finance/repo/financeRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -48,35 +53,16 @@ export function ReferralCard() {
         if (!authUserData?.user) return;
 
         // Step 1: Retrieve core profile referral hash identities from database variables
-        const { data: talentProfileData, error: talentQueryError } = await supabase
-          .from("talents")
-          .select("id, ref_code")
-          .eq("user_id", authUserData.user.id)
-          .maybeSingle();
-
-        if (talentQueryError) throw talentQueryError;
+        const talentProfileData = await getTalentReferralIdentityByUser(authUserData.user.id);
         if (!talentProfileData) return;
 
         const resolvedRefCodeTokenStr = talentProfileData.ref_code ?? talentProfileData.id;
 
         // Step 2: Concurrent Promise Execution Pass to avoid nested sequential network cascades
-        const [invitedCountResponse, creditTransactionsResponse] = await Promise.all([
-          supabase.from("talents").select("id", { count: "exact", head: true }).eq("referred_by", talentProfileData.id),
-          supabase
-            .from("credit_transactions")
-            .select("amount")
-            .eq("talent_id", talentProfileData.id)
-            .eq("service_type", "referral_bonus"),
+        const [calculatedInvitedTotalNum, compiledEarnedTokensNum] = await Promise.all([
+          countTalentsReferredBy(talentProfileData.id),
+          sumReferralBonusCredits(talentProfileData.id),
         ]);
-
-        if (invitedCountResponse.error) throw invitedCountResponse.error;
-        if (creditTransactionsResponse.error) throw creditTransactionsResponse.error;
-
-        const calculatedInvitedTotalNum = invitedCountResponse.count ?? 0;
-        const compiledEarnedTokensNum = (creditTransactionsResponse.data || []).reduce(
-          (sumAccumulator, transactionRow) => sumAccumulator + Number(transactionRow.amount || 0),
-          0,
-        );
 
         // Step 3: Evaporate stale local data records using verified React Query tracks globally
         await queryClient.invalidateQueries({ queryKey: ["referral-stats"] });

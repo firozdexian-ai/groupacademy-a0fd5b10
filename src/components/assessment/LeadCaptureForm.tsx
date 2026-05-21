@@ -1,7 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { insertCareerAssessment } from "@/domains/marketing/repo/marketingRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { toast } from "sonner";
 import { z } from "zod";
@@ -118,7 +118,7 @@ export function LeadCaptureForm({
       const unifiedContactVector = String(formData.countryCode + formData.phone).trim();
 
       // HUD: COMMITTING_CAREER_ASSESSMENT_RECORD_PERSISTENCE
-      const { error } = await supabase.from("career_assessments").insert({
+      await insertCareerAssessment({
         id: generatedNodeUuid,
         user_id: user?.id || null,
         talent_id: talent?.id || null,
@@ -134,7 +134,6 @@ export function LeadCaptureForm({
         improvement_areas: [],
       });
 
-      if (error) throw error;
       return generatedNodeUuid;
     },
     onSuccess: async (nodeId) => {

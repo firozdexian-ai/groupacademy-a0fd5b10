@@ -4,7 +4,11 @@
  */
 import { useState } from "react";
 import { useMutation, useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listAdminTableRows,
+  insertAdminTableRow,
+  deleteAdminTableRow,
+} from "@/domains/admin/repo/adminRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Card } from "@/components/ui/card";
@@ -39,14 +43,7 @@ export function SimpleAdminRegistry({
 
   const listQ = useQuery({
     queryKey: [`admin-table:${table}`],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from(table as any)
-        .select("*")
-        .order("created_at", { ascending: false });
-      if (error) throw error;
-      return (data ?? []) as any[];
-    },
+    queryFn: () => listAdminTableRows(table),
   });
 
   const create = useMutation({
@@ -57,8 +54,7 @@ export function SimpleAdminRegistry({
         if (v === undefined || v === "") continue;
         payload[f.key] = f.type === "number" ? Number(v) : v;
       }
-      const { error } = await supabase.from(table as any).insert(payload);
-      if (error) throw error;
+      await insertAdminTableRow(table, payload);
     },
     onSuccess: () => {
       toast.success("Saved");
@@ -70,10 +66,7 @@ export function SimpleAdminRegistry({
   });
 
   const remove = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from(table as any).delete().eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: (id: string) => deleteAdminTableRow(table, id),
     onSuccess: () => qc.invalidateQueries({ queryKey: [`admin-table:${table}`] }),
   });
 

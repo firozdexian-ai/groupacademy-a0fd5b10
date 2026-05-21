@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { Star, MessageSquare, Loader2 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { listAgentReviews, upsertAgentReview } from "@/domains/agents/repo/agentsRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
@@ -47,19 +47,9 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
     staleTime: 30 * 1000, // 30-second stability cache window for ledger metrics
     queryFn: async (): Promise<Review[]> => {
       // HUD: EXECUTING_RELATIONAL_LEDGER_INGRESS_SELECT
-      // Architecture: Pulls reviews and profiles in a single query via server-side joins
-      const { data, error } = await supabase
-        .from("agent_reviews")
-        .select("id, talent_id, rating, review_text, created_at, talent:talents(full_name)")
-        .eq("agent_key", agentKey)
-        .order("created_at", { ascending: false });
+      const data = await listAgentReviews(agentKey);
 
-      if (error) {
-        console.error("[Digital Workforce] FAULT: agent_reviews relational lookup dropped.", error);
-        throw error;
-      }
-
-      return (data || []).map((row: any) => ({
+      return data.map((row: any) => ({
         id: String(row.id),
         talent_id: String(row.talent_id),
         rating: Number(row.rating ?? 5),
@@ -78,22 +68,19 @@ export function AgentReviewSection({ agentKey, canReview }: Props) {
       const cleanText = text.trim();
 
       // HUD: COMMITTING_REVIEW_LEDGER_UPSERT
-      const { error } = await supabase.from("agent_reviews").upsert(
-        {
+      try {
+        await upsertAgentReview({
           agent_key: agentKey,
           talent_id: talent.id,
           rating,
           review_text: cleanText || null,
-        },
-        { onConflict: "agent_key,talent_id" },
-      );
-
-      if (error) {
+        });
+      } catch (error: any) {
         // Digital Workforce Anomaly Trigger: Imprints explicit trace tracking packets
         console.error("[Digital Workforce] ANOMALY: agent_reviews upsert transaction rejected.", {
           agentKey,
           talentId: talent.id,
-          message: error.message,
+          message: error?.message,
         });
         throw error;
       }

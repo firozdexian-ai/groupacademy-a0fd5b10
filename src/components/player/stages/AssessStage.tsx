@@ -19,7 +19,11 @@ import {
   Target,
   Loader2,
 } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listQuizQuestionsByModule,
+  listFallbackQuizQuestionsByContent,
+  insertQuizAttempt,
+} from "@/domains/learning/repo/learningRepo";
 import { learnerAdaptiveSample } from "@/domains/learning/api/learningApi";
 import { cn } from "@/lib/utils";
 
@@ -125,20 +129,10 @@ export function AssessStage({
 
 
       // Fallback Strategy: Extract static matching records directly from default repositories
-      let { data, error } = await supabase
-        .from("quiz_questions")
-        .select("*")
-        .eq("module_id", moduleId)
-        .order("display_order");
+      let { data, error } = await listQuizQuestionsByModule(moduleId);
 
       if (!error && (!data || data.length === 0)) {
-        const fallbackResult = await supabase
-          .from("quiz_questions")
-          .select("*")
-          .eq("content_id", contentId)
-          .is("module_id", null)
-          .order("display_order");
-
+        const fallbackResult = await listFallbackQuizQuestionsByContent(contentId);
         data = fallbackResult.data;
         error = fallbackResult.error;
       }
@@ -186,7 +180,7 @@ export function AssessStage({
 
     if (studentId && enrollmentId) {
       try {
-        const { error: insertError } = await supabase.from("quiz_attempts").insert({
+        await insertQuizAttempt({
           student_id: studentId,
           content_id: contentId,
           enrollment_id: enrollmentId,
@@ -195,8 +189,6 @@ export function AssessStage({
           total_questions: totalQuestions,
           passed: attemptPassed,
         });
-
-        if (insertError) throw insertError;
 
         // Automated Efficiency: Evaporate stale query structures across dashboard summaries instantly
         await queryClient.invalidateQueries({ queryKey: ["quiz-questions-adaptive", moduleId] });
