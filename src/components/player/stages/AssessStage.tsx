@@ -181,7 +181,7 @@ export function AssessStage({
 
     if (studentId && enrollmentId) {
       try {
-        const { error: insertError } = await supabase.from("quiz_attempts").insert({
+        await insertQuizAttempt({
           student_id: studentId,
           content_id: contentId,
           enrollment_id: enrollmentId,
@@ -190,8 +190,6 @@ export function AssessStage({
           total_questions: totalQuestions,
           passed: attemptPassed,
         });
-
-        if (insertError) throw insertError;
 
         // Automated Efficiency: Evaporate stale query structures across dashboard summaries instantly
         await queryClient.invalidateQueries({ queryKey: ["quiz-questions-adaptive", moduleId] });
