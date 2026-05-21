@@ -118,21 +118,15 @@ export function AgentTriggers() {
 
   async function load() {
     setLoading(true);
-    const [a, t, p, o] = await Promise.all([
-      supabase.from("ai_agents").select("id, name, agent_key").eq("is_active", true).order("name"),
-      supabase.from("agent_triggers").select("*").order("created_at", { ascending: false }),
-      supabase.from("headless_pool").select("*").eq("id", 1).maybeSingle(),
-      supabase
-        .from("agent_outreach")
-        .select("id, agent_id, recipient_kind, channel, status, body, credits_charged, created_at")
-        .order("created_at", { ascending: false })
-        .limit(20),
+    const [{ agents: agentRows, triggers: triggerRows, pool: poolRow }, outreachRows] = await Promise.all([
+      getTriggersBundle(),
+      listRecentAgentOutreach(20),
     ]);
-    setAgents((a.data || []) as Agent[]);
-    setTriggers((t.data || []) as Trigger[]);
-    setPool((p.data as Pool) || null);
-    setOutreach((o.data || []) as OutreachRow[]);
-    setCapAmount(p.data ? String((p.data as Pool).monthly_cap) : "");
+    setAgents((agentRows || []) as Agent[]);
+    setTriggers((triggerRows || []) as Trigger[]);
+    setPool((poolRow as Pool) || null);
+    setOutreach((outreachRows || []) as OutreachRow[]);
+    setCapAmount(poolRow ? String((poolRow as Pool).monthly_cap) : "");
     setLoading(false);
   }
 
