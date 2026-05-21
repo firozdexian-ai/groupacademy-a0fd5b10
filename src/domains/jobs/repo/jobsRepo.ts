@@ -94,3 +94,26 @@ export async function getJobShareClickCounts(
   });
   return counts;
 }
+
+// ─────────────────────────────────────────────────────────────────────────────
+// Access codes (assessment + job application)
+// ─────────────────────────────────────────────────────────────────────────────
+
+export async function insertAssessmentAccessCode(payload: {
+  code: string;
+  email: string;
+  created_by?: string | null;
+  expires_at?: string;
+}): Promise<{ error: any }> {
+  const { error } = await supabase.from("assessment_access_codes").insert(payload as any);
+  return { error };
+}
+
+export async function insertJobApplicationAccessCode(payload: {
+  code: string;
+  email: string;
+  created_by?: string | null;
+}): Promise<{ error: any }> {
+  const { error } = await supabase.from("job_application_access_codes").insert(payload as any);
+  return { error };
+}
