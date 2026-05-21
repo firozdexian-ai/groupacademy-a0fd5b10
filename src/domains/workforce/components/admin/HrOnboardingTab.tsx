@@ -237,11 +237,9 @@ export function HrOnboardingTab() {
                             variant="ghost"
                             size="icon"
                             onClick={() =>
-                              supabase
-                                .from("hr_onboarding_tasks")
-                                .delete()
-                                .eq("id", t.id)
-                                .then(() => qc.invalidateQueries({ queryKey: ["hr_onboarding"] }))
+                              deleteGraphRow("hr_onboarding_tasks", t.id).then(() =>
+                                qc.invalidateQueries({ queryKey: ["hr_onboarding"] }),
+                              )
                             }
                             className="text-destructive hover:bg-destructive/10"
                           >
