@@ -775,3 +775,14 @@ export async function getApplicationOfferContext(applicationId: string) {
     .maybeSingle();
   return data as any | null;
 }
+
+// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
+export async function insertJobReturningId(payload: any): Promise<string> {
+  const { data, error } = await supabase
+    .from("jobs")
+    .insert(payload)
+    .select("id")
+    .maybeSingle();
+  if (error) throw error;
+  return (data as { id: string } | null)?.id ?? "";
+}
