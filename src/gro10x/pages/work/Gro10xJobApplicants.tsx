@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate, useParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getJobTitleById } from "@/domains/jobs/repo/jobsRepo";
 import { useAuth } from "@/hooks/useAuth";
 import { ArrowLeft } from "lucide-react";
 import { ApplicationKanban } from "@/components/applications/ApplicationKanban";
