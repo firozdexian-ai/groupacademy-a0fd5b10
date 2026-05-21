@@ -115,15 +115,10 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
       linkedin_url: data.linkedin_url,
       industry: data.industry,
     };
-    const { data: node, error } = await supabase.from("companies").insert(insertObj).select("id").single();
+    const { data: node, error } = await talentRepo.insertCompany(insertObj);
 
     if (error) {
-      const { data: existing } = await supabase
-        .from("companies")
-        .select("id")
-        .ilike("name", data.name)
-        .limit(1)
-        .single();
+      const { data: existing } = await talentRepo.findCompanyByName(data.name);
       if (existing) {
         map[key] = existing.id;
         return existing.id;
