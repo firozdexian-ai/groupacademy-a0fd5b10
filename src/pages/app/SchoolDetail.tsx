@@ -2,7 +2,11 @@ import { useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { ArrowLeft, Bot, Briefcase, GraduationCap, UserPlus, CheckCircle2, Loader2, AlertCircle } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  getSchoolBySlugWithAcademy,
+  listProfessionCategoriesForSchool,
+  insertInstructorConnectionRequest,
+} from "@/domains/abroad/repo/abroadRepo";
 import { adminSupportAssistant } from "@/domains/agents/api/agentsApi";
 import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
