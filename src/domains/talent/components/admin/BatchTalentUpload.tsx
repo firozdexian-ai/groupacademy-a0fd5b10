@@ -333,7 +333,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
   const pollBatchProgress = useCallback(
     async (batchId: string) => {
       const pollInterval = setInterval(async () => {
-        const { data: batch } = await supabase.from("batch_uploads").select("*").eq("id", batchId).single();
+        const { data: batch } = await talentRepo.getBatchUpload(batchId);
         if (batch) {
           setCurrentBatch(batch as BatchUpload);
           if (batch.status === "completed" || batch.status === "failed") {
