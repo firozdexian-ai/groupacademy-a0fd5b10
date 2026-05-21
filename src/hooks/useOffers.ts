@@ -118,13 +118,9 @@ export function useAcceptOffer() {
       signedName: string;
       applicationId: string;
     }) => {
-      // HUD: EXECUTING_RPC_OFFER_SIGNATURE_ACCEPT
-      const { error } = await supabase.rpc("accept_offer", {
-        p_offer_id: offerId,
-        p_signed_name: signedName,
-      });
-
-      if (error) {
+      try {
+        await acceptOffer(offerId, signedName);
+      } catch (error: any) {
         console.error("[Digital Workforce] FAULT: accept_offer transaction verification failed.", error);
         throw error;
       }
