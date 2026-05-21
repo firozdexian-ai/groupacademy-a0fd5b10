@@ -5,8 +5,12 @@
  * Features: Restored Rename Protocol & Unassigned KPI
  */
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { countCompaniesWithNullIndustry, renameCompanyIndustry } from "@/domains/companies/repo/companiesRepo";
+import {
+  countCompaniesWithNullIndustry,
+  renameCompanyIndustry,
+  getIndustryRollup,
+  mergeIndustries,
+} from "@/domains/companies/repo/companiesRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -69,14 +73,12 @@ export function IndustriesTab() {
     setIsLoading(true);
     try {
       // A3 Fix: Single RPC for aggregates + Parallel head query for unassigned
-      const [rollupRes, unassignedCountVal] = await Promise.all([
-        supabase.rpc("get_industry_rollup"),
+      const [rollupData, unassignedCountVal] = await Promise.all([
+        getIndustryRollup(),
         countCompaniesWithNullIndustry(),
       ]);
 
-      if (rollupRes.error) throw rollupRes.error;
-
-      setIndustries(rollupRes.data || []);
+      setIndustries(rollupData || []);
       setUnassignedCount(unassignedCountVal);
     } catch (err: any) {
       toast.error("Registry Sync Failed: " + err.message);
@@ -112,12 +114,7 @@ export function IndustriesTab() {
     try {
       const sources = [...selected].filter((s) => s !== mergeTarget.trim());
       // A4 Fix: Single atomic transaction via RPC
-      const { error } = await supabase.rpc("merge_industries", {
-        p_sources: sources,
-        p_target: mergeTarget.trim(),
-      });
-
-      if (error) throw error;
+      await mergeIndustries(sources, mergeTarget.trim());
 
       toast.success(`Protocol Committed: ${sources.length} sectors fused into "${mergeTarget}"`);
       setMergeDialogOpen(false);

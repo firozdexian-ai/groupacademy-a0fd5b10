@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { listActiveProfessionCategoriesFull, listProfessionalRolesByCategory } from "@/domains/profile/repo/profileRepo";
+import { assignCareerCoach } from "@/domains/talent/repo/talentRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTalent } from "@/hooks/useTalent";
@@ -163,8 +163,7 @@ export function ProfessionStep({ onContinue }: ProfessionStepProps) {
       // Bind an automated system Career Coach as soon as the baseline taxonomy resolves
       if (talent?.id && !showCustom && selectedCat) {
         try {
-          const { error: rpcError } = await supabase.rpc("assign_career_coach", { _talent_id: talent.id });
-          if (rpcError) throw rpcError;
+          await assignCareerCoach(talent.id);
           trackEvent("onboarding_career_coach_assigned_success");
         } catch (coachErr) {
           trackError(coachErr, { component: "ProfessionStep", action: "assign_career_coach_rpc", talentId: talent.id });

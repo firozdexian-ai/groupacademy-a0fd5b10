@@ -24,7 +24,7 @@ import StatsCard from "@/platform/admin/ui/StatsCard";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
-import { supabase } from "@/integrations/supabase/client";
+import { getCompaniesOverview } from "@/domains/companies/repo/companiesRepo";
 import { cn } from "@/lib/utils";
 
 interface OverviewData {
@@ -50,9 +50,7 @@ export function CompaniesOverviewTab() {
     setLoading(true);
     try {
       // A1 Fix: Atomic RPC replaces 12 sequential queries & client-side tallies
-      const { data: res, error } = await supabase.rpc("get_companies_overview");
-
-      if (error) throw error;
+      const res = await getCompaniesOverview();
       setData(res as unknown as OverviewData);
     } catch (err) {
       console.error("B2B Telemetry Fault:", err);

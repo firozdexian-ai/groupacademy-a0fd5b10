@@ -4,6 +4,7 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   resetThreadUnread,
   markThreadNotificationsRead,
+  ensureSystemThread,
 } from "@/domains/messaging/repo/messagingRepo";
 import { useTalent } from "@/hooks/useTalent";
 
@@ -47,7 +48,7 @@ export function useMessageThreads() {
     staleTime: 30000, // 30s consistency boundary
     queryFn: async (): Promise<MessageThread[]> => {
       // HUD: INITIALIZING_SYSTEM_THREAD_HANDSHAKE
-      await supabase.rpc("ensure_system_thread", { _talent_id: talentId });
+      await ensureSystemThread(talentId);
 
       const { data: rows, error } = await supabase
         .from("message_threads")

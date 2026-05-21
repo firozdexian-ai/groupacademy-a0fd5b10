@@ -1,6 +1,7 @@
 import * as React from "react";
 import { Loader2, Bot, UserX } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { assignCareerCoach } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { AIChatPanel } from "@/components/ai-instructor/AIChatPanel";
 import { trackCoachEvent } from "@/lib/onboarding/telemetry";
@@ -69,12 +70,10 @@ export default function CareerCoach() {
 
         // Step 2: Programmatically trigger remote atomic allocation RPC procedure if mapping is unassigned
         if (!evaluatedCoachIdUUID) {
-          const { data: rpcAssignmentPayload, error: rpcExecutionError } = await supabase.rpc("assign_career_coach", {
-            _talent_id: talentProfileRecord.id,
-          });
-
-          if (!rpcExecutionError && rpcAssignmentPayload) {
-            evaluatedCoachIdUUID = String(rpcAssignmentPayload);
+          try {
+            evaluatedCoachIdUUID = await assignCareerCoach(talentProfileRecord.id);
+          } catch {
+            evaluatedCoachIdUUID = null;
           }
         }
 

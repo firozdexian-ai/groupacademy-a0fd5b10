@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+
 import { useTalent } from "@/hooks/useTalent";
 import { useAgentChat } from "@/hooks/useAgentChat";
 import { useMessageThreads } from "@/hooks/useMessageThreads";
@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { PAGE_SHELL } from "@/lib/uiTokens";
 import { listTalentSystemFeedNotifications } from "@/domains/talent/repo/talentRepo";
 import { getAgentByKey } from "@/domains/agents/repo/agentsRepo";
-import { getMessageThreadIdByTalentAndAgent } from "@/domains/messaging/repo/messagingRepo";
+import { getMessageThreadIdByTalentAndAgent, ensureSystemThread } from "@/domains/messaging/repo/messagingRepo";
 
 // =========================================================================
 // DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
@@ -66,8 +66,8 @@ export default function MessageThread() {
 
     if (isSystemThread) {
       const loadSystemFeed = async () => {
-        const { data: tid } = await supabase.rpc("ensure_system_thread", { _talent_id: talent.id });
-        if (tid) markThreadRead(tid as string);
+        const tid = await ensureSystemThread(talent.id);
+        if (tid) markThreadRead(tid);
 
         const data = await listTalentSystemFeedNotifications(talent.id, 200);
         setSystemNotifications(data ?? []);

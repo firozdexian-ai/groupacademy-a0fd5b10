@@ -18,7 +18,7 @@ import { useTalentPitches } from "@/domains/profile/hooks/useTalentPitches";
 import { useSkillCredentials } from "@/domains/learning";
 import { computeReadiness } from "@/lib/talentReadiness";
 import { formatDistanceToNow } from "date-fns";
-import { supabase } from "@/integrations/supabase/client";
+import { boostProfile, getTalentBoostUntil } from "@/domains/talent/repo/talentRepo";
 import { toast } from "sonner";
 import { GRO10X_BG, GRO10X_PANEL, GRO10X_TEXT, GRO10X_MUTED } from "@/gro10x/lib/tokens";
 import { adminSupportAssistant } from "@/domains/agents/api/agentsApi";
@@ -51,13 +51,8 @@ export default function TalentHome() {
     if (!talent?.id) return;
     const fetchSettings = async () => {
       try {
-        const { data, error } = await supabase
-          .from("talent_inbox_settings")
-          .select("boost_until")
-          .eq("talent_id", talent.id)
-          .maybeSingle();
-        if (error) throw error;
-        setBoostUntil((data as any)?.boost_until ?? null);
+        const boostUntilVal = await getTalentBoostUntil(talent.id);
+        setBoostUntil(boostUntilVal);
       } catch (e) {
         await reportAnomaly("BoostStatusFetchFailure", { error: e });
       }
@@ -72,8 +67,7 @@ export default function TalentHome() {
   const boost = async () => {
     setBoosting(true);
     try {
-      const { error } = await supabase.rpc("boost_profile");
-      if (error) throw error;
+      await boostProfile();
       toast.success("Profile Pinned for 24h.");
       setBoostUntil(new Date(Date.now() + 86400000).toISOString());
     } catch (e) {

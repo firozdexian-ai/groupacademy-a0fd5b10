@@ -719,9 +719,10 @@ export async function getCompanyUnlockedTalents(p_company_id: string): Promise<S
   return new Set(((data as any[]) ?? []).map((r) => (typeof r === "string" ? r : r.get_company_unlocked_talents)));
 }
 
-export async function assignCareerCoach(_talent_id: string): Promise<void> {
-  const { error } = await supabase.rpc("assign_career_coach", { _talent_id });
+export async function assignCareerCoach(_talent_id: string): Promise<string | null> {
+  const { data, error } = await supabase.rpc("assign_career_coach", { _talent_id });
   if (error) throw error;
+  return data ? String(data) : null;
 }
 
 export async function getTalentCountryByUserId(user_id: string): Promise<string | null> {
@@ -806,4 +807,25 @@ export async function getTalentPhotoByUserId(userId: string) {
     .eq("user_id", userId)
     .maybeSingle();
   return (data as { full_name: string | null; profile_photo_url: string | null } | null) ?? null;
+}
+
+// ─── Phase 10j.5h1: RPC wrappers ──────────────────────────────────────────
+export async function boostProfile(): Promise<void> {
+  const { error } = await supabase.rpc("boost_profile");
+  if (error) throw error;
+}
+
+export async function unlockTalentInbox(): Promise<void> {
+  const { error } = await supabase.rpc("unlock_talent_inbox");
+  if (error) throw error;
+}
+
+export async function getTalentBoostUntil(talentId: string): Promise<string | null> {
+  const { data, error } = await supabase
+    .from("talent_inbox_settings")
+    .select("boost_until")
+    .eq("talent_id", talentId)
+    .maybeSingle();
+  if (error) throw error;
+  return ((data as any)?.boost_until as string | null) ?? null;
 }
