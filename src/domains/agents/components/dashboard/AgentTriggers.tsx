@@ -143,16 +143,17 @@ export function AgentTriggers() {
       });
       return;
     }
-    const { error } = await supabase.from("agent_triggers").insert({
-      agent_id: draft.agent_id,
-      event_kind: draft.event_kind,
-      recipient_strategy: draft.recipient_strategy || "subject",
-      template: draft.template,
-      is_active: draft.is_active ?? true,
-      channel: draft.channel && draft.channel !== "auto" ? draft.channel : null,
-      cooldown_minutes: Number(draft.cooldown_minutes ?? 1440),
-    });
-    if (error) {
+    try {
+      await insertAgentTrigger({
+        agent_id: draft.agent_id,
+        event_kind: draft.event_kind,
+        recipient_strategy: draft.recipient_strategy || "subject",
+        template: draft.template,
+        is_active: draft.is_active ?? true,
+        channel: draft.channel && draft.channel !== "auto" ? draft.channel : null,
+        cooldown_minutes: Number(draft.cooldown_minutes ?? 1440),
+      });
+    } catch (error: any) {
       toast({ title: "Protocol Rejection", description: error.message, variant: "destructive" });
       return;
     }
