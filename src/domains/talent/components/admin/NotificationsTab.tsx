@@ -39,7 +39,6 @@ export function NotificationsTab() {
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const from = (page - 1) * ITEMS_PER_PAGE;
       const { data, count, error } = await talentRepo.listNotificationsPage(page, ITEMS_PER_PAGE);
 
       if (error) throw error;
