@@ -71,10 +71,15 @@ export default function ContentReadinessChecklist({
 
   const forcePublish = async () => {
     setBusy(true);
-    const { error } = await supabase.from("content").update({ is_published: true }).eq("id", contentId);
+    try {
+      await setContentPublished(contentId, true);
+    } catch (err: any) {
+      setBusy(false);
+      return toast.error(err?.message ?? "Force publish failed");
+    }
     setBusy(false);
-    if (error) return toast.error(error.message);
     toast.success("Force-published. Talent app may still hide it until is_ready = true.");
+
     onRecomputed?.();
   };
 
