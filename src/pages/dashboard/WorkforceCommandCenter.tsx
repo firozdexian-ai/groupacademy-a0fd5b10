@@ -321,8 +321,8 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
       if (!templateId || !companyId) throw new Error("Select a template and company");
 
       // FIX 1: Changed .select("") to .select("*")
-      const { data: tpl, error: e1 } = await supabase.from("ai_agents").select("*").eq("id", templateId).maybeSingle();
-      if (e1 || !tpl) throw new Error(e1?.message ?? "Template not found");
+      const tpl = await getAiAgentById(templateId);
+      if (!tpl) throw new Error("Template not found");
 
       const company = companies.find((c: any) => c.id === companyId);
       const slug =
@@ -335,7 +335,7 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
       const { id, created_at, updated_at, ...rest } = tpl as any;
       const newAgentKey = `${tpl.agent_key}__${slug}__${Math.random().toString(36).slice(2, 6)}`;
 
-      const { error: e2 } = await supabase.from("ai_agents").insert({
+      const { error: e2 } = await cloneAiAgentInstance({
         ...rest,
         agent_key: newAgentKey,
         name: `${tpl.name} (${company?.name ?? "Client"})`,
@@ -344,7 +344,7 @@ function HireDialog({ templates, companies, onClose, onDone }: any) {
         company_id: companyId,
         owner_kind: "company",
         owner_id: companyId,
-      } as any);
+      });
       if (e2) throw e2;
     },
     onSuccess: () => {
