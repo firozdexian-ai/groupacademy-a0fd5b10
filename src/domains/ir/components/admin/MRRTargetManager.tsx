@@ -20,7 +20,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { upsertMonthlyTarget } from "@/domains/ir/repo/irRepo";
+import { getMonthlyTarget, upsertMonthlyTarget } from "@/domains/ir/repo/irRepo";
 import { toast } from "sonner";
 import {
   Save,
@@ -65,16 +65,7 @@ export function MRRTargetManager() {
   // PROTOCOL: Fetch Active Target Node
   const { data: target, isLoading } = useQuery({
     queryKey: ["ir-target", currentMonth],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("ir_monthly_targets")
-        .select("*")
-        .eq("month", currentMonth)
-        .maybeSingle();
-
-      if (error && error.code !== "PGRST116") throw error;
-      return data || null;
-    },
+    queryFn: () => getMonthlyTarget(currentMonth),
   });
 
   // CTO FIX: Safely hydrate state using useEffect instead of inside the queryFn

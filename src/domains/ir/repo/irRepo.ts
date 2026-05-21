@@ -116,6 +116,16 @@ export async function logInvestorInteraction(input: {
 }
 
 // ─── Monthly targets ───────────────────────────────────────────────────────
+export async function getMonthlyTarget(currentMonth: string): Promise<any | null> {
+  const { data, error } = await supabase
+    .from("ir_monthly_targets")
+    .select("*")
+    .eq("month", currentMonth)
+    .maybeSingle();
+  if (error && (error as any).code !== "PGRST116") throw error;
+  return data || null;
+}
+
 export async function upsertMonthlyTarget(payload: any & { id?: string }): Promise<void> {
   return upsertGraphRow("ir_monthly_targets", payload);
 }
