@@ -519,7 +519,7 @@ export function CompaniesTab() {
             <AlertDialogCancel className="rounded-xl font-black uppercase text-[10px]">Decline</AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
-                await supabase.from("companies").delete().eq("id", deleteTarget.id);
+                await deleteCompany(deleteTarget.id);
                 setDeleteTarget(null);
                 loadData();
               }}
