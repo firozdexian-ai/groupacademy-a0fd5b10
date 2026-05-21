@@ -519,3 +519,24 @@ export async function listCompanyShortlistsRecent(companyId: string, limit = 200
     .limit(limit);
   return (data ?? []) as Array<{ talent_id: string; created_at: string }>;
 }
+
+// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
+export async function getCompanyNameAndLogo(companyId: string) {
+  const { data } = await supabase
+    .from("companies")
+    .select("name, logo_url")
+    .eq("id", companyId)
+    .maybeSingle();
+  return (data as { name: string | null; logo_url: string | null } | null) ?? null;
+}
+
+export async function getActiveMembershipWithCompanyName(userId: string) {
+  const { data } = await supabase
+    .from("company_members")
+    .select("role, companies:company_id (name)")
+    .eq("user_id", userId)
+    .eq("status", "active")
+    .limit(1)
+    .maybeSingle();
+  return (data as { role: string; companies: { name: string } | null } | null) ?? null;
+}

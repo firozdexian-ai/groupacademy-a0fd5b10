@@ -797,3 +797,13 @@ export async function listTalentsBasicByIds(ids: string[]) {
     .in("id", ids);
   return (data ?? []) as any[];
 }
+
+// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
+export async function getTalentPhotoByUserId(userId: string) {
+  const { data } = await supabase
+    .from("talents")
+    .select("full_name, profile_photo_url")
+    .eq("user_id", userId)
+    .maybeSingle();
+  return (data as { full_name: string | null; profile_photo_url: string | null } | null) ?? null;
+}

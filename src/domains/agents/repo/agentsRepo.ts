@@ -411,3 +411,14 @@ export async function getAgentByKey(agentKey: string) {
   if (error) throw error;
   return data as { id: string; name: string; agent_key: string; avatar_url: string | null; bg_color: string } | null;
 }
+
+// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
+export async function listPinnedAgentKeys(userId: string, companyId: string): Promise<string[]> {
+  const { data } = await supabase
+    .from("gro10x_agent_threads")
+    .select("agent_key")
+    .eq("user_id", userId)
+    .eq("company_id", companyId)
+    .eq("pinned", true);
+  return ((data ?? []) as Array<{ agent_key: string }>).map((r) => r.agent_key);
+}
