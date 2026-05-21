@@ -356,8 +356,9 @@ export function BatchContentGenerator() {
         activeTab === "blog-posts"
           ? { status: "published", published_at: new Date().toISOString() }
           : { status: "published", is_active: true };
-      const table = activeTab === "blog-posts" ? "blog_posts" : "feed_posts";
-      await supabase.from(table).update(payload).eq("id", draft.id);
+      const table: DraftPostTable = activeTab === "blog-posts" ? "blog_posts" : "feed_posts";
+      await updateDraftPost(table, draft.id, payload);
+
       setDrafts((prev) => prev.filter((d) => d.id !== draft.id));
       toast.success("Artifact Deployed: Node live.");
     } finally {
