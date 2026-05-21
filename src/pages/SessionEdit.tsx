@@ -132,22 +132,17 @@ export default function SessionEdit() {
       const [hours, minutes] = values.scheduled_time.split(":").map(Number);
       scheduledDateTime.setHours(hours, minutes, 0, 0);
 
-      const { error } = await supabase
-        .from("course_sessions")
-        .update({
-          content_id: values.content_id,
-          instructor_id: values.instructor_id,
-          title: values.title,
-          description: values.description,
-          scheduled_date: scheduledDateTime.toISOString(),
-          duration_minutes: values.duration_minutes,
-          meeting_link: values.meeting_link || null,
-          recording_link: values.recording_link || null,
-          status: values.status,
-        })
-        .eq("id", id!);
-
-      if (error) throw error;
+      await updateCourseSession(id!, {
+        content_id: values.content_id,
+        instructor_id: values.instructor_id,
+        title: values.title,
+        description: values.description,
+        scheduled_date: scheduledDateTime.toISOString(),
+        duration_minutes: values.duration_minutes,
+        meeting_link: values.meeting_link || null,
+        recording_link: values.recording_link || null,
+        status: values.status,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sessions"] });
@@ -160,10 +155,8 @@ export default function SessionEdit() {
   });
 
   const deleteSession = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("course_sessions").delete().eq("id", id!);
-      if (error) throw error;
-    },
+    mutationFn: () => deleteCourseSession(id!),
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sessions"] });
       toast.success("Session node purged.");
