@@ -5,11 +5,11 @@
  */
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
 import Profile from "@/pages/app/Profile";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { Building2, ExternalLink, LogOut } from "lucide-react";
+import { getActiveMembershipWithCompanyName } from "@/domains/companies/repo/companiesRepo";
 
 export default function Gro10xMe() {
   const { user, signOut } = useAuth();
@@ -21,16 +21,10 @@ export default function Gro10xMe() {
     if (!user?.id) return;
     let cancelled = false;
     (async () => {
-      const { data: m } = await supabase
-        .from("company_members")
-        .select("role, companies:company_id (name)")
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .limit(1)
-        .maybeSingle();
+      const m = await getActiveMembershipWithCompanyName(user.id);
       if (cancelled || !m) return;
-      setRole(m.role as string);
-      setCompany((m as any).companies);
+      setRole(m.role);
+      setCompany(m.companies);
     })();
     return () => {
       cancelled = true;
