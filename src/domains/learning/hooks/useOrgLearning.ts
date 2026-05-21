@@ -150,7 +150,11 @@ export function useOrgWallet(companyId: string | undefined) {
       // HUD: CONCURRENT_MONETARY_LEDGER_HANDSHAKE
       // Wrapped in an atomic bundle to eliminate visual balance desynchronization vectors
       const [balanceResult, transactionsResult] = await Promise.all([
-        supabase.from("company_credits").select("balance, earned_balance").eq("company_id", companyId!).maybeSingle(),
+        supabase
+          .from("company_credits")
+          .select("balance, earned_balance")
+          .eq("company_id", companyId!)
+          .maybeSingle(),
         supabase
           .from("company_credit_transactions")
           .select("*")
