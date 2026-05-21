@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { deductCreditsRpc, addCreditsRpc } from "@/domains/finance/repo/financeRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { ServiceType, getServiceCost } from "@/lib/creditPricing";
 import { useToast } from "@/hooks/use-toast";
@@ -125,14 +126,12 @@ export function useCredits() {
       const safeRefId = isValidUUID(referenceId) ? referenceId : null;
 
       // HUD: EXECUTING_RPC_ATOMIC_DEDUCTION
-      const { data, error } = await supabase.rpc("deduct_credits", {
-        p_amount: amount,
-        p_service_type: serviceType,
-        p_reference_id: safeRefId,
-        p_description: description || `Service: ${serviceType}`,
+      const data = await deductCreditsRpc({
+        amount,
+        serviceType,
+        referenceId: safeRefId,
+        description: description || `Service: ${serviceType}`,
       });
-
-      if (error) throw error;
       const result = data as any;
       if (!result?.success) throw new Error(result?.error || "TRANSACTION_DENIED");
 
@@ -182,14 +181,11 @@ export function useCredits() {
       if (!talent?.id) throw new Error("AUTH_REQUIRED");
 
       // HUD: EXECUTING_RPC_ATOMIC_INGRESS
-      const { data, error } = await supabase.rpc("add_credits" as any, {
-        p_amount: amount,
-        p_transaction_type: type,
-        p_description: description || `${type} sync`,
+      return await addCreditsRpc({
+        amount,
+        transactionType: type,
+        description: description || `${type} sync`,
       });
-
-      if (error) throw error;
-      return data;
     },
     onSuccess: (_, vars) => {
       queryClient.invalidateQueries({ queryKey: ["talent-credits-balance", talent?.id] });

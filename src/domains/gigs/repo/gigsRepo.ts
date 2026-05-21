@@ -313,3 +313,15 @@ export async function rejectMarketplaceBid(id: string): Promise<void> {
   const { error } = await (supabase as any).from("marketplace_bids").update({ status: "rejected" }).eq("id", id);
   if (error) throw error;
 }
+
+// ─── Phase 10j.5h2: gig match RPC wrappers ────────────────────────────────
+export async function recordMatchEvent(matchId: string, event: "view" | "dismiss" | "click" | "accept" | "reject"): Promise<void> {
+  const { error } = await supabase.rpc("record_match_event", { _match_id: matchId, _event: event });
+  if (error) throw error;
+}
+
+export async function matchGigsForTalent(talentId: string, limit = 20) {
+  const { data, error } = await supabase.rpc("match_gigs_for_talent", { _talent_id: talentId, _limit: limit });
+  if (error) throw error;
+  return (data ?? []) as any[];
+}

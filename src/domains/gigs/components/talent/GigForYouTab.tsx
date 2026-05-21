@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { recordMatchEvent, matchGigsForTalent } from "@/domains/gigs/repo/gigsRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -31,12 +31,7 @@ export function GigForYouTab() {
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("match_gigs_for_talent", {
-        _talent_id: talent!.id,
-        _limit: 20,
-      });
-      if (error) throw error;
-      return data || [];
+      return await matchGigsForTalent(talent!.id, 20);
     },
   });
 
@@ -54,11 +49,7 @@ export function GigForYouTab() {
   // 3. Hardened Dismiss Mutation Pipeline
   const dismiss = useMutation({
     mutationFn: async (matchId: string) => {
-      const { error } = await supabase.rpc("record_match_event", {
-        _match_id: matchId,
-        _event: "dismiss",
-      });
-      if (error) throw error;
+      await recordMatchEvent(matchId, "dismiss");
       return matchId;
     },
     onMutate: async (matchId) => {
@@ -93,11 +84,7 @@ export function GigForYouTab() {
       for (const matchItem of offeredMatches) {
         if (!matchItem?.match_id) continue;
         try {
-          const { error: rpcError } = await supabase.rpc("record_match_event", {
-            _match_id: matchItem.match_id,
-            _event: "view",
-          });
-          if (rpcError) throw rpcError;
+          await recordMatchEvent(matchItem.match_id, "view");
           traceCount++;
         } catch (loopErr) {
           trackError(loopErr, {

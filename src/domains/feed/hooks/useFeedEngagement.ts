@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { feedApi } from "@/domains/feed/api/manifest";
 import { useTalent } from "@/hooks/useTalent";
 import { useMemo } from "react";
 
@@ -47,18 +47,18 @@ export function useFeedEngagement(postIds: string[]) {
       if (postIds.length === 0) return {};
 
       // HUD: EXECUTING_RPC_BATCH_ENGAGEMENT_SELECT
-      const { data, error } = await supabase.rpc("get_feed_engagement" as any, {
-        _post_ids: postIds,
-        _talent_id: talent?.id || null,
-      });
-
-      if (error) {
-        // Digital Workforce System Flag: Route analytical lookups exceptions directly to Admin panels
+      let data: any[] = [];
+      try {
+        data = (await feedApi.getEngagement({
+          _post_ids: postIds,
+          _talent_id: talent?.id || null,
+        } as any)) as any[];
+      } catch (error: any) {
         console.error("[Digital Workforce] ANOMALY: get_feed_engagement database sync failed.", {
           postIdCount: postIds.length,
           talentId: talent?.id || "ANONYMOUS_NODE",
-          error: error.message,
-          code: error.code,
+          error: error?.message,
+          code: error?.code,
         });
         throw error;
       }

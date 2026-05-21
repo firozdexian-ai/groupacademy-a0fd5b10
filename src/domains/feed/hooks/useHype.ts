@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { feedApi } from "@/domains/feed/api/manifest";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
@@ -104,10 +104,12 @@ export function useHype(
     inFlight.current += 1;
     setIsHyping(true);
 
-    const { error } = await supabase.rpc("hype_content" as any, {
-      _content_type: contentType,
-      _content_id: contentId,
-    });
+    let error: any = null;
+    try {
+      await feedApi.hypeContent({ _content_type: contentType, _content_id: contentId } as any);
+    } catch (e) {
+      error = e;
+    }
 
     inFlight.current -= 1;
     if (inFlight.current === 0) setIsHyping(false);

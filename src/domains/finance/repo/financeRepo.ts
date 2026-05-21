@@ -231,3 +231,46 @@ export async function insertTalentWithdrawalRequest(payload: {
   const { error } = await supabase.from("withdrawal_requests").insert(payload as any);
   return { error };
 }
+
+// ─── Phase 10j.5h2: credit RPC wrappers ───────────────────────────────────
+export interface DeductCreditsArgs {
+  amount: number;
+  serviceType: string;
+  referenceId?: string | null;
+  description?: string;
+  talentId?: string;
+  transactionType?: string;
+}
+
+export async function deductCreditsRpc(args: DeductCreditsArgs) {
+  const payload: Record<string, any> = {
+    p_amount: args.amount,
+    p_service_type: args.serviceType,
+    p_reference_id: args.referenceId ?? null,
+    p_description: args.description ?? `Service: ${args.serviceType}`,
+  };
+  if (args.talentId) payload.p_talent_id = args.talentId;
+  if (args.transactionType) payload.p_transaction_type = args.transactionType;
+  const { data, error } = await supabase.rpc("deduct_credits" as any, payload as any);
+  if (error) throw error;
+  return data as any;
+}
+
+export interface AddCreditsArgs {
+  amount: number;
+  transactionType: string;
+  description?: string;
+  talentId?: string;
+}
+
+export async function addCreditsRpc(args: AddCreditsArgs) {
+  const payload: Record<string, any> = {
+    p_amount: args.amount,
+    p_transaction_type: args.transactionType,
+    p_description: args.description ?? `${args.transactionType} sync`,
+  };
+  if (args.talentId) payload.p_talent_id = args.talentId;
+  const { data, error } = await supabase.rpc("add_credits" as any, payload as any);
+  if (error) throw error;
+  return data as any;
+}
