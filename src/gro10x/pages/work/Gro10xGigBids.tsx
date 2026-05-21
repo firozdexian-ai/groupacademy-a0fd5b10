@@ -156,14 +156,12 @@ export default function Gro10xGigBids() {
                       variant="ghost"
                       className="text-xs gap-1"
                       onClick={async () => {
-                        const { error } = await supabase
-                          .from("marketplace_bids")
-                          .update({ status: "rejected" })
-                          .eq("id", b.id);
-                        if (error) toast.error(error.message);
-                        else {
+                        try {
+                          await rejectMarketplaceBid(b.id);
                           toast.success("Bid rejected");
                           void refetch();
+                        } catch (e: any) {
+                          toast.error(e?.message ?? "Failed");
                         }
                       }}
                     >
