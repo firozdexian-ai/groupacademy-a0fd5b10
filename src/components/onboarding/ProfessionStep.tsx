@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { listActiveProfessionCategoriesFull, listProfessionalRolesByCategory } from "@/domains/profile/repo/profileRepo";
+import { assignCareerCoach } from "@/domains/talent/repo/talentRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { useTalent } from "@/hooks/useTalent";
