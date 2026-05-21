@@ -31,8 +31,59 @@ export const talentRepo = {
     return query.range(from, from + pageSize - 1);
   },
 
+  // ---------- Notifications list ----------
+  listNotificationsPage: (page: number, pageSize: number) => {
+    const from = (page - 1) * pageSize;
+    return supabase
+      .from("notifications")
+      .select(`*, talent:talents(full_name, email)`, { count: "exact" })
+      .order("created_at", { ascending: false })
+      .range(from, from + pageSize - 1);
+  },
 
-  // ---------- Professions / Roles ----------
+  // ---------- Outreach console ----------
+  getOutreachChannel: () =>
+    supabase
+      .from("messaging_channels")
+      .select("id, agent_key, status, daily_outreach_cap, hourly_outreach_cap")
+      .eq("agent_key", "talent-outreach")
+      .maybeSingle(),
+
+  listOutreachableTalents: (search: string, limit = 50) => {
+    let q = supabase
+      .from("talents")
+      .select(
+        `id, full_name, phone, custom_profession, profession_categories(name)`,
+      )
+      .not("phone", "is", null)
+      .order("created_at", { ascending: false })
+      .limit(limit);
+    if (search.trim()) q = q.ilike("full_name", `%${search.trim()}%`);
+    return q;
+  },
+
+  // ---------- Portfolio requests list ----------
+  listPortfolioRequests: (params: {
+    page: number;
+    pageSize: number;
+    search?: string;
+    statusFilter?: string;
+  }) => {
+    const { page, pageSize, search, statusFilter } = params;
+    let query = supabase
+      .from("portfolio_requests")
+      .select(`*, profession_category:profession_categories(name)`, { count: "exact" })
+      .order("created_at", { ascending: false });
+    if (search) {
+      const safe = sanitizeIlike(search);
+      if (safe) query = query.or(`full_name.ilike.%${safe}%,email.ilike.%${safe}%,phone.ilike.%${safe}%`);
+    }
+    if (statusFilter && statusFilter !== "all") query = query.eq("status", statusFilter as any);
+    const from = (page - 1) * pageSize;
+    return query.range(from, from + pageSize - 1);
+  },
+
+
   listProfessionStructure: async () => {
     const [academies, schools, categories] = await Promise.all([
       supabase.from("academies").select("*").order("display_order"),
