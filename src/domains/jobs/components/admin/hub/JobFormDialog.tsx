@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { enhanceJobDescription } from "@/domains/jobs/api/jobsApi";
+import { getJobById, insertJob, updateJob } from "@/domains/jobs/repo/jobsRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -108,9 +109,14 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
       setLoading(true);
       try {
-        const { data, error } = await supabase.from("jobs").select("*").eq("id", jobId).single();
-
-        if (error || !data) {
+        let data: any = null;
+        try {
+          data = await getJobById(jobId);
+        } catch {
+          toast.error("Registry Ingestion Fault: Node not found.");
+          return;
+        }
+        if (!data) {
           toast.error("Registry Ingestion Fault: Node not found.");
           return;
         }
