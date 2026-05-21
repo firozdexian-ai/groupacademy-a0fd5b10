@@ -93,29 +93,19 @@ export function CompaniesTab() {
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
-      let query = supabase.from("companies").select("*", { count: "exact" }).order("name");
-
-      // Logic Restoration: Search & Industry Filters
-      if (searchQuery) {
-        const safe = sanitizeIlike(searchQuery);
-        query = query.or(`name.ilike.%${safe}%,industry.ilike.%${safe}%,primary_email.ilike.%${safe}%`);
-      }
-      if (industryFilter !== "all") {
-        industryFilter === "none"
-          ? (query = query.is("industry", null))
-          : (query = query.eq("industry", industryFilter));
-      }
-
       const [registryRes, industryRes, overviewRes] = await Promise.all([
-        query.range((page - 1) * ITEMS_PER_PAGE, page * ITEMS_PER_PAGE - 1),
+        listCompaniesPaged({
+          search: searchQuery,
+          industry: industryFilter,
+          from: (page - 1) * ITEMS_PER_PAGE,
+          to: page * ITEMS_PER_PAGE - 1,
+        }),
         supabase.rpc("get_industry_rollup"),
         supabase.rpc("get_companies_overview"),
       ]);
 
-      if (registryRes.error) throw registryRes.error;
-
-      setCompanies(registryRes.data || []);
-      setTotalCount(registryRes.count || 0);
+      setCompanies(registryRes.rows);
+      setTotalCount(registryRes.count);
       setIndustryOptions(industryRes.data || []);
 
       if (overviewRes.data) {
@@ -127,18 +117,10 @@ export function CompaniesTab() {
       }
 
       // Outreach Telemetry Fetch
-      if (registryRes.data?.length) {
-        const { data: out } = await supabase
-          .from("contact_outreach")
-          .select("company_id, sent_at, message_type")
-          .in(
-            "company_id",
-            registryRes.data.map((c) => c.id),
-          )
-          .order("sent_at", { ascending: false });
-
+      if (registryRes.rows.length) {
+        const out = await listLatestOutreachForCompanies(registryRes.rows.map((c) => c.id));
         const history: Record<string, any> = {};
-        out?.forEach((r) => {
+        out.forEach((r) => {
           if (!history[r.company_id]) history[r.company_id] = r;
         });
         setOutreachHistory(history);
