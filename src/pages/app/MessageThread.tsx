@@ -12,6 +12,9 @@ import { ArrowLeft, Bot, Sparkles, Send, Loader2 } from "lucide-react";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { PAGE_SHELL } from "@/lib/uiTokens";
+import { listTalentSystemFeedNotifications } from "@/domains/talent/repo/talentRepo";
+import { getAgentByKey } from "@/domains/agents/repo/agentsRepo";
+import { getMessageThreadIdByTalentAndAgent } from "@/domains/messaging/repo/messagingRepo";
 
 // =========================================================================
 // DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
