@@ -750,3 +750,28 @@ export async function getTalentCreditPoolsByUserId(
     bonus: Number((data as any)?.contact_bonus_balance ?? 0),
   };
 }
+
+// ─── Phase 10j.5g2: talent mini-profiles for company team list ────────────
+export async function listTalentMiniProfilesByUserIds(userIds: string[]): Promise<any[]> {
+  if (!userIds.length) return [];
+  const { data } = await supabase
+    .from("talents")
+    .select("user_id, full_name, profile_photo_url, custom_profession")
+    .in("user_id", userIds);
+  return (data ?? []) as any[];
+}
+
+export async function listTalentBasicByUserIds(userIds: string[], limit = 12): Promise<any[]> {
+  if (!userIds.length) return [];
+  const { data } = await supabase
+    .from("talents")
+    .select("full_name, profile_photo_url, custom_profession")
+    .in("user_id", userIds)
+    .limit(limit);
+  return (data ?? []) as any[];
+}
+
+export async function updateTalentCvUrl(talentId: string, cvUrl: string): Promise<{ error: any }> {
+  const { error } = await supabase.from("talents").update({ cv_url: cvUrl }).eq("id", talentId);
+  return { error };
+}

@@ -1,7 +1,14 @@
 import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  getCourseProjectById,
+  getCourseProjectCourse,
+  listCourseProjectSubtasks,
+  submitCourseProject,
+  updateCourseProjectSubtask,
+  claimCourseProject,
+} from "@/domains/learning/repo/learningRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -115,34 +122,21 @@ export default function CourseProjectDetail() {
     queryKey: ["app-course-project-composite-detail", unverifiedProjectIdStr],
     enabled: !!unverifiedProjectIdStr,
     queryFn: async (): Promise<ProjectCompositePayload> => {
-      const { data: projectRow, error: projectQueryError } = await supabase
-        .from("course_projects")
-        .select("id, course_id, status, claimed_by, deadline, total_credit_reward, progress_percent")
-        .eq("id", unverifiedProjectIdStr!)
-        .single();
+      const { data: projectRow, error: projectQueryError } = await getCourseProjectById(
+        unverifiedProjectIdStr!,
+      );
 
       if (projectQueryError || !projectRow) throw projectQueryError || new Error("Project absent.");
 
-      const [courseQueryResponse, subtasksQueryResponse] = await Promise.all([
-        supabase
-          .from("content")
-          .select("id, title, description, cover_image_url")
-          .eq("id", projectRow.course_id)
-          .maybeSingle(),
-        supabase
-          .from("course_project_subtasks")
-          .select(
-            "id, project_id, title, kind, status, brief, expected_format, credit_reward, display_order, submitted_files, submitted_notes, reviewer_notes",
-          )
-          .eq("project_id", unverifiedProjectIdStr!)
-          .order("display_order", { ascending: true })
-          .order("created_at", { ascending: true }),
+      const [courseRow, subtaskRows] = await Promise.all([
+        getCourseProjectCourse(projectRow.course_id),
+        listCourseProjectSubtasks(unverifiedProjectIdStr!),
       ]);
 
       return {
         project: projectRow as unknown as CourseProject,
-        course: courseQueryResponse.data as unknown as CourseMetadata | null,
-        subtasks: (subtasksQueryResponse.data as unknown as ProjectSubtask[]) || [],
+        course: courseRow as unknown as CourseMetadata | null,
+        subtasks: (subtaskRows as unknown as ProjectSubtask[]) || [],
       };
     },
   });
@@ -160,11 +154,7 @@ export default function CourseProjectDetail() {
   const claimProjectMutation = useMutation({
     mutationFn: async () => {
       if (!unverifiedProjectIdStr) return;
-      const { data: rpcPayload, error: rpcHandshakeError } = await supabase.rpc("claim_course_project", {
-        p_project_id: unverifiedProjectIdStr,
-      });
-
-      if (rpcHandshakeError) throw rpcHandshakeError;
+      const rpcPayload = await claimCourseProject(unverifiedProjectIdStr);
       const castRpcResponse = rpcPayload as unknown as ClaimRpcResponse;
       if (!castRpcResponse?.success) throw new Error(castRpcResponse?.error || "Pipeline allocation failed.");
     },
@@ -180,10 +170,7 @@ export default function CourseProjectDetail() {
 
   const submitEntireProjectMutation = useMutation({
     mutationFn: async () => {
-      const { error: updateError } = await supabase
-        .from("course_projects")
-        .update({ status: "submitted", submitted_at: new Date().toISOString() })
-        .eq("id", unverifiedProjectIdStr!);
+      const { error: updateError } = await submitCourseProject(unverifiedProjectIdStr!);
       if (updateError) throw updateError;
     },
     onSuccess: () => {
@@ -447,15 +434,12 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
     const isThreadMountedFlag = { current: true };
 
     try {
-      const { error: updateHandshakeError } = await supabase
-        .from("course_project_subtasks")
-        .update({
-          submitted_files: uploadedFilesCollection as any,
-          submitted_notes: textReviewerNotesInput.trim() || null,
-          submitted_at: uploadedFilesCollection.length ? new Date().toISOString() : null,
-          status: uploadedFilesCollection.length ? "in_review" : "pending",
-        })
-        .eq("id", subtask.id);
+      const { error: updateHandshakeError } = await updateCourseProjectSubtask(subtask.id, {
+        submitted_files: uploadedFilesCollection as any,
+        submitted_notes: textReviewerNotesInput.trim() || null,
+        submitted_at: uploadedFilesCollection.length ? new Date().toISOString() : null,
+        status: uploadedFilesCollection.length ? "in_review" : "pending",
+      });
 
       if (updateHandshakeError) throw updateHandshakeError;
 

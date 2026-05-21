@@ -1,6 +1,12 @@
 import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  getJobForApplication,
+  getExistingTalentApplication,
+  insertTalentJobApplication,
+} from "@/domains/jobs/repo/jobsRepo";
+import { updateTalentCvUrl } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
 import { Button } from "@/components/ui/button";
@@ -99,11 +105,9 @@ export default function AppJobApplication() {
 
     const executeJobDossierAndVettingLookup = async () => {
       try {
-        const { data: jobQueryPayload, error: jobHandshakeError } = await supabase
-          .from("jobs")
-          .select("id, title, company_name, company_logo_url, application_email, ai_assessment_enabled")
-          .eq("id", unverifiedJobIdentifierStr)
-          .single();
+        const { data: jobQueryPayload, error: jobHandshakeError } = await getJobForApplication(
+          unverifiedJobIdentifierStr,
+        );
 
         if (jobHandshakeError || !jobQueryPayload) throw jobQueryPayload;
 
@@ -111,12 +115,10 @@ export default function AppJobApplication() {
         setJobRecordState(jobQueryPayload as unknown as Job);
 
         if (talentProfileRecord?.id) {
-          const { data: existingApplicationRecord } = await supabase
-            .from("job_applications")
-            .select(`id, job_assessments(id)`)
-            .eq("job_id", unverifiedJobIdentifierStr)
-            .eq("talent_id", talentProfileRecord.id)
-            .maybeSingle();
+          const existingApplicationRecord = await getExistingTalentApplication(
+            unverifiedJobIdentifierStr,
+            talentProfileRecord.id,
+          );
 
           if (!isThreadActive) return;
 
@@ -176,10 +178,10 @@ export default function AppJobApplication() {
 
         if (signingHandshakeError || !signedUrlResponsePayload) throw signingHandshakeError;
 
-        const { error: relationalTalentRowUpdateError } = await supabase
-          .from("talents")
-          .update({ cv_url: signedUrlResponsePayload.signedUrl })
-          .eq("id", talentProfileRecord.id);
+        const { error: relationalTalentRowUpdateError } = await updateTalentCvUrl(
+          talentProfileRecord.id,
+          signedUrlResponsePayload.signedUrl,
+        );
 
         if (relationalTalentRowUpdateError) throw relationalTalentRowUpdateError;
 
@@ -252,17 +254,14 @@ export default function AppJobApplication() {
     setSubmissionProgressMessage(SUBMISSION_STAGES[0].message);
 
     try {
-      const { data: applicationInsertPayload, error: applicationInsertError } = await supabase
-        .from("job_applications")
-        .insert({
+      const { data: applicationInsertPayload, error: applicationInsertError } =
+        await insertTalentJobApplication({
           job_id: jobRecordState.id,
           talent_id: talentProfileRecord.id,
           cover_letter: coverLetterInputStr.trim(),
           cv_url: talentProfileRecord.cvUrl,
           delivery_status: "pending",
-        })
-        .select("id")
-        .single();
+        });
 
       if (applicationInsertError || !applicationInsertPayload) throw applicationInsertError;
 

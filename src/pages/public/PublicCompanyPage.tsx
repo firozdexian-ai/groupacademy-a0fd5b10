@@ -1,6 +1,11 @@
 import * as React from "react";
 import { useParams, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  getCompanyPublicProfileBySlug,
+  listActiveCompanyMemberUserIds,
+} from "@/domains/companies/repo/companiesRepo";
+import { listActiveJobsByCompanyIdShort } from "@/domains/jobs/repo/jobsRepo";
+import { listTalentBasicByUserIds } from "@/domains/talent/repo/talentRepo";
 import { Building2, Globe, MapPin, Briefcase } from "lucide-react";
 import { cn } from "@/lib/utils";
 
@@ -94,11 +99,8 @@ export default function PublicCompanyPage() {
     const executeConcurrentPlatformLookup = async () => {
       try {
         // Core Step A: Extract baseline company context profile metrics
-        const { data: baseCompanyNode, error: companyLookupError } = await supabase
-          .from("companies")
-          .select("id,name,tagline,about,logo_url,banner_url,website,country,slug")
-          .eq("slug", unverifiedRouteSlugStr)
-          .maybeSingle();
+        const { data: baseCompanyNode, error: companyLookupError } =
+          await getCompanyPublicProfileBySlug(unverifiedRouteSlugStr);
 
         if (!isRequestThreadValid) return;
 
@@ -111,41 +113,19 @@ export default function PublicCompanyPage() {
         setCompanyRecordState(baseCompanyNode as Company);
 
         // Core Step B: Execute parallel handshakes to resolve child relational nodes simultaneously
-        const [jobsResponsePayload, membersResponsePayload] = await Promise.all([
-          supabase
-            .from("jobs")
-            .select("id, title, location, job_type")
-            .eq("company_id", baseCompanyNode.id)
-            .eq("is_active", true)
-            .order("created_at", { ascending: false })
-            .limit(10),
-          supabase
-            .from("company_members")
-            .select("user_id")
-            .eq("company_id", baseCompanyNode.id)
-            .eq("status", "active")
-            .limit(12),
+        const [jobRows, memberUserIds] = await Promise.all([
+          listActiveJobsByCompanyIdShort(baseCompanyNode.id, 10),
+          listActiveCompanyMemberUserIds(baseCompanyNode.id, 12),
         ]);
 
         if (!isRequestThreadValid) return;
 
-        if (jobsResponsePayload.data) {
-          setAssociatedJobsState(jobsResponsePayload.data as Job[]);
-        }
+        setAssociatedJobsState(jobRows as Job[]);
 
-        // Core Step C: Inline extraction loop resolving talent profile configurations
-        const verifiedUserIdsArray = (membersResponsePayload.data ?? [])
-          .map((memberRecord) => memberRecord.user_id)
-          .filter((idWindow): idWindow is string => Boolean(idWindow));
+        if (memberUserIds.length > 0) {
+          const verifiedTalentsPayloadNode = await listTalentBasicByUserIds(memberUserIds, 12);
 
-        if (verifiedUserIdsArray.length > 0) {
-          const { data: verifiedTalentsPayloadNode } = await supabase
-            .from("talents")
-            .select("full_name, profile_photo_url, custom_profession")
-            .in("user_id", verifiedUserIdsArray)
-            .limit(12);
-
-          if (isRequestThreadValid && verifiedTalentsPayloadNode) {
+          if (isRequestThreadValid && verifiedTalentsPayloadNode.length) {
             setActiveMembersState(verifiedTalentsPayloadNode as Member[]);
           }
         }
