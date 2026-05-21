@@ -121,14 +121,8 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
   const { data: competitionChallengeQueryPayload, isLoading: isChallengeCacheResolving } = useQuery({
     queryKey: ["app-competition-specification-detail", activeChallengeSlug],
     queryFn: async (): Promise<CompetitionRecord> => {
-      const { data: dbChallengePayload, error: queryHandshakeError } = await supabase
-        .from("competitions")
-        .select("*")
-        .eq("slug", activeChallengeSlug!)
-        .single();
-
-      if (queryHandshakeError) throw queryHandshakeError;
-      return dbChallengePayload as unknown as CompetitionRecord;
+      const row = await getCompetitionBySlug(activeChallengeSlug!);
+      return row as unknown as CompetitionRecord;
     },
     enabled: !!activeChallengeSlug,
     staleTime: 4 * 60 * 1000,
