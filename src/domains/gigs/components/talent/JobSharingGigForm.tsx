@@ -1,7 +1,9 @@
 import { useState, useMemo, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { generateJobShareCaption } from "@/domains/jobs/api/jobsApi";
+import { getActiveJobsForSharing } from "@/domains/jobs/repo/jobsRepo";
+import { getTalentRefCode } from "@/domains/talent/repo/talentRepo";
+import { insertGigSubmission } from "@/domains/gigs/repo/gigsRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -88,17 +90,8 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
     queryKey: ["talent-ref-code", talentId],
     enabled: !!talentId,
     refetchOnWindowFocus: false,
-    queryFn: async () => {
-      const { data, error } = await supabase.from("talents").select("ref_code").eq("id", talentId).single();
-
-      if (error) throw error;
-      return data?.ref_code;
-    },
+    queryFn: () => getTalentRefCode(talentId),
   });
-
-  // 2. Active Employment Tracking Query Pipeline
-  const { data: jobs = [], isLoading } = useQuery({
-    queryKey: ["active-jobs-for-sharing"],
     staleTime: 1000 * 60 * 5,
     refetchOnWindowFocus: false,
     queryFn: async () => {
