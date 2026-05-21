@@ -53,35 +53,10 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
     staleTime: 15000, // 15-second cache consistency boundary
     queryFn: async (): Promise<ProgressQueryPayload> => {
       // HUD: ATOMIC_ACADEMIC_PROGRESS_BUNDLE_SELECT
-      const [cmRes, mpRes, enrRes, espRes] = await Promise.all([
-        supabase
-          .from("course_modules")
-          .select("id, display_order, title")
-          .eq("content_id", contentId!)
-          .order("display_order", { ascending: true }),
-        supabase
-          .from("module_progress")
-          .select("module_id, stages_completed, total_stages, progress_pct, started_at, completed_at")
-          .eq("enrollment_id", enrollmentId!),
-        supabase
-          .from("enrollments")
-          .select("progress, status, current_module_id")
-          .eq("id", enrollmentId!)
-          .maybeSingle(),
-        supabase
-          .from("enrollment_stage_progress")
-          .select("module_id, resource_view_states")
-          .eq("enrollment_id", enrollmentId!),
-      ]);
+      const bundle = await getEnrollmentProgressBundle(enrollmentId!, contentId!);
+      const mpByModule = new Map(bundle.moduleProgress.map((r) => [r.module_id, r]));
 
-      if (cmRes.error) throw cmRes.error;
-      if (mpRes.error) throw mpRes.error;
-      if (enrRes.error) throw enrRes.error;
-      if (espRes.error) throw espRes.error;
-
-      const mpByModule = new Map((mpRes.data ?? []).map((r) => [r.module_id, r]));
-
-      const modules: ModuleProgressRow[] = (cmRes.data ?? []).map((m) => {
+      const modules: ModuleProgressRow[] = bundle.modules.map((m) => {
         const mp = mpByModule.get(m.id);
         return {
           moduleId: m.id,
