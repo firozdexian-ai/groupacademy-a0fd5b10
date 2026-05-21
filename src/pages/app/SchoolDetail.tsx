@@ -99,13 +99,13 @@ export default function SchoolDetail() {
     setSubmitting(true);
     try {
       const instructor = getInstructor(openProfession);
-      const { error } = await supabase.from("instructor_connection_requests").insert({
+      const { error } = await insertInstructorConnectionRequest({
         talent_id: talent.id,
         school_id: school.id,
         profession_id: openProfession.id,
         instructor_id: instructor?.id || null,
         message: message.trim() || null,
-      } as any);
+      });
 
       if (error) throw error;
       toast.success("Request synchronized with Digital Workforce.");
