@@ -58,7 +58,7 @@ export default function Feed() {
   return (
     <div className="max-w-md md:max-w-2xl mx-auto px-3 py-2 pb-32 space-y-2">
       <FeedHeader
-        talentName={talent?.fullName || talent?.full_name || "You"}
+        talentName={talent?.fullName || "You"}
         talentPhoto={(talent as any)?.profilePhotoUrl || (talent as any)?.profile_photo_url || null}
         talentProfession={(talent as any)?.customProfession || (talent as any)?.custom_profession || null}
         onRefresh={refresh}
