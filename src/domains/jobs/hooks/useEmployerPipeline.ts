@@ -1,5 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  getEmployerPipelineFull,
+  updateApplicationStatus,
+} from "@/domains/jobs/repo/jobsRepo";
 import { notifyApplicationStatus } from "@/domains/jobs/api/jobsApi";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
 import { toast } from "sonner";
