@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getJobsHubDashboard } from "@/domains/jobs/repo/jobsRepo";
 import type { JobCardData } from "@/components/jobs/JobCard";
 import type { CompanyWithSignal } from "@/domains/companies/hooks/useCompaniesWithSignal";
 import type { CountryWithSignal } from "@/hooks/useCountriesWithSignal";
@@ -38,17 +38,14 @@ export function useJobsHubDashboard(talentId: string | undefined) {
     staleTime: 3 * 60 * 1000,
     queryFn: async (): Promise<JobsHubDashboard> => {
       // HUD: EXECUTING_JOBS_HUB_AGGREGATION_SYNC
-      const { data, error } = await supabase.rpc("get_jobs_hub_dashboard", {
-        _talent_id: talentId ?? null,
-      });
-
-      if (error) {
-        // Digital Workforce Anomaly Trigger:
-        // Identifies RPC bottlenecks or structural mismatches in discovery.
+      let data: any;
+      try {
+        data = await getJobsHubDashboard(talentId ?? null);
+      } catch (error: any) {
         console.error("[Digital Workforce] ANOMALY: get_jobs_hub_dashboard RPC handshake failed.", {
           talentId,
-          error: error.message,
-          code: error.code,
+          error: error?.message,
+          code: error?.code,
         });
         throw error;
       }

@@ -1,5 +1,8 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  getEmployerPipelineFull,
+  updateApplicationStatus,
+} from "@/domains/jobs/repo/jobsRepo";
 import { notifyApplicationStatus } from "@/domains/jobs/api/jobsApi";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
 import { toast } from "sonner";
@@ -58,17 +61,18 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
     staleTime: 0,
     queryFn: async (): Promise<PipelineDashboardPayload> => {
       // HUD: EXECUTING_RPC_PIPELINE_SELECT
-      const { data, error } = await supabase.rpc("get_employer_pipeline_full", {
-        p_company_id: opts.companyId ?? null,
-        p_job_id: opts.jobId ?? null,
-        p_limit: 500,
-      });
-
-      if (error) {
+      let data: any;
+      try {
+        data = await getEmployerPipelineFull({
+          companyId: opts.companyId ?? null,
+          jobId: opts.jobId ?? null,
+          limit: 500,
+        });
+      } catch (error: any) {
         console.error("[Digital Workforce] FAULT: get_employer_pipeline_full database ingress rejected.", {
           companyId: opts.companyId,
           jobId: opts.jobId,
-          error: error.message,
+          error: error?.message,
         });
         throw error;
       }
@@ -87,12 +91,7 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
   const moveMutation = useMutation({
     mutationFn: async ({ applicationId, to }: { applicationId: string; to: PipelineStatus }) => {
       // HUD: ATOMIC_APPLICATION_STATUS_UPDATE
-      const { error: updateError } = await supabase
-        .from("job_applications")
-        .update({ application_status: to })
-        .eq("id", applicationId);
-
-      if (updateError) throw updateError;
+      await updateApplicationStatus(applicationId, to);
 
       // HUD: EDGE_INVOCATION_NOTIFICATION_DISPATCH
       // Hardened tracking logic replaces baseline ignoring of failed email pipelines

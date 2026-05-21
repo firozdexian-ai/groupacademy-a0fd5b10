@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getGigsHubDashboard } from "@/domains/gigs/repo/gigsRepo";
 
 /**
  * GroUp Academy: Gigs & Marketplace Command Center (V5.6.0)
@@ -33,14 +33,13 @@ export function useGigsHubDashboard(enabled = true) {
     staleTime: 2 * 60 * 1000, // 2-minute performance consistency baseline
     queryFn: async (): Promise<GigsHubDashboard> => {
       // HUD: EXECUTING_MARKETPLACE_AGGREGATION_SYNC
-      const { data, error } = await supabase.rpc("get_gigs_hub_dashboard");
-
-      if (error) {
-        // Digital Workforce Anomaly Trigger:
-        // Direct stream to Admin OS to monitor marketplace liquidity bottlenecks.
+      let data: any;
+      try {
+        data = await getGigsHubDashboard();
+      } catch (error: any) {
         console.error("[Digital Workforce] ANOMALY: get_gigs_hub_dashboard RPC handshake failed.", {
-          code: error.code,
-          message: error.message,
+          code: error?.code,
+          message: error?.message,
         });
         throw error;
       }
