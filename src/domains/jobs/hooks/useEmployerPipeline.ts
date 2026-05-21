@@ -61,17 +61,18 @@ export function useEmployerPipeline(opts: { companyId?: string | null; jobId?: s
     staleTime: 0,
     queryFn: async (): Promise<PipelineDashboardPayload> => {
       // HUD: EXECUTING_RPC_PIPELINE_SELECT
-      const { data, error } = await supabase.rpc("get_employer_pipeline_full", {
-        p_company_id: opts.companyId ?? null,
-        p_job_id: opts.jobId ?? null,
-        p_limit: 500,
-      });
-
-      if (error) {
+      let data: any;
+      try {
+        data = await getEmployerPipelineFull({
+          companyId: opts.companyId ?? null,
+          jobId: opts.jobId ?? null,
+          limit: 500,
+        });
+      } catch (error: any) {
         console.error("[Digital Workforce] FAULT: get_employer_pipeline_full database ingress rejected.", {
           companyId: opts.companyId,
           jobId: opts.jobId,
-          error: error.message,
+          error: error?.message,
         });
         throw error;
       }
