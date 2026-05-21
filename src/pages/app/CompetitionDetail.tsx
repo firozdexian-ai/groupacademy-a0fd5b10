@@ -151,7 +151,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
       if (!activeChallengeItem || !talentProfileRecord) {
         throw new Error("Authorization signature expired. Authenticate container profile.");
       }
-      const { error: mutationRpcHandshakeError } = await supabase.from("competition_submissions").upsert({
+      const { error: mutationRpcHandshakeError } = await upsertCompetitionSubmission({
         competition_id: activeChallengeItem.id,
         talent_id: talentProfileRecord.id,
         submission_url: textSubmissionUrlInput.trim(),
