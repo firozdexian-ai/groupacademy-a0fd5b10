@@ -129,7 +129,7 @@ export function PayoutAccountsManager() {
         isPrimary: isFirstAccountNode,
       });
 
-      if (insertRegistryError) throw insertRegistryError;
+      
 
       // Automated Efficiency: Synchronize cache streams immediately to avoid state drift across layouts
       await queryClient.invalidateQueries({ queryKey: ["payout-accounts"] });
@@ -166,12 +166,7 @@ export function PayoutAccountsManager() {
     const dynamicToastTrackerId = toast.loading("Updating primary payout path designations...");
 
     try {
-      const { error: updateRegistryError } = await supabase
-        .from("talent_payout_accounts" as any)
-        .update({ is_primary: true } as any)
-        .eq("id", targetAccountIdStr);
-
-      if (updateRegistryError) throw updateRegistryError;
+      await setPayoutAccountPrimary(targetAccountIdStr);
 
       await queryClient.invalidateQueries({ queryKey: ["payout-accounts"] });
 
@@ -207,12 +202,7 @@ export function PayoutAccountsManager() {
           trackEvent("payout_account_removal_executed", { accountId: targetAccountIdStr });
 
           try {
-            const { error: deleteRegistryError } = await supabase
-              .from("talent_payout_accounts" as any)
-              .delete()
-              .eq("id", targetAccountIdStr);
-
-            if (deleteRegistryError) throw deleteRegistryError;
+            await deletePayoutAccount(targetAccountIdStr);
 
             await queryClient.invalidateQueries({ queryKey: ["payout-accounts"] });
             toast.success("Disbursement node successfully removed.");
