@@ -53,15 +53,17 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
 
   useEffect(() => {
     const loadRegistryOptions = async () => {
-      const [progRes, lvlRes] = await Promise.all([
-        supabase.from("profession_categories").select("id, name").order("name"),
-        supabase.from("profession_levels").select("id, name").order("display_order"),
-      ]);
-      if (progRes.data) setPrograms(progRes.data);
-      if (lvlRes.data) setLevels(lvlRes.data);
+      try {
+        const { programs, levels } = await listProfessionCategoriesAndLevels();
+        setPrograms(programs);
+        setLevels(levels);
+      } catch (e) {
+        console.error(e);
+      }
     };
     loadRegistryOptions();
   }, []);
+
 
   const updateLogic = (key: keyof ContentFilterValues, val: string) => {
     onChange({ ...values, [key]: val });
