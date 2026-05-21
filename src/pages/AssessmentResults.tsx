@@ -2,6 +2,8 @@ import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getCareerAssessmentWithCategory } from "@/domains/marketing/repo/marketingRepo";
+import { listRecommendedCoursesForProfession } from "@/domains/learning/repo/learningRepo";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { Button } from "@/components/ui/button";
@@ -104,13 +106,7 @@ export default function AssessmentResults() {
     queryKey: ["career_assessment", id],
     queryFn: async () => {
       if (!id) throw new Error("Assessment ID is required.");
-      const { data, error } = await supabase
-        .from("career_assessments")
-        .select(`*, profession_categories (name)`)
-        .eq("id", id)
-        .maybeSingle();
-
-      if (error) throw error;
+      const data = await getCareerAssessmentWithCategory(id);
       if (!data) throw new Error("Record not found.");
       return data as unknown as Assessment;
     },
@@ -123,14 +119,11 @@ export default function AssessmentResults() {
   const { data: recommendedCourses = [] } = useQuery({
     queryKey: ["recommended_courses", assessment?.profession_category_id],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("content")
-        .select("id, title, slug, description, estimated_hours, thumbnail_url")
-        .eq("profession_line_id", assessment!.profession_category_id)
-        .eq("is_published", true)
-        .limit(3);
-
-      if (error) throw error;
+      const data = await listRecommendedCoursesForProfession(
+        assessment!.profession_category_id,
+        3,
+        true,
+      );
       return data as Course[];
     },
     enabled: !!assessment?.profession_category_id,

@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate, Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getPublicActiveJobById } from "@/domains/jobs/repo/jobsRepo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -63,12 +63,7 @@ export default function PublicJobDetail() {
     if (!id) return;
     void (async () => {
       setLoading(true);
-      const { data } = await supabase
-        .from("jobs")
-        .select("*")
-        .eq("id", id)
-        .eq("is_active", true)
-        .maybeSingle();
+      const data = await getPublicActiveJobById(id);
       setJob(data as Job | null);
       setLoading(false);
 

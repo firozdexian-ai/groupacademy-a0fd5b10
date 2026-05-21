@@ -1,6 +1,6 @@
 import { useState, useEffect, useCallback } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { updateMockInterview } from "@/domains/marketing/repo/marketingRepo";
 import { getMockInterviewById } from "@/domains/marketing/repo/marketingRepo";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -123,10 +123,7 @@ export default function MockInterviewQuestions() {
   const saveProgress = useCallback(
     async (newAnswers: Answer[]) => {
       if (!id) return;
-      await supabase
-        .from("mock_interviews")
-        .update({ answers: newAnswers as any })
-        .eq("id", id);
+      await updateMockInterview(id, { answers: newAnswers as any });
     },
     [id],
   );

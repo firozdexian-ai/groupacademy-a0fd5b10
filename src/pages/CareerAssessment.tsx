@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { markAssessmentAccessCodeUsed } from "@/domains/marketing/repo/marketingRepo";
+import {
+  markAssessmentAccessCodeUsed,
+  listActiveProfessionCategoriesAll,
+  getLatestCareerAssessmentByEmail,
+  getValidAssessmentAccessCode,
+} from "@/domains/marketing/repo/marketingRepo";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ProfessionSelector } from "@/components/assessment/ProfessionSelector";
@@ -91,12 +96,7 @@ function CareerAssessmentContent() {
 
   const loadCategories = async () => {
     try {
-      const { data, error } = await supabase
-        .from("profession_categories")
-        .select("*")
-        .eq("is_active", true)
-        .order("display_order");
-      if (error) throw error;
+      const data = await listActiveProfessionCategoriesAll();
       if (data) setCategories(data);
     } catch (err) {
       console.error("Critical: Failed to load taxonomy.");
@@ -110,15 +110,7 @@ function CareerAssessmentContent() {
     setCheckingEmail(true);
 
     try {
-      const { data: existing, error } = await supabase
-        .from("career_assessments")
-        .select("*")
-        .eq("email", email.toLowerCase().trim())
-        .order("created_at", { ascending: false })
-        .limit(1)
-        .maybeSingle();
-
-      if (error) throw error;
+      const existing = await getLatestCareerAssessmentByEmail(email.toLowerCase().trim());
 
       if (existing && new Date(existing.expires_at) > new Date()) {
         setExistingAssessment(existing);
@@ -139,13 +131,10 @@ function CareerAssessmentContent() {
     if (!accessCode.trim()) return toast.error("Verification code required.");
     setValidatingCode(true);
     try {
-      const { data: codeData, error } = await supabase
-        .from("assessment_access_codes")
-        .select("*")
-        .eq("code", accessCode.trim().toUpperCase())
-        .eq("email", email.toLowerCase().trim())
-        .eq("is_used", false)
-        .maybeSingle();
+      const { data: codeData, error } = await getValidAssessmentAccessCode(
+        accessCode.trim().toUpperCase(),
+        email.toLowerCase().trim(),
+      );
 
       if (error || !codeData) throw new Error("Invalid sequence.");
 

@@ -4,6 +4,9 @@ import { supabase } from "@/integrations/supabase/client";
 import {
   markMockInterviewAccessCodeUsed,
   insertMockInterview,
+  listActiveProfessionCategoriesWithSlug,
+  getLatestCompletedMockInterviewByEmail,
+  getValidMockInterviewAccessCode,
 } from "@/domains/marketing/repo/marketingRepo";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -95,24 +98,13 @@ function MockInterviewSetupContent() {
   }, [email]);
 
   const loadCategories = async () => {
-    const { data } = await supabase
-      .from("profession_categories")
-      .select("id, name, slug")
-      .eq("is_active", true)
-      .order("display_order");
+    const data = await listActiveProfessionCategoriesWithSlug();
     if (data) setCategories(data);
   };
 
   const checkCooldown = async () => {
     setCheckingCooldown(true);
-    const { data: existing } = await supabase
-      .from("mock_interviews")
-      .select("*")
-      .eq("email", email.toLowerCase().trim())
-      .eq("status", "completed")
-      .order("created_at", { ascending: false })
-      .limit(1)
-      .maybeSingle();
+    const existing = await getLatestCompletedMockInterviewByEmail(email.toLowerCase().trim());
 
     if (existing && new Date(existing.expires_at) > new Date()) {
       setExistingInterview(existing);
@@ -126,13 +118,10 @@ function MockInterviewSetupContent() {
     if (!accessCode.trim()) return toast.error("Verification code required.");
     setValidatingCode(true);
     try {
-      const { data, error } = await supabase
-        .from("mock_interview_access_codes")
-        .select("*")
-        .eq("code", accessCode.trim().toUpperCase())
-        .eq("email", email.toLowerCase().trim())
-        .eq("is_used", false)
-        .maybeSingle();
+      const { data, error } = await getValidMockInterviewAccessCode(
+        accessCode.trim().toUpperCase(),
+        email.toLowerCase().trim(),
+      );
 
       if (error || !data) throw new Error("Invalid or expired code.");
       await markMockInterviewAccessCodeUsed(data.id);

@@ -1,6 +1,6 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { listRecommendedCoursesForProfession } from "@/domains/learning/repo/learningRepo";
 import { getMockInterviewById } from "@/domains/marketing/repo/marketingRepo";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
@@ -125,11 +125,7 @@ export default function MockInterviewResults() {
 
   const loadRecommendedCourses = async (pId: string) => {
     setLoadingCourses(true);
-    const { data } = await supabase
-      .from("content")
-      .select("id, title, slug, estimated_hours, thumbnail_url")
-      .eq("profession_line_id", pId)
-      .limit(3);
+    const data = await listRecommendedCoursesForProfession(pId, 3, false);
     if (data) setRecommendedCourses(data);
     setLoadingCourses(false);
   };
