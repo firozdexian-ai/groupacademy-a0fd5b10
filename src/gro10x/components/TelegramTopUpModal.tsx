@@ -10,7 +10,7 @@ import { Button } from "@/components/ui/button";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Loader2, Send } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { insertManualPaymentRequest } from "@/domains/finance/repo/financeRepo";
 import { useAuth } from "@/hooks/useAuth";
 import { toast } from "sonner";
 
@@ -41,15 +41,14 @@ export function TelegramTopUpModal({ open, onOpenChange, companyId, defaultCredi
 
     setSubmitting(true);
     try {
-      const { error } = await supabase.from("manual_payment_requests").insert({
+      await insertManualPaymentRequest({
         company_id: companyId,
         requester_user_id: user.id,
         amount_bdt: bdt,
         requested_credits: credits,
         trx_id: trxId.trim(),
         notes: notes.trim() || null,
-      } as any);
-      if (error) throw error;
+      });
       toast.success("Top-up request submitted — admin will confirm shortly.");
       setTrxId("");
       setNotes("");
