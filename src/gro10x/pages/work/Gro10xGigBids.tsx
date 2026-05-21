@@ -47,9 +47,7 @@ export default function Gro10xGigBids() {
   const { data, isLoading, refetch } = useQuery({
     queryKey: ["employer-gig-bids", gigId],
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("get_employer_gig_bids", { p_gig_id: gigId! });
-      if (error) throw error;
-      return (data ?? {}) as { gig?: Gig; bids?: Bid[] };
+      return (await getEmployerGigBids(gigId!)) as { gig?: Gig; bids?: Bid[] };
     },
     enabled: !!gigId,
   });
@@ -57,11 +55,7 @@ export default function Gro10xGigBids() {
   const accept = useMutation({
     mutationFn: async (bidId: string) => {
       if (!companyId) throw new Error("No active company");
-      const { data, error } = await supabase.rpc("accept_gig_bid", {
-        p_bid_id: bidId,
-        p_company_id: companyId,
-      });
-      if (error) throw error;
+      const data = await acceptGigBid(bidId, companyId);
       const res = data as { ok: boolean; error?: string; balance?: number; required?: number };
       if (!res.ok) throw new Error(res.error ?? "Failed");
       return res;
