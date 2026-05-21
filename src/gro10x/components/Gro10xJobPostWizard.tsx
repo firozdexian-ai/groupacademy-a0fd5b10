@@ -62,11 +62,7 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
       if (!form.description.trim()) throw new Error("Description is required.");
 
       // Resolve company name (jobs.company_name is NOT NULL)
-      const { data: co } = await supabase
-        .from("companies")
-        .select("name, logo_url")
-        .eq("id", companyId)
-        .maybeSingle();
+      const co = await getCompanyNameAndLogo(companyId);
 
       const reqs = form.requirements
         .split("\n")
@@ -93,14 +89,7 @@ export default function Gro10xJobPostWizard({ open, onClose }: Props) {
         application_type: "email",
       };
 
-      const { data, error } = await supabase
-        .from("jobs")
-        .insert(payload)
-        .select("id")
-        .maybeSingle();
-
-      if (error) throw error;
-      return data?.id as string;
+      return await insertJobReturningId(payload);
     },
     onSuccess: () => {
       toast.success(form.publish ? "Job published" : "Draft saved");
