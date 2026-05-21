@@ -253,24 +253,17 @@ export function BatchContentGenerator() {
     setLoadingDrafts(true);
     try {
       if (activeTab === "blog-posts") {
-        const { data } = await supabase
-          .from("blog_posts")
-          .select("*")
-          .eq("status", "draft")
-          .order("created_at", { ascending: false });
+        const data = await listDraftPosts("blog_posts", "draft");
         setDrafts((data || []) as DraftPost[]);
       } else if (activeTab === "feed-posts") {
-        const { data } = await supabase
-          .from("feed_posts")
-          .select("*")
-          .eq("status", "pending")
-          .order("created_at", { ascending: false });
+        const data = await listDraftPosts("feed_posts", "pending");
         setDrafts((data || []) as DraftPost[]);
       }
     } finally {
       setLoadingDrafts(false);
     }
   }, [activeTab]);
+
 
   useEffect(() => {
     if (!generator.needsSchool) fetchDrafts();
