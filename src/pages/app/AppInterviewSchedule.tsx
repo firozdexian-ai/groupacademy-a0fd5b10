@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getInterviewById, listInterviewSlots } from "@/domains/jobs/repo/jobsRepo";
 import { useConfirmInterviewSlot } from "@/hooks/useInterviews";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
