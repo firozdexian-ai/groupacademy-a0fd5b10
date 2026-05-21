@@ -154,20 +154,14 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
       const {
         data: { user },
       } = await supabase.auth.getUser();
-      const { error: appErr } = await supabase.from("job_applications").insert({
+      await insertExternalJobApplication({
         job_id: jobId,
         talent_id: talentId as string,
         cv_url: cvUrl || null,
         cover_letter: coverLetter || null,
-        application_status: "submitted",
-        delivery_status: "pending",
-        is_paid: true,
-        source: "external",
         external_notes: externalNotes || null,
         added_by: user?.id || null,
-      } as any);
-
-      if (appErr) throw appErr;
+      });
 
       toast.success("Node Synchronized");
       handleClose(false);
