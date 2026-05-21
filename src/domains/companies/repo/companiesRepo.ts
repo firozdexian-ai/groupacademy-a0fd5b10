@@ -252,12 +252,15 @@ export async function unfollowCompany(userId: string, companyName: string): Prom
 }
 
 // ─── Phase 10j.2 — active company membership ──────────────────────────────
-export async function getActiveCompanyMembership(userId: string): Promise<{ company_id: string } | null> {
+export async function getActiveCompanyMembership(
+  userId: string,
+): Promise<{ company_id: string; role: string | null } | null> {
   const { data } = await supabase
     .from("company_members")
-    .select("company_id")
+    .select("company_id, role")
     .eq("user_id", userId)
     .eq("status", "active")
+    .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
   return (data as any) ?? null;
