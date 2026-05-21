@@ -49,11 +49,7 @@ export function GigForYouTab() {
   // 3. Hardened Dismiss Mutation Pipeline
   const dismiss = useMutation({
     mutationFn: async (matchId: string) => {
-      const { error } = await supabase.rpc("record_match_event", {
-        _match_id: matchId,
-        _event: "dismiss",
-      });
-      if (error) throw error;
+      await recordMatchEvent(matchId, "dismiss");
       return matchId;
     },
     onMutate: async (matchId) => {
