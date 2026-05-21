@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { fetchFeedRecommendationPage } from "@/domains/feed/repo/feedRepo";
+import {
+  fetchFeedRecommendationPage,
+  getTalentAuthorMeta,
+  upsertFeedInteraction,
+} from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 
