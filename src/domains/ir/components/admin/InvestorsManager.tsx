@@ -128,16 +128,12 @@ export function InvestorsManager() {
 
   const { data: vcFirms } = useQuery({
     queryKey: ["ir-vc-firms-list"],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("ir_vc_firms").select("id, name").order("name");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => listVCFirmsMin(),
   });
 
   const saveMutation = useMutation({
     mutationFn: async () => {
-      const payload = {
+      const payload: any = {
         vc_firm_id: formData.vc_firm_id || null,
         full_name: formData.full_name,
         title: formData.title || null,
@@ -151,14 +147,8 @@ export function InvestorsManager() {
         subscription_status: formData.subscription_status,
         notes: formData.notes || null,
       };
-
-      if (editingInvestor) {
-        const { error } = await supabase.from("ir_investors").update(payload).eq("id", editingInvestor.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("ir_investors").insert(payload);
-        if (error) throw error;
-      }
+      if (editingInvestor) payload.id = editingInvestor.id;
+      await upsertInvestor(payload);
     },
     onSuccess: () => {
       toast.success(editingInvestor ? "Stakeholder Node Optimized" : "Investor Identity Deployed");
@@ -170,10 +160,7 @@ export function InvestorsManager() {
   });
 
   const deleteMutation = useMutation({
-    mutationFn: async (id: string) => {
-      const { error } = await supabase.from("ir_investors").delete().eq("id", id);
-      if (error) throw error;
-    },
+    mutationFn: (id: string) => deleteInvestor(id),
     onSuccess: () => {
       toast.success("Identity Node Terminated");
       setDeleteConfirmId(null);
