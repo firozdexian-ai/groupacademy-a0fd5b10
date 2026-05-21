@@ -13,6 +13,7 @@ import {
   getSubmissionWithReviews,
   upsertSubmissionReview,
   insertContentReport,
+  acceptLessonAnswer,
 } from "@/domains/learning/repo/learningRepo";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
