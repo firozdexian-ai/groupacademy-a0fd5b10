@@ -39,13 +39,7 @@ export default function LanguagesHub() {
   const { data: languagesRegistry = [], isLoading: isRegistryLoading } = useQuery<LanguageRecord[]>({
     queryKey: ["app-languages-registry"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("languages")
-        .select("code, name, flag_emoji, is_active, display_order")
-        .eq("is_active", true)
-        .order("display_order");
-
-      if (error) throw error;
+      const data = await listActiveLanguages();
       return (data as unknown as LanguageRecord[]) ?? [];
     },
     staleTime: 10 * 60 * 1000,
@@ -54,9 +48,7 @@ export default function LanguagesHub() {
   const { data: talentProficiencyLevels = [] } = useQuery<TalentLanguageLevel[]>({
     queryKey: ["app-talent-language-proficiency-levels"],
     queryFn: async () => {
-      const { data, error } = await supabase.from("talent_language_levels").select("language_code, cefr_level, source");
-
-      if (error) throw error;
+      const data = await listMyTalentLanguageLevels();
       return (data as unknown as TalentLanguageLevel[]) ?? [];
     },
   });
