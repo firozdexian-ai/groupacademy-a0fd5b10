@@ -4,7 +4,7 @@
  * Fixes: B3 (Column Selects), B4 (Standardized Logging)
  */
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { talentRepo } from "@/domains/talent/repo/talentRepo";
 import { generateOutreachMessage } from "@/domains/talent/api/talentApi";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
 import { Button } from "@/components/ui/button";
