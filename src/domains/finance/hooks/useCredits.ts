@@ -126,14 +126,12 @@ export function useCredits() {
       const safeRefId = isValidUUID(referenceId) ? referenceId : null;
 
       // HUD: EXECUTING_RPC_ATOMIC_DEDUCTION
-      const { data, error } = await supabase.rpc("deduct_credits", {
-        p_amount: amount,
-        p_service_type: serviceType,
-        p_reference_id: safeRefId,
-        p_description: description || `Service: ${serviceType}`,
+      const data = await deductCreditsRpc({
+        amount,
+        serviceType,
+        referenceId: safeRefId,
+        description: description || `Service: ${serviceType}`,
       });
-
-      if (error) throw error;
       const result = data as any;
       if (!result?.success) throw new Error(result?.error || "TRANSACTION_DENIED");
 
