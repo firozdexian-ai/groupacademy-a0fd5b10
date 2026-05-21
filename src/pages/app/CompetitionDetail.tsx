@@ -1,7 +1,11 @@
 import * as React from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  getCompetitionBySlug,
+  getMyCompetitionSubmission,
+  upsertCompetitionSubmission,
+} from "@/domains/ugc/repo/ugcRepo";
 import { useTalent } from "@/contexts/TalentContext";
 import {
   Trophy,
