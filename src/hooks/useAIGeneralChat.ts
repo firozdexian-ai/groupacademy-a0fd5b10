@@ -45,22 +45,16 @@ export function useAIGeneralChat(initialQuery?: string): UseAIGeneralChatReturn 
         // Telemetry: Synchronize platform-level usage counters for the Digital Workforce
         await supabase.rpc("increment_agent_conversations", { p_agent_key: "ai-general" });
 
-        const { data, error } = await supabase
-          .from("agent_chat_sessions")
-          .insert({
-            talent_id: talent.id,
-            agent_key: "ai-general",
-            messages: [],
-            is_active: true,
-            credits_charged: 0,
-            session_started_at: now.toISOString(),
-            session_expires_at: expiresAt.toISOString(),
-          })
-          .select("id")
-          .maybeSingle();
-
-        if (error) throw error;
-        if (data) setSessionId(data.id);
+        const newId = await createAgentChatSession({
+          talent_id: talent.id,
+          agent_key: "ai-general",
+          messages: [],
+          is_active: true,
+          credits_charged: 0,
+          session_started_at: now.toISOString(),
+          session_expires_at: expiresAt.toISOString(),
+        });
+        if (newId) setSessionId(newId);
       } catch (err) {
         console.error("[Digital Workforce] SESSION_PROVISIONING_FAULT:", err);
       } finally {
@@ -83,13 +77,7 @@ export function useAIGeneralChat(initialQuery?: string): UseAIGeneralChatReturn 
     async (msgs: AgentMessage[]) => {
       if (!sessionId) return;
       try {
-        await supabase
-          .from("agent_chat_sessions")
-          .update({
-            messages: msgs as any,
-            updated_at: new Date().toISOString(),
-          })
-          .eq("id", sessionId);
+        await updateAgentChatSessionMessages(sessionId, msgs as unknown[]);
       } catch (err) {
         console.error("[Digital Workforce] REGISTRY_PERSISTENCE_FAULT:", err);
       }

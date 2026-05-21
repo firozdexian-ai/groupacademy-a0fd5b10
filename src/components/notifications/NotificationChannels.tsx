@@ -42,12 +42,7 @@ export function NotificationChannels() {
 
     const fetchNotificationPreferencesLedger = async () => {
       try {
-        const { data, error } = await supabase
-          .from("notification_preferences")
-          .select("channel, enabled")
-          .eq("talent_id", talent.id);
-
-        if (error) throw error;
+        const data = await listNotificationPreferences(talent.id);
 
         const temporaryPreferenceMap: Record<string, boolean> = {};
         CHANNELS.forEach((channelItem) => (temporaryPreferenceMap[channelItem.key] = true));
@@ -90,11 +85,7 @@ export function NotificationChannels() {
     trackEvent("notification_channel_toggle_requested", { channel, targetState: enabled });
 
     try {
-      const { error } = await supabase
-        .from("notification_preferences")
-        .upsert({ talent_id: talent.id, channel, enabled }, { onConflict: "talent_id,channel" });
-
-      if (error) throw error;
+      await upsertNotificationPreference(talent.id, channel, enabled);
 
       // Automated Efficiency: Invalidate global alert counts dynamically across adjacent page views
       queryClient.invalidateQueries({ queryKey: ["notifications-count"] });

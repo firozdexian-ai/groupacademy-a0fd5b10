@@ -116,12 +116,7 @@ export function ProtectedRoute({
 
       // Phase 2: Structural Institutional Role Validation Checking
       if (requireAdmin || requireAnyAdminRole) {
-        const { data: userRolesPayloadRows, error: rolesQueryError } = await supabase
-          .from("user_roles")
-          .select("role")
-          .eq("user_id", sessionPayload.user.id);
-
-        if (rolesQueryError) throw rolesQueryError;
+        const userRolesPayloadRows = await listUserRoles(sessionPayload.user.id);
 
         const flattenedActiveRolesArray = (userRolesPayloadRows || []).map((roleRowItem) => roleRowItem.role);
         trackEvent("protected_route_clearance_evaluating", {
@@ -308,12 +303,7 @@ export function useUserRole() {
       if (sessionFetchError) throw sessionFetchError;
       if (!session?.user) return null;
 
-      const { data: userRolesPayloadRows, error: rolesQueryError } = await supabase
-        .from("user_roles")
-        .select("role")
-        .eq("user_id", session.user.id);
-
-      if (rolesQueryError) throw rolesQueryError;
+      const userRolesPayloadRows = await listUserRoles(session.user.id);
 
       const roleStringsListArray = (userRolesPayloadRows || []).map((itemRow) => itemRow.role);
 

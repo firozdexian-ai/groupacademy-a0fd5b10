@@ -41,15 +41,7 @@ export function ActiveInstructorChip({ talentId, className = "" }: ActiveInstruc
     const executeInstructorLedgerAudit = async () => {
       try {
         // Step 1: Resolve talentId master profile mapping down to user_id indices
-        const { data: talentRecordData, error: talentRecordQueryError } = await supabase
-          .from("talents")
-          .select("user_id")
-          .eq("id", talentId)
-          .maybeSingle();
-
-        if (talentRecordQueryError) throw talentRecordQueryError;
-
-        const targetUserUuidStr = talentRecordData?.user_id;
+        const targetUserUuidStr = await getTalentUserIdById(talentId);
 
         // Defensive Check: Close execution threads safely if relational ids break down paths
         if (!targetUserUuidStr) {
@@ -65,15 +57,9 @@ export function ActiveInstructorChip({ talentId, className = "" }: ActiveInstruc
         const baselineChronologyTimestampStr = new Date(Date.now() - THIRTY_DAYS_IN_MILLISECONDS).toISOString();
 
         // Step 3: Run exact head count operations over secure accounting ledger tables
-        const { count: activeEarningsLedgerCount, error: ledgerQueryError } = await supabase
-          .from("instructor_earnings_ledger" as any)
-          .select("id", { count: "exact", head: true })
-          .eq("instructor_user_id", targetUserUuidStr)
-          .gte("created_at", baselineChronologyTimestampStr);
+        const activeEarningsLedgerCount = await getInstructorRecentEarningsCount(targetUserUuidStr, baselineChronologyTimestampStr);
 
-        if (ledgerQueryError) throw ledgerQueryError;
-
-        const dynamicHasRecentActivityBool = (activeEarningsLedgerCount ?? 0) > 0;
+        const dynamicHasRecentActivityBool = activeEarningsLedgerCount > 0;
 
         // Automated Efficiency: Synchronize state markers inside central cache registers safely
         await queryClient.invalidateQueries({ queryKey: ["instructor-activity", talentId] });

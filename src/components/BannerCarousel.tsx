@@ -75,16 +75,7 @@ export function BannerCarousel({ compact = false, placement = "carousel", classN
     }
 
     try {
-      const { data: bannersPayloadData, error: bannersQueryError } = await supabase
-        .from("banners")
-        .select(
-          "id, image_url, media_type, media_url, poster_url, link_url, link_content_id, cta_label, focal_point, display_order, start_at, end_at",
-        )
-        .eq("is_active", true)
-        .eq("placement", placement)
-        .order("display_order", { ascending: true });
-
-      if (bannersQueryError) throw bannersQueryError;
+      const bannersPayloadData = await listActiveBannersForPlacement(placement);
 
       const continuousCurrentEpochTimestampNum = Date.now();
       const synchronizedFilteredBannersList = (bannersPayloadData || []).filter((bannerItem: any) => {
@@ -107,12 +98,7 @@ export function BannerCarousel({ compact = false, placement = "carousel", classN
         .filter((idItem): idItem is string => !!idItem);
 
       if (collectiveCourseRelationContentIdsArray.length > 0) {
-        const { data: coursesSlugPayloadData, error: coursesQueryError } = await supabase
-          .from("content")
-          .select("id, slug")
-          .in("id", collectiveCourseRelationContentIdsArray);
-
-        if (coursesQueryError) throw coursesQueryError;
+        const coursesSlugPayloadData = await listContentSlugsByIds(collectiveCourseRelationContentIdsArray);
 
         if (isMountedRef.current && coursesSlugPayloadData) {
           const structuredSlugsRegistryMap: Record<string, string> = {};
