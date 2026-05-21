@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { deletePostReaction, insertPostReaction } from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 import { useFeedEngagement, patchEngagementCache, EMPTY_REACTIONS, type ReactionType } from "@/hooks/useFeedEngagement";
