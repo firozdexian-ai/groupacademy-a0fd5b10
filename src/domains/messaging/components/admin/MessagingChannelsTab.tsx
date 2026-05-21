@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { updateChannelAutoReply } from "@/domains/messaging/repo/messagingRepo";
 import { unipileConnect } from "@/domains/messaging/api/messagingApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -125,7 +126,7 @@ export function MessagingChannelsTab({
   };
 
   const toggleAutoReply = async (id: string, val: boolean) => {
-    const { error } = await supabase.from("messaging_channels").update({ auto_reply_enabled: val }).eq("id", id);
+    const { error } = await updateChannelAutoReply(id, val);
     if (error) toast.error(error.message);
   };
 

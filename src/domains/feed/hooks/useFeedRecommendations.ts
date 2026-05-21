@@ -1,6 +1,10 @@
 import { useState, useEffect, useCallback, useMemo, useRef } from "react";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  fetchFeedRecommendationPage,
+  getTalentAuthorMeta,
+  upsertFeedInteraction,
+} from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 
@@ -73,26 +77,12 @@ const getYoutubeThumbnail = (url: string): string | null => {
 };
 
 async function fetchFeedPage(olderThan?: string): Promise<{ items: FeedItem[]; nextCursor?: string }> {
-  let coursesQuery = supabase.from("content").select("*").eq("is_published", true).limit(PAGE_SIZE_COURSES);
-  let blogsQuery = supabase.from("blog_posts").select("*").eq("status", "published").limit(PAGE_SIZE_BLOGS);
-  let postsQuery = supabase
-    .from("feed_posts")
-    .select("*")
-    .eq("is_active", true)
-    .eq("status", "published")
-    .limit(PAGE_SIZE_POSTS);
-
-  if (olderThan) {
-    coursesQuery = coursesQuery.lt("created_at", olderThan);
-    blogsQuery = blogsQuery.lt("created_at", olderThan);
-    postsQuery = postsQuery.lt("created_at", olderThan);
-  }
-
-  const [coursesRes, blogsRes, postsRes] = await Promise.all([
-    coursesQuery.order("created_at", { ascending: false }),
-    blogsQuery.order("created_at", { ascending: false }),
-    postsQuery.order("is_pinned", { ascending: false }).order("created_at", { ascending: false }),
-  ]);
+  const { coursesRes, blogsRes, postsRes } = await fetchFeedRecommendationPage({
+    olderThan,
+    pageSizeCourses: PAGE_SIZE_COURSES,
+    pageSizeBlogs: PAGE_SIZE_BLOGS,
+    pageSizePosts: PAGE_SIZE_POSTS,
+  });
 
   const items: FeedItem[] = [];
 
@@ -131,11 +121,8 @@ async function fetchFeedPage(olderThan?: string): Promise<{ items: FeedItem[]; n
   );
   const authorMeta = new Map<string, { country?: string; profession?: string }>();
   if (authorIds.length > 0) {
-    const { data: authors } = await supabase
-      .from("talents")
-      .select("user_id, country, custom_profession")
-      .in("user_id", authorIds);
-    authors?.forEach((a: any) =>
+    const authors = await getTalentAuthorMeta(authorIds as string[]);
+    authors.forEach((a) =>
       authorMeta.set(a.user_id, { country: a.country, profession: a.custom_profession }),
     );
   }
@@ -260,9 +247,12 @@ export function useFeedRecommendations() {
     },
     markInterested: async (item: FeedItem) => {
       if (talent?.id)
-        await supabase
-          .from("feed_interactions")
-          .upsert({ talent_id: talent.id, item_id: item.id, item_type: item.type, interaction_type: "interested" });
+        await upsertFeedInteraction({
+          talentId: talent.id,
+          itemId: item.id,
+          itemType: item.type,
+          interactionType: "interested",
+        });
     },
     markNotInterested: (itemId: string) => {
       setDismissedIds((prev) => new Set([...prev, itemId]));

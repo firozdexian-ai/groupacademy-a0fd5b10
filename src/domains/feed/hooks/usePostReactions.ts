@@ -1,6 +1,6 @@
 import { useCallback, useRef } from "react";
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { deletePostReaction, insertPostReaction } from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 import { useFeedEngagement, patchEngagementCache, EMPTY_REACTIONS, type ReactionType } from "@/hooks/useFeedEngagement";
@@ -50,19 +50,17 @@ export function usePostReactions(postId: string): UsePostReactionsResult {
 
       // HUD: EXECUTING_DB_REACTION_TRANSACTION
       if (isToggleOff) {
-        const { error } = await supabase
-          .from("post_reactions")
-          .delete()
-          .eq("post_id", postId)
-          .eq("talent_id", talent.id);
+        const { error } = await deletePostReaction({ postId, talentId: talent.id });
         if (error) throw error;
       } else {
         if (prevUserReaction) {
-          await supabase.from("post_reactions").delete().eq("post_id", postId).eq("talent_id", talent.id);
+          await deletePostReaction({ postId, talentId: talent.id });
         }
-        const { error } = await supabase
-          .from("post_reactions")
-          .insert({ post_id: postId, talent_id: talent.id, reaction_type: type });
+        const { error } = await insertPostReaction({
+          postId,
+          talentId: talent.id,
+          reactionType: type,
+        });
         if (error) throw error;
       }
     },

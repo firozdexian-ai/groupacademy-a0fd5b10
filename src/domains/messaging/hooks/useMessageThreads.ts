@@ -1,6 +1,10 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  resetThreadUnread,
+  markThreadNotificationsRead,
+} from "@/domains/messaging/repo/messagingRepo";
 import { useTalent } from "@/hooks/useTalent";
 
 /**
@@ -109,7 +113,7 @@ export function useMessageThreads() {
   const markThreadRead = useCallback(
     async (threadId: string) => {
       // HUD: ATOMIC_UNREAD_COUNT_RESET
-      const { error } = await supabase.from("message_threads").update({ unread_count: 0 }).eq("id", threadId);
+      const { error } = await resetThreadUnread(threadId);
 
       if (error) {
         console.error("[Digital Workforce] ANOMALY: markThreadRead database write rejected.", error);
@@ -122,11 +126,7 @@ export function useMessageThreads() {
       );
 
       // Relational cleanup for notification ledger
-      await supabase
-        .from("notifications")
-        .update({ is_read: true, read_at: new Date().toISOString() })
-        .eq("thread_id", threadId)
-        .eq("is_read", false);
+      await markThreadNotificationsRead(threadId);
     },
     [qc, queryKey],
   );
