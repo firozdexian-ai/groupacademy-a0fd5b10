@@ -90,23 +90,18 @@ export default function AbroadCounsellor() {
         }
 
         // Trigger parallel database handshakes simultaneously to minimize connection latency waterfall spikes
-        const [counsellorRegistryLookup, rolesRegistryLookup] = await Promise.all([
-          supabase
-            .from("abroad_counsellors")
-            .select("user_id")
-            .eq("user_id", authedUserNode.id)
-            .eq("is_active", true)
-            .maybeSingle(),
-          supabase.from("user_roles").select("role").eq("user_id", authedUserNode.id),
+        const [counsellorRow, rolesList] = await Promise.all([
+          getActiveCounsellorByUser(authedUserNode.id),
+          listUserRoles(authedUserNode.id).catch(() => []),
         ]);
 
         if (!isRequestThreadValid) return;
 
-        const isOperatorPlatformAdmin = (rolesRegistryLookup.data ?? []).some(
+        const isOperatorPlatformAdmin = (rolesList ?? []).some(
           (roleRecord) => roleRecord.role === "admin",
         );
 
-        const isOperatorCounsellorNode = Boolean(counsellorRegistryLookup.data);
+        const isOperatorCounsellorNode = Boolean(counsellorRow);
 
         setAuthorizationState(isOperatorCounsellorNode || isOperatorPlatformAdmin);
       } catch (fatalSecurityPipelineCrash) {
