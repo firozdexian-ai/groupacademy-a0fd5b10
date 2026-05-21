@@ -1,7 +1,13 @@
 import { useState, useEffect } from "react";
 import { useNavigate, useParams } from "react-router-dom";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  getCourseSessionById,
+  updateCourseSession,
+  deleteCourseSession,
+  listPublishedContentBasic,
+  listActiveInstructorsBasic,
+} from "@/domains/learning/repo/learningRepo";
 import { useQueryWithTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { useForm } from "react-hook-form";
@@ -72,41 +78,22 @@ export default function SessionEdit() {
     refetch,
   } = useQueryWithTimeout({
     queryKey: ["session", id],
-    queryFn: async () => {
-      const { data, error } = await supabase.from("course_sessions").select("*").eq("id", id!).single();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => getCourseSessionById(id!),
     timeout: TIMEOUTS.DEFAULT,
   });
 
   const { data: courses } = useQueryWithTimeout({
     queryKey: ["courses-list"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("content")
-        .select("id, title")
-        .eq("is_published", true)
-        .order("title");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => listPublishedContentBasic(),
     timeout: TIMEOUTS.DEFAULT,
   });
 
   const { data: instructors } = useQueryWithTimeout({
     queryKey: ["instructors-list"],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("instructors")
-        .select("id, full_name")
-        .eq("status", "active")
-        .order("full_name");
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => listActiveInstructorsBasic(),
     timeout: TIMEOUTS.DEFAULT,
   });
+
 
   const form = useForm<FormValues>({
     resolver: zodResolver(formSchema),
@@ -145,22 +132,17 @@ export default function SessionEdit() {
       const [hours, minutes] = values.scheduled_time.split(":").map(Number);
       scheduledDateTime.setHours(hours, minutes, 0, 0);
 
-      const { error } = await supabase
-        .from("course_sessions")
-        .update({
-          content_id: values.content_id,
-          instructor_id: values.instructor_id,
-          title: values.title,
-          description: values.description,
-          scheduled_date: scheduledDateTime.toISOString(),
-          duration_minutes: values.duration_minutes,
-          meeting_link: values.meeting_link || null,
-          recording_link: values.recording_link || null,
-          status: values.status,
-        })
-        .eq("id", id!);
-
-      if (error) throw error;
+      await updateCourseSession(id!, {
+        content_id: values.content_id,
+        instructor_id: values.instructor_id,
+        title: values.title,
+        description: values.description,
+        scheduled_date: scheduledDateTime.toISOString(),
+        duration_minutes: values.duration_minutes,
+        meeting_link: values.meeting_link || null,
+        recording_link: values.recording_link || null,
+        status: values.status,
+      });
     },
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sessions"] });
@@ -173,10 +155,8 @@ export default function SessionEdit() {
   });
 
   const deleteSession = useMutation({
-    mutationFn: async () => {
-      const { error } = await supabase.from("course_sessions").delete().eq("id", id!);
-      if (error) throw error;
-    },
+    mutationFn: () => deleteCourseSession(id!),
+
     onSuccess: () => {
       queryClient.invalidateQueries({ queryKey: ["sessions"] });
       toast.success("Session node purged.");

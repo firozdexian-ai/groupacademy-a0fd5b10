@@ -3,7 +3,13 @@ import { useNavigate, useParams, useSearchParams } from "react-router-dom";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import CourseSessionsManager from "@/domains/learning/components/admin/sessions/CourseSessionsManager";
 import CoursePerformanceDashboard from "@/domains/learning/components/admin/content-widgets/CoursePerformanceDashboard";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listCourseModuleSummariesForContent,
+  listModuleResourceLinksForModules,
+  getContentById,
+  updateContent,
+  countCourseSessionsForContent,
+} from "@/domains/learning/repo/learningRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -90,15 +96,9 @@ export default function ContentEdit() {
 
   const loadModuleStats = async () => {
     if (!id) return;
-    const { data: modules } = await supabase
-      .from("course_modules")
-      .select("id, title, description, video_url")
-      .eq("content_id", id)
-      .order("order_index", { ascending: true });
-    const moduleIds = (modules || []).map((m: any) => m.id);
-    const { data: resources } = moduleIds.length
-      ? await supabase.from("module_resources").select("module_id, resource_url").in("module_id", moduleIds)
-      : { data: [] as any[] };
+    const modules = await listCourseModuleSummariesForContent(id);
+    const moduleIds = modules.map((m: any) => m.id);
+    const resources = await listModuleResourceLinksForModules(moduleIds);
 
     const moduleHasResource = new Set<string>();
     for (const r of resources || []) {
@@ -127,8 +127,8 @@ export default function ContentEdit() {
   const loadContent = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase.from("content").select("*").eq("id", id).single();
-      if (error) throw error;
+      const data = await getContentById(id!);
+
 
       setFormData({
         ...data,
@@ -142,11 +142,9 @@ export default function ContentEdit() {
       });
       setIsReady(data.is_ready ?? null);
       await loadModuleStats();
-      const { count: sCount } = await supabase
-        .from("course_sessions")
-        .select("*", { count: "exact", head: true })
-        .eq("content_id", id!);
-      setSessionCount(sCount || 0);
+      const sCount = await countCourseSessionsForContent(id!);
+      setSessionCount(sCount);
+
     } catch (error: any) {
       toast({ title: "Load Error", description: error.message, variant: "destructive" });
       navigate("/dashboard");
@@ -168,22 +166,18 @@ export default function ContentEdit() {
         throw new Error("Invalid WhatsApp link format.");
       }
 
-      const { error } = await supabase
-        .from("content")
-        .update({
-          ...formData,
-          price: formData.price ? parseFloat(formData.price) : null,
-          duration_hours: formData.duration_hours ? parseInt(formData.duration_hours) : null,
-          modules_count: formData.modules_count ? parseInt(formData.modules_count) : null,
-          event_duration_minutes: formData.event_duration_minutes ? parseInt(formData.event_duration_minutes) : null,
-          max_capacity: formData.max_capacity ? parseInt(formData.max_capacity) : null,
-          event_date: formData.event_date || null,
-        })
-        .eq("id", id);
-
-      if (error) throw error;
+      await updateContent(id!, {
+        ...formData,
+        price: formData.price ? parseFloat(formData.price) : null,
+        duration_hours: formData.duration_hours ? parseInt(formData.duration_hours) : null,
+        modules_count: formData.modules_count ? parseInt(formData.modules_count) : null,
+        event_duration_minutes: formData.event_duration_minutes ? parseInt(formData.event_duration_minutes) : null,
+        max_capacity: formData.max_capacity ? parseInt(formData.max_capacity) : null,
+        event_date: formData.event_date || null,
+      });
       toast({ title: "Success", description: "Academy record synchronized." });
       navigate("/dashboard");
+
     } catch (error: any) {
       toast({ title: "Update Failed", description: error.message, variant: "destructive" });
     } finally {
