@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getStudyAbroadRoadmapById } from "@/domains/abroad/repo/abroadRepo";
 import { adminSupportAssistant } from "@/domains/agents/api/agentsApi";
 import {
   ArrowLeft,
