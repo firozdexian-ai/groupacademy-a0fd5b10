@@ -82,7 +82,7 @@ export default function SavedItems() {
           blogIds.length ? listBlogPostsByIds(blogIds) : Promise.resolve([] as any[]),
         ]);
 
-        jobsResult.data?.forEach((job: any) => {
+        jobsResult.forEach((job: any) => {
           const saved = savedItems.find((i) => i.item_id === job.id);
           if (saved)
             details.set(`${saved.item_type}-${job.id}`, {
@@ -93,7 +93,7 @@ export default function SavedItems() {
             });
         });
 
-        coursesResult.data?.forEach((c: any) => {
+        coursesResult.forEach((c: any) => {
           const saved = savedItems.find((i) => i.item_id === c.id);
           if (saved)
             details.set(`${saved.item_type}-${c.id}`, {
@@ -104,7 +104,7 @@ export default function SavedItems() {
             });
         });
 
-        blogsResult.data?.forEach((b: any) => {
+        blogsResult.forEach((b: any) => {
           const saved = savedItems.find((i) => i.item_id === b.id);
           if (saved)
             details.set(`${saved.item_type}-${b.id}`, {
