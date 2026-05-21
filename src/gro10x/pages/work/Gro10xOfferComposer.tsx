@@ -32,12 +32,7 @@ export default function Gro10xOfferComposer() {
 
   useEffect(() => {
     (async () => {
-      const { data: app } = await supabase
-        .from("job_applications")
-        .select("talent_id, jobs!inner(title, company_id)")
-        .eq("id", applicationId!)
-        .maybeSingle();
-      const a: any = app;
+      const a: any = await getApplicationOfferContext(applicationId!);
       if (a) {
         setCompanyId(a.jobs.company_id);
         setTalentId(a.talent_id);
