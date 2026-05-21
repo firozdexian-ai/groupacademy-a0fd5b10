@@ -117,7 +117,7 @@ export function ProfessionalRolesPanel() {
 
   const remove = async (r: Role) => {
     if (!confirm(`Delete role "${r.name}"? Talents tagged with it will be untagged.`)) return;
-    const { error } = await supabase.from("professional_roles").delete().eq("id", r.id);
+    const { error } = await talentRepo.deleteProfessionalRole(r.id);
     if (error) toast.error(error.message);
     else {
       toast.success(`Deleted role: ${r.name}`);
