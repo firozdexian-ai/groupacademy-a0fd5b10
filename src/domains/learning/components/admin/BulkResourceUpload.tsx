@@ -152,8 +152,8 @@ export function BulkResourceUpload({
         display_order: currentMaxOrder + i + 1,
         is_required: false,
       }));
-      const { error } = await supabase.from("module_resources").insert(rows);
-      if (error) throw error;
+      await insertModuleResources(rows);
+
       toast.success(`Added ${rows.length} resource${rows.length === 1 ? "" : "s"}.`);
       // Drop saved items, keep failures for retry.
       setQueue((prev) => prev.filter((q) => q.status !== "uploaded"));
