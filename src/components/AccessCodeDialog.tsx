@@ -1,6 +1,12 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  getActiveAccessCode,
+  findStudentIdByUserId,
+  requireStudentIdByUserId,
+  insertEnrollmentRow,
+} from "@/domains/learning/repo/learningRepo";
 import { createStudentProfile } from "@/hooks/useAuth";
 import { Button } from "@/components/ui/button";
 import {
@@ -70,21 +76,11 @@ export const AccessCodeDialog = ({ open, onOpenChange, contentId, contentTitle, 
 
     try {
       // PHASE 1: Code Registry Validation Pass
-      const { data: accessCodePayloadData, error: codeQueryRegistryError } = (await withTimeout(
-        Promise.resolve(
-          supabase
-            .from("access_codes")
-            .select("*")
-            .eq("code", sanitizedCodeTokenStr)
-            .eq("content_id", contentId)
-            .eq("is_active", true)
-            .maybeSingle(),
-        ),
+      const accessCodePayloadData = (await withTimeout(
+        getActiveAccessCode(sanitizedCodeTokenStr, contentId),
         TIMEOUTS.DEFAULT,
         "CODE_SYNC_TIMEOUT",
-      )) as { data: any; error: any };
-
-      if (codeQueryRegistryError) throw codeQueryRegistryError;
+      )) as any;
 
       if (!accessCodePayloadData) {
         toast.error("Access Validation Rejected: Specified lookup alphanumeric key is invalid or un-assigned.", {
