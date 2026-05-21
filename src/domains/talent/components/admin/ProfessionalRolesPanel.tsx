@@ -5,7 +5,7 @@
  * - Shows talent counts so the operator knows where the gaps are
  */
 import { useEffect, useMemo, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { talentRepo } from "@/domains/talent/repo/talentRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Button } from "@/components/ui/button";
