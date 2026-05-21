@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getEmployerJobsDashboard } from "@/domains/jobs/repo/jobsRepo";
 
 export interface EmployerJobRow {
   id: string;
