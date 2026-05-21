@@ -214,7 +214,7 @@ export async function deleteCourseSession(id: string) {
 }
 
 export async function updateCourseSessionStatus(id: string, status: string) {
-  const { error } = await supabase.from("course_sessions").update({ status }).eq("id", id);
+  const { error } = await supabase.from("course_sessions").update({ status: status as any }).eq("id", id);
   if (error) throw error;
 }
 
