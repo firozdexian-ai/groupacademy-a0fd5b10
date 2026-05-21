@@ -1,6 +1,7 @@
 import { useState, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
+import { supabase } from "@/integrations/supabase/client";
 import {
   listTalentRowsForDirectory,
   listTalentInboxSettingsByIds,
@@ -67,15 +68,15 @@ export default function TalentDirectory() {
         ]);
 
         // Merge Logic
-        const settingsMap = new Map((s.data || []).map((i: any) => [i.talent_id, i]));
-        const volMap = new Map((v.data || []).map((i: any) => [i.talent_id, Number(i.volume || 0)]));
+        const settingsMap = new Map((s || []).map((i: any) => [i.talent_id, i]));
+        const volMap = new Map((v || []).map((i: any) => [i.talent_id, Number(i.volume || 0)]));
         const hypeMap = new Map<string, number>();
-        (h.data || []).forEach((i: any) =>
+        (h || []).forEach((i: any) =>
           hypeMap.set(i.recipient_talent_id, (hypeMap.get(i.recipient_talent_id) || 0) + 1),
         );
 
         let merged: TalentRow[] = (data || []).map((t: any) => {
-          const setting = settingsMap.get(t.id);
+          const setting = settingsMap.get(t.id) as any;
           return {
             ...t,
             inbox_unlocked: Boolean(setting?.unlocked),
