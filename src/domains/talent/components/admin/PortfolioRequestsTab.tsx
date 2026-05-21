@@ -183,7 +183,7 @@ export default function PortfolioRequestsManager() {
             : selectedRequest.portfolio_credentials,
       };
 
-      const { error } = await supabase.from("portfolio_requests").update(updates).eq("id", selectedRequest.id);
+      const { error } = await talentRepo.updatePortfolioRequest(selectedRequest.id, updates);
       if (error) throw error;
 
       toast.success("Request updated successfully");
