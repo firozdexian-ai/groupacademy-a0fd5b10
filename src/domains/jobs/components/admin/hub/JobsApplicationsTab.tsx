@@ -124,11 +124,11 @@ export function JobsApplicationsTab() {
   }, [loadApps]);
 
   const updateStatus = async (id: string, st: string) => {
-    const { error } = await supabase
-      .from("job_applications")
-      .update({ application_status: st as any })
-      .eq("id", id);
-    if (error) return toast.error("Protocol Fault: " + error.message);
+    try {
+      await updateApplicationStatus(id, st);
+    } catch (error: any) {
+      return toast.error("Protocol Fault: " + error.message);
+    }
     setApps((prev) => prev.map((a) => (a.id === id ? { ...a, application_status: st } : a)));
     toast.success("Status Synchronized");
   };
