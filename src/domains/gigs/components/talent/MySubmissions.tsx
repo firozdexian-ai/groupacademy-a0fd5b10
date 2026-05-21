@@ -76,7 +76,6 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
     enabled: !!talentId,
     staleTime: 1000 * 60 * 3,
     refetchOnWindowFocus: false,
-    queryFn: async () => {
     queryFn: () => getMyGigSubmissions(talentId),
   });
 
@@ -86,19 +85,6 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
     enabled: !!talentId,
     staleTime: 1000 * 60 * 10,
     queryFn: () => getTalentRefCode(talentId),
-  });
-
-  // 2. Referral Parameters Synchronization Query Node
-  const { data: talentRefCode } = useQuery({
-    queryKey: ["talent-ref-code", talentId],
-    enabled: !!talentId,
-    staleTime: 1000 * 60 * 10,
-    queryFn: async () => {
-      const { data, error } = await supabase.from("talents").select("ref_code").eq("id", talentId).single();
-
-      if (error) throw error;
-      return data?.ref_code;
-    },
   });
 
   // TELEMETRY Matrix: Extract job codes safely to execute atomic batch count aggregation
