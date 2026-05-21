@@ -132,7 +132,7 @@ export const talentRepo = {
 
   // ---------- LinkedIn JSON importer ----------
   insertCompany: (insertObj: Record<string, any>) =>
-    supabase.from("companies").insert(insertObj).select("id").single(),
+    (supabase.from("companies") as any).insert(insertObj).select("id").single(),
 
   findCompanyByName: (name: string) =>
     supabase.from("companies").select("id").ilike("name", name).limit(1).single(),
