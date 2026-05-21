@@ -21,6 +21,18 @@ import { Badge } from "@/components/ui/badge";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  listActiveCountries,
+  listActiveCareerStages,
+  searchOnboardingInstitutions,
+  listActiveSchools,
+} from "@/domains/profile/repo/profileRepo";
+import {
+  findWorkforceInstanceByCluster,
+  getActiveWorkforceTemplateByKey,
+  insertWorkforceInstanceReturningId,
+} from "@/domains/workforce/repo/workforceRepo";
+import { patchTalentByUser } from "@/domains/talent/repo/talentRepo";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
