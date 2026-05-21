@@ -65,16 +65,13 @@ export default function SchoolDetail() {
   } = useQuery({
     queryKey: ["school", slug],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("schools")
-        .select("*, academies(name, slug)")
-        .eq("slug", slug)
-        .maybeSingle();
-      if (error) {
+      try {
+        const data = await getSchoolBySlugWithAcademy(slug!);
+        return data as School | null;
+      } catch (error) {
         await reportAnomaly("SchoolFetchError", { slug, error });
         throw error;
       }
-      return data as School | null;
     },
   });
 
@@ -82,17 +79,13 @@ export default function SchoolDetail() {
     queryKey: ["professions", school?.id],
     enabled: !!school?.id,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("profession_categories")
-        .select("*, ai_instructors(id, name)")
-        .eq("school_id", school!.id)
-        .eq("is_active", true)
-        .order("display_order", { ascending: true });
-      if (error) {
+      try {
+        const data = await listProfessionCategoriesForSchool(school!.id);
+        return (data as unknown as ProfessionLine[]) || [];
+      } catch (error) {
         await reportAnomaly("ProfessionFetchError", { schoolId: school?.id, error });
         throw error;
       }
-      return (data as unknown as ProfessionLine[]) || [];
     },
   });
 
