@@ -1,6 +1,10 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useEffect, useCallback } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  resetThreadUnread,
+  markThreadNotificationsRead,
+} from "@/domains/messaging/repo/messagingRepo";
 import { useTalent } from "@/hooks/useTalent";
 
 /**
