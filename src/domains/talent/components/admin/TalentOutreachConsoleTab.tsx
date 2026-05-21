@@ -107,7 +107,7 @@ export function TalentOutreachConsoleTab() {
     if (!selectedTalent || !draft.trim()) return;
     setSending(true);
     try {
-      const { error } = await supabase.from("outreach_messages").insert({
+      const { error } = await talentRepo.logOutreachMessage({
         talent_id: selectedTalent.id,
         message_content: draft,
         channel: "whatsapp",
