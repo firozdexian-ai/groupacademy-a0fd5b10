@@ -95,23 +95,23 @@ export function CompaniesTab() {
   const loadData = useCallback(async () => {
     setIsLoading(true);
     try {
-      const [registryRes, industryRes, overviewRes] = await Promise.all([
+      const [registryRes, industryData, overviewData] = await Promise.all([
         listCompaniesPaged({
           search: searchQuery,
           industry: industryFilter,
           from: (page - 1) * ITEMS_PER_PAGE,
           to: page * ITEMS_PER_PAGE - 1,
         }),
-        supabase.rpc("get_industry_rollup"),
-        supabase.rpc("get_companies_overview"),
+        getIndustryRollup(),
+        getCompaniesOverview(),
       ]);
 
       setCompanies(registryRes.rows);
       setTotalCount(registryRes.count);
-      setIndustryOptions(industryRes.data || []);
+      setIndustryOptions(industryData || []);
 
-      if (overviewRes.data) {
-        const ov = overviewRes.data as any;
+      if (overviewData) {
+        const ov = overviewData as any;
         setKpis({
           verified: ov.verified,
           pending: ov.totals - (ov.riya_funnel?.converted || 0),
