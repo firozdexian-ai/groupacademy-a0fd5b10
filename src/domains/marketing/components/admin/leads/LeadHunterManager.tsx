@@ -183,7 +183,7 @@ export function LeadHunterManager() {
         await navigator.clipboard.writeText(msg);
         toast.success("Invite synchronized to clipboard");
       }
-      await supabase.from("outreach_messages").insert({ talent_id: match.talent.id, product: "welcome", channel });
+      await logTalentWelcomeOutreach({ talentId: match.talent.id, channel });
     } catch (err) {
       toast.error("Outreach sequence failed");
     }
