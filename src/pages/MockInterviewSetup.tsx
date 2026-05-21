@@ -98,11 +98,7 @@ function MockInterviewSetupContent() {
   }, [email]);
 
   const loadCategories = async () => {
-    const { data } = await supabase
-      .from("profession_categories")
-      .select("id, name, slug")
-      .eq("is_active", true)
-      .order("display_order");
+    const data = await listActiveProfessionCategoriesWithSlug();
     if (data) setCategories(data);
   };
 
