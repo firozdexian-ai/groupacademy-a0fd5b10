@@ -150,6 +150,18 @@ export async function markPayoutPaid(requestId: string, notes: string | null): P
   if (error) throw error;
 }
 
+export async function updatePayoutRequestStatus(
+  requestId: string,
+  status: string,
+  notes: string | null,
+): Promise<void> {
+  const { error } = await supabase
+    .from("agent_payout_requests")
+    .update({ status, admin_notes: notes, processed_at: new Date().toISOString() })
+    .eq("id", requestId);
+  if (error) throw error;
+}
+
 // ─── Chat sessions ────────────────────────────────────────────────────────
 export async function updateAgentChatSession(sessionId: string, patch: Record<string, any>): Promise<void> {
   const { error } = await supabase.from("agent_chat_sessions").update(patch).eq("id", sessionId);
