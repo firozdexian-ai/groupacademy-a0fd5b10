@@ -176,12 +176,8 @@ export default function Gro10xFeed() {
         toast.success(`Posted as ${companyName ?? "company"}`);
       } else {
         // Personal post — write directly to feed_posts with the chosen audience.
-        const { data: t } = await supabase
-          .from("talents")
-          .select("id, full_name, profile_photo_url, custom_profession")
-          .eq("user_id", user!.id)
-          .maybeSingle();
-        const { error } = await supabase.from("feed_posts").insert({
+        const t = await getTalentMiniProfileByUser(user!.id);
+        const { error } = await insertFeedPost({
           text_content: text,
           author_name: t?.full_name || "Member",
           author_avatar: t?.profile_photo_url || null,
@@ -193,7 +189,7 @@ export default function Gro10xFeed() {
           content_type: "text",
           status: "published",
           is_active: true,
-        } as any);
+        });
         if (error) {
           toast.error(error.message ?? "Could not post");
           return;
