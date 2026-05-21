@@ -1489,3 +1489,9 @@ export async function updateCourseProjectSubtask(
   const { error } = await supabase.from("course_project_subtasks").update(patch).eq("id", subtaskId);
   return { error };
 }
+
+export async function claimCourseProject(projectId: string): Promise<any> {
+  const { data, error } = await supabase.rpc("claim_course_project", { p_project_id: projectId });
+  if (error) throw error;
+  return data;
+}
