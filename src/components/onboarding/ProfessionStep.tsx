@@ -163,8 +163,7 @@ export function ProfessionStep({ onContinue }: ProfessionStepProps) {
       // Bind an automated system Career Coach as soon as the baseline taxonomy resolves
       if (talent?.id && !showCustom && selectedCat) {
         try {
-          const { error: rpcError } = await supabase.rpc("assign_career_coach", { _talent_id: talent.id });
-          if (rpcError) throw rpcError;
+          await assignCareerCoach(talent.id);
           trackEvent("onboarding_career_coach_assigned_success");
         } catch (coachErr) {
           trackError(coachErr, { component: "ProfessionStep", action: "assign_career_coach_rpc", talentId: talent.id });
