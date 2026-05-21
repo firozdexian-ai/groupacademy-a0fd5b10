@@ -8,7 +8,8 @@ import { ArrowLeft, ArrowDownCircle, ArrowUpCircle, Plus, AlertTriangle, Graduat
 import { useCompanyCredits } from "../hooks/useCompanyCredits";
 import { useCurrencyRates } from "@/hooks/useCurrencyRates";
 import { useAuth } from "@/hooks/useAuth";
-import { supabase } from "@/integrations/supabase/client";
+import { getInstructorEarningsSummary } from "@/domains/learning/repo/learningRepo";
+import { getTalentCountryByUserId } from "@/domains/talent/repo/talentRepo";
 import { creditsToUSD, formatMoney, formatUSD } from "@/lib/currency";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { TelegramTopUpModal } from "../components/TelegramTopUpModal";
