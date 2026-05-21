@@ -11,6 +11,11 @@ import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button"; // R1 Fix: Critical import restored
 import { Loader2, Search, Lock, TrendingUp, Coins, KeyRound, RefreshCw, Mail, Phone } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  listRecentContactUnlocks,
+  listCompaniesByIds,
+  listTalentEmailsByUserIds,
+} from "@/domains/companies/repo/companiesRepo";
 import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
