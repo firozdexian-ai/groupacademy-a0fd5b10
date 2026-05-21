@@ -1,6 +1,7 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getTalentInboxVolume, getTalentInboxUnlocked } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 import { Card, CardContent } from "@/components/ui/card";
@@ -42,16 +43,10 @@ export function InboxUnlockCard() {
 
     try {
       // Execute uninsulated asynchronous queries wrapped inside a clean unified promise mesh
-      const [
-        { data: volumePayloadData, error: volumeQueryError },
-        { data: settingsPayloadData, error: settingsQueryError },
-      ] = await Promise.all([
-        supabase.from("v_talent_transaction_volume").select("volume").eq("talent_id", talent.id).maybeSingle(),
-        supabase.from("talent_inbox_settings").select("unlocked").eq("talent_id", talent.id).maybeSingle(),
+      const [normalizedVolumeNum, normalizedUnlockStatusBool] = await Promise.all([
+        getTalentInboxVolume(talent.id),
+        getTalentInboxUnlocked(talent.id),
       ]);
-
-      if (volumeQueryError) throw volumeQueryError;
-      if (settingsQueryError) throw settingsQueryError;
 
       if (isMountedRef.current) {
         const normalizedVolumeNum = Number((volumePayloadData as any)?.volume ?? 0);
