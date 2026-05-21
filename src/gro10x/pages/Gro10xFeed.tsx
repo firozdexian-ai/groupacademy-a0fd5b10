@@ -6,6 +6,12 @@ import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { CheckCircle2, X, Sparkles, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { companyAgentTools } from "@/domains/agents/api/agentsApi";
+import {
+  getActiveCompanyMembershipWithName,
+  listPendingCompanyPostDrafts,
+} from "@/domains/companies/repo/companiesRepo";
+import { listAudienceFeedPosts, insertFeedPost } from "@/domains/feed/repo/feedRepo";
+import { getTalentMiniProfileByUser } from "@/domains/talent/repo/talentRepo";
 
 interface FeedPost {
   id: string;
@@ -48,50 +54,25 @@ export default function Gro10xFeed() {
     let r: string | null = null;
     let cname: string | null = null;
     if (user?.id) {
-      const { data: m } = await supabase
-        .from("company_members")
-        .select("company_id, role, companies:company_id (name)")
-        .eq("user_id", user.id)
-        .eq("status", "active")
-        .order("created_at", { ascending: true })
-        .limit(1)
-        .maybeSingle();
+      const m = await getActiveCompanyMembershipWithName(user.id);
       cid = m?.company_id ?? null;
       r = m?.role ?? null;
-      cname = (m as any)?.companies?.name ?? null;
+      cname = m?.companies?.name ?? null;
     }
     setCompanyId(cid);
     setRole(r);
     setCompanyName(cname);
 
     if (cid) {
-      const { data: d } = await supabase
-        .from("company_post_drafts")
-        .select("id, text_content, tags, agent_key, created_at")
-        .eq("company_id", cid)
-        .eq("status", "pending")
-        .order("created_at", { ascending: false })
-        .limit(10);
-      setDrafts((d ?? []) as Draft[]);
+      const d = await listPendingCompanyPostDrafts(cid, 10);
+      setDrafts(d as Draft[]);
     } else {
       setDrafts([]);
     }
 
     // Audience-aware feed
-    let query = supabase
-      .from("feed_posts")
-      .select("id, author_name, author_avatar, author_title, text_content, tags, created_at, author_type, author_company_id")
-      .eq("is_active", true)
-      .eq("status", "published")
-      .order("created_at", { ascending: false })
-      .limit(30);
-    if (audience === "internal" && cid) {
-      query = query.eq("audience", "internal").eq("author_company_id", cid);
-    } else {
-      query = query.eq("audience", "network");
-    }
-    const { data: p } = await query;
-    setPosts((p ?? []) as FeedPost[]);
+    const p = await listAudienceFeedPosts({ audience, companyId: cid, limit: 30 });
+    setPosts(p as FeedPost[]);
     setLoading(false);
   }, [user?.id, audience]);
 
@@ -195,12 +176,8 @@ export default function Gro10xFeed() {
         toast.success(`Posted as ${companyName ?? "company"}`);
       } else {
         // Personal post — write directly to feed_posts with the chosen audience.
-        const { data: t } = await supabase
-          .from("talents")
-          .select("id, full_name, profile_photo_url, custom_profession")
-          .eq("user_id", user!.id)
-          .maybeSingle();
-        const { error } = await supabase.from("feed_posts").insert({
+        const t = await getTalentMiniProfileByUser(user!.id);
+        const { error } = await insertFeedPost({
           text_content: text,
           author_name: t?.full_name || "Member",
           author_avatar: t?.profile_photo_url || null,
@@ -212,7 +189,7 @@ export default function Gro10xFeed() {
           content_type: "text",
           status: "published",
           is_active: true,
-        } as any);
+        });
         if (error) {
           toast.error(error.message ?? "Could not post");
           return;

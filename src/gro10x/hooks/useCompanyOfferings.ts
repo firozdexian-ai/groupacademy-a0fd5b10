@@ -3,8 +3,12 @@
  * Used by the public company page and the Activities → Offerings editor.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
 import { useAuth } from "@/hooks/useAuth";
+import {
+  listCompanyOfferings,
+  upsertCompanyOffering,
+  deleteCompanyOffering,
+} from "@/domains/companies/repo/companiesRepo";
 
 export interface CompanyOffering {
   id: string;
@@ -29,16 +33,8 @@ export function useCompanyOfferings(companyId: string | null, opts?: { activeOnl
     enabled: !!companyId,
     staleTime: 30_000,
     queryFn: async (): Promise<CompanyOffering[]> => {
-      let q = supabase
-        .from("company_offerings")
-        .select("*")
-        .eq("company_id", companyId!)
-        .order("display_order", { ascending: true })
-        .order("created_at", { ascending: false });
-      if (opts?.activeOnly) q = q.eq("is_active", true);
-      const { data, error } = await q;
-      if (error) throw error;
-      return (data ?? []) as CompanyOffering[];
+      const data = await listCompanyOfferings(companyId!, !!opts?.activeOnly);
+      return data as CompanyOffering[];
     },
   });
 }
@@ -49,21 +45,11 @@ export function useUpsertOffering(companyId: string | null) {
   return useMutation({
     mutationFn: async (input: Partial<CompanyOffering> & { name: string; kind: "service" | "product" }) => {
       if (!companyId || !user) throw new Error("Missing company or user");
-      const payload = {
+      await upsertCompanyOffering({
         ...input,
         company_id: companyId,
         created_by: user.id,
-      };
-      if (input.id) {
-        const { error } = await supabase
-          .from("company_offerings")
-          .update(payload)
-          .eq("id", input.id);
-        if (error) throw error;
-      } else {
-        const { error } = await supabase.from("company_offerings").insert(payload);
-        if (error) throw error;
-      }
+      });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["gro10x-offerings", companyId] });
@@ -75,8 +61,7 @@ export function useDeleteOffering(companyId: string | null) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (id: string) => {
-      const { error } = await supabase.from("company_offerings").delete().eq("id", id);
-      if (error) throw error;
+      await deleteCompanyOffering(id);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["gro10x-offerings", companyId] });

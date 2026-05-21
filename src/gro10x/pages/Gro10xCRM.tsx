@@ -6,7 +6,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listCompanyLeads,
+  insertCompanyLead,
+  updateCompanyLead,
+  listCompanyLeadActivities,
+  insertCompanyLeadActivity,
+} from "@/domains/companies/repo/companiesRepo";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveCompany } from "../hooks/useActiveCompany";
 import { useCompanyOfferings } from "../hooks/useCompanyOfferings";
@@ -58,24 +64,19 @@ export default function Gro10xCRM() {
     queryKey: ["company-leads", companyId],
     enabled: !!companyId,
     queryFn: async (): Promise<Lead[]> => {
-      const { data } = await supabase
-        .from("company_leads")
-        .select("id,name,email,phone,company_name,title,source,stage,value_usd,notes,next_step,offering_id,created_at")
-        .eq("company_id", companyId!)
-        .order("created_at", { ascending: false });
-      return (data ?? []).map((r: any) => ({ ...r, value_usd: Number(r.value_usd ?? 0) }));
+      const data = await listCompanyLeads(companyId!);
+      return data.map((r: any) => ({ ...r, value_usd: Number(r.value_usd ?? 0) }));
     },
   });
 
   const createLead = useMutation({
     mutationFn: async (payload: { name: string; email: string; company_name: string; source: string; value_usd: number }) => {
-      const { error } = await supabase.from("company_leads").insert({
+      await insertCompanyLead({
         company_id: companyId!,
         created_by: user!.id,
         owner_user_id: user!.id,
         ...payload,
       });
-      if (error) throw error;
     },
     onSuccess: () => {
       toast.success("Lead added");
@@ -87,8 +88,7 @@ export default function Gro10xCRM() {
 
   const updateStage = useMutation({
     mutationFn: async ({ id, stage }: { id: string; stage: Stage }) => {
-      const { error } = await supabase.from("company_leads").update({ stage }).eq("id", id);
-      if (error) throw error;
+      await updateCompanyLead(id, { stage });
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["company-leads", companyId] });
@@ -317,19 +317,13 @@ function LeadDetail({
   const activitiesQuery = useQuery({
     queryKey: ["lead-activities", lead.id],
     queryFn: async () => {
-      const { data } = await supabase
-        .from("company_lead_activities")
-        .select("id, activity_type, body, created_at")
-        .eq("lead_id", lead.id)
-        .order("created_at", { ascending: false });
-      return data ?? [];
+      return await listCompanyLeadActivities(lead.id);
     },
   });
 
   const updateLead = useMutation({
     mutationFn: async (patch: Partial<Lead>) => {
-      const { error } = await supabase.from("company_leads").update(patch as any).eq("id", lead.id);
-      if (error) throw error;
+      await updateCompanyLead(lead.id, patch as any);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["company-leads", companyId] });
@@ -339,14 +333,13 @@ function LeadDetail({
 
   const addNote = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.from("company_lead_activities").insert({
+      await insertCompanyLeadActivity({
         lead_id: lead.id,
         company_id: companyId,
         created_by: userId,
         activity_type: "note",
         body: note,
       });
-      if (error) throw error;
     },
     onSuccess: () => {
       setNote("");
