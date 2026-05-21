@@ -212,6 +212,11 @@ export const talentRepo = {
   findCompanyByName: (name: string) =>
     supabase.from("companies").select("id").ilike("name", name).limit(1).single(),
 
+  findExistingByEmails: (table: string, emails: string[]) =>
+    (supabase.from(table as any) as any)
+      .select("email, linkedin_url")
+      .or(`email.in.(${emails.join(",")})`),
+
   insertIntoTable: (table: string, insertData: Record<string, any>) =>
     ((supabase as any).from(table)).insert(insertData),
 };
