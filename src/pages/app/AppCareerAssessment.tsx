@@ -79,29 +79,23 @@ export default function AppCareerAssessment() {
   // LIFECYCLE SECTOR 2: PARSE REPOS DIRECTORIES WITH INSULATED ABORT GATES
   // =========================================================================
   React.useEffect(() => {
-    const macroAbortControllerInstance = new AbortController();
-    const networkSchedulingTimerToken = setTimeout(() => {
-      macroAbortControllerInstance.abort();
-    }, TIMEOUTS.CATEGORY_LOAD || 10000);
+    let cancelled = false;
+    const timeoutMs = TIMEOUTS.CATEGORY_LOAD || 10000;
+    const timeoutToken = setTimeout(() => {
+      cancelled = true;
+    }, timeoutMs);
 
     const loadProfessionCategoriesInventory = async () => {
       try {
-        const { data: dbCategoriesPayload, error: queryHandshakeError } = await supabase
-          .from("profession_categories")
-          .select("id, name, display_order, is_active")
-          .eq("is_active", true)
-          .order("display_order")
-          .abortSignal(macroAbortControllerInstance.signal);
-
-        clearTimeout(networkSchedulingTimerToken);
-
-        if (queryHandshakeError) throw queryHandshakeError;
+        const dbCategoriesPayload = await listActiveProfessionCategoriesBasic();
+        clearTimeout(timeoutToken);
+        if (cancelled) return;
         if (dbCategoriesPayload) {
-          setProfessionCategoriesArray(dbCategoriesPayload);
+          setProfessionCategoriesArray(dbCategoriesPayload as any);
         }
       } catch (pipelineException: any) {
-        clearTimeout(networkSchedulingTimerToken);
-        if (pipelineException?.name !== "AbortError") {
+        clearTimeout(timeoutToken);
+        if (!cancelled) {
           console.error("Diagnostic Failure: Category Grid Load Exception:", pipelineException);
         }
       }
@@ -110,8 +104,8 @@ export default function AppCareerAssessment() {
     loadProfessionCategoriesInventory();
 
     return () => {
-      clearTimeout(networkSchedulingTimerToken);
-      macroAbortControllerInstance.abort();
+      cancelled = true;
+      clearTimeout(timeoutToken);
     };
   }, []);
 
