@@ -1,6 +1,8 @@
 import { useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { parseCv } from "@/domains/jobs/api/jobsApi";
+import { insertExternalJobApplication } from "@/domains/jobs/repo/jobsRepo";
+import { findTalentByEmail } from "@/domains/talent/repo/talentRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
