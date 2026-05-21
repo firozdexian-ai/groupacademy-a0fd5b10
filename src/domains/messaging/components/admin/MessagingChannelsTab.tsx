@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import { updateChannelAutoReply } from "@/domains/messaging/repo/messagingRepo";
 import { unipileConnect } from "@/domains/messaging/api/messagingApi";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
