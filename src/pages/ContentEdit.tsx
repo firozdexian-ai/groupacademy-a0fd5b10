@@ -96,15 +96,9 @@ export default function ContentEdit() {
 
   const loadModuleStats = async () => {
     if (!id) return;
-    const { data: modules } = await supabase
-      .from("course_modules")
-      .select("id, title, description, video_url")
-      .eq("content_id", id)
-      .order("order_index", { ascending: true });
-    const moduleIds = (modules || []).map((m: any) => m.id);
-    const { data: resources } = moduleIds.length
-      ? await supabase.from("module_resources").select("module_id, resource_url").in("module_id", moduleIds)
-      : { data: [] as any[] };
+    const modules = await listCourseModuleSummariesForContent(id);
+    const moduleIds = modules.map((m: any) => m.id);
+    const resources = await listModuleResourceLinksForModules(moduleIds);
 
     const moduleHasResource = new Set<string>();
     for (const r of resources || []) {
@@ -133,8 +127,8 @@ export default function ContentEdit() {
   const loadContent = async () => {
     try {
       setLoading(true);
-      const { data, error } = await supabase.from("content").select("*").eq("id", id).single();
-      if (error) throw error;
+      const data = await getContentById(id!);
+
 
       setFormData({
         ...data,
