@@ -146,14 +146,15 @@ export function AgentStudio() {
       toast.error("Logic Fault: agent_key and name required");
       return;
     }
-    const { error } = await supabase.from("ai_agents").insert({
-      ...form,
-      is_active: true,
-      owner_kind: "platform",
-      allowed_tools: [],
-      canvas_mode: "chat",
-    } as any);
-    if (error) {
+    try {
+      await insertAiAgent({
+        ...form,
+        is_active: true,
+        owner_kind: "platform",
+        allowed_tools: [],
+        canvas_mode: "chat",
+      });
+    } catch (error: any) {
       toast.error(error.message);
       return;
     }
