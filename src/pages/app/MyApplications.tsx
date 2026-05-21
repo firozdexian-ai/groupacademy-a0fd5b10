@@ -87,20 +87,10 @@ export default function MyApplications() {
     if (!user) return;
 
     setLoading(true);
-    const { data, error } = await supabase
-      .from("job_applications")
-      .select(
-        `
-        id, job_id, application_status, created_at, last_status_at,
-        job:jobs(title, company_name, company_logo_url, ai_assessment_enabled),
-        job_assessments(id, status)
-      `,
-      )
-      .eq("talent_id", user.id)
-      .order("last_status_at", { ascending: false, nullsFirst: false })
-      .order("created_at", { ascending: false });
-
-    if (error) {
+    let data: any[] = [];
+    try {
+      data = await listTalentApplicationsWithJob(user.id);
+    } catch (err) {
       toast.error("Failed to synchronize application ledger.");
       return;
     }
