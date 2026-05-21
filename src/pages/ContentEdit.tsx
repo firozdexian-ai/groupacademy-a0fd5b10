@@ -175,11 +175,9 @@ export default function ContentEdit() {
         max_capacity: formData.max_capacity ? parseInt(formData.max_capacity) : null,
         event_date: formData.event_date || null,
       });
-
-
-      if (error) throw error;
       toast({ title: "Success", description: "Academy record synchronized." });
       navigate("/dashboard");
+
     } catch (error: any) {
       toast({ title: "Update Failed", description: error.message, variant: "destructive" });
     } finally {
