@@ -9,7 +9,7 @@ import {
   CommandList,
   CommandSeparator,
 } from "@/components/ui/command";
-import { supabase } from "@/integrations/supabase/client";
+import { gro10xGlobalSearch } from "@/domains/admin/repo/adminRepo";
 import {
   Building2,
   User,
