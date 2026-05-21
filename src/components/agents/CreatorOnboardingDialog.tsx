@@ -112,26 +112,26 @@ export function CreatorOnboardingDialog({ open, onOpenChange, onCreated }: Creat
       const uniqueSlug = `${safeSlug}-${Math.random().toString(36).slice(2, 6)}`;
 
       // HUD: COMMITTING_AGENT_RECORD_INSERTION
-      const { error } = await supabase.from("ai_agents").insert({
-        agent_key: uniqueSlug,
-        name: name.trim(),
-        description: blueprint?.description ?? brief.slice(0, 200),
-        system_prompt: blueprint?.system_prompt ?? brief,
-        allowed_tools: blueprint?.allowed_tools ?? [],
-        owner_kind: "talent",
-        owner_id: talent.id,
-        visibility: "private",
-        marketplace_status: "pending",
-        message_credit_cost: credits,
-        is_active: true,
-      });
-
-      if (error) {
+      try {
+        await insertAiAgent({
+          agent_key: uniqueSlug,
+          name: name.trim(),
+          description: blueprint?.description ?? brief.slice(0, 200),
+          system_prompt: blueprint?.system_prompt ?? brief,
+          allowed_tools: blueprint?.allowed_tools ?? [],
+          owner_kind: "talent",
+          owner_id: talent.id,
+          visibility: "private",
+          marketplace_status: "pending",
+          message_credit_cost: credits,
+          is_active: true,
+        });
+      } catch (error: any) {
         // Digital Workforce Anomaly Trigger: Imprints explicit failure trace parameters
         console.error("[Digital Workforce] ANOMALY: ai_agents ledger entry validation failure.", {
           talentId: talent.id,
           agentKey: uniqueSlug,
-          message: error.message,
+          message: error?.message,
         });
         throw error;
       }
