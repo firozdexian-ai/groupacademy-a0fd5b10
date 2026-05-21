@@ -1,6 +1,8 @@
 import { useEffect, useState, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getTalentUserIdById } from "@/domains/talent/repo/talentRepo";
+import { getInstructorRecentEarningsCount } from "@/domains/learning/repo/learningRepo";
 import { Badge } from "@/components/ui/badge";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { GraduationCap, Zap } from "lucide-react";

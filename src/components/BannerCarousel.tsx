@@ -2,6 +2,8 @@ import { useEffect, useState, useMemo, useRef, useCallback } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { listActiveBannersForPlacement } from "@/domains/marketing/repo/marketingRepo";
+import { listContentSlugsByIds } from "@/domains/learning/repo/learningRepo";
 import { Button } from "@/components/ui/button";
 import { BannerLightbox } from "@/components/feed/BannerLightbox";
 import { trackError, trackEvent } from "@/lib/errorTracking";

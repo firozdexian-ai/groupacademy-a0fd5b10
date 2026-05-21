@@ -2,6 +2,7 @@ import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { listUserRoles } from "@/domains/profile/repo/profileRepo";
 import { toast } from "sonner";
 import { Button } from "@/components/ui/button";
 import { RefreshCw, LogIn, ShieldCheck, Zap, AlertCircle } from "lucide-react";
