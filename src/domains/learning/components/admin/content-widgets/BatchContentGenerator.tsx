@@ -1,5 +1,17 @@
 import { useState, useRef, useCallback, useEffect } from "react";
 import { supabase } from "@/integrations/supabase/client";
+import {
+  listSchoolsLite,
+  listProgramsBySchool,
+  listContentsByProgramIds,
+  listModulesByContentIds,
+  listQuizQuestionsByModuleIds,
+  listModuleResourcesByType,
+  listDraftPosts,
+  updateDraftPost,
+  type DraftPostTable,
+} from "@/domains/learning/repo/learningRepo";
+
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
 import { Progress } from "@/components/ui/progress";
