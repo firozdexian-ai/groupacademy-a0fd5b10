@@ -7,7 +7,9 @@ import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/comp
 import { CheckCircle2, AlertTriangle, XCircle, RefreshCw, Zap, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
 import { supabase } from "@/integrations/supabase/client";
+import { setContentPublished } from "@/domains/learning/repo/learningRepo";
 import { toast } from "sonner";
+
 import {
   computeChecks,
   readinessSummary,
