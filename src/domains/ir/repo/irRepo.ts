@@ -94,8 +94,7 @@ export async function logInvestorInteraction(input: {
   payload: Record<string, any>;
   updatePayload: Record<string, any>;
 }): Promise<void> {
-  const { error: insertError } = await supabase
-    .from("ir_investor_interactions")
+  const { error: insertError } = await (supabase.from("ir_investor_interactions") as any)
     .insert({ investor_id: input.investorId, ...input.payload });
   if (insertError) throw insertError;
   const { error: updateError } = await supabase
@@ -115,9 +114,9 @@ export async function logOutreachAndEmail(input: {
   outreach: Record<string, any>;
   email: Record<string, any>;
 }): Promise<void> {
-  const { error: logError } = await supabase.from("ir_outreach_log").insert([input.outreach]);
+  const { error: logError } = await (supabase.from("ir_outreach_log") as any).insert([input.outreach]);
   if (logError) throw logError;
-  const { error: commError } = await supabase.from("ir_email_communications").insert([input.email]);
+  const { error: commError } = await (supabase.from("ir_email_communications") as any).insert([input.email]);
   if (commError) throw commError;
 }
 
