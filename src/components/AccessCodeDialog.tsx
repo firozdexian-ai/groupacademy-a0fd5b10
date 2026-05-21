@@ -124,16 +124,10 @@ export const AccessCodeDialog = ({ open, onOpenChange, contentId, contentTitle, 
       }
 
       let targetStudentContextNode: { id: string };
-      const { data: existingStudentRowData, error: studentQueryError } = await supabase
-        .from("students")
-        .select("id")
-        .eq("user_id", user.id)
-        .maybeSingle();
+      const existingStudentId = await findStudentIdByUserId(user.id);
 
-      if (studentQueryError) throw studentQueryError;
-
-      if (existingStudentRowData) {
-        targetStudentContextNode = existingStudentRowData;
+      if (existingStudentId) {
+        targetStudentContextNode = { id: existingStudentId };
       } else {
         // Fallback profile creation pass if relational records live disconnected down database tables
         const profileInitializationCreatedBool = await createStudentProfile(
@@ -148,18 +142,11 @@ export const AccessCodeDialog = ({ open, onOpenChange, contentId, contentTitle, 
           throw new Error("Identity Pipeline Fault: Remote engine failed to establish raw student profile references.");
         }
 
-        const { data: newlyAllocatedStudentData, error: targetRequeryError } = await supabase
-          .from("students")
-          .select("id")
-          .eq("user_id", user.id)
-          .single();
-
-        if (targetRequeryError) throw targetRequeryError;
-        targetStudentContextNode = newlyAllocatedStudentData;
+        targetStudentContextNode = { id: await requireStudentIdByUserId(user.id) };
       }
 
       // PHASE 4: Transactional Enrollment Ingest Commit
-      const { error: insertEnrollmentRegistryError } = await supabase.from("enrollments").insert({
+      const { error: insertEnrollmentRegistryError } = await insertEnrollmentRow({
         student_id: targetStudentContextNode.id,
         content_id: contentId,
         status: "active",
