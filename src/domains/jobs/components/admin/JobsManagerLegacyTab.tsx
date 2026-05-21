@@ -387,7 +387,7 @@ export function JobsManagerLegacyTab() {
                             className="h-8 w-8 text-destructive"
                             onClick={async () => {
                               if (confirm("Remove listing?")) {
-                                await supabase.from("jobs").delete().eq("id", job.id);
+                                await deleteJob(job.id);
                                 loadJobs();
                               }
                             }}
