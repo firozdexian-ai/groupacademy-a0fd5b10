@@ -96,13 +96,7 @@ export function HrPayrollTab() {
     mutationFn: async (payload: any) => {
       const total = Number(payload.base_amount || 0) + Number(payload.incentive_amount || 0);
       const finalPayload = { ...payload, total_amount: total };
-
-      const query = finalPayload.id
-        ? supabase.from("hr_payroll_runs").update(finalPayload).eq("id", finalPayload.id)
-        : supabase.from("hr_payroll_runs").insert([finalPayload]);
-
-      const { error } = await query;
-      if (error) throw error;
+      await upsertGraphRow("hr_payroll_runs", finalPayload);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["hr_payroll"] });
