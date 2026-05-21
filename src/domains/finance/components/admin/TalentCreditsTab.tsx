@@ -193,24 +193,26 @@ export function TalentCreditsTab() {
         return toast.error("Logic Fault: Insufficient liquidity for debit");
       }
 
-      let rpcError;
-      if (adjustDialog.type === "add") {
-        const { error } = await supabase.rpc("add_credits", {
-          p_talent_id: talentNode.talent_id,
-          p_amount: amount,
-          p_description: adjustReason || "Executive credit handshake",
-          p_transaction_type: "admin_credit",
-        });
-        rpcError = error;
-      } else {
-        const { error } = await supabase.rpc("deduct_credits" as any, {
-          p_talent_id: talentNode.talent_id,
-          p_amount: amount,
-          p_description: adjustReason || "Executive debit handshake",
-          p_service_type: "admin_debit",
-          p_transaction_type: "admin_debit",
-        });
-        rpcError = error;
+      let rpcError: any = null;
+      try {
+        if (adjustDialog.type === "add") {
+          await addCreditsRpc({
+            talentId: talentNode.talent_id,
+            amount,
+            description: adjustReason || "Executive credit handshake",
+            transactionType: "admin_credit",
+          });
+        } else {
+          await deductCreditsRpc({
+            talentId: talentNode.talent_id,
+            amount,
+            description: adjustReason || "Executive debit handshake",
+            serviceType: "admin_debit",
+            transactionType: "admin_debit",
+          });
+        }
+      } catch (e) {
+        rpcError = e;
       }
 
       if (rpcError) {
