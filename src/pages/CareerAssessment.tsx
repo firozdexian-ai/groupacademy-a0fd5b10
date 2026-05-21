@@ -1,7 +1,12 @@
 import { useState, useEffect } from "react";
 import { useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
-import { markAssessmentAccessCodeUsed } from "@/domains/marketing/repo/marketingRepo";
+import {
+  markAssessmentAccessCodeUsed,
+  listActiveProfessionCategoriesAll,
+  getLatestCareerAssessmentByEmail,
+  getValidAssessmentAccessCode,
+} from "@/domains/marketing/repo/marketingRepo";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { ProfessionSelector } from "@/components/assessment/ProfessionSelector";
