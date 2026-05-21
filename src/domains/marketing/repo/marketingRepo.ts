@@ -569,3 +569,13 @@ export async function getCareerAssessmentWithCategory(id: string) {
   if (error) throw error;
   return data as any | null;
 }
+
+export async function listActiveProfessionCategoriesAll() {
+  const { data, error } = await supabase
+    .from("profession_categories")
+    .select("*")
+    .eq("is_active", true)
+    .order("display_order");
+  if (error) throw error;
+  return (data ?? []) as any[];
+}
