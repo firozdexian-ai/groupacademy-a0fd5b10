@@ -165,8 +165,11 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
       return toast({ title: "Variant is live", description: "Switch to another variant first." });
     const next = { ...(agent.prompt_variants || {}) };
     delete next[key];
-    const { error } = await supabase.from("ai_agents").update({ prompt_variants: next }).eq("id", agent.id);
-    if (error) return toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+    try {
+      await updateAiAgent(agent.id, { prompt_variants: next });
+    } catch (error: any) {
+      return toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+    }
     onSaved?.();
   }
 
