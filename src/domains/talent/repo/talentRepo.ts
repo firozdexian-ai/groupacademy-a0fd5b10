@@ -138,5 +138,5 @@ export const talentRepo = {
     supabase.from("companies").select("id").ilike("name", name).limit(1).single(),
 
   insertIntoTable: (table: string, insertData: Record<string, any>) =>
-    (supabase.from(table as any) as any).insert(insertData),
+    ((supabase as any).from(table)).insert(insertData),
 };
