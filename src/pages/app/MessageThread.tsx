@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { PAGE_SHELL } from "@/lib/uiTokens";
 import { listTalentSystemFeedNotifications } from "@/domains/talent/repo/talentRepo";
 import { getAgentByKey } from "@/domains/agents/repo/agentsRepo";
-import { getMessageThreadIdByTalentAndAgent } from "@/domains/messaging/repo/messagingRepo";
+import { getMessageThreadIdByTalentAndAgent, ensureSystemThread } from "@/domains/messaging/repo/messagingRepo";
 
 // =========================================================================
 // DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
