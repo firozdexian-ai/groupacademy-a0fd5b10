@@ -626,3 +626,14 @@ export async function listActiveJobsByCompanyId(companyId: string, limit = 10): 
     .limit(limit);
   return (data ?? []) as any[];
 }
+
+export async function listActiveJobsByCompanyIdShort(companyId: string, limit = 10): Promise<any[]> {
+  const { data } = await supabase
+    .from("jobs")
+    .select("id, title, location, job_type")
+    .eq("company_id", companyId)
+    .eq("is_active", true)
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  return (data ?? []) as any[];
+}

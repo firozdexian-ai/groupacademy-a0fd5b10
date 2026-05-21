@@ -760,3 +760,13 @@ export async function listTalentMiniProfilesByUserIds(userIds: string[]): Promis
     .in("user_id", userIds);
   return (data ?? []) as any[];
 }
+
+export async function listTalentBasicByUserIds(userIds: string[], limit = 12): Promise<any[]> {
+  if (!userIds.length) return [];
+  const { data } = await supabase
+    .from("talents")
+    .select("full_name, profile_photo_url, custom_profession")
+    .in("user_id", userIds)
+    .limit(limit);
+  return (data ?? []) as any[];
+}

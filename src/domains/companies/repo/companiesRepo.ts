@@ -488,3 +488,23 @@ export async function updateCompanyField(
   const { error } = await supabase.from("companies").update(patch).eq("id", companyId);
   return { error };
 }
+
+// ─── Phase 10j.5g2: PublicCompanyPage (slug-based) ────────────────────────
+export async function getCompanyPublicProfileBySlug(slug: string): Promise<{ data: any; error: any }> {
+  const { data, error } = await supabase
+    .from("companies")
+    .select("id,name,tagline,about,logo_url,banner_url,website,country,slug")
+    .eq("slug", slug)
+    .maybeSingle();
+  return { data, error };
+}
+
+export async function listActiveCompanyMemberUserIds(companyId: string, limit = 12): Promise<string[]> {
+  const { data } = await supabase
+    .from("company_members")
+    .select("user_id")
+    .eq("company_id", companyId)
+    .eq("status", "active")
+    .limit(limit);
+  return ((data ?? []) as any[]).map((r) => r.user_id).filter(Boolean);
+}
