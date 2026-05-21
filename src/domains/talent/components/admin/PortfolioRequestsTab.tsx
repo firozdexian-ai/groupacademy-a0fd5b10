@@ -126,29 +126,15 @@ export default function PortfolioRequestsManager() {
     setLoading(true);
     setError(null);
     try {
-      let query = supabase
-        .from("portfolio_requests")
-        .select(`*, profession_category:profession_categories(name)`, { count: "exact" })
-        .order("created_at", { ascending: false });
-
-      if (debouncedSearch) {
-        const safe = sanitizeIlike(debouncedSearch);
-        if (safe) {
-          query = query.or(`full_name.ilike.%${safe}%,email.ilike.%${safe}%,phone.ilike.%${safe}%`);
-        }
-      }
-
-      // Filter is now type-safe for Supabase [cite: 7, 16]
-      if (statusFilter !== "all") {
-        query = query.eq("status", statusFilter);
-      }
-
-      const from = (page - 1) * ITEMS_PER_PAGE;
-      const to = from + ITEMS_PER_PAGE - 1;
-      query = query.range(from, to);
-
       const result = await withTimeout(
-        Promise.resolve(query),
+        Promise.resolve(
+          talentRepo.listPortfolioRequests({
+            page,
+            pageSize: ITEMS_PER_PAGE,
+            search: debouncedSearch,
+            statusFilter,
+          }),
+        ),
         TIMEOUTS.DEFAULT,
         "Loading portfolio requests timed out",
       );
