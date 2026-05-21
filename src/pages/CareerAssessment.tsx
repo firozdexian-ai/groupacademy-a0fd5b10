@@ -96,12 +96,7 @@ function CareerAssessmentContent() {
 
   const loadCategories = async () => {
     try {
-      const { data, error } = await supabase
-        .from("profession_categories")
-        .select("*")
-        .eq("is_active", true)
-        .order("display_order");
-      if (error) throw error;
+      const data = await listActiveProfessionCategoriesAll();
       if (data) setCategories(data);
     } catch (err) {
       console.error("Critical: Failed to load taxonomy.");
