@@ -5,8 +5,12 @@
  * Features: Restored Rename Protocol & Unassigned KPI
  */
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
-import { countCompaniesWithNullIndustry, renameCompanyIndustry } from "@/domains/companies/repo/companiesRepo";
+import {
+  countCompaniesWithNullIndustry,
+  renameCompanyIndustry,
+  getIndustryRollup,
+  mergeIndustries,
+} from "@/domains/companies/repo/companiesRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
