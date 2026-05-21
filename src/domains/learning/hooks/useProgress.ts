@@ -71,12 +71,12 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
       });
 
       const resourceViewStates: Record<string, Record<string, boolean>> = {};
-      (espRes.data ?? []).forEach((row) => {
+      bundle.stageProgress.forEach((row) => {
         resourceViewStates[row.module_id] = (row.resource_view_states as Record<string, boolean>) ?? {};
       });
 
       const resumeModuleId =
-        enrRes.data?.current_module_id ??
+        bundle.enrollment?.current_module_id ??
         modules.find((m) => m.progressPct < 100)?.moduleId ??
         modules[0]?.moduleId ??
         null;
@@ -84,8 +84,8 @@ export function useProgress({ enrollmentId, contentId }: UseProgressOptions) {
       return {
         modules,
         resourceViewStates,
-        overallPct: enrRes.data?.progress ?? 0,
-        isCompleted: enrRes.data?.status === "completed",
+        overallPct: bundle.enrollment?.progress ?? 0,
+        isCompleted: bundle.enrollment?.status === "completed",
         currentModuleId: resumeModuleId,
       };
     },
