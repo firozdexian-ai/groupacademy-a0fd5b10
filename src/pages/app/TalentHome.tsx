@@ -67,8 +67,7 @@ export default function TalentHome() {
   const boost = async () => {
     setBoosting(true);
     try {
-      const { error } = await supabase.rpc("boost_profile");
-      if (error) throw error;
+      await boostProfile();
       toast.success("Profile Pinned for 24h.");
       setBoostUntil(new Date(Date.now() + 86400000).toISOString());
     } catch (e) {
