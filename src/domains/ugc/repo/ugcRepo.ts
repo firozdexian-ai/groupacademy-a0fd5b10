@@ -184,10 +184,10 @@ export async function getProjectPublicSettings(projectId: string) {
 }
 
 // ─── Phase 10j.5d additions ────────────────────────────────────────────────
-import { supabase as _ugcSupabase } from "@/integrations/supabase/client";
+
 
 export async function getCompetitionBySlug(slug: string) {
-  const { data, error } = await _ugcSupabase
+  const { data, error } = await supabase
     .from("competitions")
     .select("*")
     .eq("slug", slug)
@@ -197,7 +197,7 @@ export async function getCompetitionBySlug(slug: string) {
 }
 
 export async function getMyCompetitionSubmission(opts: { competitionId: string; talentId: string }) {
-  const { data, error } = await _ugcSupabase
+  const { data, error } = await supabase
     .from("competition_submissions")
     .select("*")
     .eq("competition_id", opts.competitionId)
@@ -214,6 +214,6 @@ export async function upsertCompetitionSubmission(payload: {
   description: string | null;
   status: string;
 }): Promise<{ error: any }> {
-  const { error } = await _ugcSupabase.from("competition_submissions").upsert(payload as any);
+  const { error } = await supabase.from("competition_submissions").upsert(payload as any);
   return { error };
 }
