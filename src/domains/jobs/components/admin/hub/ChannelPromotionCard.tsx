@@ -95,14 +95,16 @@ export function ChannelPromotionCard({ job }: Props) {
     const {
       data: { user },
     } = await supabase.auth.getUser();
-    const { error } = await supabase.from("job_channel_posts").insert({
-      job_id: job.id,
-      channel,
-      posted_by: user?.id || null,
-      caption: captions[channel] || null,
-    } as any);
-
-    if (error) return toast.error("Registry Fault: " + error.message);
+    try {
+      await insertJobChannelPost({
+        job_id: job.id,
+        channel,
+        posted_by: user?.id || null,
+        caption: captions[channel] || null,
+      });
+    } catch (error: any) {
+      return toast.error("Registry Fault: " + error.message);
+    }
 
     setPosted((p) => new Set(p).add(channel));
     toast.success(`Protocol Successful: Syndication logged on ${channel}`);
