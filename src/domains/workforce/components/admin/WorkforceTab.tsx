@@ -114,12 +114,8 @@ export function WorkforceManager() {
   useEffect(() => {
     if (talentSearch.length < 2) return;
     const timer = setTimeout(async () => {
-      const { data } = await supabase
-        .from("talents")
-        .select("id, full_name, email")
-        .or(`full_name.ilike.%${sanitizeIlike(talentSearch)}%,email.ilike.%${sanitizeIlike(talentSearch)}%`)
-        .limit(5);
-      setTalentOptions(data || []);
+      const data = await searchTalentsByNameOrEmail(sanitizeIlike(talentSearch));
+      setTalentOptions(data);
     }, 300);
     return () => clearTimeout(timer);
   }, [talentSearch]);
