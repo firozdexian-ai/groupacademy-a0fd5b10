@@ -172,15 +172,21 @@ export function AgentTriggers() {
   }
 
   async function toggleTrigger(t: Trigger) {
-    const { error } = await supabase.from("agent_triggers").update({ is_active: !t.is_active }).eq("id", t.id);
-    if (error) return toast({ title: "Protocol Rejection", description: error.message, variant: "destructive" });
+    try {
+      await toggleAgentTrigger(t.id, !t.is_active);
+    } catch (error: any) {
+      return toast({ title: "Protocol Rejection", description: error.message, variant: "destructive" });
+    }
     load();
   }
 
   async function deleteTrigger(id: string) {
     if (!confirm("Purge this trigger node?")) return;
-    const { error } = await supabase.from("agent_triggers").delete().eq("id", id);
-    if (error) return toast({ title: "Purge Failed", description: error.message, variant: "destructive" });
+    try {
+      await deleteAgentTrigger(id);
+    } catch (error: any) {
+      return toast({ title: "Purge Failed", description: error.message, variant: "destructive" });
+    }
     load();
   }
 
@@ -188,8 +194,11 @@ export function AgentTriggers() {
     const amt = Number(topUpAmount);
     if (!Number.isFinite(amt) || amt <= 0) return;
     const newBalance = (pool?.balance || 0) + amt;
-    const { error } = await supabase.from("headless_pool").update({ balance: newBalance }).eq("id", 1);
-    if (error) return toast({ title: "Transaction Rejection", description: error.message, variant: "destructive" });
+    try {
+      await updateHeadlessPoolBalance(newBalance);
+    } catch (error: any) {
+      return toast({ title: "Transaction Rejection", description: error.message, variant: "destructive" });
+    }
     toast({ title: `Allocated ${amt} CR to Headless Pool` });
     load();
   }
@@ -197,8 +206,11 @@ export function AgentTriggers() {
   async function updateCap() {
     const cap = Number(capAmount);
     if (!Number.isFinite(cap) || cap < 0) return;
-    const { error } = await supabase.from("headless_pool").update({ monthly_cap: cap }).eq("id", 1);
-    if (error) return toast({ title: "Transaction Rejection", description: error.message, variant: "destructive" });
+    try {
+      await updateHeadlessPoolMonthlyCap(cap);
+    } catch (error: any) {
+      return toast({ title: "Transaction Rejection", description: error.message, variant: "destructive" });
+    }
     toast({ title: "Burn Cap Synchronized" });
     load();
   }
