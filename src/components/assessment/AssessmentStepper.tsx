@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo, useCallback } from "react";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { listAssessmentQuestionsForCategory } from "@/domains/learning/repo/learningRepo";
 import { toast } from "sonner";
 
 // UI Primitive Matrix Registries

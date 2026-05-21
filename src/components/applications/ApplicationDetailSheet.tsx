@@ -1,6 +1,7 @@
 import { useState, useEffect, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { updateJobApplication } from "@/domains/jobs/repo/jobsRepo";
 import type { PipelineApplication, PipelineStatus } from "@/domains/jobs";
 import { ApplicationMessageThread } from "./ApplicationMessageThread";
 import { InterviewPanel } from "@/components/interviews/InterviewPanel";
