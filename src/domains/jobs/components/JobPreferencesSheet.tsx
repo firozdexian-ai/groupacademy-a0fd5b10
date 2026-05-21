@@ -8,7 +8,11 @@ import { Checkbox } from "@/components/ui/checkbox";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { listActiveJobLocations } from "@/domains/jobs/repo/jobsRepo";
+import {
+  getTalentJobPreferences,
+  updateTalentJobPreferences,
+} from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
 import type { Json } from "@/integrations/supabase/types";
 import { JOB_TYPES } from "@/lib/constants/jobTypes";
