@@ -50,20 +50,15 @@ export function useCreatorScorecard(talentId?: string, days: number = 7) {
     enabled: !!talentId,
     staleTime: 5 * 60 * 1000, // 5-minute metric consistency window
     queryFn: async (): Promise<CreatorScorecard> => {
-      // HUD: EXECUTING_RPC_AGGREGATION_SYNC
-      const { data, error } = await supabase.rpc("get_creator_scorecard" as any, {
-        _talent_id: talentId,
-        _days: days,
-      });
-
-      if (error) {
+      try {
+        return (await getCreatorScorecard(talentId!, days)) as CreatorScorecard;
+      } catch (error: any) {
         console.error("[Digital Workforce] FAULT: get_creator_scorecard transaction failed.", {
           talentId,
-          error: error.message,
+          error: error?.message,
         });
         throw error;
       }
-      return data as CreatorScorecard;
     },
   });
 }
