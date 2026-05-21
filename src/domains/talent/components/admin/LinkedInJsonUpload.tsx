@@ -144,10 +144,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
     const emails = selected.map((r) => r.data.email?.toLowerCase()).filter(Boolean);
 
     // Perform deduplication handshake
-    const { data: existingRecords } = await supabase
-      .from(targetTable)
-      .select("email, linkedin_url")
-      .or(`email.in.(${emails.join(",")})`);
+    const { data: existingRecords } = await talentRepo.findExistingByEmails(targetTable, emails);
 
     const castedExisting = (existingRecords as any[]) || [];
     const emailSet = new Set(castedExisting.map((r) => r.email?.toLowerCase()));
