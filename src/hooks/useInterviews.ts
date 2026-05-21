@@ -138,13 +138,7 @@ export function useConfirmInterviewSlot() {
       slotId: string;
       applicationId: string;
     }) => {
-      // HUD: EXECUTING_RPC_SLOT_CONFIRMATION
-      const { error: rpcError } = await supabase.rpc("confirm_interview_slot", {
-        p_interview_id: interviewId,
-        p_slot_id: slotId,
-      });
-
-      if (rpcError) throw rpcError;
+      await confirmInterviewSlot(interviewId, slotId);
 
       try {
         await notifyHiringEvent({ kind: "interview_confirmed", ref: { interview_id: interviewId } });
