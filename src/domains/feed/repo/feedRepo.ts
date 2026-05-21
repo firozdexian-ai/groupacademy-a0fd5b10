@@ -31,7 +31,7 @@ export async function insertPostReaction(input: {
 }
 
 export async function insertFeedPost(payload: Record<string, any>): Promise<{ error: any }> {
-  const { error } = await supabase.from("feed_posts").insert(payload);
+  const { error } = await supabase.from("feed_posts").insert(payload as any);
   return { error };
 }
 
