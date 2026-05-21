@@ -84,11 +84,7 @@ export function Gro10xCommandPalette() {
     }
     const t = setTimeout(async () => {
       setLoading(true);
-      const { data } = await supabase.rpc("gro10x_global_search", {
-        _q: q,
-        _limit: 6,
-      });
-      const d = (data ?? {}) as any;
+      const d = (await gro10xGlobalSearch(q, 6)) as any;
       setResults({
         company: d.companies ?? [],
         talent: d.talents ?? [],
