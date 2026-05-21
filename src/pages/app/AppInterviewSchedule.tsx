@@ -64,19 +64,19 @@ export default function AppInterviewSchedule() {
       setIsDataLayerLoading(true);
       try {
         // Execute discrete queries concurrently to eliminate response latency waterfall blockages
-        const [interviewDataResponse, slotsDataResponse] = await Promise.all([
-          supabase.from("interviews").select("*").eq("id", unverifiedInterviewIdStr).maybeSingle(),
-          supabase.from("interview_slots").select("*").eq("interview_id", unverifiedInterviewIdStr).order("starts_at"),
+        const [interviewRow, slotRows] = await Promise.all([
+          getInterviewById(unverifiedInterviewIdStr).catch(() => null),
+          listInterviewSlots(unverifiedInterviewIdStr).catch(() => []),
         ]);
 
         if (!isThreadMountedFlag.current) return;
 
-        if (interviewDataResponse.error || !interviewDataResponse.data) {
+        if (!interviewRow) {
           setInterviewRecordData(null);
           setAvailableTimeSlotsArray([]);
         } else {
-          setInterviewRecordData(interviewDataResponse.data as unknown as InterviewMetadata);
-          setAvailableTimeSlotsArray((slotsDataResponse.data as unknown as InterviewTimeSlot[]) ?? []);
+          setInterviewRecordData(interviewRow as unknown as InterviewMetadata);
+          setAvailableTimeSlotsArray((slotRows as unknown as InterviewTimeSlot[]) ?? []);
         }
       } catch (fatalHandshakeExceptionPayload) {
         if (isThreadMountedFlag.current) {
