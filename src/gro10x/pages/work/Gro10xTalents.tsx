@@ -4,7 +4,9 @@
  */
 import { useEffect, useState } from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { listRecentApplicationsWithJobMeta } from "@/domains/jobs/repo/jobsRepo";
+import { listCompanyShortlistsRecent } from "@/domains/companies/repo/companiesRepo";
+import { listTalentsBasicByIds } from "@/domains/talent/repo/talentRepo";
 import { useActiveCompany } from "../../hooks/useActiveCompany";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../../lib/tokens";
 import { Loader2, MessageSquare, User } from "lucide-react";
