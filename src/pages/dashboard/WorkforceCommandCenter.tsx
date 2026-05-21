@@ -988,13 +988,7 @@ function RoutingDialog({ editing, agents, onClose, onDone }: any) {
         is_active: active,
       };
 
-      if (editing?.id) {
-        const { error } = await (supabase as any).from("workforce_routing_rules").update(payload).eq("id", editing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await (supabase as any).from("workforce_routing_rules").insert(payload);
-        if (error) throw error;
-      }
+      await upsertWorkforceRoutingRule(payload, editing?.id);
     },
     onSuccess: () => {
       toast.success(editing ? "Rule updated" : "Rule created");
