@@ -62,20 +62,14 @@ export function HrPayrollTab() {
     queryKey: ["hr_payroll"],
     queryFn: async () => {
       // W4 Fix: Accurate Workforce-to-Talent join
-      const [payrollRes, workforceRes] = await Promise.all([
-        supabase.from("hr_payroll_runs").select("*").order("period_end", { ascending: false }),
-        supabase.from("workforce_members").select("user_id, talents(full_name)").eq("status", "active"),
-      ]);
-
-      if (payrollRes.error) throw payrollRes.error;
-      if (workforceRes.error) throw workforceRes.error;
+      const { runs: runsData, workforce } = await getHrPayrollMaster();
 
       const userMap = new Map<string, string>();
-      (workforceRes.data || []).forEach((w: any) => {
+      workforce.forEach((w: any) => {
         if (w.user_id) userMap.set(w.user_id, (w.talents as any)?.full_name || "Unknown Agent");
       });
 
-      const runs = payrollRes.data || [];
+      const runs = runsData;
 
       // W11: Group by Month
       const groupedRuns = runs.reduce((acc: any, run) => {
