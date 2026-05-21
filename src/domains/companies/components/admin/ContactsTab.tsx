@@ -4,7 +4,11 @@
  * Fixes: S1 (Ownership Move), PII Masking Standardized
  */
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listCompaniesNameSorted,
+  listContactsPaged,
+  upsertContact,
+} from "@/domains/companies/repo/companiesRepo";
 import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
