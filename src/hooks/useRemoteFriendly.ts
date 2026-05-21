@@ -1,5 +1,5 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getRemoteFriendlySummary } from "@/domains/jobs/repo/jobsRepo";
 
 /**
  * GroUp Academy: Geographic Decoupling Radar (V5.6.0)
