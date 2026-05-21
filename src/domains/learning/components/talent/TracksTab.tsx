@@ -109,8 +109,9 @@ export function TracksTab() {
 
         // 1. Component-Lifetime Safety Lock Check: Freeze updates if workspace teardown completes mid-flight
         if (isMounted) {
-          setAcademies(acadResult.data || []);
-          setSchools(schoolResult.data || []);
+          setAcademies(academiesData || []);
+          setSchools(schoolsData || []);
+
           setReadiness(mappedReadinessBuffer);
           setEnrollments(synchronizedEnrollments);
           setIsLoading(false);
