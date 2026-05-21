@@ -188,7 +188,7 @@ export default function AdminLiveInbox() {
       : { status: "ai" as ThreadStatus, human_takeover_at: null, assigned_admin_id: null };
     const prev = { ...active };
     setThreads((ts) => ts.map((t) => (t.id === active.id ? { ...t, ...patch } : t)));
-    const { error } = await supabase.from("agent_threads").update(patch).eq("id", active.id);
+    const { error } = await updateAgentThread(active.id, patch);
     if (error) {
       setThreads((ts) => ts.map((t) => (t.id === active.id ? prev : t)));
       toast.error(`Takeover failed: ${error.message}`);
@@ -207,7 +207,7 @@ export default function AdminLiveInbox() {
     }
     setSending(true);
     const body = `[${adminName}]: ${draft.trim()}`;
-    const { error } = await supabase.from("agent_messages").insert({
+    const { error } = await insertAgentMessage({
       thread_id: active.id,
       role: "assistant",
       content: body,
@@ -216,10 +216,7 @@ export default function AdminLiveInbox() {
       toast.error(`Send failed: ${error.message}`);
     } else {
       // Bump thread.last_message_at so list re-orders.
-      await supabase
-        .from("agent_threads")
-        .update({ last_message_at: new Date().toISOString() })
-        .eq("id", active.id);
+      await bumpAgentThreadLastMessage(active.id);
       setDraft("");
     }
     setSending(false);

@@ -106,7 +106,7 @@ const Auth = () => {
     const fullPhone = `${signupData.countryCode}${signupData.phone}`;
 
     try {
-      const { data: existing } = await supabase.from("talents").select("id").eq("phone", fullPhone).maybeSingle();
+      const existing = await findTalentByPhone(fullPhone);
       if (existing) {
         toast.error("An account already uses this phone. Switching to sign in.");
         setActiveTab("login");

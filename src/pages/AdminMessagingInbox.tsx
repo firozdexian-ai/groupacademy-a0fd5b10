@@ -122,7 +122,7 @@ export default function AdminMessagingInbox() {
 
   const toggleHumanTakeover = async (paused: boolean) => {
     if (!activeId) return;
-    await supabase.from("messaging_conversations").update({ auto_reply_paused: paused }).eq("id", activeId);
+    await pauseMessagingConversationAutoReply(activeId, paused);
     loadConvs();
   };
 
