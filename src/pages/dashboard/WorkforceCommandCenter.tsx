@@ -610,16 +610,7 @@ function ChannelDialog({ editing, instances, onClose, onDone }: any) {
         updated_at: new Date().toISOString(),
       };
 
-      if (editing?.id) {
-        const { error } = await (supabase as any)
-          .from("workforce_channel_connections")
-          .update(payload)
-          .eq("id", editing.id);
-        if (error) throw error;
-      } else {
-        const { error } = await (supabase as any).from("workforce_channel_connections").insert(payload);
-        if (error) throw error;
-      }
+      await upsertWorkforceChannelConnection(payload, editing?.id);
     },
     onSuccess: () => {
       toast.success(editing ? "Updated!" : "Connected!");
