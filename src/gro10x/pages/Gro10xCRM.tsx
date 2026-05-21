@@ -6,7 +6,13 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listCompanyLeads,
+  insertCompanyLead,
+  updateCompanyLead,
+  listCompanyLeadActivities,
+  insertCompanyLeadActivity,
+} from "@/domains/companies/repo/companiesRepo";
 import { useAuth } from "@/hooks/useAuth";
 import { useActiveCompany } from "../hooks/useActiveCompany";
 import { useCompanyOfferings } from "../hooks/useCompanyOfferings";
