@@ -134,15 +134,11 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
     queryKey: ["my-competition-submission-node", activeChallengeItem?.id, talentProfileRecord?.id],
     queryFn: async (): Promise<CompetitionSubmission | null> => {
       if (!activeChallengeItem?.id || !talentProfileRecord?.id) return null;
-      const { data: dbSubmissionPayload, error: queryHandshakeError } = await supabase
-        .from("competition_submissions")
-        .select("*")
-        .eq("competition_id", activeChallengeItem.id)
-        .eq("talent_id", talentProfileRecord.id)
-        .maybeSingle();
-
-      if (queryHandshakeError) throw queryHandshakeError;
-      return dbSubmissionPayload as unknown as CompetitionSubmission | null;
+      const row = await getMyCompetitionSubmission({
+        competitionId: activeChallengeItem.id,
+        talentId: talentProfileRecord.id,
+      });
+      return row as unknown as CompetitionSubmission | null;
     },
     enabled: !!activeChallengeItem?.id && !!talentProfileRecord?.id,
   });
