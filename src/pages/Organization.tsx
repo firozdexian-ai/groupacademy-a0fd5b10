@@ -20,6 +20,7 @@ import { toast } from "sonner";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
 import { supabase } from "@/integrations/supabase/client";
+import { insertOrganizationWaitlist } from "@/domains/marketing/repo/marketingRepo";
 import { cn } from "@/lib/utils";
 
 const FEATURES = [
