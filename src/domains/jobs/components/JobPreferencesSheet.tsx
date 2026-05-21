@@ -72,14 +72,7 @@ export function JobPreferencesSheet({
     staleTime: 1000 * 60 * 15,
     enabled: open,
     queryFn: async () => {
-      const { data, error } = await supabase.from("jobs").select("location").eq("is_active", true).limit(300);
-      if (error) throw error;
-
-      const locSet = new Set<string>(["Remote"]);
-      data?.forEach((jobItem) => {
-        if (jobItem.location) locSet.add(jobItem.location.trim());
-      });
-      return Array.from(locSet).slice(0, 15);
+      return await listActiveJobLocations();
     },
   });
 
