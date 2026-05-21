@@ -332,7 +332,7 @@ export function useAgentChat(): UseAgentChatReturn {
 
   const endSession = useCallback(async () => {
     if (!session) return;
-    await supabase.from("agent_chat_sessions").update({ is_active: false }).eq("id", session.id);
+    await updateAgentChatSession(session.id, { is_active: false });
     setSession((prev) => (prev ? { ...prev, is_active: false } : null));
   }, [session]);
 
