@@ -1,6 +1,7 @@
 import { useEffect } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { insertDirectMessage } from "@/domains/messaging/repo/messagingRepo";
 
 /**
  * GroUp Academy: Direct Messaging Sync & Ingress Hub (V5.6.0)
