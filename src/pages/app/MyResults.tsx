@@ -101,7 +101,7 @@ export default function MyResults() {
           status: a.readiness_level,
           score: a.percentage,
         })) || []),
-        ...(interviews.data?.map((i) => ({
+        ...(interviews?.map((i: any) => ({
           id: i.id,
           type: "interview" as const,
           title: i.job_title || "Mock Interview",
