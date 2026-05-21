@@ -154,11 +154,7 @@ export default function CourseProjectDetail() {
   const claimProjectMutation = useMutation({
     mutationFn: async () => {
       if (!unverifiedProjectIdStr) return;
-      const { data: rpcPayload, error: rpcHandshakeError } = await supabase.rpc("claim_course_project", {
-        p_project_id: unverifiedProjectIdStr,
-      });
-
-      if (rpcHandshakeError) throw rpcHandshakeError;
+      const rpcPayload = await claimCourseProject(unverifiedProjectIdStr);
       const castRpcResponse = rpcPayload as unknown as ClaimRpcResponse;
       if (!castRpcResponse?.success) throw new Error(castRpcResponse?.error || "Pipeline allocation failed.");
     },
@@ -174,10 +170,7 @@ export default function CourseProjectDetail() {
 
   const submitEntireProjectMutation = useMutation({
     mutationFn: async () => {
-      const { error: updateError } = await supabase
-        .from("course_projects")
-        .update({ status: "submitted", submitted_at: new Date().toISOString() })
-        .eq("id", unverifiedProjectIdStr!);
+      const { error: updateError } = await submitCourseProject(unverifiedProjectIdStr!);
       if (updateError) throw updateError;
     },
     onSuccess: () => {
