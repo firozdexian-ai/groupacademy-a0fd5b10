@@ -160,8 +160,7 @@ export function CompaniesTab() {
     if (!formData.name.trim()) return toast.error("Entity identity required");
     setSaving(true);
     try {
-      const { error } = await supabase.from("companies").upsert(formData);
-      if (error) throw error;
+      await upsertCompany(formData);
       toast.success("Artifact synchronized with global registry");
       setIsDialogOpen(false);
       loadData();
