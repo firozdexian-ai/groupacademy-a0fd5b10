@@ -92,12 +92,11 @@ export function ProfessionsTab() {
     // Convert checkbox
     if ("is_active" in raw) payload.is_active = raw.is_active === "on";
 
-    const tbl = supabase.from(table as any) as any;
-    const query = editingItem?.id
-      ? tbl.update(payload).eq("id", editingItem.id)
-      : tbl.insert(payload);
-
-    const { error } = await query;
+    const { error } = await talentRepo.upsertProfessionRow(
+      table as any,
+      payload,
+      editingItem?.id,
+    );
     if (error) {
       toast.error(error.message);
     } else {
