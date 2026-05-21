@@ -56,7 +56,7 @@ export default function Organization() {
 
     setIsSubmitting(true);
     try {
-      const { error } = await supabase.from("organization_waitlist").insert({
+      const { error } = await insertOrganizationWaitlist({
         email: email.toLowerCase().trim(),
         company_name: companyName.trim() || null,
       });
