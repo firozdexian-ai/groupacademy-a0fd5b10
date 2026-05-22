@@ -1,56 +1,62 @@
-## A5.3 — Consolidated AI Tools Hub
+# A5.4 — Job Detail Refinement
 
-### Goal
-Replace the `ToolsView.tsx` "coming soon" stub with a fully functional hub that surfaces all 7 AI tools, shows a personalized "Up next" recommendation, and displays recent tool activity.
+## Goal
+Polish the two job-detail surfaces (`/app/jobs/:id` and public `/jobs/:id`) so they match the A5.1–A5.3 quality bar: human copy, visible match reasoning, one clear apply CTA, and a related-jobs rail. No business-logic changes.
 
-### Current State
-- `ToolsView.tsx` is a 3-line stub.
-- All 7 tool page components exist: `CVMaker`, `ApplicationHelper`, `AppCareerAssessment`, `AppMockInterviewSetup`, `AppSalaryAnalysisSetup`, `AppPortfolioRequest`, and `ScoreMeJobPicker` + `AppJobDetail` (for the score-me flow).
-- Routes: `/app/tools/cv-maker` and `/app/tools/application-helper` exist. The other 4 tools live under `/app/services/*`.
-- `useNextBestTool` and `useToolRuns` hooks exist but are jargon-heavy.
-- `ScoreMeJobPicker` and `AppJobDetail` contain user-visible jargon.
-- `/app/services` already redirects to `/app/jobs?tab=tools`.
+## Current state
+- **`src/pages/app/AppJobDetail.tsx` (830 lines)** — works, but riddled with jargon: `compileDeadlineMetadata`, `compileSalaryCurrencyLabel`, "HUD LEVEL 1..9" comments, "Phase Z1 Integration Stability Locked", "Evaluate Synthetic Capability Alignment", "Reconciled AI Competability Alignment Strip". Match score is shown but not explained.
+- **`src/pages/PublicJobDetail.tsx` (350 lines)** — already mobile-first from Phase 3.5, but copy + share text not audited.
+- **`WhyYouMatchPanel` + `VerifiedMatchBadge`** exist (used in `JobCard`) but are NOT wired into the detail page.
+- **`ExternalApplicationPrep`** handles external link flow; in-app + email flows live inline. Three branches, no unified CTA component.
+- **`RelatedJobs`** already imported in `AppJobDetail`; need to verify public page parity.
 
-### Changes
+## Scope
 
-#### 1. ToolsView.tsx (full rewrite)
-Replace the stub with a responsive hub containing:
-- **Header**: "AI Career Tools" + subtitle.
-- **Up Next card**: Uses `useNextBestTool` to show the recommended tool with `tool_key`, `reason`, and a CTA button. If no recommendation, show a generic "Explore tools" prompt.
-- **Tools grid**: 7 cards in a responsive 1-2 column grid:
-  | Tool | Route | Cost | Icon |
-  |---|---|---|---|
-  | ATS-friendly CV | `/app/tools/cv-maker` | 15 cr | FileText |
-  | Application answers | `/app/tools/application-helper` | 10 cr | ClipboardList |
-  | Career assessment | `/app/tools/assessment` | 50 cr | Target |
-  | Mock interview | `/app/tools/mock-interview` | 50 cr | Zap |
-  | Salary analysis | `/app/tools/salary-analysis` | 50 cr | Coins |
-  | Portfolio builder | `/app/tools/portfolio` | 500 cr | Sparkles |
-  | Score me vs job | Opens `ScoreMeJobPicker` sheet | 10 cr | TrendingUp |
+### 1. Humanize `AppJobDetail.tsx`
+- Rename internals: `compileDeadlineMetadata` → `getDeadlineMeta`, `compileSalaryCurrencyLabel` → `formatSalaryRange`, `jobRecordState` → `job`, `compiledSalaryLabelStr` → `salaryLabel`, etc.
+- Strip "HUD LEVEL N" comments → plain section comments (`{/* Header */}`, `{/* Match score */}`, `{/* Description */}`...).
+- Remove "Phase Z1" / "Launch Candidate" header block.
+- User-visible string fixes:
+  - "Evaluate Synthetic Capability Alignment" → "See why you match"
+  - "Reconciled AI Compatability Alignment Strip" comment → removed
+  - "Record Unassigned" empty state → "Job not found"
+  - Any remaining "synthetic" / "alignment" / "vector" copy → plain language.
 
-  Each card shows: icon, title, one-line description, credit cost badge, and link/action.
-- **Recent activity**: Uses `useToolRuns(limit=5)` to show last runs with tool name, relative date, and credit cost. Empty state: "No tool runs yet. Pick a tool above to get started."
+### 2. Wire `WhyYouMatchPanel` into both detail pages
+- Replace the existing inline match strip in `AppJobDetail` with `<WhyYouMatchPanel job={job} talentId={talent.id} />` (component already pulls breakdown + verified-skill boost).
+- Add the same panel to `PublicJobDetail` **only when** the viewer is authenticated + has a talent profile; otherwise show a "Sign in to see your match" CTA.
+- Keep `VerifiedMatchBadge` next to the match% in the sticky header.
 
-#### 2. New tool routes in App.tsx
-Add under the `/app/*` shell:
-```
-/app/tools/assessment        → AppCareerAssessment
-/app/tools/mock-interview    → AppMockInterviewSetup
-/app/tools/salary-analysis   → AppSalaryAnalysisSetup
-/app/tools/portfolio         → AppPortfolioRequest
-```
-Keep existing `/app/services/*` routes for backward compatibility.
+### 3. Unify apply CTA
+Create a small `<JobApplyCTA job={job} existingApplication={...} />` component in `src/domains/jobs/components/` that branches once on `application_type` (`in_app` | `link` | `email`) and renders:
+  - **in_app** → primary button → `/app/jobs/:id/apply`
+  - **link** → primary button → opens `ExternalApplicationPrep` sheet
+  - **email** → primary `mailto:` button + small "Copy email" secondary
+  - **already applied** → disabled "Applied · {status}" badge + "View application" link
+  - **deadline passed** → disabled "Closed"
+Use it in both the inline section and the mobile sticky footer of `AppJobDetail`, and in `PublicJobDetail` (auth-gated: unauthenticated users get "Sign in to apply" routing through `safeReturnTo`).
 
-#### 3. Jargon scrub (user-visible + code comments)
-- `ScoreMeJobPicker.tsx`: rewrite Sheet title/description, button labels, aria-labels, empty state, error toast, and section comments to plain English.
-- `useToolRuns.ts`: remove "Digital Workforce", "Phase Z1", "CTO Reference", "HUD" comments; keep functionality intact.
-- `useNextBestTool.ts`: same treatment.
-- `AppJobDetail.tsx`: humanize the 3 user-facing strings: "Synthetic alignment compatibility calculations complete." → "Match score ready."; "Secure registration route parameter copied to system buffer." → "Link copied."; "Record Unassigned" / body copy → friendly "Job not found" language.
+### 4. Public page polish
+- Audit `PublicJobDetail` copy + share text (use AI Job Sharing Captions memo).
+- Ensure JSON-LD `JobPosting` schema is present (per SEO memo).
+- Add `RelatedJobs` rail at the bottom (public-safe variant — no talent-personalized ranking, just same-company + same-location fallback).
 
-#### 4. Audit log
-Append A5.3 shipped block to `.lovable/launch-audit.md`.
+### 5. Jargon scrub — secondary files
+- `src/pages/app/AppJobApplication.tsx` — quick pass for similar "HUD"/"synthetic" patterns.
+- `src/domains/jobs/components/ExternalApplicationPrep.tsx` — verify copy.
 
-### No DB changes required.
-All data comes from existing `tool_runs` table, `get_next_best_tool` RPC, and existing tool page components.
+### 6. Audit log
+Append **A5.4 shipped** block to `.lovable/launch-audit.md` listing the 5 changes above.
 
-### Est. time: 45–60 min.
+## Out of scope
+- No DB or RPC changes.
+- No new edge functions.
+- No changes to `score-job-match` logic (already produces `verified_match` payload that `WhyYouMatchPanel` consumes).
+- No referral/share-system rework (already shipped).
+
+## Files touched
+- **Edited:** `src/pages/app/AppJobDetail.tsx`, `src/pages/PublicJobDetail.tsx`, `src/pages/app/AppJobApplication.tsx`, `src/domains/jobs/components/ExternalApplicationPrep.tsx`, `src/domains/jobs/index.ts`, `.lovable/launch-audit.md`, `.lovable/plan.md`
+- **Created:** `src/domains/jobs/components/JobApplyCTA.tsx`
+
+## Estimated time
+60–90 min. No migrations, no edge deploys.
