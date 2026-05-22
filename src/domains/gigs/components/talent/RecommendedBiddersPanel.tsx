@@ -84,12 +84,7 @@ export function RecommendedBiddersPanel({ gigId, gigKind = "marketplace" }: Prop
   // 3. Hardened Re-Scoring Model Mutation Engine
   const refresh = useMutation({
     mutationFn: async () => {
-      const { error } = await supabase.rpc("refresh_gig_matches", {
-        _gig_id: gigId,
-        _gig_kind: gigKind,
-        _limit: 25,
-      });
-      if (error) throw error;
+      await refreshGigMatches({ gigId, gigKind, limit: 25 });
     },
     onMutate: () => {
       trackEvent("recommended_bidders_refresh_requested", { gigId });
