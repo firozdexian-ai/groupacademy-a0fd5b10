@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { uploadJobAsset } from "@/domains/jobs/repo/jobsRepo";
 import { parseJobPost } from "@/domains/jobs/api/jobsApi";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
