@@ -127,7 +127,7 @@ export function PostCard({ post }: PostCardProps) {
         action: "handleSaveToggle_fault",
         postId: post.id,
       });
-      toast.error("Couldn't update your saved items layout registry.");
+      toast.error("Couldn't update saved items. Please try again.");
     }
   };
 
