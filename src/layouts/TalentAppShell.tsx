@@ -121,7 +121,7 @@ export function TalentAppShell() {
         console.error("ALERT_SYNC_FAULT", err);
       }
     };
-    fetchInstitutionalAlerts();
+    fetchNotificationCount();
 
     const channel = supabase
       .channel("notification-count")
@@ -129,7 +129,7 @@ export function TalentAppShell() {
         "postgres_changes",
         { event: "*", schema: "public", table: "notifications", filter: `talent_id=eq.${talent.id}` },
         () => {
-          fetchInstitutionalAlerts();
+          fetchNotificationCount();
         },
       )
       .subscribe();
