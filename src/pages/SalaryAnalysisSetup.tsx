@@ -10,7 +10,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Badge } from "@/components/ui/badge";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { supabase } from "@/integrations/supabase/client";
+import { uploadPortfolioFile } from "@/domains/profile/repo/profileRepo";
 import {
   markSalaryAnalysisAccessCodeUsed,
   insertSalaryAnalysis,
