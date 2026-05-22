@@ -275,3 +275,75 @@ Polished both job detail surfaces (`/app/jobs/:id` and public `/jobs/:id`) to ma
 - Edited: `src/pages/PublicJobDetail.tsx`, `src/pages/app/AppJobApplication.tsx`, `src/domains/jobs/components/WhyYouMatchPanel.tsx`, `src/domains/jobs/components/ExternalApplicationPrep.tsx`, `.lovable/launch-audit.md`, `.lovable/plan.md`.
 
 Next: pick A6 (Gigs Hub parity) or A7 (Profile / Talent Mirror polish).
+
+---
+
+## A5.5 — Jobs Hub Closeout — shipped 2026-05-22
+
+Batched closeout sweep of remaining Jobs Hub surfaces. Pure UI/copy + comment scrubs. No DB, RPC, or behavior changes.
+
+**Plan deviation:** the plan called for redirecting `/app/jobs/all` → `/app/jobs?tab=browse` and deleting `AppJobs.tsx`. On inspection, `AppJobs` is the only surface with real filtered search (text + type + experience + min-salary + company/location URL params); the Browse tab only shows recommendations. Deleting it would regress filtering UX. Instead, **kept the route and deeply humanized `AppJobs.tsx`**. Header/Browse "View all" links continue pointing at `/app/jobs/all`.
+
+**`AppJobs.tsx` — full rewrite (426 → ~330 lines):**
+- Removed "Phase Z1 Integration Stability Locked" / "HUD LEVEL 1..4" comments.
+- Renamed internals: `jobsRegistryPayload` → `jobs`, `urlSearchParamsMap` → `params`, `textSearchQueryInput` → `query`, `selectedJobTypesArray` → `selectedTypes`, `minimumSalaryValueInt` → `minSalaryK`, `compositeActiveFiltersCounterInt` → `activeFilterCount`, etc.
+- User-visible copy:
+  - "Placement Opportunities Index" → "All jobs"
+  - "Hub Matrix" → "Jobs Hub"
+  - "Searching active tracking records registry…" → "Loading jobs…"
+  - "Found N open positions aligned with profile parameters." → "N jobs matching your filters."
+  - "Search matching positions by title designation or explicit corporate identifier…" → "Search by title, company or skill…"
+  - "Refine Parameters Matrix" → "Filters"
+  - "Employment Structural Variant" → "Job type"
+  - "Minimum Salary Threshold" / "UNLIMITED FALLBACK" → "Minimum salary" / "Any"
+  - "Reset Matrix" / "Apply Criteria" → "Reset" / "Apply"
+  - "Criteria Index Unmatched / No career opening entries resolved matching…" → "No jobs match those filters / Try clearing some filters or broaden your search."
+  - "Load Additional Placements" / "Synchronizing Index Rows…" → "Load more jobs" / "Loading…"
+- Also accepts `?q=` (from Browse tab) in addition to `?search=` for backward compatibility.
+
+**`JobAssessment.tsx` — full rewrite (351 → ~290 lines):**
+- "Phase Z1 Transaction Matrix Sealed" / "HARDENED HARDWARE CLEANUP GATES" / "TRANSACTION MUTATION" headers removed.
+- Renamed: `assessmentRecordState` → `assessmentRef`, `answersBufferMap` → `answers`, `isRecordingEngineActive` → `recording`, `recordingIntervalTime` → `recordSeconds`, `unverifiedAssessmentIdStr` → `assessmentId`.
+- Copy: "Exit Assessment / TASK N OF M / Execution Vector / Stop Pipeline / Re-record Channel / Initialize Audio Capture / Submit Assessment Artifacts / Next Segment / Input your evaluation response parameter string block…" → "Exit / Question N of M / Progress / Stop recording / Re-record / Start recording / Submit assessment / Next / Type your answer here…".
+- Toasts: "Voice response artifact secured." → "Voice answer saved."; "Failed to transmit audio asset to repository pipeline." → "Couldn't upload your voice answer. Please try again."; "Microphone hardware channel access refused by security container." → "Microphone access denied. Please allow microphone permissions."; "Submission transmission handshake failed." → "Couldn't submit your assessment. Please try again."; "Assessment registry lookup failed." → "Couldn't load this assessment."
+
+**`JobAssessmentResults.tsx` — full rewrite (461 → ~365 lines):**
+- Stripped "Neural Synthesis Active / Synthesis Report / Logic v2.6.4 / Connection Status / Dimension Tracking / Vocal Synthesis / Systematic Solving / Neural Briefing / Strategic Edge / Logic Gaps / Operational Protocol / Market Discover / Manage Applications" and italicized faux-futurist copy throughout.
+- New copy: "Your assessment results / Your match score / Strong match · Good match · Needs more practice / AI scored / Skill breakdown / Technical · Communication · Problem solving / AI feedback / What you did well · Where to improve / What to do next / My applications · Browse more jobs".
+- Polling stages: "Decompressing Artifacts… / Generating responses… / Loading Skill Matrix… / Finalizing Briefing…" → "Reading your answers… / Scoring your responses… / Mapping skills… / Finalizing your report…".
+- Timeout copy: "The synthesis is exceeding typical logic cycles…" → "This is taking longer than usual…".
+- Empty state: "List Missing / Return to Dashboard" → "Assessment not found / Back to applications".
+
+**`CompanyDetailSheet.tsx` — surgical scrub:**
+- Removed "Phase Z0 Hardened" + "HUD: FIXED HEADER ROW SECTION" + "STRUCTURAL VISUAL DRAG HANDLE" + "Automated Efficiency" comments.
+- Renamed `userIsFollowingTarget` → `isFollowing`, `corporateInitialsString` → `companyInitials`, `handleFollowRelationshipToggle` → `handleFollowToggle`.
+- Copy: "Organization Profile Matrix" → "Company details"; "active role / active roles" → "open role / open roles"; "+N fresh" → "+N this fortnight"; "Open Structural Roles" → "Open roles"; "No active occupational target vacancies mapped to this corporate taxonomy grid right now." → "No open roles at this company right now."; "corporate tracking branding logo" → "logo".
+- Event names renamed: `company_detail_sheet_expanded` → `company_detail_sheet_opened`, `company_sheet_job_saved_toggled` → `company_sheet_job_save_toggled`, `company_sheet_job_navigation_triggered` → `company_sheet_job_opened`.
+
+**`RelatedJobs.tsx` — full rewrite (186 → ~150 lines):**
+- Removed "Phase Z0 Hardened" + "HUD: SECTION COMPLIANCE HEADER STRIP" + "PHASE 1/2/3" comments and decorative "Discovery Active" badge.
+- Renamed: `extractInstitutionalGeography` → `extractCountry`, `executeDiscoveryProtocol` → `loadRelatedJobs`, `trajectoryBuffer` → `buffer`, `filterRegistry` → `excludeIds`, `institutionalNodes/geographicNodes/featuredNodes` → `sameCompany/nearby/featured`, `initializeJobHandshake` → `openJob`.
+- Section title humanized: "Institutional_Sync: ACME" → "More at ACME"; "Regional_Sync: BANGLADESH" → "Other jobs in Bangladesh"; "Strategic_Deployments" → "Featured jobs"; default "Recommended_Syncs" → "Recommended for you".
+- Telemetry events renamed: `opportunity_discovery_initiated/success/navigation_redirect` → `related_jobs_load/loaded/open`.
+
+**`JobPreferencesSheet.tsx` — scrub:**
+- "Phase Z0 Hardened" / "Automated Efficiency" / "HUD LEVEL 1..3" / "SECTOR A/B/C" / "PROTOCOL: Dynamic Location Discovery Map Pipeline" comments removed.
+- Copy: "Match Constraint Registry / Deployment Preferences Matrix Configuration Node" → "Job preferences / Tell us what kinds of roles you want."; "Vector: Contract Models Model" → "Job type"; "Vector: Targeted Deployment Geographies" → "Preferred locations"; "Vector: Compensation Range Bounds" → "Salary range"; "Registry floor Min / Registry ceiling Max" → "Minimum / Maximum"; "Synchronizing Constraint Bounds… / Commit Constraints Configuration" → "Saving… / Save preferences"; "Ecosystem parsing matrices convert multicurrency parity variables…" → "Salaries are auto-converted between BDT and USD when matching jobs.".
+- Toasts: "Syncing constraint matrix parameters down to profile registry…" → "Saving your preferences…"; "AI deployment constraint profile finalized cleanly" → "Preferences saved"; "Ledger constraint registration timeout." → "Couldn't save your preferences. Please try again.".
+
+**`InfiniteJobsList.tsx` — comment-only scrub:**
+- "Phase Z0 Hardened" + "CTO Reference" + "TanStack Infinite Query Server State Synchronization Hook" + "High-Performance Defensive Intersection Observer Lifecycle Management" + "Instrument Incident Telemetry Metrics Over Query Exceptions" + "Consolidate dataset mapping allocations natively from nested infinity pages" + "Log active viewport compilation milestones" comments → plain English where useful, deleted where noise.
+- Renamed `apiQueryError` → `queryError`, `currentSentinelNode` → `sentinel`, `intersectionObserverInstance` → `observer`, `structuralEntry` → `entry`.
+- Event renamed: `infinite_jobs_feed_compiled` → `infinite_jobs_loaded`. Telemetry action `useRankedJobs_infinite_query_fetch` → `fetch_ranked_jobs`.
+
+**Files**
+- Rewritten: `src/pages/app/AppJobs.tsx`, `src/pages/app/JobAssessment.tsx`, `src/pages/app/JobAssessmentResults.tsx`, `src/domains/jobs/components/RelatedJobs.tsx`
+- Edited: `src/domains/jobs/components/CompanyDetailSheet.tsx`, `src/domains/jobs/components/JobPreferencesSheet.tsx`, `src/domains/jobs/components/InfiniteJobsList.tsx`, `.lovable/launch-audit.md`, `.lovable/plan.md`
+
+**Deferred (carry-over to pre-launch sweep):**
+- `useJobsHubDashboard`, `useRankedJobs`, `JobCard` JSDoc/comments — still contain "Phase Z0" jargon. Zero user impact.
+- `/app/jobs/all` route consolidation — re-evaluate whether to merge the filtered-search surface into the Browse tab as a unified experience after A6.
+
+## A5 Jobs Hub — COMPLETE
+A5.1 → A5.5 all shipped. No P0/P1 launch blockers remain on the Jobs Hub. Ready for **A6 (Gigs Hub parity)** or **A7 (Profile / Talent Mirror polish)**.
+

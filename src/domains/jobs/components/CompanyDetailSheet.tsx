@@ -30,33 +30,28 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 /**
- * GroUp Academy: Corporate Topology Ingress Node (CompanyDetailSheet)
- * CTO Reference: Authoritative slide-up panel displaying corporate metadata telemetry and aggregated active job pipelines.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Company detail sheet — slide-up panel with company info, job-type / location chips, and open roles.
  */
 export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
 
-  // Monitor contextual sheet view expansions safely via analytics event hooks
   useEffect(() => {
     if (open && companyName) {
-      trackEvent("company_detail_sheet_expanded", { companyName });
+      trackEvent("company_detail_sheet_opened", { companyName });
     }
   }, [open, companyName]);
 
-  // 1. Core Server State Query Hook Sync Configuration
   const { data, isLoading, error: detailLoadError } = useCompanyDetail(open ? companyName : null);
   const { data: followedSet } = useFollowedCompanies();
   const { mutateAsync: toggleFollow } = useToggleFollowCompany();
   const { isSaved, toggleSave } = useSavedItems();
 
-  // Monitor query transaction faults transparently via central telemetry boundaries
   useEffect(() => {
     if (detailLoadError) {
       trackError(detailLoadError, {
         component: "CompanyDetailSheet",
-        action: "fetch_company_details_api",
+        action: "fetch_company_details",
         companyName,
       });
     }
@@ -64,20 +59,18 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
 
   const header = data?.header;
   const jobs = data?.jobs ?? [];
-  const userIsFollowingTarget = companyName ? !!followedSet?.has(companyName) : false;
+  const isFollowing = companyName ? !!followedSet?.has(companyName) : false;
 
-  const handleFollowRelationshipToggle = async () => {
+  const handleFollowToggle = async () => {
     if (!companyName) return;
 
     trackEvent("company_sheet_follow_toggled", {
       companyName,
-      transitionToState: !userIsFollowingTarget,
+      newState: !isFollowing,
     });
 
     try {
       await toggleFollow(companyName);
-
-      // Automated Efficiency: Synchronize cache pools instantly across vertical layouts
       queryClient.invalidateQueries({ queryKey: ["company-detail", companyName] });
       queryClient.invalidateQueries({ queryKey: ["followed-companies"] });
       queryClient.invalidateQueries({ queryKey: ["companies-list"] });
@@ -85,18 +78,17 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
     } catch (err) {
       trackError(err, {
         component: "CompanyDetailSheet",
-        action: "execute_follow_toggle_callback",
+        action: "toggle_follow",
         companyName,
       });
     }
   };
 
-  // Safe split extractor parsing initials out of raw corporate names cleanly
-  const corporateInitialsString =
+  const companyInitials =
     companyName
       ?.split(" ")
       .filter(Boolean)
-      .map((word) => word[0])
+      .map((w) => w[0])
       .slice(0, 2)
       .join("")
       .toUpperCase() || "CO";
@@ -116,12 +108,10 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
         className="max-h-[92vh] max-h-[92svh] h-[92vh] p-0 flex flex-col rounded-t-3xl bg-background/98 backdrop-blur-xl border-t border-border/40 select-none sm:select-text transform-gpu shadow-2xl transition-all duration-300 overflow-hidden"
         style={{ contentVisibility: "auto" }}
       >
-        {/* STRUCTURAL VISUAL DRAG HANDLE */}
         <div className="mx-auto w-12 h-1 bg-muted/60 rounded-full mt-2.5 shrink-0 select-none" />
 
-        {/* HUD: FIXED HEADER ROW SECTION */}
         <SheetHeader className="px-5 pt-3 pb-3 border-b border-border/20 text-left select-none shrink-0 w-full">
-          <SheetTitle className="sr-only">{companyName || "Organization Profile Matrix"}</SheetTitle>
+          <SheetTitle className="sr-only">{companyName || "Company details"}</SheetTitle>
           {isLoading || !header ? (
             <div className="flex items-center gap-3 w-full animate-pulse">
               <Skeleton className="h-12 w-12 rounded-xl opacity-60 shrink-0" />
@@ -132,68 +122,58 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
             </div>
           ) : (
             <div className="flex items-center gap-3.5 w-full min-w-0">
-              {/* Organization Branding Identification Avatar */}
-              <Avatar className="h-12 w-12 border border-border/30 shrink-0 shadow-sm transition-transform duration-300">
+              <Avatar className="h-12 w-12 border border-border/30 shrink-0 shadow-sm">
                 {header.logo_url && (
                   <AvatarImage
                     src={header.logo_url}
-                    alt={`${header.company_name} corporate tracking branding logo`}
+                    alt={`${header.company_name} logo`}
                     className="object-cover"
                   />
                 )}
-                <AvatarFallback className="text-xs font-extrabold bg-primary/10 text-primary uppercase select-none tracking-tight">
-                  {corporateInitialsString}
+                <AvatarFallback className="text-xs font-extrabold bg-primary/10 text-primary uppercase tracking-tight">
+                  {companyInitials}
                 </AvatarFallback>
               </Avatar>
 
-              {/* Text Taxonomy Metadata Frame */}
               <div className="flex-1 min-w-0 text-left flex flex-col justify-center">
-                <p className="text-base font-bold text-foreground/90 tracking-tight leading-snug truncate pr-1 select-text selection:bg-primary/20">
+                <p className="text-base font-bold text-foreground/90 tracking-tight truncate pr-1 select-text">
                   {header.company_name}
                 </p>
-                <div className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wide flex items-center gap-1.5 leading-none mt-0.5 tabular-nums flex-wrap w-full">
-                  <Briefcase className="h-3.5 w-3.5 text-primary stroke-[2.2] shrink-0" />
+                <div className="text-xs font-semibold text-muted-foreground/80 flex items-center gap-1.5 mt-0.5 tabular-nums flex-wrap w-full">
+                  <Briefcase className="h-3.5 w-3.5 text-primary shrink-0" />
                   <span>
-                    {header.active_jobs || 0} {header.active_jobs === 1 ? "active role" : "active roles"}
+                    {header.active_jobs || 0} {header.active_jobs === 1 ? "open role" : "open roles"}
                   </span>
 
-                  {/* Fresh Influx Fortnight Aggregate Indicator Badge */}
                   {header.jobs_last_14d > 0 && (
-                    <Badge className="bg-emerald-500/10 dark:bg-emerald-500/5 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10 text-[9px] font-extrabold tracking-wide px-2 h-5.5 gap-1 shadow-sm shrink-0 uppercase tracking-wider scale-102">
-                      <TrendingUp className="h-3 w-3 stroke-[2.5]" />
-                      <span>+{header.jobs_last_14d} fresh</span>
+                    <Badge className="bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border border-emerald-500/10 text-[9px] font-bold px-2 h-5 gap-1 shrink-0">
+                      <TrendingUp className="h-3 w-3" />
+                      <span>+{header.jobs_last_14d} this fortnight</span>
                     </Badge>
                   )}
                 </div>
               </div>
 
-              {/* Relationship Network Alignment Trigger CTA */}
               <Button
                 size="sm"
                 type="button"
-                variant={userIsFollowingTarget ? "default" : "outline"}
+                variant={isFollowing ? "default" : "outline"}
                 className={cn(
-                  "h-8 px-3 gap-1.5 text-xs font-bold rounded-xl transition-all duration-300 select-none cursor-pointer shrink-0 active:scale-95 shadow-sm",
-                  userIsFollowingTarget && "bg-primary text-primary-foreground border-transparent hover:bg-primary/90",
+                  "h-8 px-3 gap-1.5 text-xs font-bold rounded-xl shrink-0 active:scale-95",
+                  isFollowing && "bg-primary text-primary-foreground border-transparent hover:bg-primary/90",
                 )}
-                onClick={handleFollowRelationshipToggle}
+                onClick={handleFollowToggle}
+                aria-label={isFollowing ? `Unfollow ${header.company_name}` : `Follow ${header.company_name}`}
               >
-                <Heart
-                  className={cn(
-                    "h-3.5 w-3.5 stroke-[2.5] transition-transform duration-300",
-                    userIsFollowingTarget &&
-                      "fill-current scale-102 drop-shadow-[0_1px_4px_rgba(var(--primary-foreground-rgb),0.2)]",
-                  )}
-                />
-                <span>{userIsFollowingTarget ? "Following" : "Follow"}</span>
+                <Heart className={cn("h-3.5 w-3.5", isFollowing && "fill-current")} />
+                <span>{isFollowing ? "Following" : "Follow"}</span>
               </Button>
             </div>
           )}
         </SheetHeader>
 
-        {/* SCROLLABLE INTERACTIVE PLACEMENT AREA TRACK */}
         <div className="flex-1 overflow-y-auto px-4 py-4 space-y-4 pb-safe-bottom w-full">
-          {/* Taxonomy Structural Distribution Filter Tags Badge Collection */}
+          {/* Job-type counts + top locations */}
           {data && (
             <div className="flex flex-wrap items-center gap-1.5 select-none w-full animate-in fade-in duration-300 border-b border-border/10 pb-3">
               {data.types?.map((typeItem) => {
@@ -227,20 +207,19 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
             </div>
           )}
 
-          {/* Active Job Pipelines Stream Selection Section Block */}
           <div className="space-y-3 w-full text-left">
-            <h3 className="text-xs font-bold text-foreground/90 uppercase tracking-wider pl-0.5 select-none">
-              Open Structural Roles
+            <h3 className="text-xs font-bold text-foreground/90 uppercase tracking-wider pl-0.5">
+              Open roles
             </h3>
 
             {isLoading ? (
-              <div className="space-y-2.5 w-full select-none animate-pulse">
+              <div className="space-y-2.5 w-full animate-pulse">
                 <Skeleton className="h-16 w-full rounded-2xl opacity-60" />
                 <Skeleton className="h-16 w-full rounded-2xl opacity-40" />
               </div>
             ) : jobs.length === 0 ? (
-              <p className="text-xs font-medium text-muted-foreground/80 leading-normal italic py-6 text-center select-text max-w-xs mx-auto">
-                No active occupational target vacancies mapped to this corporate taxonomy grid right now.
+              <p className="text-xs font-medium text-muted-foreground/80 py-6 text-center max-w-xs mx-auto">
+                No open roles at this company right now.
               </p>
             ) : (
               <div className="space-y-2 w-full">
@@ -253,11 +232,11 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
                       variant="compact"
                       isSaved={!!isSaved(jobItem.id, "job")}
                       onSaveToggle={() => {
-                        trackEvent("company_sheet_job_saved_toggled", { jobId: jobItem.id, companyName });
+                        trackEvent("company_sheet_job_save_toggled", { jobId: jobItem.id, companyName });
                         toggleSave(jobItem.id, "job");
                       }}
                       onClick={() => {
-                        trackEvent("company_sheet_job_navigation_triggered", { jobId: jobItem.id, companyName });
+                        trackEvent("company_sheet_job_opened", { jobId: jobItem.id, companyName });
                         onOpenChange(false);
                         navigate(`/app/jobs/${jobItem.id}`);
                       }}

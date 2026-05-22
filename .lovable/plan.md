@@ -1,15 +1,13 @@
-## A5.4 — Job Detail Refinement (shipped 2026-05-22)
+## A5.5 — Jobs Hub Closeout (shipped 2026-05-22)
 
-See `.lovable/launch-audit.md` "A5.4" block for the full ship log.
+See `.lovable/launch-audit.md` "A5.5" block for the full ship log.
 
 ### Summary
-- Rewrote `src/pages/app/AppJobDetail.tsx` (830 → ~470 lines): all "HUD LEVEL / Phase Z / Synthetic / Telemetry / Quantum" jargon stripped; semantic section labels; humanized copy for every user-visible string.
-- Created `src/domains/jobs/components/JobApplyCTA.tsx`: unified apply CTA used in both `/app/jobs/:id` and public `/jobs/:id`, branching once on `application_type` (`in_app | link | email`), `existingApplication`, `deadlinePassed`, and `authMode`.
-- Wired `WhyYouMatchPanel` into `AppJobDetail` (consumes `verified_match` from `score-job-match`); panel header copy humanized.
-- Public `PublicJobDetail.tsx`: sticky button replaced with `<JobApplyCTA authMode="public" />`; Job interface extended with `application_type / url / email / ai_assessment_enabled`.
-- Scrubbed jargon from `AppJobApplication.tsx` (`SUBMISSION_STAGES` messages, `Initialize Vetting AI Interview`, `HUD LEVEL` comments) and `ExternalApplicationPrep.tsx` (header comment + `VIEW PROTOCOL` comments).
+- Humanized `AppJobs.tsx` (filtered all-jobs search), `JobAssessment.tsx`, `JobAssessmentResults.tsx`, `RelatedJobs.tsx`, `JobPreferencesSheet.tsx`, `CompanyDetailSheet.tsx`, `InfiniteJobsList.tsx`.
+- Deviation from approved plan: kept `/app/jobs/all` route alive and deeply humanized `AppJobs.tsx` rather than redirecting + deleting — it owns real filter UX (text/type/exp/min-salary/company/location) that BrowseView doesn't replicate.
+- No DB, RPC, or behavior changes.
 
-### No DB / RPC / edge-function changes.
+### A5 Jobs Hub status: COMPLETE (A5.1 → A5.5)
 
 ### Next
-A6 (Gigs Hub parity) or A7 (Profile / Talent Mirror polish) — user to choose.
+A6 (Gigs Hub parity) or A7 (Profile / Talent Mirror polish).

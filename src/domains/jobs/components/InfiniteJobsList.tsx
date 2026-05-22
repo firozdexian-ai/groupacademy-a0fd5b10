@@ -14,9 +14,7 @@ interface Props {
 }
 
 /**
- * GroUp Academy: Infinite Opportunity Feed (InfiniteJobsList)
- * CTO Reference: Authoritative zero-latency job feed leveraging keyset pagination.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Infinite, ranked job list with keyset pagination and an IntersectionObserver sentinel.
  */
 export function InfiniteJobsList({ talentId }: Props) {
   const navigate = useNavigate();
@@ -24,66 +22,60 @@ export function InfiniteJobsList({ talentId }: Props) {
   const { isSaved, toggleSave } = useSavedItems();
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // 1. TanStack Infinite Query Server State Synchronization Hook
   const {
     data,
     fetchNextPage,
     hasNextPage,
     isFetchingNextPage,
     isLoading,
-    error: apiQueryError,
+    error: queryError,
   } = useRankedJobs(talentId);
 
-  // 2. High-Performance Defensive Intersection Observer Lifecycle Management
+  // Sentinel intersection observer for infinite scroll.
   useEffect(() => {
-    const currentSentinelNode = sentinelRef.current;
-    if (!currentSentinelNode || !hasNextPage || isFetchingNextPage) return;
+    const sentinel = sentinelRef.current;
+    if (!sentinel || !hasNextPage || isFetchingNextPage) return;
 
-    const intersectionObserverInstance = new IntersectionObserver(
+    const observer = new IntersectionObserver(
       (entries) => {
-        const structuralEntry = entries[0];
-        if (structuralEntry?.isIntersecting && !isFetchingNextPage) {
+        const entry = entries[0];
+        if (entry?.isIntersecting && !isFetchingNextPage) {
           trackEvent("infinite_jobs_sentinel_triggered", { talentId });
           fetchNextPage();
         }
       },
       {
-        root: null, // Bounds mapped directly to the viewport frame
-        rootMargin: "400px", // Proactive pagination threshold pre-fetching line
+        root: null,
+        rootMargin: "400px",
       },
     );
 
-    intersectionObserverInstance.observe(currentSentinelNode);
+    observer.observe(sentinel);
 
     return () => {
-      if (currentSentinelNode) {
-        intersectionObserverInstance.unobserve(currentSentinelNode);
-      }
-      intersectionObserverInstance.disconnect();
+      if (sentinel) observer.unobserve(sentinel);
+      observer.disconnect();
     };
   }, [hasNextPage, isFetchingNextPage, fetchNextPage, talentId]);
 
-  // 3. Instrument Incident Telemetry Metrics Over Query Exceptions
   useEffect(() => {
-    if (apiQueryError) {
-      trackError(apiQueryError, {
+    if (queryError) {
+      trackError(queryError, {
         component: "InfiniteJobsList",
-        action: "useRankedJobs_infinite_query_fetch",
+        action: "fetch_ranked_jobs",
         talentId,
       });
     }
-  }, [apiQueryError, talentId]);
+  }, [queryError, talentId]);
 
-  // Consolidate dataset mapping allocations natively from nested infinity pages
   const items = useMemo(() => {
     return (data?.pages ?? []).flat().filter(Boolean);
   }, [data]);
 
-  // Log active viewport compilation milestones
   useEffect(() => {
     if (items.length > 0) {
-      trackEvent("infinite_jobs_feed_compiled", {
-        computedCount: items.length,
+      trackEvent("infinite_jobs_loaded", {
+        count: items.length,
         talentId,
       });
     }
