@@ -1,11 +1,11 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import {
   listNotifications,
   markNotificationRead,
   markAllNotificationsRead,
   deleteNotification as repoDeleteNotification,
+  subscribeNotificationsRealtime,
 } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { mapNotificationRow, type Notification } from "@/lib/notificationHelpers";
