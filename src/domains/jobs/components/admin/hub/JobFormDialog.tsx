@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { uploadJobAsset } from "@/domains/jobs/repo/jobsRepo";
 import { enhanceJobDescription } from "@/domains/jobs/api/jobsApi";
 import { getJobById, insertJob, updateJob } from "@/domains/jobs/repo/jobsRepo";
 import { Button } from "@/components/ui/button";
