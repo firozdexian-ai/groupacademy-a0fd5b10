@@ -120,10 +120,10 @@ export function useRecordToolRun() {
  */
 export async function recordToolRun(opts: RecordToolRunInput): Promise<void> {
   try {
-    const { data: userRes, error: authError } = await supabase.auth.getUser();
-    if (authError || !userRes.user) return;
+    const user = await getCurrentUser();
+    if (!user) return;
     await insertToolRun({
-      user_id: userRes.user.id,
+      user_id: user.id,
       tool_key: opts.toolKey,
       cost_credits: opts.costCredits,
       payload: opts.payload ?? {},
