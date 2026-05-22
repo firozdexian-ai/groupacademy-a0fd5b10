@@ -151,3 +151,22 @@ Decisions logged:
 Carry-over (P2, deferred to pre-launch sweep): JSDoc/comment jargon in `useJobsHubDashboard`, `useRankedJobs`, `JobCard`, `InfiniteJobsList` ("Phase Z0 Hardened", "Digital Workforce", "CTO Reference", "HUD: EXECUTING_…"). Zero user impact.
 
 Next: **A5.2 — Companies & Locations tabs** (replace remaining 2 stubs).
+
+---
+
+## A5.2 — shipped
+
+Replaced both remaining "coming soon" stubs (`CompaniesView`, `LocationsView`) with real implementations using existing card components and the dashboard RPC payload.
+
+**Wired up:**
+- `CompaniesView` — top 24 employers in a responsive 2-col grid, follow heart, click → `/app/jobs/all?company=...`, friendly empty state.
+- `LocationsView` — countries grid with user's country pinned + "Your country" badge; city chips deep-link to `/app/jobs/all?city=...`.
+- New `useFollowedCompanies` + `useToggleFollowCompany` hooks on the `followed_companies` table — optimistic, auth-gated, toast feedback, cache invalidation.
+- Patched `CompanyDetailSheet` to the new query+mutation API (was importing a non-existent shape — pre-existing latent bug fixed).
+
+**Humanized copy:**
+- `CompanyCard` aria-labels: "Track ecosystem career updates from X" → "Follow X".
+- `CountryCard`: "Local Context" badge → "Your country"; city aria-labels and company tooltips de-jargoned.
+- Headers in `useCompaniesWithSignal`, `useCountriesWithSignal`, `useJobsHubDashboard` stripped of "Digital Workforce / Phase Z0 Hardened / REGISTRY_SYNC_FAULT / CTO Reference" noise. Errors now rethrow unchanged.
+
+Next: **A5.3 — Tools tab** (consolidated AI tools hub + tool_runs ledger).
