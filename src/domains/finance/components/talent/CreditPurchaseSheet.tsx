@@ -78,8 +78,8 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
   const stripeCheckoutMutation = useMutation({
     mutationKey: ["create-stripe-checkout-session"],
     mutationFn: async (payload: BundlePayload): Promise<string> => {
-      const { data: sessionRes, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionRes.session?.access_token) {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
         throw new Error("AUTH_REQUIRED");
       }
 
