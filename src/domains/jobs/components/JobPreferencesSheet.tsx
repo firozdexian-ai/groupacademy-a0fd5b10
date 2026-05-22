@@ -21,9 +21,7 @@ import { Zap, ShieldCheck, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * GroUp Academy: Neural Matching Preference Ingress (JobPreferencesSheet)
- * CTO Reference: Authoritative interface for defining AI matching constraints.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Job preferences sheet — saves a talent's preferred job types, locations, and salary range.
  */
 
 interface JobPreferences {
@@ -103,7 +101,7 @@ export function JobPreferencesSheet({
     if (!talent?.id) return;
 
     setSaving(true);
-    const toastId = toast.loading("Syncing constraint matrix parameters down to profile registry...");
+    const toastId = toast.loading("Saving your preferences…");
 
     trackEvent("match_constraints_sync_requested", { talentId: talent.id });
 
@@ -112,25 +110,24 @@ export function JobPreferencesSheet({
 
       trackEvent("match_constraints_sync_success", { talentId: talent.id });
 
-      // Automated Efficiency: Broadcast explicit cache overrides instantly across shared viewports
       queryClient.invalidateQueries({ queryKey: ["gig-matches-for-you", talent.id] });
       queryClient.invalidateQueries({ queryKey: ["ranked-jobs", talent.id] });
       queryClient.invalidateQueries({ queryKey: ["talent-profile", talent.id] });
 
-      toast.success("AI deployment constraint profile finalized cleanly", { id: toastId });
+      toast.success("Preferences saved", { id: toastId });
 
       onSaved?.();
       onOpenChange(false);
     } catch (err: any) {
-      const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
+      const msg = err instanceof Error ? err.message : String(err);
 
-      trackError(parsedExceptionMsg, {
+      trackError(msg, {
         component: "JobPreferencesSheet",
-        action: "execute_sync_persistence",
+        action: "save_preferences",
         talentId: talent.id,
       });
 
-      toast.error("Ledger constraint registration timeout.", { id: toastId });
+      toast.error("Couldn't save your preferences. Please try again.", { id: toastId });
     } finally {
       setSaving(false);
     }
@@ -164,31 +161,29 @@ export function JobPreferencesSheet({
         className="overflow-y-auto w-full sm:max-w-md rounded-t-3xl sm:rounded-t-none sm:rounded-l-2xl border-l border-border/40 bg-background/98 backdrop-blur-xl p-0 flex flex-col h-full max-h-[100vh] max-h-[100svh] transform-gpu shadow-2xl transition-all duration-300 antialiased select-none sm:select-text"
         style={{ contentVisibility: "auto" }}
       >
-        {/* HUD LEVEL 1: SECTION FIXED HEADER CONTAINER */}
-        <div className="p-5 sm:p-6 border-b border-border/20 bg-primary/5 select-none shrink-0 w-full text-left">
+        <div className="p-5 sm:p-6 border-b border-border/20 bg-primary/5 shrink-0 w-full text-left">
           <SheetHeader className="text-left">
             <div className="flex items-center gap-3.5 w-full min-w-0">
               <div className="h-11 w-11 rounded-xl bg-primary/10 border border-primary/5 flex items-center justify-center shrink-0 shadow-sm">
-                <Zap className="h-5 w-5 text-primary fill-primary/10 animate-pulse stroke-[2.2]" />
+                <Zap className="h-5 w-5 text-primary" />
               </div>
-              <div className="min-w-0 flex-1 flex flex-col justify-center leading-none">
-                <SheetTitle className="text-base sm:text-lg font-bold tracking-tight text-foreground uppercase tracking-wide">
-                  Match Constraint Registry
+              <div className="min-w-0 flex-1 flex flex-col justify-center">
+                <SheetTitle className="text-base sm:text-lg font-bold tracking-tight text-foreground">
+                  Job preferences
                 </SheetTitle>
-                <SheetDescription className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 mt-1 truncate max-w-full">
-                  Deployment Preferences Matrix Configuration Node
+                <SheetDescription className="text-xs font-medium text-muted-foreground/80 mt-0.5 truncate">
+                  Tell us what kinds of roles you want.
                 </SheetDescription>
               </div>
             </div>
           </SheetHeader>
         </div>
 
-        {/* HUD LEVEL 2: MIDDLE INPUT SCROLL TRACK WORKSPACE */}
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 text-left w-full min-w-0 pb-32">
-          {/* SECTOR A: EMPLOYMENT TYPE SELECTION BOXES */}
+          {/* Job type */}
           <div className="space-y-2 w-full min-w-0">
-            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5 select-none">
-              Vector: Contract Models Model
+            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+              Job type
             </Label>
             <div className="grid grid-cols-1 gap-2 w-full select-none">
               {JOB_TYPE_REGISTRY.map((typeItem) => {
@@ -218,10 +213,10 @@ export function JobPreferencesSheet({
             </div>
           </div>
 
-          {/* SECTOR B: GEOGRAPHIC VECTOR COMPLIANCE BADGES */}
+          {/* Locations */}
           <div className="space-y-2 w-full min-w-0">
-            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5 select-none">
-              Vector: Targeted Deployment Geographies
+            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+              Preferred locations
             </Label>
             {loadingLocations ? (
               <div className="space-y-2 p-1 w-full select-none animate-pulse">
@@ -254,16 +249,16 @@ export function JobPreferencesSheet({
             )}
           </div>
 
-          {/* SECTOR C: FISCAL COMPENSATION THRESHOLDS */}
+          {/* Salary range */}
           <div className="space-y-3.5 pt-3 border-t border-border/10 w-full min-w-0">
-            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5 select-none">
-              Vector: Compensation Range Bounds
+            <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
+              Salary range
             </Label>
 
-            <div className="grid grid-cols-2 gap-4 w-full tabular-nums text-left select-all font-semibold">
+            <div className="grid grid-cols-2 gap-4 w-full tabular-nums text-left font-semibold">
               <div className="space-y-1 w-full min-w-0 text-left">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60 pl-0.5 block select-none leading-none">
-                  Registry floor Min
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70 block">
+                  Minimum
                 </span>
                 <Input
                   type="number"
@@ -277,8 +272,8 @@ export function JobPreferencesSheet({
                 />
               </div>
               <div className="space-y-1 w-full min-w-0 text-left">
-                <span className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/60 pl-0.5 block select-none leading-none">
-                  Registry ceiling Max
+                <span className="text-[10px] font-semibold uppercase tracking-wide text-muted-foreground/70 block">
+                  Maximum
                 </span>
                 <Input
                   type="number"
@@ -293,33 +288,31 @@ export function JobPreferencesSheet({
               </div>
             </div>
 
-            <div className="flex items-start gap-2.5 p-3.5 bg-muted/20 border border-border/10 rounded-xl shadow-inner select-none w-full animate-in fade-in duration-200">
-              <ShieldCheck className="h-4 w-4 text-primary shrink-0 opacity-70 mt-0.5 stroke-[2.2]" />
-              <p className="text-[10px] font-semibold leading-normal text-muted-foreground/80 italic break-words flex-1 pr-1">
-                Ecosystem parsing matrices convert multicurrency parity variables matching BDT/USD standards
-                autonomously inside backend pipelines.
+            <div className="flex items-start gap-2.5 p-3.5 bg-muted/20 border border-border/10 rounded-xl shadow-inner w-full">
+              <ShieldCheck className="h-4 w-4 text-primary shrink-0 opacity-70 mt-0.5" />
+              <p className="text-xs font-medium leading-normal text-muted-foreground/80 flex-1 pr-1">
+                Salaries are auto-converted between BDT and USD when matching jobs.
               </p>
             </div>
           </div>
         </div>
 
-        {/* HUD LEVEL 3: DYNAMIC BOTTOM ACTION STRIP BAR */}
-        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 border-t border-border/20 bg-background/70 backdrop-blur-xl shrink-0 select-none w-full pb-safe-bottom">
+        <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 border-t border-border/20 bg-background/70 backdrop-blur-xl shrink-0 w-full pb-safe-bottom">
           <Button
             size="default"
             onClick={executeSync}
-            className="w-full h-11 rounded-xl font-bold text-xs tracking-wide shadow-md active:scale-[0.99] transition-all cursor-pointer gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
+            className="w-full h-11 rounded-xl font-bold text-sm shadow-md gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
             disabled={saving}
           >
             {saving ? (
               <>
-                <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Synchronizing Constraint Bounds…</span>
+                <Loader2 className="h-4 w-4 animate-spin" />
+                <span>Saving…</span>
               </>
             ) : (
               <>
                 <ShieldCheck className="h-4 w-4 shrink-0" />
-                <span>Commit Constraints Configuration</span>
+                <span>Save preferences</span>
               </>
             )}
           </Button>
