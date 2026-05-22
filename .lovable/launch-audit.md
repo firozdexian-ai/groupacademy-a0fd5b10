@@ -123,3 +123,31 @@ Re-audit revealed 3 gaps that have now been closed:
 A4 is now complete. Carry-over (P2, deferred to pre-launch sweep): ~30 feed files still contain non-user-visible jargon in code comments and `console.error` strings. Zero user impact, low value to fix now, high merge-conflict risk against ongoing phase work.
 
 Ready for **A5 — Jobs Hub**.
+
+---
+
+## A5.1 Jobs Hub — Browse tab + Shell — shipped 2026-05-22
+**P0 fix:** `/app/jobs` was rendering 4 empty "coming soon" stubs. Every talent tapping the Jobs bottom-nav landed on a blank page despite all data plumbing existing.
+
+- ✅ `BrowseView.tsx` (3-line stub → full implementation):
+  - Authenticated: `ProfileCompletenessGate` → Trending strip → In-your-field strip → Type-count chips → `<InfiniteJobsList>` recommended list
+  - Unauthenticated: Trending public strip + "Sign in" CTA → `/auth?returnTo=/app/jobs`
+  - Horizontal snap-scrolling strips (mobile-first, vertical layout maintained)
+- ✅ `JobsHubHeader.tsx` (8 lines → full header): title + subtitle + "View all" link + search box deep-linking to `/app/jobs/all?q=…` + preferences-sheet trigger (`JobPreferencesSheet`, previously unmounted)
+- ✅ `InfiniteJobsList.tsx` user-visible copy:
+  - Empty: "Complete your professional profile configuration tracks to unlock matched employment fields." → "No matching jobs yet. Complete your profile to unlock personalized matches."
+  - Loading more: "Compiling subsequent timeline updates…" → "Loading more jobs…"
+  - End-of-list: "Platform Career Stream Fully Synchronized" → "You're all caught up"
+- ✅ `ProfileCompletenessGate.tsx` user-visible copy:
+  - "Unlock Predictive AI Matching" → "Complete your profile for better matches"
+  - "Fully customized profiles radically accelerate candidate recommendation scores." → "Filling the rest helps us recommend stronger job matches."
+- ✅ Auth gate: `/app/jobs` continues redirecting via `OnboardingGuard`; unauthenticated `BrowseView` fallback sends to `/auth?returnTo=/app/jobs`.
+
+Decisions logged:
+- Strips: horizontal snap-scroll (top 6 each) above vertical infinite list — matches mobile-first design system.
+- `/app/jobs/all` kept intact; reachable from header "View all" + Browse "View all" link. Deferred merge to A5.7.
+- ProfileCompletenessGate threshold kept at the existing 60% (matches A4 readiness floor).
+
+Carry-over (P2, deferred to pre-launch sweep): JSDoc/comment jargon in `useJobsHubDashboard`, `useRankedJobs`, `JobCard`, `InfiniteJobsList` ("Phase Z0 Hardened", "Digital Workforce", "CTO Reference", "HUD: EXECUTING_…"). Zero user impact.
+
+Next: **A5.2 — Companies & Locations tabs** (replace remaining 2 stubs).
