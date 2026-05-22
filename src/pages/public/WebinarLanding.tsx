@@ -79,9 +79,7 @@ export default function WebinarLanding() {
   // =========================================================================
   const handleJoinSequenceExecution = React.useCallback(async () => {
     try {
-      const {
-        data: { session: activeSessionInstance },
-      } = await supabase.auth.getSession();
+      const activeSessionInstance = await getCurrentSession();
       const redirectionTargetRouteStr = `/app/learning/courses/${unverifiedRouteSlugStr}?promo=webinar`;
 
       if (activeSessionInstance) {
