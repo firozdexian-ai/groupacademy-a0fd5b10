@@ -488,15 +488,13 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
           .createSignedUrl(path, 60 * 60 * 24 * 365);
         proofUrl = signed?.signedUrl || path;
       }
-      const { data, error } = await supabase.rpc("approve_invoice_and_disburse", {
-        p_invoice_id: invoice.id,
-        p_payment_method: method,
-        p_payment_reference: reference || null,
-        p_payment_proof_url: proofUrl,
-        p_admin_notes: notes || null,
+      const result = await approveInvoiceAndDisburse({
+        invoiceId: invoice.id,
+        paymentMethod: method,
+        paymentReference: reference || null,
+        paymentProofUrl: proofUrl,
+        adminNotes: notes || null,
       });
-      if (error) throw error;
-      const result = data as { success: boolean; error?: string; credits_added?: number };
       if (!result?.success) throw new Error(result?.error || "Protocol Rejected");
       toast.success(`Success: ${result.credits_added} Credits Disbursed`, { id: toastId });
       onDone();
