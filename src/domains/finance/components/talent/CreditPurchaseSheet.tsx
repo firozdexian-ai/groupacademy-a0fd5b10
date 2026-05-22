@@ -1,6 +1,6 @@
 import { useState, useMemo } from "react";
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getAccessToken } from "@/lib/auth";
 import { createCreditInvoice } from "@/domains/finance/repo/financeRepo";
 import { createCheckout } from "@/domains/finance/api/financeApi";
 import { CREDIT_CONFIG } from "@/lib/creditPricing";
