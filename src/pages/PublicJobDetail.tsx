@@ -42,6 +42,10 @@ interface Job {
   is_featured: boolean;
   created_at: string;
   source_image_url: string | null;
+  application_type: string;
+  application_url: string | null;
+  application_email: string | null;
+  ai_assessment_enabled: boolean;
 }
 
 const JOB_TYPES: Record<string, string> = {
