@@ -20,6 +20,7 @@ import {
 import { format, formatDistanceToNow, differenceInDays } from "date-fns";
 import { toast } from "sonner";
 import { RelatedJobs } from "@/domains/jobs/components/RelatedJobs";
+import { JobApplyCTA } from "@/domains/jobs/components/JobApplyCTA";
 import { Footer } from "@/components/Footer";
 import logoIcon from "@/assets/logo-icon.png";
 import { cn } from "@/lib/utils";
