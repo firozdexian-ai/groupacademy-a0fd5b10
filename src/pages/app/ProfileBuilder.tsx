@@ -108,8 +108,9 @@ export default function ProfileBuilder() {
 
       await refreshTalent();
     } catch (e: any) {
-      await reportAnomalyToAdmin("OnboardingChatError", { error: e.message, messages: nextMessages });
-      toast.error(e.message || "Something went wrong during onboarding.");
+      logChatError("OnboardingChatError", { error: e.message, messages: nextMessages });
+      toast.error(e.message || "Something went wrong — please try again.");
+
     } finally {
       setSending(false);
     }
