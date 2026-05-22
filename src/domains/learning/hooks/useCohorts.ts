@@ -189,19 +189,18 @@ export function useMarkAttendance() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (sessionId: string) => {
-      const { error } = await supabase.rpc("mark_session_attendance", {
-        _session_id: sessionId,
-      });
-
-      if (error) {
+      try {
+        await markSessionAttendance(sessionId);
+      } catch (error: any) {
         console.error("[Digital Workforce] ANOMALY: user attendance logging handshake rejected.", {
           sessionId,
-          message: error.message,
-          code: error.code,
+          message: error?.message,
+          code: error?.code,
         });
         throw error;
       }
     },
+
     onSuccess: (_, sessionId) => {
       qc.invalidateQueries({ queryKey: ["session-attendance", sessionId] });
       qc.invalidateQueries({ queryKey: ["upcoming-sessions"] });
