@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import {
   getStudentIdByUserIdStrict,
   getContentBySlugMaybe,
@@ -70,9 +71,7 @@ export default function Quiz() {
     setLoading(true);
     setLoadError(null);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) return navigate("/auth");
 
       // 1. Fetch Student Context

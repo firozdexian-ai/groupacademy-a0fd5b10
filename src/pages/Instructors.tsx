@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { listAllInstructors, deleteInstructor } from "@/domains/learning/repo/learningRepo";
 import { isUserAdmin } from "@/domains/profile/repo/profileRepo";
 import { useQueryWithTimeout, withTimeout } from "@/hooks/useQueryWithTimeout";
@@ -88,9 +88,7 @@ const Instructors = () => {
 
   const checkAuth = async () => {
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) return navigate("/auth");
 
       setIsAdmin(await isUserAdmin(user.id));

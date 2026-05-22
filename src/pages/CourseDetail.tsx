@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentSession } from "@/lib/auth";
 import {
   getStudentRecordByUserId,
   getContentBySlugPublished,
@@ -101,9 +102,7 @@ const CourseDetail = () => {
 
   const checkAuth = async () => {
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const session = await getCurrentSession();
       if (session) {
         setUser(session.user);
         const student = await getStudentRecordByUserId(session.user.id);

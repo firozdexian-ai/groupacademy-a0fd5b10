@@ -1,6 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams, useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { userHasRole } from "@/domains/admin/repo/adminRepo";
 import { getCertificateById } from "@/domains/learning/repo/learningRepo";
 import { Button } from "@/components/ui/button";
@@ -68,9 +69,7 @@ export default function ReportCard() {
   const loadReportData = async () => {
     setLoading(true);
     try {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) return navigate("/auth");
 
       const { data: enrollment, error: enrollError } = await supabase
