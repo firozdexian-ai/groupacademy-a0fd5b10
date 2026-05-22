@@ -1,11 +1,11 @@
 import { useQuery, useQueryClient, useMutation } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import {
   listNotifications,
   markNotificationRead,
   markAllNotificationsRead,
   deleteNotification as repoDeleteNotification,
+  subscribeNotificationsRealtime,
 } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { mapNotificationRow, type Notification } from "@/lib/notificationHelpers";
@@ -47,39 +47,24 @@ export function useNotifications() {
   useEffect(() => {
     if (!talentId) return;
 
-    const channel = supabase
-      .channel(`public:notifications:${talentId}`)
-      .on(
-        "postgres_changes",
-        { event: "INSERT", schema: "public", table: "notifications", filter: `talent_id=eq.${talentId}` },
-        (payload) => {
-          const newNotif = mapNotificationRow(payload.new);
-          qc.setQueryData<Notification[]>(queryKey, (old) => [newNotif, ...(old || [])]);
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "UPDATE", schema: "public", table: "notifications", filter: `talent_id=eq.${talentId}` },
-        (payload) => {
-          const updated = mapNotificationRow(payload.new);
-          qc.setQueryData<Notification[]>(queryKey, (old) =>
-            (old || []).map((n) => (n.id === updated.id ? updated : n)),
-          );
-        },
-      )
-      .on(
-        "postgres_changes",
-        { event: "DELETE", schema: "public", table: "notifications", filter: `talent_id=eq.${talentId}` },
-        (payload) => {
-          const targetId = (payload.old as any).id;
-          qc.setQueryData<Notification[]>(queryKey, (old) => (old || []).filter((n) => n.id !== targetId));
-        },
-      )
-      .subscribe();
+    const unsubscribe = subscribeNotificationsRealtime(talentId, {
+      onInsert: (row) => {
+        const newNotif = mapNotificationRow(row);
+        qc.setQueryData<Notification[]>(queryKey, (old) => [newNotif, ...(old || [])]);
+      },
+      onUpdate: (row) => {
+        const updated = mapNotificationRow(row);
+        qc.setQueryData<Notification[]>(queryKey, (old) =>
+          (old || []).map((n) => (n.id === updated.id ? updated : n)),
+        );
+      },
+      onDelete: (oldRow) => {
+        const targetId = (oldRow as any).id;
+        qc.setQueryData<Notification[]>(queryKey, (old) => (old || []).filter((n) => n.id !== targetId));
+      },
+    });
 
-    return () => {
-      void supabase.removeChannel(channel);
-    };
+    return unsubscribe;
   }, [talentId, qc, queryKey]);
 
   // --- ACTIONS: REGISTRY_CLEANUP_MUTATIONS ---

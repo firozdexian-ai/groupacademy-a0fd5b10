@@ -1,6 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import {
   listDiscussionThreads,
   getDiscussionThreadWithPosts,
@@ -14,6 +13,9 @@ import {
   upsertSubmissionReview,
   insertContentReport,
   acceptLessonAnswer,
+  subscribeDiscussionPostsForCohort,
+  subscribeDiscussionPostsForThread,
+  subscribeLessonAnswers,
 } from "@/domains/learning/repo/learningRepo";
 import { useAuth } from "./useAuth";
 import { toast } from "sonner";
@@ -58,17 +60,9 @@ export function useDiscussionThreads(cohortId?: string) {
 
   useEffect(() => {
     if (!cohortId) return;
-
-    const ch = supabase
-      .channel(`public:threads:${cohortId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "discussion_posts" }, () => {
-        void qc.invalidateQueries({ queryKey: ["threads", cohortId] });
-      })
-      .subscribe();
-
-    return () => {
-      void supabase.removeChannel(ch);
-    };
+    return subscribeDiscussionPostsForCohort(cohortId, () => {
+      void qc.invalidateQueries({ queryKey: ["threads", cohortId] });
+    });
   }, [cohortId, qc]);
 
   return useQuery({
@@ -94,21 +88,9 @@ export function useThread(threadId?: string) {
 
   useEffect(() => {
     if (!threadId) return;
-
-    const ch = supabase
-      .channel(`public:thread:${threadId}`)
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "discussion_posts", filter: `thread_id=eq.${threadId}` },
-        () => {
-          void qc.invalidateQueries({ queryKey: ["thread", threadId] });
-        },
-      )
-      .subscribe();
-
-    return () => {
-      void supabase.removeChannel(ch);
-    };
+    return subscribeDiscussionPostsForThread(threadId, () => {
+      void qc.invalidateQueries({ queryKey: ["thread", threadId] });
+    });
   }, [threadId, qc]);
 
   return useQuery({
@@ -185,17 +167,9 @@ export function useLessonQuestions(contentId?: string, itemId?: string) {
 
   useEffect(() => {
     if (!contentId) return;
-
-    const ch = supabase
-      .channel(`public:qna:${contentId}:${itemId ?? "all"}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "lesson_answers" }, () => {
-        void qc.invalidateQueries({ queryKey: ["qna", contentId, itemId] });
-      })
-      .subscribe();
-
-    return () => {
-      void supabase.removeChannel(ch);
-    };
+    return subscribeLessonAnswers(contentId, itemId, () => {
+      void qc.invalidateQueries({ queryKey: ["qna", contentId, itemId] });
+    });
   }, [contentId, itemId, qc]);
 
   return useQuery({
