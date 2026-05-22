@@ -42,7 +42,7 @@ export default tseslint.config(
       ...reactHooks.configs.recommended.rules,
       "react-refresh/only-export-components": ["warn", { allowConstantExport: true }],
       "@typescript-eslint/no-unused-vars": "off",
-      "no-restricted-syntax": ["error", NO_RAW_INVOKE],
+      "no-restricted-syntax": ["error", NO_RAW_INVOKE, NO_RAW_AUTH],
     },
   },
   {
@@ -51,7 +51,24 @@ export default tseslint.config(
       "src/components/ai-instructor/AIChatPanel.tsx",
     ],
     rules: {
-      "no-restricted-syntax": "off",
+      "no-restricted-syntax": ["error", NO_RAW_AUTH],
+    },
+  },
+  {
+    // Core auth-flow files: legitimately orchestrate session/identity state.
+    files: [
+      "src/lib/auth.ts",
+      "src/hooks/useAuth.ts",
+      "src/components/AuthGate.tsx",
+      "src/components/ProtectedRoute.tsx",
+      "src/components/Navbar.tsx",
+      "src/components/onboarding/OnboardingWizard.tsx",
+      "src/pages/AuthClassic.tsx",
+      "src/pages/AuthChat.tsx",
+      "src/pages/ResetPassword.tsx",
+    ],
+    rules: {
+      "no-restricted-syntax": ["error", NO_RAW_INVOKE],
     },
   },
 );
