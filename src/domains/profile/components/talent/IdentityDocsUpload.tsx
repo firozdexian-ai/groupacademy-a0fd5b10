@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/lib/auth";
 import { getLatestIdentityDoc, insertIdentityDoc, uploadIdentityDoc } from "@/domains/profile/repo/profileRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { Button } from "@/components/ui/button";
@@ -117,10 +117,7 @@ export function IdentityDocsUpload() {
     const dynamicToastTrackerId = toast.loading("Encrypting identity resources over secure bucket nodes...");
 
     try {
-      const { data: sessionPayload, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) throw sessionError;
-
-      const uid = sessionPayload.session?.user.id;
+      const uid = await getCurrentUserId();
       if (!uid) throw new Error("Authentication index token lost. Please log in.");
 
       const front_url = await uploadOne(uid, frontFile, "front");

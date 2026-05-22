@@ -5,7 +5,7 @@ import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Sparkles, X, Send, Loader2, Bot } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Textarea } from "@/components/ui/textarea";
-import { supabase } from "@/integrations/supabase/client";
+import { getAccessToken } from "@/lib/auth";
 import {
   getContentIdBySlug,
   getAiInstructorName,
@@ -149,8 +149,8 @@ export function GlobalAIBubble() {
     setStreaming(true);
 
     try {
-      const { data: sessionRes, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError || !sessionRes.session?.access_token) {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
         throw new Error("AUTHENTICATION_REQUIRED: Ingress token missing.");
       }
 
@@ -161,7 +161,7 @@ export function GlobalAIBubble() {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionRes.session.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
         },
         body: JSON.stringify({
           agentKey,

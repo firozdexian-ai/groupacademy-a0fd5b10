@@ -3,6 +3,7 @@ import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTalent } from "@/hooks/useTalent";
 import { getCountryFlag } from "@/lib/constants/countries";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import {
   Home,
   Briefcase,
@@ -144,7 +145,7 @@ export function TalentAppShell() {
     }
     let cancelled = false;
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) return;
       const { count } = await supabase
         .from("company_members")
@@ -166,7 +167,7 @@ export function TalentAppShell() {
     }
     let cancelled = false;
     (async () => {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) return;
       const { count } = await supabase
         .from("user_roles")

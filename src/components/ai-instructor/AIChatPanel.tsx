@@ -7,7 +7,7 @@ import { Send, Bot, Loader2, Sparkles, RefreshCw, Zap, ShieldCheck, X } from "lu
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
-import { supabase } from "@/integrations/supabase/client";
+import { getAccessToken } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useTutorMasteryContext } from "@/domains/learning";
 
@@ -128,15 +128,15 @@ export function AIChatPanel({
     const timeoutId = setTimeout(() => abortControllerRef.current?.abort(), generationTimeoutValue);
 
     try {
-      const { data: sessionRes, error: authError } = await supabase.auth.getSession();
-      if (authError || !sessionRes.session?.access_token) throw new Error("AUTH_SYNC_REQUIRED");
+      const accessToken = await getAccessToken();
+      if (!accessToken) throw new Error("AUTH_SYNC_REQUIRED");
 
       // HUD: EXECUTING_AI_INSTRUCTOR_STREAM_HANDSHAKE
       const response = await fetch(CHAT_ENDPOINT, {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
-          Authorization: `Bearer ${sessionRes.session.access_token}`,
+          Authorization: `Bearer ${accessToken}`,
           apikey: String(import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY),
         },
         body: JSON.stringify({

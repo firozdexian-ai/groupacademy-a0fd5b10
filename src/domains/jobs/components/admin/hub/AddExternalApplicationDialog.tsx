@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/lib/auth";
 import { uploadTalentCv, createTalentCvSignedUrl } from "@/domains/jobs/repo/jobsRepo";
 import { parseCv } from "@/domains/jobs/api/jobsApi";
 import { insertExternalJobApplication, getOrCreateTalent } from "@/domains/jobs/repo/jobsRepo";
@@ -149,16 +149,14 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
         phone: phone.trim() || null,
       });
 
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const uid = await getCurrentUserId();
       await insertExternalJobApplication({
         job_id: jobId,
         talent_id: talentId as string,
         cv_url: cvUrl || null,
         cover_letter: coverLetter || null,
         external_notes: externalNotes || null,
-        added_by: user?.id || null,
+        added_by: uid || null,
       });
 
       toast.success("Node Synchronized");

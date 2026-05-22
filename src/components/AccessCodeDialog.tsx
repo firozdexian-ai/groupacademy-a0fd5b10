@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { incrementAccessCodeUse, incrementContentEnrollment } from "@/domains/learning/repo/learningRepo";
 import {
   getActiveAccessCode,
@@ -109,12 +109,7 @@ export const AccessCodeDialog = ({ open, onOpenChange, contentId, contentTitle, 
       }
 
       // PHASE 3: Identity Artifact Verification & Sync
-      const {
-        data: { user },
-        error: identityCheckError,
-      } = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "IDENTITY_CHECK_TIMEOUT");
-
-      if (identityCheckError) throw identityCheckError;
+      const user = await withTimeout(getCurrentUser(), TIMEOUTS.AUTH, "IDENTITY_CHECK_TIMEOUT");
 
       if (!user) {
         toast.error("Authentication Matrix Required: Initialize your active browser user login session.", {

@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { Search, Briefcase, ArrowRight, Loader2, Sparkles } from "lucide-react";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 
@@ -53,10 +54,7 @@ export function ScoreMeJobPicker({ open, onOpenChange }: Props) {
       trackEvent("score_me_job_picker_data_fetch_initiated");
 
       try {
-        const { data: userRes, error: userError } = await supabase.auth.getUser();
-        if (userError) throw userError;
-
-        const uid = userRes?.user?.id;
+        const uid = await getCurrentUserId();
         const out: JobLite[] = [];
         const seen = new Set<string>();
 

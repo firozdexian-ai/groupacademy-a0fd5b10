@@ -9,7 +9,7 @@ import { ProcessingCard, type ProcessingStage } from "@/components/ui/processing
 import { Copy, Check, ExternalLink, Upload, ImagePlus, Sparkles, X, AlertCircle, Zap, ShieldCheck } from "lucide-react";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { getAccessToken } from "@/lib/auth";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 
@@ -82,12 +82,9 @@ export function ExternalApplicationPrep({
 
   const callEdgeFunction = useCallback(
     async (payload: Record<string, unknown>) => {
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-      if (sessionError || !session) {
-        trackError(sessionError || "Unauthenticated session token check intercepted.", {
+      const accessToken = await getAccessToken();
+      if (!accessToken) {
+        trackError("Unauthenticated session token check intercepted.", {
           component: "ExternalApplicationPrep",
           action: "security_context_assertion",
         });
@@ -103,7 +100,7 @@ export function ExternalApplicationPrep({
           signal: abortControllerInstance.signal,
           headers: {
             "Content-Type": "application/json",
-            Authorization: `Bearer ${session.access_token}`,
+            Authorization: `Bearer ${accessToken}`,
             apikey: import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
           },
           body: JSON.stringify(payload),

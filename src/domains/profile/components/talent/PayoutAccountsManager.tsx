@@ -1,6 +1,6 @@
 import { useEffect, useState, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/lib/auth";
 import {
   listPayoutAccounts,
   insertPayoutAccount,
@@ -111,10 +111,7 @@ export function PayoutAccountsManager() {
     );
 
     try {
-      const { data: sessionPayload, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) throw sessionError;
-
-      const uid = sessionPayload.session?.user.id;
+      const uid = await getCurrentUserId();
       if (!uid) throw new Error("Authentication index token lost. Please log in.");
 
       const isFirstAccountNode = rows.length === 0;

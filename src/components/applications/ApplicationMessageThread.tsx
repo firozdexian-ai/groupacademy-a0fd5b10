@@ -1,6 +1,6 @@
 import { useState, useMemo, useEffect, useRef } from "react";
 import { useApplicationMessages } from "@/domains/jobs";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 
 // UI Primitive Matrix Registries
@@ -35,9 +35,9 @@ export function ApplicationMessageThread({ applicationId, actorRole }: Applicati
     let isCurrent = true;
 
     (async () => {
-      const { data: userRes } = await supabase.auth.getUser();
-      if (userRes?.user && isCurrent) {
-        setActiveUserId(userRes.user.id);
+      const user = await getCurrentUser();
+      if (user && isCurrent) {
+        setActiveUserId(user.id);
       }
     })();
 

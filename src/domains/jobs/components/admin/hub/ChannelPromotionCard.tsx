@@ -1,5 +1,5 @@
 import { useState, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/lib/auth";
 import { listJobChannelPosts, insertJobChannelPost } from "@/domains/jobs/repo/jobsRepo";
 import { generateJobShareCaption } from "@/domains/jobs/api/jobsApi";
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
@@ -92,14 +92,12 @@ export function ChannelPromotionCard({ job }: Props) {
   };
 
   const handleMarkPosted = async (channel: string) => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const uid = await getCurrentUserId();
     try {
       await insertJobChannelPost({
         job_id: job.id,
         channel,
-        posted_by: user?.id || null,
+        posted_by: uid || null,
         caption: captions[channel] || null,
       });
     } catch (error: any) {

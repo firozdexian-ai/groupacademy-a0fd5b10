@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/lib/auth";
 import { uploadGigSubmission, removeGigSubmissions } from "@/domains/gigs/repo/gigsRepo";
 import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
@@ -95,11 +95,10 @@ export function GigUploader({
         return;
       }
 
-      const { data: sess, error: sessErr } = await supabase.auth.getSession();
-      const uid = sess?.session?.user?.id;
+      const uid = await getCurrentUserId();
 
-      if (sessErr || !uid) {
-        trackError(sessErr || "Unauthenticated storage access attempt intercepted.", {
+      if (!uid) {
+        trackError("Unauthenticated storage access attempt intercepted.", {
           component: "GigUploader",
           action: "security_session_assertion",
         });
