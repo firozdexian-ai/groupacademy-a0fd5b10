@@ -14,6 +14,17 @@ const NO_RAW_INVOKE = {
     "Do not call supabase.functions.invoke directly. Import a typed wrapper from src/domains/<owner>/api/<owner>Api.ts (Phase 9h convention).",
 };
 
+// Phase 10j.5j2: ban raw supabase.auth.getUser / getSession outside the
+// centralized auth boundary (`src/lib/auth.ts`) and the core auth-flow files
+// that legitimately orchestrate sessions (useAuth, AuthGate, ProtectedRoute,
+// Navbar identity badge, Auth pages, OnboardingWizard, ResetPassword).
+const NO_RAW_AUTH = {
+  selector:
+    "CallExpression[callee.type='MemberExpression'][callee.object.type='MemberExpression'][callee.object.property.name='auth'][callee.object.object.name='supabase'][callee.property.name=/^(getUser|getSession)$/]",
+  message:
+    "Do not call supabase.auth.getUser/getSession directly. Use getCurrentUser / getCurrentSession / getAccessToken / getCurrentUserId from '@/lib/auth' (Phase 10j.5j convention).",
+};
+
 export default tseslint.config(
   { ignores: ["dist"] },
   {
