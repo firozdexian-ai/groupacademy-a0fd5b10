@@ -14,9 +14,8 @@ import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 
 /**
- * GroUp Academy: Autonomous Application Deployment Node (ExternalApplicationPrep)
- * CTO Reference: Authoritative interface for external form decryption and response synthesis.
- */
+ * External application prep sheet: helps the talent fill out a third-party
+ * job form (analyzes the page, drafts answers, opens the link).
  */
 
 interface ExternalApplicationPrepProps {
