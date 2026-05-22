@@ -103,7 +103,7 @@ export function TalentAppShell() {
     { label: "AI Agents", icon: Bot, path: "/app/agents" },
   ];
 
-  // PHASE: Real-Time_Notification_Orchestration
+  // Notification badge polling
   useEffect(() => {
     if (!talent?.id) return;
     const fetchInstitutionalAlerts = async () => {
