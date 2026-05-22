@@ -6,8 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getActiveCompanyMembership } from "@/domains/companies/repo/companiesRepo";
 import { listUserRolesSafe } from "@/domains/profile/repo/profileRepo";
 import type { AccountType } from "@/lib/postAuthRoute";
-
-const ADMIN_ROLES = ["admin", "super_admin", "staff", "talent_exec", "content_lead"];
+import { ADMIN_ROLES } from "@/lib/adminRoles";
 
 export function useAccountType() {
   const { user, isLoading: authLoading } = useAuth();
@@ -35,7 +34,7 @@ export function useAccountType() {
         // If metadata says admin, verify against user_roles
         if (metaType === "admin") {
           const roles = await listUserRolesSafe(user.id);
-          if (roles.some((r) => ADMIN_ROLES.includes(r.role))) {
+          if (roles.some((r) => (ADMIN_ROLES as readonly string[]).includes(r.role))) {
             return "admin";
           }
         }
@@ -45,7 +44,7 @@ export function useAccountType() {
         if (companyCheck?.company_id) return "company";
 
         const rolesCheck = await listUserRolesSafe(user.id);
-        if (rolesCheck.some((r) => ADMIN_ROLES.includes(r.role))) {
+        if (rolesCheck.some((r) => (ADMIN_ROLES as readonly string[]).includes(r.role))) {
           return "admin";
         }
 

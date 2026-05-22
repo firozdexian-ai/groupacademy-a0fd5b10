@@ -1,6 +1,7 @@
 import { useState, useEffect } from "react";
 import { Outlet, useNavigate, useLocation } from "react-router-dom";
 import { useTalent } from "@/hooks/useTalent";
+import { useAuth } from "@/hooks/useAuth";
 import { getCountryFlag } from "@/lib/constants/countries";
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/lib/auth";
@@ -75,6 +76,7 @@ export function TalentAppShell() {
   const navigate = useNavigate();
   const location = useLocation();
   const { talent } = useTalent();
+  const { signOut } = useAuth();
   const { balance } = useCredits();
   const { theme, setTheme } = useTheme();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -182,8 +184,7 @@ export function TalentAppShell() {
   }, [talent?.id]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
+    await signOut();
   };
 
   const handleSearch = (e: React.FormEvent) => {

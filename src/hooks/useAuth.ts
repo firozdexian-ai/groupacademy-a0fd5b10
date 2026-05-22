@@ -52,7 +52,7 @@ export interface AuthState {
 function friendlyAuthError(msg: string): string {
   const m = (msg || "").toLowerCase();
   if (m.includes("invalid login")) return "Email or password is incorrect.";
-  if (m.includes("email not confirmed")) return "Your account is being activated — please try again in a moment.";
+  if (m.includes("email not confirmed")) return "Please confirm your email — check your inbox for the link.";
   if (m.includes("user already registered")) return "An account with this email already exists. Try signing in.";
   if (m.includes("password") && m.includes("weak")) return "Choose a stronger password (at least 8 characters).";
   if (m.includes("rate limit")) return "Too many attempts. Please wait a moment and try again.";
