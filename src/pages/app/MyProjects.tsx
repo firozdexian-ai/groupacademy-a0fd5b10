@@ -44,12 +44,7 @@ export default function MyProjects() {
     queryKey: ["app-talent-project-workload", talent?.id],
     enabled: !!talent?.id,
     queryFn: async (): Promise<ProjectMilestoneAgg[]> => {
-      const { data, error } = await supabase.rpc("get_talent_project_workload", {
-        _talent_id: talent!.id,
-      });
-
-      if (error) throw error;
-      return (data as unknown as ProjectMilestoneAgg[]) ?? [];
+      return await getTalentProjectWorkload<ProjectMilestoneAgg>(talent!.id);
     },
   });
 
