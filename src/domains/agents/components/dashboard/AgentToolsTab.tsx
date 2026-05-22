@@ -25,15 +25,12 @@ export function AgentToolsTab() {
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
-    supabase
-      .from("agent_tools")
-      .select("*")
-      .order("handler_kind")
-      .order("name")
-      .then(({ data }) => {
-        setTools((data ?? []) as Tool[]);
+    listAllAgentTools()
+      .then((data) => {
+        setTools(data as Tool[]);
         setIsLoading(false);
-      });
+      })
+      .catch(() => setIsLoading(false));
   }, []);
 
   const groups = useMemo(
