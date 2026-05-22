@@ -7,7 +7,10 @@ import { Progress } from "@/components/ui/progress";
 import { Separator } from "@/components/ui/separator";
 import { Navbar } from "@/components/Navbar";
 import { Footer } from "@/components/Footer";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  getSalaryAnalysisWithCategory,
+  listPublishedCoursesByProfession,
+} from "@/domains/marketing/repo/marketingRepo";
 import { useToast } from "@/hooks/use-toast";
 import { SalaryAnalysisPDFTemplate } from "@/components/salary-analysis/SalaryAnalysisPDFTemplate";
 import { generateSalaryAnalysisPDF } from "@/lib/salaryPdfGenerator";
