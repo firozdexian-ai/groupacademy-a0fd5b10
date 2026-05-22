@@ -78,7 +78,7 @@ export function useCreateInterview() {
       duration_min: number;
       slots: string[]; // ISO timestamps
     }) => {
-      const { data: u } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
 
       // Step 1: Create Master Interview Record
       const interviewId = await insertInterview({
@@ -90,7 +90,7 @@ export function useCreateInterview() {
         location: input.location ?? null,
         note: input.note ?? null,
         duration_min: input.duration_min,
-        created_by: u.user?.id,
+        created_by: user?.id,
       });
 
       // Step 2: Ingress Proposed Slots
