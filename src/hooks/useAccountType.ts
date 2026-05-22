@@ -6,8 +6,7 @@ import { useAuth } from "@/hooks/useAuth";
 import { getActiveCompanyMembership } from "@/domains/companies/repo/companiesRepo";
 import { listUserRolesSafe } from "@/domains/profile/repo/profileRepo";
 import type { AccountType } from "@/lib/postAuthRoute";
-
-const ADMIN_ROLES = ["admin", "super_admin", "staff", "talent_exec", "content_lead"];
+import { ADMIN_ROLES } from "@/lib/adminRoles";
 
 export function useAccountType() {
   const { user, isLoading: authLoading } = useAuth();

@@ -11,6 +11,7 @@ import { TIMEOUTS } from "@/lib/timeoutConfig";
 import type { Database } from "@/integrations/supabase/types";
 import logoIcon from "@/assets/logo-icon.png";
 import { cn } from "@/lib/utils";
+import { ADMIN_ROLES } from "@/lib/adminRoles";
 
 type AppRole = Database["public"]["Enums"]["app_role"];
 
@@ -126,18 +127,16 @@ export function ProtectedRoute({
         });
 
         if (requireAdmin && !flattenedActiveRolesArray.includes("admin")) {
-          toast.error("Security Level Error: Administrative clearance verification tokens missing from user account.");
+          toast.error("You don't have access to this area.");
           navigate("/app/learning", { replace: true });
           return;
         }
 
         if (
           requireAnyAdminRole &&
-          !flattenedActiveRolesArray.some((roleKey) => ["admin", "talent_exec"].includes(roleKey))
+          !flattenedActiveRolesArray.some((roleKey) => (ADMIN_ROLES as readonly string[]).includes(roleKey))
         ) {
-          toast.error(
-            "Security Level Error: Dashboard view components restricted to authorized operations executives.",
-          );
+          toast.error("You don't have access to this area.");
           navigate("/app/learning", { replace: true });
           return;
         }
@@ -165,8 +164,8 @@ export function ProtectedRoute({
       if (isMountedRef.current) {
         setFault(
           formattedExceptionMsgStr === "SYNC_TIMEOUT"
-            ? "CONNECTION_LATENCY_THRESHOLD_EXCEEDED"
-            : "NEURAL_IDENTITY_FAULT_REJECTED",
+            ? "Connection timed out"
+            : "Sign-in check failed",
         );
       }
     } finally {
@@ -239,8 +238,7 @@ export function ProtectedRoute({
               {fault}
             </h3>
             <p className="text-[11px] font-semibold text-muted-foreground/60 block leading-normal pt-1 italic">
-              Institutional synchronization pipeline aborted. Verify connection telemetry maps before re-attempting
-              ingress access validation.
+              We couldn't verify your session. Check your connection and try again, or sign in.
             </p>
           </div>
 
