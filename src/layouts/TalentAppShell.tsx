@@ -76,6 +76,7 @@ export function TalentAppShell() {
   const navigate = useNavigate();
   const location = useLocation();
   const { talent } = useTalent();
+  const { signOut } = useAuth();
   const { balance } = useCredits();
   const { theme, setTheme } = useTheme();
   const [unreadCount, setUnreadCount] = useState(0);
@@ -183,8 +184,7 @@ export function TalentAppShell() {
   }, [talent?.id]);
 
   const handleSignOut = async () => {
-    await supabase.auth.signOut();
-    navigate("/auth");
+    await signOut();
   };
 
   const handleSearch = (e: React.FormEvent) => {
