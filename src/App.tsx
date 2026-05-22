@@ -10,6 +10,7 @@ import { TalentProvider } from "@/contexts/TalentContext";
 import { ImpersonationProvider } from "@/contexts/ImpersonationContext";
 import { useTalent } from "@/hooks/useTalent";
 import { AccountUpgradeModal } from "@/components/auth/AccountUpgradeModal";
+import { PhoneCaptureModal } from "@/components/onboarding/PhoneCaptureModal";
 import ProfileBuilder from "@/pages/app/ProfileBuilder";
 
 // Components
@@ -236,6 +237,22 @@ const OnboardingGuard = ({ children }: { children: React.ReactNode }) => {
       <>
         {children}
         <AccountUpgradeModal open onComplete={() => refreshTalent()} />
+      </>
+    );
+  }
+
+  // Mandatory phone capture gate: completed onboarding but no phone on file
+  // (covers OAuth signups and legacy rows). Per global product policy phone is required.
+  const needsPhone =
+    !!talent &&
+    !!talent.onboardingCompletedAt &&
+    !(talent.phone && talent.phone.trim().length > 0);
+
+  if (needsPhone) {
+    return (
+      <>
+        {children}
+        <PhoneCaptureModal open onComplete={() => refreshTalent()} />
       </>
     );
   }
