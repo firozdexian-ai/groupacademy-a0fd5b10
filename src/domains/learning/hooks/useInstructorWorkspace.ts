@@ -1,5 +1,6 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
+import { getInstructorSummary } from "@/domains/learning/repo/learningRepo";
 import { toast } from "sonner";
 
 /**
