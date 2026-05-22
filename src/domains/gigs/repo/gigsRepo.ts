@@ -430,7 +430,7 @@ export async function submitReviewVerdict(args: {
   const { error } = await supabase.rpc("submit_review_verdict", {
     _assignment_id: args.assignmentId,
     _verdict: args.verdict,
-    _payload: args.payload ?? {},
+    _payload: (args.payload ?? {}) as any,
     _confidence: args.confidence,
     _rationale: args.rationale,
   });
@@ -443,7 +443,7 @@ export async function submitMilestoneDeliverables(args: {
 }) {
   const { error } = await supabase.rpc("submit_milestone_deliverables", {
     _milestone_id: args.milestoneId,
-    _payload: args.payload,
+    _payload: args.payload as any,
   });
   if (error) throw error;
 }
