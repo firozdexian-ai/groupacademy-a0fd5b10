@@ -149,7 +149,7 @@ export function PostCard({ post }: PostCardProps) {
 
   const handleReportAction = () => {
     trackEvent("feed_post_reported_by_user", { postId: post.id });
-    toast.info("Content flagged. Platform moderators have been notified.");
+    toast.info("Reported. Our moderators will review this post.");
   };
 
   const trackerRef = useImpressionTracker(post.id, "feed");
