@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button";
 import { cn } from "@/lib/utils";
 import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/hooks/useCredits";
-import { supabase } from "@/integrations/supabase/client";
+import { markTalentWhatsappBonusClaimed } from "@/domains/talent/repo/talentRepo";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { toast } from "sonner";
 import { getWhatsAppLink, getWhatsAppConnectMessage } from "@/lib/constants/support";
