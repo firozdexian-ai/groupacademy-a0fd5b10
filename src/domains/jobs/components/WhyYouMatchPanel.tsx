@@ -98,11 +98,11 @@ export function WhyYouMatchPanel({ verifiedMatch }: WhyYouMatchPanelProps) {
           </div>
         )}
 
-        {/* HUD LEVEL 3: KNOWLEDGE TARGET MASTERED SUB-GRID */}
+        {/* Mastered topics */}
         {masteryTopics.length > 0 && (
           <div className="space-y-1 w-full text-left">
             <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80 pl-0.5 select-none leading-none">
-              Demonstrated Knowledge Vectors
+              Skills you've shown
             </p>
             <div className="flex flex-wrap items-center gap-1.5 pt-0.5 max-w-full">
               {masteryTopics.slice(0, 6).map((topicItem, index) => {
