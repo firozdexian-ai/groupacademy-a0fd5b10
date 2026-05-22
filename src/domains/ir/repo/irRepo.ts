@@ -8,6 +8,7 @@
  * - Data room documents, share links, telemetry
  */
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 
 // ─── Generic helpers ───────────────────────────────────────────────────────
 export async function upsertGraphRow(table: string, payload: any): Promise<void> {
@@ -179,13 +180,13 @@ export async function uploadDataRoomDocument(input: {
   const path = `${crypto.randomUUID()}/${input.file.name}`;
   const { error: upErr } = await supabase.storage.from("ir-data-room").upload(path, input.file, { upsert: false });
   if (upErr) throw upErr;
-  const { data: user } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   const { error } = await supabase.from("ir_data_room_documents").insert({
     title: input.title,
     doc_type: input.doc_type,
     file_url: path,
     total_slides: input.total_slides ?? null,
-    created_by: user.user?.id,
+    created_by: user?.id,
   });
   if (error) throw error;
 }
@@ -196,7 +197,7 @@ export async function createDataRoomShareLink(input: {
   expires_in_days?: number | null;
   require_email?: boolean;
 }): Promise<any> {
-  const { data: user } = await supabase.auth.getUser();
+  const user = await getCurrentUser();
   const expires_at =
     input.expires_in_days && input.expires_in_days > 0
       ? new Date(Date.now() + input.expires_in_days * 86400000).toISOString()
@@ -208,7 +209,7 @@ export async function createDataRoomShareLink(input: {
       investor_id: input.investor_id ?? null,
       expires_at,
       require_email: input.require_email ?? true,
-      created_by: user.user?.id,
+      created_by: user?.id,
     })
     .select("*")
     .single();
