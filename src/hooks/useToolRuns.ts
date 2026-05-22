@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { insertToolRun, listToolRunsForUser } from "@/domains/jobs/repo/jobsRepo";
 
 /**
