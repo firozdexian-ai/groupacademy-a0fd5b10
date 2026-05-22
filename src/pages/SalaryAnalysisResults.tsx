@@ -61,13 +61,7 @@ const SalaryAnalysisResults = () => {
     if (!id) return;
     setIsLoading(true);
     try {
-      const { data, error } = await supabase
-        .from("salary_analyses")
-        .select("*, profession_categories(name)")
-        .eq("id", id)
-        .single();
-
-      if (error) throw error;
+      const data = await getSalaryAnalysisWithCategory(id);
       setAnalysis(data);
 
       if (data.profession_category_id) {
@@ -82,12 +76,7 @@ const SalaryAnalysisResults = () => {
 
   const loadRecommendedCourses = async (catId: string) => {
     setLoadingCourses(true);
-    const { data } = await supabase
-      .from("content")
-      .select("id, title, slug, description, estimated_hours, thumbnail_url")
-      .eq("profession_line_id", catId)
-      .eq("is_published", true)
-      .limit(3);
+    const data = await listPublishedCoursesByProfession(catId, 3);
     if (data) setRecommendedCourses(data);
     setLoadingCourses(false);
   };
