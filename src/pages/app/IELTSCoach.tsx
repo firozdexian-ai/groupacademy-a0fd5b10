@@ -90,8 +90,8 @@ export default function IELTSCoach() {
   const { data: userStreakRecord, isLoading: isStreakCacheResolving } = useQuery<StreakRecord | null>({
     queryKey: ["app-ielts-attendance-streak"],
     queryFn: async (): Promise<StreakRecord | null> => {
-      const { data: authUserResponse, error: authUserError } = await supabase.auth.getUser();
-      if (authUserError || !authUserResponse?.user) return null;
+      const authUser = await getCurrentUser();
+      if (!authUser) return null;
 
       const { data: dbStreakRow, error: queryHandshakeError } = await supabase
         .from("ielts_streaks")
