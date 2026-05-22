@@ -137,7 +137,7 @@ export function CommentList({ postId }: CommentListProps) {
       return;
     }
 
-    toast.success(`Transferred ${amount} credits successfully`);
+    toast.success(`Tipped ${amount} credits.`);
 
     // Unified invalidation ensures local wallet balances and dashboards sync instantly
     queryClient.invalidateQueries({ queryKey: ["post-comments", postId] });
