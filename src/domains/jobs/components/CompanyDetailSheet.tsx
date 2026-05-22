@@ -207,20 +207,19 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
             </div>
           )}
 
-          {/* Active Job Pipelines Stream Selection Section Block */}
           <div className="space-y-3 w-full text-left">
-            <h3 className="text-xs font-bold text-foreground/90 uppercase tracking-wider pl-0.5 select-none">
-              Open Structural Roles
+            <h3 className="text-xs font-bold text-foreground/90 uppercase tracking-wider pl-0.5">
+              Open roles
             </h3>
 
             {isLoading ? (
-              <div className="space-y-2.5 w-full select-none animate-pulse">
+              <div className="space-y-2.5 w-full animate-pulse">
                 <Skeleton className="h-16 w-full rounded-2xl opacity-60" />
                 <Skeleton className="h-16 w-full rounded-2xl opacity-40" />
               </div>
             ) : jobs.length === 0 ? (
-              <p className="text-xs font-medium text-muted-foreground/80 leading-normal italic py-6 text-center select-text max-w-xs mx-auto">
-                No active occupational target vacancies mapped to this corporate taxonomy grid right now.
+              <p className="text-xs font-medium text-muted-foreground/80 py-6 text-center max-w-xs mx-auto">
+                No open roles at this company right now.
               </p>
             ) : (
               <div className="space-y-2 w-full">
@@ -233,11 +232,11 @@ export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
                       variant="compact"
                       isSaved={!!isSaved(jobItem.id, "job")}
                       onSaveToggle={() => {
-                        trackEvent("company_sheet_job_saved_toggled", { jobId: jobItem.id, companyName });
+                        trackEvent("company_sheet_job_save_toggled", { jobId: jobItem.id, companyName });
                         toggleSave(jobItem.id, "job");
                       }}
                       onClick={() => {
-                        trackEvent("company_sheet_job_navigation_triggered", { jobId: jobItem.id, companyName });
+                        trackEvent("company_sheet_job_opened", { jobId: jobItem.id, companyName });
                         onOpenChange(false);
                         navigate(`/app/jobs/${jobItem.id}`);
                       }}
