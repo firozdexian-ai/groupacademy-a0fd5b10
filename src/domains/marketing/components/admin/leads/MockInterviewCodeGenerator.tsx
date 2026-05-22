@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { insertMockInterviewAccessCode } from "@/domains/marketing/repo/marketingRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -47,9 +47,8 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
     setGenerating(true);
     try {
       // 1. Authenticated Session Audit
-      const authResponse = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "Authentication check timed out");
+      const user = await withTimeout(getCurrentUser(), TIMEOUTS.AUTH, "Authentication check timed out");
 
-      const user = authResponse?.data?.user;
       if (!user) {
         toast.error("Security Fault: Unauthorized access attempt.");
         return;
