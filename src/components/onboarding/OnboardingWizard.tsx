@@ -21,6 +21,7 @@ import { Badge } from "@/components/ui/badge";
 import { Command, CommandEmpty, CommandGroup, CommandInput, CommandItem, CommandList } from "@/components/ui/command";
 import { Popover, PopoverContent, PopoverTrigger } from "@/components/ui/popover";
 import { supabase } from "@/integrations/supabase/client";
+import { provisionOrGetInstance as provisionOrGetInstanceRpc } from "@/domains/profile/repo/profileRepo";
 import {
   listActiveCountries,
   listActiveCareerStages,
