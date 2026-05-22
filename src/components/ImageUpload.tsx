@@ -70,20 +70,14 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
     const computedStorageFileNameStr = `asset_${uniqueHashTokenStr}_${Date.now()}.${fileExtensionStr}`;
 
     try {
-      const { error: storageUploadRegistryError } = await supabase.storage
-        .from(bucket)
-        .upload(computedStorageFileNameStr, file, {
-          cacheControl: "3600",
-          upsert: false,
-        });
+      const { publicUrl } = await uploadToBucketPublic(bucket, computedStorageFileNameStr, file, {
+        upsert: false,
+      });
 
-      if (storageUploadRegistryError) throw storageUploadRegistryError;
-
-      const { data: publicUrlPayloadData } = supabase.storage.from(bucket).getPublicUrl(computedStorageFileNameStr);
-
-      if (!publicUrlPayloadData?.publicUrl) {
+      if (!publicUrl) {
         throw new Error("Registry Error: Object storage engine failed to generate secure URL public tracking string.");
       }
+      const publicUrlPayloadData = { publicUrl };
 
       if (isMountedRef.current) {
         onUpload(publicUrlPayloadData.publicUrl);
