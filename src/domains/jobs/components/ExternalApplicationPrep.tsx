@@ -9,7 +9,7 @@ import { ProcessingCard, type ProcessingStage } from "@/components/ui/processing
 import { Copy, Check, ExternalLink, Upload, ImagePlus, Sparkles, X, AlertCircle, Zap, ShieldCheck } from "lucide-react";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { toast } from "sonner";
-import { supabase } from "@/integrations/supabase/client";
+import { getAccessToken } from "@/lib/auth";
 import ReactMarkdown from "react-markdown";
 import { cn } from "@/lib/utils";
 
