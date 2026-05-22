@@ -1,7 +1,7 @@
 import * as React from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { advanceAbroadStage } from "@/domains/abroad/repo/abroadRepo";
 import { getActiveCounsellorByUser, listAbroadApplications } from "@/domains/abroad/repo/abroadRepo";
 import { listUserRoles } from "@/domains/profile/repo/profileRepo";
@@ -80,12 +80,9 @@ export default function AbroadCounsellor() {
 
     const evaluateOperatorSecurityThreshold = async () => {
       try {
-        const {
-          data: { user: authedUserNode },
-          error: authUserLookupError,
-        } = await supabase.auth.getUser();
+        const authedUserNode = await getCurrentUser();
 
-        if (authUserLookupError || !authedUserNode) {
+        if (!authedUserNode) {
           if (isRequestThreadValid) executeNavigationHook("/auth");
           return;
         }

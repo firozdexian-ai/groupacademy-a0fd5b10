@@ -4,6 +4,7 @@ import { Loader2, Send, Sparkles } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentSession } from "@/lib/auth";
 import { useTalent } from "@/hooks/useTalent";
 import { computeReadiness } from "@/lib/talentReadiness";
 import { toast } from "sonner";
@@ -68,9 +69,7 @@ export default function ProfileBuilder() {
     setSending(true);
 
     try {
-      const {
-        data: { session },
-      } = await supabase.auth.getSession();
+      const session = await getCurrentSession();
       if (!session?.access_token) throw new Error("Not signed in");
 
       const res = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/talent-onboarding-chat`, {

@@ -2,6 +2,7 @@ import * as React from "react";
 import { useQuery } from "@tanstack/react-query";
 import { Link } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -90,13 +91,13 @@ export default function IELTSCoach() {
   const { data: userStreakRecord, isLoading: isStreakCacheResolving } = useQuery<StreakRecord | null>({
     queryKey: ["app-ielts-attendance-streak"],
     queryFn: async (): Promise<StreakRecord | null> => {
-      const { data: authUserResponse, error: authUserError } = await supabase.auth.getUser();
-      if (authUserError || !authUserResponse?.user) return null;
+      const authUser = await getCurrentUser();
+      if (!authUser) return null;
 
       const { data: dbStreakRow, error: queryHandshakeError } = await supabase
         .from("ielts_streaks")
         .select("id, user_id, current_streak_days, longest_streak_days, xp_total, updated_at")
-        .eq("user_id", authUserResponse.user.id)
+        .eq("user_id", authUser.id)
         .maybeSingle();
 
       if (queryHandshakeError) throw queryHandshakeError;

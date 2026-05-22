@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useParams, useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { uploadIeltsAudio } from "@/domains/learning/repo/learningRepo";
 import { aiIeltsEvaluate } from "@/domains/abroad/api/abroadApi";
 import { Card } from "@/components/ui/card";
@@ -90,10 +90,10 @@ export default function IELTSMockRunner() {
       let remoteAudioStoragePath: string | null = null;
 
       if (isAudioSectionFlag && activeAudioBlob) {
-        const { data: authUserResponse } = await supabase.auth.getUser();
-        if (!authUserResponse.user) throw new Error("Authentication credential session expired.");
+        const authUser = await getCurrentUser();
+        if (!authUser) throw new Error("Authentication credential session expired.");
 
-        const generatedPath = `${authUserResponse.user.id}/${Date.now().toString()}.webm`;
+        const generatedPath = `${authUser.id}/${Date.now().toString()}.webm`;
         await uploadIeltsAudio(generatedPath, activeAudioBlob);
         remoteAudioStoragePath = generatedPath;
       }

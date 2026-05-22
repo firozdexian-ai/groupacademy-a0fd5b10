@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUserId } from "@/lib/auth";
 import { useAuthoringTrends } from "@/domains/learning";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -37,7 +37,7 @@ export default function InstructorInsights() {
   const [meId, setMeId] = React.useState<string | null>(null);
 
   React.useEffect(() => {
-    supabase.auth.getUser().then(({ data }) => setMeId(data.user?.id ?? null));
+    getCurrentUserId().then((id) => setMeId(id));
   }, []);
 
   const instructorId = params.get("instructor") || meId;

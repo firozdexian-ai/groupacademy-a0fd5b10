@@ -1,6 +1,6 @@
 import * as React from "react";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { listTalentApplicationsWithJob } from "@/domains/jobs/repo/jobsRepo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
@@ -81,9 +81,7 @@ export default function MyApplications() {
   const [activeBucket, setActiveBucket] = React.useState<BucketType>("active");
 
   const fetchApplicationsRegistry = React.useCallback(async () => {
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (!user) return;
 
     setLoading(true);

@@ -1,6 +1,6 @@
 import * as React from "react";
 import { Link } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { userHasRole } from "@/domains/admin/repo/adminRepo";
 import {
   listPublishedContentIdsLimit,
@@ -55,7 +55,7 @@ export default function InstructorReviewQueue() {
     setLoading(true);
     setError(null);
     try {
-      const { data: { user } } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) throw new Error("Authentication credential session expired.");
 
       const adminRole = await userHasRole(user.id, "admin");

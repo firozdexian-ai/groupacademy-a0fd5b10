@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react";
 import { useParams } from "react-router-dom";
 import { Loader2, Send, Sparkles, ShieldCheck, AlertCircle, FileText } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { submitMilestoneDeliverables } from "@/domains/gigs/repo/gigsRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { toast } from "sonner";
@@ -73,11 +73,11 @@ export default function ProjectRoom() {
 
   const sendMessage = async () => {
     if (!body.trim()) return;
-    const { data: u } = await supabase.auth.getUser();
+    const u = await getCurrentUser();
     try {
       await insertProjectMessage({
         projectId: projectId!,
-        senderId: u.user!.id,
+        senderId: u!.id,
         body,
       });
       setBody("");
