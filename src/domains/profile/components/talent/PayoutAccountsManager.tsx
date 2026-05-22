@@ -111,10 +111,7 @@ export function PayoutAccountsManager() {
     );
 
     try {
-      const { data: sessionPayload, error: sessionError } = await supabase.auth.getSession();
-      if (sessionError) throw sessionError;
-
-      const uid = sessionPayload.session?.user.id;
+      const uid = await getCurrentUserId();
       if (!uid) throw new Error("Authentication index token lost. Please log in.");
 
       const isFirstAccountNode = rows.length === 0;
