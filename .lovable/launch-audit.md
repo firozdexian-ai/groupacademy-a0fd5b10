@@ -72,3 +72,13 @@ Time to fix: ~45 min. No DB migrations. Recommend rolling these into A-FIX after
 - ✅ #7 `GoogleSignInButton` focus-reset guarded by `visibilityState` + `redirectPendingRef`
 
 Carry-over P2s tracked: country_code backfill, manifest preview 401, auth audit retention.
+
+---
+
+## A3 Talent Profile — shipped 2026-05-22
+- ✅ `ProfileEdit.tsx` rewritten: hydrates from `talent` on mount; renders all fields (about, basics, school, links, skills, experience, education, languages, achievements); CV upload + auto-parse; unsaved-changes confirm on Cancel; humanized copy; removed hardcoded `+880`/`BD`
+- ✅ `Profile.tsx` rebuilt: full read view (about, experience, education, skills, languages, achievements) with empty-state CTAs, contact strip (country/email/phone/LinkedIn/portfolio), AI rewrite dialog wired, humanized copy
+- ✅ `ProfileVerify.tsx` copy humanized (header, status labels, step CTAs)
+- ✅ `ProfileBuilder.tsx` copy/error path humanized; renamed `reportAnomalyToAdmin` → `logChatError`
+- ✅ `TalentPublicProfile.tsx` dropped broken `adminSupportAssistant` call (known edge contract drift); friendly error copy
+- ✅ Replaced `reportAnomaly` no-ops in Profile + ProfileEdit with `trackError` from `src/lib/errorTracking.ts`

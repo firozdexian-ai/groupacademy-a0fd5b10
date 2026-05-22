@@ -39,12 +39,11 @@ export default function ProfileBuilder() {
   const [sending, setSending] = useState(false);
   const scrollRef = useRef<HTMLDivElement>(null);
 
-  // Digital Workforce Anomaly Protocol — telemetry no-op.
-  // The legacy `ai-support-assistant` invoke here always failed server-side
-  // (body shape mismatch). Replace with a real telemetry sink later.
-  const reportAnomalyToAdmin = async (error: string, context: any) => {
-    console.warn(`[Digital Workforce Anomaly] ${error}`, context);
+  // Lightweight client-side error log; replace with a real telemetry sink later.
+  const logChatError = (error: string, context: any) => {
+    console.warn(`[ProfileBuilder] ${error}`, context);
   };
+
 
   useEffect(() => {
     scrollRef.current?.scrollTo({ top: scrollRef.current.scrollHeight, behavior: "smooth" });
@@ -109,8 +108,9 @@ export default function ProfileBuilder() {
 
       await refreshTalent();
     } catch (e: any) {
-      await reportAnomalyToAdmin("OnboardingChatError", { error: e.message, messages: nextMessages });
-      toast.error(e.message || "Something went wrong during onboarding.");
+      logChatError("OnboardingChatError", { error: e.message, messages: nextMessages });
+      toast.error(e.message || "Something went wrong — please try again.");
+
     } finally {
       setSending(false);
     }
