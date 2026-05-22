@@ -28,7 +28,7 @@ import { SkillsEditor } from "@/components/profile/SkillsEditor";
 import { CoverImageUpload } from "@/components/profile/CoverImageUpload";
 import { ExperienceEditor, ExperienceEntry } from "@/components/profile/ExperienceEditor";
 import { EducationEditor, EducationEntry } from "@/components/profile/EducationEditor";
-import { supabase } from "@/integrations/supabase/client";
+import { uploadPortfolioFile } from "@/domains/profile/repo/profileRepo";
 import { PhoneInput } from "@/components/ui/phone-input";
 import { cn } from "@/lib/utils";
 import { parseCv } from "@/domains/jobs/api/jobsApi";
