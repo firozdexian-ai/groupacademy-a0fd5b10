@@ -142,7 +142,7 @@ export function PersonalizedPromptCard() {
           // Automated Efficiency: Invalidate target balance keys across system layouts dynamically
           queryClient.invalidateQueries({ queryKey: ["credits-balance"] });
 
-          toast.success(`${prompt.title} service unlocked successfully`, { id: toastId });
+          toast.success(`${prompt.title} unlocked.`, { id: toastId });
           navigate(prompt.path);
         } else {
           throw new Error("Ecosystem credits execution function declined the wallet mutation request.");
