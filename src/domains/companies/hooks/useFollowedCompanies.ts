@@ -28,9 +28,7 @@ export function useFollowedCompanies() {
 
   const toggle = useMutation({
     mutationFn: async (company_name: string) => {
-      const {
-        data: { user },
-      } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
       if (!user) throw new Error("Please sign in to follow companies");
 
       const isCurrentlyFollowing = (list.data ?? []).includes(company_name);
