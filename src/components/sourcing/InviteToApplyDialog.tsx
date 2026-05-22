@@ -1,6 +1,6 @@
 import { useState, useEffect, useMemo, useRef } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { listJobsByCompanyAndStatus } from "@/domains/jobs/repo/jobsRepo";
 import { useInviteToApply } from "@/domains/jobs";
 import {
   Dialog,
