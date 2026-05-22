@@ -1,8 +1,7 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { useNavigate } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
-import { checkCvDuplicate } from "@/domains/profile/repo/profileRepo";
+import { checkCvDuplicate, uploadPortfolioFile } from "@/domains/profile/repo/profileRepo";
 import { Button } from "@/components/ui/button";
 import { useTalent } from "@/hooks/useTalent";
 import { computeCVFingerprint } from "@/lib/onboarding/cvFingerprint";
