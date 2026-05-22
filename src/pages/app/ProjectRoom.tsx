@@ -90,11 +90,10 @@ export default function ProjectRoom() {
   const submitMilestone = async (id: string) => {
     setSubmitting(true);
     try {
-      const { error } = await supabase.rpc("submit_milestone_deliverables", {
-        _milestone_id: id,
-        _payload: { note: submitNote, submitted_by: talent?.id },
+      await submitMilestoneDeliverables({
+        milestoneId: id,
+        payload: { note: submitNote, submitted_by: talent?.id },
       });
-      if (error) throw error;
       toast.success("Deliverables synchronized.");
       setSubmitNote("");
       load();
