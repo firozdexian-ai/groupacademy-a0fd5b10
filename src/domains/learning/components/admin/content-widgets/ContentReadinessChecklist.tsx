@@ -6,8 +6,7 @@ import { Badge } from "@/components/ui/badge";
 import { Tooltip, TooltipContent, TooltipProvider, TooltipTrigger } from "@/components/ui/tooltip";
 import { CheckCircle2, AlertTriangle, XCircle, RefreshCw, Zap, ChevronRight } from "lucide-react";
 import { cn } from "@/lib/utils";
-import { supabase } from "@/integrations/supabase/client";
-import { setContentPublished } from "@/domains/learning/repo/learningRepo";
+import { setContentPublished, recomputeContentReadiness } from "@/domains/learning/repo/learningRepo";
 import { toast } from "sonner";
 
 import {
