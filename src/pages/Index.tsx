@@ -8,7 +8,7 @@ import { useAccountType } from "@/hooks/useAccountType";
 import { getDefaultRouteFor } from "@/lib/postAuthRoute";
 import { usePWADetect } from "@/hooks/usePWADetect";
 import { useTheme } from "next-themes";
-import { supabase } from "@/integrations/supabase/client";
+import { listLatestPublishedBlogPostsLite } from "@/domains/marketing/repo/marketingRepo";
 import logoIcon from "@/assets/logo-icon.png";
 import logoLight from "@/assets/logo-horizontal-light.png";
 import logoDark from "@/assets/logo-horizontal-dark.png";
