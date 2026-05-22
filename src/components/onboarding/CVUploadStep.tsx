@@ -194,10 +194,16 @@ export function CVUploadStep({ onContinue, onSkip }: CVUploadStepProps) {
         if (computedStringFingerprint) {
           finalUpdatePayloadMap.cvFingerprint = computedStringFingerprint;
 
-          const { data: rpcDuplicateCheckResult, error: rpcError } = await supabase.rpc("check_cv_duplicate", {
-            _fingerprint: computedStringFingerprint,
-            _self_user_id: talent.userId,
-          });
+          let rpcDuplicateCheckResult: any = null;
+          let rpcError: any = null;
+          try {
+            rpcDuplicateCheckResult = await checkCvDuplicate({
+              fingerprint: computedStringFingerprint,
+              selfUserId: talent.userId,
+            });
+          } catch (e) {
+            rpcError = e;
+          }
 
           if (!rpcError) {
             const singularDuplicateRowNode = Array.isArray(rpcDuplicateCheckResult)
