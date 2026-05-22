@@ -165,11 +165,10 @@ export default function AbroadCounsellor() {
       applicationIdStr: string;
       targetNextStageKey: Stage;
     }) => {
-      const { error: rpcExecutionHandshakeError } = await supabase.rpc("advance_abroad_stage", {
-        _application_id: applicationIdStr,
-        _next_stage: targetNextStageKey,
+      await advanceAbroadStage({
+        applicationId: applicationIdStr,
+        nextStage: targetNextStageKey,
       });
-      if (rpcExecutionHandshakeError) throw rpcExecutionHandshakeError;
     },
     onSuccess: () => {
       toast.success("Classification state successfully advanced.");
