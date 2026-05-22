@@ -38,16 +38,7 @@ export default function PublicBlogPost() {
 
   const { data: post, isLoading } = useQuery({
     queryKey: ["public-blog-post", slug],
-    queryFn: async () => {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("*")
-        .eq("slug", slug)
-        .eq("status", "published")
-        .single();
-      if (error) throw error;
-      return data;
-    },
+    queryFn: () => getPublishedBlogPostBySlug(slug!),
     enabled: !!slug,
   });
 
