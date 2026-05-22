@@ -1,5 +1,5 @@
 import { useEffect, useState, useCallback } from "react";
-import { useNavigate, useLocation } from "react-router-dom";
+import { useNavigate } from "react-router-dom";
 import {
   ArrowLeft,
   Loader2,
@@ -9,10 +9,7 @@ import {
   Upload,
   Plus,
   X,
-  ShieldCheck,
-  Zap,
-  Sparkles,
-  Settings,
+  Check,
 } from "lucide-react";
 import { Badge } from "@/components/ui/badge";
 import { useTalent } from "@/hooks/useTalent";
@@ -21,7 +18,6 @@ import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
-import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { toast } from "sonner";
 import { ProfilePhotoUpload } from "@/domains/profile/components/talent/ProfilePhotoUpload";
 import { SkillsEditor } from "@/domains/profile/components/talent/SkillsEditor";
@@ -30,10 +26,9 @@ import { ExperienceEditor, ExperienceEntry } from "@/domains/profile/components/
 import { EducationEditor, EducationEntry } from "@/domains/profile/components/talent/EducationEditor";
 import { uploadPortfolioFile } from "@/domains/profile/repo/profileRepo";
 import { PhoneInput } from "@/components/ui/phone-input";
-import { cn } from "@/lib/utils";
 import { parseCv } from "@/domains/jobs/api/jobsApi";
+import { trackError } from "@/lib/errorTracking";
 
-// Production Data Contracts[cite: 8]
 interface LanguageEntry {
   language: string;
   proficiency: string;
@@ -44,9 +39,10 @@ interface AchievementEntry {
   date: string;
 }
 
+const PROFICIENCY_OPTIONS = ["Beginner", "Intermediate", "Advanced", "Fluent", "Native"];
+
 export default function ProfileEdit() {
   const navigate = useNavigate();
-  const location = useLocation();
   const { talent, updateTalent, refreshTalent } = useTalent();
 
   const [saving, setSaving] = useState(false);
@@ -61,8 +57,8 @@ export default function ProfileEdit() {
   const [formData, setFormData] = useState({
     fullName: "",
     phone: "",
-    countryCode: "+880",
-    country: "BD",
+    countryCode: "",
+    country: "",
     customProfession: "",
     currentStatus: "",
     institution: "",
@@ -77,15 +73,43 @@ export default function ProfileEdit() {
   const [languages, setLanguages] = useState<LanguageEntry[]>([]);
   const [achievements, setAchievements] = useState<AchievementEntry[]>([]);
 
-  // Digital Workforce Anomaly Reporting — telemetry no-op.
-  // The legacy `ai-support-assistant` invoke here always failed server-side
-  // (body shape mismatch). Replace with a real telemetry sink later.
-  const reportAnomaly = async (event: string, context: any) => {
-    console.warn(`[Digital Workforce Anomaly] ${event}`, context);
-  };
+  // Hydrate from talent once it loads.
+  useEffect(() => {
+    if (!talent) return;
+    setProfilePhotoUrl(talent.profilePhotoUrl ?? "");
+    setCoverImageUrl(talent.coverImageUrl ?? "");
+    setCvUrl(talent.cvUrl ?? "");
+    setFormData({
+      fullName: talent.fullName ?? "",
+      phone: talent.phone ?? "",
+      countryCode: talent.countryCode ?? "",
+      country: talent.country ?? "",
+      customProfession: talent.customProfession ?? "",
+      currentStatus: talent.currentStatus ?? "",
+      institution: talent.institution ?? "",
+      fieldOfStudy: talent.fieldOfStudy ?? "",
+      linkedinUrl: talent.linkedinUrl ?? "",
+      portfolioUrl: talent.portfolioUrl ?? "",
+    });
+    setSkills(
+      Array.isArray(talent.skills)
+        ? talent.skills.map((s: any) => (typeof s === "string" ? s : s?.name ?? "")).filter(Boolean)
+        : [],
+    );
+    setExperience(Array.isArray(talent.experience) ? (talent.experience as any) : []);
+    setEducation(Array.isArray(talent.education) ? (talent.education as any) : []);
+    setLanguages(Array.isArray(talent.languages) ? (talent.languages as any) : []);
+    setAchievements(Array.isArray(talent.achievements) ? (talent.achievements as any) : []);
+    setIsDirty(false);
+  }, [talent]);
 
   const handleChange = useCallback((field: string, value: string) => {
     setFormData((prev) => ({ ...prev, [field]: value }));
+    setIsDirty(true);
+  }, []);
+
+  const markDirty = useCallback(<T,>(setter: (v: T) => void) => (v: T) => {
+    setter(v);
     setIsDirty(true);
   }, []);
 
@@ -98,23 +122,26 @@ export default function ProfileEdit() {
       const fileName = `${talent.id}/cv-${Date.now()}.${file.name.split(".").pop()}`;
       const { publicUrl } = await uploadPortfolioFile(fileName, file, { upsert: true });
       setCvUrl(publicUrl);
+      setIsDirty(true);
       setParsingCV(true);
 
       const parseResult: any = await parseCv({ cvUrl: publicUrl });
 
       if (parseResult?.success) {
-        const parsed = parseResult.parsed;
+        const parsed = parseResult.parsed ?? {};
         setFormData((prev) => ({
           ...prev,
           fullName: parsed.full_name || prev.fullName,
           phone: parsed.phone || prev.phone,
         }));
-        await updateTalent({ cvUrl: publicUrl, cvParsedAt: new Date().toISOString() });
-        toast.success("CV artifacts integrated.");
+        await updateTalent({ cvUrl: publicUrl, cvParsedAt: new Date().toISOString() } as any);
+        toast.success("We pulled your info from the CV.");
+      } else {
+        toast.success("CV uploaded.");
       }
     } catch (error) {
-      await reportAnomaly("CVParseFailure", { error });
-      toast.error("Extraction error. Admin alerted.");
+      trackError(error, { area: "ProfileEdit.handleCVUpload" });
+      toast.error("Couldn't read that CV — try a different file.");
     } finally {
       setUploadingCV(false);
       setParsingCV(false);
@@ -130,7 +157,7 @@ export default function ProfileEdit() {
         profilePhotoUrl,
         coverImageUrl,
         cvUrl,
-        skills: skills as any,
+        skills: skills.map((name) => ({ name })) as any,
         experience: experience as any,
         education: education as any,
         languages,
@@ -138,146 +165,406 @@ export default function ProfileEdit() {
       });
       await refreshTalent();
       setIsDirty(false);
-      toast.success("Identity Ledger Synchronized.");
+      toast.success("Profile saved.");
       navigate("/app/profile");
     } catch (error) {
-      await reportAnomaly("ProfileSyncFailure", { error });
-      toast.error("Sync failed. Check integrity constraints.");
+      trackError(error, { area: "ProfileEdit.handleSubmit" });
+      toast.error("Couldn't save — please try again.");
     } finally {
       setSaving(false);
     }
   };
 
+  const handleCancel = () => {
+    if (isDirty && !window.confirm("You have unsaved changes. Discard them?")) return;
+    navigate("/app/profile");
+  };
+
   if (!talent) return null;
 
   return (
-    <div className="max-w-3xl mx-auto px-6 py-10 pb-40 space-y-10 animate-in fade-in duration-700">
+    <div className="max-w-3xl mx-auto px-6 py-10 pb-40 space-y-8 animate-in fade-in duration-300">
       {isDirty && (
         <div className="fixed top-20 right-6 z-50">
-          <Badge variant="destructive" className="animate-pulse shadow-2xl">
-            Pending Sync
+          <Badge variant="secondary" className="shadow-lg">
+            Unsaved changes
           </Badge>
         </div>
       )}
 
-      <header className="flex items-center justify-between">
-        <div className="flex items-center gap-5">
-          <Button variant="ghost" size="icon" className="h-11 w-11" onClick={() => navigate("/app/profile")}>
-            <ArrowLeft className="h-5 w-5 text-primary" />
-          </Button>
-          <div className="space-y-0.5">
-            <h1 className="text-xl font-bold">Edit profile</h1>
-            <p className="text-xs text-muted-foreground">Keep your identity parameters updated.</p>
-          </div>
+      <header className="flex items-center gap-4">
+        <Button variant="ghost" size="icon" className="h-10 w-10" onClick={handleCancel}>
+          <ArrowLeft className="h-5 w-5" />
+        </Button>
+        <div>
+          <h1 className="text-xl font-bold">Edit profile</h1>
+          <p className="text-xs text-muted-foreground">Keep your details up to date.</p>
         </div>
       </header>
 
-      <form onSubmit={handleSubmit} className="space-y-8">
-        {/* Profile Header Fields[cite: 8] */}
-        <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
-          <Card className="rounded-[32px] border-2 border-border/40">
+      <form onSubmit={handleSubmit} className="space-y-6">
+        {/* Photos */}
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-[11px] font-black uppercase text-primary">Identity Frame</CardTitle>
+              <CardTitle className="text-sm">Profile photo</CardTitle>
             </CardHeader>
             <CardContent>
               <ProfilePhotoUpload
                 currentPhotoUrl={profilePhotoUrl}
                 fullName={formData.fullName}
-                onPhotoChange={setProfilePhotoUrl}
+                onPhotoChange={markDirty(setProfilePhotoUrl)}
               />
             </CardContent>
           </Card>
-          <Card className="rounded-[32px] border-2 border-border/40">
+          <Card>
             <CardHeader>
-              <CardTitle className="text-[11px] font-black uppercase text-primary">Environmental Banner</CardTitle>
+              <CardTitle className="text-sm">Cover image</CardTitle>
             </CardHeader>
             <CardContent>
-              <CoverImageUpload currentUrl={coverImageUrl} onImageChange={setCoverImageUrl} />
+              <CoverImageUpload currentUrl={coverImageUrl} onImageChange={markDirty(setCoverImageUrl)} />
             </CardContent>
           </Card>
         </div>
 
-        {/* CV Ingestion Logic[cite: 4] */}
-        <Card className="rounded-[32px] border-2 border-primary/20 bg-primary/5">
+        {/* CV */}
+        <Card>
           <CardHeader>
-            <CardTitle className="text-[11px] font-black uppercase text-primary flex items-center gap-3">
-              <Zap className="h-4 w-4" /> Logic Artifact Ingestion (CV)
-            </CardTitle>
+            <CardTitle className="text-sm">Your CV</CardTitle>
           </CardHeader>
           <CardContent>
             {cvUrl ? (
-              <div className="flex items-center justify-between p-6 bg-background rounded-2xl border">
-                <div className="flex items-center gap-5">
-                  <FileText className="h-8 w-8 text-primary" />
+              <div className="flex items-center justify-between p-4 bg-muted/40 rounded-xl border">
+                <div className="flex items-center gap-3">
+                  <FileText className="h-6 w-6 text-primary" />
                   <div>
-                    <p className="font-black text-sm italic">Active List Artifact</p>
-                    <p className="text-[9px] uppercase text-muted-foreground">Verified Payload</p>
+                    <p className="font-medium text-sm">CV uploaded</p>
+                    <p className="text-xs text-muted-foreground">
+                      {parsingCV ? "Reading your CV…" : "We'll use this for applications."}
+                    </p>
                   </div>
                 </div>
-                <div className="flex gap-2">
-                  <Button variant="ghost" size="icon" onClick={() => window.open(cvUrl, "_blank")}>
+                <div className="flex gap-1">
+                  <Button type="button" variant="ghost" size="icon" onClick={() => window.open(cvUrl, "_blank")}>
                     <ExternalLink className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" className="text-destructive" onClick={() => setCvUrl("")}>
+                  <Button
+                    type="button"
+                    variant="ghost"
+                    size="icon"
+                    className="text-destructive"
+                    onClick={() => {
+                      setCvUrl("");
+                      setIsDirty(true);
+                    }}
+                  >
                     <Trash2 className="h-4 w-4" />
                   </Button>
                 </div>
               </div>
             ) : (
-              <div className="border-4 border-dashed rounded-[32px] p-10 cursor-pointer text-center relative">
+              <label className="block border-2 border-dashed rounded-xl p-8 cursor-pointer text-center hover:bg-muted/30 transition relative">
                 <Input
                   type="file"
                   accept=".pdf,.doc,.docx"
                   onChange={handleCVUpload}
-                  className="absolute inset-0 opacity-0 z-10 cursor-pointer"
+                  disabled={uploadingCV}
+                  className="absolute inset-0 opacity-0 cursor-pointer"
                 />
-                <Upload className="h-8 w-8 mx-auto text-muted-foreground mb-4" />
-                <p className="text-sm font-black uppercase">Authorize CV Ingestion</p>
-              </div>
+                {uploadingCV ? (
+                  <Loader2 className="h-6 w-6 mx-auto text-muted-foreground mb-2 animate-spin" />
+                ) : (
+                  <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-2" />
+                )}
+                <p className="text-sm font-medium">Upload your CV</p>
+                <p className="text-xs text-muted-foreground mt-1">PDF or Word — we'll auto-fill your profile</p>
+              </label>
             )}
           </CardContent>
         </Card>
 
-        {/* Form Sections */}
-        <div className="space-y-8">
-          <Card className="rounded-[32px] border-2 border-border/40 p-8 space-y-8">
-            {/* Identity Params */}
-            <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-              <div className="space-y-2">
-                <Label>Entity Name</Label>
-                <Input value={formData.fullName} onChange={(e) => handleChange("fullName", e.target.value)} />
+        {/* Basics */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">About you</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+              <div className="space-y-1.5">
+                <Label htmlFor="fullName">Full name</Label>
+                <Input
+                  id="fullName"
+                  value={formData.fullName}
+                  onChange={(e) => handleChange("fullName", e.target.value)}
+                />
               </div>
-              <div className="space-y-2">
+              <div className="space-y-1.5">
                 <Label>Phone</Label>
                 <PhoneInput
                   value={formData.phone}
-                  countryCode={formData.countryCode}
+                  countryCode={formData.countryCode || "US"}
                   onValueChange={(v) => handleChange("phone", v)}
                   onCountryCodeChange={(c, ct) => {
                     handleChange("countryCode", c);
-                    handleChange("country", ct);
+                    if (ct) handleChange("country", ct);
                   }}
                 />
               </div>
             </div>
-            {/* Add logic fields here... */}
-          </Card>
-        </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="customProfession">Your role / title</Label>
+              <Input
+                id="customProfession"
+                placeholder="e.g. Product Designer"
+                value={formData.customProfession}
+                onChange={(e) => handleChange("customProfession", e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="currentStatus">Short bio</Label>
+              <Textarea
+                id="currentStatus"
+                rows={4}
+                placeholder="A line or two about what you do and what you're looking for."
+                value={formData.currentStatus}
+                onChange={(e) => handleChange("currentStatus", e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
 
-        {/* Footer Sync Button[cite: 6] */}
-        <div className="fixed bottom-0 left-0 right-0 p-8 bg-background/80 backdrop-blur-2xl border-t border-border z-50">
-          <div className="max-w-2xl mx-auto flex gap-6">
+        {/* Education quick fields */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Current school (optional)</CardTitle>
+          </CardHeader>
+          <CardContent className="grid grid-cols-1 md:grid-cols-2 gap-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="institution">University / institution</Label>
+              <Input
+                id="institution"
+                value={formData.institution}
+                onChange={(e) => handleChange("institution", e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="fieldOfStudy">Field of study</Label>
+              <Input
+                id="fieldOfStudy"
+                value={formData.fieldOfStudy}
+                onChange={(e) => handleChange("fieldOfStudy", e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Links */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Links</CardTitle>
+          </CardHeader>
+          <CardContent className="space-y-4">
+            <div className="space-y-1.5">
+              <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
+              <Input
+                id="linkedinUrl"
+                placeholder="https://linkedin.com/in/…"
+                value={formData.linkedinUrl}
+                onChange={(e) => handleChange("linkedinUrl", e.target.value)}
+              />
+            </div>
+            <div className="space-y-1.5">
+              <Label htmlFor="portfolioUrl">Portfolio / website</Label>
+              <Input
+                id="portfolioUrl"
+                placeholder="https://…"
+                value={formData.portfolioUrl}
+                onChange={(e) => handleChange("portfolioUrl", e.target.value)}
+              />
+            </div>
+          </CardContent>
+        </Card>
+
+        {/* Skills */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Skills</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <SkillsEditor skills={skills} onChange={markDirty(setSkills)} />
+          </CardContent>
+        </Card>
+
+        {/* Experience */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Work experience</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <ExperienceEditor experience={experience} onChange={markDirty(setExperience)} />
+          </CardContent>
+        </Card>
+
+        {/* Education list */}
+        <Card>
+          <CardHeader>
+            <CardTitle className="text-sm">Education history</CardTitle>
+          </CardHeader>
+          <CardContent>
+            <EducationEditor education={education} onChange={markDirty(setEducation)} />
+          </CardContent>
+        </Card>
+
+        {/* Languages */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-sm">Languages</CardTitle>
             <Button
               type="button"
+              size="sm"
               variant="outline"
-              className="rounded-[20px] h-14 px-8"
-              onClick={() => navigate("/app/profile")}
+              onClick={() => {
+                setLanguages([...languages, { language: "", proficiency: "Intermediate" }]);
+                setIsDirty(true);
+              }}
             >
-              Discard
+              <Plus className="h-4 w-4 mr-1" /> Add
             </Button>
-            <Button type="submit" className="flex-1 h-14 rounded-[20px]" disabled={saving}>
-              {saving ? <Loader2 className="h-5 w-5 animate-spin" /> : <ShieldCheck className="h-5 w-5 mr-3" />}
-              {saving ? "Syncing..." : "Finalize Sync"}
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {languages.length === 0 && (
+              <p className="text-sm text-muted-foreground">No languages added yet.</p>
+            )}
+            {languages.map((l, idx) => (
+              <div key={idx} className="flex gap-2 items-start">
+                <Input
+                  placeholder="Language (e.g. English)"
+                  value={l.language}
+                  onChange={(e) => {
+                    const next = [...languages];
+                    next[idx] = { ...next[idx], language: e.target.value };
+                    setLanguages(next);
+                    setIsDirty(true);
+                  }}
+                />
+                <select
+                  value={l.proficiency}
+                  onChange={(e) => {
+                    const next = [...languages];
+                    next[idx] = { ...next[idx], proficiency: e.target.value };
+                    setLanguages(next);
+                    setIsDirty(true);
+                  }}
+                  className="h-10 px-3 rounded-md border border-input bg-background text-sm"
+                >
+                  {PROFICIENCY_OPTIONS.map((p) => (
+                    <option key={p} value={p}>
+                      {p}
+                    </option>
+                  ))}
+                </select>
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="text-destructive"
+                  onClick={() => {
+                    setLanguages(languages.filter((_, i) => i !== idx));
+                    setIsDirty(true);
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Achievements */}
+        <Card>
+          <CardHeader className="flex flex-row items-center justify-between">
+            <CardTitle className="text-sm">Achievements & certifications</CardTitle>
+            <Button
+              type="button"
+              size="sm"
+              variant="outline"
+              onClick={() => {
+                setAchievements([...achievements, { title: "", issuer: "", date: "" }]);
+                setIsDirty(true);
+              }}
+            >
+              <Plus className="h-4 w-4 mr-1" /> Add
+            </Button>
+          </CardHeader>
+          <CardContent className="space-y-3">
+            {achievements.length === 0 && (
+              <p className="text-sm text-muted-foreground">No achievements added yet.</p>
+            )}
+            {achievements.map((a, idx) => (
+              <div key={idx} className="grid grid-cols-1 md:grid-cols-[1fr_1fr_140px_auto] gap-2 items-start">
+                <Input
+                  placeholder="Title"
+                  value={a.title}
+                  onChange={(e) => {
+                    const next = [...achievements];
+                    next[idx] = { ...next[idx], title: e.target.value };
+                    setAchievements(next);
+                    setIsDirty(true);
+                  }}
+                />
+                <Input
+                  placeholder="Issuer"
+                  value={a.issuer}
+                  onChange={(e) => {
+                    const next = [...achievements];
+                    next[idx] = { ...next[idx], issuer: e.target.value };
+                    setAchievements(next);
+                    setIsDirty(true);
+                  }}
+                />
+                <Input
+                  type="month"
+                  value={a.date}
+                  onChange={(e) => {
+                    const next = [...achievements];
+                    next[idx] = { ...next[idx], date: e.target.value };
+                    setAchievements(next);
+                    setIsDirty(true);
+                  }}
+                />
+                <Button
+                  type="button"
+                  size="icon"
+                  variant="ghost"
+                  className="text-destructive"
+                  onClick={() => {
+                    setAchievements(achievements.filter((_, i) => i !== idx));
+                    setIsDirty(true);
+                  }}
+                >
+                  <X className="h-4 w-4" />
+                </Button>
+              </div>
+            ))}
+          </CardContent>
+        </Card>
+
+        {/* Sticky save bar */}
+        <div className="fixed bottom-0 left-0 right-0 p-4 bg-background/90 backdrop-blur-xl border-t border-border z-40">
+          <div className="max-w-3xl mx-auto flex gap-3">
+            <Button type="button" variant="outline" className="flex-1 sm:flex-none" onClick={handleCancel}>
+              Cancel
+            </Button>
+            <Button type="submit" className="flex-1" disabled={saving}>
+              {saving ? (
+                <>
+                  <Loader2 className="h-4 w-4 animate-spin mr-2" /> Saving…
+                </>
+              ) : (
+                <>
+                  <Check className="h-4 w-4 mr-2" /> Save changes
+                </>
+              )}
             </Button>
           </div>
         </div>
