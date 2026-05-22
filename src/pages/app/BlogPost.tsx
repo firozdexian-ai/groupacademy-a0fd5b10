@@ -52,16 +52,7 @@ export default function BlogPost() {
   const { data: blogPostQueryPayload, isLoading: isPostCacheResolving } = useQuery({
     queryKey: ["app-blog-article-detail-node", unverifiedPostSlugStr],
     queryFn: async (): Promise<BlogPostPayload> => {
-      const { data: dbPostPayload, error: queryHandshakeError } = await supabase
-        .from("blog_posts")
-        .select(
-          "id, title, slug, content, excerpt, category, tags, featured_image, author_name, published_at, reading_time_mins, views, external_url, status",
-        )
-        .eq("slug", unverifiedPostSlugStr!)
-        .eq("status", "published")
-        .maybeSingle();
-
-      if (queryHandshakeError) throw queryHandshakeError;
+      const dbPostPayload = await getPublishedBlogPostDetailBySlug(unverifiedPostSlugStr!);
       if (!dbPostPayload) throw new Error("Target article metrics map unassigned.");
       return dbPostPayload as unknown as BlogPostPayload;
     },
