@@ -125,13 +125,13 @@ export function WhyYouMatchPanel({ verifiedMatch }: WhyYouMatchPanelProps) {
           </div>
         )}
 
-        {/* HUD LEVEL 4: TALENT REVISION DISPARITY MARKERS GAP LOOP */}
+        {/* Skill gaps */}
         {gaps.length > 0 && (
           <div className="space-y-1.5 pt-1.5 border-t border-emerald-500/10 w-full text-left">
             <div className="flex items-center gap-1.5 select-none leading-none pl-0.5">
               <TrendingDown className="h-3.5 w-3.5 text-amber-500 shrink-0 stroke-[2.2]" />
               <p className="text-[9px] font-bold uppercase tracking-wider text-muted-foreground/80">
-                Strategic Skill Revision Gaps
+                Skills to practice
               </p>
             </div>
 
