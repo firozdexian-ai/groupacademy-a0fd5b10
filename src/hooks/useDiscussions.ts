@@ -60,17 +60,9 @@ export function useDiscussionThreads(cohortId?: string) {
 
   useEffect(() => {
     if (!cohortId) return;
-
-    const ch = supabase
-      .channel(`public:threads:${cohortId}`)
-      .on("postgres_changes", { event: "*", schema: "public", table: "discussion_posts" }, () => {
-        void qc.invalidateQueries({ queryKey: ["threads", cohortId] });
-      })
-      .subscribe();
-
-    return () => {
-      void supabase.removeChannel(ch);
-    };
+    return subscribeDiscussionPostsForCohort(cohortId, () => {
+      void qc.invalidateQueries({ queryKey: ["threads", cohortId] });
+    });
   }, [cohortId, qc]);
 
   return useQuery({
