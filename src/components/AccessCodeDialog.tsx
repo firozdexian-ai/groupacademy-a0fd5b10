@@ -1,6 +1,6 @@
 import { useState, useEffect, useRef, useMemo } from "react";
 import { useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { incrementAccessCodeUse, incrementContentEnrollment } from "@/domains/learning/repo/learningRepo";
 import {
   getActiveAccessCode,
