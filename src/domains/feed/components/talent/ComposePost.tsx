@@ -34,12 +34,10 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const textareaRef = useRef<HTMLTextAreaElement>(null);
 
-  // Maintain profile state logging boundaries under Automated Efficiency protocols
   useEffect(() => {
     if (talent?.id) {
-      trackEvent("ComposePost:active_editor_session_initialized", {
+      trackEvent("feed_compose_opened", {
         talentId: talent.id,
-        professionTier: talent.customProfession || "unassigned",
       });
     }
   }, [talent]);
