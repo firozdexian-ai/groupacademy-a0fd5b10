@@ -344,9 +344,15 @@ export default function PublicJobDetail() {
             {format(new Date(job.deadline), "MMM d")}
           </span>
         )}
-        <Button className="flex-1" size="lg" onClick={goAuthThenApply}>
-          Apply now
-        </Button>
+        <div className="flex-1">
+          <JobApplyCTA
+            job={job}
+            authMode="public"
+            deadlinePassed={deadlineDays != null && deadlineDays < 0}
+            size="lg"
+            className="w-full justify-center"
+          />
+        </div>
       </div>
 
       <Footer />
