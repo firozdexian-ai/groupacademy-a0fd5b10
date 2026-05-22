@@ -87,12 +87,12 @@ export function useRecordToolRun() {
 
   return useMutation({
     mutationFn: async (opts: RecordToolRunInput): Promise<void> => {
-      const { data: userRes, error: authError } = await supabase.auth.getUser();
-      if (authError || !userRes.user) throw new Error("Authentication session required.");
+      const user = await getCurrentUser();
+      if (!user) throw new Error("Authentication session required.");
 
       try {
         await insertToolRun({
-          user_id: userRes.user.id,
+          user_id: user.id,
           tool_key: opts.toolKey,
           cost_credits: opts.costCredits,
           payload: opts.payload ?? {},
