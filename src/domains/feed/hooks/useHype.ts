@@ -1,5 +1,5 @@
 import { useEffect, useRef, useState, useCallback } from "react";
-import { feedApi } from "@/domains/feed/api/manifest";
+import { hypeContent as rpcHypeContent } from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useToast } from "@/hooks/use-toast";
 import { useQueryClient } from "@tanstack/react-query";
