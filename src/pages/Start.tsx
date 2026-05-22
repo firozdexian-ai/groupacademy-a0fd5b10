@@ -4,19 +4,20 @@ import { Loader2 } from "lucide-react";
 import { OnboardingWizard } from "@/components/onboarding/OnboardingWizard";
 import { useAuth } from "@/hooks/useAuth";
 import { useAccountType } from "@/hooks/useAccountType";
+import { resolvePostAuthRoute, getDefaultRouteFor } from "@/lib/postAuthRoute";
 
 /**
  * Public pre-auth onboarding entry point.
  *
  * Flow:
- *   1) Visitor picks country → stage → university → profession.
+ *   1) Visitor picks country → stage → university → field.
  *   2) OnboardingWizard (in preAuth mode) stashes the selection to
  *      sessionStorage as `pending_onboarding`.
  *   3) We route them to /auth — after Google or email sign-up,
  *      AuthCallback / AccountUpgradeModal will pick the stash up and
  *      apply it to their talents row.
  *
- * Already-signed-in users skip straight to /app/feed (or their default).
+ * Already-signed-in users skip straight to their account-type default.
  */
 export default function Start() {
   const navigate = useNavigate();
@@ -30,16 +31,20 @@ export default function Start() {
     if (authLoading || accountTypeLoading) return;
     if (user) {
       const returnTo = searchParams.get("returnTo");
-      navigate(returnTo || "/app/feed", { replace: true });
+      const target = resolvePostAuthRoute(accountType, returnTo) ?? "/app/feed";
+      navigate(target, { replace: true });
     }
   }, [user, authLoading, accountType, accountTypeLoading, navigate, searchParams]);
 
-  // After the wizard stashes selections, jump to /auth with returnTo=/app/feed
-  // so the existing post-auth route + AuthCallback finalize step takes over.
+  // After the wizard stashes selections, jump to /auth with an account-type-aware
+  // returnTo so the existing post-auth route + AuthCallback finalize step takes over.
   useEffect(() => {
     if (done) {
       const qs = new URLSearchParams(searchParams);
-      if (!qs.get("returnTo")) qs.set("returnTo", "/app/feed");
+      if (!qs.get("returnTo")) {
+        // Pre-auth visitors are talents by default; admins/companies don't go through Start.
+        qs.set("returnTo", getDefaultRouteFor("talent"));
+      }
       navigate(`/auth?${qs.toString()}`, { replace: true });
     }
   }, [done, navigate, searchParams]);
