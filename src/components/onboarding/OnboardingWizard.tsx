@@ -10,6 +10,7 @@ import {
   ChevronsUpDown,
   GraduationCap,
   Loader2,
+  LogOut,
   MapPin,
   Sparkles,
   Zap,
@@ -38,6 +39,7 @@ import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
 import { agentRuntime } from "@/domains/agents/api/agentsApi";
+import { useAuth } from "@/hooks/useAuth";
 
 type Country = { id: string; iso2: string; name: string };
 type Stage = { id: string; name: string; slug: string; academy_id: string | null };
@@ -80,6 +82,7 @@ export function OnboardingWizard({
 }) {
   const [searchParams] = useSearchParams();
   const queryClient = useQueryClient();
+  const { signOut } = useAuth();
   const funnelParamsRef = useRef<FunnelParams>({});
 
   // Guard against state writes after unmount during in-flight async work.
