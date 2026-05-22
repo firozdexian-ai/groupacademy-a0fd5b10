@@ -26,9 +26,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 /**
- * GroUp Academy: Corporate Topology Node (CompanyCard)
- * CTO Reference: Authoritative interface component organizing organization tracking and hiring analytics.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * CompanyCard — directory card for an employer with active jobs + follow toggle.
  */
 export function CompanyCard({ company, isFollowing, onToggleFollow, onClick }: Props) {
   const queryClient = useQueryClient();
@@ -145,8 +143,8 @@ export function CompanyCard({ company, isFollowing, onToggleFollow, onClick }: P
             onClick={handleFollowRelationshipToggle}
             aria-label={
               isFollowing
-                ? `Stop tracking updates from ${company.company_name}`
-                : `Track ecosystem career updates from ${company.company_name}`
+                ? `Unfollow ${company.company_name}`
+                : `Follow ${company.company_name}`
             }
           >
             <Heart
