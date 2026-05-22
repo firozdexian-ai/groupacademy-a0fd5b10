@@ -110,8 +110,8 @@ export function RecommendedBiddersPanel({ gigId, gigKind = "marketplace" }: Prop
   // 4. Hardened Shortlist Selection Mutation Pipeline
   const shortlist = useMutation({
     mutationFn: async (matchId: string) => {
-      const { error } = await supabase.rpc("shortlist_match", { _match_id: matchId });
-      if (error) throw error;
+      await shortlistMatch(matchId);
+
     },
     onMutate: (matchId) => {
       trackEvent("recommended_bidders_shortlist_requested", { matchId, gigId });
