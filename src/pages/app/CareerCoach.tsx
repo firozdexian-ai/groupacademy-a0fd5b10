@@ -20,9 +20,6 @@ interface CoachInstructor {
   avatar_url: string | null;
 }
 
-interface TalentCoachBindingRecord {
-  career_coach_instructor_id: string | null;
-}
 
 interface StarterChipConfig {
   label: string;
