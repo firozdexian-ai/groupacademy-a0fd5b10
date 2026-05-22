@@ -176,8 +176,7 @@ export function GigUploader({
     onChange(value.filter((f) => f.path !== path));
 
     try {
-      const { error } = await supabase.storage.from("gig-submissions").remove([path]);
-      if (error) throw error;
+      await removeGigSubmissions([path]);
     } catch (err: any) {
       // Best-effort delete; ignore errors as admin can still clear downstream via service role hooks
       trackError(err, {
