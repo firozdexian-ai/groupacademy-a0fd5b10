@@ -1,5 +1,5 @@
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { feedApi } from "@/domains/feed/api/manifest";
+import { getFeedEngagement } from "@/domains/feed/repo/feedRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { useMemo } from "react";
 
