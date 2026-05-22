@@ -72,19 +72,12 @@ export default function PortfolioStatus() {
 
     setIsLoading(true);
     try {
-      const { data, error } = await withTimeout(
-        Promise.resolve(
-          supabase
-            .from("portfolio_requests")
-            .select("*")
-            .eq("email", email.trim().toLowerCase())
-            .order("created_at", { ascending: false }),
-        ),
+      const data = await withTimeout(
+        listPortfolioRequestsByEmailFull(email),
         TIMEOUTS.DEFAULT,
         "Search sequence timed out.",
       );
 
-      if (error) throw error;
       setRequests((data || []) as any);
 
       if (!data?.length) {
