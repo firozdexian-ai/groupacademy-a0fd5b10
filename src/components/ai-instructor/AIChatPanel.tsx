@@ -7,7 +7,7 @@ import { Send, Bot, Loader2, Sparkles, RefreshCw, Zap, ShieldCheck, X } from "lu
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
-import { supabase } from "@/integrations/supabase/client";
+import { getAccessToken } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { useTutorMasteryContext } from "@/domains/learning";
 
