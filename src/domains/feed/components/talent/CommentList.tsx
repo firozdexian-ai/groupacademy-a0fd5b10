@@ -137,7 +137,7 @@ export function CommentList({ postId }: CommentListProps) {
     // Execute atomic RPC credit deduction with server-side balance checks
     let error: any = null;
     try {
-      await feedApi.tipComment({ _comment_id: commentId, _amount: amount } as any);
+      await tipComment({ _comment_id: commentId, _amount: amount });
     } catch (e) {
       error = e;
     }
