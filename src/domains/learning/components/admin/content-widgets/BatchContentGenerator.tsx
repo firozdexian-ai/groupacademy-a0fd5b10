@@ -1,5 +1,5 @@
 import { useState, useRef, useCallback, useEffect } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentSession } from "@/lib/auth";
 import {
   listSchoolsLite,
   listProgramsBySchool,
@@ -274,9 +274,7 @@ export function BatchContentGenerator() {
 
   const runBatchSequence = async () => {
     if (generator.needsSchool && !selectedSchool) return toast.error("Logic Error: School node not selected");
-    const {
-      data: { session },
-    } = await supabase.auth.getSession();
+    const session = await getCurrentSession();
     if (!session) return toast.error("Auth Handshake Failed");
 
     setIsRunning(true);

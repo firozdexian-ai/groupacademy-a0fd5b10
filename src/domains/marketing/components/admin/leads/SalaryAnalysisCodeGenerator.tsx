@@ -9,7 +9,7 @@ import {
   DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { insertSalaryAnalysisAccessCode } from "@/domains/marketing/repo/marketingRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -47,9 +47,8 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
     setIsGenerating(true);
     try {
       // 1. Authenticated Identity Audit
-      const authResponse = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "Authentication check timed out");
+      const user = await withTimeout(getCurrentUser(), TIMEOUTS.AUTH, "Authentication check timed out");
 
-      const user = authResponse?.data?.user;
       if (!user) {
         toast.error("Security Fault: Unauthorized access attempt.");
         return;
