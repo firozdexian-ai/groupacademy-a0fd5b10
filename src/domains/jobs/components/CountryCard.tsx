@@ -34,9 +34,7 @@ interface Props {
 }
 
 /**
- * GroUp Academy: Spatial Market Telemetry Node (CountryCard)
- * CTO Reference: Authoritative interface for regional job density tracking and attribution analytics.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * CountryCard — country tile with active job count, top cities, and top employers.
  */
 export function CountryCard({ country, isUserCountry = false, onCityClick }: Props) {
   const queryClient = useQueryClient();
@@ -113,7 +111,7 @@ export function CountryCard({ country, isUserCountry = false, onCityClick }: Pro
 
               {isUserCountry && (
                 <Badge className="bg-primary/10 border border-primary/20 text-primary text-[9px] font-extrabold tracking-wide uppercase px-1.5 h-4.5 rounded select-none">
-                  Local Context
+                  Your country
                 </Badge>
               )}
 
@@ -143,7 +141,7 @@ export function CountryCard({ country, isUserCountry = false, onCityClick }: Pro
                   type="button"
                   onClick={() => handleCityFilterTrigger(cityItem.name)}
                   className="flex items-center gap-1.5 px-2.5 py-1 rounded-xl bg-muted/30 dark:bg-muted/10 border border-border/20 hover:border-primary/20 hover:bg-primary/5 transition-all duration-200 text-[10px] font-bold tracking-tight text-foreground/90 cursor-pointer transform-gpu active:scale-95 outline-none focus-visible:ring-1 focus-visible:ring-ring tabular-nums group"
-                  aria-label={`Filter recruitment metrics by ${cityItem.name} with ${cityItem.count} available nodes`}
+                  aria-label={`Filter jobs in ${cityItem.name} (${cityItem.count} open)`}
                 >
                   <MapPin className="h-3 w-3 text-muted-foreground/60 group-hover:text-primary transition-colors stroke-[2.2]" />
                   <span className="truncate max-w-[80px]">{cityItem.name}</span>
@@ -181,7 +179,7 @@ export function CountryCard({ country, isUserCountry = false, onCityClick }: Pro
                 return (
                   <Avatar
                     key={companyItem.name}
-                    title={`${companyItem.name} macro tracking employment profile`}
+                    title={companyItem.name}
                     className="h-5 w-5 border border-background bg-background shadow-sm shrink-0 transition-transform hover:scale-105 duration-200"
                   >
                     {companyItem.logo_url && (
