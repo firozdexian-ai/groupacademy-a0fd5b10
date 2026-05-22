@@ -120,7 +120,7 @@ export default function AgentProfile() {
           );
 
           setHasSufficientChatFootprint(calculatedMessagesVolume >= 3);
-          setIsUplinkConnected(Boolean(networkConnectionPayload.data));
+          setIsUplinkConnected(Boolean(networkConnectionPayload));
         }
       } catch (fatalHandshakeException) {
         if (isThreadActiveAndValid) setAgentProfileData(null);
