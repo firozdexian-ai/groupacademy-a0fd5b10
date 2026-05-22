@@ -61,11 +61,15 @@ export default function ContentReadinessChecklist({
 
   const recompute = async () => {
     setBusy(true);
-    const { error } = await supabase.rpc("recompute_content_readiness", { _content_id: contentId });
-    setBusy(false);
-    if (error) return toast.error(error.message);
-    toast.success("Readiness recomputed");
-    onRecomputed?.();
+    try {
+      await recomputeContentReadiness(contentId);
+      setBusy(false);
+      toast.success("Readiness recomputed");
+      onRecomputed?.();
+    } catch (error: any) {
+      setBusy(false);
+      toast.error(error?.message ?? "Recompute failed");
+    }
   };
 
   const forcePublish = async () => {
