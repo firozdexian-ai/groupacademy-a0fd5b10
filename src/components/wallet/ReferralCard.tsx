@@ -48,12 +48,11 @@ export function ReferralCard() {
 
     const executeReferralLedgerHydration = async () => {
       try {
-        const { data: authUserData, error: authUserQueryError } = await supabase.auth.getUser();
-        if (authUserQueryError) throw authUserQueryError;
-        if (!authUserData?.user) return;
+        const authUser = await getCurrentUser();
+        if (!authUser) return;
 
         // Step 1: Retrieve core profile referral hash identities from database variables
-        const talentProfileData = await getTalentReferralIdentityByUser(authUserData.user.id);
+        const talentProfileData = await getTalentReferralIdentityByUser(authUser.id);
         if (!talentProfileData) return;
 
         const resolvedRefCodeTokenStr = talentProfileData.ref_code ?? talentProfileData.id;
