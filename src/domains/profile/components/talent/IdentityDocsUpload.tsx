@@ -103,12 +103,7 @@ export function IdentityDocsUpload() {
     const fileExtensionString = file.name.split(".").pop() || "jpg";
     const fullTargetStoragePathStr = `${uid}/${Date.now()}-${label}.${fileExtensionString}`;
 
-    const { error } = await supabase.storage.from("talent-id-docs").upload(fullTargetStoragePathStr, file, {
-      cacheControl: "3600",
-      upsert: false,
-    });
-
-    if (error) throw error;
+    await uploadIdentityDoc(fullTargetStoragePathStr, file, { upsert: false });
     return fullTargetStoragePathStr;
   };
 
