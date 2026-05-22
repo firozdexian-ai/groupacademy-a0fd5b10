@@ -186,24 +186,20 @@ export default function ProfileVerify() {
               <div className="flex-1 min-w-0">
                 <p
                   className={cn(
-                    "text-sm font-black uppercase italic tracking-tight",
+                    "text-sm font-semibold",
                     c.done && "line-through text-muted-foreground",
                   )}
                 >
                   {c.label}
                 </p>
-                <p className="text-[11px] font-medium text-muted-foreground leading-snug">{c.description}</p>
+                <p className="text-xs text-muted-foreground leading-snug">{c.description}</p>
               </div>
               {!c.done && (
-                <Button
-                  size="sm"
-                  variant="outline"
-                  className="rounded-xl font-black uppercase text-[9px] tracking-widest"
-                  onClick={c.action}
-                >
+                <Button size="sm" variant="outline" onClick={c.action}>
                   {c.cta} <ChevronRight className="h-3 w-3 ml-1" />
                 </Button>
               )}
+
             </CardContent>
           </Card>
         ))}
