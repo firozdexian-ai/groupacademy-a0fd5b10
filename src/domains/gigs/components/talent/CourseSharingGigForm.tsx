@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getTalentRefCode } from "@/domains/talent/repo/talentRepo";
+import { listShareableActiveContent, insertGigSubmission } from "@/domains/gigs/repo/gigsRepo";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
@@ -49,14 +50,8 @@ export function CourseSharingGigForm({ gig, talentId, onSubmitted }: Props) {
     enabled: !!talentId,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const { data, error: refError } = await supabase
-        .from("talents")
-        .select("ref_code, id")
-        .eq("id", talentId)
-        .single();
-
-      if (refError) throw refError;
-      return data?.ref_code || data?.id;
+      const code = await getTalentRefCode(talentId);
+      return code || talentId;
     },
   });
 
