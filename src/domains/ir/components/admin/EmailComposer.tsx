@@ -14,6 +14,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import { Skeleton } from "@/components/ui/skeleton";
 import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
+import { getCurrentSession } from "@/lib/auth";
 import { logOutreachAndEmail } from "@/domains/ir/repo/irRepo";
 import { Send, X, ShieldCheck, Mail, Loader2, ExternalLink, History, Sparkles } from "lucide-react";
 import { cn } from "@/lib/utils";
@@ -138,12 +139,8 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
     const toastId = toast.loading("Logging telemetry and preparing client...");
 
     try {
-      const {
-        data: { session },
-        error: sessionError,
-      } = await supabase.auth.getSession();
-
-      if (sessionError || !session) throw new Error("Unauthorized Dispatch");
+      const session = await getCurrentSession();
+      if (!session) throw new Error("Unauthorized Dispatch");
 
       // 1. Cross-channel outreach log (kept for IR FP&A agent's unified feed)
       await logOutreachAndEmail({

@@ -40,9 +40,8 @@ export function StandaloneAssessmentCodeGenerator() {
     setIsGenerating(true);
     try {
       // 1. Authenticated Identity Verification
-      const authResponse = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "Authentication check timed out");
+      const user = await withTimeout(getCurrentUser(), TIMEOUTS.AUTH, "Authentication check timed out");
 
-      const user = authResponse?.data?.user;
       const codes: string[] = [];
 
       // 2. Optimized Batch Generation Protocol

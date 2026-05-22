@@ -5,7 +5,7 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { useSearchParams } from "react-router-dom";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import {
   listCompaniesPaged,
   upsertCompany,
@@ -177,9 +177,7 @@ export function CompaniesTab() {
     if (!company.primary_email) return toast.error("No communication endpoint provided");
     window.open(getDexianEmailLink(company.primary_email, template, company.name), "_blank");
 
-    const {
-      data: { user },
-    } = await supabase.auth.getUser();
+    const user = await getCurrentUser();
     if (user) {
       await logContactOutreach({
         company_id: company.id,

@@ -4,7 +4,7 @@
  * Fixes: B7 (RPC Broadcast), P4 (Identity List Freshness & Surgical Targeting)
  */
 import { useState, useEffect, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { talentRepo, broadcastNotifications } from "@/domains/talent/repo/talentRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -76,14 +76,14 @@ export function NotificationsTab() {
 
     setIsSending(true);
     try {
-      const { data: user } = await supabase.auth.getUser();
+      const user = await getCurrentUser();
 
       // B7 Fix: Server-side fan-out via optimized RPC
       await broadcastNotifications({
         title: payload.title,
         message: payload.message,
         type: payload.type,
-        createdBy: user.user?.id ?? null,
+        createdBy: user?.id ?? null,
       });
 
 

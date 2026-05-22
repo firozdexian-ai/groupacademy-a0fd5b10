@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { insertJobApplicationAccessCode } from "@/domains/jobs/repo/jobsRepo";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/components/ui/card";
@@ -54,9 +54,7 @@ export function JobApplicationCodeGenerator() {
     setIsGenerating(true);
     setGeneratedCodes([]);
     try {
-      const {
-        data: { user },
-      } = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "Auth Handshake Timeout");
+      const user = await withTimeout(getCurrentUser(), TIMEOUTS.AUTH, "Auth Handshake Timeout");
 
       const codes: string[] = [];
 

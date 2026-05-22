@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import {
   listBannersWithContent,
   listPublishedContentTitles,
@@ -111,9 +111,7 @@ export const BannerManager = () => {
     if (!newBanner.image_url) return toast.error("Logic Fault: Image payload missing");
 
     try {
-      const {
-        data: { user },
-      } = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "Auth Handshake Timeout");
+      const user = await withTimeout(getCurrentUser(), TIMEOUTS.AUTH, "Auth Handshake Timeout");
       if (!user) throw new Error("Registry Access Denied");
 
       await withTimeout(

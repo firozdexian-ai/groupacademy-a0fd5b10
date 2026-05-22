@@ -1,5 +1,5 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { getCurrentUser } from "@/lib/auth";
 import { insertAssessmentAccessCode } from "@/domains/jobs/repo/jobsRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
@@ -49,9 +49,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
   const handleGenerateHandshake = async () => {
     setGenerating(true);
     try {
-      const {
-        data: { user },
-      } = await withTimeout(supabase.auth.getUser(), TIMEOUTS.AUTH, "Auth Registry Link Timeout");
+      const user = await withTimeout(getCurrentUser(), TIMEOUTS.AUTH, "Auth Registry Link Timeout");
 
       if (!user) {
         toast.error("Handshake Refused: Administrative privileges required.");
