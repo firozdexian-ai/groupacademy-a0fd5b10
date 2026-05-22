@@ -58,16 +58,14 @@ interface JobApplicationPayload {
 }
 
 const SUBMISSION_STAGES: SubmissionStage[] = [
-  { progress: 20, message: "Syncing Repository Nodes..." },
-  { progress: 40, message: "Hardening CV Telemetry Node..." },
-  { progress: 60, message: "Generating AI Interview Matrix..." },
-  { progress: 85, message: "Finalizing Registry Handshake..." },
+  { progress: 20, message: "Saving your application..." },
+  { progress: 40, message: "Uploading your CV..." },
+  { progress: 60, message: "Preparing AI interview..." },
+  { progress: 85, message: "Almost done..." },
 ];
 
 /**
- * GroUp Academy: Technical Job Application Transaction Ingress (AppJobApplication)
- * Hardened submission cockpit orchestrating secure cloud CV storage mappings and insulating credit deduction loops.
- * Version: Launch Candidate · Phase Z1 Cryptographic Gate Locked
+ * Job application submission page: CV upload, cover letter, and submit.
  */
 export default function AppJobApplication() {
   const { id: unverifiedJobIdentifierStr } = useParams<{ id: string }>();
