@@ -912,3 +912,41 @@ export async function uploadLegacyCv(
   const { data } = supabase.storage.from("cvs").getPublicUrl(path);
   return { path, publicUrl: data.publicUrl };
 }
+
+// -----------------------------------------------------------------------------
+// Realtime helpers (Phase 10j.5k1) — notifications CDC subscription
+// -----------------------------------------------------------------------------
+
+export interface NotificationsRealtimeHandlers {
+  onInsert?: (row: any) => void;
+  onUpdate?: (row: any) => void;
+  onDelete?: (oldRow: any) => void;
+}
+
+export function subscribeNotificationsRealtime(
+  talentId: string,
+  handlers: NotificationsRealtimeHandlers,
+): () => void {
+  const channel = supabase
+    .channel(`public:notifications:${talentId}`)
+    .on(
+      "postgres_changes",
+      { event: "INSERT", schema: "public", table: "notifications", filter: `talent_id=eq.${talentId}` },
+      (payload) => handlers.onInsert?.(payload.new),
+    )
+    .on(
+      "postgres_changes",
+      { event: "UPDATE", schema: "public", table: "notifications", filter: `talent_id=eq.${talentId}` },
+      (payload) => handlers.onUpdate?.(payload.new),
+    )
+    .on(
+      "postgres_changes",
+      { event: "DELETE", schema: "public", table: "notifications", filter: `talent_id=eq.${talentId}` },
+      (payload) => handlers.onDelete?.(payload.old),
+    )
+    .subscribe();
+
+  return () => {
+    void supabase.removeChannel(channel);
+  };
+}
