@@ -1,5 +1,6 @@
 import { useQuery } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import { getAuthoringTrends } from "@/domains/learning/repo/learningRepo";
+
 
 /**
  * GroUp Academy: Authoring Trends Intelligence (V2.1.0)
@@ -35,25 +36,18 @@ export function useAuthoringTrends(instructorId: string | undefined, days = 30) 
     queryFn: async (): Promise<AuthoringTrends> => {
       if (!instructorId) throw new Error("ID_HYDRATION_FAULT: Instructor ID required.");
 
-      // HUD: EXECUTING_NEURAL_ANALYTICS_SYNC
-      const { data, error } = await supabase.rpc("get_authoring_trends", {
-        _instructor_id: instructorId,
-        _days: days,
-      });
-
-      if (error) {
-        // Digital Workforce Anomaly reporting:
-        // Reported to Admin Chat for infrastructure auditing.
+      try {
+        const data = await getAuthoringTrends<AuthoringTrends>({ instructorId, days });
+        return data;
+      } catch (error: any) {
         console.error("[Digital Workforce] FAULT: get_authoring_trends sync failed.", {
           instructorId,
-          error: error.message,
-          code: error.code,
+          error: error?.message,
+          code: error?.code,
         });
         throw error;
       }
 
-      // HUD: REGISTRY_HYDRATION_SUCCESS
-      return data as AuthoringTrends;
     },
   });
 }

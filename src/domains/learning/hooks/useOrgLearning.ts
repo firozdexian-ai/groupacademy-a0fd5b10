@@ -1,6 +1,11 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { getCompanyWallet } from "@/domains/learning/repo/learningRepo";
+import {
+  getCompanyWallet,
+  getOrgLearningHealth,
+  getOrgTeamMastery,
+  orgAssignTalents,
+} from "@/domains/learning/repo/learningRepo";
 import { toast } from "sonner";
 
 /**
@@ -68,17 +73,14 @@ export function useOrgLearningHealth(companyId: string | undefined) {
     enabled: !!companyId,
     staleTime: 60 * 1000, // 1-minute organizational health consistency boundary
     queryFn: async (): Promise<OrgLearningHealth> => {
-      // HUD: EXECUTING_RPC_ORG_LEARNING_HEALTH
-      const { data, error } = await supabase.rpc("org_learning_health", {
-        p_company_id: companyId!,
-      });
-
-      if (error) {
+      try {
+        return await getOrgLearningHealth<OrgLearningHealth>(companyId!);
+      } catch (error: any) {
         console.error("[Digital Workforce] FAULT: org_learning_health calculation rejected.", error);
         throw error;
       }
-      return data as unknown as OrgLearningHealth;
     },
+
   });
 }
 
@@ -108,18 +110,14 @@ export function useOrgTeamMastery(companyId: string | undefined, contentId?: str
     enabled: !!companyId,
     staleTime: 5 * 60 * 1000, // 5-minute psychometric consistency window for bulk sets
     queryFn: async (): Promise<OrgTeamMastery[]> => {
-      // HUD: EXECUTING_RPC_ORG_TEAM_MASTERY
-      const { data, error } = await supabase.rpc("org_team_mastery", {
-        p_company_id: companyId!,
-        p_content_id: contentId ?? null,
-      });
-
-      if (error) {
+      try {
+        return await getOrgTeamMastery<OrgTeamMastery>({ companyId: companyId!, contentId: contentId ?? null });
+      } catch (error: any) {
         console.error("[Digital Workforce] FAULT: org_team_mastery query rejected.", error);
         throw error;
       }
-      return ((data as unknown) as OrgTeamMastery[]) ?? [];
     },
+
   });
 }
 
@@ -173,28 +171,17 @@ export function useAssignTalents() {
       budget_per_seat?: number | null;
       note?: string | null;
     }) => {
-      // HUD: ATOMIC_BULK_ENTERPRISE_ASSIGNMENT_RPC
-      const { data, error } = await supabase.rpc("org_assign_talents", {
-        p_company_id: input.company_id,
-        p_content_id: input.content_id,
-        p_cohort_id: input.cohort_id ?? null,
-        p_user_ids: input.user_ids,
-        p_due_at: input.due_at ?? null,
-        p_budget_per_seat: input.budget_per_seat ?? null,
-        p_note: input.note ?? null,
-      });
-
-      if (error) {
-        // Digital Workforce Anomaly Trigger:
-        // Captures business logic blocks (such as fiscal deficits or registration locks)
+      try {
+        return await orgAssignTalents(input);
+      } catch (error: any) {
         console.error("[Digital Workforce] ANOMALY: org_assign_talents bulk operation rejected.", {
           companyId: input.company_id,
-          message: error.message,
+          message: error?.message,
         });
         throw error;
       }
-      return data;
     },
+
     onSuccess: (_, vars) => {
       // Invalidate the full dependency graph to prevent stale presentation grids
       void qc.invalidateQueries({ queryKey: ["org-assignments", vars.company_id] });

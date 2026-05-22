@@ -1,6 +1,12 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { upsertCohort, upsertCourseSession } from "@/domains/learning/repo/learningRepo";
+import {
+  upsertCohort,
+  upsertCourseSession,
+  getCohortHealth,
+  markSessionAttendance,
+  getInstructorSessionAttendance,
+} from "@/domains/learning/repo/learningRepo";
 import { useAuth } from "@/hooks/useAuth";
 
 /**
@@ -95,20 +101,17 @@ export function useCohortHealth(cohortId?: string) {
     enabled: !!cohortId,
     staleTime: 60000, // Light-speed 60s window for real-time risk alerts
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("cohort_health", {
-        _cohort_id: cohortId!,
-      });
-
-      if (error) {
+      let results: any;
+      try {
+        results = await getCohortHealth(cohortId!);
+      } catch (error: any) {
         console.error("[Digital Workforce] ANOMALY: cohort health aggregator calculation dropout.", {
           cohortId,
-          message: error.message,
-          code: error.code,
+          message: error?.message,
+          code: error?.code,
         });
         throw error;
       }
-
-      const results: any = Array.isArray(data) ? data[0] : data;
 
       // AUTOMATED NUDGE: Detect at-risk performance levels immediately at data sync layer
       if (results && results.health_status === "critical") {
@@ -119,6 +122,7 @@ export function useCohortHealth(cohortId?: string) {
 
       return results;
     },
+
   });
 }
 
@@ -185,19 +189,18 @@ export function useMarkAttendance() {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (sessionId: string) => {
-      const { error } = await supabase.rpc("mark_session_attendance", {
-        _session_id: sessionId,
-      });
-
-      if (error) {
+      try {
+        await markSessionAttendance(sessionId);
+      } catch (error: any) {
         console.error("[Digital Workforce] ANOMALY: user attendance logging handshake rejected.", {
           sessionId,
-          message: error.message,
-          code: error.code,
+          message: error?.message,
+          code: error?.code,
         });
         throw error;
       }
     },
+
     onSuccess: (_, sessionId) => {
       qc.invalidateQueries({ queryKey: ["session-attendance", sessionId] });
       qc.invalidateQueries({ queryKey: ["upcoming-sessions"] });
@@ -215,20 +218,18 @@ export function useInstructorAttendance(sessionId?: string) {
     enabled: !!sessionId,
     staleTime: 10000, // Aggressive 10s caching for active dashboard grids
     queryFn: async () => {
-      const { data, error } = await supabase.rpc("instructor_session_attendance", {
-        _session_id: sessionId!,
-      });
-
-      if (error) {
+      try {
+        return await getInstructorSessionAttendance(sessionId!);
+      } catch (error: any) {
         console.error("[Digital Workforce] FAULT: instructor_session_attendance evaluation error.", {
           sessionId,
-          message: error.message,
-          code: error.code,
+          message: error?.message,
+          code: error?.code,
         });
         throw error;
       }
-      return data ?? [];
     },
+
   });
 }
 
