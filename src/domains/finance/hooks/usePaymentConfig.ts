@@ -38,12 +38,6 @@ export function usePaymentConfig() {
         throw error;
       }
 
-        // Digital Workforce Anomaly Trigger:
-        // Essential for monitoring fiscal pipeline accessibility.
-        console.error("[Digital Workforce] ANOMALY: platform_settings ingress failure.", error);
-        throw error;
-      }
-
       // SYNC: ATOMIC_REGISTRY_MAPPING
       const registry = new Map(settings?.map((s) => [s.key, s.value]) || []);
       const stripeKey = registry.get("stripe_publishable_key") || null;
