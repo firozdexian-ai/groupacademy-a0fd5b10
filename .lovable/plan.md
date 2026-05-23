@@ -1,64 +1,62 @@
-# B3.1 — Learning Hub Jargon Residue Cleanup (DONE)
+# B4 — Jobs + Gigs + Career Abroad Jargon Cleanup
 
-All 11 residual Learning Hub hits rewritten. Next batch: **B4** Jobs + Gigs + Career Abroad talent surfaces (~70 hits).
+Sweep the remaining talent-facing jargon out of the Jobs, Gigs, Competitions, Career services and Abroad surfaces, using the same plain-English voice locked in by B3/B3.1.
 
----
+## Scope (talent surfaces only)
 
-# B3.1 — Learning Hub Jargon Residue Cleanup
+**Jobs (~14 hits)**
+- `src/pages/app/AppJobApplication.tsx` (4)
+- `src/domains/jobs/components/AIJobInsights.tsx` (6 — L209, L355, plus 4 T2)
+- `src/domains/jobs/components/ExternalApplicationPrep.tsx` (2)
+- `src/pages/app/AppOfferDecision.tsx` (1)
+- `src/pages/app/AppProfessionDetail.tsx` (2)
+- `src/pages/app/AppApplicationDetail.tsx` (1)
 
-B3 took the heavy pass last round. The latest sweep still flags 11 user-visible strings inside `src/domains/learning/` that slipped through (mix of T1 toasts and T2 labels). This phase closes them out so the Learning Hub is clean before we move on to B4 (Jobs/Gigs/Abroad).
+**Gigs (~17 hits)**
+- `src/pages/app/Gigs.tsx` (6)
+- `src/pages/app/NewGigWizard.tsx` (3)
+- `src/pages/app/GigDisputes.tsx` (1)
+- `src/domains/gigs/components/talent/JobPostingGigForm.tsx` (4)
+- `src/domains/gigs/components/talent/VerificationVerdictCard.tsx` (1)
+- `src/domains/gigs/components/talent/MySubmissions.tsx` (1)
+- `src/domains/gigs/components/talent/JobSharingGigForm.tsx` (1)
+- `src/domains/gigs/components/talent/CVUploadGigForm.tsx` (1)
+- `src/domains/gigs/components/talent/GigSubmissionForm.tsx` (1)
 
-## Scope
+**Career Abroad + IELTS (~10 hits)**
+- `src/pages/app/StudyAbroad.tsx`, `StudyAbroadDetail.tsx`, `StudyAbroadRoadmap.tsx`, `StudyAbroadRoadmapResults.tsx`, `SchoolDetail.tsx`, `AbroadApplications.tsx` (1 each, mostly `Digital Workforce Anomaly` logger)
+- `src/domains/abroad/components/talent/RoadmapBuilderSheet.tsx`, `RoadmapTimeline.tsx`, `RoadmapIntakeForm.tsx` (1 each)
+- `src/pages/app/IELTSPrep.tsx` (1), `IELTSMockRunner.tsx` (2)
 
-Talent-facing Learning surfaces only. No schema, no business logic. Plain string replacements using the project's plain-English voice already established in the prior B3 sweep.
+**Career services + misc talent pages (~17 hits)**
+- `src/pages/app/CareerCoach.tsx` (3)
+- `src/pages/app/AppCareerAssessment.tsx` (7 — progress messages)
+- `src/pages/app/AppMockInterviewSetup.tsx` (2)
+- `src/pages/app/Competitions.tsx` (2), `CompetitionDetail.tsx` (3)
+- `src/pages/app/Connections.tsx` (3)
+- `src/pages/app/TalentDirectory.tsx` (1), `SavedItems.tsx` (1), `ReviewerCockpit.tsx` (1)
+- `src/pages/app/AppCohortDiscussions.tsx` (1)
 
-## Files & replacements
+Estimated **~58 user-visible strings across ~33 files**.
 
-### T1 — user-blocking copy
+## Replacement voice
 
-1. `src/domains/learning/hooks/useSkillCredentials.ts` — L117
-   - `Cryptographic Ledger Verified: Issued N new skill credentials.` → `Issued N new skill credentials.`
+Same rules as B3:
+- Drop "Digital Workforce", "Anomaly", "Telemetry", "Pipeline", "Ingress", "Synthesis", "Handshake", "Ledger", "Matrix", "Vector", "Node" from user-visible strings.
+- Keep internal console.* prefixes short and neutral (e.g. `[jobs]`, `[gigs]`, `[abroad]`).
+- Toast titles describe outcomes plainly: "Application sent", "Couldn't load categories", "Saved", "Refund failed".
+- Buttons/CTAs use verbs ("Apply", "Submit", "Enroll for N credits", "Take screenshot upload").
+- Placeholders are realistic examples, not sci-fi labels.
 
-2. `src/domains/learning/components/talent/WebinarEnrollPanel.tsx` — L77
-   - `Ecosytem Capacity Maximum: Selected synchronous channel is fully booked.` → `This session is fully booked.`
+## Process
 
-3. `src/domains/learning/components/talent/ModuleScenarioRunner.tsx`
-   - L283 tag fallback `Core Competency Vector` → `Skill`
-   - L356 scenario title fallback `Operational Execution Simulation` → `Scenario`
-   - L395 role label `Candidate Operator Input` / `System Environment Response` → `You` / `Scenario`
-
-4. `src/domains/learning/components/talent/TalentMirrorPanel.tsx`
-   - L157 `Tracked Knowledge Vectors` → `Topics tracked`
-   - L158 `Mean Mastery Profile` → `Average mastery`
-
-### T2 — decorative labels
-
-5. `src/domains/learning/hooks/useCohorts.ts` — L110
-   - Internal log string: `[Digital Workforce] SIGNAL: Cohort [..] health status marked CRITICAL. Notifying Dean Agent.` → `[learning] Cohort {id} health critical — notifying admin.`
-
-6. `src/domains/learning/components/talent/CoursesTab.tsx` — L499
-   - `Settlement Pools Staged` → `Prizes announced soon`
-
-7. `src/domains/learning/components/talent/WebinarEnrollPanel.tsx` — L207
-   - Button: `Debit Framework & Lock Pass` / `Acquire Free Entry Pass` → `Enroll for N credits` / `Enroll for free`
-
-8. `src/domains/learning/components/talent/ItemRewriteSheet.tsx` — L468
-   - `Editable Buffer Token` / `Malformed JSON Syntax` → `Editable` / `Invalid JSON`
-
-9. `src/domains/learning/components/talent/EventsTab.tsx` — L25
-   - Filter chip `Study Abroad Track` → `Study Abroad`
-
-10. `src/domains/learning/components/talent/TracksTab.tsx` — L197
-    - Fallback track title `Specialized Core Track` → `Untitled track`
-
-## Verification
-
-- After edits, re-run the jargon sweep and confirm `src/domains/learning/**` shows 0 hits in `.lovable/v0.5-jargon-hits.md`.
-- Spot-check Learning Hub, Talent Mirror, Webinar enroll panel, and Scenario Runner in the preview for any visible regression.
-- Update `.lovable/plan.md` B3 section: mark B3.1 done, restate next batch (B4 Jobs/Gigs/Abroad ~70 hits).
+1. Edit files in 4 parallel batches by domain (Jobs → Gigs → Abroad → Career/misc).
+2. After each batch, spot-read affected files for stray jargon nearby and clean if cheap.
+3. Re-run the jargon sweep script that produced `.lovable/v0.5-jargon-hits.md`; expect Jobs/Gigs/Abroad sections to be empty or down to noise (acronym false positives).
+4. Update `.lovable/plan.md`: mark B4 done, leave **B5** (Agents + Wallet + Player + shared components, ~50 hits) as next.
 
 ## Out of scope
 
-- B4 surfaces (Jobs, Gigs, Career Abroad) — handled in the next phase.
-- Player/shared components (`src/components/player/**`, `ResearchPromptDialog`, etc.) — those live outside the Learning domain folder and ship with B5.
-- Any logic, state, or styling changes.
+- Admin / Gro10x / instructor staff routes
+- Player components (`src/components/player/**`), Footer, retry cards, certificate/report/salary PDF templates, assessment lead form, portfolio builder — these ship in **B5** alongside Agents + Wallet.
+- Any logic, styling, or schema changes.
