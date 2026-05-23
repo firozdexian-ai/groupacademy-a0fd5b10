@@ -22,10 +22,10 @@ export function TalentUploadTab() {
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
-            <UploadIcon className="h-6 w-6 text-primary" /> Talent Ingestion
+            <UploadIcon className="h-6 w-6 text-primary" /> Upload talents
           </h2>
           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-            Phase Z0 Bulk CV Parsing Engine
+            Bulk CV import with AI parsing
           </p>
         </div>
       </div>
@@ -36,7 +36,7 @@ export function TalentUploadTab() {
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <CardContent className="p-8">
             <div className="mb-6">
-              <h3 className="text-lg font-black uppercase italic tracking-tight">Bulk Upload Terminal</h3>
+              <h3 className="text-lg font-black uppercase italic tracking-tight">Bulk upload</h3>
               <p className="text-xs text-muted-foreground leading-relaxed mt-1">
                 Upload one or more CVs. The AI Workforce will automatically parse skills, experience, and contact data
                 into the Talent Pool[cite: 323, 472].

@@ -132,14 +132,14 @@ export function TalentOutreachConsoleTab() {
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
-            <UserSearch className="h-6 w-6 text-primary" /> Outreach Console
+            <UserSearch className="h-6 w-6 text-primary" /> Outreach console
           </h2>
           <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
-            Phase Z0 Native Dispatcher
+            WhatsApp messaging to talents
           </p>
         </div>
         <Badge variant={channel?.status === "connected" ? "default" : "secondary"} className="h-8 px-4 rounded-xl">
-          LINE: {channel?.status?.toUpperCase() || "OFFLINE"}
+          Line: {channel?.status?.toUpperCase() || "OFFLINE"}
         </Badge>
       </div>
 
