@@ -144,7 +144,7 @@ export default function MarketplaceGigDetail() {
     );
   }
 
-  if (!gigRecord) return <div className="text-center py-20">Resource missing.</div>;
+  if (!gigRecord) return <div className="text-center py-20">Gig not found.</div>;
 
   const averageTrustRating = reviewManifestCollection.length
     ? (reviewManifestCollection.reduce((s, r) => s + r.rating, 0) / reviewManifestCollection.length).toFixed(1)
