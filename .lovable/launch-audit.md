@@ -370,3 +370,34 @@ Brought `/app/gigs/*` to the A5 quality bar. All 5 tabs (For You / Tasks / Cours
 **Out of scope (deferred):** JSDoc/comment jargon in gig components, admin `/dashboard/gigs/*`, Gro10x employer gigs, visual redesign.
 
 Ready for **A7 (Profile/Talent Mirror polish)** or **A8 (Career Abroad)**.
+
+
+---
+
+## A7 Profile & Talent Mirror — shipped 2026-05-23
+
+Humanized user-visible copy across the Profile / Talent Mirror / My Gigs surfaces. No schema, RPC, or business-logic changes.
+
+**Files edited (visible strings only):**
+- `src/pages/app/MyGigs.tsx`: header "Output Hub" → "My Gigs"; subtitle rewritten; dropped "Launch Candidate · Phase Z1 Production Contract Locked" version banner.
+- `src/domains/profile/components/talent/ProfilePhotoUpload.tsx` + `CoverImageUpload.tsx`: all toasts and validation messages rewritten ("Format Rejected: Ingress pipeline requires..." → "Please upload a valid image file.", "Synchronizing avatar binary asset..." → "Uploading photo…", "Initialize Cover Node Ingress" → "Upload a cover image", "Syncing Synapse Ledger…" → "Uploading…", etc.).
+- `src/domains/profile/components/talent/ProfileEditDialog.tsx`: loading toast, success/error toasts, footer buttons ("Syncing Ledger Node…" → "Saving…", "Authorize Ledger Sync" → "Save profile").
+- `src/domains/profile/components/talent/ProfileCompletionMeter.tsx`: checklist labels ("Artifact Sync (CV)" → "Upload CV", "Professional Ledger" → "Work experience", "Academic Registry" → "Education"), status pills ("Synchronized Verified" / "Awaiting Ingress" → "Complete" / "To do").
+- `src/domains/profile/components/talent/ProfileCompletionPrompt.tsx`: section header ("Registry Synchronization Alignment" → "Complete your profile"), summary copy, gap labels ("Network Handshake" → "LinkedIn profile"), CTAs ("Complete Nodes" → "Finish profile", "Synchronize Digital Professional Identity Vector" → "Complete my profile").
+- `src/domains/profile/components/talent/SkillsEditor.tsx`: title ("Core Vector Skill Matrix" → "Your skills"), subtitle, placeholder, add button title, empty state ("Matrix Vector Fields Awaiting Data Ingress" → "No skills added yet").
+- `src/domains/profile/components/talent/ExperienceEditor.tsx` + `EducationEditor.tsx`: headers ("Professional Experience Registry" → "Work experience", "Academic Credential Registry" → "Education"), subtitles, add buttons ("Deploy Node" → "Add experience"), empty states ("Experience Ledger Vacant" / "Academic Directory Empty" → "No experience added yet" / "No education added yet").
+- `src/domains/profile/components/talent/PublicProfileSettings.tsx`: header ("Public Trajectory Discoverability" → "Public profile settings"), toggle label ("Make Vector Profile Discoverable" → "Make my profile public"), handle label/CTA, public URL banner ("Ecosystem Ingress Synchronized Live At:" → "Live at:").
+- `src/domains/profile/components/talent/PayoutAccountsManager.tsx`: loading ("Hydrating Disbursement Node Ledger…" → "Loading payout accounts…"), empty state, add button ("Add Ingress Disbursement Route" → "Add payout account").
+- `src/domains/profile/components/talent/IdentityDocsUpload.tsx`: loading, timestamp ("Transmission committed on" → "Submitted on"), rejection reason label, NID back label, submit CTA ("Processing Secure Ledger Ingress…" / "Commit Document for Audit Review" → "Uploading…" / "Submit for review").
+- `src/domains/profile/components/talent/ServiceHistoryCard.tsx`: loading ("Synchronizing historical pipeline records…" → "Loading your service history…"), error header ("Ecosystem Ingress Sync Fault" → "Couldn't load history").
+- `src/domains/profile/components/talent/ApplicationHistoryCard.tsx`: empty state ("Pipeline Ledger Vacant" → "No applications yet").
+- `src/domains/profile/components/talent/CVUploadSection.tsx`: card title ("Neural Artifact Sync" → "Upload your CV"), description, badge ("Node Verified" → "CV on file"), progress text, error/success headers/descriptions, retry CTA ("Re-Initialize Calibration Sync" → "Try again"), footer ribbon ("Neural Engine Vector Ingress Protocol Alignment Core v2.6 Mapped" → "Powered by AI · CV parsing").
+- `src/domains/profile/components/talent/ProfileSectionEditor.tsx`: about-label/placeholder, language select items ("Native Dialect" / "Fluent Ingress" / "Basic Operational" → "Native" / "Fluent" / "Basic"), cancel CTA ("Abort Section Changes" → "Cancel"), save CTA ("Authorize Segment Sync" → "Save").
+- `src/components/talent/TrackCompletionBadge.tsx`: tooltip rewritten.
+- `src/domains/learning/components/talent/TalentMirrorPanel.tsx`: section header ("Integrated Specialization Tracks Masteries Ledger" → "Mastery by course").
+
+**Verified:** rg sweep on profile/talent components for visible Vector/Ingress/Synchroniz/Ledger/Ecosystem/Handshake/Telemetry/Phase-Z strings — 0 hits in JSX text or toast strings. Remaining hits are JSDoc/identifier-level only (zero user impact).
+
+**Deferred:** JSDoc/identifier-level jargon across profile components, admin profile surfaces, Career Abroad shell (A8).
+
+V0.5 launch-readiness sweep across **A5 Jobs + A6 Gigs + A7 Profile/Mirror + B3-B5 cross-cutting** is now complete. Ready for **A8 (Career Abroad)** or admin shell cleanup.
