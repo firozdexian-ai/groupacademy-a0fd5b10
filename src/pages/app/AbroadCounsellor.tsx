@@ -169,11 +169,11 @@ export default function AbroadCounsellor() {
       });
     },
     onSuccess: () => {
-      toast.success("Classification state successfully advanced.");
+      toast.success("Stage updated.");
       queryClientInstance.invalidateQueries({ queryKey: ["counsellor-applications-matrix"] });
     },
-    onError: (pipelineMutationException: any) => {
-      toast.error(pipelineMutationException.message || "Failed to alter tracking bounds configuration mapping.");
+    onError: (err: any) => {
+      toast.error(err.message || "Couldn't update stage. Please try again.");
     },
   });
 
@@ -200,10 +200,9 @@ export default function AbroadCounsellor() {
             <Plane className="h-5 w-5 stroke-[2.2]" />
           </div>
           <div className="space-y-1 block">
-            <p className="text-xs font-bold text-foreground uppercase tracking-wide">Access Credential Refused</p>
+            <p className="text-xs font-bold text-foreground uppercase tracking-wide">Access denied</p>
             <p className="text-[11px] font-semibold text-muted-foreground/60 leading-normal">
-              This node profile is missing explicit specialist clearance parameters. Request system permissions
-              validation from an administrator.
+              You don't have counsellor permissions yet. Ask an admin to grant access.
             </p>
           </div>
         </div>
@@ -217,10 +216,10 @@ export default function AbroadCounsellor() {
       <div className="flex items-center justify-between leading-none w-full shrink-0 select-none pb-2 border-b border-border/10">
         <div className="space-y-0.5 block">
           <h1 className="text-xl sm:text-2xl font-bold uppercase tracking-wide text-foreground leading-none pt-0.5">
-            Counselor Workspace Dashboard
+            Counsellor workspace
           </h1>
           <p className="text-[11px] sm:text-xs font-semibold text-muted-foreground/60 leading-none block">
-            Audit international student migration tracks and execute administrative timeline operations.
+            Review student applications and move them through the admissions pipeline.
           </p>
         </div>
 
@@ -228,7 +227,7 @@ export default function AbroadCounsellor() {
           variant="outline"
           className="font-mono text-[10px] font-extrabold uppercase tracking-wide px-2.5 h-6 rounded border border-border/60 bg-card select-none shrink-0 pointer-events-none tabular-nums pt-0.5"
         >
-          {rawApplicationsDataRows.length.toString()} ACTIVE ALLOCATIONS
+          {rawApplicationsDataRows.length.toString()} active
         </Badge>
       </div>
 
@@ -236,7 +235,7 @@ export default function AbroadCounsellor() {
       {isRegistryCacheResolving ? (
         <div className="w-full flex items-center justify-center py-12 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2">
           <Loader2 className="h-4 w-4 animate-spin text-primary" />
-          <span>Syncing Registration Ledger Contexts...</span>
+          <span>Loading applications…</span>
         </div>
       ) : (
         <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 block w-full align-top">
@@ -272,7 +271,7 @@ export default function AbroadCounsellor() {
                   {isStageCategoryRosterEmpty ? (
                     <Card className="rounded-lg border border-dashed border-border/40 bg-card/10 p-4 text-center select-none block shadow-none">
                       <p className="text-[10px] font-semibold text-muted-foreground/30 uppercase tracking-wide">
-                        Empty Sector
+                        No applications
                       </p>
                     </Card>
                   ) : (
@@ -287,7 +286,7 @@ export default function AbroadCounsellor() {
                               {applicationNodeItem.target_country}
                             </p>
                             <p className="font-mono text-[10px] font-bold text-muted-foreground/40 leading-none select-text block tracking-tight uppercase truncate">
-                              TERM: {applicationNodeItem.intake_term ?? "PENDING"}
+                              Term: {applicationNodeItem.intake_term ?? "TBC"}
                               <span className="font-sans font-medium opacity-30 mx-1.5 select-none">·</span>
                               {new Date(applicationNodeItem.updated_at).toLocaleDateString("en-US", {
                                 timeZone: "UTC",
@@ -307,7 +306,7 @@ export default function AbroadCounsellor() {
                               }
                             >
                               <SelectTrigger className="h-7 text-[10px] font-mono font-bold uppercase tracking-wider rounded border border-border/60 bg-background/50 shadow-none flex-1">
-                                <SelectValue placeholder="ADVANCE COHORT →" />
+                                <SelectValue placeholder="Move stage →" />
                               </SelectTrigger>
                               <SelectContent className="rounded-lg border border-border/60 bg-popover text-popover-foreground">
                                 {STAGES.filter(
@@ -330,7 +329,7 @@ export default function AbroadCounsellor() {
                               variant="ghost"
                               onClick={() => executeNavigationHook(`/app/abroad/applications`)}
                               className="h-7 w-7 rounded-md border border-border/10 p-0 text-muted-foreground/50 hover:text-foreground hover:bg-accent cursor-pointer transition-colors shadow-none shrink-0 block"
-                              title="Audit detail records spec file"
+                              title="Open application details"
                             >
                               <ArrowRight className="h-3.5 w-3.5 stroke-[2.2] mx-auto block" />
                             </Button>
