@@ -83,7 +83,7 @@ export function QuickStats({ coursesCompleted, hoursLearned, modulesCompleted, c
         <div className="flex items-center gap-2.5 min-w-0">
           <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse shadow-[0_0_8px_rgba(245,158,11,0.6)] shrink-0" />
           <h2 className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/60 italic leading-none">
-            Ecosystem Performance Ledger
+            Your Progress
           </h2>
         </div>
         <Zap className="h-3 w-3 text-primary/30 stroke-[2.2] shrink-0" />

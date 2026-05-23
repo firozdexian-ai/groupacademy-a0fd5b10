@@ -21,7 +21,7 @@ type EventFilter = "in_person" | "competitions" | "abroad";
 
 const filterOptions: { key: EventFilter; icon: any; label: string }[] = [
   { key: "in_person", icon: MapPin, label: "In-Person Seminars" },
-  { key: "competitions", icon: Trophy, label: "Ecosystem Battles" },
+  { key: "competitions", icon: Trophy, label: "Competitions" },
   { key: "abroad", icon: Globe, label: "Study Abroad Track" },
 ];
 
@@ -282,10 +282,10 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
             <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-full flex flex-col justify-center items-center animate-in fade-in duration-300">
               <Calendar className="h-6 w-6 text-primary/40 mb-2.5 animate-pulse stroke-[2.2]" />
               <p className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wide">
-                Ecosystem Seminars Vacant
+                No events yet
               </p>
               <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1 italic">
-                No physical encounters logged. Recheck parameters down the line.
+                Nothing scheduled. Check back later.
               </p>
             </div>
           ) : (
@@ -309,7 +309,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
               {upcomingEvents.length > 0 && (
                 <section className="space-y-2.5 w-full">
                   <h2 className="text-xs font-bold text-foreground/80 uppercase tracking-wider pl-0.5 select-none leading-none mb-1">
-                    Subsequent Upcoming Encounters
+                    Upcoming
                   </h2>
                   <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w-full">
                     {upcomingEvents.map((eventItem) => (
@@ -336,10 +336,10 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
             <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-full flex flex-col justify-center items-center animate-in fade-in duration-300">
               <Trophy className="h-6 w-6 text-primary/40 mb-2.5 animate-pulse stroke-[2.2]" />
               <p className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wide">
-                Ecosystem Challenges Staged Empty
+                No competitions yet
               </p>
               <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1 italic">
-                No active structural battles mapped. Code freeze window lock.
+                Nothing active right now. Check back soon.
               </p>
             </div>
           ) : (
@@ -365,13 +365,13 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
                     )}
                     <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent p-3.5 flex flex-col justify-center text-left">
                       <Badge className="bg-amber-500/10 text-amber-600 border-none text-[9px] font-extrabold px-2 py-0.5 rounded h-4.5 w-fit mb-1.5 uppercase tracking-wide">
-                        {STATUS_LABEL[compItem.status] || "Staged Pipeline"}
+                        {STATUS_LABEL[compItem.status] || "Upcoming"}
                       </Badge>
                       <h3 className="font-bold text-xs sm:text-sm text-foreground/90 tracking-tight leading-tight line-clamp-1 truncate w-full group-hover:text-primary transition-colors select-text pr-1">
                         {compItem.title}
                       </h3>
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1 select-none leading-none">
-                        {compItem.category || "Ecosystem Battle Track"}
+                        {compItem.category || "Competition"}
                       </p>
                     </div>
                   </div>
