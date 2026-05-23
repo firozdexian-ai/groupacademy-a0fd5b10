@@ -63,9 +63,9 @@ export default function StudyAbroadRoadmapResults() {
   const [loading, setLoading] = useState(true);
   const [pollCount, setPollCount] = useState(0);
 
-  // Digital Workforce Anomaly Protocol[cite: 6]
+  // Internal error logger
   const reportAnomaly = async (event: string, context: any) => {
-    console.error(`[Digital Workforce Anomaly] ${event}`, context);
+    console.error(`[abroad] ${event}`, context);
     try {
       await adminSupportAssistant({ type: "roadmap_result_error", event, context });
     } catch {

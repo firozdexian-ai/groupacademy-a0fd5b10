@@ -55,9 +55,9 @@ export default function StudyAbroadDetail() {
   const navigate = useNavigate();
   const { talent } = useTalent();
 
-  // Digital Workforce Anomaly Protocol
+  // Internal error logger
   const reportAnomaly = async (event: string, context: any) => {
-    console.error(`[Digital Workforce Anomaly] ${event}`, context);
+    console.error(`[abroad] ${event}`, context);
     try {
       await adminSupportAssistant({ type: "abroad_detail_error", event, context });
     } catch {

@@ -48,9 +48,9 @@ export default function SchoolDetail() {
   const [message, setMessage] = useState("");
   const [submitting, setSubmitting] = useState(false);
 
-  // Digital Workforce Anomaly Protocol[cite: 5, 6]
+  // Internal error logger
   const reportAnomaly = async (event: string, context: any) => {
-    console.error(`[Digital Workforce Anomaly] ${event}`, context);
+    console.error(`[abroad] ${event}`, context);
     try {
       await adminSupportAssistant({ type: "school_detail_error", event, context });
     } catch {
