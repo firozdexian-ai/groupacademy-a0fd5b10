@@ -79,7 +79,7 @@ export function MRRTargetManager() {
     }
   }, [target]);
 
-  // MUTATION: Synchronize Target Protocol
+  // MUTATION: Synchronize Targets
   const saveMutation = useMutation({
     mutationFn: async () => {
       const payload: any = {
@@ -94,7 +94,7 @@ export function MRRTargetManager() {
       await upsertMonthlyTarget(payload);
     },
     onSuccess: () => {
-      toast.success("Protocol Successful: Target Synchronized");
+      toast.success("Target Synchronized");
       setHasChanges(false);
       queryClient.invalidateQueries({ queryKey: ["ir-target"] });
     },
@@ -177,7 +177,7 @@ export function MRRTargetManager() {
                 ) : (
                   <Zap className={cn("h-4 w-4", hasChanges ? "fill-current" : "")} />
                 )}
-                {saveMutation.isPending ? "Syncing..." : "Synchronize"}
+                {saveMutation.isPending ? "Saving…" : "Synchronize"}
               </Button>
             </div>
           )}

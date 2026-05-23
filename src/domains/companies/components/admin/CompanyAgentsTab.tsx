@@ -308,7 +308,7 @@ export function CompanyAgentsManager() {
     link.href = url;
     link.setAttribute("download", `Partner_Leads_${new Date().getTime()}.csv`);
     link.click();
-    toast.success("Lead Ledger Exported");
+    toast.success("Leads exported");
   };
 
   // Telemetry Constants
@@ -430,7 +430,7 @@ export function CompanyAgentsManager() {
                     </div>
                     <div className="space-y-2">
                       <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
-                        Expertise Matrix
+                        Expertise
                       </Label>
                       <Input
                         placeholder="Comma-separated domains..."
@@ -571,7 +571,7 @@ export function CompanyAgentsManager() {
                   ) : (
                     <ShieldCheck className="mr-2 h-4 w-4" />
                   )}
-                  {createAgentMutation.isPending ? "Syncing..." : "Authorize Creation"}
+                  {createAgentMutation.isPending ? "Saving…" : "Authorize Creation"}
                 </Button>
               </DialogFooter>
             </div>
@@ -773,7 +773,7 @@ export function CompanyAgentsManager() {
                   <Select value={leadFilter} onValueChange={setLeadFilter}>
                     <SelectTrigger className="h-12 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest bg-muted/20">
                       <Filter className="h-4 w-4 mr-2 text-primary" />
-                      <SelectValue placeholder="Protocol Filter" />
+                      <SelectValue placeholder="Filter" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2">
                       <SelectItem value="all" className="font-bold">
@@ -889,7 +889,7 @@ export function CompanyAgentsManager() {
             Partnership Terminal: Authorized Access Only
           </p>
           <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
-            Protocol: B2B Intel Registry v2.6.4
+            B2B contacts
           </p>
         </div>
         <div className="flex gap-2">

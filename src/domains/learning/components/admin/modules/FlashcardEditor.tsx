@@ -100,7 +100,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
       toast.success("Payload Synced to Clipboard");
       setTimeout(() => setCopied(false), 2000);
     } catch {
-      toast.error("Handshake Failed: Copy aborted");
+      toast.error("Copy failed");
     }
   };
 
@@ -127,7 +127,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
     const emptyNodes = cards.filter((c) => !c.front.trim() || !c.back.trim());
     if (emptyNodes.length > 0) return toast.error(`Sync Blocked: ${emptyNodes.length} nodes incomplete`);
     onSave?.(getPayloadSynthesis());
-    toast.success("Registry Handshake Verified");
+    toast.success("Saved");
   };
 
   const validCards = cards.filter((c) => c.front.trim() && c.back.trim());
@@ -315,7 +315,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                 disabled={!jsonInput.trim()}
                 className="w-full h-14 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] shadow-xl shadow-primary/20"
               >
-                Authorize Ingestion Protocol
+                Upload
               </Button>
             </CardContent>
           </Card>

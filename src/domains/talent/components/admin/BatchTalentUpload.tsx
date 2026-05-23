@@ -90,7 +90,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
     files.forEach((file) => {
       if (!file.name.toLowerCase().endsWith(".pdf")) {
-        errors.push(`${file.name}: Protocol Mismatch (PDF Required)`);
+        errors.push(`${file.name}: PDF format required`);
       } else if (file.size > MAX_FILE_SIZE_BYTES) {
         errors.push(`${file.name}: Payload Exceeds ${MAX_FILE_SIZE_MB}MB`);
       } else {
@@ -106,7 +106,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
     if (e.target.files && e.target.files[0]) {
       const file = e.target.files[0];
       if (!file.name.toLowerCase().endsWith(".csv")) {
-        toast.error("Protocol Mismatch (CSV Required)");
+        toast.error("CSV format required");
         return;
       }
       setCsvFile(file);
@@ -366,7 +366,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
           <div className="space-y-1">
             <CardTitle className="text-3xl font-black uppercase tracking-tighter italic">Registry Ingestion</CardTitle>
             <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
-              Bulk Talent Artifact Synchronization Node v2.7
+              Bulk talent upload
             </CardDescription>
           </div>
         </div>
@@ -490,7 +490,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
               ) : (
                 <ShieldCheck className="mr-3 h-5 w-5" />
               )}
-              Commit Ingestion Protocol
+              Upload
             </Button>
           </TabsContent>
 

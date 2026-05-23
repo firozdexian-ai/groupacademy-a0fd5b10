@@ -63,7 +63,7 @@ const Dashboard = () => {
     );
 
   const TabComponent = TAB_COMPONENTS[activeTab];
-  const pageTitle = TAB_TITLES[activeTab] ?? "Nexus Console";
+  const pageTitle = TAB_TITLES[activeTab] ?? "Admin";
 
   return (
     <SidebarProvider>

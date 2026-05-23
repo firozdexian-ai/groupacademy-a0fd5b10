@@ -74,7 +74,7 @@ export function HrTargetsTab() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["hr_targets"] });
-      toast.success("Target Parameters Synchronized");
+      toast.success("Targets saved");
       setOpen(false);
     },
     onError: (e: Error) => toast.error(`Sync Failed: ${e.message}`),
@@ -163,7 +163,7 @@ export function HrTargetsTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Crosshair className="h-8 w-8 text-primary fill-primary/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Target Protocol</h2>
+            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Targets</h2>
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Performance Metrics &amp; Incentive Distribution

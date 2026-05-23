@@ -170,7 +170,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
   const handleEnhanceDescription = async () => {
     if (form.description.length < 30) {
-      toast.error("Protocol Fault: Min 30 characters required.");
+      toast.error("Error: Min 30 characters required.");
       return;
     }
     setIsEnhancing(true);
@@ -457,7 +457,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
               <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-[40px] border-2 border-primary/10 bg-primary/5">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
-                    Application Ingress Type
+                    How to apply
                   </Label>
                   <Select
                     value={form.application_type}

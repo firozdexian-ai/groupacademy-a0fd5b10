@@ -123,7 +123,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
     }
 
     if (!subject.trim() || !body.trim()) {
-      toast.error("Protocol Fault: Transmission requires subject and payload.");
+      toast.error("Error: Transmission requires subject and payload.");
       return;
     }
 
@@ -164,7 +164,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
 
       qc.invalidateQueries({ queryKey: ["ir-email-communications"] });
 
-      toast.success("Protocol Registered: Opening mail client.", { id: toastId });
+      toast.success("Opening mail client…", { id: toastId });
       setSubject("");
       setBody("");
     } catch (error: any) {

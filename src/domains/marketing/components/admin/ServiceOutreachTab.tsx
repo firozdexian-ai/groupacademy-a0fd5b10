@@ -33,7 +33,7 @@ import {
 
 /**
  * Platform Logic: Service Outreach & Attribution Manager
- * 2026 Standard: Blended Phase 6 UI (Registry Ledger + Distribution Engine)
+ * 2026 Standard: Blended Phase 6 UI (Banners + Distribution Engine)
  */
 
 interface ServiceConfig {
@@ -130,7 +130,7 @@ export function ServiceOutreachTab() {
       setShareLogs((prev) => prev.filter((l) => l !== newLog));
       toast.error("System Error: Progress synchronization failed.");
     } else {
-      toast.success(`Protocol: Recorded share on ${channel}`);
+      toast.success(`Recorded share on ${channel}`);
     }
   };
 
