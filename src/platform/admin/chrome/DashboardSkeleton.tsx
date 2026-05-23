@@ -103,14 +103,14 @@ export function DashboardErrorState({
               className="h-14 px-10 rounded-2xl border-2 font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:bg-destructive hover:text-white hover:border-destructive shadow-xl shadow-destructive/10 group"
             >
               <RefreshCw className="w-4 h-4 mr-3 group-hover:rotate-180 transition-transform duration-700" />
-              Re-Initialize Handshake
+              Try again
             </Button>
           </div>
         )}
 
         <div className="mt-8 flex items-center gap-2 opacity-20">
           <Terminal className="h-3 w-3" />
-          <span className="text-[8px] font-black uppercase tracking-widest">Protocol Error Log: 0x2A94F</span>
+          <span className="text-[8px] font-black uppercase tracking-widest">Error code: 0x2A94F</span>
         </div>
       </CardContent>
     </Card>
