@@ -69,17 +69,17 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <TrendingUp className="h-8 w-8 text-primary fill-primary/20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Intelligence Hub</h2>
+            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Investor overview</h2>
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            Consolidated Operational Telemetry & Stakeholder Nexus
+            Live revenue, targets & stakeholder activity
           </p>
         </div>
         <Button
           onClick={() => onNavigate("ir-targets")}
           className="h-14 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-3 shadow-lg"
         >
-          <Target className="h-4 w-4" /> {telemetry?.target ? "Recalibrate Targets" : "Initialize Targets"}
+          <Target className="h-4 w-4" /> {telemetry?.target ? "Update targets" : "Set targets"}
         </Button>
       </header>
 
@@ -95,20 +95,20 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
           title="Revenue Volume"
           value={formatUSD(currentMRR)}
           icon={Zap}
-          subtext={`${progressPercent.toFixed(1)}% Synchronization`}
+          subtext={`${progressPercent.toFixed(1)}% of target`}
           variant="accent"
         />
         <KPICard
           title="30D Activity"
           value={telemetry?.registry.outreach30 || 0}
           icon={Activity}
-          subtext="Institutional Interactions"
+          subtext="Stakeholder interactions"
         />
         <KPICard
-          title="Global Nodes"
+          title="Talents"
           value={telemetry?.registry.talents.toLocaleString() || 0}
           icon={Globe}
-          subtext="Verified Network Pool"
+          subtext="Verified network pool"
         />
       </div>
 
@@ -120,14 +120,14 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
             <div className="flex items-center justify-between">
               <div className="space-y-1">
                 <CardTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-600">
-                  Monetization Pulse
+                  Revenue
                 </CardTitle>
                 <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
-                  Live Credit-to-USD Protocol
+                  Live credit-to-USD conversion
                 </CardDescription>
               </div>
               <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black italic px-3 py-1 shadow-sm uppercase tracking-widest">
-                Phase_Z1_Active
+                Live
               </Badge>
             </div>
           </CardHeader>

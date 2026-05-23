@@ -66,10 +66,10 @@ export function JobsUploadTab() {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Database className="h-8 w-8" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Ingress Terminal</h2>
+            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Upload jobs</h2>
           </div>
           <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            Marketplace Data Synchronization & Multi-Source Intake
+            AI parse, batch import & verification queue
           </p>
         </div>
         <Button
@@ -79,7 +79,7 @@ export function JobsUploadTab() {
           }}
           className="h-14 px-8 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-3 shadow-lg group"
         >
-          <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" /> Provision Manual Node
+          <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" /> Add job manually
         </Button>
       </div>
 
@@ -87,9 +87,9 @@ export function JobsUploadTab() {
         {/* TAB NAVIGATION */}
         <div className="bg-card/30 p-2 rounded-[32px] border-2 border-border/40 backdrop-blur-sm shadow-xl inline-block mb-8">
           <TabsList className="bg-transparent h-auto gap-2">
-            <TabTriggerNode value="ai-parse" icon={Sparkles} label="Neural_Parser" />
-            <TabTriggerNode value="batch" icon={Upload} label="Batch_Sync" />
-            <TabTriggerNode value="pending" icon={ShieldCheck} label="Verification_Queue" />
+            <TabTriggerNode value="ai-parse" icon={Sparkles} label="AI parse" />
+            <TabTriggerNode value="batch" icon={Upload} label="Batch import" />
+            <TabTriggerNode value="pending" icon={ShieldCheck} label="Verification" />
           </TabsList>
         </div>
 
@@ -101,24 +101,24 @@ export function JobsUploadTab() {
               <div className="flex justify-between items-center">
                 <div className="space-y-1">
                   <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
-                    <Sparkles className="h-6 w-6 text-primary fill-primary/10" /> Single Node Extraction
+                    <Sparkles className="h-6 w-6 text-primary fill-primary/10" /> Parse a single job
                   </CardTitle>
                   <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
-                    Input raw text to generate a structured job artifact via AI.
+                    Paste raw text and AI fills the structured fields.
                   </CardDescription>
                 </div>
                 <Badge variant="outline" className="font-black italic px-4 py-1.5 border-2 text-[10px]">
-                  AI_ENGINE_PROMPT
+                  AI parser
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="p-8 pt-0 space-y-6">
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Raw Payload Ingress</Label>
+                <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Raw text</Label>
                 <Textarea
                   value={rawText}
                   onChange={(e) => setRawText(e.target.value)}
-                  placeholder="PASTE LINKEDIN, COMPANY SITE, OR UNSYNCED JOB DESCRIPTION DATA..."
+                  placeholder="Paste a LinkedIn post, company careers page, or any job description..."
                   rows={10}
                   className="rounded-3xl border-2 font-medium italic text-sm leading-relaxed bg-muted/5 p-8 focus-visible:ring-primary shadow-inner resize-none"
                 />
@@ -130,7 +130,7 @@ export function JobsUploadTab() {
                   className="h-16 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl shadow-primary/20 active:scale-95 transition-all"
                 >
                   {parsing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Zap className="h-6 w-6 fill-current" />}
-                  Execute Neural Parse
+                  Parse with AI
                 </Button>
                 <Button
                   variant="outline"
@@ -140,7 +140,7 @@ export function JobsUploadTab() {
                   }}
                   className="h-16 px-8 rounded-[24px] border-2 font-black uppercase text-[10px] tracking-widest gap-2"
                 >
-                  <LinkIcon className="h-4 w-4" /> Skip Extraction
+                  <LinkIcon className="h-4 w-4" /> Skip AI
                 </Button>
               </div>
             </CardContent>
@@ -157,10 +157,10 @@ export function JobsUploadTab() {
                 </div>
                 <div>
                   <CardTitle className="text-2xl font-black uppercase italic tracking-tighter">
-                    Industrial Batch Synchronization
+                    Bulk import
                   </CardTitle>
                   <CardDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">
-                    Direct JSON artifact ingestion for high-volume recruitment hit-lists.
+                    Upload a JSON file of jobs in bulk.
                   </CardDescription>
                 </div>
               </div>
