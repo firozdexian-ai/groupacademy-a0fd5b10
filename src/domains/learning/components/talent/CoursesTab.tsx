@@ -496,7 +496,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           <span className="flex items-center gap-1.5 bg-primary/5 px-2 py-0.5 border border-primary/10 rounded-full text-[11px]">
             <Gift className="h-3.5 w-3.5 fill-primary/5 stroke-[2.2]" />
             <span>
-              {Array.isArray(compItem.prizes) ? `${compItem.prizes.length} baseline awards` : "Settlement Pools Staged"}
+              {Array.isArray(compItem.prizes) ? `${compItem.prizes.length} prizes` : "Prizes announced soon"}
             </span>
           </span>
           <span className="flex items-center gap-0.5 text-[11px] font-bold group-hover:translate-x-0.5 transition-transform">

@@ -1,3 +1,9 @@
+# B3.1 — Learning Hub Jargon Residue Cleanup (DONE)
+
+All 11 residual Learning Hub hits rewritten. Next batch: **B4** Jobs + Gigs + Career Abroad talent surfaces (~70 hits).
+
+---
+
 # B3.1 — Learning Hub Jargon Residue Cleanup
 
 B3 took the heavy pass last round. The latest sweep still flags 11 user-visible strings inside `src/domains/learning/` that slipped through (mix of T1 toasts and T2 labels). This phase closes them out so the Learning Hub is clean before we move on to B4 (Jobs/Gigs/Abroad).

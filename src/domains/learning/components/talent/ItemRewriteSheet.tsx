@@ -465,7 +465,7 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
                   variant={isJsonTextStringValid ? "outline" : "destructive"}
                   className="text-[9px] font-extrabold h-4.5 px-2 rounded tracking-wide uppercase select-none shadow-sm leading-none flex items-center shrink-0"
                 >
-                  {isJsonTextStringValid ? "Editable Buffer Token" : "Malformed JSON Syntax"}
+                  {isJsonTextStringValid ? "Editable" : "Invalid JSON"}
                 </Badge>
               </div>
 

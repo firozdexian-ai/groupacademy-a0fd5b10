@@ -114,9 +114,9 @@ export function useIssueSkillCredentials(talentId?: string | null) {
       });
 
       if (res.newly_issued.length > 0) {
-        toast.success(`Cryptographic Ledger Verified: Issued ${res.newly_issued.length} new skill credentials.`);
+        toast.success(`Issued ${res.newly_issued.length} new skill credentials.`);
       } else {
-        toast.info(`Evaluation loop complete. Current mastery profiles (${res.evaluated} nodes) are fully aligned.`);
+        toast.info(`Review complete — your mastery is up to date across ${res.evaluated} topics.`);
       }
     },
     onError: (err: any) => {
