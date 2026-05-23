@@ -221,7 +221,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
                   ) : (
                     <Camera className="h-3.5 w-3.5 stroke-[2.2]" />
                   )}
-                  <span>{mode === "text" ? "Data Text Paste" : "Vision Screen Upload"}</span>
+                  <span>{mode === "text" ? "Paste text" : "Upload screenshot"}</span>
                 </button>
               );
             })}
@@ -230,10 +230,10 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
           {inputMode === "text" ? (
             <div className="space-y-1.5 text-left animate-in slide-in-from-top-1 duration-200">
               <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground pl-0.5 select-none">
-                Ingress Payload Content
+                Job description
               </Label>
               <Textarea
-                placeholder="Initialize raw job description text paste compilation sequence..."
+                placeholder="Paste the full job description here..."
                 className="rounded-2xl border border-border/40 min-h-[160px] resize-none bg-card/30 p-4 font-medium sm:text-sm text-xs leading-relaxed focus-visible:ring-1 focus-visible:ring-ring focus-visible:border-primary/40"
                 value={jobText}
                 onChange={(e) => setJobText(e.target.value)}
@@ -311,7 +311,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
             ) : (
               <Zap className="h-4 w-4 fill-primary-foreground/10" />
             )}
-            <span>{isParsing ? "Analyzing Intelligence Vectors..." : "Extract Data With AI"}</span>
+            <span>{isParsing ? "Extracting details..." : "Extract data with AI"}</span>
           </Button>
         </div>
       ) : (
@@ -321,7 +321,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
             <div className="flex items-center gap-2 min-w-0">
               <div className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse shrink-0" />
               <h4 className="text-[10px] font-bold uppercase tracking-wider text-foreground/90 truncate">
-                Curation Data Verification
+                Review extracted details
               </h4>
             </div>
             <Button
@@ -335,7 +335,7 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
               }}
             >
               <RotateCcw className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
-              <span>Re-Initialize</span>
+              <span>Start over</span>
             </Button>
           </div>
 
@@ -347,14 +347,14 @@ export function JobPostingGigForm({ gig, talentId, onSubmitted }: JobPostingGigF
             <div className="grid gap-4 relative z-10 w-full min-w-0">
               <div className="space-y-1 text-left w-full min-w-0">
                 <Label className="text-[9px] font-bold uppercase tracking-wider text-primary pl-0.5 select-none">
-                  Target Role Designation Designation
+                  Job title
                 </Label>
                 <div className="relative w-full min-w-0">
                   <Briefcase className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/50 stroke-[2.2]" />
                   <Input
                     value={editTitle}
                     onChange={(e) => setEditTitle(e.target.value)}
-                    placeholder="E.g. Senior Frontend Engineer"
+                    placeholder="e.g. Senior Frontend Engineer"
                     className="rounded-xl border border-border/40 bg-background/40 pl-10 h-10 font-bold text-xs sm:text-sm tracking-tight focus-visible:ring-1 focus-visible:ring-ring text-foreground/90 w-full"
                   />
                 </div>

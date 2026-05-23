@@ -47,7 +47,7 @@ const verdictMeta: Record<string, { label: string; icon: any; tone: string; clas
     className: "bg-amber-500/10 text-amber-600 border-amber-500/20 dark:text-amber-400",
   },
   escalated: {
-    label: "Under Review Panel",
+    label: "Under review",
     icon: Clock,
     tone: "secondary",
     className: "bg-blue-500/10 text-blue-600 border-blue-500/20 dark:text-blue-400",
@@ -219,7 +219,7 @@ export function VerificationVerdictCard({ verification }: { verification: Verifi
       {verification.risk_flags?.length > 0 && (
         <div className="space-y-1.5 pt-3 border-t border-border/10 mt-3 select-none">
           <span className="text-[9px] font-extrabold text-rose-500/80 uppercase tracking-wider block pl-0.5">
-            Anomaly Anomaly Risk Signatures
+            Risk flags
           </span>
           <div className="flex flex-wrap gap-1.5 max-w-full">
             {verification.risk_flags.map((flagStr) => {
@@ -274,7 +274,7 @@ export function VerificationVerdictCard({ verification }: { verification: Verifi
                 type="button"
                 className="w-full sm:w-auto h-8 px-4 rounded-xl text-xs font-bold border-border/60 hover:bg-accent cursor-pointer active:scale-95 transition-transform shadow-sm"
               >
-                <span>Appeal Audit Verdict</span>
+                <span>Appeal verdict</span>
               </Button>
             </SheetTrigger>
             <SheetContent
@@ -287,7 +287,7 @@ export function VerificationVerdictCard({ verification }: { verification: Verifi
                   <div className="mx-auto w-12 h-1 bg-muted/60 rounded-full mb-2" />
                   <SheetTitle className="text-sm font-bold tracking-tight text-foreground flex items-center justify-center gap-2 uppercase tracking-wider">
                     <Scale className="h-4 w-4 text-primary animate-pulse stroke-[2.2]" />
-                    <span>Dispute Audit Settlement</span>
+                    <span>File an appeal</span>
                   </SheetTitle>
                   <SheetDescription className="text-xs text-muted-foreground/90 leading-normal">
                     Provide precise contextual counter-arguments regarding the rejection markers or metric failures

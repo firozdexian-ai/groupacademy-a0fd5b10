@@ -37,10 +37,9 @@ export default function NewGigWizard() {
   const [brief, setBrief] = useState<GigBrief | null>(null);
   const [draft, setDraft] = useState<GigDraft | null>(null);
 
-  // Digital Workforce Hook: Placeholder for Admin Agent interaction[cite: 6]
+  // Admin notifier: in production this invokes the admin-gig-ops agent.
   const notifyAdminAgent = async (message: string, context: any) => {
-    // In production, this invokes the 'admin-gig-ops' agent
-    console.log("Notifying Digital Workforce Agent:", message, context);
+    console.log("[gigs] admin notify:", message, context);
   };
 
   const scope = useMutation({
@@ -56,7 +55,7 @@ export default function NewGigWizard() {
     },
     onError: (e: Error) => {
       toast.error(e.message || "Failed to scope gig");
-      notifyAdminAgent("Gig Scoping Failure", { error: e.message });
+      notifyAdminAgent("gig.scope.failed", { error: e.message });
     },
   });
 
@@ -71,7 +70,7 @@ export default function NewGigWizard() {
     },
     onError: (e: Error) => {
       toast.error("Failed to publish");
-      notifyAdminAgent("Gig Publishing Failure", { draftId: draft?.id, error: e.message });
+      notifyAdminAgent("gig.publish.failed", { draftId: draft?.id, error: e.message });
     },
   });
 

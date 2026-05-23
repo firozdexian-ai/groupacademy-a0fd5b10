@@ -440,7 +440,7 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
                   <ShieldCheck className="h-4 w-4" />
                 )}
                 <span>
-                  {sharedChannels.length > 0 ? "Commit Verification Logs" : "Awaiting Referral Launch Tracking"}
+                  {sharedChannels.length > 0 ? "Submit for review" : "Share to at least one channel first"}
                 </span>
               </Button>
 

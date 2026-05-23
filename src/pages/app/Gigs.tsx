@@ -278,7 +278,7 @@ export default function Gigs() {
           )}
         >
           <ShieldCheck className="h-4 w-4 stroke-[2.2]" />
-          <span>{verificationStatusState === "verified" ? "Verified" : "Verify Account Ingress"}</span>
+          <span>{verificationStatusState === "verified" ? "Verified" : "Verify account"}</span>
         </button>
       </header>
 
@@ -542,7 +542,7 @@ export default function Gigs() {
                         {marketItemNode.title}
                       </h3>
                       <p className="font-sans text-[11px] font-semibold text-muted-foreground/50 truncate block select-text leading-tight">
-                        {marketItemNode.employer_name || "Hashed Corporate Identity Pool"}
+                        {marketItemNode.employer_name || "Private employer"}
                       </p>
 
                       <div className="flex items-center gap-3.5 font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight select-none pointer-events-none leading-none pt-0.5 tabular-nums w-full shrink-0">
@@ -593,7 +593,7 @@ export default function Gigs() {
                     >
                       <div className="flex justify-between items-start gap-4 leading-none w-full block">
                         <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground truncate block pt-0.5 flex-1 min-w-0 select-text">
-                          {bidItem.marketplace_gigs?.title || "Untitled Assignment Target Specification"}
+                          {bidItem.marketplace_gigs?.title || "Untitled gig"}
                         </h4>
                         <Badge
                           variant="outline"
@@ -603,7 +603,7 @@ export default function Gigs() {
                         </Badge>
                       </div>
                       <p className="font-sans text-[11px] font-semibold text-muted-foreground/50 truncate block select-text leading-tight">
-                        {bidItem.marketplace_gigs?.employer_name || "Corporate Client Identity Pool"}
+                        {bidItem.marketplace_gigs?.employer_name || "Private employer"}
                       </p>
                     </div>
                   ))
@@ -631,7 +631,7 @@ export default function Gigs() {
                       >
                         <div className="min-w-0 flex-1 leading-none space-y-1 block pr-1">
                           <h4 className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground truncate block pt-0.5 select-text">
-                            {contractItem.marketplace_gigs?.title || "Untitled Active Milestone Space"}
+                            {contractItem.marketplace_gigs?.title || "Untitled gig"}
                           </h4>
                           <p className="font-mono text-[9px] font-black text-emerald-600 uppercase tracking-tight leading-none block pt-0.5 select-text tabular-nums">
                             Escrow Balance: {contractItem.agreed_amount.toLocaleString()} Credits Draw
@@ -679,7 +679,7 @@ export default function Gigs() {
                 type="text"
                 value={textDeliverableTitleInput}
                 onChange={(e) => setTextDeliverableTitleInput(e.target.value)}
-                placeholder="e.g. Completed System Core Abstraction Layer specs"
+                placeholder="e.g. Completed homepage redesign"
                 className="h-10 text-xs sm:text-sm bg-background border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none"
               />
             </div>

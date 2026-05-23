@@ -49,7 +49,7 @@ export default function GigDisputes() {
           setDisputesRegistryItems((dbDisputesPayload as unknown as DisputeRecord[]) ?? []);
         }
       } catch (fatalHandshakeException) {
-        console.error("Dispute Ledger Compilation Pipeline Interrupted:", fatalHandshakeException);
+        console.error("[gigs] Failed to load disputes:", fatalHandshakeException);
       } finally {
         if (isThreadActiveFlag.current) {
           setIsDataLayerLoading(false);
