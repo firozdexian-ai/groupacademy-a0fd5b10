@@ -27,7 +27,7 @@ export function JobsUploadTab() {
   const [parsing, setParsing] = useState(false);
 
   const runAIParse = async () => {
-    if (!rawText.trim()) return toast.error("Protocol Fault: Ingestion payload required.");
+    if (!rawText.trim()) return toast.error("Please paste a job description first.");
     setParsing(true);
     const toastId = toast.loading("Initializing neural extraction...");
 
