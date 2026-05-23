@@ -652,7 +652,7 @@ export default function Gigs() {
         </TabsContent>
       </Tabs>
 
-      {/* HUD LEVEL 3: ARTIFACT MANIFEST TRANSMISSION DISPATCH MODAL LAYER */}
+      {/* Deliverable submission dialog */}
       <Dialog
         open={!!activeDeliverableContractId}
         onOpenChange={(isOpenState) => !isOpenState && setActiveDeliverableContractId(null)}
@@ -660,14 +660,14 @@ export default function Gigs() {
         <DialogContent className="rounded-lg max-w-md border border-border/60 bg-popover text-popover-foreground shadow-2xl select-none leading-none p-5">
           <DialogHeader className="text-left leading-none pb-2 border-b border-border/5">
             <DialogTitle className="text-sm font-bold uppercase tracking-wide text-foreground leading-none m-0">
-              Transmit Assignment Deliverable Archive
+              Submit deliverable
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 pt-4 block w-full leading-none">
             <div className="space-y-1 block leading-none">
               <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">
-                Deliverable Manifest Document Title
+                Title
               </Label>
               <Input
                 type="text"
@@ -680,19 +680,19 @@ export default function Gigs() {
 
             <div className="space-y-1 block leading-none pt-1">
               <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">
-                Implementation Architecture Remarks Summary
+                Notes (optional)
               </Label>
               <Textarea
                 value={textDeliverableDescInput}
                 onChange={(e) => setTextDeliverableDescInput(e.target.value)}
-                placeholder="Outline explicit technical details, build artifacts logs, or structural adjustments performed down-stream for client verification notes..."
+                placeholder="Add any notes about what's included, changes made, or things to review..."
                 className="bg-background border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg text-xs sm:text-sm font-sans leading-relaxed resize-none p-2.5 min-h-[100px]"
               />
             </div>
 
             <div className="space-y-1 block leading-none pt-1">
               <Label className="font-mono text-[10px] font-extrabold uppercase text-primary tracking-wide block leading-none ml-0.5">
-                Secure Document Asset Files Ledger
+                Files
               </Label>
               <GigUploader
                 value={uploadedFilesCollection}
@@ -715,10 +715,10 @@ export default function Gigs() {
               {submitDeliverableMutation.isPending ? (
                 <div className="flex items-center justify-center gap-1.5 mx-auto leading-none">
                   <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-primary-foreground stroke-[2.5]" />
-                  <span className="pt-0.5">Authorizing Archive Transport Loop...</span>
+                  <span className="pt-0.5">Submitting...</span>
                 </div>
               ) : (
-                <span>Publish Escrow Deliverable Artifacts</span>
+                <span>Submit deliverable</span>
               )}
             </Button>
           </div>
