@@ -132,7 +132,7 @@ export default function GigDisputes() {
               >
                 <CardHeader className="p-3.5 pb-2 border-b border-border/5 bg-muted/20 flex flex-row items-center justify-between w-full select-none shrink-0 leading-none">
                   <CardTitle className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground flex items-center gap-2 m-0">
-                    <span>Incident Reason Ref: {disputeItemNode.reason_code.replace(/_/g, " ")}</span>
+                    <span>Reason: {disputeItemNode.reason_code.replace(/_/g, " ")}</span>
                   </CardTitle>
 
                   <Badge
