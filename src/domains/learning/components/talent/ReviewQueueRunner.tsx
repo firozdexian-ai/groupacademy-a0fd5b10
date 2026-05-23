@@ -153,7 +153,7 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
                 <span className="truncate text-ellipsis block pr-1">{topic.topic_tag}</span>
               </CardTitle>
               <p className="text-[11px] font-semibold text-muted-foreground/70 truncate tracking-tight italic">
-                {topic.content_title ?? "Ecosystem Course"} &bull; {topic.module_title ?? "Target Module"}
+                {topic.content_title ?? "Course"} &bull; {topic.module_title ?? "Module"}
               </p>
             </div>
             <Badge
@@ -166,11 +166,11 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
 
           <div className="flex flex-wrap items-center gap-2.5 pt-2 text-[10px] font-bold text-muted-foreground/60 select-none tabular-nums leading-none">
             <span className="bg-muted/40 border border-border/20 px-1.5 py-0.5 rounded">
-              Mean Mastery: {Math.round(topic.mastery * 100)}%
+              Avg Mastery: {Math.round(topic.mastery * 100)}%
             </span>
             <span>&bull;</span>
             <span className="bg-muted/40 border border-border/20 px-1.5 py-0.5 rounded">
-              Horizon Interval: {topic.interval_days}d
+              Review interval: {topic.interval_days}d
             </span>
             {overdueLabel && (
               <>
@@ -199,7 +199,7 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
               <span className="truncate text-ellipsis block pr-1">{topic.topic_tag}</span>
             </CardTitle>
             <p className="text-[11px] font-semibold text-muted-foreground/70 truncate tracking-tight italic">
-              {topic.content_title ?? "Ecosystem Course"} &bull; {topic.module_title ?? "Target Module"}
+              {topic.content_title ?? "Course"} &bull; {topic.module_title ?? "Module"}
             </p>
           </div>
           <Badge
@@ -207,7 +207,7 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
             className="shrink-0 text-[9px] font-extrabold px-2 h-5 bg-rose-500/5 border-rose-500/10 text-rose-600 dark:text-rose-400 uppercase tracking-wide rounded animate-pulse shadow-sm"
           >
             <Clock className="h-3 w-3 mr-1 shrink-0 stroke-[2.2]" />
-            <span>{overdueLabel || "due framework"}</span>
+            <span>{overdueLabel || "due"}</span>
           </Badge>
         </div>
 
@@ -267,7 +267,7 @@ function TopicCard({ topic, onCompleted }: { topic: ReviewTopic; onCompleted: ()
                   {r.explanation && (
                     <div className="p-3 pl-3.5 rounded-lg border border-border/20 bg-muted/20 select-text font-medium text-muted-foreground/90 italic leading-relaxed break-words shadow-inner text-[11px] sm:text-xs">
                       <span className="font-bold uppercase tracking-wider text-[9px] text-primary not-italic block mb-1 select-none leading-none pl-0.5">
-                        Ecosystem Synapse Rationale
+                        Why this answer
                       </span>
                       <p className="pl-0.5">&ldquo;{r.explanation.trim()}&rdquo;</p>
                     </div>
@@ -374,7 +374,7 @@ export function ReviewQueueRunner() {
         <CardContent className="py-12 flex flex-col items-center justify-center gap-3.5 text-center w-full">
           <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5 animate-pulse">
-            Assembling Spaced Repetition Calibration Backlog…
+            Loading your review queue…
           </p>
         </CardContent>
       </Card>
@@ -403,7 +403,7 @@ export function ReviewQueueRunner() {
             className="h-8 rounded-xl border-border/60 hover:bg-accent font-bold uppercase text-[10px] tracking-wide gap-1.5 shrink-0 shadow-sm cursor-pointer"
           >
             <RefreshCw className="h-3.5 w-3.5 stroke-[2.5]" />
-            <span>Re-establish Ingress Sync</span>
+            <span>Try again</span>
           </Button>
         </CardContent>
       </Card>
@@ -417,11 +417,10 @@ export function ReviewQueueRunner() {
           <CheckCircle2 className="h-5 w-5 text-emerald-600 dark:text-emerald-400 stroke-[2.5]" />
         </div>
         <h3 className="text-sm font-bold text-foreground/90 uppercase tracking-wide leading-none">
-          Ecosystem Calibrated Clean
+          All caught up
         </h3>
         <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 italic">
-          No baseline memory parameters are currently due for review inside your retention framework. Keep practicing
-          active modules to seed the repetition ledger.
+          Nothing due for review right now. Keep practicing your modules to build your review queue.
         </p>
       </Card>
     );
@@ -504,7 +503,7 @@ export function ReviewQueueRunner() {
                       {t.topic_tag}
                     </p>
                     <p className="text-[11px] font-semibold text-muted-foreground/70 truncate tracking-tight pr-1 italic select-text">
-                      {t.content_title ?? "Ecosystem Course"} &bull; {t.module_title ?? "Target Module"}
+                      {t.content_title ?? "Course"} &bull; {t.module_title ?? "Module"}
                     </p>
 
                     <div className="flex flex-wrap items-center gap-2 text-[10px] font-bold text-muted-foreground/60 select-none tabular-nums leading-none pt-0.5">
@@ -512,7 +511,7 @@ export function ReviewQueueRunner() {
                         variant="outline"
                         className="text-[9px] font-extrabold px-1.5 h-4.5 rounded uppercase tracking-wide bg-background/50 border-border/40 text-muted-foreground shadow-sm"
                       >
-                        {Math.round(t.mastery * 100)}% mastery scale
+                        {Math.round(t.mastery * 100)}% mastery
                       </Badge>
 
                       {t.source === "scenario" && (

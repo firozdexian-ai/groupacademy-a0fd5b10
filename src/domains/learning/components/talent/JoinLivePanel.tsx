@@ -182,12 +182,12 @@ export function JoinLivePanel({ course }: Props) {
                 onClick={() => handleLiveSessionHandshakeRedirect(course.youtube_url!, "youtube_archive")}
               >
                 <PlayCircle className="h-4 w-4 shrink-0 stroke-[2.5]" />
-                <span>Watch Localized Core Recording</span>
+                <span>Watch Recording</span>
               </a>
             </Button>
           ) : (
             <p className="text-xs font-semibold text-muted-foreground/70 leading-normal italic pl-0.5 select-text pt-1 border-t border-border/5 text-center sm:text-left max-w-sm">
-              Ecosystem digital recording will automatically register into this dashboard within 24 hours.
+              Recording will appear here within 24 hours.
             </p>
           )
         ) : (
@@ -206,7 +206,7 @@ export function JoinLivePanel({ course }: Props) {
                   onClick={() => handleLiveSessionHandshakeRedirect(joinUrl, "live_stream_ingress")}
                 >
                   <Video className="h-4 w-4 shrink-0 stroke-[2.5]" />
-                  <span>{state === "live" ? "Launch Active Room Shell Now" : "Establish Secure Live Ingress"}</span>
+                  <span>{state === "live" ? "Join live now" : "Join session"}</span>
                 </a>
               ) : (
                 <div className="flex items-center justify-center gap-1.5 font-bold tracking-tight">

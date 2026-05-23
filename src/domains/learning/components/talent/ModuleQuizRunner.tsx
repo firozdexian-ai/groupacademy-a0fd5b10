@@ -94,7 +94,7 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
         moduleId
       });
 
-      toast.error(`Ecosystem generation lockout: ${parsedExceptionMsg}`);
+      toast.error(`Couldn't load quiz: ${parsedExceptionMsg}`);
       if (isRequestAlive) setLoading(false);
     }
   };

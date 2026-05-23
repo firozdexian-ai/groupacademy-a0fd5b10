@@ -439,7 +439,7 @@ function QuizRow({ q, onRewrite }: { q: QuizItemStat; onRewrite: () => void }) {
             className="h-6 rounded-lg text-[9px] font-extrabold uppercase tracking-wide px-2 border-border/60 hover:bg-accent text-primary shrink-0 cursor-pointer shadow-sm flex items-center gap-1 active:scale-95 transition-transform"
           >
             <Sparkles className="h-2.5 w-2.5 text-primary fill-primary/10 stroke-[2.5]" />
-            <span>Execute AI Calibration</span>
+            <span>Rewrite with AI</span>
           </Button>
         </div>
       )}
@@ -466,7 +466,7 @@ function ScenarioRow({ s, onRewrite }: { s: ScenarioItemStat; onRewrite: () => v
     <div className="rounded-xl border border-border/40 bg-background/40 backdrop-blur-sm p-3.5 space-y-2.5 w-full min-w-0 text-left transition-all duration-300 hover:border-border/60 shadow-sm">
       <div className="flex items-start justify-between gap-4 w-full text-left leading-none">
         <p className="text-xs sm:text-sm font-bold text-foreground/90 select-text line-clamp-2 break-words flex-1 pr-1 leading-snug">
-          {s.title || "Interactive simulation node identifier header missing."}
+          {s.title || "Untitled scenario"}
         </p>
         <span
           className={cn(
@@ -474,7 +474,7 @@ function ScenarioRow({ s, onRewrite }: { s: ScenarioItemStat; onRewrite: () => v
             scoreIntensityToneClass,
           )}
         >
-          mean score: {pct(normalizedOverallScore)}
+          avg score: {pct(normalizedOverallScore)}
         </span>
       </div>
 
@@ -492,8 +492,8 @@ function ScenarioRow({ s, onRewrite }: { s: ScenarioItemStat; onRewrite: () => v
             ))}
         </div>
         <span className="text-muted-foreground/70 font-semibold text-[10px] sm:text-xs shrink-0">
-          {Number(s.runs_lifetime || 0).toLocaleString()} runs completed &bull;{" "}
-          {Number(s.runs_window || 0).toLocaleString()} recent tracking
+          {Number(s.runs_lifetime || 0).toLocaleString()} total runs &bull;{" "}
+          {Number(s.runs_window || 0).toLocaleString()} recent
         </span>
       </div>
 
@@ -531,7 +531,7 @@ function ScenarioRow({ s, onRewrite }: { s: ScenarioItemStat; onRewrite: () => v
             className="h-6 rounded-lg text-[9px] font-extrabold uppercase tracking-wide px-2 border-border/60 hover:bg-accent text-primary shrink-0 pointer-events-auto cursor-pointer shadow-sm flex items-center gap-1 active:scale-95 transition-transform"
           >
             <Sparkles className="h-2.5 w-2.5 text-primary fill-primary/10 stroke-[2.5]" />
-            <span>Execute AI Calibration</span>
+            <span>Rewrite with AI</span>
           </Button>
         </div>
       )}

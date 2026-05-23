@@ -113,7 +113,7 @@ export function TalentMirrorPanel() {
             className="h-8 rounded-xl border-border/60 hover:bg-accent font-bold uppercase text-[10px] tracking-wide gap-1.5 shrink-0 shadow-sm cursor-pointer"
           >
             <RefreshCw className="h-3 w-3 stroke-[2.5]" />
-            <span>Re-establish Ingress Sync</span>
+            <span>Try again</span>
           </Button>
         </CardContent>
       </Card>
@@ -130,11 +130,10 @@ export function TalentMirrorPanel() {
           <Sparkles className="w-5 h-5 text-primary/40 stroke-[2.2] animate-pulse" />
         </div>
         <h3 className="text-sm font-bold text-foreground/90 uppercase tracking-wide leading-none">
-          Ecosystem Blueprints Empty
+          No skills tracked yet
         </h3>
         <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 italic mb-4">
-          No psychometric parameters are currently tracked. Execute an active module quiz or dynamic simulation inside
-          your repository tracks to populate vectors.
+          Take a quiz or run a scenario in any of your modules to start building your skill profile.
         </p>
         <Button
           size="sm"
