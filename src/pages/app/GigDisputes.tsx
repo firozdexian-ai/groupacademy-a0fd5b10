@@ -74,7 +74,7 @@ export default function GigDisputes() {
         className="w-full flex items-center justify-center py-16 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2.5"
       >
         <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0 stroke-[2.5]" />
-        <span>Compiling Active Dispute Data...</span>
+        <span>Loading disputes...</span>
       </div>
     );
   }
