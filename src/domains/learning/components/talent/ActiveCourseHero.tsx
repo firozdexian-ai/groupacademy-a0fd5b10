@@ -89,10 +89,10 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
           </div>
           <div className="min-w-0 flex-1 flex flex-col justify-center leading-none">
             <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide">
-              Ecosystem Mission Control
+              Continue Learning
             </h2>
             <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/80 mt-1 leading-none">
-              Active Trajectory Resume Pipeline
+              Pick up where you left off
             </p>
           </div>
         </div>

@@ -225,7 +225,7 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
                 </span>
               ) : (
                 <span className="text-emerald-600 dark:text-emerald-400 font-extrabold shrink-0 uppercase tracking-wider text-[9px]">
-                  Ecosystem Fully Synchronized
+                  All caught up
                 </span>
               )}
               {nextDueLabel && (

@@ -344,7 +344,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
                 </span>
               )}
               <span className="flex items-center gap-0.5 text-[11px] font-bold text-primary group-hover:translate-x-0.5 transition-transform">
-                <span>Configure Ingress</span>
+                <span>View course</span>
                 <ArrowRight className="h-3.5 w-3.5 stroke-[2.5]" />
               </span>
             </div>
@@ -481,13 +481,13 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           )}
           <div className="absolute inset-0 bg-gradient-to-r from-background/95 via-background/60 to-transparent p-3.5 flex flex-col justify-center text-left">
             <Badge className="bg-amber-500/10 text-amber-600 border-none text-[9px] font-extrabold px-2 py-0.5 rounded h-4.5 w-fit mb-1.5 uppercase tracking-wide">
-              {STATUS_LABEL[compItem.status] || "Staged Pipeline"}
+              {STATUS_LABEL[compItem.status] || "Upcoming"}
             </Badge>
             <h3 className="font-bold text-xs sm:text-sm text-foreground/90 tracking-tight leading-tight line-clamp-1 truncate w-full group-hover:text-primary transition-colors select-text pr-1">
               {compItem.title}
             </h3>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1 select-none leading-none">
-              {compItem.category || "Ecosystem Battle Track"}
+              {compItem.category || "Competition"}
             </p>
           </div>
         </div>
@@ -547,7 +547,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         <section className="space-y-2.5 w-full">
           {selectedType === "all" && (
             <h2 className="text-xs font-bold text-foreground/80 uppercase tracking-wider pl-0.5 select-none leading-none mb-1">
-              Ecosystem Course Directories & Live Cohorts
+              Courses & Live Cohorts
             </h2>
           )}
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w-full">{filteredCourses.map(renderCourseCard)}</div>
@@ -557,11 +557,11 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
               {isFetchingNextPage ? (
                 <div className="flex items-center justify-center text-[10px] font-bold text-primary animate-pulse tracking-wide">
                   <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5 stroke-[2.5]" />
-                  <span>Staging additional directories…</span>
+                  <span>Loading more…</span>
                 </div>
               ) : (
                 <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/40 italic select-none animate-in fade-in duration-300">
-                  &mdash; Scroll to fetch alternative tracks &mdash;
+                  &mdash; Scroll for more &mdash;
                 </span>
               )}
             </div>
@@ -574,7 +574,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         <section className="space-y-4 w-full">
           {selectedType === "all" && (
             <h2 className="text-xs font-bold text-foreground/80 uppercase tracking-wider pl-0.5 select-none leading-none mb-1">
-              Physical In-Person Seminar Gatherings
+              In-Person Events
             </h2>
           )}
 
@@ -583,7 +583,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
               <div className="flex items-center gap-2 px-0.5 select-none leading-none animate-in fade-in duration-200">
                 <div className="h-1.5 w-1.5 rounded-full bg-rose-500 animate-pulse shrink-0" />
                 <h3 className="text-[10px] font-extrabold uppercase tracking-wider text-rose-600 dark:text-rose-400">
-                  Executing Materializing Today
+                  Happening Today
                 </h3>
               </div>
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w-full">{todayEvents.map(renderEventCard)}</div>
@@ -594,7 +594,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
             <div className="space-y-2 w-full">
               {selectedType === "all" && todayEvents.length > 0 && (
                 <div className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest pl-0.5 select-none leading-none pt-1">
-                  Subsequent Upcoming Encounters
+                  Upcoming
                 </div>
               )}
               <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w-full">{upcomingEvents.map(renderEventCard)}</div>
@@ -608,7 +608,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         <section className="space-y-2.5 w-full">
           {selectedType === "all" && (
             <h2 className="text-xs font-bold text-foreground/80 uppercase tracking-wider pl-0.5 select-none leading-none mb-1">
-              Ecosystem Hackathon Challenges & Battles
+              Competitions & Challenges
             </h2>
           )}
           <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w-full">{competitions.map(renderCompetitionCard)}</div>
@@ -623,11 +623,10 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-full flex flex-col justify-center items-center animate-in fade-in duration-300">
             <Gift className="h-6 w-6 text-primary/40 mb-3 animate-pulse stroke-[2.2]" />
             <p className="text-xs sm:text-sm font-bold text-foreground/90 tracking-tight leading-none uppercase tracking-wide">
-              Registry Ingress Horizon Vacant
+              Nothing here yet
             </p>
             <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 italic">
-              No matching program tracks are currently active inside this section shield boundary. Recheck options
-              later.
+              No programs match this section right now. Check back later.
             </p>
           </div>
         )}

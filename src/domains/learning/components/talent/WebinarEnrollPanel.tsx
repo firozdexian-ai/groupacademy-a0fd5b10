@@ -103,7 +103,7 @@ export function WebinarEnrollPanel({ course }: Props) {
         courseId: course.id,
       });
 
-      toast.error(`Ecosystem reservation timeout: ${exceptionMsg}`, { id: toastId });
+      toast.error(`Couldn't reserve your seat: ${exceptionMsg}`, { id: toastId });
     }
   };
 

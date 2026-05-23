@@ -73,7 +73,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
           moduleId,
         });
 
-        toast.error(`Ecosystem translation error: ${parsedExceptionMsg}`);
+        toast.error(`Couldn't load scenario: ${parsedExceptionMsg}`);
         if (isMounted) setLoading(false);
       }
     };
@@ -195,7 +195,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
         scenarioId: scenario.id,
       });
 
-      toast.error(`Ecosystem pipeline network drop: ${parsedExceptionMsg}`);
+      toast.error(`Connection lost: ${parsedExceptionMsg}`);
     } finally {
       setStreaming(false);
     }

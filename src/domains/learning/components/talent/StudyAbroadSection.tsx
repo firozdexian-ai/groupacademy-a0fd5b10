@@ -58,10 +58,10 @@ export function StudyAbroadSection() {
         </div>
         <div className="min-w-0 flex-1 flex flex-col justify-center leading-none">
           <h2 className="text-sm sm:text-base font-bold tracking-tight text-foreground uppercase tracking-wide">
-            Global Study Abroad Ingress
+            Study Abroad
           </h2>
           <p className="text-[11px] font-semibold text-muted-foreground/80 mt-1 leading-none">
-            Ecosystem Universities Catalog, IELTS Mock Calibration & 12-Month Roadmaps
+            Universities, IELTS prep & 12-month roadmaps
           </p>
         </div>
       </div>
@@ -131,10 +131,10 @@ export function StudyAbroadSection() {
             </div>
             <div className="space-y-0.5 flex flex-col justify-center leading-none w-full min-w-0">
               <p className="text-xs sm:text-sm font-bold text-foreground/90 tracking-tight leading-none group-hover:text-primary transition-colors">
-                IELTS Matrix
+                IELTS Prep
               </p>
               <p className="text-[11px] font-semibold text-muted-foreground/70 truncate tracking-tight italic mt-1 block">
-                Calibration reviews & simulated tests
+                Practice reviews & mock tests
               </p>
             </div>
           </CardContent>
@@ -216,7 +216,7 @@ export function StudyAbroadSection() {
               onClick={() => handleGlobalNavigationTrigger("/app/abroad/roadmap", "roadmap_intake_form")}
             >
               <FileText className="h-4 w-4 text-primary-foreground shrink-0 stroke-[2.5]" />
-              <span>Initialize Ledger Ingress</span>
+              <span>Start your roadmap</span>
             </Button>
           </div>
 

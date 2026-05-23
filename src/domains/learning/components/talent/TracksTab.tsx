@@ -267,10 +267,10 @@ export function TracksTab() {
           <div className="py-12 text-center border border-dashed border-border/60 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-md mx-auto flex flex-col justify-center items-center animate-in fade-in duration-300">
             <GraduationCap className="h-6 w-6 text-primary/40 mb-3 animate-pulse stroke-[2.2]" />
             <h3 className="text-sm font-bold text-foreground/90 uppercase tracking-wide leading-none">
-              Active Folders Pipeline Vacant
+              No active tracks yet
             </h3>
             <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 mb-4 italic">
-              No active professional programs or specialized tracks registered inside your collection yet.
+              You haven't enrolled in any career tracks yet. Browse the catalog to get started.
             </p>
             <Button
               size="sm"

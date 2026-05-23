@@ -75,7 +75,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
     if (!itemId || !draft) return;
 
     setApplying(true);
-    const toastId = toast.loading("Applying psychometric item modifications into main core registry...");
+    const toastId = toast.loading("Applying changes…");
 
     trackEvent("ai_calibration_patch_requested", { itemId, kind });
 
@@ -86,7 +86,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
       queryClient.invalidateQueries({ queryKey: ["item-analytics"] });
       queryClient.invalidateQueries({ queryKey: ["module-analytics"] });
 
-      toast.success("Calibration item synchronized cleanly. Counter metrics reset.", { id: toastId });
+      toast.success("Item updated. Stats reset.", { id: toastId });
       trackEvent("ai_calibration_patch_success", { itemId });
 
       if (onApplied) onApplied();
@@ -101,7 +101,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
         kind,
       });
 
-      toast.error(`Ecosystem calibration processing error: ${parsedExceptionMsg}`, { id: toastId });
+      toast.error(`Couldn't apply changes: ${parsedExceptionMsg}`, { id: toastId });
     } finally {
       setApplying(false);
     }
@@ -126,11 +126,10 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
         <SheetHeader className="text-left select-none border-b border-border/10 pb-4 shrink-0 w-full">
           <SheetTitle className="text-base font-bold tracking-tight text-foreground/90 uppercase tracking-wider flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary fill-primary/10 animate-pulse stroke-[2.2]" />
-            <span>AI Calibration & Localized Translation Interface</span>
+            <span>AI Rewrite & Translate</span>
           </SheetTitle>
           <SheetDescription className="text-xs text-muted-foreground/80 leading-normal mt-1">
-            Dynamic optimization shifts baseline psychometric items, resetting system exposure tallies. Multi-lingual
-            localization persists decoupled copies into sidecar stores without altering core schemas.
+            Use AI to rewrite this item and reset its serve stats. Translations are stored separately and don't affect the original.
           </SheetDescription>
         </SheetHeader>
 
@@ -166,7 +165,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                   variant="destructive"
                   className="text-[9px] font-extrabold px-2 h-5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 shadow-sm uppercase tracking-wide leading-none flex items-center shrink-0"
                 >
-                  Anomaly: {flagItem?.replace(/_/g, " ")}
+                  Flag: {flagItem?.replace(/_/g, " ")}
                 </Badge>
               ))}
             </div>
@@ -224,7 +223,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                     }}
                     className="h-8 rounded-xl border-border/60 hover:bg-accent font-bold uppercase text-[10px] tracking-wide shrink-0 shadow-sm cursor-pointer"
                   >
-                    <span>Retry Ingress Sync</span>
+                    <span>Try again</span>
                   </Button>
                 </CardContent>
               </Card>
@@ -243,7 +242,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                     <CardContent className="p-4 space-y-3 w-full min-w-0">
                       <div className="flex items-center justify-between gap-4 select-none border-b border-border/10 pb-2 w-full leading-none">
                         <p className="text-xs font-extrabold text-foreground/90 uppercase tracking-wide truncate max-w-[70%]">
-                          {suggestionItem.label || `Calibration Variant Node #${index + 1}`}
+                          {suggestionItem.label || `Variant #${index + 1}`}
                         </p>
                         <Button
                           size="sm"
@@ -673,7 +672,7 @@ function QuizEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) => voi
 
       <div className="space-y-1.5 pt-1 border-t border-border/10 w-full text-left select-none">
         <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5">
-          Ecosystem Target Complexity Difficulty
+          Difficulty
         </Label>
         <div className="flex flex-wrap items-center gap-1.5">
           {(["easy", "medium", "hard"] as const).map((diffTokenStr) => {
@@ -728,7 +727,7 @@ function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) =>
 
       <div className="space-y-1 w-full text-left">
         <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5 select-none">
-          Cognitive Simulation Prompt Context Narrative
+          Scenario Prompt
         </Label>
         <Textarea
           value={draft.scenario_prompt ?? ""}

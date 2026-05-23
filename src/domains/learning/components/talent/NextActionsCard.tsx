@@ -102,7 +102,7 @@ export function NextActionsCard() {
       <CardHeader className="p-4 flex-row items-center gap-2 space-y-0 select-none border-b border-border/10">
         <Sparkles className="h-4 w-4 text-primary fill-primary/5 stroke-[2.2] animate-pulse" />
         <CardTitle className="text-xs font-bold text-foreground/90 uppercase tracking-wider pl-0.5">
-          Ecosystem Adaptive Directives
+          Recommended for you
         </CardTitle>
       </CardHeader>
 
