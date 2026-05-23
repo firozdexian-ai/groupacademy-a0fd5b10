@@ -189,32 +189,32 @@ export default function Gigs() {
   // =========================================================================
   const submitDeliverableMutation = useMutation({
     mutationFn: async () => {
-      if (!activeDeliverableContractId) throw new Error("Contract reference channel token unassigned.");
+      if (!activeDeliverableContractId) throw new Error("No contract selected.");
 
       const primaryTargetFile = uploadedFilesCollection[0];
       const resolvedSecurePublicUrl = primaryTargetFile
         ? getGigSubmissionPublicUrl(primaryTargetFile.path)
         : null;
 
-      const { error: insertPipelineHandshakeError } = await insertMarketplaceDeliverable({
+      const { error: insertError } = await insertMarketplaceDeliverable({
         contract_id: activeDeliverableContractId,
         title: textDeliverableTitleInput.trim(),
         description: textDeliverableDescInput.trim() || null,
         file_url: resolvedSecurePublicUrl,
       });
 
-      if (insertPipelineHandshakeError) throw insertPipelineHandshakeError;
+      if (insertError) throw insertError;
     },
     onSuccess: () => {
-      toast.success("Freelance project deliverables signed and transmitted safely.");
+      toast.success("Deliverable submitted.");
       setActiveDeliverableContractId(null);
       setTextDeliverableTitleInput("");
       setTextDeliverableDescInput("");
       setUploadedFilesCollection([]);
       tanstackQueryClient.invalidateQueries({ queryKey: ["gigs-hub-dashboard"] });
     },
-    onError: (mutationRejectionPayload: Error) => {
-      toast.error(mutationRejectionPayload.message || "Failed to commit project deliverable manifest.");
+    onError: (err: Error) => {
+      toast.error(err.message || "Couldn't submit your deliverable.");
     },
   });
 
