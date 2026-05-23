@@ -215,7 +215,7 @@ export default function MarketplaceGigDetail() {
               <CardContent className="p-6 text-center space-y-4">
                 <CheckCircle2 className="h-12 w-12 text-emerald-600 mx-auto" />
                 <div>
-                  <h3 className="font-bold">Proposal Active</h3>
+                  <h3 className="font-bold">Proposal submitted</h3>
                   <p className={META_TEXT}>Status: {existingBidRecord.status}</p>
                 </div>
                 <div className="text-2xl font-black">{existingBidRecord.bid_amount} CR</div>
