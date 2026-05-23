@@ -267,7 +267,7 @@ export function UnifiedDiscovery() {
         <div className="py-16 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-full flex flex-col justify-center items-center animate-in fade-in duration-300">
           <FileText className="h-6 w-6 text-primary/40 mb-3 animate-pulse stroke-[2.2]" />
           <p className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wide leading-none">
-            Discovery Ledger Ingress Empty
+            Nothing to discover yet
           </p>
           <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 italic">
             No operational knowledge modules conform to this active validation sub-filter right now.

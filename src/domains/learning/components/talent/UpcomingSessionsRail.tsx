@@ -133,7 +133,7 @@ export function UpcomingSessionsRail() {
                   className="flex items-center justify-center gap-1.5 bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   <Video className="h-3.5 w-3.5 shrink-0 stroke-[2.5]" />
-                  <span>{isLiveActiveNode ? "Initialize Room Connection" : "Audit Session Matrix"}</span>
+                  <span>{isLiveActiveNode ? "Join now" : "View session"}</span>
                 </Link>
               </Button>
             </Card>
