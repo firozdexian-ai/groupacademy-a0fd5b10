@@ -66,8 +66,7 @@ export default function GigAppeals() {
           </h1>
         </div>
         <p className="text-xs sm:text-sm font-semibold text-muted-foreground/60 leading-none block pt-0.5">
-          Track individual submitted verification disputes, analyze procedural milestones, and review automated AI
-          verdict indexes.
+          Track your verification appeals and review the latest verdicts.
         </p>
       </header>
 
@@ -88,8 +87,7 @@ export default function GigAppeals() {
               <Scale className="h-4 w-4 stroke-[2.2]" />
             </div>
             <p className="text-xs font-semibold text-muted-foreground/40 leading-normal max-w-xs mx-auto block pt-1">
-              No dispute appeals logged. Your verification tracking archive history matches the system clearance base
-              standard.
+              No appeals yet. Your verifications are all in good standing.
             </p>
           </CardContent>
         </Card>
@@ -108,7 +106,7 @@ export default function GigAppeals() {
                     day: "numeric",
                   })
                   .toUpperCase()
-              : "UNKNOWN REGISTRATION DATE";
+              : "Unknown date";
 
             return (
               <Card
@@ -152,7 +150,7 @@ export default function GigAppeals() {
                       <AlertCircle className="h-4 w-4 text-muted-foreground/40 stroke-[2.2] shrink-0 mt-0.5 select-none pointer-events-none" />
                       <div className="flex-1 leading-normal block">
                         <span className="font-mono text-[9px] font-bold uppercase text-muted-foreground/50 tracking-wide block mb-1 select-none pointer-events-none leading-none">
-                          Administrative Resolution Notes
+                          Resolution notes
                         </span>
                         <p className="text-xs text-muted-foreground/80 font-medium italic tracking-normal">
                           {appealItemNode.resolution_notes}

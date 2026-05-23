@@ -74,7 +74,7 @@ export default function GigDisputes() {
         className="w-full flex items-center justify-center py-16 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2.5"
       >
         <Loader2 className="h-4 w-4 animate-spin text-primary shrink-0 stroke-[2.5]" />
-        <span>Compiling Active Dispute Data...</span>
+        <span>Loading disputes...</span>
       </div>
     );
   }
@@ -86,12 +86,11 @@ export default function GigDisputes() {
         <div className="flex items-center gap-2 leading-none w-full block">
           <Scale className="h-4.5 w-4.5 text-primary stroke-[2.2] shrink-0" />
           <h1 className="text-base sm:text-lg md:text-xl font-bold uppercase tracking-wide text-foreground pt-0.5 block truncate">
-            My Contract Disputes Ledger
+            My disputes
           </h1>
         </div>
         <p className="text-xs sm:text-sm font-semibold text-muted-foreground/60 leading-none block pt-0.5">
-          Track initialized task settlement filings, evaluate resolution status, and review authoritative matrix
-          verdicts.
+          Track your open disputes and review final verdicts.
         </p>
       </header>
 
@@ -103,7 +102,7 @@ export default function GigDisputes() {
               <Scale className="h-4 w-4 stroke-[2.2]" />
             </div>
             <p className="text-xs font-semibold text-muted-foreground/40 leading-normal max-w-xs mx-auto block pt-1">
-              You haven't opened any transactional contract disputes under this profile credentials index.
+              You haven't opened any disputes.
             </p>
           </CardContent>
         </Card>
@@ -124,7 +123,7 @@ export default function GigDisputes() {
                     minute: "2-digit",
                   })
                   .toUpperCase()
-              : "UNASSIGNED TIMELOG PARAMETER";
+              : "Unknown date";
 
             return (
               <Card
@@ -133,7 +132,7 @@ export default function GigDisputes() {
               >
                 <CardHeader className="p-3.5 pb-2 border-b border-border/5 bg-muted/20 flex flex-row items-center justify-between w-full select-none shrink-0 leading-none">
                   <CardTitle className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground flex items-center gap-2 m-0">
-                    <span>Incident Reason Ref: {disputeItemNode.reason_code.replace(/_/g, " ")}</span>
+                    <span>Reason: {disputeItemNode.reason_code.replace(/_/g, " ")}</span>
                   </CardTitle>
 
                   <Badge
@@ -150,7 +149,7 @@ export default function GigDisputes() {
                 <CardContent className="p-3.5 space-y-2 block w-full leading-none select-text">
                   <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-2 font-mono text-[10px] font-bold text-muted-foreground/50 uppercase tracking-tight select-none pointer-events-none leading-none tabular-nums w-full shrink-0">
                     <div className="flex items-center gap-1">
-                      <span>Initiation Anchor: </span>
+                      <span>Opened by: </span>
                       <strong className="text-foreground/70 font-sans tracking-normal font-semibold capitalize">
                         {disputeItemNode.opened_by_role}
                       </strong>
@@ -168,7 +167,7 @@ export default function GigDisputes() {
                       <ShieldAlert className="h-4 w-4 text-muted-foreground/40 stroke-[2.2] shrink-0 mt-0.5 select-none pointer-events-none" />
                       <div className="flex-1 leading-normal block">
                         <span className="font-mono text-[9px] font-bold uppercase text-muted-foreground/50 tracking-wide block mb-1 select-none pointer-events-none leading-none">
-                          System Final Settlement Verdict
+                          Final verdict
                         </span>
                         <p className="text-xs text-foreground/80 font-semibold tracking-normal">
                           {disputeItemNode.final_verdict}

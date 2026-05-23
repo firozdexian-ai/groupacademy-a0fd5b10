@@ -101,9 +101,7 @@ type TabVariant = "for-you" | "tasks" | "course" | "client" | "work";
 const SKELETON_ROWS_ROSTER = [1, 2, 3, 4];
 
 /**
- * GroUp Academy: Authoritative Gig Hub Center Ecosystem (Gigs)
- * Hardened transaction cockpit processing freelance subtasks, syncing AI listings, and insulating search state inputs.
- * Version: Launch Candidate · Phase Z1 Production Contract Locked
+ * Gigs hub — talent landing page for finding and submitting gig work.
  */
 export default function Gigs() {
   const navigateHook = useNavigate();
@@ -191,32 +189,32 @@ export default function Gigs() {
   // =========================================================================
   const submitDeliverableMutation = useMutation({
     mutationFn: async () => {
-      if (!activeDeliverableContractId) throw new Error("Contract reference channel token unassigned.");
+      if (!activeDeliverableContractId) throw new Error("No contract selected.");
 
       const primaryTargetFile = uploadedFilesCollection[0];
       const resolvedSecurePublicUrl = primaryTargetFile
         ? getGigSubmissionPublicUrl(primaryTargetFile.path)
         : null;
 
-      const { error: insertPipelineHandshakeError } = await insertMarketplaceDeliverable({
+      const { error: insertError } = await insertMarketplaceDeliverable({
         contract_id: activeDeliverableContractId,
         title: textDeliverableTitleInput.trim(),
         description: textDeliverableDescInput.trim() || null,
         file_url: resolvedSecurePublicUrl,
       });
 
-      if (insertPipelineHandshakeError) throw insertPipelineHandshakeError;
+      if (insertError) throw insertError;
     },
     onSuccess: () => {
-      toast.success("Freelance project deliverables signed and transmitted safely.");
+      toast.success("Deliverable submitted.");
       setActiveDeliverableContractId(null);
       setTextDeliverableTitleInput("");
       setTextDeliverableDescInput("");
       setUploadedFilesCollection([]);
       tanstackQueryClient.invalidateQueries({ queryKey: ["gigs-hub-dashboard"] });
     },
-    onError: (mutationRejectionPayload: Error) => {
-      toast.error(mutationRejectionPayload.message || "Failed to commit project deliverable manifest.");
+    onError: (err: Error) => {
+      toast.error(err.message || "Couldn't submit your deliverable.");
     },
   });
 
@@ -256,14 +254,14 @@ export default function Gigs() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 sm:py-10 space-y-6 text-left antialiased block transform-gpu w-full pb-32">
-      {/* HUD LEVEL 1: APPLICATION HEADER MODULE DESCRIPTION COCKPIT */}
+      {/* Header */}
       <header className="flex items-center justify-between gap-4 leading-none w-full shrink-0 select-none border-b border-border/5 pb-4">
         <div className="min-w-0 flex-1 leading-none space-y-1.5 block">
           <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground leading-none m-0">
-            Ecosystem Gig Hub
+            Gigs
           </h1>
           <p className="font-mono text-[10px] font-bold text-muted-foreground/50 uppercase tracking-tight block leading-none">
-            Execute operational system parameters tasks to draw direct platform verification tokens.
+            Find work, submit deliverables, and earn credits.
           </p>
         </div>
 
@@ -290,50 +288,50 @@ export default function Gigs() {
           onClick={handleTransitionToAICreatorWorkspace}
         >
           <Sparkles className="h-4 w-4 stroke-[2] fill-current text-primary-foreground shrink-0" />
-          <span>Post New Custom Assignment via Copilot AI</span>
+          <span>Post a new gig with AI</span>
         </Button>
       </div>
 
-      {/* HUD LEVEL 2: IMMERSIVE FIVE-WAY SEGMENT FILTER MATRIX BAR */}
+      {/* Tabs */}
       <Tabs value={activeTabPanelKey} onValueChange={handleTabSelectionTransition} className="w-full block">
         <TabsList className="grid w-full grid-cols-5 p-1 h-10 bg-muted/40 rounded-lg border border-border/10 select-none mb-6">
           <TabsTrigger
             value="for-you"
             className="rounded-md font-mono text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wide h-8 cursor-pointer outline-none pt-0.5 gap-1.5"
           >
-            <Sparkles className="h-3.5 w-3.5 stroke-[2.2]" /> <span className="hidden sm:inline">Matched Gigs</span>
+            <Sparkles className="h-3.5 w-3.5 stroke-[2.2]" /> <span className="hidden sm:inline">For You</span>
             <span className="sm:hidden">For You</span>
           </TabsTrigger>
           <TabsTrigger
             value="tasks"
             className="rounded-md font-mono text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wide h-8 cursor-pointer outline-none pt-0.5 gap-1.5"
           >
-            <Zap className="h-3.5 w-3.5 stroke-[2.2]" /> <span className="hidden sm:inline">Quick Micro Tasks</span>
+            <Zap className="h-3.5 w-3.5 stroke-[2.2]" /> <span className="hidden sm:inline">Quick tasks</span>
             <span className="sm:hidden">Tasks</span>
           </TabsTrigger>
           <TabsTrigger
             value="course"
             className="rounded-md font-mono text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wide h-8 cursor-pointer outline-none pt-0.5 gap-1.5"
           >
-            <BookOpen className="h-3.5 w-3.5 stroke-[2]" /> <span>Course Bundle</span>
+            <BookOpen className="h-3.5 w-3.5 stroke-[2]" /> <span>Course gigs</span>
           </TabsTrigger>
           <TabsTrigger
             value="client"
             className="rounded-md font-mono text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wide h-8 cursor-pointer outline-none pt-0.5 gap-1.5"
           >
-            <Briefcase className="h-3.5 w-3.5 stroke-[2]" /> <span className="hidden sm:inline">Client Market</span>
+            <Briefcase className="h-3.5 w-3.5 stroke-[2]" /> <span className="hidden sm:inline">Client work</span>
             <span className="sm:hidden">Client</span>
           </TabsTrigger>
           <TabsTrigger
             value="work"
             className="rounded-md font-mono text-[9px] sm:text-[10px] font-extrabold uppercase tracking-wide h-8 cursor-pointer outline-none pt-0.5 gap-1.5"
           >
-            <Activity className="h-3.5 w-3.5 stroke-[2]" /> <span className="hidden sm:inline">My Activity</span>
+            <Activity className="h-3.5 w-3.5 stroke-[2]" /> <span className="hidden sm:inline">My activity</span>
             <span className="sm:hidden">Mine</span>
           </TabsTrigger>
         </TabsList>
 
-        {/* VIEWPORT CHANNEL A: PERSONAL MATCH TARGET METRICS */}
+        {/* For You */}
         <TabsContent
           value="for-you"
           className="space-y-4 focus:outline-none outline-none mt-2 block w-full animate-in fade-in duration-200"
@@ -342,13 +340,13 @@ export default function Gigs() {
           <GigForYouTab />
           <div className="pt-4 border-t border-border/40 block w-full leading-none">
             <h3 className="font-mono text-[10px] font-extrabold uppercase tracking-wide text-muted-foreground/50 flex items-center gap-2 mb-4 select-none pointer-events-none">
-              <Briefcase className="h-4 w-4 stroke-[2.2]" /> <span>Browse System Absolute Open Vacancies Pool</span>
+              <Briefcase className="h-4 w-4 stroke-[2.2]" /> <span>Browse all open gigs</span>
             </h3>
             <InfiniteGigsList talentId={resolvedDashboardData?.talent_id ?? talentProfileRecord?.id} />
           </div>
         </TabsContent>
 
-        {/* VIEWPORT CHANNEL B: ONE-TAP MICRO GIGS CONTROLLER PANEL */}
+        {/* Quick tasks */}
         <TabsContent
           value="tasks"
           className="space-y-4 focus:outline-none outline-none mt-2 block w-full animate-in fade-in duration-200"
@@ -357,15 +355,14 @@ export default function Gigs() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 stroke-[2.2] select-none pointer-events-none" />
             <Input
               type="search"
-              placeholder="Filter quick micro tasks inventory by structural property title keyword..."
+              placeholder="Search quick tasks..."
               className="w-full h-10 pl-9 pr-3 bg-background border border-border/40 text-xs sm:text-sm font-semibold rounded-lg shadow-none"
               value={textSearchInputStr}
               onChange={(e) => setTextSearchInputStr(e.target.value)}
             />
           </div>
           <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
-            System Index Strategy: 1-Tap Execution Assignments · Auto-Reviewed Analytics Validation Matrix · Instant
-            Wallet Allocation
+            Fast, one-tap tasks · Auto-reviewed · Instant credit payout
           </p>
 
           <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 block w-full align-top">
@@ -390,7 +387,7 @@ export default function Gigs() {
           </div>
         </TabsContent>
 
-        {/* VIEWPORT CHANNEL C: COURSE BUNDLED BLUEPRINT OPERATIONS */}
+        {/* Course gigs */}
         <TabsContent
           value="course"
           className="space-y-4 focus:outline-none outline-none mt-2 block w-full animate-in fade-in duration-200"
@@ -399,15 +396,14 @@ export default function Gigs() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 stroke-[2.2] select-none pointer-events-none" />
             <Input
               type="search"
-              placeholder="Filter master structural courses blueprint series by topic taxonomy title..."
+              placeholder="Search course gigs..."
               className="w-full h-10 pl-9 pr-3 bg-background border border-border/40 text-xs sm:text-sm font-semibold rounded-lg shadow-none"
               value={textSearchInputStr}
               onChange={(e) => setTextSearchInputStr(e.target.value)}
             />
           </div>
           <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
-            System Production Blueprint Framework: Comprehensive Curriculum Assemblies · Scaled Subtasks Distributions
-            Hierarchy · High-Budgets Draw Payouts
+            Full courses to build · Multi-step subtasks · Higher payouts
           </p>
 
           <div className="space-y-2.5 block w-full align-top">
@@ -421,7 +417,7 @@ export default function Gigs() {
             ) : filteredCourseProjectsList.length === 0 ? (
               <Card className="rounded-lg border border-dashed border-border/80 bg-muted/5 p-8 text-center select-none block w-full shadow-none pointer-events-none">
                 <CardContent className="p-0 text-xs font-semibold text-muted-foreground/40 leading-normal block">
-                  No open course curriculum build projects match active parameter criteria maps.
+                  No open course gigs match your search.
                 </CardContent>
               </Card>
             ) : (
@@ -450,13 +446,13 @@ export default function Gigs() {
                     <div className="min-w-0 flex-1 leading-none space-y-1.5 block">
                       <div className="flex items-center gap-1.5 flex-wrap select-none pointer-events-none leading-none">
                         <Badge className="font-mono text-[8px] font-black uppercase px-1.5 h-4.5 rounded border border-transparent bg-primary/5 text-primary tracking-wide pt-0 leading-none shrink-0">
-                          COURSE MATRIX BUNDLE
+                          COURSE GIG
                         </Badge>
                         <Badge
                           variant="outline"
                           className="font-mono text-[8px] font-black uppercase px-1.5 h-4.5 rounded border border-border/40 bg-background text-muted-foreground/60 tracking-wide pt-0 leading-none shrink-0 rounded-xs tabular-nums"
                         >
-                          {projectItem.subtasks.length.toString()} SUBTASKS BOUND
+                          {projectItem.subtasks.length.toString()} SUBTASKS
                         </Badge>
                         <Badge
                           variant="outline"
@@ -471,11 +467,11 @@ export default function Gigs() {
                       <div className="flex items-center gap-3 font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight select-none pointer-events-none leading-none pt-0.5 tabular-nums">
                         <span className="flex items-center gap-0.5 font-extrabold text-amber-600 shrink-0">
                           <Coins className="h-3.5 w-3.5 stroke-[2] text-amber-500" />{" "}
-                          {projectItem.totalReward.toLocaleString()} Total Credits
+                          {projectItem.totalReward.toLocaleString()} total credits
                         </span>
                         <span className="opacity-30 block select-none shrink-0">•</span>
                         <span className="text-primary tracking-normal font-semibold">
-                          Inspect Workspace Matrix to Claim Subtasks
+                          Open to claim subtasks
                         </span>
                       </div>
                     </div>
@@ -487,7 +483,7 @@ export default function Gigs() {
           </div>
         </TabsContent>
 
-        {/* VIEWPORT CHANNEL D: FREELANCE CLIENT PROJECT ALLOCATIONS */}
+        {/* Client work */}
         <TabsContent
           value="client"
           className="space-y-4 focus:outline-none outline-none mt-2 block w-full animate-in fade-in duration-200"
@@ -496,22 +492,21 @@ export default function Gigs() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 stroke-[2.2] select-none pointer-events-none" />
             <Input
               type="search"
-              placeholder="Filter external commercial client assignments database by contract keyword moniker..."
+              placeholder="Search client projects..."
               className="w-full h-10 pl-9 pr-3 bg-background border border-border/40 text-xs sm:text-sm font-semibold rounded-lg shadow-none"
               value={textSearchInputStr}
               onChange={(e) => setTextSearchInputStr(e.target.value)}
             />
           </div>
           <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
-            Freelance Procurement Runway: Deploy Competitive Project Proposals · Negotiate Functional Execution Bounds &
-            Milestones Budget Allocations
+            Submit proposals · Negotiate scope · Set milestones and budgets
           </p>
 
           <div className="space-y-2.5 block w-full align-top">
             {filteredMarketplaceProjectsList.length === 0 ? (
               <Card className="rounded-lg border border-dashed border-border/80 bg-muted/5 p-8 text-center select-none block w-full shadow-none pointer-events-none">
                 <CardContent className="p-0 text-xs font-semibold text-muted-foreground/40 leading-normal block">
-                  No external client organizational hackathons or projects match current filter search tokens.
+                  No client projects match your search.
                 </CardContent>
               </Card>
             ) : (
@@ -530,11 +525,11 @@ export default function Gigs() {
                     <div className="min-w-0 flex-1 leading-none space-y-1 block pr-2">
                       <div className="flex items-center gap-1.5 flex-wrap select-none pointer-events-none leading-none">
                         <Badge className="font-mono text-[8px] font-black uppercase px-1.5 h-4.5 rounded border border-transparent bg-primary/5 text-primary tracking-wide pt-0 leading-none shrink-0">
-                          EXTERNAL CORPORATE GIG
+                          CLIENT GIG
                         </Badge>
                         {marketItemNode.is_featured && (
                           <Badge className="font-mono text-[8px] font-black uppercase px-1.5 h-4.5 rounded border border-amber-500/20 bg-amber-500/5 text-amber-600 tracking-wide pt-0 leading-none shrink-0 rounded-xs shadow-3xs">
-                            FLAG_PRIORITY
+                            FEATURED
                           </Badge>
                         )}
                       </div>
@@ -548,12 +543,11 @@ export default function Gigs() {
                       <div className="flex items-center gap-3.5 font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight select-none pointer-events-none leading-none pt-0.5 tabular-nums w-full shrink-0">
                         <span className="flex items-center gap-0.5 font-extrabold text-amber-600 shrink-0">
                           <Coins className="h-3.5 w-3.5 stroke-[2] text-amber-500" />{" "}
-                          {marketItemNode.budget_amount.toLocaleString()} Budget Credits
+                          {marketItemNode.budget_amount.toLocaleString()} credits budget
                         </span>
                         <span className="opacity-30 block select-none shrink-0">•</span>
                         <span className="flex items-center gap-1 shrink-0">
-                          <Send className="h-3.5 w-3.5 stroke-[2.2]" /> {marketItemNode.total_bids || 0} Bid Profiles
-                          Logged
+                          <Send className="h-3.5 w-3.5 stroke-[2.2]" /> {marketItemNode.total_bids || 0} bids
                         </span>
                       </div>
                     </div>
@@ -565,7 +559,7 @@ export default function Gigs() {
           </div>
         </TabsContent>
 
-        {/* VIEWPORT CHANNEL E: CANDIDATE TRANSACTIONS DIRECTORY MONITOR */}
+        {/* My activity */}
         <TabsContent
           value="work"
           className="space-y-6 focus:outline-none outline-none mt-2 block w-full animate-in fade-in duration-200 leading-none"
@@ -573,7 +567,7 @@ export default function Gigs() {
           <section className="space-y-3 block w-full">
             <h3 className="font-mono text-[10px] font-extrabold uppercase tracking-wide text-primary flex items-center gap-1.5 select-none pointer-events-none leading-none pb-2 border-b border-border/5">
               <Zap className="h-3.5 w-3.5 stroke-[2.2] fill-current text-primary" />{" "}
-              <span>Hashed Micro Task Submission Logs</span>
+              <span>My submissions</span>
             </h3>
             <MySubmissions talentId={talentProfileRecord?.id} />
           </section>
@@ -581,7 +575,7 @@ export default function Gigs() {
           <div className="grid sm:grid-cols-2 gap-4 block w-full pt-2 align-top">
             <section className="space-y-3 block flex-1 min-w-0">
               <h3 className="font-mono text-[10px] font-extrabold uppercase tracking-wide text-blue-600 flex items-center gap-1.5 select-none pointer-events-none leading-none pb-2 border-b border-border/5">
-                <Send className="h-3.5 w-3.5 stroke-[2.2]" /> <span>Proposals Bids Register</span>
+                <Send className="h-3.5 w-3.5 stroke-[2.2]" /> <span>My bids</span>
               </h3>
 
               <div className="space-y-2 block w-full">
@@ -609,7 +603,7 @@ export default function Gigs() {
                   ))
                 ) : (
                   <p className="font-sans text-xs italic font-medium text-muted-foreground/40 block py-1 px-0.5 select-none pointer-events-none">
-                    No active commercial proposal indices logged.
+                    You haven't placed any bids yet.
                   </p>
                 )}
               </div>
@@ -617,7 +611,7 @@ export default function Gigs() {
 
             <section className="space-y-3 block flex-1 min-w-0">
               <h3 className="font-mono text-[10px] font-extrabold uppercase tracking-wide text-emerald-600 flex items-center gap-1.5 select-none pointer-events-none leading-none pb-2 border-b border-border/5">
-                <ShieldCheck className="h-3.5 w-3.5 stroke-[2.2]" /> <span>Operational Contracts Vault</span>
+                <ShieldCheck className="h-3.5 w-3.5 stroke-[2.2]" /> <span>Active contracts</span>
               </h3>
 
               <div className="space-y-2 block w-full">
@@ -634,7 +628,7 @@ export default function Gigs() {
                             {contractItem.marketplace_gigs?.title || "Untitled gig"}
                           </h4>
                           <p className="font-mono text-[9px] font-black text-emerald-600 uppercase tracking-tight leading-none block pt-0.5 select-text tabular-nums">
-                            Escrow Balance: {contractItem.agreed_amount.toLocaleString()} Credits Draw
+                            In escrow: {contractItem.agreed_amount.toLocaleString()} credits
                           </p>
                         </div>
                         <Button
@@ -643,13 +637,13 @@ export default function Gigs() {
                           className="h-7.5 px-3 rounded font-mono text-[10px] font-extrabold uppercase tracking-wide cursor-pointer shrink-0 shadow-2xs transform-gpu active:scale-95 pt-0.5"
                           onClick={() => setActiveDeliverableContractId(contractItem.id)}
                         >
-                          Deliver Artifact
+                          Submit deliverable
                         </Button>
                       </div>
                     ))
                 ) : (
                   <p className="font-sans text-xs italic font-medium text-muted-foreground/40 block py-1 px-0.5 select-none pointer-events-none">
-                    No active legal assignment matrices validated in escrow handles.
+                    No active contracts.
                   </p>
                 )}
               </div>
@@ -658,7 +652,7 @@ export default function Gigs() {
         </TabsContent>
       </Tabs>
 
-      {/* HUD LEVEL 3: ARTIFACT MANIFEST TRANSMISSION DISPATCH MODAL LAYER */}
+      {/* Deliverable submission dialog */}
       <Dialog
         open={!!activeDeliverableContractId}
         onOpenChange={(isOpenState) => !isOpenState && setActiveDeliverableContractId(null)}
@@ -666,14 +660,14 @@ export default function Gigs() {
         <DialogContent className="rounded-lg max-w-md border border-border/60 bg-popover text-popover-foreground shadow-2xl select-none leading-none p-5">
           <DialogHeader className="text-left leading-none pb-2 border-b border-border/5">
             <DialogTitle className="text-sm font-bold uppercase tracking-wide text-foreground leading-none m-0">
-              Transmit Assignment Deliverable Archive
+              Submit deliverable
             </DialogTitle>
           </DialogHeader>
 
           <div className="space-y-4 pt-4 block w-full leading-none">
             <div className="space-y-1 block leading-none">
               <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">
-                Deliverable Manifest Document Title
+                Title
               </Label>
               <Input
                 type="text"
@@ -686,19 +680,19 @@ export default function Gigs() {
 
             <div className="space-y-1 block leading-none pt-1">
               <Label className="font-mono text-[10px] font-extrabold uppercase text-muted-foreground/60 tracking-wide block leading-none ml-0.5">
-                Implementation Architecture Remarks Summary
+                Notes (optional)
               </Label>
               <Textarea
                 value={textDeliverableDescInput}
                 onChange={(e) => setTextDeliverableDescInput(e.target.value)}
-                placeholder="Outline explicit technical details, build artifacts logs, or structural adjustments performed down-stream for client verification notes..."
+                placeholder="Add any notes about what's included, changes made, or things to review..."
                 className="bg-background border border-border/60 focus-visible:ring-1 focus-visible:ring-ring rounded-lg text-xs sm:text-sm font-sans leading-relaxed resize-none p-2.5 min-h-[100px]"
               />
             </div>
 
             <div className="space-y-1 block leading-none pt-1">
               <Label className="font-mono text-[10px] font-extrabold uppercase text-primary tracking-wide block leading-none ml-0.5">
-                Secure Document Asset Files Ledger
+                Files
               </Label>
               <GigUploader
                 value={uploadedFilesCollection}
@@ -721,10 +715,10 @@ export default function Gigs() {
               {submitDeliverableMutation.isPending ? (
                 <div className="flex items-center justify-center gap-1.5 mx-auto leading-none">
                   <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 text-primary-foreground stroke-[2.5]" />
-                  <span className="pt-0.5">Authorizing Archive Transport Loop...</span>
+                  <span className="pt-0.5">Submitting...</span>
                 </div>
               ) : (
-                <span>Publish Escrow Deliverable Artifacts</span>
+                <span>Submit deliverable</span>
               )}
             </Button>
           </div>

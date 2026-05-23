@@ -87,7 +87,7 @@ export default function MarketplaceGigDetail() {
     enabled: !!gigIdStr,
     queryFn: async (): Promise<GigRecord> => {
       const data = await getMarketplaceGigById(gigIdStr!);
-      if (!data) throw new Error("Gig registry node unreachable.");
+      if (!data) throw new Error("Gig not found.");
       return data as unknown as GigRecord;
     },
   });
@@ -123,10 +123,10 @@ export default function MarketplaceGigDetail() {
       });
 
       if (error) throw error;
-      toast.success("Strategic proposal dispatched to client registry.");
+      toast.success("Proposal submitted.");
       queryClient.invalidateQueries({ queryKey: ["app-talent-marketplace-bid", gigIdStr] });
     } catch (e: any) {
-      toast.error(e.message || "Failed to finalize submission handshake.");
+      toast.error(e.message || "Couldn't submit your proposal.");
     } finally {
       setIsSubmitPending(false);
     }
@@ -144,7 +144,7 @@ export default function MarketplaceGigDetail() {
     );
   }
 
-  if (!gigRecord) return <div className="text-center py-20">Resource missing.</div>;
+  if (!gigRecord) return <div className="text-center py-20">Gig not found.</div>;
 
   const averageTrustRating = reviewManifestCollection.length
     ? (reviewManifestCollection.reduce((s, r) => s + r.rating, 0) / reviewManifestCollection.length).toFixed(1)
@@ -184,11 +184,10 @@ export default function MarketplaceGigDetail() {
             </CardContent>
           </Card>
 
-          {/* Reputation Logic */}
           {reviewManifestCollection.length > 0 && (
             <section className="space-y-4">
               <h3 className="text-sm font-bold flex items-center gap-2">
-                <ShieldCheck className="h-4 w-4 text-emerald-600" /> Trust Ledger
+                <ShieldCheck className="h-4 w-4 text-emerald-600" /> Client reviews
               </h3>
               <div className="grid gap-3">
                 {reviewManifestCollection.map((r) => (
@@ -216,7 +215,7 @@ export default function MarketplaceGigDetail() {
               <CardContent className="p-6 text-center space-y-4">
                 <CheckCircle2 className="h-12 w-12 text-emerald-600 mx-auto" />
                 <div>
-                  <h3 className="font-bold">Proposal Active</h3>
+                  <h3 className="font-bold">Proposal submitted</h3>
                   <p className={META_TEXT}>Status: {existingBidRecord.status}</p>
                 </div>
                 <div className="text-2xl font-black">{existingBidRecord.bid_amount} CR</div>
@@ -224,7 +223,7 @@ export default function MarketplaceGigDetail() {
             </Card>
           ) : (
             <Card className={cn(CARD, "p-6 space-y-6")}>
-              <CardTitle className="text-base">Initialize Proposal</CardTitle>
+              <CardTitle className="text-base">Submit a proposal</CardTitle>
               {gigRecord.pricing_type !== "fixed" && (
                 <div className="space-y-2">
                   <Label className="text-xs font-bold uppercase tracking-wide">Bid Amount</Label>
@@ -246,11 +245,11 @@ export default function MarketplaceGigDetail() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-xs font-bold uppercase tracking-wide">Strategic Narrative</Label>
+                <Label className="text-xs font-bold uppercase tracking-wide">Your pitch</Label>
                 <Textarea
                   value={coverLetterInput}
                   onChange={(e) => setCoverLetterInput(e.target.value)}
-                  placeholder="Your pitch..."
+                  placeholder="Why are you the right fit for this gig?"
                   className="min-h-[150px]"
                 />
               </div>
@@ -264,7 +263,7 @@ export default function MarketplaceGigDetail() {
                 ) : (
                   <Send className="h-4 w-4 mr-2" />
                 )}
-                Transmit Proposal
+                Submit proposal
               </Button>
             </Card>
           )}

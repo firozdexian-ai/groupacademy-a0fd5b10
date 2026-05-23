@@ -347,3 +347,26 @@ Batched closeout sweep of remaining Jobs Hub surfaces. Pure UI/copy + comment sc
 ## A5 Jobs Hub — COMPLETE
 A5.1 → A5.5 all shipped. No P0/P1 launch blockers remain on the Jobs Hub. Ready for **A6 (Gigs Hub parity)** or **A7 (Profile / Talent Mirror polish)**.
 
+
+---
+
+## A6 Gigs Hub — shipped 2026-05-23
+
+Brought `/app/gigs/*` to the A5 quality bar. All 5 tabs (For You / Tasks / Course / Client / My activity) work, default landing is For You with `AvailabilityWidget` + `GigForYouTab` + `InfiniteGigsList` already wired — no architectural changes needed.
+
+**Humanized copy (talent-facing only):**
+- `src/pages/app/Gigs.tsx`: header "Ecosystem Gig Hub" → "Gigs"; subtitle and CTA rewritten ("Post a new gig with AI"); tab labels (Matched Gigs → For You, Quick Micro Tasks → Quick tasks, Course Bundle → Course gigs, Client Market → Client work, My Activity → My activity); strip headers, empty states, search placeholders, card badges (COURSE MATRIX BUNDLE → COURSE GIG, EXTERNAL CORPORATE GIG → CLIENT GIG, FLAG_PRIORITY → FEATURED, SUBTASKS BOUND → SUBTASKS), credit/bid labels, work-tab section titles (Hashed Micro Task Submission Logs → My submissions, Proposals Bids Register → My bids, Operational Contracts Vault → Active contracts), button copy ("Deliver Artifact" → "Submit deliverable", "Publish Escrow Deliverable Artifacts" → "Submit deliverable", "Authorizing Archive Transport Loop..." → "Submitting..."), dialog title & labels (Transmit Assignment Deliverable Archive → Submit deliverable, Deliverable Manifest Document Title → Title, Implementation Architecture Remarks Summary → Notes, Secure Document Asset Files Ledger → Files), empty/error toasts.
+- `src/pages/app/GigDisputes.tsx`: header "My Contract Disputes Ledger" → "My disputes"; subtitle, loading state ("Compiling Active Dispute Data..." → "Loading disputes..."), empty state, "Incident Reason Ref" → "Reason", "Initiation Anchor" → "Opened by", "System Final Settlement Verdict" → "Final verdict", "UNASSIGNED TIMELOG PARAMETER" → "Unknown date".
+- `src/pages/app/GigAppeals.tsx`: subtitle, empty state, "UNKNOWN REGISTRATION DATE" → "Unknown date", "Administrative Resolution Notes" → "Resolution notes".
+- `src/pages/app/MarketplaceGigDetail.tsx`: error msgs ("Gig registry node unreachable." → "Gig not found.", "Resource missing." → "Gig not found.", "Failed to finalize submission handshake." → "Couldn't submit your proposal."), success toast ("Strategic proposal dispatched to client registry." → "Proposal submitted."), section title "Trust Ledger" → "Client reviews", card title "Proposal Active" → "Proposal submitted", form title "Initialize Proposal" → "Submit a proposal", label "Strategic Narrative" → "Your pitch", CTA "Transmit Proposal" → "Submit proposal".
+- `src/domains/gigs/components/talent/InfiniteGigsList.tsx`: end-of-list "Ecosystem Stream Lock Fully Synchronized" → "You're all caught up".
+- `src/domains/gigs/components/talent/BidCoachDialog.tsx`: error toast humanized.
+- `src/domains/gigs/components/talent/RecommendedBiddersPanel.tsx`: success + error toasts humanized.
+- `src/domains/gigs/components/talent/CourseSharingGigForm.tsx`, `CVUploadGigForm.tsx`: "Ecosystem ... timeout/failed" error msgs humanized.
+- `src/domains/gigs/components/talent/JobPostingGigForm.tsx`: CTA "Commit To Ecosystem Registry" → "Post job gig".
+
+**Verified:** rg sweep on `src/pages/app/Gig*` + `src/domains/gigs/components/talent/` — remaining "Phase Z0/Z1", "HUD LEVEL" hits are all in JSDoc/code comments only, zero user impact.
+
+**Out of scope (deferred):** JSDoc/comment jargon in gig components, admin `/dashboard/gigs/*`, Gro10x employer gigs, visual redesign.
+
+Ready for **A7 (Profile/Talent Mirror polish)** or **A8 (Career Abroad)**.
