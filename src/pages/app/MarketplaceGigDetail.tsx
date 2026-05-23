@@ -123,10 +123,10 @@ export default function MarketplaceGigDetail() {
       });
 
       if (error) throw error;
-      toast.success("Strategic proposal dispatched to client registry.");
+      toast.success("Proposal submitted.");
       queryClient.invalidateQueries({ queryKey: ["app-talent-marketplace-bid", gigIdStr] });
     } catch (e: any) {
-      toast.error(e.message || "Failed to finalize submission handshake.");
+      toast.error(e.message || "Couldn't submit your proposal.");
     } finally {
       setIsSubmitPending(false);
     }
