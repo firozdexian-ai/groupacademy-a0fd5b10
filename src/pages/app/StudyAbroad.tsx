@@ -57,9 +57,9 @@ export default function StudyAbroad() {
   const [selectedCountry, setSelectedCountry] = useState(searchParams.get("country") || "all");
   const [selectedDegree, setSelectedDegree] = useState(searchParams.get("degree") || "All Degrees");
 
-  // Digital Workforce Anomaly Protocol[cite: 6]
+  // Internal error logger
   const reportAnomaly = async (event: string, context: any) => {
-    console.error(`[Digital Workforce Anomaly] ${event}`, context);
+    console.error(`[abroad] ${event}`, context);
     try {
       await adminSupportAssistant({ type: "study_abroad_sync_error", event, context });
     } catch {

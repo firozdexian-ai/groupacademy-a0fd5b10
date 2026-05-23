@@ -131,11 +131,11 @@ export function GigSubmissionForm({ gig, open, onOpenChange }: GigSubmissionForm
             </div>
             <div className="min-w-0 flex-1 flex flex-col justify-center">
               <DialogTitle className="text-base sm:text-lg font-bold tracking-tight text-foreground line-clamp-1 truncate w-full break-all">
-                {gig.title ? gig.title.replace(/_/g, " ") : "Task Update Ingress"}
+                {gig.title ? gig.title.replace(/_/g, " ") : "Submit your work"}
               </DialogTitle>
               <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/80 uppercase tracking-wide mt-0.5 leading-none">
                 <Zap className="h-3 w-3 text-primary stroke-[2.2]" />
-                <span>Orchestration Node Ingress</span>
+                <span>Submission</span>
               </div>
             </div>
           </div>

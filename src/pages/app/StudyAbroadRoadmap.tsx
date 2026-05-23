@@ -17,9 +17,9 @@ import { PAGE_SHELL, PAGE_TITLE, PAGE_SUBTITLE, CARD } from "@/lib/uiTokens";
 export default function StudyAbroadRoadmap() {
   const navigate = useNavigate();
 
-  // Digital Workforce Anomaly Reporting[cite: 6]
+  // Internal error logger
   const reportAnomaly = async (event: string, context: any) => {
-    console.error(`[Digital Workforce Anomaly] ${event}`, context);
+    console.error(`[abroad] ${event}`, context);
     try {
       await adminSupportAssistant({ type: "roadmap_intake_error", event, context });
     } catch {

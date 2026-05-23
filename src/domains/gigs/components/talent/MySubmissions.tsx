@@ -32,12 +32,12 @@ import { cn } from "@/lib/utils";
 
 const STATUS_CONFIG = {
   pending: {
-    label: "Pending Verification",
+    label: "Pending review",
     icon: Clock,
     className: "bg-amber-500/10 text-amber-600 border-amber-500/20",
   },
   approved: {
-    label: "Approved Settlement",
+    label: "Approved",
     icon: ShieldCheck,
     className: "bg-emerald-500/10 text-emerald-600 border-emerald-500/20",
   },
@@ -188,7 +188,7 @@ export function MySubmissions({ talentId }: { talentId?: string }) {
                   {(sub.submission_data as any)?.job_title ||
                     (sub.submission_data as any)?.parsed_job?.title ||
                     (sub.submission_data as any)?.title ||
-                    "Ecosystem Task Submission"}
+                    "Untitled submission"}
                 </h4>
 
                 {/* Automated AI Feedback Ribbon */}

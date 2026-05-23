@@ -257,7 +257,7 @@ export function CVUploadGigForm({ gig, talentId, onSubmitted }: CVUploadGigFormP
           ) : (
             <Zap className="h-4 w-4 fill-primary-foreground/10" />
           )}
-          <span>{isProcessing ? "Processing Synapse Ledger..." : "Initialize AI Mapping Sync"}</span>
+          <span>{isProcessing ? "Processing..." : "Start AI mapping"}</span>
         </Button>
       ) : (
         <div className="space-y-5 animate-in slide-in-from-bottom-3 duration-500 w-full min-w-0">
