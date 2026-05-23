@@ -74,7 +74,7 @@ export function WebinarEnrollPanel({ course }: Props) {
     }
 
     if (seatsLeft !== null && seatsLeft <= 0) {
-      toast.error(" Ecosytem Capacity Maximum: Selected synchronous channel is fully booked.");
+      toast.error("This session is fully booked.");
       return;
     }
 
@@ -204,7 +204,7 @@ export function WebinarEnrollPanel({ course }: Props) {
               </>
             ) : (
               <>
-                <span>{creditCost > 0 ? `Debit Framework & Lock Pass` : "Acquire Free Entry Pass"}</span>
+                <span>{creditCost > 0 ? `Enroll for ${creditCost} credits` : "Enroll for free"}</span>
                 <ArrowRight className="h-4 w-4 shrink-0 stroke-[2.5] ml-0.5" />
               </>
             )}

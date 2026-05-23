@@ -280,7 +280,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
 
     const normalizedReportItems: Array<{ label: string; pct: number; notes?: string }> = isV1
       ? (evalResult.topics ?? []).map((t: any) => ({
-          label: String(t.tag ?? "Core Competency Vector").replace(/_/g, " "),
+          label: String(t.tag ?? "Skill").replace(/_/g, " "),
           pct: Math.round(Number(t.score ?? 0) * 100),
           notes: t.notes,
         }))
@@ -353,7 +353,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
       <CardHeader className="p-4 px-5 border-b border-border/10 select-none bg-muted/20">
         <CardTitle className="text-sm font-bold text-foreground/90 uppercase tracking-wider flex items-center gap-2">
           <MessageSquare className="h-4.5 w-4.5 text-primary stroke-[2.2]" />
-          <span className="truncate pr-1">{scenario.title || "Operational Execution Simulation"}</span>
+          <span className="truncate pr-1">{scenario.title || "Scenario"}</span>
         </CardTitle>
       </CardHeader>
 
@@ -392,7 +392,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
                 )}
               >
                 <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 select-none mb-1 leading-none">
-                  {isUserRole ? "Candidate Operator Input" : "System Environment Response"}
+                  {isUserRole ? "You" : "Scenario"}
                 </span>
 
                 <p className="select-text whitespace-pre-wrap">{messageItem.content}</p>

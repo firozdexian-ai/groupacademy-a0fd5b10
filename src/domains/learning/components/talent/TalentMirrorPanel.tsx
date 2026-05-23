@@ -154,8 +154,8 @@ export function TalentMirrorPanel() {
       {/* HUD SECTION 1: SYSTEM CALIBRATION PLOTS GRID NODES */}
       <div className="grid grid-cols-2 md:grid-cols-4 gap-2 w-full select-none">
         <Stat label="Active Tracks" value={summaryValuesModel.courses || 0} />
-        <Stat label="Tracked Knowledge Vectors" value={summaryValuesModel.topics || 0} />
-        <Stat label="Mean Mastery Profile" value={pct(summaryValuesModel.avg_mastery)} />
+        <Stat label="Topics tracked" value={summaryValuesModel.topics || 0} />
+        <Stat label="Average mastery" value={pct(summaryValuesModel.avg_mastery)} />
         <Stat
           label="Tasks Outstanding"
           value={summaryValuesModel.due_now || 0}

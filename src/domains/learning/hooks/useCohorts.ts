@@ -107,7 +107,7 @@ export function useCohortHealth(cohortId?: string) {
       // AUTOMATED NUDGE: Detect at-risk performance levels immediately at data sync layer
       if (results && results.health_status === "critical") {
         console.warn(
-          `[Digital Workforce] SIGNAL: Cohort [${cohortId}] health status marked CRITICAL. Notifying Dean Agent.`,
+          `[learning] Cohort ${cohortId} health critical — notifying admin.`,
         );
       }
 

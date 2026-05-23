@@ -194,7 +194,7 @@ export function TracksTab() {
                       </div>
                       <div className="flex-1 min-w-0 space-y-2 text-left flex flex-col justify-center leading-none">
                         <p className="text-xs sm:text-sm font-bold text-foreground/90 tracking-tight leading-tight line-clamp-1 truncate select-text w-full group-hover:text-primary transition-colors pr-1">
-                          {enrollmentItem.content?.title || "Specialized Core Track"}
+                          {enrollmentItem.content?.title || "Untitled track"}
                         </p>
                         <div className="space-y-1.5 w-full tabular-nums text-[10px] font-bold text-primary select-none">
                           <div className="flex items-center justify-between text-muted-foreground/80 font-semibold mb-0.5 leading-none tracking-tight">

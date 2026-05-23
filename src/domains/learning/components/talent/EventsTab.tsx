@@ -22,7 +22,7 @@ type EventFilter = "in_person" | "competitions" | "abroad";
 const filterOptions: { key: EventFilter; icon: any; label: string }[] = [
   { key: "in_person", icon: MapPin, label: "In-Person Seminars" },
   { key: "competitions", icon: Trophy, label: "Competitions" },
-  { key: "abroad", icon: Globe, label: "Study Abroad Track" },
+  { key: "abroad", icon: Globe, label: "Study Abroad" },
 ];
 
 const STATUS_LABEL: Record<string, string> = {
