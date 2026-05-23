@@ -254,14 +254,14 @@ export default function Gigs() {
 
   return (
     <div className="max-w-5xl mx-auto px-4 py-6 sm:py-10 space-y-6 text-left antialiased block transform-gpu w-full pb-32">
-      {/* HUD LEVEL 1: APPLICATION HEADER MODULE DESCRIPTION COCKPIT */}
+      {/* Header */}
       <header className="flex items-center justify-between gap-4 leading-none w-full shrink-0 select-none border-b border-border/5 pb-4">
         <div className="min-w-0 flex-1 leading-none space-y-1.5 block">
           <h1 className="text-xl sm:text-2xl font-black uppercase tracking-tight text-foreground leading-none m-0">
-            Ecosystem Gig Hub
+            Gigs
           </h1>
           <p className="font-mono text-[10px] font-bold text-muted-foreground/50 uppercase tracking-tight block leading-none">
-            Execute operational system parameters tasks to draw direct platform verification tokens.
+            Find work, submit deliverables, and earn credits.
           </p>
         </div>
 
@@ -288,11 +288,11 @@ export default function Gigs() {
           onClick={handleTransitionToAICreatorWorkspace}
         >
           <Sparkles className="h-4 w-4 stroke-[2] fill-current text-primary-foreground shrink-0" />
-          <span>Post New Custom Assignment via Copilot AI</span>
+          <span>Post a new gig with AI</span>
         </Button>
       </div>
 
-      {/* HUD LEVEL 2: IMMERSIVE FIVE-WAY SEGMENT FILTER MATRIX BAR */}
+      {/* Tabs */}
       <Tabs value={activeTabPanelKey} onValueChange={handleTabSelectionTransition} className="w-full block">
         <TabsList className="grid w-full grid-cols-5 p-1 h-10 bg-muted/40 rounded-lg border border-border/10 select-none mb-6">
           <TabsTrigger
