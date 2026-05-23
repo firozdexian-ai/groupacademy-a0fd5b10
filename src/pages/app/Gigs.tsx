@@ -483,7 +483,7 @@ export default function Gigs() {
           </div>
         </TabsContent>
 
-        {/* VIEWPORT CHANNEL D: FREELANCE CLIENT PROJECT ALLOCATIONS */}
+        {/* Client work */}
         <TabsContent
           value="client"
           className="space-y-4 focus:outline-none outline-none mt-2 block w-full animate-in fade-in duration-200"
@@ -492,22 +492,21 @@ export default function Gigs() {
             <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 stroke-[2.2] select-none pointer-events-none" />
             <Input
               type="search"
-              placeholder="Filter external commercial client assignments database by contract keyword moniker..."
+              placeholder="Search client projects..."
               className="w-full h-10 pl-9 pr-3 bg-background border border-border/40 text-xs sm:text-sm font-semibold rounded-lg shadow-none"
               value={textSearchInputStr}
               onChange={(e) => setTextSearchInputStr(e.target.value)}
             />
           </div>
           <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
-            Freelance Procurement Runway: Deploy Competitive Project Proposals · Negotiate Functional Execution Bounds &
-            Milestones Budget Allocations
+            Submit proposals · Negotiate scope · Set milestones and budgets
           </p>
 
           <div className="space-y-2.5 block w-full align-top">
             {filteredMarketplaceProjectsList.length === 0 ? (
               <Card className="rounded-lg border border-dashed border-border/80 bg-muted/5 p-8 text-center select-none block w-full shadow-none pointer-events-none">
                 <CardContent className="p-0 text-xs font-semibold text-muted-foreground/40 leading-normal block">
-                  No external client organizational hackathons or projects match current filter search tokens.
+                  No client projects match your search.
                 </CardContent>
               </Card>
             ) : (
