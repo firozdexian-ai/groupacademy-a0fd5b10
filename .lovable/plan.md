@@ -1,178 +1,73 @@
-# v0.5 Plan — Revised (P1 audit + P2 micro-tasks + AI Agents v0.5 + Public Showcase)
+# B3 — Waitlist table + RPC (migration only)
 
-I'll restructure so we move in **small, verifiable steps**. Each step = one chat turn, one deliverable, one approval. Nothing branches until the prior step is green.
+Scope: one migration. No frontend wiring yet (that's B4). No UI changes.
 
----
+## 1. Table: `public.feature_waitlist`
 
-## Track A — P1 Completion Audit (do first, 1 turn)
+| Column | Type | Notes |
+|---|---|---|
+| `id` | uuid PK | `gen_random_uuid()` |
+| `feature_key` | text NOT NULL | matches B1 registry (`gigs-marketplace`, `reviewer-program`, …, `abroad-country-*`) |
+| `user_id` | uuid NULL | set when authed; FK-free per project convention |
+| `email` | text NULL | required when `user_id` is NULL (anon path) |
+| `source_path` | text NULL | e.g. `/app/reviewer` — for debug/analytics |
+| `user_agent` | text NULL | trimmed to 500 chars |
+| `metadata` | jsonb NOT NULL default `'{}'::jsonb` | future-proofing (referrer, locale, etc.) |
+| `created_at` | timestamptz NOT NULL default `now()` |
 
-Before touching P2, verify P1 is actually complete.
+Constraints / indexes:
+- `CHECK (user_id IS NOT NULL OR email IS NOT NULL)` — at least one identity
+- `CHECK (char_length(feature_key) BETWEEN 1 AND 80)`
+- Partial unique index `(user_id, feature_key) WHERE user_id IS NOT NULL` — dedup authed
+- Partial unique index `(lower(email), feature_key) WHERE email IS NOT NULL AND user_id IS NULL` — dedup anon
+- Index on `(feature_key, created_at DESC)` — powers B6 admin widget
 
-**A1. P1 audit pass** — re-read `.lovable/v05/inventory.md`, cross-check against:
-- `src/App.tsx` (talent routes), `src/gro10x/Gro10xRoutes.tsx`, `src/shells/admin/routes/*.ts`
-- `mem://admin/*` group files (16 groups, 118 admin tabs)
-- Public routes in `src/App.tsx` (`/`, `/jobs`, `/projects`, `/leaderboards`, `/c/:slug`, `/t/:handle`, `/verify/*`)
+## 2. RLS
 
-**Deliverable:** append `## P1 Audit Result` section to `inventory.md` listing:
-- Routes missed in first pass
-- Regression suspects re-confirmed or dismissed (with file evidence)
-- Coverage % for each shell
+Enable RLS. Policies:
 
-**Stop and wait for your sign-off** before Track B.
+- **INSERT (anon + authed)**: `WITH CHECK (true)` — anyone may join (the RPC enforces shape; direct inserts also fine since columns are non-sensitive and dedup is enforced by unique indexes).
+- **SELECT (admin only)**: `USING (public.has_role(auth.uid(), 'admin'))` — only admins read the list. Talents do not need to see who else joined.
+- **SELECT (own rows, authed)**: `USING (auth.uid() = user_id)` — so a logged-in user can check their own joins (used by B4 to suppress re-prompt across devices).
+- No UPDATE / DELETE policies (admin-only via service role if ever needed).
 
----
+## 3. RPC: `public.join_feature_waitlist(_feature_key text, _email text default null, _source_path text default null, _metadata jsonb default '{}'::jsonb)`
 
-## Track B — P2 broken into 6 micro-steps
+- `LANGUAGE plpgsql SECURITY DEFINER SET search_path = public`
+- Returns `jsonb`: `{ status: 'joined' | 'already_joined', id: uuid }`
+- Logic:
+  1. Validate `_feature_key` matches `^[a-z0-9][a-z0-9-]{0,79}$` (raises `invalid_argument` otherwise).
+  2. Resolve identity: `_uid := auth.uid()`. If `_uid IS NULL` and `_email IS NULL` → raise `invalid_argument` ("email required").
+  3. Normalize email: `lower(trim(_email))` when present; validate basic regex.
+  4. `INSERT … ON CONFLICT DO NOTHING` against the appropriate unique index.
+  5. If conflict (no row returned), fetch the existing row id and return `already_joined`. Else return `joined`.
+- `GRANT EXECUTE … TO anon, authenticated`.
 
-Originally P2 was "defer matrix + ComingSoonGate + waitlist table + wire it up". Splitting:
+## 4. Admin helper RPC (read-only, for B6): `public.get_feature_waitlist_signals(_limit int default 50)`
 
-**B1. Defer matrix doc only** (1 turn)
-- Create `.lovable/v05/defer-matrix.md`
-- Every Talent + Public surface flagged "looks empty" in P1, classified `keep | coming-soon | hide`
-- Include rationale + data-readiness check per row
-- No code. You approve the matrix.
+- `SECURITY DEFINER`, returns table `(feature_key text, total bigint, last_24h bigint, last_7d bigint, latest_at timestamptz)`.
+- Guard with `IF NOT public.has_role(auth.uid(), 'admin') THEN RAISE EXCEPTION 'forbidden' END IF;` at the top.
+- Powers the admin widget in B6 without exposing PII.
 
-**B2. ComingSoonGate component** (1 turn)
-- Build `src/components/common/ComingSoonGate.tsx` only
-- Props: `featureKey`, `title`, `description`, optional `illustration`
-- No waitlist wiring yet — just visual shell using design tokens
-- Render-test on one surface as a preview
+## 5. Out of scope (explicit)
 
-**B3. Waitlist backend** (1 turn, migration only)
-- `feature_waitlist` table (`user_id`, `feature_key`, `email`, `created_at`) + RLS + unique constraint
-- One RPC `join_feature_waitlist(feature_key)`
-- Migration approval required before code
+- No frontend changes (B4 does that).
+- No email notification system to waitlist subscribers (P4 punch list, if at all).
+- No moderation UI beyond the read-only signals RPC (B6 renders it).
+- No retention/cleanup cron — table is small, defer.
 
-**B4. Wire waitlist into ComingSoonGate** (1 turn)
-- Add form + submit → RPC
-- Toast confirmation, idempotent re-submit
-- Test on one surface
+## 6. Verification after migration runs
 
-**B5. Apply gate to `coming-soon` surfaces** (1 turn per ~5 surfaces, batched)
-- Wrap each flagged surface per the approved matrix
-- Update nav labels where needed (small "Soon" pill)
+- `supabase--linter` — confirm no new RLS/security warnings.
+- `supabase--read_query` smoke: `SELECT proname FROM pg_proc WHERE proname IN ('join_feature_waitlist','get_feature_waitlist_signals');`
+- Stop. Wait for sign-off before B4 wires the gate.
 
-**B6. Hide `hide` surfaces + admin waitlist signals widget** (1 turn)
-- Remove nav entries, add 404 redirect
-- Admin tab: `feature_waitlist` aggregated by `feature_key` with signup counts → drives "what to build next"
+## 7. Risks
 
----
-
-## Track C — AI Agents v0.5 (new, agent-by-agent)
-
-Per your direction: **one agent at a time, skip if too complex, ship minimum viable interaction.**
-
-Three capabilities defined as the v0.5 floor for every customer-facing agent:
-
-1. **Text chatbot wrapper** — info-only, uses agent persona + system prompt. No tool calls required. Already mostly built via `useAgentRuntime` — just verify each agent has a working persona.
-2. **Inbox push** — agent can send a transactional message to the talent's in-app inbox (existing `notifications` infra) on triggers (e.g. new job match, new course).
-3. **Daily feed post** — each agent posts 1 text post/day to `feed_posts` via cron. Variety driven by agent persona + light context (recent platform activity).
-
-### Micro-steps:
-
-**C0. Agent inventory & triage** (1 turn)
-- Read `ai_agents` table + `src/lib/constants/agents.ts`
-- Doc `.lovable/v05/agents-triage.md`: per agent → has persona? has working chat? credit cost set? — classify `ship | fix | defer`
-- You approve the shortlist
-
-**C1. Verify text-wrapper chat works for all `ship` agents** (1 turn)
-- Smoke test `/app/agents/:agentKey` in browser for each
-- Fix broken persona prompts only (no new features)
-
-**C2. Inbox-push infrastructure** (1 turn)
-- Edge function `agent-push-inbox` (input: `agent_key`, `user_id`, `subject`, `body`, `cta_url`)
-- Writes to `notifications` with `source='agent'` + agent metadata
-- RLS verified
-
-**C3. Wire 2-3 high-value inbox triggers** (1 turn)
-- Examples: Jobs agent on new high-match job; Learning agent on new course in tracked topic
-- Pick triggers WITH you before building
-
-**C4. Daily feed post — single agent pilot** (1 turn)
-- Edge function `agent-daily-post` for ONE agent (e.g. AI General or Career agent)
-- Cron daily, posts to `feed_posts` with `author_type='agent'` (new column if needed)
-- Feed UI shows agent badge
-
-**C5. Roll out daily-post to remaining `ship` agents** (1 turn)
-- Same function, parameterized by agent
-- Stagger post times to avoid feed flood
+- **Anon spam**: unique index on `(lower(email), feature_key)` limits dedup but not flood. Acceptable for v0.5 — revisit with captcha/turnstile if abused.
+- **PII**: only email + UA stored; admin-only SELECT. No phone, no name. Aligns with PII memory.
+- **Migration is additive**: no existing data touched; rollback = `DROP TABLE` if needed.
 
 ---
 
-## Track D — Jobs UI Polish (talent-facing)
-
-You called out text alignment is "fucking horrible" in `/app/jobs`. Treating as one focused pass.
-
-**D1. Jobs hub visual audit** (1 turn)
-- Browser screenshots of `/app/jobs` at 390px (your current viewport) + 768px + 1280px
-- Doc issues: alignment, hierarchy, spacing, card density, mobile horizontal-scroll violations
-- No code. You approve the fix list.
-
-**D2. Job card + list polish** (1 turn)
-- Fix alignment per D1 findings
-- Apply mobile design system rules (py-2, space-y-2, no horizontal scroll, 3:1 banner if any)
-- Scoped to `JobCard`, `InfiniteJobsList`, hub tabs
-
-**D3. Job detail polish** (1 turn)
-- `/app/jobs/:id` + public `/jobs/:id` alignment + hierarchy pass
-
----
-
-## Track E — Public AI Agent Network Showcase
-
-Your point: we sell AI-agent-first but our public site never says so.
-
-**E1. Public AI Network landing section** (1 turn, design directions first)
-- New section on `/` (home) introducing the agent network
-- Carousel/grid of agent personas with name, role, avatar, "Chat" CTA → routes to public agent profile or signup
-- I'll generate 2-3 design directions for your approval
-
-**E2. Public agent profile pages** (1 turn)
-- Route `/agents/:agentKey` (public, SEO-indexed)
-- Persona bio, "institutions/credentials" panel, recent feed posts (from Track C5), chat CTA
-- JSON-LD `Person` schema so social platforms pick it up
-- This gives you the LinkedIn-shareable artifact you want
-
-**E3. Admin promo tools for agent network** (1 turn)
-- Admin tab under AI Agents group: "Public showcase" → toggle which agents appear on `/`, edit public bio, schedule social posts (text export for now; full social automation is post-v0.5)
-
----
-
-## Execution order (proposed)
-
-```text
-A1                          → audit, gate to B
-B1 → B2 → B3 → B4 → B5 → B6 → defer/coming-soon shipped
-C0 → C1 → C2 → C3 → C4 → C5 → agents at v0.5 floor
-D1 → D2 → D3                → jobs polish
-E1 → E2 → E3                → public agent showcase
-P3 (smoke tests) — unchanged from prior plan, runs after B+C+D
-P4 (publish punch list)     — last
-```
-
-Each arrow = one chat turn = one approval gate. If a step balloons, we split it again.
-
----
-
-## What's explicitly OUT of v0.5 (constraining your scope per your ask)
-
-- Agent tool-calling beyond text + inbox + feed-post
-- Full social-media automation for agents (LinkedIn/FB posting)
-- Gro10x B2B polish
-- Admin UX polish beyond the one waitlist widget
-- New features not listed above
-- Performance work beyond what A19 already did
-
----
-
-## Technical notes (for me, not for the user-facing dashboard)
-
-- `feed_posts` likely needs `author_type` enum (`talent | agent`) + `author_agent_key` column — confirm in C4 migration
-- `agent-push-inbox` should respect notification preferences (existing prefs table from agentic-feed-notifications memory)
-- Daily-post cron: stagger via `pg_cron` with different minute offsets per agent
-- Public agent pages must be in public shell bundle (`src/shells/public/agents.ts` already exists, currently exports registry only — extend)
-- `ComingSoonGate` form submit blocked for unauthenticated users → show signup CTA instead
-
----
-
-**Next turn after you approve this plan:** I execute A1 only (P1 completion audit), output the audit section, stop.
+Awaiting "go" to switch to build mode and run the migration.
