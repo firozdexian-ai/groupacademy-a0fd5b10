@@ -20,6 +20,7 @@ import { MySubmissions } from "@/domains/gigs/components/talent/MySubmissions";
 import { GigUploader, type UploadedFile } from "@/domains/gigs/components/talent/GigUploader";
 import { GigForYouTab } from "@/domains/gigs/components/talent/GigForYouTab";
 import { AvailabilityWidget } from "@/domains/gigs/components/talent/AvailabilityWidget";
+import { ComingSoonGate } from "@/components/launch/ComingSoonGate";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
  Search,
