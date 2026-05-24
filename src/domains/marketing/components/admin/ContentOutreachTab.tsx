@@ -154,7 +154,7 @@ export function ContentOutreachTab() {
       setOutreachRecords((prev) => [...prev, { talent_id: talent.id, course_id: selectedContent.id }]);
       toast.success(`Saved: ${talent.full_name}`);
     } catch (err) {
-      toast.error("Failed: Registry rejection");
+      toast.error("Failed: Rejected");
     } finally {
       setIsSending(null);
     }

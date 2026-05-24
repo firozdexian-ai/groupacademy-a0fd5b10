@@ -113,11 +113,11 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
         try {
           data = await getJobById(jobId);
         } catch {
-          toast.error("Registry Ingestion Fault: Node not found.");
+          toast.error("Save failed: Record not found.");
           return;
         }
         if (!data) {
-          toast.error("Registry Ingestion Fault: Node not found.");
+          toast.error("Save failed: Record not found.");
           return;
         }
 

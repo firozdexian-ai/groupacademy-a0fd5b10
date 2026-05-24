@@ -203,7 +203,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
 
     setImportStats(stats);
     setIsImporting(false);
-    toast.success("Registry Sync Complete");
+    toast.success("Saved");
   };
 
   const handleClose = () => {

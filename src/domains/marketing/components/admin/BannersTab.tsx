@@ -169,7 +169,7 @@ export const BannerManager = () => {
     if (!confirm("Authorize permanent artifact purge?")) return;
     try {
       await withTimeout(deleteBannerRepo(bannerId), TIMEOUTS.DEFAULT, "Delete timed out");
-      toast.success("Artifact Purged from Registry");
+      toast.success("Deleted");
       loadRegistryData();
     } catch (error: any) {
       toast.error("Purge Failed: Artifact locked by protocol");

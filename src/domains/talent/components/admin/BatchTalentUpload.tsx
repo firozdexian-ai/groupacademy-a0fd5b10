@@ -338,7 +338,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             clearInterval(pollInterval);
             setIsUploading(false);
             if (batch.status === "completed") {
-              toast.success("Registry Sync Complete");
+              toast.success("Saved");
               onComplete?.();
             }
           }

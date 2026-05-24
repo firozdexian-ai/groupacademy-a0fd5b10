@@ -128,7 +128,7 @@ export function CompaniesTab() {
         setOutreachHistory(history);
       }
     } catch (err) {
-      toast.error("Registry synchronization failure");
+      toast.error("Save failed");
     } finally {
       setIsLoading(false);
     }

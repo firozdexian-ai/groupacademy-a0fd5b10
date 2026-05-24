@@ -118,7 +118,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
 
   const handleLogAndOpenClient = async () => {
     if (!selectedInvestor?.email) {
-      toast.error("Registry Fault: Recipient identity undefined.");
+      toast.error("Error: Recipient identity undefined.");
       return;
     }
 

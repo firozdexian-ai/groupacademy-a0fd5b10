@@ -103,7 +103,7 @@ export function WorkforceManager() {
         totalAssigned: data?.reduce((s: number, m: any) => s + (m.assigned_count || 0), 0) || 0,
       });
     } catch (err: any) {
-      toast.error("Telemetry Fault: Registry Sync Failed");
+      toast.error("Failed to load");
     } finally {
       setLoading(false);
     }

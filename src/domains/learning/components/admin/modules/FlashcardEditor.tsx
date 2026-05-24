@@ -117,7 +117,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
 
       updateRegistry(newCards);
       setActiveTab("visual");
-      toast.success(`Ingested ${newCards.length} Registry Artifacts`);
+      toast.success(`Imported ${newCards.length} cards`);
     } catch (err: any) {
       toast.error(err.message || "Invalid Logic Schema");
     }

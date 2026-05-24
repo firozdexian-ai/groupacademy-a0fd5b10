@@ -166,7 +166,7 @@ export function TalentCreditsTab() {
 
       setTotalCount(result.count || 0);
     } catch (err) {
-      toast.error("Failed: Registry sync error");
+      toast.error("Failed: Save failed");
     } finally {
       setIsLoading(false);
     }
@@ -228,7 +228,7 @@ export function TalentCreditsTab() {
         });
       }
 
-      toast.success("Fiscal Registry Updated");
+      toast.success("Credits updated");
       setAdjustDialog({ open: false, type: "add" });
       setAdjustAmount("");
       setAdjustReason("");
