@@ -505,7 +505,7 @@ export default function App() {
                     <Route path="submissions/:submissionId" element={<AppSubmissionDetail />} />
                     <Route path="learning/events" element={<AppEvents />} />
                     <Route path="learning/webinars" element={<AppEvents />} />
-                    <Route path="learning/competitions" element={<Competitions />} />
+                    <Route path="learning/competitions" element={<ComingSoonGate featureKey="competitions" title="Competitions" description="Time-boxed challenges with prizes. Next season opens soon — join the waitlist for early access." secondaryCtaLabel="Browse learning" secondaryCtaHref="/app/learning" />} />
                     <Route path="learning/competitions/:slug" element={<CompetitionDetail />} />
                     <Route path="learning/blog" element={<Blog />} />
                     <Route path="learning/blog/:slug" element={<BlogPost />} />
