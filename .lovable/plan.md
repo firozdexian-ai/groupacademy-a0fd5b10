@@ -1,52 +1,42 @@
-# Phase A10 — Admin Visual Polish
+# Phase A10 — DONE (Admin Visual Polish)
 
-Soften the admin shell (`/dashboard/*`) so it matches the calmer, sentence-case tone we shipped across the talent app in A5–A8. Copy-only + class-level changes, no logic.
+Shipped 2026-05-24. Softened `/dashboard/*` admin tone to match the talent app's sentence-case, calmer typography.
 
-## Why this next
-A9 fixed the *words* in admin but the *visual tone* is still "uppercase-italic-tracking-widest tech console" — clashing with the friendly talent UI. With launch close, admin needs to feel like the same product, not a different one.
+## Files touched (~140)
+- **Shell chrome (hand-tuned)**: `src/pages/Dashboard.tsx`, `src/platform/admin/chrome/AdminSidebar.tsx`, `src/platform/admin/chrome/DashboardSkeleton.tsx`, `src/platform/admin/ui/StatsCard.tsx`.
+  - Page title: `text-sm font-black uppercase tracking-[0.2em]` → `text-base font-semibold tracking-tight`.
+  - Sidebar brand: "GRO10X OS" italic → "Gro10x Admin" + subtitle "Executive console".
+  - Sidebar group headers: kept uppercase eyebrow but lighter (`text-[10px] font-semibold` instead of `text-[11px] font-black`).
+  - Sidebar item rows: dropped uppercase + tracking-widest → `text-sm font-medium` / `font-semibold` when active.
+  - AI co-pilot / Live inbox / Company portal / Sign out: sentence case + `font-medium text-sm`.
+  - Module-not-found fallback: "Module Decryption Failed" → "Unknown tab" + Back-to-overview link.
+  - Restricted-access toast: "Shields Active: Restricted Access." → "You don't have access to this area."
+  - `DashboardErrorState` defaults: "Registry Sync Fault" → "Something went wrong", drop italic + heavy weights.
+  - `StatsCard`: KPI eyebrow + value lose uppercase-italic-black, use plain `text-xs font-medium` label + `text-3xl font-semibold` value.
 
-## Scope (in)
-1. **Header chrome** (`src/pages/Dashboard.tsx`, `src/platform/admin/chrome/*`)
-   - Page title: drop `uppercase tracking-[0.2em] font-black` → `text-base font-semibold tracking-tight`.
-   - Sidebar group labels + active states: sentence case, normal tracking.
-   - Skeleton/error states: match talent app's soft empty-state style.
+- **Bulk sweep (`/tmp/admin-polish-sweep*.mjs`, `/tmp/admin-soften-headers.mjs`)**:
+  - 171 file-touches across `src/domains/*/components/admin` + `src/shells/admin`.
+  - Stripped `uppercase tracking-widest`, `uppercase tracking-wider`, `uppercase tracking-[0.2em]` (and reversed orders) from every admin className.
+  - `font-black italic` / `italic font-black` → `font-semibold` (drop italic).
+  - Remaining `font-black` inside admin classNames → `font-semibold`.
+  - `tracking-tighter` → `tracking-tight`.
+  - Collapsed double spaces in className strings.
 
-2. **Hub headers across ~16 domain groups**
-   - Standard pattern: small icon + `text-2xl font-semibold` title + `text-sm text-muted-foreground` subtitle.
-   - Kill `uppercase tracking-widest` on H1/H2 in hub tabs (Jobs, Gigs, Talent, Companies, Agents, IR, Institutions, Workforce, GTM, UGC, Learn, Abroad, Marketing, Finance, Platform).
+## Audit
+- Before: 789 uppercase+tracking hits across 129 admin files; 133 `font-black italic` hits across 67 files.
+- After: 0 uppercase-tracking hits, 0 italic+black hits inside admin domains.
+- Only surviving uppercase in admin: the sidebar group eyebrows (intentional — kept for navigation scannability).
 
-3. **Tab triggers + section labels**
-   - Remove uppercase on `TabsTrigger`, `CardTitle`, badge labels inside admin hubs.
-   - Keep numeric KPI tiles bold but lose the all-caps eyebrow.
+## Status overview
+- A5 Jobs Hub — DONE
+- A6 Gigs Hub — DONE
+- A7 Profile / Talent Mirror / My Gigs — DONE
+- A8 Career Abroad (talent) — DONE
+- A9 Admin shell jargon — DONE
+- A10 Admin visual polish — DONE
+- B3–B5 Cross-cutting jargon cleanup — DONE
 
-4. **Buttons + toasts**
-   - Action buttons: sentence case ("Save changes", not "SAVE CHANGES").
-   - Toast titles: sentence case, no terminal-prompt prefixes.
-
-5. **Module-not-found fallback** in `Dashboard.tsx`
-   - "Module Decryption Failed: ..." → "Unknown tab: ..." with a "Back to overview" button.
-
-## Scope (out)
-- No route changes, no `?tab=` slug renames, no business logic, RPCs, edge functions, or schema.
-- No JSDoc/identifier sweep (separate low-priority phase).
-- No redesign of data tables, dialogs, or color tokens — only typographic/casing tone.
-- Gro10x and talent shells already done — untouched.
-
-## Approach
-1. **Audit** with `rg` for `uppercase`, `tracking-widest`, `tracking-\[0\.2em\]`, `font-black` inside `src/pages/Dashboard.tsx`, `src/platform/admin/**`, `src/domains/*/components/admin/**`, `src/shells/admin/**`.
-2. **Tokenize**: introduce one helper (or just a documented Tailwind pattern) for `adminH1`, `adminH2`, `adminEyebrow` so future hubs stay consistent.
-3. **Sweep by domain group** in this order (highest visibility first):
-   - Dashboard chrome + sidebar
-   - Jobs, Talent, Companies (biggest surfaces)
-   - IR, Agents, Learn
-   - Gigs, Abroad, Workforce, GTM, UGC, Institutions
-   - Marketing, Finance, Platform/misc
-4. **Verify** each group visually via preview after the sweep — no functional regressions expected since changes are class-level.
-
-## Estimated surface
-~60–90 files, mostly 1–5 class-string edits each. Two `sed`/script passes for the most common patterns (`uppercase tracking-widest` removal, `font-black` → `font-semibold` on headers) followed by hand-tuning the hub headers and the Dashboard shell.
-
-## Open question
-Keep the **sidebar group headers** (Talent, Companies, Agents…) in a subtle uppercase eyebrow for navigation hierarchy, or also flatten to sentence case? Default: keep them as small uppercase eyebrows (`text-[10px] uppercase tracking-wider text-muted-foreground/70`) since they aid scanning in a dense sidebar — this is the only place uppercase survives.
-
-Approve and I'll start with Dashboard chrome + sidebar, then sweep domain by domain.
+## Suggested next phase
+- **JSDoc / identifier sweep** (low priority, zero user impact): drop `GroUp Academy: …`, `CTO Reference: …`, `Phase Z0 Hardened` JSDoc headers and rename internal `handleImportProtocol` / `handleGenerateHandshake` identifiers.
+- **Admin button/input pass**: many admin actions still use `h-14 px-12 rounded-2xl shadow-2xl` mega-buttons. A pass to standardize on `h-10 px-4 rounded-xl` would finish the calm-down.
+- **Spot-check toast prefixes**: A9 covered obvious offenders but some niche admin tabs may still ship `Protocol Fault:` style strings.
