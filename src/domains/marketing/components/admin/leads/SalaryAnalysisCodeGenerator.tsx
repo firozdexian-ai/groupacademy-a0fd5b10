@@ -116,7 +116,7 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
           Code
         </Button>
       </DialogTrigger>
-      <DialogContent className="max-w-md rounded-[32px] border-4 overflow-hidden p-0 bg-background shadow-2xl">
+      <DialogContent className="max-w-md rounded-2xl border-4 overflow-hidden p-0 bg-background shadow-sm">
         <div className="h-2 w-full bg-primary" />
         <div className="p-8 space-y-6">
           <DialogHeader className="text-left">

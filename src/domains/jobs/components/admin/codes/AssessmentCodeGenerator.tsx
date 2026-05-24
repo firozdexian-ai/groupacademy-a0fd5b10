@@ -113,7 +113,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
         </Button>
       </DialogTrigger>
 
-      <DialogContent className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl p-0 overflow-hidden max-w-md">
+      <DialogContent className="rounded-2xl border border-border/60 bg-card shadow-sm p-0 overflow-hidden max-w-md">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary opacity-50" />
 
         <div className="p-8">

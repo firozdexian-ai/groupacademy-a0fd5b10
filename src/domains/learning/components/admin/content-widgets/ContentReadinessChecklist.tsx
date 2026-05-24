@@ -93,7 +93,7 @@ export default function ContentReadinessChecklist({
     : "Ready to go live";
 
   return (
-    <Card className="rounded-[32px] border-border/40 overflow-hidden">
+    <Card className="rounded-2xl border-border/40 overflow-hidden">
       <CardHeader className="pb-3">
         <CardTitle className="text-xs font-black flex items-center justify-between">
           <span>Readiness</span>

@@ -91,7 +91,7 @@ export function CreatorEconomyTab() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" /> Creator Economy
@@ -139,7 +139,7 @@ export function CreatorEconomyTab() {
       </div>
 
       <Tabs defaultValue="leaders">
-        <TabsList className="bg-muted/30 border-2 border-border/40 p-1 h-auto rounded-2xl mb-6">
+        <TabsList className="bg-muted/30 border border-border/60 p-1 h-auto rounded-2xl mb-6">
           <TabsTrigger
             value="leaders"
             className="rounded-xl text-xs font-bold py-2.5 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
@@ -156,7 +156,7 @@ export function CreatorEconomyTab() {
 
         <TabsContent value="leaders" className="grid lg:grid-cols-2 gap-8 mt-6">
           {/* Hype Leaderboard */}
-          <Card className="rounded-[40px] border-2 bg-card/30 backdrop-blur-xl overflow-hidden text-left">
+          <Card className="rounded-2xl border-2 bg-card overflow-hidden text-left">
             <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 to-orange-600" />
             <CardHeader className="p-6 border-b border-border/10">
               <CardTitle className="text-xs font-semibold flex items-center gap-2">
@@ -181,7 +181,7 @@ export function CreatorEconomyTab() {
           </Card>
 
           {/* Connections Leaderboard */}
-          <Card className="rounded-[40px] border-2 bg-card/30 backdrop-blur-xl overflow-hidden text-left">
+          <Card className="rounded-2xl border-2 bg-card overflow-hidden text-left">
             <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-blue-600" />
             <CardHeader className="p-6 border-b border-border/10">
               <CardTitle className="text-xs font-semibold flex items-center gap-2">
@@ -242,7 +242,7 @@ export function CreatorEconomyTab() {
 
 function StatCard({ icon, label, value, suffix, loading }: any) {
   return (
-    <Card className="rounded-[32px] border-2 bg-card/40 p-6 flex items-center gap-4 group hover:shadow-lg transition-all text-left">
+    <Card className="rounded-2xl border-2 bg-card/40 p-6 flex items-center gap-4 group hover:shadow-lg transition-all text-left">
       <div className="h-12 w-12 rounded-xl bg-primary/5 flex items-center justify-center border-2 border-primary/10 transition-transform group-hover:scale-110">
         {icon}
       </div>

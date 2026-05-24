@@ -19,7 +19,7 @@ export function DataRoomManager() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Database className="h-8 w-8 text-primary fill-primary/20" />
@@ -38,13 +38,13 @@ export function DataRoomManager() {
       </header>
 
       {/* Document Registry */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-primary" />
         <CardContent className="p-0">
           {documents.isLoading ? (
             <div className="p-8 space-y-4">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-24 w-full rounded-[24px] bg-muted/40" />
+                <Skeleton key={i} className="h-24 w-full rounded-xl bg-muted/40" />
               ))}
             </div>
           ) : documents.data && documents.data.length === 0 ? (
@@ -69,7 +69,7 @@ export function DataRoomManager() {
                   className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-8 hover:bg-primary/[0.02] transition-colors group"
                 >
                   <div className="flex items-start gap-5 min-w-0">
-                    <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border-2 border-border/20 shadow-sm shrink-0 group-hover:border-primary/30 transition-colors">
+                    <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border border-border/40 shadow-sm shrink-0 group-hover:border-primary/30 transition-colors">
                       <FileText className="h-6 w-6 text-primary" />
                     </div>
                     <div className="space-y-2 min-w-0">

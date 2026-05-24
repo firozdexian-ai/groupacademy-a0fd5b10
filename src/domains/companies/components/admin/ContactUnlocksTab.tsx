@@ -80,7 +80,7 @@ export function ContactUnlocksTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Header Action Bar */}
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2 text-primary">
             <Lock className="h-6 w-6" /> Contact Ledger
@@ -119,7 +119,7 @@ export function ContactUnlocksTab() {
         />
       </div>
 
-      <Card className="rounded-[40px] border-2 overflow-hidden shadow-2xl bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border-2 overflow-hidden shadow-sm bg-card">
         <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-primary to-blue-500" />
 
         <div className="p-6 border-b border-border/10">
@@ -136,7 +136,7 @@ export function ContactUnlocksTab() {
 
         <div className="overflow-x-auto">
           <table className="w-full text-left">
-            <thead className="bg-muted/20 border-b-2">
+            <thead className="bg-muted/20 border-b">
               <tr className="text-[10px] font-semibold text-muted-foreground/60">
                 <th className="px-8 py-6">Timestamp</th>
                 <th className="px-6 py-6">Employer Node</th>
@@ -204,7 +204,7 @@ export function ContactUnlocksTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 p-6 text-left group hover:border-primary/30 transition-all shadow-xl">
+    <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group hover:border-primary/30 transition-all shadow-xl">
       <div className="flex items-center gap-5">
         <div
           className={cn(

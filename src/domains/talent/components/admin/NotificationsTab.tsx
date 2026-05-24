@@ -100,7 +100,7 @@ export function NotificationsTab() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <BellRing className="h-6 w-6 text-primary" /> Notifications
@@ -117,7 +117,7 @@ export function NotificationsTab() {
         </Button>
       </div>
 
-      <Card className="rounded-[40px] border-2 overflow-hidden shadow-2xl bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border-2 overflow-hidden shadow-sm bg-card">
         <Table>
           <TableHeader className="bg-muted/20">
             <TableRow>
@@ -180,7 +180,7 @@ export function NotificationsTab() {
       </Card>
 
       <Dialog open={sendDialog} onOpenChange={setSendDialog}>
-        <DialogContent className="max-w-md rounded-[32px] border-4 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl text-left">
+        <DialogContent className="max-w-md rounded-2xl border-4 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm text-left">
           <div className="h-2 w-full bg-gradient-to-r from-primary to-fuchsia-600" />
           <div className="p-8 space-y-6">
             <DialogHeader>

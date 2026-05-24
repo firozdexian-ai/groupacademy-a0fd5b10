@@ -72,7 +72,7 @@ export function AgentAnomalyFeed() {
   }, []);
 
   return (
-    <Card className="rounded-[40px] border-2 border-primary/20 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col h-full relative">
+    <Card className="rounded-2xl border-2 border-primary/20 bg-card shadow-sm overflow-hidden flex flex-col h-full relative">
       {/* Active Pulse for Critical Alerts */}
       {events.some((e) => e.severity === "critical") && (
         <div className="absolute top-0 right-0 p-8">
@@ -148,7 +148,7 @@ export function AgentAnomalyFeed() {
         <div className="p-6 bg-muted/5 mt-auto border-t border-border/10">
           <Button
             onClick={() => navigate("/dashboard/chat")}
-            className="w-full h-12 rounded-xl justify-between font-black uppercase text-[10px] tracking-[0.2em] px-6 shadow-lg hover:shadow-primary/20 transition-all"
+            className="w-full h-12 rounded-xl justify-between font-black uppercase text-[10px] tracking-tight px-6 shadow-lg hover:shadow-primary/20 transition-all"
           >
             Enter Agent OS Chat <ArrowUpRight className="h-4 w-4" />
           </Button>

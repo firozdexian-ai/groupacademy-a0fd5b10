@@ -323,10 +323,10 @@ export function CompanyAgentsManager() {
       <div className="space-y-8 animate-pulse">
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-28 rounded-[32px] bg-muted/40" />
+            <Skeleton key={i} className="h-28 rounded-2xl bg-muted/40" />
           ))}
         </div>
-        <Skeleton className="h-[600px] w-full rounded-[40px] bg-muted/40" />
+        <Skeleton className="h-[600px] w-full rounded-2xl bg-muted/40" />
       </div>
     );
 
@@ -346,7 +346,7 @@ export function CompanyAgentsManager() {
               <Plus className="h-4 w-4 mr-2" /> Initialize Artifact
             </Button>
           </DialogTrigger>
-          <DialogContent className="max-w-3xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+          <DialogContent className="max-w-3xl rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
             <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
             <div className="p-10 max-h-[85vh] overflow-y-auto no-scrollbar">
               <DialogHeader className="mb-8">
@@ -455,7 +455,7 @@ export function CompanyAgentsManager() {
                   />
                 </div>
 
-                <div className="p-8 rounded-[32px] border-2 bg-muted/10 space-y-8 shadow-inner">
+                <div className="p-8 rounded-2xl border-2 bg-muted/10 space-y-8 shadow-inner">
                   <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary italic border-b border-border/10 pb-4 flex items-center gap-3">
                     <ShieldCheck className="h-4 w-4" /> Sponsorship Protocol
                   </h4>
@@ -495,7 +495,7 @@ export function CompanyAgentsManager() {
                   </div>
                 </div>
 
-                <div className="p-8 rounded-[32px] border-2 bg-primary/5 border-primary/10 space-y-6">
+                <div className="p-8 rounded-2xl border-2 bg-primary/5 border-primary/10 space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
                       <h4 className="text-sm font-semibold uppercase tracking-tight italic">Lead Ingestion Node</h4>
@@ -613,7 +613,7 @@ export function CompanyAgentsManager() {
         ].map((stat, i) => (
           <Card
             key={i}
-            className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all duration-500 shadow-sm"
+            className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all duration-500 shadow-sm"
           >
             <CardContent className="p-6 flex items-center gap-5">
               <div
@@ -638,7 +638,7 @@ export function CompanyAgentsManager() {
 
       {/* Main Terminal Viewport */}
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1 mb-8 w-full max-w-md">
+        <TabsList className="bg-muted/30 rounded-xl border border-border/60 p-1 mb-8 w-full max-w-md">
           <TabsTrigger
             value="agents"
             className="flex-1 rounded-[18px] font-semibold uppercase text-[10px] tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
@@ -663,7 +663,7 @@ export function CompanyAgentsManager() {
                 <Card
                   key={ca.id}
                   className={cn(
-                    "rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl overflow-hidden transition-all duration-500 hover:border-primary/40 group",
+                    "rounded-2xl border border-border/40 bg-card overflow-hidden transition-all duration-500 hover:border-primary/40 group",
                     !ca.is_active && "opacity-60 grayscale-[0.5]",
                   )}
                 >
@@ -766,7 +766,7 @@ export function CompanyAgentsManager() {
         </TabsContent>
 
         <TabsContent value="leads" className="animate-in slide-in-from-bottom-4 duration-700">
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl overflow-hidden shadow-2xl">
+          <Card className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
             <CardHeader className="p-8 border-b border-border/10">
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4 flex-1 max-w-md">
@@ -808,7 +808,7 @@ export function CompanyAgentsManager() {
                         className="p-8 hover:bg-primary/[0.02] transition-all flex items-center justify-between group"
                       >
                         <div className="flex items-center gap-6">
-                          <div className="h-12 w-12 rounded-2xl bg-muted/50 flex items-center justify-center border-2 border-border/20 shadow-inner group-hover:rotate-3 transition-transform">
+                          <div className="h-12 w-12 rounded-2xl bg-muted/50 flex items-center justify-center border border-border/40 shadow-inner group-hover:rotate-3 transition-transform">
                             <UserCheck className="h-6 w-6 text-muted-foreground/40" />
                           </div>
                           <div className="space-y-1">
@@ -838,7 +838,7 @@ export function CompanyAgentsManager() {
                           </div>
                           <Badge
                             className={cn(
-                              "rounded-lg font-black text-[9px]  px-4 py-1.5 border-none",
+                              "rounded-lg font-black text-[9px] px-4 py-1.5 border-none",
                               lead.status === "new" ? "bg-primary text-white" : "bg-muted text-muted-foreground",
                             )}
                           >
@@ -855,7 +855,7 @@ export function CompanyAgentsManager() {
       </Tabs>
 
       <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <AlertDialogContent className="rounded-[32px] border-4 border-destructive/20 bg-background/95 p-8 shadow-2xl">
+        <AlertDialogContent className="rounded-2xl border border-destructive/30 bg-background/95 p-8 shadow-sm">
           <AlertDialogHeader>
             <div className="h-12 w-12 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
               <Trash2 className="h-6 w-6 text-destructive" />

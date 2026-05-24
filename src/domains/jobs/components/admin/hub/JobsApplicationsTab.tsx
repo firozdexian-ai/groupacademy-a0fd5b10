@@ -169,7 +169,7 @@ export function JobsApplicationsTab() {
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
       {/* EXECUTIVE FILTER BAR */}
-      <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-md shadow-xl overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden">
         <CardHeader className="p-6 border-b border-border/10 bg-muted/10">
           <div className="flex flex-col xl:flex-row gap-4 items-start xl:items-center justify-between">
             <div className="flex flex-wrap gap-3 items-center w-full xl:w-auto">
@@ -301,7 +301,7 @@ export function JobsApplicationsTab() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-muted/5">
-                  <TableRow className="hover:bg-transparent border-b-2">
+                  <TableRow className="hover:bg-transparent border-b">
                     <TableHead className="font-semibold uppercase text-[10px] tracking-widest py-5 pl-8">
                       Candidate node
                     </TableHead>
@@ -430,7 +430,7 @@ export function JobsApplicationsTab() {
                     <TableRow>
                       <TableCell
                         colSpan={7}
-                        className="text-center py-20 font-semibold uppercase text-xs tracking-[0.2em] opacity-30"
+                        className="text-center py-20 font-semibold uppercase text-xs tracking-tight opacity-30"
                       >
                         Zero nodes detected in current filter range
                       </TableCell>

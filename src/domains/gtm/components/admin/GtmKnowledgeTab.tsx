@@ -219,7 +219,7 @@ export function GtmKnowledgeTab() {
             <Button
               disabled={!draft.title || !draft.country_code || upsertKnowledgePack.isPending}
               onClick={() => upsertKnowledgePack.mutate(draft, { onSuccess: () => setOpen(false) })}
-              className="h-14 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
+              className="h-14 px-10 rounded-xl font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
             >
               <ShieldAlert className="h-5 w-5" /> Authorize Injection
             </Button>

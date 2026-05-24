@@ -159,7 +159,7 @@ export function MessagingChannelsTab({
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {(title || description) && (
-        <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
           <div className="space-y-1">
             <div className="flex items-center gap-3 text-primary">
               <Network className="h-8 w-8" />
@@ -175,7 +175,7 @@ export function MessagingChannelsTab({
       )}
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
-        <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-lg overflow-hidden flex flex-col">
+        <Card className="rounded-2xl border border-border/60 bg-card shadow-lg overflow-hidden flex flex-col">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary to-blue-500" />
           <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
             <CardTitle className="text-lg font-semibold tracking-tight flex items-center gap-2">
@@ -249,7 +249,7 @@ export function MessagingChannelsTab({
           </CardContent>
         </Card>
 
-        <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-lg overflow-hidden flex flex-col">
+        <Card className="rounded-2xl border border-border/60 bg-card shadow-lg overflow-hidden flex flex-col">
           <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-emerald-500" />
           <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
             <CardTitle className="text-lg font-semibold tracking-tight flex items-center gap-2">
@@ -271,7 +271,7 @@ export function MessagingChannelsTab({
                 {channels.map((c) => (
                   <div
                     key={c.id}
-                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border-2 border-border/40 rounded-2xl p-4 bg-background hover:border-primary/30 transition-all shadow-sm"
+                    className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 border border-border/60 rounded-2xl p-4 bg-background hover:border-primary/30 transition-all shadow-sm"
                   >
                     <div className="flex items-center gap-4 min-w-0">
                       <div

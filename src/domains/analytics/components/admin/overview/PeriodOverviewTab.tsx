@@ -116,7 +116,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* P2: Action row only. Header context provided by Dashboard shell. */}
-      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-muted/10 p-6 rounded-[32px] border-2 border-border/40 backdrop-blur-sm">
+      <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-muted/10 p-6 rounded-2xl border border-border/60 backdrop-blur-sm">
         <div className="flex flex-col">
           <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-primary italic">
             {mode === "month" ? "Monthly" : "Quarterly"} Performance
@@ -189,7 +189,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
           return (
             <Card
               key={r.key}
-              className="relative overflow-hidden rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl transition-all duration-500 hover:shadow-2xl group hover:-translate-y-1"
+              className="relative overflow-hidden rounded-2xl border border-border/60 bg-card transition-all duration-500 hover:shadow-sm group hover:-translate-y-1"
             >
               <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full blur-3xl opacity-10 group-hover:opacity-20 bg-gradient-to-br from-primary to-blue-600" />
               <CardHeader className="p-6 pb-2">

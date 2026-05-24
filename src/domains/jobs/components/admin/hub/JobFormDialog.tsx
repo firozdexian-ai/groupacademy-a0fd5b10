@@ -241,7 +241,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-2xl rounded-[40px]">
+      <DialogContent className="max-w-4xl max-h-[95vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-sm rounded-2xl">
         <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
 
         <DialogHeader className="p-8 pb-4 text-left">
@@ -449,12 +449,12 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                   onChange={(e) => updateField("description", e.target.value)}
                   rows={10}
                   placeholder="INPUT ROLE RESPONSIBILITIES..."
-                  className="rounded-[32px] border-2 font-medium italic text-sm leading-relaxed bg-muted/5 p-8 shadow-inner"
+                  className="rounded-2xl border-2 font-medium italic text-sm leading-relaxed bg-muted/5 p-8 shadow-inner"
                 />
               </section>
 
               {/* SECTION: TRANSMISSION & LIFECYCLE */}
-              <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-[40px] border-2 border-primary/10 bg-primary/5">
+              <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-2xl border-2 border-primary/10 bg-primary/5">
                 <div className="space-y-2">
                   <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                     How to apply
@@ -557,7 +557,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
           <Button
             onClick={handleSave}
             disabled={isSaving || loading}
-            className="h-16 px-12 rounded-[24px] font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
+            className="h-16 px-12 rounded-xl font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
           >
             {isSaving ? <Loader2 className="h-6 w-6 animate-spin" /> : <ShieldCheck className="h-6 w-6 fill-current" />}
             {jobId ? "Commit Updates" : "Initialize Deployment"}

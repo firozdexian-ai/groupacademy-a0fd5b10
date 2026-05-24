@@ -190,7 +190,7 @@ export const BannerManager = () => {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000">
       {/* Creation Node */}
-      <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
         <CardHeader className="p-8 pb-4">
           <div className="flex items-center gap-4 mb-2">
@@ -214,7 +214,7 @@ export const BannerManager = () => {
                 <Label className="text-[10px] font-black text-primary ml-1">
                   Visual Payload (Image)
                 </Label>
-                <div className="p-4 rounded-[24px] border-2 border-dashed border-border/40 bg-muted/5 group transition-all hover:border-primary/40">
+                <div className="p-4 rounded-xl border-2 border-dashed border-border/40 bg-muted/5 group transition-all hover:border-primary/40">
                   <ImageUpload
                     value={newBanner.image_url}
                     onUpload={(url) => setNewBanner({ ...newBanner, image_url: url })}
@@ -427,7 +427,7 @@ export const BannerManager = () => {
       </Card>
 
       {/* Banners */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/10 backdrop-blur-sm overflow-hidden shadow-sm">
+      <Card className="rounded-2xl border border-border/60 bg-card/10 backdrop-blur-sm overflow-hidden shadow-sm">
         <CardHeader className="p-8 bg-muted/20 border-b border-border/10 flex flex-row items-center justify-between">
           <div className="space-y-1">
             <CardTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-3">
@@ -456,7 +456,7 @@ export const BannerManager = () => {
                   key={banner.id}
                   className="group p-8 flex items-center gap-8 transition-all hover:bg-primary/[0.02]"
                 >
-                  <div className="relative w-48 h-28 rounded-2xl border-2 border-border/40 overflow-hidden shadow-inner shrink-0 group-hover:border-primary/40 transition-all duration-500">
+                  <div className="relative w-48 h-28 rounded-2xl border border-border/60 overflow-hidden shadow-inner shrink-0 group-hover:border-primary/40 transition-all duration-500">
                     <img
                       src={banner.image_url}
                       alt="Artifact"

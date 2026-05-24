@@ -23,7 +23,7 @@ export function JobsTalentCrmTab() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-emerald-500">
             <UserCheck className="h-8 w-8 text-emerald-500 fill-emerald-500/20" />
@@ -46,12 +46,12 @@ export function JobsTalentCrmTab() {
         </Button>
       </header>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-600" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+              <TableHeader className="bg-muted/10 border-b border-border/20">
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
                     Talent Node
@@ -83,7 +83,7 @@ export function JobsTalentCrmTab() {
                     <TableRow key={row.id} className="group hover:bg-emerald-500/[0.02]">
                       <TableCell className="py-6 pl-8">
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-lg bg-background border-2 border-border/20 flex items-center justify-center shrink-0">
+                          <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
                             <UserCheck className="h-3 w-3 text-emerald-500" />
                           </div>
                           <span className="font-mono text-xs uppercase tracking-tight text-muted-foreground">
@@ -149,7 +149,7 @@ export function JobsTalentCrmTab() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] p-8 border-4 border-border/40 text-left">
+        <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
               <UserCheck className="h-6 w-6" /> CRM Record

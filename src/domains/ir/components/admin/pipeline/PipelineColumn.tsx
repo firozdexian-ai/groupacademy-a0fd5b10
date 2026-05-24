@@ -16,9 +16,9 @@ export function PipelineColumn({ stage, label, accent, investors, onSelect }: Pr
   const totalValue = investors.reduce((sum, inv) => sum + (Number(inv.check_size_max_usd) || 0), 0);
 
   return (
-    <div className="w-[340px] flex flex-col shrink-0 rounded-[32px] border-2 border-border/20 bg-muted/10 overflow-hidden shadow-inner">
+    <div className="w-[340px] flex flex-col shrink-0 rounded-2xl border border-border/40 bg-muted/10 overflow-hidden shadow-inner">
       {/* Column Header */}
-      <div className="p-5 border-b-2 border-border/10 bg-background/50 backdrop-blur-md">
+      <div className="p-5 border-b border-border/10 bg-background/50">
         <div className="flex items-center justify-between mb-2">
           <div className="flex items-center gap-2.5">
             <div className={cn("h-2.5 w-2.5 rounded-full shadow-sm", accent)} />

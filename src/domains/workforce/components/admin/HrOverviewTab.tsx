@@ -103,7 +103,7 @@ export function HrOverviewTab() {
                   return (
                     <Card key={vertical.id} className="border-2 overflow-hidden">
                       {/* Vertical Header */}
-                      <CardHeader className="bg-muted/30 border-b-2 flex-row items-start justify-between gap-3 space-y-0">
+                      <CardHeader className="bg-muted/30 border-b flex-row items-start justify-between gap-3 space-y-0">
                         <div className="space-y-1">
                           <CardTitle className="flex items-center gap-2 text-base font-black uppercase tracking-tight">
                             <Building2 className="h-4 w-4 text-primary" />

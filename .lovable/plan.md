@@ -1,40 +1,33 @@
-# Phase A11 — DONE (Admin Button & Input Normalization)
+# Phase A12 — DONE (Admin Card & Table Radius Polish)
 
-Shipped 2026-05-24. Shrunk admin's oversized "mega buttons" to standard control size and finished the toast jargon sweep A9 left behind.
+Shipped 2026-05-24. Standardized admin card/table chrome to standard shadcn radii, borders, and shadows — admin now visually matches the talent app.
 
-## Files touched (~60)
-- **Button sweep (`/tmp/admin-button-sweep.mjs`)** — 43 files in `src/domains/*/components/admin` + `src/shells/admin`:
-  - `h-14 px-{8,10,12} rounded-2xl` → `h-10 px-4 rounded-xl`
-  - `h-14 rounded-2xl` → `h-10 rounded-xl`
-  - `shadow-2xl shadow-{primary,destructive}/{10,20,30}` → `shadow-sm`
-  - `text-[11px]` button labels → `text-sm`
-  - `text-[10px] font-bold uppercase` → `text-xs font-medium`
-  - Collapsed double-spaces in className strings.
-
-- **Toast sweep (`/tmp/admin-toast-sweep*.mjs`)** — 19 files:
-  - `Registry Sync Failed` / `Failed` / `Fault` / `Complete` / `Ingestion Fault` / `Persistence Fault` → plain "Failed to save", "Save failed", "Saved", "Error".
-  - `Fiscal Registry Updated` → "Credits updated".
-  - `Artifact Purged from Registry` → "Deleted".
-  - `Ingested N Registry Artifacts` → "Imported N cards".
-  - `Target Synchronized` → "Target saved".
-  - `Telemetry Fault: Registry Sync Failed` → "Failed to load".
-  - String-concat variants (`"Registry Fault: " + err.message`) also normalized.
+## Files touched (~140)
+- **Card chrome sweep** (`/tmp/admin-card-sweep{,2,3}.mjs`) across `src/domains/*/components/admin` + `src/shells/admin`:
+  - `rounded-[40px]`, `rounded-[32px]`, `rounded-[28px]` → `rounded-2xl`
+  - `rounded-[24px]` → `rounded-xl`
+  - `border-2 border-border/{any}` → `border border-border/40`
+  - `border-4 border-destructive/20` → `border border-destructive/30`
+  - `shadow-2xl` → `shadow-sm`
+  - `backdrop-blur-xl` / `backdrop-blur-md` → removed from cards
+  - `bg-card/30`, `bg-card/50` → `bg-card`
+  - `border-b-2` / `border-t-2` → `border-b` / `border-t`
+  - `tracking-[0.2em]` (residual from A10) → `tracking-tight`
+  - `font-black uppercase italic tracking-[0.2em] text-[11px]` button labels → `text-sm font-medium`
+  - Collapsed double-spaces in quoted strings.
+- **Platform skeletons** (`src/platform/admin/chrome/DashboardSkeleton.tsx`): rewrote `DashboardCardSkeleton` and `DashboardTableSkeleton` to `rounded-2xl border border-border/60 bg-card` with normal `p-6` padding, dropped backdrop-blur and 2xl shadow.
 
 ## Audit
-- Before: 90 hits across 39 files for `h-14 px-* rounded-2xl` / `shadow-2xl shadow-primary`.
-- After: 0 mega-button hits, 0 jargon toast hits inside admin domains.
+- Before: 600 hits across 116 files for `rounded-[NNpx]`, `shadow-2xl`, `backdrop-blur-{xl,md}`, `border-2 border-border`, `bg-card/{30,50}`.
+- After: 0 hits inside admin domains and shells.
+- Sweep passes: 116 + 58 + 22 file-touches across three runs (first two scoped to className strings, third token-level for `cn()` ternary args).
 
 ## Status overview
-- A5 Jobs Hub — DONE
-- A6 Gigs Hub — DONE
-- A7 Profile / Talent Mirror / My Gigs — DONE
-- A8 Career Abroad — DONE
-- A9 Admin shell jargon — DONE
-- A10 Admin visual polish — DONE
-- A11 Admin button normalization — DONE
+- A5–A11 — DONE
+- A12 Admin card/table polish — DONE
 - B3–B5 Cross-cutting jargon cleanup — DONE
 
 ## Suggested next phase
-- **JSDoc / identifier sweep** (low priority, zero user impact): drop `GroUp Academy: …`, `CTO Reference: …`, `Phase Z0 Hardened` JSDoc headers; rename internal `handleImportProtocol` / `handleGenerateHandshake` helpers.
-- **Admin card/table polish**: A11 finished controls; remaining inconsistency is `rounded-[32px]` / `rounded-[40px]` "premium" cards on data tables. Standardizing to `rounded-xl` / `rounded-2xl` would match the talent app.
-- **Empty-state pass**: many admin tabs still ship custom 200-line "no data" panels. Replacing with the shared `EmptyState` component would shrink code and unify tone.
+- **Empty-state consolidation**: ~30 admin tabs still ship custom 100–200 line "no data" panels. Replacing with `src/components/common/EmptyState.tsx` would unify tone and shrink code.
+- **Dialog/Sheet polish**: admin modals still use heavy `rounded-3xl shadow-xl` chrome. A small pass would finish the visual unification.
+- **JSDoc / identifier sweep** (still low priority): drop `GroUp Academy:` / `CTO Reference:` JSDoc headers, rename `handleImportProtocol` etc. Zero user impact.

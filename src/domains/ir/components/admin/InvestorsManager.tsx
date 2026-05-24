@@ -196,7 +196,7 @@ export function InvestorsManager() {
   return (
     <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
       {/* EXECUTIVE COMMAND HEADER */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Zap className="h-8 w-8 text-primary fill-primary/20" />
@@ -234,7 +234,7 @@ export function InvestorsManager() {
             placeholder="SEARCH STAKEHOLDER REGISTRY..."
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
-            className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card/30 focus-visible:border-primary/40"
+            className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card focus-visible:border-primary/40"
           />
         </div>
         <Select value={filterFirmId} onValueChange={setFilterFirmId}>
@@ -264,13 +264,13 @@ export function InvestorsManager() {
       </div>
 
       {/* CORE REGISTRY TABLE */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-indigo-500" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-muted/10">
-                <TableRow className="hover:bg-transparent border-b-2 border-border/20">
+                <TableRow className="hover:bg-transparent border-b border-border/20">
                   <TableHead className="font-black uppercase text-[10px] tracking-widest py-6 pl-8">
                     Investor Identity
                   </TableHead>
@@ -398,7 +398,7 @@ export function InvestorsManager() {
 
       {/* DEPLOYMENT DIALOG */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background shadow-2xl">
+        <DialogContent className="max-w-2xl rounded-2xl border-4 border-border/40 p-0 overflow-hidden bg-background shadow-sm">
           <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <div className="p-10 pb-0 text-left">
             <DialogHeader className="mb-8">
@@ -534,7 +534,7 @@ export function InvestorsManager() {
             <Button
               onClick={() => saveMutation.mutate()}
               disabled={!formData.full_name || saveMutation.isPending}
-              className="h-14 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-lg shadow-primary/20 flex-1 bg-primary text-primary-foreground"
+              className="h-14 px-10 rounded-xl font-black uppercase italic tracking-tighter text-lg shadow-primary/20 flex-1 bg-primary text-primary-foreground"
             >
               {saveMutation.isPending ? (
                 <Loader2 className="h-5 w-5 animate-spin" />
@@ -549,11 +549,11 @@ export function InvestorsManager() {
 
       {/* DELETE CONFIRMATION DIALOG */}
       <Dialog open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
-        <DialogContent className="max-w-md rounded-[40px] border-4 border-destructive/20 bg-background p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-md rounded-2xl border border-destructive/30 bg-background p-0 overflow-hidden shadow-sm">
           <div className="h-2 w-full bg-destructive" />
           <div className="p-10 space-y-8 text-center">
             <div className="flex flex-col items-center space-y-4">
-              <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center border-4 border-destructive/20">
+              <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center border border-destructive/30">
                 <AlertTriangle className="h-10 w-10 text-destructive" />
               </div>
               <div className="space-y-1">
@@ -593,7 +593,7 @@ export function InvestorsManager() {
 
       {/* NEURAL IMPORT DIALOG */}
       <Dialog open={linkedinImportOpen} onOpenChange={setLinkedinImportOpen}>
-        <DialogContent className="max-w-xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background text-left shadow-2xl">
+        <DialogContent className="max-w-xl rounded-2xl border-4 border-border/40 p-0 overflow-hidden bg-background text-left shadow-sm">
           <div className="h-2 w-full bg-blue-500" />
           <div className="p-10">
             <DialogHeader className="mb-8">

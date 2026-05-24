@@ -14,7 +14,7 @@ export default function InstitutionsOverviewTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Network className="h-8 w-8 text-primary fill-primary/20" />
@@ -30,7 +30,7 @@ export default function InstitutionsOverviewTab() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-[32px] bg-muted/40" />
+            <Skeleton key={i} className="h-32 rounded-2xl bg-muted/40" />
           ))}
         </div>
       ) : (
@@ -71,10 +71,10 @@ export default function InstitutionsOverviewTab() {
       )}
 
       {/* Strategic Architecture Banner */}
-      <Card className="rounded-[40px] border-2 border-primary/20 bg-primary/5 shadow-2xl overflow-hidden relative">
+      <Card className="rounded-2xl border-2 border-primary/20 bg-primary/5 shadow-sm overflow-hidden relative">
         <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 bg-primary/10 rounded-full blur-3xl" />
         <CardContent className="p-10 flex flex-col md:flex-row items-center gap-8 relative z-10">
-          <div className="h-20 w-20 rounded-[24px] bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-xl shadow-primary/20 shrink-0">
+          <div className="h-20 w-20 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-xl shadow-primary/20 shrink-0">
             <Activity className="h-10 w-10 text-white" />
           </div>
           <div className="space-y-2 text-left">
@@ -95,7 +95,7 @@ export default function InstitutionsOverviewTab() {
 
 function MetricTile({ title, value, icon: Icon, hint, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 group">
+    <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 group">
       <CardHeader className="flex flex-row items-center justify-between pb-2 p-6">
         <p className="text-[10px] font-semibold text-muted-foreground italic group-hover:text-foreground transition-colors">
           {title}

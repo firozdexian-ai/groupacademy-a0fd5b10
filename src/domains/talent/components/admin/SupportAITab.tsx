@@ -108,7 +108,7 @@ export function SupportAITab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-cyan-500">
             <Bot className="h-8 w-8 text-cyan-500 fill-cyan-500/20" />
@@ -131,11 +131,11 @@ export function SupportAITab() {
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-10">
         {/* INPUT TERMINAL */}
         <div className="space-y-6">
-          <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
+          <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
             <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 to-blue-500" />
             <CardContent className="p-8 space-y-8 text-left">
               {imagePreview ? (
-                <div className="relative group rounded-[32px] overflow-hidden border-2 border-cyan-500/20 bg-black/40 shadow-inner">
+                <div className="relative group rounded-2xl overflow-hidden border-2 border-cyan-500/20 bg-black/40 shadow-inner">
                   <img src={imagePreview} alt="Conversation" className="w-full max-h-[400px] object-contain" />
                   <Button
                     variant="destructive"
@@ -149,7 +149,7 @@ export function SupportAITab() {
               ) : (
                 <div
                   className={cn(
-                    "border-4 border-dashed rounded-[32px] p-12 text-center cursor-pointer transition-all duration-500 min-h-[300px] flex flex-col items-center justify-center",
+                    "border-4 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-500 min-h-[300px] flex flex-col items-center justify-center",
                     dragActive
                       ? "border-cyan-500 bg-cyan-500/5 scale-[0.98]"
                       : "border-border/40 hover:border-cyan-500/40 bg-muted/10 hover:bg-muted/20",
@@ -160,7 +160,7 @@ export function SupportAITab() {
                   onDrop={handleDrop}
                   onClick={() => document.getElementById("support-image-upload")?.click()}
                 >
-                  <div className="h-20 w-20 rounded-[24px] bg-cyan-500/10 flex items-center justify-center mb-6 shadow-lg border-2 border-cyan-500/20">
+                  <div className="h-20 w-20 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-6 shadow-lg border-2 border-cyan-500/20">
                     <ImageIcon className="h-10 w-10 text-cyan-500" />
                   </div>
                   <p className="text-xl font-semibold uppercase italic tracking-tight text-foreground">
@@ -194,7 +194,7 @@ export function SupportAITab() {
               <Button
                 onClick={analyze}
                 disabled={!imagePreview || loading}
-                className="w-full h-16 rounded-[24px] font-semibold uppercase italic tracking-[0.2em] text-sm gap-3 shadow-xl bg-cyan-600 hover:bg-cyan-700 text-white transition-all"
+                className="w-full h-16 rounded-xl font-semibold uppercase italic tracking-tight text-sm gap-3 shadow-xl bg-cyan-600 hover:bg-cyan-700 text-white transition-all"
               >
                 {loading ? (
                   <>
@@ -214,7 +214,7 @@ export function SupportAITab() {
         <div className="space-y-6">
           {response ? (
             <div className="space-y-6 animate-in slide-in-from-bottom-10 duration-700">
-              <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-[24px] border-2 border-border/40 backdrop-blur-md text-left">
+              <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-xl border border-border/60 text-left">
                 <div className="h-12 w-12 rounded-xl bg-cyan-500/10 flex items-center justify-center border-2 border-cyan-500/20">
                   <Activity className="h-6 w-6 text-cyan-500" />
                 </div>
@@ -231,7 +231,7 @@ export function SupportAITab() {
                 </Badge>
               </div>
 
-              <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl text-left">
+              <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden text-left">
                 <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 to-blue-500" />
                 <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between">
                   <div>
@@ -246,7 +246,7 @@ export function SupportAITab() {
                     variant="outline"
                     onClick={copyReply}
                     className={cn(
-                      "h-12 px-6 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest italic shadow-md transition-all",
+                      "h-12 px-6 rounded-xl border-2 text-xs font-medium italic shadow-md transition-all",
                       copied
                         ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
                         : "hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/30",
@@ -264,7 +264,7 @@ export function SupportAITab() {
               </Card>
 
               <div className="grid gap-6">
-                <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden backdrop-blur-xl text-left">
+                <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden text-left">
                   <CardHeader className="p-6 pb-2 border-b border-border/5 bg-muted/5">
                     <CardTitle className="text-xs font-semibold flex items-center gap-2 text-amber-500">
                       <Lightbulb className="h-4 w-4" /> Feature Mapping
@@ -287,7 +287,7 @@ export function SupportAITab() {
                   </CardContent>
                 </Card>
 
-                <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden backdrop-blur-xl text-left">
+                <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden text-left">
                   <CardHeader className="p-6 pb-2 border-b border-border/5 bg-muted/5">
                     <CardTitle className="text-xs font-semibold flex items-center gap-2 text-emerald-500">
                       <ListChecks className="h-4 w-4" /> Strategic Follow-up
@@ -310,8 +310,8 @@ export function SupportAITab() {
               </div>
             </div>
           ) : (
-            <Card className="rounded-[40px] border-4 border-dashed border-border/40 bg-transparent flex flex-col items-center justify-center p-12 min-h-[600px]">
-              <div className="h-24 w-24 rounded-[32px] bg-muted/30 flex items-center justify-center mb-6 animate-pulse border-2 border-border/10">
+            <Card className="rounded-2xl border-4 border-dashed border-border/40 bg-transparent flex flex-col items-center justify-center p-12 min-h-[600px]">
+              <div className="h-24 w-24 rounded-2xl bg-muted/30 flex items-center justify-center mb-6 animate-pulse border border-border/40">
                 <Sparkles className="h-10 w-10 text-muted-foreground/30" />
               </div>
               <p className="text-sm font-semibold text-muted-foreground/40 italic">

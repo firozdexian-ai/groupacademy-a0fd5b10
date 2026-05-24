@@ -82,7 +82,7 @@ export function PendingJobSubmissions() {
   };
 
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden text-left animate-in fade-in duration-500">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden text-left animate-in fade-in duration-500">
       <div className="h-2 w-full bg-gradient-to-r from-amber-400 via-primary to-amber-400" />
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
@@ -110,7 +110,7 @@ export function PendingJobSubmissions() {
             <p className="text-[10px] font-semibold">Loading queue…</p>
           </div>
         ) : !data || data.length === 0 ? (
-          <div className="py-16 border-2 border-dashed rounded-[32px] text-center opacity-30 font-semibold uppercase text-xs tracking-widest">
+          <div className="py-16 border-2 border-dashed rounded-2xl text-center opacity-30 font-semibold uppercase text-xs tracking-widest">
             Verification queue is currently empty
           </div>
         ) : (
@@ -123,7 +123,7 @@ export function PendingJobSubmissions() {
               return (
                 <div
                   key={sub.id}
-                  className="group flex items-center justify-between gap-4 p-5 rounded-[24px] border-2 border-border/20 bg-muted/5 hover:border-primary/40 hover:bg-primary/5 transition-all"
+                  className="group flex items-center justify-between gap-4 p-5 rounded-xl border border-border/40 bg-muted/5 hover:border-primary/40 hover:bg-primary/5 transition-all"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">

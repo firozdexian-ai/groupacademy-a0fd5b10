@@ -140,7 +140,7 @@ export function IndustriesTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Header - Renders immediately to fix R4 loading regression */}
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <Database className="h-6 w-6 text-primary" /> Sector Registry
@@ -192,7 +192,7 @@ export function IndustriesTab() {
         />
       </div>
 
-      <Card className="rounded-[40px] border-2 overflow-hidden shadow-2xl bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border-2 overflow-hidden shadow-sm bg-card">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
         <div className="p-6 border-b border-border/10">
           <div className="relative group max-w-md">
@@ -217,7 +217,7 @@ export function IndustriesTab() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-muted/20">
-                <TableRow className="border-b-2">
+                <TableRow className="border-b">
                   <th className="w-12 px-6">
                     <Checkbox
                       checked={selected.size === paginated.length && paginated.length > 0}
@@ -304,7 +304,7 @@ export function IndustriesTab() {
 
       {/* Recalibration Dialog (Rename - Restored Logic) */}
       <Dialog open={renameDialogOpen} onOpenChange={setRenameDialogOpen}>
-        <DialogContent className="max-w-md rounded-[32px] border-4 bg-background text-left">
+        <DialogContent className="max-w-md rounded-2xl border-4 bg-background text-left">
           <div className="p-2 space-y-6">
             <DialogHeader>
               <DialogTitle className="text-2xl font-semibold tracking-tight uppercase flex items-center gap-2">
@@ -340,7 +340,7 @@ export function IndustriesTab() {
 
       {/* Fusion Dialog (Merge) */}
       <Dialog open={mergeDialogOpen} onOpenChange={setMergeDialogOpen}>
-        <DialogContent className="max-w-md rounded-[32px] border-4 bg-background text-left">
+        <DialogContent className="max-w-md rounded-2xl border-4 bg-background text-left">
           <div className="p-2 space-y-6">
             <DialogHeader>
               <DialogTitle className="text-2xl font-semibold tracking-tight uppercase flex items-center gap-2">
@@ -380,7 +380,7 @@ export function IndustriesTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 p-6 text-left group hover:border-primary/30 transition-all shadow-xl relative overflow-hidden">
+    <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group hover:border-primary/30 transition-all shadow-xl relative overflow-hidden">
       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
         <Icon className="h-12 w-12" />
       </div>

@@ -159,7 +159,7 @@ export function HrTargetsTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Crosshair className="h-8 w-8 text-primary fill-primary/20" />
@@ -181,12 +181,12 @@ export function HrTargetsTab() {
       </header>
 
       {/* Targets Registry */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary/50 to-emerald-500/50" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+              <TableHeader className="bg-muted/10 border-b border-border/20">
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
                     Metric Definition
@@ -291,7 +291,7 @@ export function HrTargetsTab() {
 
       {/* Deployment Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl rounded-[40px] p-8 border-4 border-border/40">
+        <DialogContent className="max-w-2xl rounded-2xl p-8 border-4 border-border/40">
           <DialogHeader>
             <div className="flex items-center gap-3">
               <Target className="h-7 w-7 text-primary" />
@@ -400,7 +400,7 @@ export function HrTargetsTab() {
             <Button
               disabled={!draft.metric || !draft.scope_id || upsertTarget.isPending}
               onClick={() => upsertTarget.mutate(draft)}
-              className="h-14 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl flex-1"
+              className="h-14 px-10 rounded-xl font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl flex-1"
             >
               <ShieldCheck className="h-5 w-5" /> Deploy Target
             </Button>

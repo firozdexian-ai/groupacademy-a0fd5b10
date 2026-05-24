@@ -164,7 +164,7 @@ export function WorkforceManager() {
   return (
     <div className="space-y-10 animate-in fade-in duration-700">
       {/* EXECUTIVE HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md text-left">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60 text-left">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <UserCog className="h-8 w-8" />
@@ -194,7 +194,7 @@ export function WorkforceManager() {
         <KPIStat icon={TrendingUp} label="Yield Count" value={kpis.totalAssigned} color="blue" />
       </div>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="p-8 border-b border-border/10 flex flex-col lg:flex-row gap-6 bg-muted/5">
           <div className="relative flex-1">
             <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-primary" />
@@ -202,7 +202,7 @@ export function WorkforceManager() {
               placeholder="SEARCH WORKFORCE REGISTRY..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card/50"
+              className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card"
             />
           </div>
           <Select value={roleFilter} onValueChange={setRoleFilter}>
@@ -228,7 +228,7 @@ export function WorkforceManager() {
           ) : (
             <Table>
               <TableHeader className="bg-muted/10 text-[10px] font-semibold">
-                <TableRow className="border-b-2">
+                <TableRow className="border-b">
                   <TableHead className="py-6 pl-8">Executive Identity</TableHead>
                   <TableHead>Assignment / Grade</TableHead>
                   <TableHead className="text-center">Managed</TableHead>
@@ -285,7 +285,7 @@ export function WorkforceManager() {
 
       {/* W1 RESTORED: DEPLOY MEMBER DIALOG */}
       <Dialog open={showAddDialog} onOpenChange={setShowAddDialog}>
-        <DialogContent className="max-w-2xl rounded-[40px] border-4 p-0 overflow-hidden shadow-2xl bg-background">
+        <DialogContent className="max-w-2xl rounded-2xl border-4 p-0 overflow-hidden shadow-sm bg-background">
           <div className="h-2 w-full bg-primary" />
           <div className="p-10 space-y-8 text-left">
             <DialogHeader>
@@ -309,7 +309,7 @@ export function WorkforceManager() {
                     className="h-12 border-2 rounded-xl"
                   />
                   {talentOptions.length > 0 && !selectedTalent && (
-                    <Card className="absolute z-50 w-full mt-1 border-2 shadow-2xl">
+                    <Card className="absolute z-50 w-full mt-1 border-2 shadow-sm">
                       {talentOptions.map((t) => (
                         <div
                           key={t.id}
@@ -435,7 +435,7 @@ function KPIStat({ icon: Icon, label, value, color }: any) {
     blue: "bg-blue-500/10 border-blue-500/20 text-blue-600",
   };
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden group">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden group">
       <CardContent className="p-6 flex items-center gap-5">
         <div
           className={cn(

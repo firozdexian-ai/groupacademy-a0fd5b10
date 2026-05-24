@@ -109,7 +109,7 @@ export function ChannelPromotionCard({ job }: Props) {
   };
 
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden animate-in fade-in duration-500">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden animate-in fade-in duration-500">
       <CardHeader className="p-6 border-b border-border/10 bg-muted/10">
         <div className="flex items-center justify-between">
           <div className="text-left">

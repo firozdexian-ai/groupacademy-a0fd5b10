@@ -129,7 +129,7 @@ export function TalentOutreachConsoleTab() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <UserSearch className="h-6 w-6 text-primary" /> Outreach console
@@ -144,7 +144,7 @@ export function TalentOutreachConsoleTab() {
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[350px_1fr] gap-6 h-[65vh]">
-        <Card className="rounded-[32px] border-2 flex flex-col overflow-hidden">
+        <Card className="rounded-2xl border-2 flex flex-col overflow-hidden">
           <CardHeader className="p-4 border-b">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-3 w-3 text-muted-foreground" />
@@ -177,7 +177,7 @@ export function TalentOutreachConsoleTab() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-[32px] border-2 flex flex-col p-6 space-y-4 relative overflow-hidden">
+        <Card className="rounded-2xl border-2 flex flex-col p-6 space-y-4 relative overflow-hidden">
           <div className="flex justify-between items-center">
             <h3 className="text-sm font-black uppercase italic tracking-tighter">AI Composition</h3>
             <Button

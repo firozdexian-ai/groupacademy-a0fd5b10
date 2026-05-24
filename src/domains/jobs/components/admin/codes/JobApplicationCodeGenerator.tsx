@@ -113,7 +113,7 @@ export function JobApplicationCodeGenerator() {
   };
 
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden animate-in fade-in duration-700">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden animate-in fade-in duration-700">
       <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
       <CardHeader className="p-10 border-b border-border/10 bg-muted/10">
         <div className="flex items-center gap-5">
@@ -199,7 +199,7 @@ export function JobApplicationCodeGenerator() {
               {generatedCodes.map((code, index) => (
                 <div
                   key={index}
-                  className="group flex items-center justify-between p-5 bg-muted/30 border-2 border-border/5 rounded-2xl transition-all hover:border-primary/40 hover:bg-muted/50"
+                  className="group flex items-center justify-between p-5 bg-muted/30 border border-border/40 rounded-2xl transition-all hover:border-primary/40 hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-[9px] font-semibold text-muted-foreground/30">

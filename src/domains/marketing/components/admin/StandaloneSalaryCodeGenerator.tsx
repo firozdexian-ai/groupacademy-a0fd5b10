@@ -109,7 +109,7 @@ export function StandaloneSalaryCodeGenerator() {
   };
 
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden animate-in fade-in duration-700">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden animate-in fade-in duration-700">
       <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
         <div className="flex items-center justify-between">
@@ -136,7 +136,7 @@ export function StandaloneSalaryCodeGenerator() {
               placeholder="user@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-10 rounded-xl border-2 font-bold bg-card/50"
+              className="h-10 rounded-xl border-2 font-bold bg-card"
             />
           </div>
           <div className="space-y-2 text-left">
@@ -157,7 +157,7 @@ export function StandaloneSalaryCodeGenerator() {
         <Button
           onClick={handleGenerate}
           disabled={isGenerating}
-          className="w-full h-16 rounded-[24px] font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl hover:scale-[1.01] active:scale-95 transition-transform"
+          className="w-full h-16 rounded-xl font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl hover:scale-[1.01] active:scale-95 transition-transform"
         >
           {isGenerating ? (
             <>
@@ -189,13 +189,13 @@ export function StandaloneSalaryCodeGenerator() {
               {generatedCodes.map((code, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5 group hover:border-primary/20 transition-all"
+                  className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/40 group hover:border-primary/20 transition-all"
                 >
                   <div className="flex items-center gap-4">
                     <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-semibold text-primary italic">
                       #{index + 1}
                     </div>
-                    <span className="font-mono text-lg font-semibold tracking-[0.2em]">{code}</span>
+                    <span className="font-mono text-lg font-semibold tracking-tight">{code}</span>
                   </div>
                   <Button
                     variant="ghost"

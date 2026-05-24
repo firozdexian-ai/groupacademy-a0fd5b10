@@ -13,7 +13,7 @@ export function LeadsActivitiesTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-indigo-500">
             <ClipboardList className="h-8 w-8 text-indigo-500 fill-indigo-500/20" />
@@ -28,7 +28,7 @@ export function LeadsActivitiesTab() {
       </header>
 
       <Tabs defaultValue="hunts" className="w-full">
-        <TabsList className="h-14 w-full max-w-2xl mx-auto grid grid-cols-4 bg-muted/20 border-2 border-border/10 p-1.5 rounded-2xl mb-8">
+        <TabsList className="h-14 w-full max-w-2xl mx-auto grid grid-cols-4 bg-muted/20 border border-border/40 p-1.5 rounded-2xl mb-8">
           <TabsTrigger
             value="hunts"
             className="rounded-xl font-black uppercase italic text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg py-3"
@@ -68,7 +68,7 @@ export function LeadsActivitiesTab() {
         </TabsContent>
 
         <TabsContent value="portfolio" className="mt-0 flex flex-col items-center justify-center p-20 space-y-4">
-          <div className="h-16 w-16 rounded-2xl bg-muted/10 flex items-center justify-center border-2 border-border/20">
+          <div className="h-16 w-16 rounded-2xl bg-muted/10 flex items-center justify-center border border-border/40">
             <Folder className="h-8 w-8 text-muted-foreground/30" />
           </div>
           <p className="text-muted-foreground/50 font-black uppercase text-[10px] tracking-widest italic">

@@ -72,7 +72,7 @@ function CommunicationHistory({ investorId }: { investorId?: string }) {
         {data.map((row) => (
           <li
             key={row.id}
-            className="p-4 rounded-2xl border-2 border-border/30 bg-card/40 hover:border-primary/30 transition-colors"
+            className="p-4 rounded-2xl border border-border/60 bg-card/40 hover:border-primary/30 transition-colors"
           >
             <div className="flex justify-between items-start gap-3 mb-1.5">
               <p className="font-semibold uppercase italic tracking-tight text-sm text-foreground/90 line-clamp-1 flex-1">
@@ -176,7 +176,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
 
   return (
     <div className="grid grid-cols-1 xl:grid-cols-[1fr_400px] gap-6">
-      <div className="space-y-6 p-8 rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl animate-in zoom-in-95 duration-300 text-left">
+      <div className="space-y-6 p-8 rounded-2xl border border-border/60 bg-card shadow-sm animate-in zoom-in-95 duration-300 text-left">
         <div className="flex justify-between items-start border-b border-border/10 pb-6">
           <div className="space-y-1">
             <h3 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
@@ -222,7 +222,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
             </label>
             <Input
               placeholder="ENTER STRATEGIC HEADLINE..."
-              className="h-10 rounded-xl border-2 font-semibold uppercase italic text-sm tracking-widest bg-card/50 focus-visible:border-primary/40 focus-visible:ring-0 transition-colors"
+              className="h-10 rounded-xl border-2 font-semibold uppercase italic text-sm tracking-widest bg-card focus-visible:border-primary/40 focus-visible:ring-0 transition-colors"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
             />
@@ -234,7 +234,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
             <select
               value={emailType}
               onChange={(e) => setEmailType(e.target.value)}
-              className="h-14 w-full rounded-2xl border-2 border-border/40 bg-card/50 px-4 font-semibold uppercase italic text-[10px] tracking-widest focus-visible:border-primary/40 focus-visible:outline-none"
+              className="h-14 w-full rounded-2xl border border-border/60 bg-card px-4 font-semibold uppercase italic text-[10px] tracking-widest focus-visible:border-primary/40 focus-visible:outline-none"
             >
               <option value="update">Update</option>
               <option value="intro">Intro</option>
@@ -251,7 +251,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
           </label>
           <Textarea
             placeholder="ENTER UPDATE DATA NODES..."
-            className="min-h-[220px] rounded-3xl border-2 font-medium italic text-sm leading-relaxed bg-card/50 p-6 focus-visible:border-primary/40 focus-visible:ring-0 transition-colors resize-none"
+            className="min-h-[220px] rounded-3xl border-2 font-medium italic text-sm leading-relaxed bg-card p-6 focus-visible:border-primary/40 focus-visible:ring-0 transition-colors resize-none"
             value={body}
             onChange={(e) => setBody(e.target.value)}
           />
@@ -261,9 +261,9 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
           onClick={handleLogAndOpenClient}
           disabled={isDeploying || !subject.trim() || !body.trim() || !selectedInvestor?.email}
           className={cn(
-            "w-full h-16 rounded-[24px] font-black uppercase italic tracking-[0.2em] text-[11px] gap-3 shadow-2xl transition-all",
+            "w-full h-16 rounded-xl text-sm font-medium gap-3 shadow-sm transition-all",
             isDeploying || !subject.trim() || !body.trim() || !selectedInvestor?.email
-              ? "bg-muted text-muted-foreground border-2 border-border/40 cursor-not-allowed"
+              ? "bg-muted text-muted-foreground border border-border/40 cursor-not-allowed"
               : "bg-gradient-to-r from-primary via-blue-600 to-primary hover:scale-[1.02] text-white shadow-primary/20",
           )}
         >
@@ -272,7 +272,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
         </Button>
       </div>
 
-      <aside className="space-y-4 p-6 rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl">
+      <aside className="space-y-4 p-6 rounded-2xl border border-border/60 bg-card shadow-sm">
         <div className="flex items-center gap-2 border-b border-border/10 pb-4">
           <History className="h-5 w-5 text-primary" />
           <div>

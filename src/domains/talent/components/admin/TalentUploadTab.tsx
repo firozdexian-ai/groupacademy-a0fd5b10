@@ -19,7 +19,7 @@ export function TalentUploadTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* P2 Fix: Simplified Action Row aligned with Dashboard Shell [cite: 28] */}
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <UploadIcon className="h-6 w-6 text-primary" /> Upload talents
@@ -32,7 +32,7 @@ export function TalentUploadTab() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
         {/* Main Ingestion Engine - Standardized for Phase Z0 [cite: 948, 1001] */}
-        <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+        <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <CardContent className="p-8">
             <div className="mb-6">
@@ -50,7 +50,7 @@ export function TalentUploadTab() {
 
         {/* Sidebar: Operational Context & Navigation [cite: 679, 730] */}
         <div className="space-y-6">
-          <Card className="rounded-[32px] border-2 border-primary/20 bg-primary/5 p-6 space-y-4">
+          <Card className="rounded-2xl border-2 border-primary/20 bg-primary/5 p-6 space-y-4">
             <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">
               <Briefcase className="h-5 w-5 text-primary" />
             </div>
@@ -70,7 +70,7 @@ export function TalentUploadTab() {
             </Button>
           </Card>
 
-          <Card className="rounded-[32px] border-2 border-border/40 bg-muted/5 p-6">
+          <Card className="rounded-2xl border border-border/60 bg-muted/5 p-6">
             <p className="text-[9px] font-black text-muted-foreground/60 italic mb-3">
               Ingestion Telemetry
             </p>

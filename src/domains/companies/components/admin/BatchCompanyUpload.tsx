@@ -227,7 +227,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-4xl max-h-[90vh] rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+      <DialogContent className="max-w-4xl max-h-[90vh] rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
         <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
 
         <div className="p-10 flex flex-col h-full overflow-hidden">
@@ -252,7 +252,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
               {/* State 1: Awaiting Payload */}
               {!parsedData.length && !importStats && (
                 <div className="space-y-8 animate-in fade-in zoom-in-95">
-                  <div className="group relative border-4 border-dashed rounded-[32px] p-16 text-center transition-all hover:border-primary/40 hover:bg-primary/5">
+                  <div className="group relative border-4 border-dashed rounded-2xl p-16 text-center transition-all hover:border-primary/40 hover:bg-primary/5">
                     <input
                       type="file"
                       accept=".xlsx,.xls,.csv"
@@ -261,7 +261,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                       disabled={isUploading}
                     />
                     <div className="space-y-6">
-                      <div className="h-20 w-20 rounded-[24px] bg-muted/50 flex items-center justify-center mx-auto border-2 border-border/40 group-hover:rotate-6 transition-transform">
+                      <div className="h-20 w-20 rounded-xl bg-muted/50 flex items-center justify-center mx-auto border border-border/60 group-hover:rotate-6 transition-transform">
                         {isUploading ? (
                           <Loader2 className="h-10 w-10 animate-spin text-primary" />
                         ) : (
@@ -303,7 +303,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
               {/* State 2: Preview & Synthesis */}
               {parsedData.length > 0 && !importStats && (
                 <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-                  <div className="flex items-center justify-between bg-muted/20 p-6 rounded-[28px] border-2 border-border/10">
+                  <div className="flex items-center justify-between bg-muted/20 p-6 rounded-2xl border border-border/40">
                     <div className="flex items-center gap-4">
                       <Badge className="bg-primary text-white text-lg font-semibold tracking-tight px-6 py-2 rounded-xl">
                         {parsedData.length} ARTIFACTS
@@ -331,7 +331,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                   </div>
 
                   {isImporting && (
-                    <div className="space-y-4 p-8 rounded-[32px] border-2 bg-primary/5 border-primary/20">
+                    <div className="space-y-4 p-8 rounded-2xl border-2 bg-primary/5 border-primary/20">
                       <div className="flex justify-between text-[10px] font-semibold text-primary">
                         <span>Registry Mapping...</span>
                         <span>{importProgress}%</span>
@@ -340,7 +340,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     </div>
                   )}
 
-                  <div className="rounded-2xl border-2 border-border/20 overflow-hidden bg-background">
+                  <div className="rounded-2xl border border-border/40 overflow-hidden bg-background">
                     <Table>
                       <TableHeader className="bg-muted/50">
                         <TableRow>
@@ -386,16 +386,16 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
               {importStats && (
                 <div className="space-y-8 animate-in zoom-in-95">
                   <div className="text-center space-y-4">
-                    <div className="h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto border-4 border-emerald-500/20 rotate-6 shadow-2xl">
+                    <div className="h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto border-4 border-emerald-500/20 rotate-6 shadow-sm">
                       <CheckCircle className="h-10 w-10 text-emerald-500" />
                     </div>
                     <h3 className="text-3xl font-semibold uppercase tracking-tight italic">Ingestion Complete</h3>
                   </div>
 
                   <div className="grid grid-cols-2 gap-6">
-                    <Card className="rounded-[32px] border-2 border-emerald-500/20 bg-emerald-500/5 p-8 shadow-xl group">
+                    <Card className="rounded-2xl border-2 border-emerald-500/20 bg-emerald-500/5 p-8 shadow-xl group">
                       <div className="flex items-center gap-6">
-                        <div className="h-16 w-16 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-emerald-500/40 shadow-2xl transition-transform group-hover:rotate-6">
+                        <div className="h-16 w-16 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-emerald-500/40 shadow-sm transition-transform group-hover:rotate-6">
                           <Building2 className="h-8 w-8 text-white" />
                         </div>
                         <div>
@@ -408,9 +408,9 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                         </div>
                       </div>
                     </Card>
-                    <Card className="rounded-[32px] border-2 border-blue-500/20 bg-blue-500/5 p-8 shadow-xl group">
+                    <Card className="rounded-2xl border-2 border-blue-500/20 bg-blue-500/5 p-8 shadow-xl group">
                       <div className="flex items-center gap-6">
-                        <div className="h-16 w-16 rounded-2xl bg-blue-500 flex items-center justify-center shadow-blue-500/40 shadow-2xl transition-transform group-hover:rotate-6">
+                        <div className="h-16 w-16 rounded-2xl bg-blue-500 flex items-center justify-center shadow-blue-500/40 shadow-sm transition-transform group-hover:rotate-6">
                           <Users className="h-8 w-8 text-white" />
                         </div>
                         <div>
@@ -425,7 +425,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     </Card>
                   </div>
 
-                  <Card className="rounded-[32px] border-2 bg-muted/10">
+                  <Card className="rounded-2xl border-2 bg-muted/10">
                     <CardContent className="p-10">
                       <div className="grid grid-cols-4 gap-4 text-center">
                         {[
@@ -444,7 +444,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                   </Card>
 
                   {importStats.errors.length > 0 && (
-                    <Card className="rounded-[32px] border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
+                    <Card className="rounded-2xl border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
                       <div className="p-4 bg-destructive/10 border-b border-destructive/10 flex items-center gap-3">
                         <AlertCircle className="h-4 w-4 text-destructive" />
                         <span className="text-[10px] font-semibold text-destructive">

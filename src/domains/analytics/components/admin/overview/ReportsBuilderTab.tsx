@@ -97,7 +97,7 @@ export function ReportsBuilderTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* P2: In-tab prompt row only (Page header provided by Dashboard shell) */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-lg">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-lg">
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="h-4 w-4 text-primary animate-pulse" />
@@ -136,7 +136,7 @@ export function ReportsBuilderTab() {
       </Card>
 
       {spec && (
-        <Card className="rounded-[40px] border-2 border-border/40 bg-background shadow-2xl overflow-hidden animate-in slide-in-from-bottom-4 duration-700">
+        <Card className="rounded-2xl border border-border/60 bg-background shadow-sm overflow-hidden animate-in slide-in-from-bottom-4 duration-700">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <CardHeader className="border-b border-border/20 p-8">
             <div className="flex items-center justify-between">
@@ -168,7 +168,7 @@ export function ReportsBuilderTab() {
 function SectionRender({ section, payload }: { section: Section; payload: any }) {
   if (section.kind === "note") {
     return (
-      <div className="p-6 rounded-[24px] bg-muted/30 border border-border/30">
+      <div className="p-6 rounded-xl bg-muted/30 border border-border/30">
         <p className="text-[10px] font-semibold text-muted-foreground/60 italic mb-2">
           {section.title}
         </p>
@@ -179,7 +179,7 @@ function SectionRender({ section, payload }: { section: Section; payload: any })
   if (section.kind === "kpi") {
     const value = payload?.value ?? 0;
     return (
-      <div className="p-8 rounded-[32px] bg-primary/5 border-2 border-primary/10 relative overflow-hidden group">
+      <div className="p-8 rounded-2xl bg-primary/5 border-2 border-primary/10 relative overflow-hidden group">
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
           <FileBarChart className="h-12 w-12 text-primary" />
         </div>
@@ -199,7 +199,7 @@ function SectionRender({ section, payload }: { section: Section; payload: any })
   }));
 
   return (
-    <div className="p-6 rounded-[32px] border-2 border-border/40 bg-card/50">
+    <div className="p-6 rounded-2xl border border-border/60 bg-card">
       <p className="text-[10px] font-semibold text-muted-foreground/60 italic mb-6">
         {section.title}
       </p>

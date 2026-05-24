@@ -93,7 +93,7 @@ export function WithdrawalsTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-orange-500">
             <Wallet className="h-8 w-8 text-orange-500 fill-orange-500/20" />
@@ -108,7 +108,7 @@ export function WithdrawalsTab() {
       </header>
 
       <Tabs value={filter} onValueChange={(v) => setFilter(v as Row["status"])}>
-        <TabsList className="bg-muted/30 border-2 border-border/40 p-1.5 h-auto rounded-2xl mb-8 flex w-full max-w-2xl mx-auto">
+        <TabsList className="bg-muted/30 border border-border/60 p-1.5 h-auto rounded-2xl mb-8 flex w-full max-w-2xl mx-auto">
           {STATUSES.map((s) => (
             <TabsTrigger
               key={s}
@@ -122,11 +122,11 @@ export function WithdrawalsTab() {
 
         {loading ? (
           <div className="space-y-6">
-            <Skeleton className="h-40 w-full rounded-[32px] bg-muted/40" />
-            <Skeleton className="h-40 w-full rounded-[32px] bg-muted/40" />
+            <Skeleton className="h-40 w-full rounded-2xl bg-muted/40" />
+            <Skeleton className="h-40 w-full rounded-2xl bg-muted/40" />
           </div>
         ) : filtered.length === 0 ? (
-          <div className="flex flex-col items-center justify-center py-20 bg-muted/10 border-2 border-dashed border-border/40 rounded-[40px]">
+          <div className="flex flex-col items-center justify-center py-20 bg-muted/10 border-2 border-dashed border-border/40 rounded-2xl">
             <Banknote className="h-12 w-12 text-muted-foreground/30 mb-4" />
             <p className="text-xs font-semibold text-muted-foreground/50">
               No {filter} requests in queue
@@ -137,7 +137,7 @@ export function WithdrawalsTab() {
             {filtered.map((r) => (
               <Card
                 key={r.id}
-                className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-lg overflow-hidden transition-all hover:shadow-xl"
+                className="rounded-2xl border border-border/60 bg-card shadow-lg overflow-hidden transition-all hover:shadow-xl"
               >
                 <div
                   className={cn(
@@ -233,7 +233,7 @@ export function WithdrawalsTab() {
                         size="sm"
                         onClick={() => processWithdrawal(r.id, "paid")}
                         disabled={processingId === r.id}
-                        className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-emerald-500/20"
+                        className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold uppercase text-[10px] tracking-tight shadow-lg shadow-emerald-500/20"
                       >
                         {processingId === r.id ? <Loader2 className="h-4 w-4 animate-spin" /> : "Execute Fiat Payout"}{" "}
                         <ArrowUpRight className="h-4 w-4 ml-2" />

@@ -183,12 +183,12 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
     <div className="space-y-6 animate-in fade-in duration-1000">
       {!parsed.length && !importResult && (
         <Card
-          className="rounded-[32px] border-4 border-dashed border-border/40 bg-muted/5 hover:bg-primary/5 hover:border-primary/40 transition-all cursor-pointer group"
+          className="rounded-2xl border-4 border-dashed border-border/40 bg-muted/5 hover:bg-primary/5 hover:border-primary/40 transition-all cursor-pointer group"
           onClick={() => fileInputRef.current?.click()}
         >
           <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileSelect} className="hidden" />
           <CardContent className="py-20 text-center space-y-6">
-            <div className="h-20 w-20 rounded-[24px] bg-background flex items-center justify-center mx-auto shadow-xl border-2 border-border/10 group-hover:scale-110 transition-transform">
+            <div className="h-20 w-20 rounded-xl bg-background flex items-center justify-center mx-auto shadow-xl border border-border/40 group-hover:scale-110 transition-transform">
               <FileJson2 className="w-10 h-10 text-primary" />
             </div>
             <div className="space-y-2">
@@ -202,7 +202,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
       )}
 
       {parsed.length > 0 && !importResult && (
-        <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+        <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <CardHeader className="p-8 border-b border-border/10 bg-muted/10">
             <div className="flex items-center justify-between">
@@ -303,9 +303,9 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
       )}
 
       {importResult && (
-        <Card className="rounded-[40px] border-4 border-emerald-500/20 bg-emerald-500/5 shadow-2xl overflow-hidden animate-in zoom-in-95">
+        <Card className="rounded-2xl border-4 border-emerald-500/20 bg-emerald-500/5 shadow-sm overflow-hidden animate-in zoom-in-95">
           <CardContent className="p-12 text-center space-y-8">
-            <div className="h-20 w-20 rounded-[24px] bg-emerald-500 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
+            <div className="h-20 w-20 rounded-xl bg-emerald-500 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
               <ShieldCheck className="w-10 h-10 text-white" />
             </div>
             <div className="space-y-2">
@@ -320,7 +320,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                 { label: "Duplicates Recalibrated", val: importResult.duplicates, color: "text-amber-600" },
                 { label: "Logic Faults", val: importResult.failed, color: "text-destructive" },
               ].map((s, i) => (
-                <div key={i} className="p-6 bg-background rounded-3xl border-2 border-border/5">
+                <div key={i} className="p-6 bg-background rounded-3xl border border-border/40">
                   <p className={cn("text-4xl font-semibold tracking-tighter leading-none mb-2", s.color)}>
                     {s.val}
                   </p>

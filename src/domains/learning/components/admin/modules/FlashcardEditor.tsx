@@ -135,7 +135,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       {/* Executive HUD Header */}
-      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/20 p-6 rounded-[32px] border-2 border-border/40 backdrop-blur-md">
+      <div className="flex flex-col md:flex-row md:items-center justify-between gap-4 bg-muted/20 p-6 rounded-2xl border border-border/60">
         <div className="flex items-center gap-4">
           <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20 shadow-inner">
             <Sparkles className="h-6 w-6 text-primary" />
@@ -157,7 +157,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
       </div>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
-        <TabsList className="bg-muted/30 backdrop-blur-md rounded-[20px] border-2 border-border/40 p-1.5 mb-8 w-full max-w-md">
+        <TabsList className="bg-muted/30 rounded-[20px] border border-border/60 p-1.5 mb-8 w-full max-w-md">
           <TabsTrigger
             value="visual"
             className="flex-1 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 py-3"
@@ -184,7 +184,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
               {cards.map((card, index) => (
                 <Card
                   key={card.id}
-                  className="group rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl overflow-hidden transition-all duration-500 hover:border-primary/40 shadow-xl"
+                  className="group rounded-2xl border border-border/60 bg-card overflow-hidden transition-all duration-500 hover:border-primary/40 shadow-xl"
                 >
                   <CardHeader className="p-6 bg-muted/10 border-b border-border/10">
                     <div className="flex items-center justify-between">
@@ -255,7 +255,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
               <Button
                 variant="outline"
                 onClick={injectArtifact}
-                className="w-full h-24 rounded-[32px] border-4 border-dashed border-border/40 bg-muted/5 hover:bg-primary/5 hover:border-primary/40 transition-all group"
+                className="w-full h-24 rounded-2xl border-4 border-dashed border-border/40 bg-muted/5 hover:bg-primary/5 hover:border-primary/40 transition-all group"
               >
                 <Plus className="h-6 w-6 mr-3 text-muted-foreground group-hover:scale-125 transition-transform" />
                 <span className="font-black text-xs opacity-40">
@@ -267,7 +267,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
         </TabsContent>
 
         <TabsContent value="json" className="mt-0 space-y-8">
-          <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 overflow-hidden shadow-2xl">
+          <Card className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
             <CardHeader className="p-8 border-b border-border/10 bg-muted/10 flex flex-row items-center justify-between">
               <div>
                 <CardTitle className="text-xl font-black uppercase tracking-tighter italic">
@@ -288,13 +288,13 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
               </Button>
             </CardHeader>
             <CardContent className="p-8">
-              <pre className="bg-background/50 p-8 rounded-2xl text-xs font-mono border-2 border-border/10 overflow-x-auto max-h-[400px] leading-relaxed italic text-primary/80">
+              <pre className="bg-background/50 p-8 rounded-2xl text-xs font-mono border border-border/40 overflow-x-auto max-h-[400px] leading-relaxed italic text-primary/80">
                 <code>{getPayloadSynthesis()}</code>
               </pre>
             </CardContent>
           </Card>
 
-          <Card className="rounded-[32px] border-4 border-primary/20 bg-primary/5 overflow-hidden shadow-xl">
+          <Card className="rounded-2xl border-4 border-primary/20 bg-primary/5 overflow-hidden shadow-xl">
             <CardHeader className="p-8 bg-primary/5">
               <CardTitle className="text-xl font-black uppercase tracking-tighter italic">
                 Ingest Logic Schema
@@ -349,7 +349,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                 >
                   {/* Front Face */}
                   <div
-                    className="absolute inset-0 backface-hidden rounded-[48px] border-4 border-primary/20 bg-gradient-to-br from-primary/10 via-background to-primary/5 flex flex-col items-center justify-center p-12 text-center shadow-2xl"
+                    className="absolute inset-0 backface-hidden rounded-[48px] border-4 border-primary/20 bg-gradient-to-br from-primary/10 via-background to-primary/5 flex flex-col items-center justify-center p-12 text-center shadow-sm"
                     style={{ backfaceVisibility: "hidden" }}
                   >
                     <div className="absolute top-8 left-8 h-10 w-10 rounded-xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
@@ -369,7 +369,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
 
                   {/* Back Face */}
                   <div
-                    className="absolute inset-0 backface-hidden rounded-[48px] border-4 border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-background to-emerald-500/5 flex flex-col items-center justify-center p-12 text-center shadow-2xl rotate-y-180"
+                    className="absolute inset-0 backface-hidden rounded-[48px] border-4 border-emerald-500/20 bg-gradient-to-br from-emerald-500/10 via-background to-emerald-500/5 flex flex-col items-center justify-center p-12 text-center shadow-sm rotate-y-180"
                     style={{ backfaceVisibility: "hidden", transform: "rotateY(180deg)" }}
                   >
                     <div className="absolute top-8 left-8 h-10 w-10 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/20 flex items-center justify-center">
@@ -413,7 +413,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
               </div>
             </div>
           ) : (
-            <Card className="rounded-[40px] border-2 border-dashed border-border/40 bg-card/10 py-32 text-center">
+            <Card className="rounded-2xl border-2 border-dashed border-border/40 bg-card/10 py-32 text-center">
               <Eye className="h-16 w-16 text-muted-foreground/20 mx-auto mb-6" />
               <p className="text-[11px] font-black uppercase tracking-[0.4em] text-muted-foreground/40 italic">
                 Audit Blocked: No logic paths detected.

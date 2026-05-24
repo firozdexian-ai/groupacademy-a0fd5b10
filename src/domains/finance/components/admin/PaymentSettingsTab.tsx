@@ -153,7 +153,7 @@ export function PaymentInfraTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Database className="h-8 w-8 text-primary fill-primary/20" />
@@ -218,7 +218,7 @@ export function PaymentInfraTab() {
       <div className="grid gap-8 lg:grid-cols-2">
         {/* Core Gateway Config */}
         <div className="space-y-8">
-          <Card className="rounded-[40px] border-2 border-border/40 shadow-xl overflow-hidden bg-card/30 backdrop-blur-md">
+          <Card className="rounded-2xl border border-border/60 shadow-xl overflow-hidden bg-card">
             <div className="h-1.5 w-full bg-primary" />
             <CardHeader className="p-8 border-b border-border/10 text-left">
               <CardTitle className="text-xl font-black uppercase italic tracking-tighter">Core Gateway Rules</CardTitle>
@@ -243,7 +243,7 @@ export function PaymentInfraTab() {
                 </Select>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5">
+              <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/40">
                 <div>
                   <Label className="text-[10px] font-black text-primary">
                     WhatsApp Purchase Node
@@ -283,7 +283,7 @@ export function PaymentInfraTab() {
         <div className="space-y-8">
           <Card
             className={cn(
-              "rounded-[40px] border-2 border-border/40 shadow-xl overflow-hidden bg-card/30 backdrop-blur-md transition-opacity duration-500",
+              "rounded-2xl border border-border/40 shadow-xl overflow-hidden bg-card transition-opacity duration-500",
               !stripeUsed && "opacity-40 grayscale pointer-events-none",
             )}
           >
@@ -306,7 +306,7 @@ export function PaymentInfraTab() {
               </div>
             </CardHeader>
             <CardContent className="p-8 space-y-6 text-left">
-              <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5">
+              <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/40">
                 <div>
                   <Label className="text-[10px] font-black text-primary">
                     Execution Environment
@@ -417,7 +417,7 @@ export function PaymentInfraTab() {
 
 function StatusTile({ icon: Icon, label, value, active, color, bg }: any) {
   return (
-    <Card className="rounded-[24px] border-2 border-border/40 shadow-sm overflow-hidden text-left">
+    <Card className="rounded-xl border border-border/60 shadow-sm overflow-hidden text-left">
       <CardContent className="p-5 flex items-center gap-4">
         <div
           className={cn("p-3 rounded-xl border-2 transition-transform", active ? bg : "bg-muted/30 border-border/10")}

@@ -232,15 +232,15 @@ export function ContentOutreachTab() {
   if (isLoading && contents.length === 0)
     return (
       <div className="space-y-8 animate-pulse p-6">
-        <Skeleton className="h-40 rounded-[32px] bg-muted/40" />
-        <Skeleton className="h-[500px] rounded-[40px] bg-muted/40" />
+        <Skeleton className="h-40 rounded-2xl bg-muted/40" />
+        <Skeleton className="h-[500px] rounded-2xl bg-muted/40" />
       </div>
     );
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-orange-500">
             <BookOpen className="h-8 w-8 text-orange-500 fill-orange-500/20" />
@@ -263,7 +263,7 @@ export function ContentOutreachTab() {
       </header>
 
       {/* Distribution Hub Selector */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600" />
         <CardContent className="p-10 space-y-8">
           <div className="grid gap-8 md:grid-cols-2">
@@ -309,7 +309,7 @@ export function ContentOutreachTab() {
           </div>
 
           {selectedContent && (
-            <div className="flex items-center justify-between p-8 rounded-[32px] border-2 bg-primary/5 border-primary/20 shadow-inner animate-in slide-in-from-bottom-2">
+            <div className="flex items-center justify-between p-8 rounded-2xl border-2 bg-primary/5 border-primary/20 shadow-inner animate-in slide-in-from-bottom-2">
               <div className="space-y-1 text-left">
                 <h3 className="text-xl font-semibold uppercase tracking-tight italic text-primary">
                   {selectedContent.title}
@@ -331,7 +331,7 @@ export function ContentOutreachTab() {
 
       {/* Distribution Dialog */}
       <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
-        <DialogContent className="max-w-3xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-3xl rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
           <div className="h-2 w-full bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600" />
           <div className="p-12">
             <DialogHeader className="mb-10">
@@ -400,7 +400,7 @@ export function ContentOutreachTab() {
                           variant="ghost"
                           size="icon"
                           onClick={() => copyTemplate(activeTab === "linkedin" ? templates.english : templates.bangla)}
-                          className="absolute bottom-4 right-4 h-10 w-10 rounded-xl hover:bg-primary hover:text-white transition-all shadow-inner border-2 border-border/10"
+                          className="absolute bottom-4 right-4 h-10 w-10 rounded-xl hover:bg-primary hover:text-white transition-all shadow-inner border border-border/40"
                         >
                           <Copy className="w-4 h-4" />
                         </Button>
@@ -438,7 +438,7 @@ export function ContentOutreachTab() {
                         />
                         <Button
                           onClick={() => copyLink(customChannel || "custom")}
-                          className="h-12 w-12 rounded-xl border-2 border-border/10"
+                          className="h-12 w-12 rounded-xl border border-border/40"
                         >
                           <Copy className="w-4 h-4" />
                         </Button>
@@ -461,7 +461,7 @@ export function ContentOutreachTab() {
 
       {/* Talent Registry Viewport */}
       {selectedContent && (
-        <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+        <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
           <CardHeader className="p-10 bg-muted/10 border-b border-border/10">
             <div className="flex items-center justify-between">
               <div className="space-y-1 text-left">
@@ -496,7 +496,7 @@ export function ContentOutreachTab() {
                     className="group p-8 flex items-center justify-between transition-all hover:bg-primary/[0.02]"
                   >
                     <div className="flex items-center gap-6">
-                      <div className="h-14 w-14 rounded-2xl bg-muted/50 flex items-center justify-center border-2 border-border/40 shadow-inner group-hover:rotate-3 transition-transform">
+                      <div className="h-14 w-14 rounded-2xl bg-muted/50 flex items-center justify-center border border-border/60 shadow-inner group-hover:rotate-3 transition-transform">
                         <Users className="h-6 w-6 text-muted-foreground/40" />
                       </div>
                       <div className="space-y-1 text-left">

@@ -20,7 +20,7 @@ export function JobsOverviewTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-indigo-500">
             <Briefcase className="h-8 w-8 text-indigo-500 fill-indigo-500/20" />
@@ -45,7 +45,7 @@ export function JobsOverviewTab() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-[32px] bg-muted/40" />
+            <Skeleton key={i} className="h-32 rounded-2xl bg-muted/40" />
           ))}
         </div>
       ) : data ? (
@@ -93,7 +93,7 @@ export function JobsOverviewTab() {
                 </h3>
               </div>
 
-              <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+              <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
                 <div className="h-1.5 w-full bg-gradient-to-r from-indigo-400 via-blue-500 to-violet-500" />
                 <CardContent className="p-0">
                   {pendingApps.length === 0 && pendingAssessments.length === 0 ? (
@@ -188,7 +188,7 @@ export function JobsOverviewTab() {
                 </h3>
               </div>
 
-              <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl backdrop-blur-xl">
+              <Card className="rounded-2xl border border-border/60 bg-card shadow-sm">
                 <CardContent className="p-8">
                   <div className="space-y-6">
                     <PulseBar label="Live Job Postings" value={activeJobs.length} max={100} color="bg-indigo-500" />
@@ -218,7 +218,7 @@ export function JobsOverviewTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
+    <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
       <CardContent className="p-6 flex items-center gap-5">
         <div
           className={cn(

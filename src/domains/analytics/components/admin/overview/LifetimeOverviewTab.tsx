@@ -207,7 +207,7 @@ export function LifetimeOverviewTab() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         <div className="lg:col-span-2 space-y-8">
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
             <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
             <CardHeader className="p-8 pb-2 border-b border-border/10 bg-muted/10">
               <CardTitle className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
@@ -234,7 +234,7 @@ export function LifetimeOverviewTab() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[40px] border-2 border-primary/20 bg-primary/5 shadow-xl">
+          <Card className="rounded-2xl border-2 border-primary/20 bg-primary/5 shadow-xl">
             <CardHeader className="p-8 pb-2 border-b border-primary/10">
               <CardTitle className="text-lg font-semibold uppercase tracking-tight italic text-primary">
                 LMS Pulse
@@ -254,7 +254,7 @@ export function LifetimeOverviewTab() {
               </div>
               <Button
                 variant="default"
-                className="w-full h-10 rounded-xl justify-between shadow-lg font-semibold uppercase text-[10px] tracking-[0.2em] px-6"
+                className="w-full h-10 rounded-xl justify-between shadow-lg font-semibold uppercase text-[10px] tracking-tight px-6"
                 // F1: canonical learning-progress route
                 onClick={() => navigate("/dashboard?tab=learning-progress")}
               >

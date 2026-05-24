@@ -91,7 +91,7 @@ export function AccessCodesTab() {
       </div>
 
       <Tabs defaultValue="courses" className="w-full">
-        <TabsList className="h-14 w-full grid grid-cols-5 bg-muted/20 border-2 border-border/10 p-1.5 rounded-2xl mb-6">
+        <TabsList className="h-14 w-full grid grid-cols-5 bg-muted/20 border border-border/40 p-1.5 rounded-2xl mb-6">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.v}
@@ -105,7 +105,7 @@ export function AccessCodesTab() {
         </TabsList>
 
         <TabsContent value="courses" className="space-y-6 mt-0">
-          <Card className="rounded-3xl border-2 border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden">
+          <Card className="rounded-3xl border border-border/60 bg-card/40 overflow-hidden">
             <CardContent className="p-6 space-y-4">
               <div className="grid lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2 space-y-2">
@@ -146,7 +146,7 @@ export function AccessCodesTab() {
               <Button
                 onClick={handleInitializeKey}
                 disabled={upsertAccessCode.isPending || !selectedContentId}
-                className="w-full h-10 rounded-xl font-semibold uppercase italic tracking-[0.2em] gap-3 bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="w-full h-10 rounded-xl font-semibold uppercase italic tracking-tight gap-3 bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 {upsertAccessCode.isPending ? (
                   <RefreshCw className="h-5 w-5 animate-spin" />
@@ -158,7 +158,7 @@ export function AccessCodesTab() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-3xl border-2 border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden">
+          <Card className="rounded-3xl border border-border/60 bg-card/40 overflow-hidden">
             <CardContent className="p-0">
               <Table>
                 <TableHeader>

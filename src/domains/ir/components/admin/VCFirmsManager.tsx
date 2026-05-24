@@ -156,7 +156,7 @@ export function VCFirmsManager() {
   return (
     <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6">
       {/* EXECUTIVE COMMAND HEADER */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Building2 className="h-8 w-8 text-primary fill-primary/20" />
@@ -181,26 +181,26 @@ export function VCFirmsManager() {
               resetForm();
               setDialogOpen(true);
             }}
-            className="h-10 px-4 rounded-xl font-black uppercase text-[10px] tracking-widest gap-3 shadow-lg shadow-primary/20"
+            className="h-10 px-4 rounded-xl text-xs font-medium gap-3 shadow-lg shadow-primary/20"
           >
             <Plus className="h-4 w-4" /> Deploy Firm
           </Button>
         </div>
       </header>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-indigo-500" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+              <TableHeader className="bg-muted/10 border-b border-border/20">
                 <TableRow className="hover:bg-transparent">
-                  <TableHead className="font-black uppercase text-[10px] tracking-widest py-6 pl-8">
+                  <TableHead className="text-xs font-medium py-6 pl-8">
                     Institution
                   </TableHead>
-                  <TableHead className="font-black uppercase text-[10px] tracking-widest">Stage Focus</TableHead>
-                  <TableHead className="font-black uppercase text-[10px] tracking-widest">Neural Sectors</TableHead>
-                  <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+                  <TableHead className="text-xs font-medium">Stage Focus</TableHead>
+                  <TableHead className="text-xs font-medium">Neural Sectors</TableHead>
+                  <TableHead className="text-xs font-medium">Status</TableHead>
                   <TableHead className="text-right py-6 pr-8"></TableHead>
                 </TableRow>
               </TableHeader>
@@ -231,7 +231,7 @@ export function VCFirmsManager() {
                     <TableRow key={firm.id} className="group hover:bg-primary/[0.02] transition-colors">
                       <TableCell className="py-5 pl-8 min-w-[250px]">
                         <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-xl border-2 border-border/20 bg-background/50 flex items-center justify-center overflow-hidden shadow-sm shrink-0">
+                          <div className="h-12 w-12 rounded-xl border border-border/40 bg-background/50 flex items-center justify-center overflow-hidden shadow-sm shrink-0">
                             {firm.logo_url ? (
                               <img src={firm.logo_url} alt={firm.name} className="h-full w-full object-cover" />
                             ) : (
@@ -355,7 +355,7 @@ export function VCFirmsManager() {
 
       {/* DEPLOYMENT DIALOG */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-2xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl shadow-2xl">
+        <DialogContent className="max-w-2xl rounded-2xl border-4 border-border/40 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl shadow-sm">
           <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <div className="p-10 pb-0 space-y-8 max-h-[85vh] overflow-hidden text-left flex flex-col">
             <DialogHeader className="shrink-0">
@@ -454,7 +454,7 @@ export function VCFirmsManager() {
                           "cursor-pointer font-black text-[9px] uppercase px-3 py-1.5 transition-all",
                           formData.stage_focus.includes(stage)
                             ? "bg-primary/10 text-primary border-2 border-primary/20 hover:bg-primary/20 hover:text-primary"
-                            : "bg-background text-muted-foreground border-2 border-border/40 hover:border-primary/40",
+                            : "bg-background text-muted-foreground border border-border/40 hover:border-primary/40",
                         )}
                         onClick={() => toggleArrayValue("stage_focus", stage)}
                       >
@@ -476,7 +476,7 @@ export function VCFirmsManager() {
                           "cursor-pointer font-black text-[9px] uppercase px-3 py-1.5 transition-all",
                           formData.sector_focus.includes(sector)
                             ? "bg-primary/10 text-primary border-2 border-primary/20 hover:bg-primary/20 hover:text-primary"
-                            : "bg-background text-muted-foreground border-2 border-border/40 hover:border-primary/40",
+                            : "bg-background text-muted-foreground border border-border/40 hover:border-primary/40",
                         )}
                         onClick={() => toggleArrayValue("sector_focus", sector)}
                       >
@@ -502,14 +502,14 @@ export function VCFirmsManager() {
               <Button
                 variant="outline"
                 onClick={() => setDialogOpen(false)}
-                className="h-14 px-8 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest italic text-muted-foreground hover:text-foreground transition-colors"
+                className="h-14 px-8 rounded-xl border-2 text-xs font-medium italic text-muted-foreground hover:text-foreground transition-colors"
               >
                 Cancel
               </Button>
               <Button
                 onClick={() => saveMutation.mutate()}
                 disabled={!formData.name || saveMutation.isPending}
-                className="flex-1 h-14 rounded-[24px] font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+                className="flex-1 h-14 rounded-xl font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
               >
                 {saveMutation.isPending ? (
                   <Loader2 className="h-5 w-5 animate-spin" />
@@ -525,11 +525,11 @@ export function VCFirmsManager() {
 
       {/* DELETE CONFIRMATION DIALOG */}
       <Dialog open={!!deleteConfirmId} onOpenChange={(open) => !open && setDeleteConfirmId(null)}>
-        <DialogContent className="max-w-md rounded-[40px] border-4 border-destructive/20 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-md rounded-2xl border border-destructive/30 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
           <div className="h-2 w-full bg-gradient-to-r from-destructive to-rose-600" />
           <div className="p-10 space-y-8">
             <div className="flex flex-col items-center text-center space-y-4">
-              <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center border-4 border-destructive/20">
+              <div className="h-20 w-20 rounded-full bg-destructive/10 flex items-center justify-center border border-destructive/30">
                 <AlertTriangle className="h-10 w-10 text-destructive" />
               </div>
               <div className="space-y-1">
@@ -546,7 +546,7 @@ export function VCFirmsManager() {
               <Button
                 variant="outline"
                 onClick={() => setDeleteConfirmId(null)}
-                className="flex-1 h-14 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest"
+                className="flex-1 h-14 rounded-xl border-2 text-xs font-medium"
               >
                 Cancel
               </Button>
@@ -554,7 +554,7 @@ export function VCFirmsManager() {
                 variant="destructive"
                 onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
                 disabled={deleteMutation.isPending}
-                className="flex-1 h-14 rounded-xl font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-destructive/20 gap-2"
+                className="flex-1 h-14 rounded-xl font-black uppercase text-[10px] tracking-tight shadow-lg shadow-destructive/20 gap-2"
               >
                 {deleteMutation.isPending ? (
                   <Loader2 className="h-4 w-4 animate-spin" />

@@ -102,7 +102,7 @@ export function ContactsTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* P2 Fix: Header Action Row */}
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary" /> Authority Matrix
@@ -146,7 +146,7 @@ export function ContactsTab() {
         />
       </div>
 
-      <Card className="rounded-[40px] border-2 overflow-hidden shadow-2xl bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border-2 overflow-hidden shadow-sm bg-card">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary/40 via-primary to-primary/40" />
         <Table>
           <TableHeader className="bg-muted/20">
@@ -244,7 +244,7 @@ export function ContactsTab() {
       </Card>
 
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-md rounded-[32px] border-4">
+        <DialogContent className="max-w-md rounded-2xl border-4">
           <div className="p-2 space-y-6 text-left">
             <DialogHeader>
               <DialogTitle className="text-2xl font-semibold tracking-tight uppercase">
@@ -288,7 +288,7 @@ export function ContactsTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 p-6 text-left group transition-all hover:border-primary/30">
+    <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group transition-all hover:border-primary/30">
       <div className="flex items-center gap-5">
         <div
           className={cn(

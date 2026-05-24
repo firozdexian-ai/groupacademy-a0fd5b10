@@ -38,7 +38,7 @@ function DeltaBadge({ value, invert = false }: { value: number | null; invert?: 
 
 function MetricTile({ label, value, delta, suffix = "", invert = false }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-colors">
+    <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-colors">
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
           <p className="text-[10px] font-semibold text-muted-foreground italic w-2/3 leading-tight">
@@ -61,7 +61,7 @@ export function UnitEconomics() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Cpu className="h-8 w-8 text-primary fill-primary/20" />
@@ -85,10 +85,10 @@ export function UnitEconomics() {
         <div className="space-y-8 animate-pulse">
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             {[1, 2, 3, 4].map((i) => (
-              <Skeleton key={i} className="h-32 rounded-[32px] bg-muted/40" />
+              <Skeleton key={i} className="h-32 rounded-2xl bg-muted/40" />
             ))}
           </div>
-          <Skeleton className="h-[400px] w-full rounded-[40px] bg-muted/40" />
+          <Skeleton className="h-[400px] w-full rounded-2xl bg-muted/40" />
         </div>
       ) : (
         <>
@@ -113,7 +113,7 @@ export function UnitEconomics() {
 
           {/* Core Analytics Modules */}
           <div className="grid grid-cols-1 xl:grid-cols-2 gap-8">
-            <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+            <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
               <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500" />
               <CardHeader className="p-8 pb-4">
                 <CardTitle className="text-xl font-semibold uppercase italic tracking-tight">
@@ -128,7 +128,7 @@ export function UnitEconomics() {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+            <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
               <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500" />
               <CardHeader className="p-8 pb-4">
                 <CardTitle className="text-xl font-semibold uppercase italic tracking-tight">
@@ -143,7 +143,7 @@ export function UnitEconomics() {
               </CardContent>
             </Card>
 
-            <Card className="xl:col-span-2 rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+            <Card className="xl:col-span-2 rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
               <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-teal-500" />
               <CardHeader className="p-8 pb-4 flex flex-row items-start justify-between">
                 <div className="space-y-1">
@@ -164,7 +164,7 @@ export function UnitEconomics() {
             </Card>
 
             {/* Cohort Retention Triangle — wired from ir_retention_cohorts */}
-            <Card className="xl:col-span-2 rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+            <Card className="xl:col-span-2 rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
               <div className="h-1.5 w-full bg-gradient-to-r from-fuchsia-400 via-purple-500 to-indigo-500" />
               <CardHeader className="p-8 pb-4">
                 <CardTitle className="text-xl font-semibold uppercase italic tracking-tight">

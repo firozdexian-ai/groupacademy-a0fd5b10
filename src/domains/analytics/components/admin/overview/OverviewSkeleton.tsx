@@ -5,7 +5,7 @@ export function OverviewSkeleton() {
   return (
     <div className="space-y-8 w-full animate-in fade-in duration-500">
       {/* Header Skeleton */}
-      <header className="flex justify-between items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40">
+      <header className="flex justify-between items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-3 w-1/3">
           <Skeleton className="h-10 w-3/4 rounded-lg" />
           <Skeleton className="h-4 w-1/2 rounded-md" />
@@ -16,7 +16,7 @@ export function OverviewSkeleton() {
       {/* 4-Card Top Row Skeleton */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
         {[1, 2, 3, 4].map((i) => (
-          <Card key={i} className="rounded-[32px] border-border/30 bg-card/20 shadow-sm h-32">
+          <Card key={i} className="rounded-2xl border-border/30 bg-card/20 shadow-sm h-32">
             <CardContent className="p-6 flex flex-col justify-between h-full space-y-4">
               <div className="flex justify-between items-center">
                 <Skeleton className="h-4 w-1/2" />
@@ -30,7 +30,7 @@ export function OverviewSkeleton() {
 
       {/* Main Grid Skeleton */}
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Card className="lg:col-span-2 rounded-[40px] border-2 border-border/40 bg-card/10 h-80">
+        <Card className="lg:col-span-2 rounded-2xl border border-border/60 bg-card/10 h-80">
           <CardHeader className="p-8 border-b border-border/10">
             <Skeleton className="h-6 w-1/3" />
           </CardHeader>
@@ -41,7 +41,7 @@ export function OverviewSkeleton() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-[40px] border-2 border-border/40 bg-card/10 h-80">
+        <Card className="rounded-2xl border border-border/60 bg-card/10 h-80">
           <CardHeader className="p-8 pb-2">
             <Skeleton className="h-6 w-1/2" />
           </CardHeader>

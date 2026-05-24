@@ -17,7 +17,7 @@ export function JobsKpiTab() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-pink-500">
             <Activity className="h-8 w-8 text-pink-500 fill-pink-500/20" />
@@ -34,7 +34,7 @@ export function JobsKpiTab() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-40 rounded-[40px] bg-muted/40" />
+            <Skeleton key={i} className="h-40 rounded-2xl bg-muted/40" />
           ))}
         </div>
       ) : (
@@ -71,7 +71,7 @@ export function JobsKpiTab() {
 
 function KpiCard({ title, value, subtitle, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden relative group">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden relative group">
       <div
         className={cn(
           "absolute -right-6 -top-6 w-32 h-32 rounded-full blur-3xl opacity-20 transition-opacity group-hover:opacity-40",

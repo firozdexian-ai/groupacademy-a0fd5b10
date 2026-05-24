@@ -28,7 +28,7 @@ export function LearningWebinarsTab() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-pink-500">
             <CalendarDays className="h-8 w-8 text-pink-500 fill-pink-500/20" />
@@ -51,12 +51,12 @@ export function LearningWebinarsTab() {
         </Button>
       </header>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-pink-400 via-rose-500 to-pink-600" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+              <TableHeader className="bg-muted/10 border-b border-border/20">
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
                     Event Title
@@ -88,7 +88,7 @@ export function LearningWebinarsTab() {
                     <TableRow key={row.id} className="group hover:bg-pink-500/[0.02]">
                       <TableCell className="py-6 pl-8">
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-lg bg-background border-2 border-border/20 flex items-center justify-center shrink-0">
+                          <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
                             <Video className="h-3 w-3 text-pink-500" />
                           </div>
                           <span className="font-black text-sm uppercase italic tracking-tight">{row.title}</span>
@@ -158,7 +158,7 @@ export function LearningWebinarsTab() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] p-8 border-4 border-border/40 text-left">
+        <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-pink-500 flex items-center gap-2">
               <CalendarDays className="h-6 w-6" /> Inject Webinar
@@ -213,7 +213,7 @@ export function LearningWebinarsTab() {
         </DialogContent>
       </Dialog>
       <Dialog open={!!sessionsRow} onOpenChange={(o) => !o && setSessionsRow(null)}>
-        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-[24px] p-6 border-2 border-border/40">
+        <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-6 border border-border/60">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase italic tracking-tight text-pink-500 flex items-center gap-2">
               <CalendarClock className="h-5 w-5" /> Sessions — {sessionsRow?.title}

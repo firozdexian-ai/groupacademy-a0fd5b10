@@ -83,7 +83,7 @@ export function IRPipelineBoard() {
   return (
     <div className="space-y-8 animate-in fade-in duration-1000 p-4 md:p-6 h-[calc(100vh-80px)] flex flex-col">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md shrink-0">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60 shrink-0">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Layers className="h-8 w-8 text-primary fill-primary/20" />
@@ -95,7 +95,7 @@ export function IRPipelineBoard() {
         </div>
 
         {/* Filter */}
-        <div className="flex items-center gap-3 bg-background/50 p-1.5 rounded-[20px] border-2 border-border/20 shadow-sm">
+        <div className="flex items-center gap-3 bg-background/50 p-1.5 rounded-[20px] border border-border/40 shadow-sm">
           <Filter className="h-4 w-4 text-muted-foreground ml-3" />
           <Select value={leadFilter} onValueChange={(v) => setLeadFilter(v as LeadFilter)}>
             <SelectTrigger className="w-[200px] h-11 border-none bg-transparent font-semibold uppercase text-[10px] tracking-widest focus:ring-0">
@@ -162,7 +162,7 @@ export function IRPipelineBoard() {
             {STAGES.map((s, i) => (
               <div key={i} className="w-[320px] shrink-0 h-full">
                 <Skeleton className="h-12 w-full mb-4 rounded-xl bg-muted/40" />
-                <Skeleton className="h-full w-full rounded-[24px] bg-muted/20" />
+                <Skeleton className="h-full w-full rounded-xl bg-muted/20" />
               </div>
             ))}
           </div>
@@ -209,7 +209,7 @@ function KpiCard({
   bg: string;
 }) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-sm hover:border-primary/20 transition-all group overflow-hidden">
+    <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-sm hover:border-primary/20 transition-all group overflow-hidden">
       <CardContent className="p-6 flex flex-col md:flex-row items-start md:items-center gap-5">
         <div
           className={cn(
