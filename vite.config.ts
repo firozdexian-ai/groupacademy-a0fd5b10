@@ -37,7 +37,7 @@ export default defineConfig(({ mode }) => ({
           'vendor-query': ['@tanstack/react-query'],
           'vendor-supabase': ['@supabase/supabase-js'],
           'vendor-icons': ['lucide-react'],
-          'vendor-motion': ['framer-motion'],
+          'vendor-icons': ['lucide-react'],
         },
       },
     },
