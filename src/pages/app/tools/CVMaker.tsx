@@ -289,7 +289,9 @@ export default function CVMaker() {
  className="w-full h-[70vh] bg-white"
  />
  {building && (
- <InlineSpinner size="lg" />
+ <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
+ <InlineSpinner size="md" />
+ </div>
  )}
  </div>
  <div className="flex flex-col sm:flex-row gap-2 p-3 border-t border-border/40">
