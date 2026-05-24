@@ -11,6 +11,7 @@ import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
 import { Loader2, Plus, Phone, MessageCircle, Trash2, Network, QrCode } from "lucide-react";
 import { cn } from "@/lib/utils";
+import { InlineSpinner } from "@/components/common/InlineSpinner";
 
 interface Channel {
   id: string;
@@ -258,9 +259,7 @@ export function MessagingChannelsTab({
           </CardHeader>
           <CardContent className="p-6 flex-1 overflow-y-auto">
             {loading ? (
-              <div className="py-12 flex justify-center">
-                <Loader2 className="h-8 w-8 animate-spin text-muted-foreground/30" />
-              </div>
+              <InlineSpinner size="lg" />
             ) : channels.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full min-h-[200px] border-2 border-dashed border-border/40 rounded-2xl bg-muted/5">
                 <Phone className="h-8 w-8 text-muted-foreground/30 mb-3" />

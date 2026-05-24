@@ -10,6 +10,7 @@ import { recordToolRun } from "@/hooks/useToolRuns";
 import { CREDIT_CONFIG } from "@/lib/creditPricing";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
+import { InlineSpinner } from "@/components/common/InlineSpinner";
 
 type TemplateId = "minimal" | "standard" | "modern";
 
@@ -288,9 +289,7 @@ export default function CVMaker() {
  className="w-full h-[70vh] bg-white"
  />
  {building && (
- <div className="absolute inset-0 flex items-center justify-center bg-background/60 backdrop-blur-sm">
- <Loader2 className="h-5 w-5 animate-spin text-primary" />
- </div>
+ <InlineSpinner size="lg" />
  )}
  </div>
  <div className="flex flex-col sm:flex-row gap-2 p-3 border-t border-border/40">
