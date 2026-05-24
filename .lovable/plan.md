@@ -1,40 +1,42 @@
-# Phase A11 — DONE (Admin Button & Input Normalization)
+# Phase A12 — Admin Card & Table Radius Polish
 
-Shipped 2026-05-24. Shrunk admin's oversized "mega buttons" to standard control size and finished the toast jargon sweep A9 left behind.
+Buttons and typography are now calm. The remaining visual outlier in admin is the "premium" card chrome — `rounded-[32px]` and `rounded-[40px]` borders with `border-2`, `shadow-2xl`, and `backdrop-blur-xl` on every data card and table. They make admin look like a glass dashboard mockup while the talent app uses standard `rounded-xl` / `rounded-2xl` shadcn cards.
 
-## Files touched (~60)
-- **Button sweep (`/tmp/admin-button-sweep.mjs`)** — 43 files in `src/domains/*/components/admin` + `src/shells/admin`:
-  - `h-14 px-{8,10,12} rounded-2xl` → `h-10 px-4 rounded-xl`
-  - `h-14 rounded-2xl` → `h-10 rounded-xl`
-  - `shadow-2xl shadow-{primary,destructive}/{10,20,30}` → `shadow-sm`
-  - `text-[11px]` button labels → `text-sm`
-  - `text-[10px] font-bold uppercase` → `text-xs font-medium`
-  - Collapsed double-spaces in className strings.
+## Why this next
+Cards and tables are the dominant surface in admin (every tab is a card). Standardizing the radius/border/shadow trio will finish the visual unification A10–A11 started, without touching any layout or data.
 
-- **Toast sweep (`/tmp/admin-toast-sweep*.mjs`)** — 19 files:
-  - `Registry Sync Failed` / `Failed` / `Fault` / `Complete` / `Ingestion Fault` / `Persistence Fault` → plain "Failed to save", "Save failed", "Saved", "Error".
-  - `Fiscal Registry Updated` → "Credits updated".
-  - `Artifact Purged from Registry` → "Deleted".
-  - `Ingested N Registry Artifacts` → "Imported N cards".
-  - `Target Synchronized` → "Target saved".
-  - `Telemetry Fault: Registry Sync Failed` → "Failed to load".
-  - String-concat variants (`"Registry Fault: " + err.message`) also normalized.
+## Scope (in)
+1. **Card chrome** in `src/domains/*/components/admin/**` and `src/shells/admin/**`:
+   - `rounded-[40px]` → `rounded-2xl`
+   - `rounded-[32px]` → `rounded-2xl`
+   - `rounded-[24px]` → `rounded-xl`
+   - `border-2 border-border/40` → `border border-border/60`
+   - `border-4 border-destructive/20` → `border border-destructive/30`
+   - `shadow-2xl` (on cards, not buttons) → `shadow-sm`
+   - `backdrop-blur-xl` / `backdrop-blur-md` on cards → drop (keep on overlays/modals only)
+   - `bg-card/30` / `bg-card/50` → `bg-card`
+2. **Table chrome** in the same files:
+   - `border-b-2` / `border-t-2` header rules → `border-b`
+   - Table header `bg-muted/30` stays (legit).
+3. **Platform skeleton cards** (`DashboardCardSkeleton`, `DashboardTableSkeleton`) — match the new card style.
 
-## Audit
-- Before: 90 hits across 39 files for `h-14 px-* rounded-2xl` / `shadow-2xl shadow-primary`.
-- After: 0 mega-button hits, 0 jargon toast hits inside admin domains.
+## Scope (out)
+- No layout, grid, or spacing changes.
+- No icon, color, or font changes.
+- No talent / gro10x / public shells.
+- Inline `<Card>` from shadcn already uses the standard `rounded-xl` — don't touch those.
+- Hero KPI tiles (`StatsCard`) keep their `rounded-[32px]` — already softened in A10 and they anchor overview pages.
 
-## Status overview
-- A5 Jobs Hub — DONE
-- A6 Gigs Hub — DONE
-- A7 Profile / Talent Mirror / My Gigs — DONE
-- A8 Career Abroad — DONE
-- A9 Admin shell jargon — DONE
-- A10 Admin visual polish — DONE
-- A11 Admin button normalization — DONE
-- B3–B5 Cross-cutting jargon cleanup — DONE
+## Approach
+1. **Audit**: `rg "rounded-\[(40|32|24)px\]|shadow-2xl|backdrop-blur-(xl|md)|border-2 border-border" src/domains/*/components/admin src/shells/admin`.
+2. **Automated regex sweep**, scoped to className strings only, identical to A10/A11 pattern.
+3. **Hand-tune** `DashboardCardSkeleton` + `DashboardTableSkeleton`.
+4. **Visual spot-check** the preview at `/dashboard?tab=jobs-overview`, `/dashboard?tab=companies`, `/dashboard?tab=ir-dashboard`.
 
-## Suggested next phase
-- **JSDoc / identifier sweep** (low priority, zero user impact): drop `GroUp Academy: …`, `CTO Reference: …`, `Phase Z0 Hardened` JSDoc headers; rename internal `handleImportProtocol` / `handleGenerateHandshake` helpers.
-- **Admin card/table polish**: A11 finished controls; remaining inconsistency is `rounded-[32px]` / `rounded-[40px]` "premium" cards on data tables. Standardizing to `rounded-xl` / `rounded-2xl` would match the talent app.
-- **Empty-state pass**: many admin tabs still ship custom 200-line "no data" panels. Replacing with the shared `EmptyState` component would shrink code and unify tone.
+## Estimated surface
+~80–120 admin files, regex-only edits.
+
+## Open question
+Drop `backdrop-blur-*` from cards entirely, or keep on top-level page wrappers? Default: drop from cards (it costs paint perf and adds nothing on solid backgrounds), keep on `<Dialog>`/`<Sheet>` overlays.
+
+Approve and I'll run the sweep + tune the two skeletons.
