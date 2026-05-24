@@ -26,11 +26,11 @@ export function AbroadIELTSPromptsTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-violet-500">
  <Mic className="h-8 w-8 text-violet-500 fill-violet-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  IELTS Attempts
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  AI Scored Mock Submissions
  </p>
  </div>
@@ -39,7 +39,7 @@ export function AbroadIELTSPromptsTab() {
  setDraft({ score: 0 });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-violet-500/20 bg-violet-600 hover:bg-violet-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-violet-500/20 bg-violet-600 hover:bg-violet-700 text-white"
  >
  <Plus className="h-4 w-4" /> Inject Score
  </Button>
@@ -52,11 +52,11 @@ export function AbroadIELTSPromptsTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Prompt ID
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Talent Node</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Band Score</TableHead>
+ <TableHead className="font-medium text-xs">Talent Node</TableHead>
+ <TableHead className="font-medium text-xs">Band Score</TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
  </TableRow>
  </TableHeader>
@@ -71,7 +71,7 @@ export function AbroadIELTSPromptsTab() {
  <TableRow>
  <TableCell
  colSpan={4}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero attempts detected.
  </TableCell>
@@ -97,7 +97,7 @@ export function AbroadIELTSPromptsTab() {
  </TableCell>
  <TableCell>
  {row.score ? (
- <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black uppercase text-sm tracking-widest">
+ <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-medium text-sm tracking-widest">
  Band {row.score}
  </Badge>
  ) : (
@@ -146,7 +146,7 @@ export function AbroadIELTSPromptsTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-violet-500 flex items-center gap-2">
  <Mic className="h-6 w-6" /> Evaluate Attempt
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -163,7 +163,7 @@ export function AbroadIELTSPromptsTab() {
  placeholder="UUID"
  value={draft.prompt_id || ""}
  onChange={(e) => setDraft({ ...draft, prompt_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  <div className="space-y-2">
@@ -174,7 +174,7 @@ export function AbroadIELTSPromptsTab() {
  placeholder="UUID"
  value={draft.user_id || ""}
  onChange={(e) => setDraft({ ...draft, user_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  </div>
@@ -190,7 +190,7 @@ export function AbroadIELTSPromptsTab() {
  placeholder="e.g. 7.5"
  value={draft.score || ""}
  onChange={(e) => setDraft({ ...draft, score: Number(e.target.value) })}
- className="h-14 rounded-xl border-2 border-emerald-500/20 bg-emerald-500/5 font-black text-emerald-600 text-lg"
+ className="h-14 rounded-xl border border-emerald-500/30 bg-emerald-500/5 font-black text-emerald-600 text-lg"
  />
  </div>
  </div>
@@ -202,7 +202,7 @@ export function AbroadIELTSPromptsTab() {
  delete payload.status;
  upsertIeltsAttempt.mutate(payload, { onSuccess: () => setOpen(false) });
  }}
- className="h-14 rounded-xl font-black uppercase bg-violet-600 hover:bg-violet-700 text-white"
+ className="h-14 rounded-xl font-medium bg-violet-600 hover:bg-violet-700 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Enforce Score
  </Button>

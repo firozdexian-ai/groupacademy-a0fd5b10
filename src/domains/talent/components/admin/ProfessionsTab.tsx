@@ -118,7 +118,7 @@ export function ProfessionsTab() {
  {/* Deduped Header Action Row (P2 Fix) */}
  <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
  <div className="text-left">
- <h2 className="text-2xl font-semibold uppercase italic tracking-tight">Academic Governance</h2>
+ <h2 className="text-2xl font-semibold font-medium">Academic Governance</h2>
  <p className="text-[10px] font-semibold text-muted-foreground/60">
  Manage Academies, Schools & Programs
  </p>
@@ -169,7 +169,7 @@ export function ProfessionsTab() {
  <TabsTrigger
  key={t}
  value={t}
- className="rounded-xl font-semibold uppercase italic text-[10px] tracking-widest"
+ className="rounded-xl font-semibold uppercase italic text-xs"
  >
  {t}
  </TabsTrigger>
@@ -319,9 +319,9 @@ function StructuralDialog({ title, open, setOpen, onSave, children }: any) {
 function AcademyCard({ academy, onEdit }: any) {
  const Icon = getIcon(academy.icon || "building-2");
  return (
- <Card className="rounded-2xl border-2 bg-card/40 p-5 flex items-center justify-between group">
+ <Card className="rounded-2xl border bg-card/40 p-5 flex items-center justify-between group">
  <div className="flex items-center gap-4">
- <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+ <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border border-primary/20">
  <Icon className="h-5 w-5 text-primary" />
  </div>
  <div className="text-left">
@@ -340,9 +340,9 @@ function AcademyCard({ academy, onEdit }: any) {
 
 function SchoolCard({ school, academyName, onEdit }: any) {
  return (
- <Card className="rounded-2xl border-2 bg-card/40 p-5 flex items-center justify-between group">
+ <Card className="rounded-2xl border bg-card/40 p-5 flex items-center justify-between group">
  <div className="flex items-center gap-4">
- <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border-2 border-emerald-500/20">
+ <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30">
  <GraduationCap className="h-5 w-5 text-emerald-500" />
  </div>
  <div className="text-left">
@@ -359,9 +359,9 @@ function SchoolCard({ school, academyName, onEdit }: any) {
 
 function ProfessionCard({ profession, schoolName, onEdit }: any) {
  return (
- <Card className="rounded-2xl border-2 bg-card/40 p-5 flex items-center justify-between group">
+ <Card className="rounded-2xl border bg-card/40 p-5 flex items-center justify-between group">
  <div className="flex items-center gap-4">
- <div className="h-12 w-12 rounded-xl bg-orange-500/10 flex items-center justify-center border-2 border-orange-500/20">
+ <div className="h-12 w-12 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
  <Briefcase className="h-5 w-5 text-orange-500" />
  </div>
  <div className="text-left">

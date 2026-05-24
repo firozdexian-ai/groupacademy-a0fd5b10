@@ -342,7 +342,7 @@ export function CompanyAgentsManager() {
  </div>
  <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
  <DialogTrigger asChild>
- <Button className="rounded-xl h-12 px-8 font-semibold uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+ <Button className="rounded-xl h-12 px-8 font-semibold uppercase text-xs shadow-sm transition-all hover:scale-105 active:scale-95">
  <Plus className="h-4 w-4 mr-2" /> Initialize Artifact
  </Button>
  </DialogTrigger>
@@ -369,10 +369,10 @@ export function CompanyAgentsManager() {
  Partnership Entity *
  </Label>
  <Select value={selectedCompany} onValueChange={setSelectedCompany}>
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold bg-muted/20">
+ <SelectTrigger className="h-10 rounded-xl border font-bold bg-muted/20">
  <SelectValue placeholder="Select target registry..." />
  </SelectTrigger>
- <SelectContent className="rounded-2xl border-2">
+ <SelectContent className="rounded-2xl border">
  {companies.map((company) => (
  <SelectItem key={company.id} value={company.id} className="font-bold">
  {company.name} [{company.industry?.toUpperCase() || "GLOBAL"}]
@@ -392,7 +392,7 @@ export function CompanyAgentsManager() {
  placeholder="e.g., Financial Logic Unit"
  value={formData.name}
  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -403,10 +403,10 @@ export function CompanyAgentsManager() {
  value={formData.category}
  onValueChange={(v) => setFormData({ ...formData, category: v })}
  >
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {AGENT_CATEGORIES.map((cat) => (
  <SelectItem key={cat.value} value={cat.value} className="font-bold uppercase text-[9px]">
  {cat.label}
@@ -425,7 +425,7 @@ export function CompanyAgentsManager() {
  placeholder="Brief system purpose..."
  value={formData.description}
  onChange={(e) => setFormData({ ...formData, description: e.target.value })}
- className="h-12 rounded-xl border-2 italic font-medium"
+ className="h-12 rounded-xl border italic font-medium"
  />
  </div>
  <div className="space-y-2">
@@ -436,7 +436,7 @@ export function CompanyAgentsManager() {
  placeholder="Comma-separated domains..."
  value={formData.expertise_areas}
  onChange={(e) => setFormData({ ...formData, expertise_areas: e.target.value })}
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  </div>
  </div>
@@ -451,11 +451,11 @@ export function CompanyAgentsManager() {
  value={formData.system_prompt}
  onChange={(e) => setFormData({ ...formData, system_prompt: e.target.value })}
  rows={6}
- className="rounded-2xl border-2 bg-muted/5 font-mono text-sm p-6 italic"
+ className="rounded-2xl border bg-muted/5 font-mono text-sm p-6 italic"
  />
  </div>
 
- <div className="p-8 rounded-2xl border-2 bg-muted/10 space-y-8 shadow-inner">
+ <div className="p-8 rounded-2xl border bg-muted/10 space-y-8 shadow-inner">
  <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary italic border-b border-border/10 pb-4 flex items-center gap-3">
  <ShieldCheck className="h-4 w-4" /> Sponsorship Protocol
  </h4>
@@ -468,10 +468,10 @@ export function CompanyAgentsManager() {
  value={formData.sponsorship_type}
  onValueChange={(v) => setFormData({ ...formData, sponsorship_type: v })}
  >
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold bg-background/50">
+ <SelectTrigger className="h-12 rounded-xl border font-bold bg-background/50">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {SPONSORSHIP_TYPES.map((t) => (
  <SelectItem key={t.value} value={t.value} className="font-bold">
  <p className="text-[10px] uppercase">{t.label}</p>
@@ -489,13 +489,13 @@ export function CompanyAgentsManager() {
  type="number"
  value={formData.monthly_budget}
  onChange={(e) => setFormData({ ...formData, monthly_budget: parseInt(e.target.value) || 0 })}
- className="h-12 rounded-xl border-2 font-semibold text-lg"
+ className="h-12 rounded-xl border font-semibold text-lg"
  />
  </div>
  </div>
  </div>
 
- <div className="p-8 rounded-2xl border-2 bg-primary/5 border-primary/10 space-y-6">
+ <div className="p-8 rounded-2xl border bg-primary/5 border-primary/10 space-y-6">
  <div className="flex items-center justify-between">
  <div className="space-y-1">
  <h4 className="text-sm font-semibold uppercase tracking-tight italic">Lead Ingestion Node</h4>
@@ -545,7 +545,7 @@ export function CompanyAgentsManager() {
  placeholder="leads@partnership.com"
  value={formData.lead_notification_email}
  onChange={(e) => setFormData({ ...formData, lead_notification_email: e.target.value })}
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  </div>
  </div>
@@ -557,7 +557,7 @@ export function CompanyAgentsManager() {
  <Button
  variant="ghost"
  onClick={() => setIsCreateOpen(false)}
- className="h-14 px-8 font-semibold uppercase text-[10px] tracking-widest"
+ className="h-14 px-8 font-semibold uppercase text-xs"
  >
  Abort
  </Button>
@@ -618,7 +618,7 @@ export function CompanyAgentsManager() {
  <CardContent className="p-6 flex items-center gap-5">
  <div
  className={cn(
- "h-12 w-12 rounded-2xl flex items-center justify-center border-2 transition-transform duration-500 group-hover:rotate-6 shadow-inner",
+ "h-12 w-12 rounded-2xl flex items-center justify-center border transition-transform duration-500 group-hover:rotate-6 shadow-inner",
  stat.bg,
  "border-white/5",
  )}
@@ -641,13 +641,13 @@ export function CompanyAgentsManager() {
  <TabsList className="bg-muted/30 rounded-xl border border-border/60 p-1 mb-8 w-full max-w-md">
  <TabsTrigger
  value="agents"
- className="flex-1 rounded-[18px] font-semibold uppercase text-[10px] tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+ className="flex-1 rounded-[18px] font-semibold uppercase text-xs py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
  >
  Registry Artifacts ({totalAgents})
  </TabsTrigger>
  <TabsTrigger
  value="leads"
- className="flex-1 rounded-[18px] font-semibold uppercase text-[10px] tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+ className="flex-1 rounded-[18px] font-semibold uppercase text-xs py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
  >
  Lead Registry ({totalLeads})
  </TabsTrigger>
@@ -672,7 +672,7 @@ export function CompanyAgentsManager() {
  <div className="flex items-center gap-5">
  <div
  className={cn(
- "h-14 w-14 rounded-2xl flex items-center justify-center border-2 shadow-inner",
+ "h-14 w-14 rounded-2xl flex items-center justify-center border shadow-inner",
  ca.ai_agents?.bg_color || "bg-primary/10",
  "border-white/5",
  )}
@@ -723,7 +723,7 @@ export function CompanyAgentsManager() {
  <div className="flex flex-wrap gap-3">
  <Badge
  variant="outline"
- className="rounded-lg border-2 font-semibold text-[9px] bg-background px-3 py-1"
+ className="rounded-lg border font-semibold text-[9px] bg-background px-3 py-1"
  >
  {ca.sponsorship_type || "branded"} PROTOCOL
  </Badge>
@@ -771,11 +771,11 @@ export function CompanyAgentsManager() {
  <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
  <div className="flex items-center gap-4 flex-1 max-w-md">
  <Select value={leadFilter} onValueChange={setLeadFilter}>
- <SelectTrigger className="h-12 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-muted/20">
+ <SelectTrigger className="h-12 rounded-xl border font-semibold uppercase text-xs bg-muted/20">
  <Filter className="h-4 w-4 mr-2 text-primary" />
  <SelectValue placeholder="Filter" />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  <SelectItem value="all" className="font-bold">
  GLOBAL REGISTRY
  </SelectItem>
@@ -788,7 +788,7 @@ export function CompanyAgentsManager() {
  </Select>
  <Button
  variant="outline"
- className="h-12 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
+ className="h-12 rounded-xl border font-semibold uppercase text-xs gap-2"
  onClick={exportLeadsCSV}
  >
  <Download className="h-4 w-4" /> Export Ledger
@@ -869,12 +869,12 @@ export function CompanyAgentsManager() {
  </AlertDialogDescription>
  </AlertDialogHeader>
  <AlertDialogFooter className="mt-8 gap-4">
- <AlertDialogCancel className="rounded-xl font-semibold uppercase text-[10px] tracking-widest border-2 h-12 px-8">
+ <AlertDialogCancel className="rounded-xl font-semibold uppercase text-xs border h-12 px-8">
  Decline Purge
  </AlertDialogCancel>
  <AlertDialogAction
  onClick={() => deleteTarget && deleteAgentMutation.mutate(deleteTarget)}
- className="bg-destructive text-white rounded-xl font-semibold uppercase text-[10px] tracking-widest h-12 px-10 hover:bg-destructive/90"
+ className="bg-destructive text-white rounded-xl font-semibold uppercase text-xs h-12 px-10 hover:bg-destructive/90"
  >
  Confirm Termination
  </AlertDialogAction>

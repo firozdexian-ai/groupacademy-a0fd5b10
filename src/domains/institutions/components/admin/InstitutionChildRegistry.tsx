@@ -150,9 +150,9 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  <div className="space-y-1">
  <div className="flex items-center gap-3 text-primary">
  <Icon className="h-8 w-8 text-primary" />
- <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">{title}</h2>
+ <h2 className="text-4xl font-medium tracking-tighter italic leading-none">{title}</h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  {description}
  </p>
  </div>
@@ -162,7 +162,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  setDraft({});
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-xl bg-primary text-primary-foreground"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-sm bg-primary text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Inject Node
  </Button>
@@ -172,7 +172,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  <div className="relative w-full md:w-[300px]">
  <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
  <Select value={instFilter} onValueChange={setInstFilter}>
- <SelectTrigger className="h-12 rounded-xl border-2 pl-10 font-black uppercase text-[10px] bg-card">
+ <SelectTrigger className="h-12 rounded-xl border pl-10 font-medium text-[10px] bg-card">
  <SelectValue placeholder="FILTER BY INSTITUTION" />
  </SelectTrigger>
  <SelectContent>
@@ -191,7 +191,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  <button
  onClick={() => setEventTab("upcoming")}
  className={cn(
- "px-6 py-2 rounded-lg text-[10px] font-black uppercase transition-all",
+ "px-6 py-2 rounded-lg text-[10px] font-medium transition-all",
  eventTab === "upcoming" ? "bg-primary text-white shadow-lg" : "text-muted-foreground",
  )}
  >
@@ -200,7 +200,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  <button
  onClick={() => setEventTab("past")}
  className={cn(
- "px-6 py-2 rounded-lg text-[10px] font-black uppercase transition-all",
+ "px-6 py-2 rounded-lg text-[10px] font-medium transition-all",
  eventTab === "past" ? "bg-primary text-white shadow-lg" : "text-muted-foreground",
  )}
  >
@@ -214,7 +214,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  {listQ.isLoading ? (
  <div className="h-48 animate-pulse bg-muted/40 rounded-2xl" />
  ) : listQ.data?.length === 0 ? (
- <Card className="rounded-2xl border-2 border-dashed p-20 text-center opacity-30 font-black text-xs italic">
+ <Card className="rounded-2xl border border-dashed p-20 text-center opacity-30 font-black text-xs italic">
  Registry Context Empty
  </Card>
  ) : (
@@ -230,13 +230,13 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  </div>
  <div className="space-y-1 flex-1 min-w-0">
  <div className="flex items-center gap-3">
- <h4 className="font-black text-xl uppercase italic tracking-tighter truncate">
+ <h4 className="font-black text-xl font-mediumer truncate">
  {r.name ?? r.title}
  </h4>
  {badgeKey && r[badgeKey] && (
  <Badge
  variant="outline"
- className="font-black text-[8px] border-2 bg-primary/5"
+ className="font-black text-[8px] border bg-primary/5"
  >
  {r[badgeKey].replace("_", " ")}
  </Badge>
@@ -315,18 +315,18 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  <div className="h-2 w-full bg-primary" />
  <div className="p-8 space-y-6 max-h-[80vh] overflow-y-auto no-scrollbar">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
+ <DialogTitle className="text-2xl font-semibold">
  {editingNode ? "Recalibrate Node" : "Node Deployment"}
  </DialogTitle>
  </DialogHeader>
  <div className="space-y-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Parent Institution *</Label>
+ <Label className="text-[10px] font-medium ml-1">Parent Institution *</Label>
  <Select
  value={draft.institution_id ?? ""}
  onValueChange={(v) => setDraft({ ...draft, institution_id: v })}
  >
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue placeholder="LINK TO INSTITUTION" />
  </SelectTrigger>
  <SelectContent>
@@ -341,14 +341,14 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
 
  {table === "institution_representatives" && (
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Linked Club / Society</Label>
+ <Label className="text-[10px] font-medium ml-1">Linked Club / Society</Label>
  {/* B4 Fix: Using NONE_SENTINEL to avoid Radix empty string crash */}
  <Select
  value={draft.club_id ?? NONE_SENTINEL}
  onValueChange={(v) => setDraft({ ...draft, club_id: v })}
  disabled={!draft.institution_id}
  >
- <SelectTrigger className="h-12 rounded-xl border-2">
+ <SelectTrigger className="h-12 rounded-xl border">
  <SelectValue placeholder="SELECT CLUB (OPTIONAL)" />
  </SelectTrigger>
  <SelectContent>
@@ -365,16 +365,16 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
 
  {fields.map((f) => (
  <div key={f.key} className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">{f.label}</Label>
+ <Label className="text-[10px] font-medium ml-1">{f.label}</Label>
  {f.type === "textarea" ? (
  <Textarea
  value={draft[f.key] ?? ""}
  onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
- className="rounded-xl border-2 h-24"
+ className="rounded-xl border h-24"
  />
  ) : f.type === "select" ? (
  <Select value={draft[f.key] ?? ""} onValueChange={(v) => setDraft({ ...draft, [f.key]: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2">
+ <SelectTrigger className="h-12 rounded-xl border">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -390,7 +390,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  type={f.type ?? "text"}
  value={draft[f.key] ?? ""}
  onChange={(e) => setDraft({ ...draft, [f.key]: e.target.value })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  )}
  </div>
@@ -400,14 +400,14 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  <Button
  variant="ghost"
  onClick={() => setOpen(false)}
- className="h-12 rounded-xl font-black uppercase text-[10px]"
+ className="h-12 rounded-xl font-medium text-[10px]"
  >
  Abort
  </Button>
  <Button
  onClick={() => saveMutation.mutate()}
  disabled={!draft.institution_id || saveMutation.isPending}
- className="h-12 rounded-xl font-black uppercase italic text-[10px] flex-1 shadow-lg"
+ className="h-12 rounded-xl font-medium italic text-[10px] flex-1 shadow-lg"
  >
  {saveMutation.isPending ? "Syncing..." : editingNode ? "Commit Calibration" : "Authorize Node"}
  </Button>
@@ -419,10 +419,10 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  <AlertDialog open={!!purgeId} onOpenChange={() => setPurgeId(null)}>
  <AlertDialogContent className="rounded-2xl border border-destructive/30 bg-background/95">
  <AlertDialogHeader className="items-center text-center">
- <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border-2 border-destructive/20">
+ <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border border-destructive/30">
  <AlertTriangle className="h-8 w-8 text-destructive" />
  </div>
- <AlertDialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-destructive">
+ <AlertDialogTitle className="text-2xl font-semibold text-destructive">
  Terminate Node?
  </AlertDialogTitle>
  <AlertDialogDescription className="text-xs font-bold text-muted-foreground/60 leading-relaxed">
@@ -430,10 +430,10 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  </AlertDialogDescription>
  </AlertDialogHeader>
  <AlertDialogFooter className="mt-8 gap-3">
- <AlertDialogCancel className="h-12 rounded-xl font-black uppercase text-[10px]">Cancel</AlertDialogCancel>
+ <AlertDialogCancel className="h-12 rounded-xl font-medium text-[10px]">Cancel</AlertDialogCancel>
  <AlertDialogAction
  onClick={() => purgeId && remove.mutate(purgeId)}
- className="h-12 bg-destructive text-white rounded-xl font-black uppercase text-[10px]"
+ className="h-12 bg-destructive text-white rounded-xl font-medium text-[10px]"
  >
  Confirm Termination
  </AlertDialogAction>

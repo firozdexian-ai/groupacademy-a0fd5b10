@@ -205,7 +205,7 @@ export function ServiceOutreachTab() {
  <div className="flex items-center gap-3">
  <Badge
  variant="outline"
- className="h-14 px-6 rounded-2xl border-2 font-semibold gap-2 text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
+ className="h-14 px-6 rounded-2xl border font-semibold gap-2 text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
  >
  <Activity className="h-4 w-4" /> {shareLogs.length} TOTAL TRANSMISSIONS
  </Badge>
@@ -220,7 +220,7 @@ export function ServiceOutreachTab() {
  return (
  <Card
  key={service.id}
- className="group cursor-pointer rounded-2xl border border-border/60 bg-card hover:border-emerald-500/40 transition-all duration-500 overflow-hidden shadow-xl"
+ className="group cursor-pointer rounded-2xl border border-border/60 bg-card hover:border-emerald-500/40 transition-all duration-500 overflow-hidden shadow-sm"
  onClick={() => {
  setSelectedService(service);
  setIsShareOpen(true);
@@ -231,7 +231,7 @@ export function ServiceOutreachTab() {
  <div className="flex items-center gap-6">
  <div
  className={cn(
- "h-16 w-16 rounded-2xl flex items-center justify-center border-2 transition-transform group-hover:rotate-6 shadow-inner",
+ "h-16 w-16 rounded-2xl flex items-center justify-center border transition-transform group-hover:rotate-6 shadow-inner",
  service.bg,
  "border-white/5",
  )}
@@ -239,7 +239,7 @@ export function ServiceOutreachTab() {
  <Icon className={cn("h-8 w-8", service.color)} />
  </div>
  <div className="text-left">
- <h3 className="text-xl font-semibold uppercase italic tracking-tight">{service.title}</h3>
+ <h3 className="text-xl font-semibold font-medium">{service.title}</h3>
  <p className="text-[10px] font-bold text-muted-foreground mt-1 italic">
  {service.description}
  </p>
@@ -268,11 +268,11 @@ export function ServiceOutreachTab() {
  <div className="p-10">
  <DialogHeader className="mb-8 text-left">
  <div className="flex items-center gap-5">
- <div className={cn("p-4 rounded-2xl border-2", selectedService?.bg)}>
+ <div className={cn("p-4 rounded-2xl border", selectedService?.bg)}>
  {selectedService && <selectedService.icon className={cn("h-8 w-8", selectedService.color)} />}
  </div>
  <div className="space-y-1">
- <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight">
+ <DialogTitle className="text-3xl font-semibold font-medium">
  Promote: {selectedService?.title}
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
@@ -320,7 +320,7 @@ export function ServiceOutreachTab() {
  key={ch.id}
  onClick={() => setActiveTab(ch.id)}
  className={cn(
- "w-full flex items-center justify-between p-4 rounded-2xl border-2 transition-all duration-300",
+ "w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300",
  activeTab === ch.id
  ? "border-emerald-500 bg-emerald-500/5 shadow-inner scale-105"
  : "border-border/40 hover:border-emerald-500/20 bg-muted/20",
@@ -328,7 +328,7 @@ export function ServiceOutreachTab() {
  >
  <div className="flex items-center gap-4">
  <ch.icon className={cn("w-5 h-5", ch.color)} />
- <span className="font-semibold uppercase italic text-[10px] tracking-widest">{ch.label}</span>
+ <span className="font-semibold uppercase italic text-xs">{ch.label}</span>
  </div>
  {selectedService && isShared(selectedService, ch.id) && (
  <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -341,7 +341,7 @@ export function ServiceOutreachTab() {
  <div className="flex-1 space-y-6 text-left">
  {activeTab !== "custom" ? (
  <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
- <div className="p-6 bg-emerald-500/5 rounded-2xl border-2 border-emerald-500/10">
+ <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/30">
  <p className="text-[10px] font-semibold uppercase text-emerald-500 italic mb-3 flex items-center gap-2">
  <Globe className="h-3 w-3" /> Regional Template
  </p>
@@ -354,7 +354,7 @@ export function ServiceOutreachTab() {
  />
  <Button
  variant="outline"
- className="w-full mt-4 rounded-xl font-semibold uppercase text-[10px] italic border-2"
+ className="w-full mt-4 rounded-xl font-semibold uppercase text-[10px] italic border"
  onClick={() =>
  copyToClipboard(
  activeTab === "linkedin" || activeTab === "telegram" ? templates.english : templates.bangla,
@@ -374,7 +374,7 @@ export function ServiceOutreachTab() {
  </Button>
  <Button
  variant="outline"
- className="h-16 rounded-2xl font-semibold uppercase italic text-sm gap-3 border-2"
+ className="h-16 rounded-2xl font-semibold uppercase italic text-sm gap-3 border"
  onClick={() =>
  copyToClipboard(selectedService ? getShareLink(selectedService, activeTab) : "", "link")
  }
@@ -393,7 +393,7 @@ export function ServiceOutreachTab() {
  placeholder="e.g. UNIVERSITY_NEWSLETTER_Q2"
  value={customChannel}
  onChange={(e) => setCustomChannel(e.target.value)}
- className="h-10 rounded-xl border-2 font-semibold uppercase text-xs tracking-widest"
+ className="h-10 rounded-xl border font-semibold uppercase text-xs tracking-widest"
  />
  </div>
  <div className="space-y-3">
@@ -404,11 +404,11 @@ export function ServiceOutreachTab() {
  <Input
  readOnly
  value={selectedService ? getShareLink(selectedService, customChannel || "custom") : ""}
- className="h-10 rounded-xl border-2 font-mono text-[10px] bg-muted/30"
+ className="h-10 rounded-xl border font-mono text-[10px] bg-muted/30"
  />
  <Button
  variant="outline"
- className="h-14 w-14 rounded-2xl border-2"
+ className="h-14 w-14 rounded-2xl border"
  onClick={() =>
  copyToClipboard(
  selectedService ? getShareLink(selectedService, customChannel || "custom") : "",

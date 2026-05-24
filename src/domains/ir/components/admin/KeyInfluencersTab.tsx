@@ -133,7 +133,7 @@ export default function KeyInfluencersTab() {
  </div>
  <Button
  onClick={() => handleOpenDialog()}
- className="h-12 px-8 rounded-xl font-semibold uppercase text-[10px] tracking-widest shadow-xl bg-amber-500 hover:bg-amber-600 text-white"
+ className="h-12 px-8 rounded-xl font-semibold uppercase text-xs shadow-sm bg-amber-500 hover:bg-amber-600 text-white"
  >
  <Plus className="h-4 w-4 mr-2" /> Register Node
  </Button>
@@ -146,7 +146,7 @@ export default function KeyInfluencersTab() {
  key={t}
  onClick={() => setFilter(t)}
  className={cn(
- "px-6 py-2 rounded-xl transition-all font-black uppercase text-[10px] tracking-widest",
+ "px-6 py-2 rounded-xl transition-all font-medium text-xs",
  filter === t
  ? "bg-primary text-primary-foreground shadow-lg"
  : "text-muted-foreground hover:text-foreground",
@@ -165,7 +165,7 @@ export default function KeyInfluencersTab() {
  ))}
  </div>
  ) : rows.length === 0 ? (
- <Card className="rounded-2xl border-2 border-dashed p-20 text-center opacity-40 uppercase font-semibold tracking-widest italic text-xs">
+ <Card className="rounded-2xl border border-dashed p-20 text-center opacity-40 uppercase font-semibold tracking-widest italic text-xs">
  Registry Frame Empty
  </Card>
  ) : (
@@ -257,7 +257,7 @@ export default function KeyInfluencersTab() {
  <Input
  value={form.name}
  onChange={(e) => setForm({ ...form, name: e.target.value })}
- className="rounded-xl border-2 font-bold h-12"
+ className="rounded-xl border font-bold h-12"
  />
  </div>
  <div className="grid grid-cols-2 gap-4">
@@ -266,13 +266,13 @@ export default function KeyInfluencersTab() {
  <Input
  value={form.role}
  onChange={(e) => setForm({ ...form, role: e.target.value })}
- className="rounded-xl border-2 h-12"
+ className="rounded-xl border h-12"
  />
  </div>
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase ml-1">Tier</Label>
  <Select value={form.tier} onValueChange={(v) => setForm({ ...form, tier: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2 font-semibold uppercase text-[10px]">
+ <SelectTrigger className="h-12 rounded-xl border font-semibold uppercase text-[10px]">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -288,7 +288,7 @@ export default function KeyInfluencersTab() {
  <Input
  value={form.organization}
  onChange={(e) => setForm({ ...form, organization: e.target.value })}
- className="rounded-xl border-2 h-12"
+ className="rounded-xl border h-12"
  />
  </div>
  <div className="space-y-2">
@@ -296,7 +296,7 @@ export default function KeyInfluencersTab() {
  <Input
  value={form.email}
  onChange={(e) => setForm({ ...form, email: e.target.value })}
- className="rounded-xl border-2 h-12"
+ className="rounded-xl border h-12"
  />
  </div>
  </div>
@@ -304,7 +304,7 @@ export default function KeyInfluencersTab() {
  <Button
  onClick={executeDeployment}
  disabled={busy}
- className="w-full h-10 rounded-xl font-semibold uppercase text-[11px] gap-2 shadow-xl bg-primary"
+ className="w-full h-10 rounded-xl font-semibold uppercase text-[11px] gap-2 shadow-sm bg-primary"
  >
  {busy ? <Loader2 className="animate-spin h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}{" "}
  {editingNode ? "Commit Calibration" : "Authorize Node"}

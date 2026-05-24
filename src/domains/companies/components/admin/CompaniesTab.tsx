@@ -194,7 +194,7 @@ export function CompaniesTab() {
  {/* Executive Action Bar */}
  <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
  <div className="text-left">
- <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
+ <h2 className="text-2xl font-semibold font-medium flex items-center gap-2">
  <Building2 className="h-6 w-6 text-primary" /> Employer Registry
  </h2>
  <p className="text-[10px] font-semibold text-muted-foreground/60">
@@ -205,13 +205,13 @@ export function CompaniesTab() {
  <Button
  variant="outline"
  onClick={() => setShowBatchUpload(true)}
- className="rounded-xl border-2 font-semibold uppercase text-[10px] h-11 px-5"
+ className="rounded-xl border font-semibold uppercase text-[10px] h-11 px-5"
  >
  Bulk Ingestion
  </Button>
  <Button
  onClick={() => handleOpenDialog()}
- className="rounded-xl font-semibold uppercase text-[10px] h-11 px-6 shadow-xl bg-primary text-primary-foreground"
+ className="rounded-xl font-semibold uppercase text-[10px] h-11 px-6 shadow-sm bg-primary text-primary-foreground"
  >
  <Plus className="h-4 w-4 mr-2" /> Add Node
  </Button>
@@ -237,7 +237,7 @@ export function CompaniesTab() {
  <MetricTile label="Outreach Gap" value={kpis.pending} icon={Zap} color="text-amber-500" bg="bg-amber-500/10" />
  </div>
 
- <Card className="rounded-2xl border-2 shadow-sm bg-card">
+ <Card className="rounded-2xl border shadow-sm bg-card">
  <div className="h-1.5 w-full bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
 
  {/* Search & Filter Terminal */}
@@ -246,13 +246,13 @@ export function CompaniesTab() {
  <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
  <Input
  placeholder="Search by identity or identifier..."
- className="pl-12 h-10 rounded-xl border-2 bg-muted/5 font-bold"
+ className="pl-12 h-10 rounded-xl border bg-muted/5 font-bold"
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
  />
  </div>
  <Select value={industryFilter} onValueChange={setIndustryFilter}>
- <SelectTrigger className="w-[240px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] bg-muted/5">
+ <SelectTrigger className="w-[240px] h-10 rounded-xl border font-semibold uppercase text-[10px] bg-muted/5">
  <SelectValue placeholder="Industry Filter" />
  </SelectTrigger>
  <SelectContent className="font-semibold text-[10px] uppercase">
@@ -291,7 +291,7 @@ export function CompaniesTab() {
  >
  <TableCell className="pl-8 py-6">
  <div className="flex items-center gap-4">
- <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center border-2 overflow-hidden shadow-inner shrink-0">
+ <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center border overflow-hidden shadow-inner shrink-0">
  {company.logo_url ? (
  <img src={company.logo_url} className="object-cover h-full w-full" />
  ) : (
@@ -334,7 +334,7 @@ export function CompaniesTab() {
  <TableCell className="text-right pr-8">
  <div className="flex justify-end gap-2 opacity-30 group-hover:opacity-100 transition-opacity">
  <Select onValueChange={(val: DexianEmailTemplate) => handleEmailOutreach(company, val)}>
- <SelectTrigger className="w-10 h-10 p-0 border-2 rounded-xl hover:bg-primary/10 transition-all bg-transparent">
+ <SelectTrigger className="w-10 h-10 p-0 border rounded-xl hover:bg-primary/10 transition-all bg-transparent">
  <Send className="w-4 h-4 text-primary m-auto" />
  </SelectTrigger>
  <SelectContent className="font-semibold text-[10px] uppercase">
@@ -348,7 +348,7 @@ export function CompaniesTab() {
  <Button
  variant="ghost"
  size="icon"
- className="h-10 w-10 border-2 rounded-xl"
+ className="h-10 w-10 border rounded-xl"
  onClick={() => handleOpenDialog(company)}
  >
  <Edit className="h-4 w-4" />
@@ -356,7 +356,7 @@ export function CompaniesTab() {
  <Button
  variant="ghost"
  size="icon"
- className="h-10 w-10 border-2 rounded-xl hover:bg-destructive/10 hover:text-destructive"
+ className="h-10 w-10 border rounded-xl hover:bg-destructive/10 hover:text-destructive"
  onClick={() => setDeleteTarget(company)}
  >
  <Trash2 className="h-4 w-4" />
@@ -400,7 +400,7 @@ export function CompaniesTab() {
  <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[85vh] overflow-y-auto no-scrollbar">
  <div className="col-span-full flex items-center gap-3 border-b pb-4 mb-2">
  <Activity className="h-6 w-6 text-primary" />
- <h3 className="text-xl font-semibold uppercase italic tracking-tight">Recalibrate Employer Node</h3>
+ <h3 className="text-xl font-semibold font-medium">Recalibrate Employer Node</h3>
  </div>
 
  <div className="space-y-2">
@@ -408,7 +408,7 @@ export function CompaniesTab() {
  <Input
  value={formData.name}
  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
- className="rounded-xl border-2 font-bold"
+ className="rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -416,7 +416,7 @@ export function CompaniesTab() {
  <Input
  value={formData.industry}
  onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  />
  </div>
  <div className="space-y-2">
@@ -424,7 +424,7 @@ export function CompaniesTab() {
  <Input
  value={formData.website}
  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  />
  </div>
  <div className="space-y-2">
@@ -432,7 +432,7 @@ export function CompaniesTab() {
  <Input
  value={formData.primary_email}
  onChange={(e) => setFormData({ ...formData, primary_email: e.target.value })}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  />
  </div>
  <div className="space-y-2">
@@ -440,7 +440,7 @@ export function CompaniesTab() {
  <Input
  value={formData.linkedin_url}
  onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  />
  </div>
  <div className="space-y-2">
@@ -448,7 +448,7 @@ export function CompaniesTab() {
  <Input
  value={formData.facebook_url}
  onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  />
  </div>
  <div className="space-y-2">
@@ -456,7 +456,7 @@ export function CompaniesTab() {
  <Input
  value={formData.logo_url}
  onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  />
  </div>
 
@@ -465,7 +465,7 @@ export function CompaniesTab() {
  <Textarea
  value={formData.notes}
  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
- className="rounded-2xl border-2 min-h-[120px] p-4 text-xs italic"
+ className="rounded-2xl border min-h-[120px] p-4 text-xs italic"
  />
  </div>
 
@@ -538,14 +538,14 @@ export function CompaniesTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
  return (
- <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group transition-all hover:border-primary/30 shadow-xl overflow-hidden relative">
+ <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group transition-all hover:border-primary/30 shadow-sm overflow-hidden relative">
  <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
  <Icon className="h-12 w-12" />
  </div>
  <div className="flex items-center gap-5 relative z-10">
  <div
  className={cn(
- "h-14 w-14 rounded-2xl flex items-center justify-center border-2 transition-transform group-hover:rotate-3 shadow-inner",
+ "h-14 w-14 rounded-2xl flex items-center justify-center border transition-transform group-hover:rotate-3 shadow-inner",
  bg,
  color,
  )}

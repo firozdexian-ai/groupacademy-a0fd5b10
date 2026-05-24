@@ -81,11 +81,11 @@ export function LearningCoursesTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-cyan-500">
  <Tv className="h-8 w-8 text-cyan-500 fill-cyan-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Content Catalog
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Universal Content Management
  </p>
  </div>
@@ -93,7 +93,7 @@ export function LearningCoursesTab() {
  <Button
  variant="outline"
  onClick={() => setShowBatchGenerator(true)}
- className="h-12 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 border-2 border-violet-500/40 text-violet-600 hover:bg-violet-500/10"
+ className="h-12 px-6 rounded-xl font-medium text-xs gap-2 border border-violet-500/40 text-violet-600 hover:bg-violet-500/10"
  >
  <Wand2 className="h-4 w-4" /> Bulk Generate
  </Button>
@@ -102,7 +102,7 @@ export function LearningCoursesTab() {
  setDraft({ status: "draft", content_type: "recorded_course" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-cyan-500/20 bg-cyan-600 hover:bg-cyan-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-cyan-500/20 bg-cyan-600 hover:bg-cyan-700 text-white"
  >
  <Plus className="h-4 w-4" /> Inject Course
  </Button>
@@ -127,12 +127,12 @@ export function LearningCoursesTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Course Definition
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Type</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">Created</TableHead>
+ <TableHead className="font-medium text-xs">Type</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
+ <TableHead className="font-medium text-xs text-right">Created</TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
  </TableRow>
  </TableHeader>
@@ -147,7 +147,7 @@ export function LearningCoursesTab() {
  <TableRow>
  <TableCell
  colSpan={5}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero courses detected.
  </TableCell>
@@ -163,11 +163,11 @@ export function LearningCoursesTab() {
  <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
  <BookOpen className="h-3 w-3 text-cyan-500" />
  </div>
- <span className="font-black text-sm uppercase italic tracking-tight">{row.title}</span>
+ <span className="font-black text-sm font-medium">{row.title}</span>
  </div>
  </TableCell>
  <TableCell>
- <Badge variant="outline" className="font-mono text-[9px] border-2">
+ <Badge variant="outline" className="font-mono text-[9px] border">
  {row.content_type?.replace("_", " ")}
  </Badge>
  </TableCell>
@@ -261,7 +261,7 @@ export function LearningCoursesTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-cyan-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-cyan-500 flex items-center gap-2">
  <Tv className="h-6 w-6" /> Inject Course
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -275,14 +275,14 @@ export function LearningCoursesTab() {
  placeholder="Title"
  value={draft.title || ""}
  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
 
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-primary ml-1">Content Type</Label>
  <Select value={draft.content_type} onValueChange={(v) => setDraft({ ...draft, content_type: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -304,7 +304,7 @@ export function LearningCoursesTab() {
  Deployment Status
  </Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -329,7 +329,7 @@ export function LearningCoursesTab() {
  delete payload.status; // Remove UI-only field
  upsertContent.mutate(payload, { onSuccess: () => setOpen(false) });
  }}
- className="h-14 rounded-xl font-black uppercase bg-cyan-600 hover:bg-cyan-700 text-white"
+ className="h-14 rounded-xl font-medium bg-cyan-600 hover:bg-cyan-700 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Authorize Content
  </Button>
@@ -340,7 +340,7 @@ export function LearningCoursesTab() {
  <Dialog open={!!selectedModuleCourseId} onOpenChange={(o) => !o && setSelectedModuleCourseId(null)}>
  <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 border border-border/60">
  <DialogHeader>
- <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-indigo-500 flex items-center gap-2">
+ <DialogTitle className="text-xl font-semibold text-indigo-500 flex items-center gap-2">
  <Layers className="h-5 w-5" /> Module Curriculum
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -370,7 +370,7 @@ export function LearningCoursesTab() {
  <FlashcardEditor onSave={() => {}} />
  </TabsContent>
  <TabsContent value="resources">
- <div className="space-y-3 p-4 border-2 border-dashed border-border/40 rounded-2xl">
+ <div className="space-y-3 p-4 border border-dashed border-border/40 rounded-2xl">
  <p className="text-[10px] font-black text-muted-foreground">
  Attach a resource file or link for this course.
  </p>
@@ -389,7 +389,7 @@ export function LearningCoursesTab() {
  <Dialog open={showBatchGenerator} onOpenChange={setShowBatchGenerator}>
  <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 border border-border/60">
  <DialogHeader>
- <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
+ <DialogTitle className="text-xl font-semibold text-violet-500 flex items-center gap-2">
  <Wand2 className="h-5 w-5" /> Bulk Content Generator
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -407,7 +407,7 @@ export function LearningCoursesTab() {
  >
  <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 border border-border/60">
  <DialogHeader>
- <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
+ <DialogTitle className="text-xl font-semibold text-emerald-500 flex items-center gap-2">
  <FileCheck2 className="h-5 w-5" /> Readiness Checklist
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">

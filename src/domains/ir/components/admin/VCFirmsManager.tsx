@@ -160,9 +160,9 @@ export function VCFirmsManager() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-primary">
  <Building2 className="h-8 w-8 text-primary fill-primary/20" />
- <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Firm Registry</h2>
+ <h2 className="text-4xl font-medium tracking-tighter italic leading-none">Firm Registry</h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Institutional Capital Mapping & VC Pipeline
  </p>
  </div>
@@ -172,7 +172,7 @@ export function VCFirmsManager() {
  size="icon"
  onClick={() => refetch()}
  disabled={isRefetching}
- className="h-14 w-14 rounded-2xl border-2 bg-background/50 hover:bg-primary/5 shrink-0"
+ className="h-14 w-14 rounded-2xl border bg-background/50 hover:bg-primary/5 shrink-0"
  >
  <RefreshCw className={cn("h-5 w-5 text-primary", isRefetching && "animate-spin")} />
  </Button>
@@ -239,7 +239,7 @@ export function VCFirmsManager() {
  )}
  </div>
  <div className="text-left min-w-0 flex-1">
- <p className="font-black text-sm uppercase italic tracking-tight group-hover:text-primary transition-colors truncate">
+ <p className="font-black text-sm font-medium group-hover:text-primary transition-colors truncate">
  {firm.name}
  </p>
  <div className="flex gap-3 mt-1.5">
@@ -315,7 +315,7 @@ export function VCFirmsManager() {
  <TableCell>
  <Badge
  className={cn(
- "font-black text-[9px] uppercase italic rounded-full px-4 border-2 border-none",
+ "font-black text-[9px] uppercase italic rounded-full px-4 border border-none",
  firm.status === "portfolio"
  ? "bg-emerald-500/10 text-emerald-600 shadow-sm shadow-emerald-500/10"
  : "bg-muted text-muted-foreground/60",
@@ -362,7 +362,7 @@ export function VCFirmsManager() {
  <div className="flex items-center gap-4">
  <Zap className="h-8 w-8 text-primary fill-primary/20" />
  <div className="space-y-1">
- <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+ <DialogTitle className="text-3xl font-semibold flex items-center gap-3">
  Identity Deployment
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic text-muted-foreground/60">
@@ -376,25 +376,25 @@ export function VCFirmsManager() {
  <div className="space-y-8 pb-8">
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase text-primary italic ml-1">
+ <Label className="text-[10px] font-medium text-primary italic ml-1">
  Institution Name *
  </Label>
  <Input
  value={formData.name}
  onChange={(e) => setFormData({ ...formData, name: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold bg-muted/20"
+ className="h-14 rounded-xl border font-bold bg-muted/20"
  placeholder="E.G. SEQUOIA CAPITAL..."
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase text-primary italic ml-1">
+ <Label className="text-[10px] font-medium text-primary italic ml-1">
  Deployment Status
  </Label>
  <Select value={formData.status} onValueChange={(v) => setFormData({ ...formData, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs bg-muted/20">
+ <SelectTrigger className="h-14 rounded-xl border font-bold uppercase text-xs bg-muted/20">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {IR_CONFIG.VC_STATUS_OPTIONS.map((opt) => (
  <SelectItem
  key={opt.value}
@@ -410,50 +410,50 @@ export function VCFirmsManager() {
  </div>
 
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase text-primary italic ml-1">Logo Artifact URL</Label>
+ <Label className="text-[10px] font-medium text-primary italic ml-1">Logo Artifact URL</Label>
  <Input
  value={formData.logo_url}
  onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-sm bg-muted/20"
+ className="h-14 rounded-xl border font-mono text-sm bg-muted/20"
  placeholder="https://example.com/logo.png"
  />
  </div>
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase text-primary italic ml-1">Website Route</Label>
+ <Label className="text-[10px] font-medium text-primary italic ml-1">Website Route</Label>
  <Input
  type="url"
  value={formData.website}
  onChange={(e) => setFormData({ ...formData, website: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-sm bg-muted/20"
+ className="h-14 rounded-xl border font-mono text-sm bg-muted/20"
  placeholder="https://sequoiacap.com"
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase text-primary italic ml-1">LinkedIn Route</Label>
+ <Label className="text-[10px] font-medium text-primary italic ml-1">LinkedIn Route</Label>
  <Input
  type="url"
  value={formData.linkedin_url}
  onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-sm bg-muted/20"
+ className="h-14 rounded-xl border font-mono text-sm bg-muted/20"
  placeholder="https://linkedin.com/company/..."
  />
  </div>
  </div>
 
  <div className="space-y-4">
- <Label className="text-[10px] font-black uppercase text-primary italic ml-1">
+ <Label className="text-[10px] font-medium text-primary italic ml-1">
  Target Stage Focus
  </Label>
- <div className="flex flex-wrap gap-2 p-5 rounded-2xl border-2 bg-muted/10 border-border/10">
+ <div className="flex flex-wrap gap-2 p-5 rounded-2xl border bg-muted/10 border-border/10">
  {IR_CONFIG.STAGE_FOCUS_OPTIONS.map((stage) => (
  <Badge
  key={stage}
  className={cn(
  "cursor-pointer font-black text-[9px] uppercase px-3 py-1.5 transition-all",
  formData.stage_focus.includes(stage)
- ? "bg-primary/10 text-primary border-2 border-primary/20 hover:bg-primary/20 hover:text-primary"
+ ? "bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:text-primary"
  : "bg-background text-muted-foreground border border-border/40 hover:border-primary/40",
  )}
  onClick={() => toggleArrayValue("stage_focus", stage)}
@@ -465,17 +465,17 @@ export function VCFirmsManager() {
  </div>
 
  <div className="space-y-4">
- <Label className="text-[10px] font-black uppercase text-primary italic ml-1">
+ <Label className="text-[10px] font-medium text-primary italic ml-1">
  Neural Sector Focus
  </Label>
- <div className="flex flex-wrap gap-2 p-5 rounded-2xl border-2 bg-muted/10 border-border/10">
+ <div className="flex flex-wrap gap-2 p-5 rounded-2xl border bg-muted/10 border-border/10">
  {IR_CONFIG.SECTOR_FOCUS_OPTIONS.map((sector) => (
  <Badge
  key={sector}
  className={cn(
  "cursor-pointer font-black text-[9px] uppercase px-3 py-1.5 transition-all",
  formData.sector_focus.includes(sector)
- ? "bg-primary/10 text-primary border-2 border-primary/20 hover:bg-primary/20 hover:text-primary"
+ ? "bg-primary/10 text-primary border border-primary/20 hover:bg-primary/20 hover:text-primary"
  : "bg-background text-muted-foreground border border-border/40 hover:border-primary/40",
  )}
  onClick={() => toggleArrayValue("sector_focus", sector)}
@@ -487,11 +487,11 @@ export function VCFirmsManager() {
  </div>
 
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase text-primary italic ml-1">Internal Notes</Label>
+ <Label className="text-[10px] font-medium text-primary italic ml-1">Internal Notes</Label>
  <Textarea
  value={formData.notes}
  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
- className="min-h-[120px] rounded-2xl border-2 font-medium italic text-sm bg-muted/20 p-5 resize-none"
+ className="min-h-[120px] rounded-2xl border font-medium italic text-sm bg-muted/20 p-5 resize-none"
  placeholder="Enter strategic context or private notes..."
  />
  </div>
@@ -502,14 +502,14 @@ export function VCFirmsManager() {
  <Button
  variant="outline"
  onClick={() => setDialogOpen(false)}
- className="h-14 px-8 rounded-xl border-2 text-xs font-medium italic text-muted-foreground hover:text-foreground transition-colors"
+ className="h-14 px-8 rounded-xl border text-xs font-medium italic text-muted-foreground hover:text-foreground transition-colors"
  >
  Cancel
  </Button>
  <Button
  onClick={() => saveMutation.mutate()}
  disabled={!formData.name || saveMutation.isPending}
- className="flex-1 h-14 rounded-xl font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+ className="flex-1 h-14 rounded-xl font-semibold text-lg gap-3 shadow-sm transition-all hover:scale-[1.02] active:scale-95"
  >
  {saveMutation.isPending ? (
  <Loader2 className="h-5 w-5 animate-spin" />
@@ -533,7 +533,7 @@ export function VCFirmsManager() {
  <AlertTriangle className="h-10 w-10 text-destructive" />
  </div>
  <div className="space-y-1">
- <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter text-destructive leading-none">
+ <DialogTitle className="text-3xl font-semibold text-destructive leading-none">
  Terminate Node
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic text-muted-foreground/80">
@@ -546,7 +546,7 @@ export function VCFirmsManager() {
  <Button
  variant="outline"
  onClick={() => setDeleteConfirmId(null)}
- className="flex-1 h-14 rounded-xl border-2 text-xs font-medium"
+ className="flex-1 h-14 rounded-xl border text-xs font-medium"
  >
  Cancel
  </Button>
@@ -554,7 +554,7 @@ export function VCFirmsManager() {
  variant="destructive"
  onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
  disabled={deleteMutation.isPending}
- className="flex-1 h-14 rounded-xl font-black uppercase text-[10px] tracking-tight shadow-lg shadow-destructive/20 gap-2"
+ className="flex-1 h-14 rounded-xl font-medium text-[10px] tracking-tight shadow-lg shadow-destructive/20 gap-2"
  >
  {deleteMutation.isPending ? (
  <Loader2 className="h-4 w-4 animate-spin" />

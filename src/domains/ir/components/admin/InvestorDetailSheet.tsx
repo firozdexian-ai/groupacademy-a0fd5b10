@@ -111,7 +111,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
  <SheetHeader className="p-8 border-b border-border/10 text-left bg-muted/10 shrink-0">
  <div className="flex justify-between items-start gap-4">
  <div className="space-y-1 min-w-0">
- <SheetTitle className="text-3xl font-semibold uppercase italic tracking-tight flex items-center gap-3 truncate">
+ <SheetTitle className="text-3xl font-semibold font-medium flex items-center gap-3 truncate">
  <ShieldCheck className="h-8 w-8 text-primary shrink-0" />
  <span className="truncate">{investor.full_name}</span>
  </SheetTitle>
@@ -155,7 +155,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
 
  {/* NEURAL FEEDBACK SUMMARY */}
  {(investor.relationship_summary || investor.last_feedback_summary) && (
- <section className="space-y-4 bg-primary/5 p-6 rounded-2xl border-2 border-primary/10">
+ <section className="space-y-4 bg-primary/5 p-6 rounded-2xl border border-primary/10">
  <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary italic flex items-center gap-2">
  <Zap className="h-4 w-4 fill-primary/20" /> Neural Context
  </h4>
@@ -195,7 +195,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
  <Badge
  key={interest}
  variant="outline"
- className="bg-background/50 border-2 font-semibold text-[9px] rounded-xl px-3 py-1.5 shadow-sm"
+ className="bg-background/50 border font-semibold text-[9px] rounded-xl px-3 py-1.5 shadow-sm"
  >
  {interest}
  </Badge>
@@ -219,7 +219,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
  variant="outline"
  size="sm"
  onClick={() => setShowLogger(true)}
- className="rounded-xl border-2 font-semibold uppercase text-[9px] tracking-widest h-9 bg-background/50 hover:bg-primary/5"
+ className="rounded-xl border font-semibold uppercase text-[9px] tracking-widest h-9 bg-background/50 hover:bg-primary/5"
  >
  <Zap className="h-3 w-3 mr-1.5 text-primary" /> Log Pulse
  </Button>
@@ -240,7 +240,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
  >
  <div
  className={cn(
- "h-10 w-10 rounded-xl flex items-center justify-center border-2 shrink-0 shadow-sm transition-transform group-hover:scale-110",
+ "h-10 w-10 rounded-xl flex items-center justify-center border shrink-0 shadow-sm transition-transform group-hover:scale-110",
  interaction.sentiment === "positive"
  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
  : interaction.sentiment === "negative"
@@ -252,7 +252,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
  </div>
  <div className="flex-1 space-y-1.5 min-w-0">
  <div className="flex items-center justify-between gap-2">
- <p className="text-[11px] font-semibold uppercase italic tracking-tight truncate">
+ <p className="text-[11px] font-semibold font-medium truncate">
  {IR_CONFIG.INTERACTION_TYPES.find((t) => t.value === interaction.interaction_type)
  ?.label || interaction.interaction_type}
  </p>
@@ -272,7 +272,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
  </div>
  ))
  ) : (
- <div className="text-center py-10 opacity-40 font-semibold uppercase text-[10px] tracking-widest border-2 border-dashed border-border/40 rounded-xl">
+ <div className="text-center py-10 opacity-40 font-semibold uppercase text-xs border border-dashed border-border/40 rounded-xl">
  Zero interaction artifacts found
  </div>
  )}

@@ -283,11 +283,11 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  <Button
  variant="outline"
  onClick={downloadRegistryTemplate}
- className="h-16 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-3"
+ className="h-16 rounded-2xl border font-semibold uppercase text-xs gap-3"
  >
  <Download className="h-5 w-5" /> Download Logic Template
  </Button>
- <Card className="rounded-2xl border-2 bg-muted/5">
+ <Card className="rounded-2xl border bg-muted/5">
  <CardContent className="p-4 flex items-center gap-4">
  <ShieldCheck className="h-8 w-8 text-primary/40" />
  <p className="text-[9px] font-bold text-muted-foreground uppercase leading-relaxed tracking-widest italic">
@@ -311,7 +311,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  <Button
  variant="ghost"
  onClick={() => setParsedData([])}
- className="h-12 rounded-xl font-semibold uppercase text-[10px] tracking-widest text-destructive"
+ className="h-12 rounded-xl font-semibold uppercase text-xs text-destructive"
  >
  Purge Buffer
  </Button>
@@ -331,7 +331,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  </div>
 
  {isImporting && (
- <div className="space-y-4 p-8 rounded-2xl border-2 bg-primary/5 border-primary/20">
+ <div className="space-y-4 p-8 rounded-2xl border bg-primary/5 border-primary/20">
  <div className="flex justify-between text-[10px] font-semibold text-primary">
  <span>Registry Mapping...</span>
  <span>{importProgress}%</span>
@@ -369,7 +369,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  <TableCell>
  <Badge
  variant="outline"
- className="text-[8px] font-semibold border-2"
+ className="text-[8px] font-semibold border"
  >
  {row.industry || "N/A"}
  </Badge>
@@ -393,7 +393,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  </div>
 
  <div className="grid grid-cols-2 gap-6">
- <Card className="rounded-2xl border-2 border-emerald-500/20 bg-emerald-500/5 p-8 shadow-xl group">
+ <Card className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8 shadow-sm group">
  <div className="flex items-center gap-6">
  <div className="h-16 w-16 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-emerald-500/40 shadow-sm transition-transform group-hover:rotate-6">
  <Building2 className="h-8 w-8 text-white" />
@@ -408,7 +408,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  </div>
  </div>
  </Card>
- <Card className="rounded-2xl border-2 border-blue-500/20 bg-blue-500/5 p-8 shadow-xl group">
+ <Card className="rounded-2xl border border-blue-500/30 bg-blue-500/5 p-8 shadow-sm group">
  <div className="flex items-center gap-6">
  <div className="h-16 w-16 rounded-2xl bg-blue-500 flex items-center justify-center shadow-blue-500/40 shadow-sm transition-transform group-hover:rotate-6">
  <Users className="h-8 w-8 text-white" />
@@ -425,7 +425,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  </Card>
  </div>
 
- <Card className="rounded-2xl border-2 bg-muted/10">
+ <Card className="rounded-2xl border bg-muted/10">
  <CardContent className="p-10">
  <div className="grid grid-cols-4 gap-4 text-center">
  {[
@@ -444,7 +444,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  </Card>
 
  {importStats.errors.length > 0 && (
- <Card className="rounded-2xl border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
+ <Card className="rounded-2xl border border-destructive/30 bg-destructive/5 overflow-hidden">
  <div className="p-4 bg-destructive/10 border-b border-destructive/10 flex items-center gap-3">
  <AlertCircle className="h-4 w-4 text-destructive" />
  <span className="text-[10px] font-semibold text-destructive">
@@ -472,7 +472,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  <div className="flex justify-end pt-8 border-t border-border/10">
  <Button
  onClick={handleClose}
- className="rounded-xl h-12 px-12 font-semibold uppercase text-[10px] tracking-widest shadow-xl"
+ className="rounded-xl h-12 px-12 font-semibold uppercase text-xs shadow-sm"
  >
  {importStats ? "Terminate Session" : "Close Ingestion Node"}
  </Button>

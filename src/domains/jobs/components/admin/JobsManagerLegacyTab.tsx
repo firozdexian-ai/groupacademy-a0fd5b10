@@ -510,7 +510,7 @@ export function JobsManagerLegacyTab() {
  </button>
  </div>
  ) : (
- <label className="h-14 w-14 border-2 border-dashed border-border rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
+ <label className="h-14 w-14 border border-dashed border-border rounded-lg flex items-center justify-center cursor-pointer hover:border-primary transition-colors">
  {isUploadingLogo ? <Loader2 className="h-4 w-4 animate-spin" /> : <Upload className="h-4 w-4 text-muted-foreground" />}
  <input type="file" accept="image/*" className="hidden" onChange={(e) => e.target.files?.[0] && handleLogoUpload(e.target.files[0])} />
  </label>

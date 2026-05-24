@@ -52,7 +52,7 @@ function HrRegistryShell({ title, description, icon: Icon, data, isLoading, colu
  </div>
  <Button
  onClick={onAdd}
- className="h-12 px-8 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg bg-primary text-primary-foreground"
+ className="h-12 px-8 rounded-xl font-semibold uppercase text-xs gap-2 shadow-lg bg-primary text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Deploy Node
  </Button>
@@ -69,7 +69,7 @@ function HrRegistryShell({ title, description, icon: Icon, data, isLoading, colu
  <TableHead
  key={i}
  className={cn(
- "font-black uppercase text-[10px] tracking-widest py-5",
+ "font-medium text-xs py-5",
  i === 0 && "pl-8",
  i === columns.length - 1 && "text-right pr-8",
  )}
@@ -90,7 +90,7 @@ function HrRegistryShell({ title, description, icon: Icon, data, isLoading, colu
  <TableRow>
  <TableCell
  colSpan={columns.length}
- className="py-20 text-center font-semibold uppercase text-[10px] tracking-widest text-muted-foreground/30 italic"
+ className="py-20 text-center font-semibold uppercase text-xs text-muted-foreground/30 italic"
  >
  Zero records detected.
  </TableCell>
@@ -132,7 +132,7 @@ export function HrVerticalsTab() {
  }}
  renderRow={(row: any) => (
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
- <TableCell className="py-5 pl-8 font-semibold text-sm uppercase italic tracking-tight">{row.name}</TableCell>
+ <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
  <TableCell className="text-xs text-muted-foreground">{row.description || "—"}</TableCell>
  <TableCell className="text-right pr-8">
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
@@ -171,7 +171,7 @@ export function HrVerticalsTab() {
  <Input
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -179,7 +179,7 @@ export function HrVerticalsTab() {
  <Input
  value={draft.description || ""}
  onChange={(e) => setDraft({ ...draft, description: e.target.value })}
- className="h-14 rounded-xl border-2"
+ className="h-14 rounded-xl border"
  />
  </div>
  </div>
@@ -230,7 +230,7 @@ export function HrFunctionsTab() {
  }}
  renderRow={(row: any) => (
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
- <TableCell className="py-5 pl-8 font-semibold text-sm uppercase italic tracking-tight">{row.name}</TableCell>
+ <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
  <TableCell className="text-xs font-bold uppercase text-muted-foreground">
  {hrGraphQuery.data?.verticals.find((v) => v.id === row.vertical_id)?.name || "—"}
  </TableCell>
@@ -270,10 +270,10 @@ export function HrFunctionsTab() {
  placeholder="Name"
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  <Select value={draft.vertical_id || ""} onValueChange={(v) => setDraft({ ...draft, vertical_id: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs">
+ <SelectTrigger className="h-14 rounded-xl border font-bold uppercase text-xs">
  <SelectValue placeholder="Select Parent Vertical" />
  </SelectTrigger>
  <SelectContent>
@@ -332,7 +332,7 @@ export function HrTeamsTab() {
  }}
  renderRow={(row: any) => (
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
- <TableCell className="py-5 pl-8 font-semibold text-sm uppercase italic tracking-tight">{row.name}</TableCell>
+ <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
  <TableCell className="text-xs font-bold uppercase text-muted-foreground">
  {hrGraphQuery.data?.functions.find((f) => f.id === row.function_id)?.name || "—"}
  </TableCell>
@@ -377,10 +377,10 @@ export function HrTeamsTab() {
  placeholder="Name"
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  <Select value={draft.function_id || ""} onValueChange={(v) => setDraft({ ...draft, function_id: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs">
+ <SelectTrigger className="h-14 rounded-xl border font-bold uppercase text-xs">
  <SelectValue placeholder="Select Parent Function" />
  </SelectTrigger>
  <SelectContent>
@@ -444,7 +444,7 @@ export function HrGradesTab() {
  L{row.level}
  </span>
  </TableCell>
- <TableCell className="font-semibold text-sm uppercase italic tracking-tight">{row.name}</TableCell>
+ <TableCell className="font-semibold text-sm font-medium">{row.name}</TableCell>
  <TableCell>
  <span className="font-mono text-[10px] bg-primary/10 text-primary px-2 py-1 rounded-md">
  {hrGraphQuery.data?.headcountByGrade[row.id] || 0} FTE
@@ -487,13 +487,13 @@ export function HrGradesTab() {
  placeholder="Level (e.g. 1)"
  value={draft.level || ""}
  onChange={(e) => setDraft({ ...draft, level: Number(e.target.value) })}
- className="h-14 rounded-xl border-2 font-semibold"
+ className="h-14 rounded-xl border font-semibold"
  />
  <Input
  placeholder="Name (e.g. Junior Engineer)"
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
  <Button
@@ -524,7 +524,7 @@ function PurgeAlert({ targetId, onOpenChange, onConfirm }: any) {
  <AlertDialog open={!!targetId} onOpenChange={(open) => !open && onOpenChange(null)}>
  <AlertDialogContent className="rounded-2xl border-4 bg-background">
  <AlertDialogHeader className="items-center text-center">
- <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border-2 border-destructive/20">
+ <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border border-destructive/30">
  <AlertTriangle className="h-8 w-8 text-destructive" />
  </div>
  <AlertDialogTitle className="font-semibold uppercase text-2xl tracking-tight">

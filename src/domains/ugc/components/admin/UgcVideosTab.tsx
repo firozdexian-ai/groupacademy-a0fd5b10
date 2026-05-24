@@ -31,13 +31,13 @@ export function UgcVideosTab() {
  <div>
  <div className="flex items-center gap-2">
  <Video className="h-5 w-5 text-blue-600" />
- <h2 className="text-2xl font-black uppercase tracking-tight">Free Videos</h2>
+ <h2 className="text-2xl font-medium tracking-tight">Free Videos</h2>
  </div>
  <p className="text-sm text-muted-foreground mt-1">Open-Access Media Library</p>
  </div>
  <Button
  onClick={() => { setDraft({ is_published: false }); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white"
  >
  <Plus className="h-4 w-4" /> Deploy Video
  </Button>
@@ -49,14 +49,14 @@ export function UgcVideosTab() {
  value={search}
  onChange={(e) => setSearch(e.target.value)}
  placeholder="Search title..."
- className="pl-10 h-11 rounded-xl border-2"
+ className="pl-10 h-11 rounded-xl border"
  />
  </div>
 
- <Card className="border-2">
+ <Card className="border">
  <CardHeader className="pb-2 flex flex-row items-center gap-2">
  <ShieldCheck className="h-4 w-4 text-blue-600" />
- <h3 className="text-sm font-black uppercase tracking-wide">Catalog Registry ({rows.length})</h3>
+ <h3 className="text-sm font-medium tracking-wide">Catalog Registry ({rows.length})</h3>
  </CardHeader>
  <CardContent className="p-0">
  <Table>
@@ -123,7 +123,7 @@ export function UgcVideosTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-xl">
  <DialogHeader>
- <DialogTitle className="flex items-center gap-2 text-xl font-black uppercase">
+ <DialogTitle className="flex items-center gap-2 text-xl font-medium">
  <Video className="h-5 w-5 text-blue-600" /> {draft.id ? "Edit" : "Deploy"} Video
  </DialogTitle>
  <DialogDescription>Free video catalog entry.</DialogDescription>
@@ -131,27 +131,27 @@ export function UgcVideosTab() {
  <div className="space-y-3 py-2">
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Title *</Label>
- <Input value={draft.title || ""} onChange={(e) => setDraft({ ...draft, title: e.target.value })} className="h-11 rounded-xl border-2 font-bold" />
+ <Input value={draft.title || ""} onChange={(e) => setDraft({ ...draft, title: e.target.value })} className="h-11 rounded-xl border font-bold" />
  </div>
  <div className="grid grid-cols-2 gap-3">
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Slug (auto)</Label>
- <Input value={draft.slug || ""} onChange={(e) => setDraft({ ...draft, slug: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Input value={draft.slug || ""} onChange={(e) => setDraft({ ...draft, slug: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Thumbnail URL</Label>
- <Input value={draft.thumbnail_url || ""} onChange={(e) => setDraft({ ...draft, thumbnail_url: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Input value={draft.thumbnail_url || ""} onChange={(e) => setDraft({ ...draft, thumbnail_url: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  </div>
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">YouTube URL</Label>
- <Input value={draft.youtube_url || ""} onChange={(e) => setDraft({ ...draft, youtube_url: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Input value={draft.youtube_url || ""} onChange={(e) => setDraft({ ...draft, youtube_url: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Description</Label>
- <Textarea value={draft.description || ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} className="min-h-[80px] rounded-xl border-2" />
+ <Textarea value={draft.description || ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} className="min-h-[80px] rounded-xl border" />
  </div>
- <div className="flex items-center justify-between rounded-xl border-2 px-3 py-2.5">
+ <div className="flex items-center justify-between rounded-xl border px-3 py-2.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Published</Label>
  <Switch checked={!!draft.is_published} onCheckedChange={(v) => setDraft({ ...draft, is_published: v })} />
  </div>
@@ -160,7 +160,7 @@ export function UgcVideosTab() {
  <Button
  disabled={!draft.title || upsertVideo.isPending}
  onClick={() => upsertVideo.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-12 rounded-xl font-black uppercase bg-blue-600 hover:bg-blue-700 text-white"
+ className="h-12 rounded-xl font-medium bg-blue-600 hover:bg-blue-700 text-white"
  >
  <ShieldCheck className="h-4 w-4 mr-2" /> Authorize
  </Button>

@@ -364,7 +364,7 @@ export function JobsLinkedInBatchUpload({
  </p>
  <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleFileUpload} />
  </div>
- <Card className="rounded-2xl border-2 bg-muted/5 max-w-sm border-none shadow-none">
+ <Card className="rounded-2xl border bg-muted/5 max-w-sm border-none shadow-none">
  <CardContent className="p-4 flex items-center gap-4">
  <ShieldCheck className="h-8 w-8 text-primary/40 shrink-0" />
  <p className="text-[9px] font-bold text-muted-foreground uppercase leading-relaxed tracking-widest italic">
@@ -381,13 +381,13 @@ export function JobsLinkedInBatchUpload({
  {step === "preview" && (
  <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
  <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
- <Card className="rounded-2xl border-2 bg-card p-6 shadow-sm">
+ <Card className="rounded-2xl border bg-card p-6 shadow-sm">
  <p className="text-[9px] font-semibold uppercase text-muted-foreground/60 tracking-widest mb-2 italic">
  Total Artifacts
  </p>
  <p className="text-3xl font-semibold tracking-tight leading-none">{mappedJobs.length}</p>
  </Card>
- <Card className="rounded-2xl border-2 border-emerald-500/20 bg-emerald-500/5 p-6 shadow-sm">
+ <Card className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-6 shadow-sm">
  <p className="text-[9px] font-semibold uppercase text-emerald-600 tracking-widest mb-2 italic">
  Ready for Injection
  </p>
@@ -395,7 +395,7 @@ export function JobsLinkedInBatchUpload({
  {newJobs.length}
  </p>
  </Card>
- <Card className="rounded-2xl border-2 border-amber-500/20 bg-amber-500/5 p-6 shadow-sm">
+ <Card className="rounded-2xl border border-amber-500/20 bg-amber-500/5 p-6 shadow-sm">
  <p className="text-[9px] font-semibold uppercase text-amber-600 tracking-widest mb-2 italic">
  Duplicate Nodes Purged
  </p>
@@ -437,7 +437,7 @@ export function JobsLinkedInBatchUpload({
  <TableCell>
  <Badge
  variant="outline"
- className="text-[8px] font-semibold border-2"
+ className="text-[8px] font-semibold border"
  >
  {job.applyVia}
  </Badge>
@@ -494,7 +494,7 @@ export function JobsLinkedInBatchUpload({
  </div>
 
  <div className="grid grid-cols-2 gap-6">
- <Card className="rounded-2xl border-2 border-emerald-500/20 bg-emerald-500/5 p-8 shadow-xl group">
+ <Card className="rounded-2xl border border-emerald-500/30 bg-emerald-500/5 p-8 shadow-sm group">
  <div className="flex items-center gap-6">
  <div className="h-16 w-16 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-emerald-500/40 shadow-sm transition-transform group-hover:rotate-6">
  <Zap className="h-8 w-8 text-white" />
@@ -507,7 +507,7 @@ export function JobsLinkedInBatchUpload({
  </div>
  </div>
  </Card>
- <Card className="rounded-2xl border-2 border-blue-500/20 bg-blue-500/5 p-8 shadow-xl group">
+ <Card className="rounded-2xl border border-blue-500/30 bg-blue-500/5 p-8 shadow-sm group">
  <div className="flex items-center gap-6">
  <div className="h-16 w-16 rounded-2xl bg-blue-500 flex items-center justify-center shadow-blue-500/40 shadow-sm transition-transform group-hover:rotate-6">
  <Building2 className="h-8 w-8 text-white" />
@@ -525,7 +525,7 @@ export function JobsLinkedInBatchUpload({
  </div>
 
  {stats.errors.length > 0 && (
- <Card className="rounded-2xl border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
+ <Card className="rounded-2xl border border-destructive/30 bg-destructive/5 overflow-hidden">
  <div className="p-4 bg-destructive/10 border-b border-destructive/10 flex items-center gap-3">
  <AlertCircle className="h-4 w-4 text-destructive" />
  <span className="text-[10px] font-semibold text-destructive">
@@ -554,7 +554,7 @@ export function JobsLinkedInBatchUpload({
  <Button
  variant="ghost"
  onClick={reset}
- className="font-semibold uppercase text-[10px] tracking-widest h-12 px-8"
+ className="font-semibold uppercase text-xs h-12 px-8"
  >
  Abort Ingestion
  </Button>

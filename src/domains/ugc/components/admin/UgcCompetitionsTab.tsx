@@ -37,22 +37,22 @@ export function UgcCompetitionsTab() {
  </div>
  <Button
  onClick={() => { setDraft({ status: "draft" }); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-amber-500/20 bg-amber-500 hover:bg-amber-600 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-amber-500/20 bg-amber-500 hover:bg-amber-600 text-white"
  >
  <Plus className="h-4 w-4" /> Deploy Tournament
  </Button>
  </div>
 
- <Card className="border-2 rounded-2xl overflow-hidden">
+ <Card className="border rounded-2xl overflow-hidden">
  <CardContent className="p-0">
  <Table>
  <TableHeader>
  <TableRow className="bg-muted/40 hover:bg-muted/40">
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Title</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Category</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Window</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">Actions</TableHead>
+ <TableHead className="font-medium text-xs">Title</TableHead>
+ <TableHead className="font-medium text-xs">Category</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
+ <TableHead className="font-medium text-xs">Window</TableHead>
+ <TableHead className="font-medium text-xs text-right">Actions</TableHead>
  </TableRow>
  </TableHeader>
  <TableBody>
@@ -76,7 +76,7 @@ export function UgcCompetitionsTab() {
  <Badge
  variant="outline"
  className={cn(
- "font-black uppercase text-[10px] tracking-widest",
+ "font-medium text-xs",
  row.status === "active" && "border-emerald-500/50 text-emerald-600 bg-emerald-500/10",
  row.status === "draft" && "border-muted-foreground/30 text-muted-foreground bg-muted/30",
  row.status === "completed" && "border-blue-500/50 text-blue-600 bg-blue-500/10",
@@ -118,50 +118,50 @@ export function UgcCompetitionsTab() {
  </DialogHeader>
  <div className="space-y-3 py-2">
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Title *</Label>
- <Input value={draft.title || ""} onChange={(e) => setDraft({ ...draft, title: e.target.value })} className="h-11 rounded-xl border-2 font-bold" />
+ <Label className="font-medium text-xs">Title *</Label>
+ <Input value={draft.title || ""} onChange={(e) => setDraft({ ...draft, title: e.target.value })} className="h-11 rounded-xl border font-bold" />
  </div>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Slug (auto)</Label>
- <Input value={draft.slug || ""} onChange={(e) => setDraft({ ...draft, slug: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Label className="font-medium text-xs">Slug (auto)</Label>
+ <Input value={draft.slug || ""} onChange={(e) => setDraft({ ...draft, slug: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Category</Label>
- <Input value={draft.category || ""} onChange={(e) => setDraft({ ...draft, category: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Label className="font-medium text-xs">Category</Label>
+ <Input value={draft.category || ""} onChange={(e) => setDraft({ ...draft, category: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Featured Image</Label>
- <Input value={draft.featured_image || ""} onChange={(e) => setDraft({ ...draft, featured_image: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Label className="font-medium text-xs">Featured Image</Label>
+ <Input value={draft.featured_image || ""} onChange={(e) => setDraft({ ...draft, featured_image: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  </div>
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Description</Label>
- <Textarea value={draft.description || ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} className="min-h-[80px] rounded-xl border-2" />
+ <Label className="font-medium text-xs">Description</Label>
+ <Textarea value={draft.description || ""} onChange={(e) => setDraft({ ...draft, description: e.target.value })} className="min-h-[80px] rounded-xl border" />
  </div>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Start Date</Label>
- <Input type="date" value={draft.start_date || ""} onChange={(e) => setDraft({ ...draft, start_date: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Label className="font-medium text-xs">Start Date</Label>
+ <Input type="date" value={draft.start_date || ""} onChange={(e) => setDraft({ ...draft, start_date: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">End Date</Label>
- <Input type="date" value={draft.end_date || ""} onChange={(e) => setDraft({ ...draft, end_date: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Label className="font-medium text-xs">End Date</Label>
+ <Input type="date" value={draft.end_date || ""} onChange={(e) => setDraft({ ...draft, end_date: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Submission Deadline</Label>
- <Input type="datetime-local" value={draft.submission_deadline ? draft.submission_deadline.substring(0,16) : ""} onChange={(e) => setDraft({ ...draft, submission_deadline: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Label className="font-medium text-xs">Submission Deadline</Label>
+ <Input type="datetime-local" value={draft.submission_deadline ? draft.submission_deadline.substring(0,16) : ""} onChange={(e) => setDraft({ ...draft, submission_deadline: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  </div>
  <div className="grid grid-cols-2 gap-3">
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Max Participants</Label>
- <Input type="number" value={draft.max_participants || ""} onChange={(e) => setDraft({ ...draft, max_participants: e.target.value ? parseInt(e.target.value) : null })} className="h-11 rounded-xl border-2" />
+ <Label className="font-medium text-xs">Max Participants</Label>
+ <Input type="number" value={draft.max_participants || ""} onChange={(e) => setDraft({ ...draft, max_participants: e.target.value ? parseInt(e.target.value) : null })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Status</Label>
+ <Label className="font-medium text-xs">Status</Label>
  <Select value={draft.status || "draft"} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-11 rounded-xl border-2 font-bold"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-11 rounded-xl border font-bold"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="draft">Draft</SelectItem>
  <SelectItem value="active">Active</SelectItem>
@@ -171,12 +171,12 @@ export function UgcCompetitionsTab() {
  </div>
  </div>
  <div className="space-y-1.5">
- <Label className="font-black uppercase text-[10px] tracking-widest">Prizes (JSON)</Label>
+ <Label className="font-medium text-xs">Prizes (JSON)</Label>
  <Textarea
  value={typeof draft.prizes === "string" ? draft.prizes : JSON.stringify(draft.prizes ?? "", null, 2)}
  onChange={(e) => setDraft({ ...draft, prizes: e.target.value })}
  placeholder='[{"rank":1,"reward":"500 credits"}]'
- className="min-h-[80px] rounded-xl border-2 font-mono text-xs"
+ className="min-h-[80px] rounded-xl border font-mono text-xs"
  />
  </div>
  </div>
@@ -184,7 +184,7 @@ export function UgcCompetitionsTab() {
  <Button
  disabled={!draft.title || upsertCompetition.isPending}
  onClick={() => upsertCompetition.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-12 rounded-xl font-black uppercase bg-amber-500 hover:bg-amber-600 text-white"
+ className="h-12 rounded-xl font-medium bg-amber-500 hover:bg-amber-600 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Authorize
  </Button>

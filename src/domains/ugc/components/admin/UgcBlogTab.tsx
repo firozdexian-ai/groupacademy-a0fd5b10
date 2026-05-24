@@ -37,13 +37,13 @@ export function UgcBlogTab() {
  <div>
  <div className="flex items-center gap-2">
  <FileText className="h-5 w-5 text-emerald-600" />
- <h2 className="text-2xl font-black uppercase tracking-tight">Blog Publisher</h2>
+ <h2 className="text-2xl font-medium tracking-tight">Blog Publisher</h2>
  </div>
  <p className="text-sm text-muted-foreground mt-1">Platform Articles &amp; Written Media</p>
  </div>
  <Button
  onClick={() => { setDraft({ status: "draft" }); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
  >
  <Plus className="h-4 w-4" /> Inject Article
  </Button>
@@ -52,10 +52,10 @@ export function UgcBlogTab() {
  <div className="flex items-center gap-3 flex-wrap">
  <div className="relative max-w-sm flex-1 min-w-[200px]">
  <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
- <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title..." className="pl-10 h-11 rounded-xl border-2" />
+ <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search title..." className="pl-10 h-11 rounded-xl border" />
  </div>
  <Select value={statusFilter} onValueChange={setStatusFilter}>
- <SelectTrigger className="w-40 h-11 rounded-xl border-2 font-bold"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="w-40 h-11 rounded-xl border font-bold"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="all">All Status</SelectItem>
  <SelectItem value="draft">Draft</SelectItem>
@@ -65,10 +65,10 @@ export function UgcBlogTab() {
  </Select>
  </div>
 
- <Card className="border-2">
+ <Card className="border">
  <CardHeader className="pb-2 flex flex-row items-center gap-2">
  <ShieldCheck className="h-4 w-4 text-emerald-600" />
- <h3 className="text-sm font-black uppercase tracking-wide">Article Registry ({rows.length})</h3>
+ <h3 className="text-sm font-medium tracking-wide">Article Registry ({rows.length})</h3>
  </CardHeader>
  <CardContent className="p-0">
  <Table>
@@ -138,7 +138,7 @@ export function UgcBlogTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
  <DialogHeader>
- <DialogTitle className="flex items-center gap-2 text-xl font-black uppercase">
+ <DialogTitle className="flex items-center gap-2 text-xl font-medium">
  <FileText className="h-5 w-5 text-emerald-600" /> {draft.id ? "Edit" : "Inject"} Article
  </DialogTitle>
  <DialogDescription>Long-form blog post.</DialogDescription>
@@ -146,25 +146,25 @@ export function UgcBlogTab() {
  <div className="space-y-3 py-2">
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Title *</Label>
- <Input value={draft.title || ""} onChange={(e) => setDraft({ ...draft, title: e.target.value })} className="h-11 rounded-xl border-2 font-bold" />
+ <Input value={draft.title || ""} onChange={(e) => setDraft({ ...draft, title: e.target.value })} className="h-11 rounded-xl border font-bold" />
  </div>
  <div className="grid grid-cols-3 gap-3">
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Slug (auto)</Label>
- <Input value={draft.slug || ""} onChange={(e) => setDraft({ ...draft, slug: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Input value={draft.slug || ""} onChange={(e) => setDraft({ ...draft, slug: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Category</Label>
- <Input value={draft.category || ""} onChange={(e) => setDraft({ ...draft, category: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Input value={draft.category || ""} onChange={(e) => setDraft({ ...draft, category: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Featured Image URL</Label>
- <Input value={draft.featured_image || ""} onChange={(e) => setDraft({ ...draft, featured_image: e.target.value })} className="h-11 rounded-xl border-2" />
+ <Input value={draft.featured_image || ""} onChange={(e) => setDraft({ ...draft, featured_image: e.target.value })} className="h-11 rounded-xl border" />
  </div>
  </div>
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Excerpt</Label>
- <Textarea value={draft.excerpt || ""} onChange={(e) => setDraft({ ...draft, excerpt: e.target.value })} className="min-h-[60px] rounded-xl border-2" />
+ <Textarea value={draft.excerpt || ""} onChange={(e) => setDraft({ ...draft, excerpt: e.target.value })} className="min-h-[60px] rounded-xl border" />
  </div>
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Body (Markdown)</Label>
@@ -174,10 +174,10 @@ export function UgcBlogTab() {
  <TabsTrigger value="preview">Preview</TabsTrigger>
  </TabsList>
  <TabsContent value="edit">
- <Textarea value={draft.content || ""} onChange={(e) => setDraft({ ...draft, content: e.target.value })} className="min-h-[200px] rounded-xl border-2 font-mono text-sm" />
+ <Textarea value={draft.content || ""} onChange={(e) => setDraft({ ...draft, content: e.target.value })} className="min-h-[200px] rounded-xl border font-mono text-sm" />
  </TabsContent>
  <TabsContent value="preview">
- <div className="prose prose-sm dark:prose-invert max-w-none border-2 rounded-xl p-4 min-h-[200px]">
+ <div className="prose prose-sm dark:prose-invert max-w-none border rounded-xl p-4 min-h-[200px]">
  <ReactMarkdown>{draft.content || "*Nothing to preview.*"}</ReactMarkdown>
  </div>
  </TabsContent>
@@ -187,7 +187,7 @@ export function UgcBlogTab() {
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Status</Label>
  <Select value={draft.status || "draft"} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-11 rounded-xl border-2 font-bold"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-11 rounded-xl border font-bold"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="draft">Draft</SelectItem>
  <SelectItem value="published">Published</SelectItem>
@@ -195,7 +195,7 @@ export function UgcBlogTab() {
  </SelectContent>
  </Select>
  </div>
- <div className="flex items-center justify-between rounded-xl border-2 px-3">
+ <div className="flex items-center justify-between rounded-xl border px-3">
  <Label className="text-xs font-bold uppercase tracking-wide">Featured</Label>
  <Switch checked={!!draft.is_featured} onCheckedChange={(v) => setDraft({ ...draft, is_featured: v })} />
  </div>
@@ -205,7 +205,7 @@ export function UgcBlogTab() {
  <Button
  disabled={!draft.title || upsertBlog.isPending}
  onClick={() => upsertBlog.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-12 rounded-xl font-black uppercase bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="h-12 rounded-xl font-medium bg-emerald-600 hover:bg-emerald-700 text-white"
  >
  <ShieldCheck className="h-4 w-4 mr-2" /> Authorize
  </Button>

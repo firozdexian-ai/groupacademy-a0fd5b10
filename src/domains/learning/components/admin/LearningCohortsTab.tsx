@@ -29,11 +29,11 @@ export function LearningCohortsTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-indigo-500">
  <Users className="h-8 w-8 text-indigo-500 fill-indigo-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Cohorts
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Synchronous Group Learning
  </p>
  </div>
@@ -42,7 +42,7 @@ export function LearningCohortsTab() {
  setDraft({ status: "upcoming" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
  >
  <Plus className="h-4 w-4" /> Instantiate Cohort
  </Button>
@@ -55,12 +55,12 @@ export function LearningCohortsTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Cohort Identifier
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Content Node</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">
+ <TableHead className="font-medium text-xs">Content Node</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
+ <TableHead className="font-medium text-xs text-right">
  Start Date
  </TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
@@ -77,7 +77,7 @@ export function LearningCohortsTab() {
  <TableRow>
  <TableCell
  colSpan={5}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero cohorts detected.
  </TableCell>
@@ -90,7 +90,7 @@ export function LearningCohortsTab() {
  <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
  <Users className="h-3 w-3 text-indigo-500" />
  </div>
- <span className="font-black text-sm uppercase italic tracking-tight">{row.name}</span>
+ <span className="font-black text-sm font-medium">{row.name}</span>
  </div>
  </TableCell>
  <TableCell>
@@ -163,7 +163,7 @@ export function LearningCohortsTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-indigo-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-indigo-500 flex items-center gap-2">
  <Users className="h-6 w-6" /> Instantiate Cohort
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -177,7 +177,7 @@ export function LearningCohortsTab() {
  placeholder="e.g. Spring 2026 Alpha"
  value={draft.title || ""}
  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -188,7 +188,7 @@ export function LearningCohortsTab() {
  placeholder="UUID"
  value={draft.content_id || ""}
  onChange={(e) => setDraft({ ...draft, content_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  <div className="grid grid-cols-2 gap-4">
@@ -200,14 +200,14 @@ export function LearningCohortsTab() {
  type="date"
  value={draft.start_date?.split("T")[0] || ""}
  onChange={(e) => setDraft({ ...draft, start_date: e.target.value })}
- className="h-14 rounded-xl border-2 pl-12 font-mono text-xs"
+ className="h-14 rounded-xl border pl-12 font-mono text-xs"
  />
  </div>
  </div>
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-primary ml-1">Status</Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -234,7 +234,7 @@ export function LearningCohortsTab() {
  delete payload.start_date;
  upsertCohort.mutate(payload, { onSuccess: () => setOpen(false) });
  }}
- className="h-14 rounded-xl font-black uppercase bg-indigo-600 hover:bg-indigo-700 text-white"
+ className="h-14 rounded-xl font-medium bg-indigo-600 hover:bg-indigo-700 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Enforce Cohort
  </Button>
@@ -243,7 +243,7 @@ export function LearningCohortsTab() {
  <Dialog open={!!sessionsRow} onOpenChange={(o) => !o && setSessionsRow(null)}>
  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-6 border border-border/60">
  <DialogHeader>
- <DialogTitle className="text-xl font-black uppercase italic tracking-tight text-indigo-500 flex items-center gap-2">
+ <DialogTitle className="text-xl font-medium italic tracking-tight text-indigo-500 flex items-center gap-2">
  <Video className="h-5 w-5" /> Live Sessions — {sessionsRow?.name}
  </DialogTitle>
  </DialogHeader>

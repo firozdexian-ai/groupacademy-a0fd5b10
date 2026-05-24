@@ -24,14 +24,14 @@ export function ConfirmPurge({
  <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
  <AlertDialogContent className="rounded-2xl">
  <AlertDialogHeader>
- <AlertDialogTitle className="font-black uppercase tracking-tight">{title}</AlertDialogTitle>
+ <AlertDialogTitle className="font-medium tracking-tight">{title}</AlertDialogTitle>
  <AlertDialogDescription>{description}</AlertDialogDescription>
  </AlertDialogHeader>
  <AlertDialogFooter>
  <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
  <AlertDialogAction
  onClick={onConfirm}
- className="rounded-xl bg-destructive hover:bg-destructive/90 font-black uppercase tracking-wider"
+ className="rounded-xl bg-destructive hover:bg-destructive/90 font-medium tracking-wider"
  >
  Purge
  </AlertDialogAction>

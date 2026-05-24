@@ -179,11 +179,11 @@ export function LearningProgressTab() {
  </p>
  </div>
  <Select value={selectedCourse} onValueChange={setSelectedCourse}>
- <SelectTrigger className="w-full md:w-[320px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-card shadow-inner">
+ <SelectTrigger className="w-full md:w-[320px] h-10 rounded-xl border font-semibold uppercase text-xs bg-card shadow-inner">
  <Layers className="w-4 h-4 mr-2 text-primary" />
  <SelectValue placeholder="Logic Context" />
  </SelectTrigger>
- <SelectContent className="rounded-2xl border-2 shadow-sm">
+ <SelectContent className="rounded-2xl border shadow-sm">
  <SelectItem value="all" className="font-bold">
  GLOBAL_REGISTRY
  </SelectItem>
@@ -230,7 +230,7 @@ export function LearningProgressTab() {
  <CardContent className="p-6 space-y-4">
  <div
  className={cn(
- "h-12 w-12 rounded-2xl flex items-center justify-center border-2 transition-transform duration-500 group-hover:rotate-6 shadow-inner",
+ "h-12 w-12 rounded-2xl flex items-center justify-center border transition-transform duration-500 group-hover:rotate-6 shadow-inner",
  kpi.bg,
  "border-white/5",
  )}
@@ -423,7 +423,7 @@ export function LearningProgressTab() {
  <Dialog open={!!selectedEnrollment} onOpenChange={(o) => !o && setSelectedEnrollment(null)}>
  <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 border border-border/60">
  <DialogHeader>
- <DialogTitle className="text-xl font-semibold uppercase italic tracking-tight text-violet-500 flex items-center gap-2">
+ <DialogTitle className="text-xl font-semibold font-medium text-violet-500 flex items-center gap-2">
  <ClipboardCheck className="h-5 w-5" /> Quiz Results
  {selectedEnrollment && <span className="text-xs text-muted-foreground"> — {selectedEnrollment.talentName}</span>}
  </DialogTitle>

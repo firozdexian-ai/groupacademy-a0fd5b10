@@ -27,11 +27,11 @@ export function GigsSubmissionsTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-primary">
  <FileCheck className="h-8 w-8 text-primary fill-primary/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Gig Submissions
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Master Deliverables Ledger
  </p>
  </div>
@@ -40,7 +40,7 @@ export function GigsSubmissionsTab() {
  setDraft({ status: "pending" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Override Submission
  </Button>
@@ -53,12 +53,12 @@ export function GigsSubmissionsTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Gig Reference
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Talent ID</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Verdict</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">
+ <TableHead className="font-medium text-xs">Talent ID</TableHead>
+ <TableHead className="font-medium text-xs">Verdict</TableHead>
+ <TableHead className="font-medium text-xs text-right">
  Timestamp
  </TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
@@ -75,7 +75,7 @@ export function GigsSubmissionsTab() {
  <TableRow>
  <TableCell
  colSpan={5}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero submissions detected.
  </TableCell>
@@ -155,7 +155,7 @@ export function GigsSubmissionsTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-primary flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-primary flex items-center gap-2">
  <FileCheck className="h-6 w-6" /> Force Verdict
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -172,7 +172,7 @@ export function GigsSubmissionsTab() {
  placeholder="UUID"
  value={draft.gig_id || ""}
  onChange={(e) => setDraft({ ...draft, gig_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  <div className="space-y-2">
@@ -181,7 +181,7 @@ export function GigsSubmissionsTab() {
  placeholder="UUID"
  value={draft.talent_id || ""}
  onChange={(e) => setDraft({ ...draft, talent_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  </div>
@@ -190,7 +190,7 @@ export function GigsSubmissionsTab() {
  Verdict Status
  </Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -213,7 +213,7 @@ export function GigsSubmissionsTab() {
  <Button
  disabled={!draft.gig_id || upsertSubmission.isPending}
  onClick={() => upsertSubmission.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-14 rounded-xl font-black uppercase bg-primary hover:bg-primary/90 text-primary-foreground"
+ className="h-14 rounded-xl font-medium bg-primary hover:bg-primary/90 text-primary-foreground"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Enforce Status
  </Button>

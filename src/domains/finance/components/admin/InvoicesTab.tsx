@@ -190,10 +190,10 @@ export function InvoicesTab() {
  />
  </div>
  <Select value={statusFilter} onValueChange={(v) => setStatusFilter(v as InvoiceStatus)}>
- <SelectTrigger className="w-full sm:w-[220px] h-12 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-background">
+ <SelectTrigger className="w-full sm:w-[220px] h-12 rounded-xl border font-semibold uppercase text-xs bg-background">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  <SelectItem value="all" className="font-bold text-[10px]">
  ALL LOGS
  </SelectItem>
@@ -226,15 +226,15 @@ export function InvoicesTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-semibold uppercase text-[10px] tracking-widest py-6 pl-8">
+ <TableHead className="font-semibold uppercase text-xs py-6 pl-8">
  Invoice Node
  </TableHead>
- <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Talent Identity</TableHead>
- <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-right">
+ <TableHead className="font-semibold uppercase text-xs">Talent Identity</TableHead>
+ <TableHead className="font-semibold uppercase text-xs text-right">
  Bundle Payload
  </TableHead>
- <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Status</TableHead>
- <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Date</TableHead>
+ <TableHead className="font-semibold uppercase text-xs">Status</TableHead>
+ <TableHead className="font-semibold uppercase text-xs">Date</TableHead>
  <TableHead className="text-right py-6 pr-8"></TableHead>
  </TableRow>
  </TableHeader>
@@ -253,7 +253,7 @@ export function InvoicesTab() {
  </Badge>
  </TableCell>
  <TableCell className="text-left">
- <p className="font-semibold text-sm uppercase italic tracking-tight">
+ <p className="font-semibold text-sm font-medium">
  {inv.talents?.full_name || "NULL_ENTITY"}
  </p>
  <p className="text-[9px] font-bold text-muted-foreground mt-0.5">
@@ -271,7 +271,7 @@ export function InvoicesTab() {
  <TableCell>
  <Badge
  className={cn(
- "font-black text-[9px] uppercase italic border-2 px-3 py-1 rounded-full",
+ "font-black text-[9px] uppercase italic border px-3 py-1 rounded-full",
  meta.className,
  )}
  >
@@ -286,7 +286,7 @@ export function InvoicesTab() {
  <Button
  size="sm"
  variant="outline"
- className="h-9 px-4 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest hover:bg-fuchsia-600 hover:text-white transition-all shadow-sm opacity-20 group-hover:opacity-100"
+ className="h-9 px-4 rounded-xl border font-semibold uppercase text-xs hover:bg-fuchsia-600 hover:text-white transition-all shadow-sm opacity-20 group-hover:opacity-100"
  onClick={() => setSelected(inv)}
  >
  Manage_Node
@@ -311,7 +311,7 @@ export function InvoicesTab() {
  <DialogHeader>
  <div className="flex justify-between items-center">
  <div>
- <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
+ <DialogTitle className="text-3xl font-semibold font-medium flex items-center gap-3">
  <Zap className="h-8 w-8 text-fuchsia-500 fill-fuchsia-500/20" /> {selected.invoice_number}
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold mt-1">
@@ -345,7 +345,7 @@ export function InvoicesTab() {
  <div className="pt-2">
  <Button
  variant="outline"
- className="w-full h-12 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
+ className="w-full h-12 rounded-xl border font-semibold uppercase text-xs gap-2"
  asChild
  >
  <a href={selected.payment_proof_url} target="_blank" rel="noreferrer">
@@ -370,7 +370,7 @@ export function InvoicesTab() {
  {selected.talents?.phone && (
  <Button
  variant="outline"
- className="h-10 px-4 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
+ className="h-10 px-4 rounded-xl border font-semibold uppercase text-xs gap-2"
  onClick={() => {
  const phone = selected.talents!.phone!.replace(/[^0-9]/g, "");
  const msg = encodeURIComponent(
@@ -393,7 +393,7 @@ export function InvoicesTab() {
  </Button>
  <Button
  onClick={() => setApproveOpen(true)}
- className="flex-1 h-10 rounded-xl font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+ className="flex-1 h-10 rounded-xl font-semibold font-medium text-xl gap-3 shadow-sm bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
  >
  <ShieldCheck className="h-6 w-6 fill-current" /> Authorize & Disburse
  </Button>
@@ -436,7 +436,7 @@ export function InvoicesTab() {
 
 function KpiNode({ label, value, subtext, icon: Icon, color }: any) {
  return (
- <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden group hover:border-fuchsia-500/40 transition-all">
+ <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden group hover:border-fuchsia-500/40 transition-all">
  <CardContent className="p-6 flex items-center gap-4">
  <div
  className={cn(
@@ -504,7 +504,7 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
  <Dialog open={open} onOpenChange={onOpenChange}>
  <DialogContent className="max-w-md rounded-2xl border-4 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-semibold uppercase italic tracking-tight">
+ <DialogTitle className="text-2xl font-semibold font-medium">
  Finalize Settlement
  </DialogTitle>
  <DialogDescription className="text-xs font-medium italic">
@@ -515,10 +515,10 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
  <div className="space-y-1.5">
  <Label className="text-[10px] font-semibold uppercase italic text-fuchsia-500 ml-1">Payment Methodology</Label>
  <Select value={method} onValueChange={setMethod}>
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  <SelectItem value="bkash" className="font-bold text-xs uppercase">
  BKASH
  </SelectItem>
@@ -541,7 +541,7 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
  <Input
  value={reference}
  onChange={(e) => setReference(e.target.value)}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  placeholder="E.G. TRXN992..."
  />
  </div>
@@ -553,7 +553,7 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
  type="file"
  accept="image/*,application/pdf"
  onChange={(e) => setFile(e.target.files?.[0] || null)}
- className="h-12 rounded-xl border-2 border-dashed bg-muted/10 cursor-pointer pt-2"
+ className="h-12 rounded-xl border border-dashed bg-muted/10 cursor-pointer pt-2"
  />
  </div>
  </div>
@@ -599,7 +599,7 @@ function CancelDialog({ open, onOpenChange, invoice, onDone }: any) {
  <Dialog open={open} onOpenChange={onOpenChange}>
  <DialogContent className="max-w-md rounded-2xl border-4 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-semibold uppercase italic tracking-tight text-destructive">
+ <DialogTitle className="text-2xl font-semibold font-medium text-destructive">
  Terminate Node?
  </DialogTitle>
  <DialogDescription className="text-xs font-medium italic">
@@ -611,7 +611,7 @@ function CancelDialog({ open, onOpenChange, invoice, onDone }: any) {
  value={reason}
  onChange={(e) => setReason(e.target.value)}
  placeholder="TERMINATION REASONING (INTERNAL_AUDIT)..."
- className="rounded-2xl border-2 bg-muted/10 italic text-sm p-4"
+ className="rounded-2xl border bg-muted/10 italic text-sm p-4"
  rows={3}
  />
  </div>

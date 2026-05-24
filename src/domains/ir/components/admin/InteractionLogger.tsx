@@ -144,10 +144,10 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  value={formData.interaction_type}
  onValueChange={(v) => setFormData({ ...formData, interaction_type: v })}
  >
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold uppercase text-xs bg-muted/20">
+ <SelectTrigger className="h-10 rounded-xl border font-bold uppercase text-xs bg-muted/20">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {IR_CONFIG.INTERACTION_TYPES.map((type) => (
  <SelectItem
  key={type.value}
@@ -166,10 +166,10 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  Investor Sentiment
  </Label>
  <Select value={formData.sentiment} onValueChange={(v) => setFormData({ ...formData, sentiment: v })}>
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold uppercase text-xs bg-muted/20">
+ <SelectTrigger className="h-10 rounded-xl border font-bold uppercase text-xs bg-muted/20">
  <SelectValue placeholder="NEUTRAL" />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  <SelectItem value="" className="font-bold text-xs">
  UNSPECIFIED
  </SelectItem>
@@ -195,7 +195,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  value={formData.subject}
  onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
  placeholder="E.G. Q2 EQUITY ROUND INITIAL REVIEW..."
- className="h-10 rounded-xl border-2 font-semibold uppercase italic text-sm tracking-widest bg-muted/10 focus-visible:border-primary/40 transition-colors"
+ className="h-10 rounded-xl border font-semibold uppercase italic text-sm tracking-widest bg-muted/10 focus-visible:border-primary/40 transition-colors"
  />
  </div>
 
@@ -213,7 +213,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  ? "PASTE RAW REPLY FOR AI CONTEXT..."
  : "LOG KEY DISCUSSION POINTS..."
  }
- className="min-h-[160px] rounded-2xl border-2 font-medium italic text-sm leading-relaxed bg-muted/10 p-6 resize-none focus-visible:border-primary/40 transition-colors"
+ className="min-h-[160px] rounded-2xl border font-medium italic text-sm leading-relaxed bg-muted/10 p-6 resize-none focus-visible:border-primary/40 transition-colors"
  />
  </div>
 
@@ -227,14 +227,14 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  onChange={(e) => setKeyPointInput(e.target.value)}
  placeholder="ADD STRATEGIC POINT..."
  onKeyDown={(e) => e.key === "Enter" && (e.preventDefault(), addKeyPoint())}
- className="h-12 rounded-xl border-2 font-bold uppercase text-[10px] bg-muted/10"
+ className="h-12 rounded-xl border font-bold uppercase text-[10px] bg-muted/10"
  />
  <Button
  type="button"
  variant="outline"
  onClick={addKeyPoint}
  disabled={!keyPointInput.trim()}
- className="h-12 px-6 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest shrink-0"
+ className="h-12 px-6 rounded-xl border font-semibold uppercase text-xs shrink-0"
  >
  Inject
  </Button>
@@ -244,7 +244,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  {formData.key_points.map((point, i) => (
  <Badge
  key={i}
- className="bg-primary/10 text-primary border-2 border-primary/20 font-semibold text-[9px] px-3 py-1 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-colors group flex items-center gap-1"
+ className="bg-primary/10 text-primary border border-primary/20 font-semibold text-[9px] px-3 py-1 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-colors group flex items-center gap-1"
  onClick={() =>
  setFormData((p) => ({ ...p, key_points: p.key_points.filter((_, idx) => idx !== i) }))
  }
@@ -278,7 +278,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  type="date"
  value={formData.follow_up_date}
  onChange={(e) => setFormData({ ...formData, follow_up_date: e.target.value })}
- className="w-full sm:w-44 h-12 rounded-xl border-2 font-semibold text-xs uppercase"
+ className="w-full sm:w-44 h-12 rounded-xl border font-semibold text-xs uppercase"
  />
  )}
  </div>
@@ -290,14 +290,14 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  <Button
  variant="outline"
  onClick={() => onOpenChange(false)}
- className="h-14 px-8 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest italic text-muted-foreground hover:text-foreground transition-colors"
+ className="h-14 px-8 rounded-xl border font-semibold uppercase text-xs italic text-muted-foreground hover:text-foreground transition-colors"
  >
  Abort Log
  </Button>
  <Button
  onClick={() => saveMutation.mutate()}
  disabled={saveMutation.isPending}
- className="h-14 px-10 rounded-xl font-semibold uppercase italic tracking-tight text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+ className="h-14 px-10 rounded-xl font-semibold font-medium text-lg gap-3 shadow-sm transition-all hover:scale-[1.02] active:scale-95"
  >
  {saveMutation.isPending ? (
  <Loader2 className="h-5 w-5 animate-spin" />

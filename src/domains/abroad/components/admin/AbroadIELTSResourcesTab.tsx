@@ -27,11 +27,11 @@ export function AbroadIELTSResourcesTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-orange-500">
  <BookOpen className="h-8 w-8 text-orange-500 fill-orange-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  IELTS Resources
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Language Prep Material Catalog
  </p>
  </div>
@@ -40,7 +40,7 @@ export function AbroadIELTSResourcesTab() {
  setDraft({ status: "active", resource_type: "pdf" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-orange-500/20 bg-orange-500 hover:bg-orange-600 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-orange-500/20 bg-orange-500 hover:bg-orange-600 text-white"
  >
  <Plus className="h-4 w-4" /> Add Resource
  </Button>
@@ -53,11 +53,11 @@ export function AbroadIELTSResourcesTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Resource Title
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Type</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+ <TableHead className="font-medium text-xs">Type</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
  </TableRow>
  </TableHeader>
@@ -72,7 +72,7 @@ export function AbroadIELTSResourcesTab() {
  <TableRow>
  <TableCell
  colSpan={4}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero resources detected.
  </TableCell>
@@ -85,11 +85,11 @@ export function AbroadIELTSResourcesTab() {
  <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
  <BookOpen className="h-3 w-3 text-orange-500" />
  </div>
- <span className="font-black text-sm uppercase italic tracking-tight">{row.title}</span>
+ <span className="font-black text-sm font-medium">{row.title}</span>
  </div>
  </TableCell>
  <TableCell>
- <Badge variant="outline" className="font-mono text-[9px] border-2">
+ <Badge variant="outline" className="font-mono text-[9px] border">
  {row.resource_type}
  </Badge>
  </TableCell>
@@ -142,7 +142,7 @@ export function AbroadIELTSResourcesTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-orange-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-orange-500 flex items-center gap-2">
  <BookOpen className="h-6 w-6" /> Inject Resource
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -158,14 +158,14 @@ export function AbroadIELTSResourcesTab() {
  placeholder="e.g. Master Class Writing Task 2"
  value={draft.title || ""}
  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-primary ml-1">Asset Type</Label>
  <Select value={draft.resource_type} onValueChange={(v) => setDraft({ ...draft, resource_type: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -186,7 +186,7 @@ export function AbroadIELTSResourcesTab() {
  Catalog Status
  </Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -209,7 +209,7 @@ export function AbroadIELTSResourcesTab() {
  delete payload.status;
  upsertIeltsResource.mutate(payload, { onSuccess: () => setOpen(false) });
  }}
- className="h-14 rounded-xl font-black uppercase bg-orange-500 hover:bg-orange-600 text-white"
+ className="h-14 rounded-xl font-medium bg-orange-500 hover:bg-orange-600 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Enforce Resource
  </Button>

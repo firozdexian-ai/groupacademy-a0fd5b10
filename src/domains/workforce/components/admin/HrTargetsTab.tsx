@@ -163,9 +163,9 @@ export function HrTargetsTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-primary">
  <Crosshair className="h-8 w-8 text-primary fill-primary/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Targets</h2>
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none">Targets</h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Performance Metrics &amp; Incentive Distribution
  </p>
  </div>
@@ -174,7 +174,7 @@ export function HrTargetsTab() {
  setDraft({ scope: "team" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-primary/20"
  >
  <Plus className="h-4 w-4" /> Deploy Target
  </Button>
@@ -188,17 +188,17 @@ export function HrTargetsTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Metric Definition
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5">
+ <TableHead className="font-medium text-xs py-5">
  Target Scope
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5">
+ <TableHead className="font-medium text-xs py-5">
  Temporal Window
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5">Incentive</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 text-right pr-8">
+ <TableHead className="font-medium text-xs py-5">Incentive</TableHead>
+ <TableHead className="font-medium text-xs py-5 text-right pr-8">
  Actions
  </TableHead>
  </TableRow>
@@ -214,7 +214,7 @@ export function HrTargetsTab() {
  <TableRow>
  <TableCell
  colSpan={5}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero targets deployed.
  </TableCell>
@@ -226,14 +226,14 @@ export function HrTargetsTab() {
  return (
  <TableRow key={t.id} className="group hover:bg-primary/[0.02]">
  <TableCell className="py-5 pl-8">
- <p className="font-black text-sm uppercase italic tracking-tight">{t.metric}</p>
+ <p className="font-black text-sm font-medium">{t.metric}</p>
  <p className="text-[10px] font-mono text-muted-foreground/60 mt-1">
  GOAL: {t.target_value}
  </p>
  </TableCell>
  <TableCell>
  <div className="flex flex-col gap-1">
- <Badge variant="outline" className="w-fit font-black uppercase text-[9px] tracking-widest">
+ <Badge variant="outline" className="w-fit font-medium text-[9px] tracking-widest">
  {t.scope}
  </Badge>
  <span className={cn("text-xs font-bold flex items-center gap-1.5", scopeData.color)}>
@@ -296,7 +296,7 @@ export function HrTargetsTab() {
  <div className="flex items-center gap-3">
  <Target className="h-7 w-7 text-primary" />
  <div>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
+ <DialogTitle className="text-2xl font-semibold">
  Target Deployment
  </DialogTitle>
  <DialogDescription className="text-[10px] font-black">
@@ -314,7 +314,7 @@ export function HrTargetsTab() {
  value={draft.scope || "team"}
  onValueChange={(v) => setDraft({ ...draft, scope: v, scope_id: "" })}
  >
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold bg-muted/20">
+ <SelectTrigger className="h-14 rounded-xl border font-bold bg-muted/20">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -328,7 +328,7 @@ export function HrTargetsTab() {
  <div className="space-y-2">
  <Label className="text-[10px] font-black">Target Node</Label>
  <Select value={draft.scope_id || ""} onValueChange={(v) => setDraft({ ...draft, scope_id: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold bg-muted/20">
+ <SelectTrigger className="h-14 rounded-xl border font-bold bg-muted/20">
  <SelectValue placeholder="Select node" />
  </SelectTrigger>
  <SelectContent>{renderScopeOptions()}</SelectContent>
@@ -342,7 +342,7 @@ export function HrTargetsTab() {
  placeholder="e.g. Quarterly Revenue, Closed Deals"
  value={draft.metric || ""}
  onChange={(e) => setDraft({ ...draft, metric: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold bg-muted/20"
+ className="h-14 rounded-xl border font-bold bg-muted/20"
  />
  </div>
 
@@ -353,7 +353,7 @@ export function HrTargetsTab() {
  type="number"
  value={draft.target_value ?? ""}
  onChange={(e) => setDraft({ ...draft, target_value: Number(e.target.value) })}
- className="h-14 rounded-xl border-2 font-black text-lg bg-muted/20"
+ className="h-14 rounded-xl border font-black text-lg bg-muted/20"
  />
  </div>
  <div className="space-y-2">
@@ -362,7 +362,7 @@ export function HrTargetsTab() {
  type="number"
  value={draft.incentive_amount ?? ""}
  onChange={(e) => setDraft({ ...draft, incentive_amount: Number(e.target.value) })}
- className="h-14 rounded-xl border-2 border-emerald-500/20 font-black text-lg bg-emerald-500/5 text-emerald-600"
+ className="h-14 rounded-xl border border-emerald-500/30 font-black text-lg bg-emerald-500/5 text-emerald-600"
  />
  </div>
  </div>
@@ -374,7 +374,7 @@ export function HrTargetsTab() {
  type="date"
  value={draft.period_start || ""}
  onChange={(e) => setDraft({ ...draft, period_start: e.target.value })}
- className="h-12 rounded-xl border-2 bg-background/50 font-mono text-xs"
+ className="h-12 rounded-xl border bg-background/50 font-mono text-xs"
  />
  </div>
  <div className="space-y-2">
@@ -383,7 +383,7 @@ export function HrTargetsTab() {
  type="date"
  value={draft.period_end || ""}
  onChange={(e) => setDraft({ ...draft, period_end: e.target.value })}
- className="h-12 rounded-xl border-2 bg-background/50 font-mono text-xs"
+ className="h-12 rounded-xl border bg-background/50 font-mono text-xs"
  />
  </div>
  </div>
@@ -393,14 +393,14 @@ export function HrTargetsTab() {
  <Button
  variant="ghost"
  onClick={() => setOpen(false)}
- className="h-14 px-8 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest italic text-muted-foreground"
+ className="h-14 px-8 rounded-xl border font-medium text-xs italic text-muted-foreground"
  >
  Abort
  </Button>
  <Button
  disabled={!draft.metric || !draft.scope_id || upsertTarget.isPending}
  onClick={() => upsertTarget.mutate(draft)}
- className="h-14 px-10 rounded-xl font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl flex-1"
+ className="h-14 px-10 rounded-xl font-semibold text-lg gap-3 shadow-sm flex-1"
  >
  <ShieldCheck className="h-5 w-5" /> Deploy Target
  </Button>

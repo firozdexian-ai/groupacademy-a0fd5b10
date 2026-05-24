@@ -30,7 +30,7 @@ export function GtmKnowledgeTab() {
  <div className="space-y-1">
  <div className="flex items-center gap-3">
  <FileText className="h-7 w-7 text-indigo-600" />
- <h1 className="text-3xl font-black uppercase tracking-tight">Knowledge Packs</h1>
+ <h1 className="text-3xl font-medium tracking-tight">Knowledge Packs</h1>
  </div>
  <p className="text-sm text-muted-foreground font-bold">
  Country-Scoped CMS & Informational Nodes
@@ -38,14 +38,14 @@ export function GtmKnowledgeTab() {
  </div>
  <Button
  onClick={() => { setDraft({ is_published: false, kind: "general", display_order: 0 }); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-indigo-500/20 bg-indigo-600 hover:bg-indigo-700 text-white"
  >
  <Plus className="h-4 w-4" /> Inject Content
  </Button>
  </div>
 
  {/* Registry Table */}
- <Card className="border-2">
+ <Card className="border">
  <CardHeader>
  <CardTitle className="text-sm font-black">Content Registry</CardTitle>
  <CardDescription>{packs.length} content nodes deployed</CardDescription>
@@ -133,7 +133,7 @@ export function GtmKnowledgeTab() {
  placeholder="e.g. Bangladesh Visa Guide"
  value={draft.title || ""}
  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold bg-muted/20"
+ className="h-14 rounded-xl border font-bold bg-muted/20"
  />
  </div>
 
@@ -141,7 +141,7 @@ export function GtmKnowledgeTab() {
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-muted-foreground ml-1">Target Country</Label>
  <Select value={draft.country_code || ""} onValueChange={(v) => setDraft({ ...draft, country_code: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2"><SelectValue placeholder="Select country" /></SelectTrigger>
+ <SelectTrigger className="h-12 rounded-xl border"><SelectValue placeholder="Select country" /></SelectTrigger>
  <SelectContent>
  {countries.map((c: any) => (
  <SelectItem key={c.iso2} value={c.iso2}>{c.name} ({c.iso2})</SelectItem>
@@ -153,7 +153,7 @@ export function GtmKnowledgeTab() {
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-muted-foreground ml-1">Classification</Label>
  <Select value={draft.kind || "general"} onValueChange={(v) => setDraft({ ...draft, kind: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-12 rounded-xl border"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="general">General</SelectItem>
  <SelectItem value="visa">Visa & Legal</SelectItem>
@@ -166,7 +166,7 @@ export function GtmKnowledgeTab() {
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-muted-foreground ml-1">Deployment Status</Label>
  <Select value={String(draft.is_published)} onValueChange={(v) => setDraft({ ...draft, is_published: v === "true" })}>
- <SelectTrigger className="h-12 rounded-xl border-2"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-12 rounded-xl border"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="true">Published</SelectItem>
  <SelectItem value="false">Draft</SelectItem>
@@ -187,11 +187,11 @@ export function GtmKnowledgeTab() {
  placeholder="# Heading&#10;&#10;Body content..."
  value={draft.body_markdown || ""}
  onChange={(e) => setDraft({ ...draft, body_markdown: e.target.value })}
- className="min-h-[300px] rounded-2xl border-2 font-mono text-sm bg-muted/20 p-4"
+ className="min-h-[300px] rounded-2xl border font-mono text-sm bg-muted/20 p-4"
  />
  </TabsContent>
  <TabsContent value="preview" className="mt-2">
- <div className="min-h-[300px] rounded-2xl border-2 bg-background p-4 prose prose-sm max-w-none dark:prose-invert">
+ <div className="min-h-[300px] rounded-2xl border bg-background p-4 prose prose-sm max-w-none dark:prose-invert">
  {draft.body_markdown ? (
  <ReactMarkdown>{draft.body_markdown}</ReactMarkdown>
  ) : (
@@ -205,21 +205,21 @@ export function GtmKnowledgeTab() {
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-muted-foreground ml-1">Source URL (Optional)</Label>
- <Input placeholder="https://" value={draft.source_url || ""} onChange={(e) => setDraft({ ...draft, source_url: e.target.value })} className="h-12 rounded-xl border-2 font-mono text-xs bg-background/50" />
+ <Input placeholder="https://" value={draft.source_url || ""} onChange={(e) => setDraft({ ...draft, source_url: e.target.value })} className="h-12 rounded-xl border font-mono text-xs bg-background/50" />
  </div>
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-muted-foreground ml-1">Sort Priority</Label>
- <Input type="number" placeholder="0" value={draft.display_order || 0} onChange={(e) => setDraft({ ...draft, display_order: Number(e.target.value) })} className="h-12 rounded-xl border-2 font-black bg-background/50" />
+ <Input type="number" placeholder="0" value={draft.display_order || 0} onChange={(e) => setDraft({ ...draft, display_order: Number(e.target.value) })} className="h-12 rounded-xl border font-black bg-background/50" />
  </div>
  </div>
  </div>
 
  <DialogFooter className="flex-col sm:flex-row gap-3 sm:gap-0">
- <Button variant="outline" onClick={() => setOpen(false)} className="h-14 px-8 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest italic text-muted-foreground">Abort</Button>
+ <Button variant="outline" onClick={() => setOpen(false)} className="h-14 px-8 rounded-xl border font-medium text-xs italic text-muted-foreground">Abort</Button>
  <Button
  disabled={!draft.title || !draft.country_code || upsertKnowledgePack.isPending}
  onClick={() => upsertKnowledgePack.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-14 px-10 rounded-xl font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
+ className="h-14 px-10 rounded-xl font-semibold text-lg gap-3 shadow-sm flex-1 bg-indigo-600 hover:bg-indigo-700 text-white"
  >
  <ShieldAlert className="h-5 w-5" /> Authorize Injection
  </Button>

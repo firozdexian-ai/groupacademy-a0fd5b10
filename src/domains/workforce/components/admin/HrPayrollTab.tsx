@@ -149,9 +149,9 @@ export function HrPayrollTab() {
  <div className="space-y-1">
  <div className="flex items-center gap-3 text-emerald-600">
  <Banknote className="h-8 w-8" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Payroll</h2>
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none">Payroll</h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Capital Deployment & Yield Registry
  </p>
  </div>
@@ -159,7 +159,7 @@ export function HrPayrollTab() {
  <Button
  variant="outline"
  onClick={exportToCSV}
- className="h-12 px-6 rounded-xl border-2 text-xs font-medium gap-2"
+ className="h-12 px-6 rounded-xl border text-xs font-medium gap-2"
  >
  <FileSpreadsheet className="h-4 w-4" /> Export CSV
  </Button>
@@ -187,13 +187,13 @@ export function HrPayrollTab() {
  {Object.entries(data?.groupedRuns || {}).map(([month, runs]: [string, any]) => (
  <div key={month} className="space-y-4">
  <div className="flex items-center gap-4 px-2">
- <h3 className="font-black uppercase italic text-sm tracking-widest text-muted-foreground/60">
+ <h3 className="font-medium italic text-sm tracking-widest text-muted-foreground/60">
  {month}
  </h3>
  <div className="h-px flex-1 bg-border/40" />
  </div>
 
- <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden">
+ <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
  <Table>
  <TableHeader className="bg-muted/10 text-[10px] font-black">
  <TableRow className="border-b">
@@ -212,7 +212,7 @@ export function HrPayrollTab() {
  <TableCell className="py-5 pl-8">
  <div className="flex items-center gap-3">
  <User className="h-4 w-4 text-muted-foreground/40" />
- <p className="font-black text-sm uppercase italic tracking-tight">
+ <p className="font-black text-sm font-medium">
  {data?.userMap.get(r.user_id) || "Orphaned"}
  </p>
  </div>
@@ -235,7 +235,7 @@ export function HrPayrollTab() {
  <TableCell>
  <span
  className={cn(
- "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md font-black uppercase text-[9px] tracking-widest border",
+ "inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md font-medium text-[9px] tracking-widest border",
  sc.bg,
  sc.color,
  )}
@@ -287,13 +287,13 @@ export function HrPayrollTab() {
  <div className="h-2 w-full bg-emerald-500" />
  <div className="p-10 space-y-6">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic">Financial Command</DialogTitle>
+ <DialogTitle className="text-2xl font-medium italic">Financial Command</DialogTitle>
  </DialogHeader>
  <div className="space-y-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Beneficiary Member</Label>
+ <Label className="text-[10px] font-medium ml-1">Beneficiary Member</Label>
  <Select value={draft.user_id || ""} onValueChange={(v) => setDraft({ ...draft, user_id: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-14 rounded-xl border font-bold">
  <SelectValue placeholder="SELECT WORKFORCE NODE" />
  </SelectTrigger>
  <SelectContent>
@@ -310,42 +310,42 @@ export function HrPayrollTab() {
 
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Base Yield</Label>
+ <Label className="text-[10px] font-medium ml-1">Base Yield</Label>
  <Input
  type="number"
  value={draft.base_amount ?? 0}
  onChange={(e) => setDraft({ ...draft, base_amount: Number(e.target.value) })}
- className="h-14 rounded-xl border-2 font-black"
+ className="h-14 rounded-xl border font-black"
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Incentive Yield</Label>
+ <Label className="text-[10px] font-medium ml-1">Incentive Yield</Label>
  <Input
  type="number"
  value={draft.incentive_amount ?? 0}
  onChange={(e) => setDraft({ ...draft, incentive_amount: Number(e.target.value) })}
- className="h-14 rounded-xl border-2 font-black"
+ className="h-14 rounded-xl border font-black"
  />
  </div>
  </div>
 
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Window Start</Label>
+ <Label className="text-[10px] font-medium ml-1">Window Start</Label>
  <Input
  type="date"
  value={draft.period_start || ""}
  onChange={(e) => setDraft({ ...draft, period_start: e.target.value })}
- className="h-14 rounded-xl border-2"
+ className="h-14 rounded-xl border"
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Window End</Label>
+ <Label className="text-[10px] font-medium ml-1">Window End</Label>
  <Input
  type="date"
  value={draft.period_end || ""}
  onChange={(e) => setDraft({ ...draft, period_end: e.target.value })}
- className="h-14 rounded-xl border-2"
+ className="h-14 rounded-xl border"
  />
  </div>
  </div>
@@ -354,14 +354,14 @@ export function HrPayrollTab() {
  <Button
  variant="ghost"
  onClick={() => setOpen(false)}
- className="h-12 rounded-xl font-black uppercase text-[10px]"
+ className="h-12 rounded-xl font-medium text-[10px]"
  >
  Abort
  </Button>
  <Button
  disabled={!draft.user_id || upsertPayroll.isPending}
  onClick={() => upsertPayroll.mutate(draft)}
- className="h-12 px-10 rounded-2xl font-black uppercase italic text-[11px] gap-2 shadow-xl bg-emerald-600 text-white flex-1"
+ className="h-12 px-10 rounded-2xl font-medium italic text-[11px] gap-2 shadow-sm bg-emerald-600 text-white flex-1"
  >
  <ShieldCheck className="h-4 w-4" /> Commit Ledger
  </Button>

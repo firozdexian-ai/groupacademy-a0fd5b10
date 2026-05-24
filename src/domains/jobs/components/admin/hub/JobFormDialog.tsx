@@ -247,7 +247,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  <DialogHeader className="p-8 pb-4 text-left">
  <div className="flex justify-between items-center">
  <div className="space-y-1">
- <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
+ <DialogTitle className="text-3xl font-semibold font-medium flex items-center gap-3">
  <Briefcase className="h-8 w-8 text-primary" />
  {jobId ? "Recalibrate Infrastructure" : "Deploy Job Node"}
  </DialogTitle>
@@ -255,7 +255,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  Strategic marketplace placement and AI content drafting
  </DialogDescription>
  </div>
- <Badge variant="outline" className="font-semibold text-[9px] border-2 uppercase italic px-3 py-1">
+ <Badge variant="outline" className="font-semibold text-[9px] border uppercase italic px-3 py-1">
  {jobId ? "NODE_EDIT_MODE" : "NODE_PROVISIONING"}
  </Badge>
  </div>
@@ -286,7 +286,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  value={form.title}
  onChange={(e) => updateField("title", e.target.value)}
  placeholder="E.G. LEAD FRONTEND ENGINEER"
- className="h-10 rounded-xl border-2 font-bold"
+ className="h-10 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -296,7 +296,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  <Input
  value={form.company_name}
  onChange={(e) => updateField("company_name", e.target.value)}
- className="h-10 rounded-xl border-2 font-bold"
+ className="h-10 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -307,7 +307,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  value={form.location}
  onChange={(e) => updateField("location", e.target.value)}
  placeholder="DHAKA, BANGLADESH"
- className="h-10 rounded-xl border-2 font-bold"
+ className="h-10 rounded-xl border font-bold"
  />
  </div>
  </div>
@@ -316,13 +316,13 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
  Institutional Artifact (Logo)
  </Label>
- <div className="flex items-center gap-4 p-4 rounded-2xl border-2 bg-muted/5 border-dashed">
+ <div className="flex items-center gap-4 p-4 rounded-2xl border bg-muted/5 border-dashed">
  {form.company_logo_url ? (
  <div className="relative shrink-0">
  <img
  src={form.company_logo_url}
  alt="Logo"
- className="h-16 w-16 rounded-2xl object-cover border-2 shadow-xl"
+ className="h-16 w-16 rounded-2xl object-cover border shadow-sm"
  />
  <button
  onClick={() => updateField("company_logo_url", "")}
@@ -332,7 +332,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  </button>
  </div>
  ) : (
- <label className="h-16 w-16 border-2 border-dashed border-primary/20 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-primary/5 shrink-0 transition-all">
+ <label className="h-16 w-16 border border-dashed border-primary/20 rounded-2xl flex items-center justify-center cursor-pointer hover:bg-primary/5 shrink-0 transition-all">
  {isUploadingLogo ? (
  <Loader2 className="h-6 w-6 animate-spin text-primary" />
  ) : (
@@ -350,7 +350,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  value={form.company_logo_url}
  onChange={(e) => updateField("company_logo_url", e.target.value)}
  placeholder="OR PASTE URL..."
- className="flex-1 h-12 rounded-xl border-2 font-mono text-[10px]"
+ className="flex-1 h-12 rounded-xl border font-mono text-[10px]"
  />
  </div>
  </div>
@@ -392,7 +392,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  type="number"
  value={form.salary_range_min}
  onChange={(e) => updateField("salary_range_min", e.target.value)}
- className="h-10 rounded-xl border-2 font-bold"
+ className="h-10 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -403,16 +403,16 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  type="number"
  value={form.salary_range_max}
  onChange={(e) => updateField("salary_range_max", e.target.value)}
- className="h-10 rounded-xl border-2 font-bold"
+ className="h-10 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">Currency Node</Label>
  <Select value={form.salary_currency} onValueChange={(v) => updateField("salary_currency", v)}>
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-10 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {CURRENCIES.map((c) => (
  <SelectItem key={c} value={c} className="font-bold">
  {c}
@@ -434,7 +434,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  size="sm"
  onClick={handleEnhanceDescription}
  disabled={isEnhancing}
- className="h-8 rounded-xl border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 font-semibold text-[9px] uppercase italic tracking-widest gap-2"
+ className="h-8 rounded-xl border border-primary/20 bg-primary/5 hover:bg-primary/10 font-semibold text-[9px] uppercase italic tracking-widest gap-2"
  >
  {isEnhancing ? (
  <Loader2 className="h-3 w-3 animate-spin" />
@@ -449,12 +449,12 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  onChange={(e) => updateField("description", e.target.value)}
  rows={10}
  placeholder="INPUT ROLE RESPONSIBILITIES..."
- className="rounded-2xl border-2 font-medium italic text-sm leading-relaxed bg-muted/5 p-8 shadow-inner"
+ className="rounded-2xl border font-medium italic text-sm leading-relaxed bg-muted/5 p-8 shadow-inner"
  />
  </section>
 
  {/* SECTION: TRANSMISSION & LIFECYCLE */}
- <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-2xl border-2 border-primary/10 bg-primary/5">
+ <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-2xl border border-primary/10 bg-primary/5">
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
  How to apply
@@ -463,10 +463,10 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  value={form.application_type}
  onValueChange={(v) => updateField("application_type", v as any)}
  >
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold uppercase text-[10px] bg-background">
+ <SelectTrigger className="h-10 rounded-xl border font-bold uppercase text-[10px] bg-background">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {APPLICATION_TYPES.map((t) => (
  <SelectItem key={t} value={t} className="font-bold uppercase text-[10px]">
  {t}
@@ -484,7 +484,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  type="email"
  value={form.application_email}
  onChange={(e) => updateField("application_email", e.target.value)}
- className="h-10 rounded-xl border-2 font-bold bg-background"
+ className="h-10 rounded-xl border font-bold bg-background"
  />
  </div>
  )}
@@ -497,7 +497,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  type="url"
  value={form.application_url}
  onChange={(e) => updateField("application_url", e.target.value)}
- className="h-10 rounded-xl border-2 font-bold bg-background"
+ className="h-10 rounded-xl border font-bold bg-background"
  />
  </div>
  )}
@@ -511,7 +511,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  min="1"
  value={form.vacancies}
  onChange={(e) => updateField("vacancies", e.target.value)}
- className="h-10 rounded-xl border-2 font-bold"
+ className="h-10 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -520,7 +520,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  type="date"
  value={form.deadline}
  onChange={(e) => updateField("deadline", e.target.value)}
- className="h-10 rounded-xl border-2 font-bold"
+ className="h-10 rounded-xl border font-bold"
  />
  </div>
  <div className="md:col-span-2 flex flex-wrap gap-8 pt-4 justify-end">
@@ -550,14 +550,14 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  variant="ghost"
  onClick={() => onOpenChange(false)}
  disabled={isSaving}
- className="font-semibold uppercase text-[10px] tracking-widest italic opacity-50"
+ className="font-semibold uppercase text-xs italic opacity-50"
  >
  Abort Sync
  </Button>
  <Button
  onClick={handleSave}
  disabled={isSaving || loading}
- className="h-16 px-12 rounded-xl font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
+ className="h-16 px-12 rounded-xl font-semibold font-medium text-xl gap-3 shadow-sm transition-all active:scale-95"
  >
  {isSaving ? <Loader2 className="h-6 w-6 animate-spin" /> : <ShieldCheck className="h-6 w-6 fill-current" />}
  {jobId ? "Commit Updates" : "Initialize Deployment"}
@@ -573,10 +573,10 @@ function SelectNode({ label, value, options, onChange }: any) {
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">{label}</Label>
  <Select value={value} onValueChange={onChange}>
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold uppercase text-[10px]">
+ <SelectTrigger className="h-10 rounded-xl border font-bold uppercase text-[10px]">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {options.map((o: string) => (
  <SelectItem key={o} value={o} className="font-bold uppercase text-[10px]">
  {o.replace("_", " ")}

@@ -374,32 +374,32 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
  <CardContent className="p-8 pt-0 space-y-8">
  <Tabs defaultValue="links" className="w-full">
- <TabsList className="grid w-full grid-cols-4 h-16 bg-muted/30 rounded-xl border border-border/60 p-1.5 shadow-xl">
+ <TabsList className="grid w-full grid-cols-4 h-16 bg-muted/30 rounded-xl border border-border/60 p-1.5 shadow-sm">
  <TabsTrigger
  value="links"
  disabled={isUploading}
- className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+ className="rounded-xl font-semibold uppercase text-xs gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
  >
  <LinkIcon className="w-4 h-4" /> Links
  </TabsTrigger>
  <TabsTrigger
  value="files"
  disabled={isUploading}
- className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+ className="rounded-xl font-semibold uppercase text-xs gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
  >
  <FileUp className="w-4 h-4" /> PDFs
  </TabsTrigger>
  <TabsTrigger
  value="csv"
  disabled={isUploading}
- className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+ className="rounded-xl font-semibold uppercase text-xs gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
  >
  <FileSpreadsheet className="w-4 h-4" /> CSV DB
  </TabsTrigger>
  <TabsTrigger
  value="linkedin"
  disabled={isUploading}
- className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+ className="rounded-xl font-semibold uppercase text-xs gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
  >
  <FileJson2 className="w-4 h-4" /> LinkedIn
  </TabsTrigger>
@@ -415,7 +415,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  value={urlsInput}
  onChange={(e) => setUrlsInput(e.target.value)}
  disabled={isUploading}
- className="min-h-[160px] rounded-2xl border-2 bg-muted/5 font-mono text-xs p-6 italic focus:border-primary/40 transition-all"
+ className="min-h-[160px] rounded-2xl border bg-muted/5 font-mono text-xs p-6 italic focus:border-primary/40 transition-all"
  />
  </div>
  <Button
@@ -537,7 +537,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  </Tabs>
 
  {showProgress && currentBatch && (
- <div className="p-8 rounded-2xl border-2 bg-muted/10 space-y-6 shadow-inner animate-in zoom-in-95 duration-700">
+ <div className="p-8 rounded-2xl border bg-muted/10 space-y-6 shadow-inner animate-in zoom-in-95 duration-700">
  <div className="flex items-center justify-between">
  <div className="flex items-center gap-4">
  <Zap className="h-5 w-5 text-amber-500 fill-current animate-pulse" />
@@ -545,7 +545,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  </div>
  <Badge
  className={cn(
- "rounded-lg font-black uppercase text-[8px] tracking-widest px-4 py-1.5 border-none shadow-sm",
+ "rounded-lg font-medium text-[8px] tracking-widest px-4 py-1.5 border-none shadow-sm",
  currentBatch.status === "completed"
  ? "bg-emerald-500 text-white"
  : currentBatch.status === "failed"
@@ -580,7 +580,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  <Button
  variant="ghost"
  onClick={() => setShowErrorLog(true)}
- className="h-10 px-6 font-semibold uppercase text-[10px] tracking-widest text-destructive"
+ className="h-10 px-6 font-semibold uppercase text-xs text-destructive"
  >
  Review Fault Log
  </Button>
@@ -591,7 +591,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  setShowProgress(false);
  setCurrentBatch(null);
  }}
- className="rounded-xl h-10 px-6 border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
+ className="rounded-xl h-10 px-6 border font-semibold uppercase text-xs gap-2"
  >
  <RefreshCw className="w-3.5 h-3.5" /> Terminate Session
  </Button>
@@ -613,7 +613,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  <ScrollArea className="h-[400px] rounded-2xl border border-border/60 p-8 bg-card shadow-inner">
  <div className="space-y-4">
  {(currentBatch?.error_log as any[])?.map((err, idx) => (
- <div key={idx} className="p-6 rounded-2xl bg-destructive/5 border-2 border-destructive/10 group">
+ <div key={idx} className="p-6 rounded-2xl bg-destructive/5 border border-destructive/30 group">
  <p className="font-mono text-[10px] text-destructive/40 mb-2">
  Entry_{idx.toString().padStart(3, "0")}
  </p>
@@ -630,7 +630,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  <div className="flex justify-end pt-8">
  <Button
  onClick={() => setShowErrorLog(false)}
- className="rounded-xl h-12 px-10 font-semibold uppercase text-[10px] tracking-widest"
+ className="rounded-xl h-12 px-10 font-semibold uppercase text-xs"
  >
  Acknowledge
  </Button>

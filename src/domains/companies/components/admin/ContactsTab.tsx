@@ -104,7 +104,7 @@ export function ContactsTab() {
  {/* P2 Fix: Header Action Row */}
  <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
  <div className="text-left">
- <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
+ <h2 className="text-2xl font-semibold font-medium flex items-center gap-2">
  <ShieldCheck className="h-6 w-6 text-primary" /> Authority Matrix
  </h2>
  <p className="text-[10px] font-semibold text-muted-foreground/60">
@@ -112,7 +112,7 @@ export function ContactsTab() {
  </p>
  </div>
  <div className="flex gap-2">
- <Button variant="outline" size="icon" onClick={loadData} className="rounded-xl h-12 w-12 border-2">
+ <Button variant="outline" size="icon" onClick={loadData} className="rounded-xl h-12 w-12 border">
  <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
  </Button>
  <Button
@@ -120,7 +120,7 @@ export function ContactsTab() {
  setFormData({ full_name: "", is_primary: false });
  setIsDialogOpen(true);
  }}
- className="rounded-xl h-12 px-6 font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-xl shadow-primary/20"
+ className="rounded-xl h-12 px-6 font-semibold uppercase text-xs gap-2 shadow-sm"
  >
  <Plus className="h-4 w-4" /> Add Stakeholder
  </Button>
@@ -146,7 +146,7 @@ export function ContactsTab() {
  />
  </div>
 
- <Card className="rounded-2xl border-2 overflow-hidden shadow-sm bg-card">
+ <Card className="rounded-2xl border overflow-hidden shadow-sm bg-card">
  <div className="h-1.5 w-full bg-gradient-to-r from-primary/40 via-primary to-primary/40" />
  <Table>
  <TableHeader className="bg-muted/20">
@@ -227,7 +227,7 @@ export function ContactsTab() {
  size="sm"
  onClick={() => setPage((p) => Math.max(1, p - 1))}
  disabled={page === 1}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  >
  <ChevronLeft />
  </Button>
@@ -236,7 +236,7 @@ export function ContactsTab() {
  size="sm"
  onClick={() => setPage((p) => p + 1)}
  disabled={contacts.length < ITEMS_PER_PAGE}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  >
  <ChevronRight />
  </Button>
@@ -292,7 +292,7 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
  <div className="flex items-center gap-5">
  <div
  className={cn(
- "h-14 w-14 rounded-2xl flex items-center justify-center border-2 border-white/5 transition-transform group-hover:rotate-3 shadow-inner",
+ "h-14 w-14 rounded-2xl flex items-center justify-center border border-white/5 transition-transform group-hover:rotate-3 shadow-inner",
  bg,
  color,
  )}

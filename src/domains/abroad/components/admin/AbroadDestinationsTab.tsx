@@ -27,11 +27,11 @@ export function AbroadDestinationsTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-pink-500">
  <Globe className="h-8 w-8 text-pink-500 fill-pink-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Destinations
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Regional Agent Network
  </p>
  </div>
@@ -40,7 +40,7 @@ export function AbroadDestinationsTab() {
  setDraft({ status: "active" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-pink-500/20 bg-pink-600 hover:bg-pink-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-pink-500/20 bg-pink-600 hover:bg-pink-700 text-white"
  >
  <Plus className="h-4 w-4" /> Register Agent
  </Button>
@@ -53,11 +53,11 @@ export function AbroadDestinationsTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Agent / Partner
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Region Code</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+ <TableHead className="font-medium text-xs">Region Code</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
  </TableRow>
  </TableHeader>
@@ -72,7 +72,7 @@ export function AbroadDestinationsTab() {
  <TableRow>
  <TableCell
  colSpan={4}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero agents detected.
  </TableCell>
@@ -85,7 +85,7 @@ export function AbroadDestinationsTab() {
  <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
  <Globe className="h-3 w-3 text-pink-500" />
  </div>
- <span className="font-black text-sm uppercase italic tracking-tight">{row.name}</span>
+ <span className="font-black text-sm font-medium">{row.name}</span>
  </div>
  </TableCell>
  <TableCell>
@@ -142,7 +142,7 @@ export function AbroadDestinationsTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-pink-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-pink-500 flex items-center gap-2">
  <Globe className="h-6 w-6" /> Register Agent
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -158,7 +158,7 @@ export function AbroadDestinationsTab() {
  placeholder="e.g. EduGlobal Partners"
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -169,7 +169,7 @@ export function AbroadDestinationsTab() {
  placeholder="e.g. UK, CA, AU"
  value={draft.country || ""}
  onChange={(e) => setDraft({ ...draft, country: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -177,7 +177,7 @@ export function AbroadDestinationsTab() {
  Network Status
  </Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -205,7 +205,7 @@ export function AbroadDestinationsTab() {
  delete payload.status;
  upsertAgent.mutate(payload, { onSuccess: () => setOpen(false) });
  }}
- className="h-14 rounded-xl font-black uppercase bg-pink-600 hover:bg-pink-700 text-white"
+ className="h-14 rounded-xl font-medium bg-pink-600 hover:bg-pink-700 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Enforce Agent
  </Button>

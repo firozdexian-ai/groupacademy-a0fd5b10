@@ -27,11 +27,11 @@ export function LearningCourseBriefsTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-orange-500">
  <Sparkles className="h-8 w-8 text-orange-500 fill-orange-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Course Briefs
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  B2B Content Requests & Specs
  </p>
  </div>
@@ -40,7 +40,7 @@ export function LearningCourseBriefsTab() {
  setDraft({ status: "draft" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-orange-500/20 bg-orange-500 hover:bg-orange-600 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-orange-500/20 bg-orange-500 hover:bg-orange-600 text-white"
  >
  <Plus className="h-4 w-4" /> Inject Brief
  </Button>
@@ -53,11 +53,11 @@ export function LearningCourseBriefsTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Brief Definition
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Instructor Node</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+ <TableHead className="font-medium text-xs">Instructor Node</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
  </TableRow>
  </TableHeader>
@@ -72,7 +72,7 @@ export function LearningCourseBriefsTab() {
  <TableRow>
  <TableCell
  colSpan={4}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero briefs detected.
  </TableCell>
@@ -85,7 +85,7 @@ export function LearningCourseBriefsTab() {
  <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
  <Sparkles className="h-3 w-3 text-orange-500" />
  </div>
- <span className="font-black text-sm uppercase italic tracking-tight">{row.title}</span>
+ <span className="font-black text-sm font-medium">{row.title}</span>
  </div>
  </TableCell>
  <TableCell>
@@ -145,7 +145,7 @@ export function LearningCourseBriefsTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-orange-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-orange-500 flex items-center gap-2">
  <Sparkles className="h-6 w-6" /> Inject Brief
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -159,7 +159,7 @@ export function LearningCourseBriefsTab() {
  placeholder="Title"
  value={draft.title || ""}
  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
@@ -170,13 +170,13 @@ export function LearningCourseBriefsTab() {
  placeholder="UUID"
  value={draft.instructor_user_id || ""}
  onChange={(e) => setDraft({ ...draft, instructor_user_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-primary ml-1">Brief Status</Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -198,7 +198,7 @@ export function LearningCourseBriefsTab() {
  onClick={() => {
  upsertCourseBrief.mutate(draft, { onSuccess: () => setOpen(false) });
  }}
- className="h-14 rounded-xl font-black uppercase bg-orange-500 hover:bg-orange-600 text-white"
+ className="h-14 rounded-xl font-medium bg-orange-500 hover:bg-orange-600 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Enforce Spec
  </Button>

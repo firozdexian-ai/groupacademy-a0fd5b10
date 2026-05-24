@@ -39,7 +39,7 @@ export function ThemesTab() {
  <Palette className="h-6 w-6 text-fuchsia-600" />
  </div>
  <div>
- <h2 className="text-xl font-black uppercase italic tracking-tighter">Themes</h2>
+ <h2 className="text-xl font-semibold">Themes</h2>
  <p className="text-[10px] font-bold text-muted-foreground/60 italic">
  Profile Card Aesthetics
  </p>
@@ -47,7 +47,7 @@ export function ThemesTab() {
  </div>
  <Button
  onClick={() => { setDraft(defaultDraft); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-fuchsia-500/20 bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-fuchsia-500/20 bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
  >
  <Plus className="h-4 w-4" /> Inject Theme
  </Button>
@@ -83,13 +83,13 @@ export function ThemesTab() {
  )}
  </div>
  <div>
- <p className="font-black uppercase text-sm">{row.name || "Untitled"}</p>
+ <p className="font-medium text-sm">{row.name || "Untitled"}</p>
  <p className="text-[10px] font-bold text-muted-foreground/60">Rank {row.priority}</p>
  </div>
  </div>
  </TableCell>
  <TableCell>
- <Badge variant="outline" className="font-black uppercase text-[10px]">{row.media_type}</Badge>
+ <Badge variant="outline" className="font-medium text-[10px]">{row.media_type}</Badge>
  </TableCell>
  <TableCell>
  <div className="flex items-center gap-2">
@@ -122,7 +122,7 @@ export function ThemesTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-2xl rounded-2xl">
  <DialogHeader>
- <DialogTitle className="font-black uppercase italic tracking-tighter text-xl">Inject Theme</DialogTitle>
+ <DialogTitle className="font-semibold text-xl">Inject Theme</DialogTitle>
  <DialogDescription>Update profile card aesthetics.</DialogDescription>
  </DialogHeader>
  <div className="space-y-4">
@@ -131,13 +131,13 @@ export function ThemesTab() {
  <Input
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
  <Label>Media Type</Label>
  <Select value={draft.media_type} onValueChange={(v) => setDraft({ ...draft, media_type: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-12 rounded-xl border"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="gradient">Gradient (CSS)</SelectItem>
  <SelectItem value="image">Image</SelectItem>
@@ -153,7 +153,7 @@ export function ThemesTab() {
  <Input
  value={draft.gradient_css || ""}
  onChange={(e) => setDraft({ ...draft, gradient_css: e.target.value })}
- className="h-12 rounded-xl border-2 font-mono text-xs"
+ className="h-12 rounded-xl border font-mono text-xs"
  />
  <div className="h-16 rounded-xl border border-border/60" style={{ background: draft.gradient_css }} />
  </div>
@@ -175,13 +175,13 @@ export function ThemesTab() {
  type="number"
  value={draft.priority ?? 0}
  onChange={(e) => setDraft({ ...draft, priority: Number(e.target.value) })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
  <Label>Text Color</Label>
  <Select value={draft.text_color} onValueChange={(v) => setDraft({ ...draft, text_color: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-12 rounded-xl border"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="auto">Auto</SelectItem>
  <SelectItem value="light">Light</SelectItem>
@@ -207,20 +207,20 @@ export function ThemesTab() {
  type="datetime-local"
  value={draft.start_at ? new Date(draft.start_at).toISOString().slice(0, 16) : ""}
  onChange={(e) => setDraft({ ...draft, start_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  <Input
  type="datetime-local"
  value={draft.end_at ? new Date(draft.end_at).toISOString().slice(0, 16) : ""}
  onChange={(e) => setDraft({ ...draft, end_at: e.target.value ? new Date(e.target.value).toISOString() : null })}
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  </div>
  </div>
  </div>
  <Button
  onClick={() => upsertTheme.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-14 rounded-xl font-black uppercase bg-fuchsia-600 hover:bg-fuchsia-700 text-white w-full"
+ className="h-14 rounded-xl font-medium bg-fuchsia-600 hover:bg-fuchsia-700 text-white w-full"
  >
  Enforce Theme
  </Button>

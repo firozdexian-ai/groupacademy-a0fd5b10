@@ -200,9 +200,9 @@ export function InvestorsManager() {
  <div className="space-y-1">
  <div className="flex items-center gap-3 text-primary">
  <Zap className="h-8 w-8 text-primary fill-primary/20" />
- <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Capital Pulse</h2>
+ <h2 className="text-4xl font-medium tracking-tighter italic leading-none">Capital Pulse</h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Stakeholder Registry & Strategic IR Management
  </p>
  </div>
@@ -210,7 +210,7 @@ export function InvestorsManager() {
  <Button
  variant="outline"
  onClick={() => setLinkedinImportOpen(true)}
- className="h-12 px-6 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-2 shadow-sm bg-background/50"
+ className="h-12 px-6 rounded-2xl border font-medium text-xs gap-2 shadow-sm bg-background/50"
  >
  <FileJson2 className="h-4 w-4 text-blue-500" /> Neural Import
  </Button>
@@ -219,7 +219,7 @@ export function InvestorsManager() {
  resetForm();
  setDialogOpen(true);
  }}
- className="h-12 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 bg-primary text-primary-foreground"
+ className="h-12 px-8 rounded-2xl font-medium text-xs gap-2 shadow-lg shadow-primary/20 bg-primary text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Deploy Investor
  </Button>
@@ -234,14 +234,14 @@ export function InvestorsManager() {
  placeholder="SEARCH STAKEHOLDER REGISTRY..."
  value={searchQuery}
  onChange={(e) => setSearchQuery(e.target.value)}
- className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card focus-visible:border-primary/40"
+ className="h-10 rounded-xl border pl-12 font-bold uppercase text-xs bg-card focus-visible:border-primary/40"
  />
  </div>
  <Select value={filterFirmId} onValueChange={setFilterFirmId}>
- <SelectTrigger className="w-full md:w-[260px] h-10 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest bg-background">
+ <SelectTrigger className="w-full md:w-[260px] h-10 rounded-xl border font-medium text-xs bg-background">
  <SelectValue placeholder="GLOBAL FIRMS" />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  <SelectItem value="all" className="font-bold text-[10px] text-primary">
  🌍 ALL AUTHORITIES
  </SelectItem>
@@ -257,7 +257,7 @@ export function InvestorsManager() {
  size="icon"
  onClick={() => refetch()}
  disabled={isRefetching}
- className="h-14 w-14 rounded-2xl border-2 shadow-sm shrink-0 bg-background/50"
+ className="h-14 w-14 rounded-2xl border shadow-sm shrink-0 bg-background/50"
  >
  <RefreshCw className={cn("h-5 w-5 text-primary", isRefetching && "animate-spin")} />
  </Button>
@@ -271,12 +271,12 @@ export function InvestorsManager() {
  <Table>
  <TableHeader className="bg-muted/10">
  <TableRow className="hover:bg-transparent border-b border-border/20">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-6 pl-8">
+ <TableHead className="font-medium text-xs py-6 pl-8">
  Investor Identity
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Firm Authority</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Neural Interests</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+ <TableHead className="font-medium text-xs">Firm Authority</TableHead>
+ <TableHead className="font-medium text-xs">Neural Interests</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
  <TableHead className="text-right py-6 pr-8"></TableHead>
  </TableRow>
  </TableHeader>
@@ -310,7 +310,7 @@ export function InvestorsManager() {
  onClick={() => setSelectedInvestorId(investor.id)}
  >
  <TableCell className="py-5 pl-8 text-left min-w-[200px]">
- <p className="font-black text-sm uppercase italic tracking-tight group-hover:text-primary transition-colors">
+ <p className="font-black text-sm font-medium group-hover:text-primary transition-colors">
  {investor.full_name}
  </p>
  <p className="text-[9px] font-bold text-muted-foreground/80 mt-1 truncate max-w-[250px]">
@@ -320,7 +320,7 @@ export function InvestorsManager() {
  <TableCell className="text-left min-w-[150px]">
  <Badge
  variant="outline"
- className="font-black text-[9px] uppercase italic border-2 bg-background shadow-sm"
+ className="font-black text-[9px] uppercase italic border bg-background shadow-sm"
  >
  {investor.vc_firm?.name || "INDEPENDENT_CAPITAL"}
  </Badge>
@@ -405,7 +405,7 @@ export function InvestorsManager() {
  <div className="flex items-center gap-4">
  <Zap className="h-8 w-8 text-primary fill-primary/20" />
  <div className="space-y-1">
- <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter leading-none text-foreground">
+ <DialogTitle className="text-3xl font-semibold leading-none text-foreground">
  Identity Deployment
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic text-muted-foreground/60">
@@ -425,7 +425,7 @@ export function InvestorsManager() {
  <Input
  value={formData.full_name}
  onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  placeholder="Jane Doe"
  />
  </div>
@@ -436,7 +436,7 @@ export function InvestorsManager() {
  <Input
  value={formData.title}
  onChange={(e) => setFormData({ ...formData, title: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  placeholder="General Partner"
  />
  </div>
@@ -450,10 +450,10 @@ export function InvestorsManager() {
  value={formData.vc_firm_id}
  onValueChange={(v) => setFormData({ ...formData, vc_firm_id: v })}
  >
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs">
+ <SelectTrigger className="h-14 rounded-xl border font-bold uppercase text-xs">
  <SelectValue placeholder="SELECT VC FIRM" />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  <SelectItem
  value=""
  className="font-bold text-xs text-muted-foreground"
@@ -482,7 +482,7 @@ export function InvestorsManager() {
  type="email"
  value={formData.email}
  onChange={(e) => setFormData({ ...formData, email: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  placeholder="jane@example.com"
  />
  </div>
@@ -494,10 +494,10 @@ export function InvestorsManager() {
  value={formData.investment_stage_pref}
  onValueChange={(v) => setFormData({ ...formData, investment_stage_pref: v })}
  >
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold uppercase text-xs">
+ <SelectTrigger className="h-14 rounded-xl border font-bold uppercase text-xs">
  <SelectValue placeholder="SELECT STAGE" />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {IR_CONFIG.STAGE_FOCUS_OPTIONS.map((stage) => (
  <SelectItem key={stage} value={stage} className="font-bold text-xs">
  {stage}
@@ -515,7 +515,7 @@ export function InvestorsManager() {
  <Textarea
  value={formData.notes}
  onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
- className="min-h-[120px] rounded-2xl border-2 font-medium italic text-sm p-5 resize-none bg-muted/20"
+ className="min-h-[120px] rounded-2xl border font-medium italic text-sm p-5 resize-none bg-muted/20"
  placeholder="Enter strategic context..."
  />
  </div>
@@ -527,14 +527,14 @@ export function InvestorsManager() {
  <Button
  variant="outline"
  onClick={() => setDialogOpen(false)}
- className="h-14 px-8 rounded-xl border-2 font-black uppercase text-[10px]"
+ className="h-14 px-8 rounded-xl border font-medium text-[10px]"
  >
  Cancel
  </Button>
  <Button
  onClick={() => saveMutation.mutate()}
  disabled={!formData.full_name || saveMutation.isPending}
- className="h-14 px-10 rounded-xl font-black uppercase italic tracking-tighter text-lg shadow-primary/20 flex-1 bg-primary text-primary-foreground"
+ className="h-14 px-10 rounded-xl font-semibold text-lg shadow-primary/20 flex-1 bg-primary text-primary-foreground"
  >
  {saveMutation.isPending ? (
  <Loader2 className="h-5 w-5 animate-spin" />
@@ -557,7 +557,7 @@ export function InvestorsManager() {
  <AlertTriangle className="h-10 w-10 text-destructive" />
  </div>
  <div className="space-y-1">
- <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter text-destructive">
+ <DialogTitle className="text-3xl font-semibold text-destructive">
  Terminate Node
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic text-muted-foreground/60">
@@ -569,7 +569,7 @@ export function InvestorsManager() {
  <Button
  variant="outline"
  onClick={() => setDeleteConfirmId(null)}
- className="flex-1 h-14 rounded-xl border-2 font-black uppercase text-[10px]"
+ className="flex-1 h-14 rounded-xl border font-medium text-[10px]"
  >
  Cancel
  </Button>
@@ -577,7 +577,7 @@ export function InvestorsManager() {
  variant="destructive"
  onClick={() => deleteConfirmId && deleteMutation.mutate(deleteConfirmId)}
  disabled={deleteMutation.isPending}
- className="flex-1 h-14 rounded-xl font-black uppercase text-[10px] shadow-destructive/20 gap-2"
+ className="flex-1 h-14 rounded-xl font-medium text-[10px] shadow-destructive/20 gap-2"
  >
  {deleteMutation.isPending ? (
  <Loader2 className="h-4 w-4 animate-spin" />
@@ -600,7 +600,7 @@ export function InvestorsManager() {
  <div className="flex items-center gap-4">
  <FileJson2 className="h-8 w-8 text-blue-500" />
  <div className="space-y-1 text-left">
- <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter leading-none">
+ <DialogTitle className="text-3xl font-semibold leading-none">
  Neural Import
  </DialogTitle>
  <DialogDescription className="text-xs font-medium italic text-muted-foreground/60">

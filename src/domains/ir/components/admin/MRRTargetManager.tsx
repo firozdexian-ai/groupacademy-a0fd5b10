@@ -131,7 +131,7 @@ export function MRRTargetManager() {
  </div>
  <div className="flex items-center gap-3">
  {isClosed ? (
- <Badge className="h-12 px-6 rounded-xl border-2 font-semibold gap-2 bg-muted text-muted-foreground border-border/40 text-[9px]">
+ <Badge className="h-12 px-6 rounded-xl border font-semibold gap-2 bg-muted text-muted-foreground border-border/40 text-[9px]">
  <Lock className="h-3.5 w-3.5" /> REGISTRY_LOCKED
  </Badge>
  ) : (
@@ -140,7 +140,7 @@ export function MRRTargetManager() {
  <AlertDialogTrigger asChild>
  <Button
  variant="outline"
- className="h-12 px-6 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 bg-background/50 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
+ className="h-12 px-6 rounded-xl border font-semibold uppercase text-xs gap-2 bg-background/50 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
  >
  <Calendar className="h-4 w-4" /> Close Period
  </Button>
@@ -149,7 +149,7 @@ export function MRRTargetManager() {
  <div className="h-2 w-full bg-gradient-to-r from-destructive to-rose-600" />
  <div className="p-10 space-y-8">
  <AlertDialogHeader>
- <AlertDialogTitle className="text-3xl font-semibold uppercase italic tracking-tight text-destructive leading-none">
+ <AlertDialogTitle className="text-3xl font-semibold font-medium text-destructive leading-none">
  Terminate Period?
  </AlertDialogTitle>
  <AlertDialogDescription className="text-[10px] font-bold italic text-muted-foreground/80 mt-2">
@@ -157,7 +157,7 @@ export function MRRTargetManager() {
  </AlertDialogDescription>
  </AlertDialogHeader>
  <AlertDialogFooter className="gap-3 sm:gap-0">
- <AlertDialogCancel className="h-14 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest px-8">
+ <AlertDialogCancel className="h-14 rounded-xl border font-semibold uppercase text-xs px-8">
  Cancel
  </AlertDialogCancel>
  <AlertDialogAction className="h-14 rounded-xl bg-destructive hover:bg-destructive/90 font-semibold uppercase text-[10px] tracking-tight px-10 shadow-lg shadow-destructive/20 gap-2">
@@ -170,7 +170,7 @@ export function MRRTargetManager() {
  <Button
  onClick={() => saveMutation.mutate()}
  disabled={saveMutation.isPending || !hasChanges}
- className="h-12 px-8 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 transition-all"
+ className="h-12 px-8 rounded-xl font-semibold uppercase text-xs gap-2 shadow-lg shadow-primary/20 transition-all"
  >
  {saveMutation.isPending ? (
  <RefreshCw className="h-4 w-4 animate-spin" />
@@ -189,7 +189,7 @@ export function MRRTargetManager() {
  <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500" />
  <CardHeader className="p-8 border-b border-border/10 bg-muted/5 flex flex-row items-center justify-between">
  <div className="space-y-1 text-left">
- <CardTitle className="text-xl font-semibold uppercase italic tracking-tight text-emerald-600">
+ <CardTitle className="text-xl font-semibold font-medium text-emerald-600">
  Revenue Calibration
  </CardTitle>
  <CardDescription className="text-[10px] font-bold">
@@ -246,10 +246,10 @@ export function MRRTargetManager() {
  </CardContent>
  </Card>
 
- <Card className="rounded-2xl border-2 border-primary/20 bg-primary/5 shadow-sm overflow-hidden flex flex-col justify-center relative">
+ <Card className="rounded-2xl border border-primary/20 bg-primary/5 shadow-sm overflow-hidden flex flex-col justify-center relative">
  <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 bg-primary/10 rounded-full blur-3xl" />
  <CardContent className="p-10 text-center space-y-6 relative z-10">
- <div className="mx-auto h-20 w-20 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-xl shadow-primary/20 mb-2">
+ <div className="mx-auto h-20 w-20 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-sm mb-2">
  <TrendingUp className="h-10 w-10 text-white" />
  </div>
  <div className="space-y-2">
@@ -271,7 +271,7 @@ export function MRRTargetManager() {
  <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-indigo-500" />
  <CardHeader className="p-8 border-b border-border/10 bg-muted/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
  <div className="space-y-1">
- <CardTitle className="text-xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
+ <CardTitle className="text-xl font-semibold font-medium flex items-center gap-2">
  <Settings2 className="h-5 w-5 text-primary" /> Mix Infrastructure
  </CardTitle>
  <CardDescription className="text-[10px] font-bold">
@@ -280,7 +280,7 @@ export function MRRTargetManager() {
  </div>
  <Badge
  className={cn(
- "font-semibold px-4 py-2 border-2 text-[10px] rounded-xl shrink-0",
+ "font-semibold px-4 py-2 border text-[10px] rounded-xl shrink-0",
  totalMixPercent === 100
  ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
  : "bg-amber-500/10 text-amber-600 border-amber-500/20",
@@ -326,7 +326,7 @@ export function MRRTargetManager() {
  type="number"
  value={mixValue}
  onChange={(e) => handleMixChange(service, Number(e.target.value))}
- className="h-12 rounded-xl border-2 text-center font-semibold pr-6 bg-background/50"
+ className="h-12 rounded-xl border text-center font-semibold pr-6 bg-background/50"
  disabled={isClosed}
  max={100}
  min={0}

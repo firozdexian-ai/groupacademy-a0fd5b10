@@ -198,7 +198,7 @@ export function LeadHunterManager() {
  variant="outline"
  size="icon"
  onClick={() => setSelectedSession(null)}
- className="rounded-xl h-12 w-12 border-2 hover:bg-background shrink-0"
+ className="rounded-xl h-12 w-12 border hover:bg-background shrink-0"
  >
  <ArrowLeft className="h-5 w-5" />
  </Button>
@@ -337,14 +337,14 @@ export function LeadHunterManager() {
  <Button
  variant="ghost"
  size="icon"
- className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all border-2 border-transparent hover:border-border"
+ className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all border border-transparent hover:border-border"
  >
  <MoreHorizontal className="h-5 w-5" />
  </Button>
  </DropdownMenuTrigger>
  <DropdownMenuContent
  align="end"
- className="w-56 rounded-2xl border-2 shadow-sm p-2 bg-background/95"
+ className="w-56 rounded-2xl border shadow-sm p-2 bg-background/95"
  >
  <DropdownMenuItem
  className="rounded-xl font-bold p-3 gap-3 cursor-pointer"
@@ -394,7 +394,7 @@ export function LeadHunterManager() {
  </div>
  <Button
  onClick={() => setShowNewHunt(true)}
- className="rounded-xl h-12 px-8 font-semibold uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+ className="rounded-xl h-12 px-8 font-semibold uppercase text-xs shadow-sm transition-all hover:scale-105 active:scale-95"
  >
  <Zap className="w-4 h-4 mr-2" /> Initialize Hunt
  </Button>
@@ -424,7 +424,7 @@ export function LeadHunterManager() {
  </div>
  <Badge
  variant="outline"
- className="rounded-lg border-2 font-semibold text-[9px] py-1 px-3"
+ className="rounded-lg border font-semibold text-[9px] py-1 px-3"
  >
  {s.leads_requested} NODES
  </Badge>
@@ -433,7 +433,7 @@ export function LeadHunterManager() {
  </Card>
  ))}
  {sessions.length === 0 && !isLoading && (
- <div className="col-span-full text-center py-20 bg-muted/10 rounded-2xl border-2 border-dashed border-border/40">
+ <div className="col-span-full text-center py-20 bg-muted/10 rounded-2xl border border-dashed border-border/40">
  <Database className="h-10 w-10 mx-auto text-muted-foreground/30 mb-4" />
  <p className="text-sm font-semibold text-muted-foreground/50 italic">
  No Extraction Logs Found. Initialize a Hunt to begin.
@@ -465,9 +465,9 @@ export function LeadHunterManager() {
  <Button
  variant={huntMode === "select" ? "default" : "outline"}
  className={cn(
- "h-20 rounded-xl border-2 flex flex-col gap-2 text-xs font-medium",
+ "h-20 rounded-xl border flex flex-col gap-2 text-xs font-medium",
  huntMode === "select"
- ? "shadow-xl bg-primary text-white border-primary"
+ ? "shadow-sm bg-primary text-white border-primary"
  : "opacity-40 hover:opacity-100",
  )}
  onClick={() => setHuntMode("select")}
@@ -477,9 +477,9 @@ export function LeadHunterManager() {
  <Button
  variant={huntMode === "paste" ? "default" : "outline"}
  className={cn(
- "h-20 rounded-xl border-2 flex flex-col gap-2 text-xs font-medium",
+ "h-20 rounded-xl border flex flex-col gap-2 text-xs font-medium",
  huntMode === "paste"
- ? "shadow-xl bg-primary text-white border-primary"
+ ? "shadow-sm bg-primary text-white border-primary"
  : "opacity-40 hover:opacity-100",
  )}
  onClick={() => setHuntMode("paste")}
@@ -509,7 +509,7 @@ export function LeadHunterManager() {
  className={cn(
  "p-5 rounded-2xl cursor-pointer transition-all flex items-center justify-between group",
  selectedJobId === job.id
- ? "bg-primary text-white shadow-xl scale-[1.02]"
+ ? "bg-primary text-white shadow-sm scale-[1.02]"
  : "hover:bg-muted",
  )}
  >
@@ -540,7 +540,7 @@ export function LeadHunterManager() {
  value={rawJD}
  onChange={(e) => setRawJD(e.target.value)}
  placeholder="Paste logic parameters, skills, and experience criteria..."
- className="min-h-[250px] rounded-2xl border-2 bg-muted/5 font-mono text-sm p-6 italic"
+ className="min-h-[250px] rounded-2xl border bg-muted/5 font-mono text-sm p-6 italic"
  />
  </div>
  )}
@@ -549,7 +549,7 @@ export function LeadHunterManager() {
  <Button
  variant="ghost"
  onClick={() => setShowNewHunt(false)}
- className="h-14 px-8 font-semibold uppercase text-[10px] tracking-widest"
+ className="h-14 px-8 font-semibold uppercase text-xs"
  >
  Abort
  </Button>

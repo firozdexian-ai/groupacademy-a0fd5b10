@@ -141,11 +141,11 @@ export function QuizResultsViewer() {
  </p>
  </div>
  <Select value={selectedCourse} onValueChange={setSelectedCourse}>
- <SelectTrigger className="w-full md:w-[320px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-card shadow-inner">
+ <SelectTrigger className="w-full md:w-[320px] h-10 rounded-xl border font-semibold uppercase text-xs bg-card shadow-inner">
  <Layers className="w-4 h-4 mr-2 text-primary" />
  <SelectValue placeholder="Logic Context" />
  </SelectTrigger>
- <SelectContent className="rounded-2xl border-2 shadow-sm">
+ <SelectContent className="rounded-2xl border shadow-sm">
  <SelectItem value="all" className="font-bold">
  GLOBAL_REGISTRY
  </SelectItem>
@@ -199,7 +199,7 @@ export function QuizResultsViewer() {
  <CardContent className="p-6 space-y-4">
  <div
  className={cn(
- "h-12 w-12 rounded-2xl flex items-center justify-center border-2 shadow-inner group-hover:rotate-6 transition-transform",
+ "h-12 w-12 rounded-2xl flex items-center justify-center border shadow-inner group-hover:rotate-6 transition-transform",
  kpi.bg,
  "border-white/5",
  )}
@@ -377,7 +377,7 @@ export function QuizResultsViewer() {
  <Card
  key={index}
  className={cn(
- "rounded-xl border-2 bg-muted/5 overflow-hidden",
+ "rounded-xl border bg-muted/5 overflow-hidden",
  answer.isCorrect ? "border-emerald-500/20" : "border-destructive/20",
  )}
  >
@@ -410,7 +410,7 @@ export function QuizResultsViewer() {
  </p>
  </div>
  {!answer.isCorrect && (
- <div className="p-3 rounded-xl bg-emerald-500/5 border-2 border-emerald-500/10">
+ <div className="p-3 rounded-xl bg-emerald-500/5 border border-emerald-500/30">
  <p className="text-[8px] font-semibold uppercase text-emerald-600/40">Verified_Target</p>
  <p className="text-xs font-bold text-emerald-700">{answer.correctAnswer}</p>
  </div>
@@ -431,7 +431,7 @@ export function QuizResultsViewer() {
  <DialogFooter className="pt-8 border-t border-border/10">
  <Button
  onClick={() => setDetailDialogOpen(false)}
- className="w-full h-10 rounded-xl font-semibold text-[11px] shadow-xl shadow-primary/30"
+ className="w-full h-10 rounded-xl font-semibold text-[11px] shadow-sm"
  >
  Close Audit
  </Button>

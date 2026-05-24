@@ -260,7 +260,7 @@ export function TalentCreditsTab() {
  <Button
  variant="outline"
  onClick={loadData}
- className="rounded-xl h-12 px-6 border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 text-blue-600 border-blue-500/20 bg-blue-500/10 hover:bg-blue-500 hover:text-white transition-all"
+ className="rounded-xl h-12 px-6 border font-semibold uppercase text-xs gap-2 text-blue-600 border-blue-500/20 bg-blue-500/10 hover:bg-blue-500 hover:text-white transition-all"
  >
  <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} /> Re-Sync Registry
  </Button>
@@ -271,7 +271,7 @@ export function TalentCreditsTab() {
  <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
  <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-sm group">
  <CardContent className="p-6 flex items-center gap-6">
- <div className="h-14 w-14 rounded-2xl bg-blue-500/10 flex items-center justify-center border-2 border-white/5 transition-transform group-hover:rotate-6">
+ <div className="h-14 w-14 rounded-2xl bg-blue-500/10 flex items-center justify-center border border-white/5 transition-transform group-hover:rotate-6">
  <Coins className="h-7 w-7 text-blue-500" />
  </div>
  <div className="text-left">
@@ -285,7 +285,7 @@ export function TalentCreditsTab() {
  </CardContent>
  </Card>
 
- <Card className="rounded-2xl border-2 border-destructive/20 bg-destructive/5 shadow-sm text-left">
+ <Card className="rounded-2xl border border-destructive/30 bg-destructive/5 shadow-sm text-left">
  <CardContent className="p-6">
  <div className="flex items-center gap-2 mb-3">
  <TrendingDown className="h-4 w-4 text-destructive" />
@@ -421,7 +421,7 @@ export function TalentCreditsTab() {
  <TableCell className="text-left">
  <Badge
  variant="outline"
- className="font-mono text-[10px] border-2 rounded-lg bg-background px-3 border-blue-500/20 text-blue-600"
+ className="font-mono text-[10px] border rounded-lg bg-background px-3 border-blue-500/20 text-blue-600"
  >
  {credit.balance.toLocaleString()} TKN
  </Badge>
@@ -431,7 +431,7 @@ export function TalentCreditsTab() {
  <Button
  variant="ghost"
  size="icon"
- className="h-10 w-10 rounded-xl hover:bg-emerald-500 hover:text-white transition-all border-2"
+ className="h-10 w-10 rounded-xl hover:bg-emerald-500 hover:text-white transition-all border"
  onClick={() => setAdjustDialog({ open: true, talent: credit, type: "add" })}
  >
  <Plus className="h-4 w-4" />
@@ -439,7 +439,7 @@ export function TalentCreditsTab() {
  <Button
  variant="ghost"
  size="icon"
- className="h-10 w-10 rounded-xl hover:bg-destructive text-destructive hover:text-white transition-all border-2"
+ className="h-10 w-10 rounded-xl hover:bg-destructive text-destructive hover:text-white transition-all border"
  onClick={() => setAdjustDialog({ open: true, talent: credit, type: "deduct" })}
  >
  <Minus className="h-4 w-4" />
@@ -499,7 +499,7 @@ export function TalentCreditsTab() {
  <Button
  variant="outline"
  size="icon"
- className="h-12 w-12 rounded-xl border-2 hover:bg-blue-600 hover:text-white transition-all"
+ className="h-12 w-12 rounded-xl border hover:bg-blue-600 hover:text-white transition-all"
  onClick={() => setPage((p) => Math.max(1, p - 1))}
  disabled={page === 1}
  >
@@ -508,7 +508,7 @@ export function TalentCreditsTab() {
  <Button
  variant="outline"
  size="icon"
- className="h-12 w-12 rounded-xl border-2 hover:bg-blue-600 hover:text-white transition-all"
+ className="h-12 w-12 rounded-xl border hover:bg-blue-600 hover:text-white transition-all"
  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
  disabled={page === totalPages}
  >
@@ -548,7 +548,7 @@ export function TalentCreditsTab() {
  </div>
  </DialogHeader>
  <div className="space-y-8 py-4">
- <div className="p-6 rounded-2xl border-2 bg-muted/20 border-border/10 flex items-center justify-between">
+ <div className="p-6 rounded-2xl border bg-muted/20 border-border/10 flex items-center justify-between">
  <div>
  <p className="text-[10px] font-semibold text-muted-foreground/40 mb-1">
  Target Node
@@ -575,7 +575,7 @@ export function TalentCreditsTab() {
  value={adjustAmount}
  onChange={(e) => setAdjustAmount(e.target.value)}
  placeholder="0000"
- className="h-10 rounded-xl border-2 font-semibold text-xl"
+ className="h-10 rounded-xl border font-semibold text-xl"
  />
  </div>
  <div className="space-y-2">
@@ -587,7 +587,7 @@ export function TalentCreditsTab() {
  onChange={(e) => setAdjustReason(e.target.value)}
  placeholder="Define administrative reason..."
  rows={3}
- className="rounded-2xl border-2 p-6 italic font-medium"
+ className="rounded-2xl border p-6 italic font-medium"
  />
  </div>
  </div>
@@ -595,7 +595,7 @@ export function TalentCreditsTab() {
  <Button
  variant="ghost"
  onClick={() => setAdjustDialog({ open: false, type: "add" })}
- className="h-14 px-8 font-semibold uppercase text-[10px] tracking-widest"
+ className="h-14 px-8 font-semibold uppercase text-xs"
  >
  Abort
  </Button>

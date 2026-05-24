@@ -106,7 +106,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
  <Button
  variant="outline"
  size="sm"
- className="rounded-xl font-black uppercase text-[10px] tracking-widest border-2 hover:bg-primary/5 gap-2 transition-all active:scale-95"
+ className="rounded-xl font-medium text-xs border hover:bg-primary/5 gap-2 transition-all active:scale-95"
  >
  <KeyRound className="h-3.5 w-3.5 text-primary" />
  Authorize Retake
@@ -123,7 +123,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
  <ShieldCheck className="h-5 w-5 text-primary" />
  </div>
  <div className="space-y-0.5">
- <DialogTitle className="text-xl font-black uppercase tracking-tighter italic leading-none">
+ <DialogTitle className="text-xl font-medium tracking-tighter italic leading-none">
  Generate Access Node
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
@@ -138,7 +138,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
  <Label className="text-[10px] font-black text-primary ml-1">
  Entity Telemetry (Email)
  </Label>
- <Input value={leadEmail} disabled className="h-11 rounded-xl bg-muted/20 border-2 font-bold opacity-60" />
+ <Input value={leadEmail} disabled className="h-11 rounded-xl bg-muted/20 border font-bold opacity-60" />
  </div>
 
  {generatedCode ? (
@@ -151,11 +151,11 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
  <Input
  value={generatedCode}
  readOnly
- className="h-10 rounded-xl bg-primary/5 border-2 border-primary/20 font-mono text-2xl font-black tracking-[0.3em] text-center text-primary shadow-inner"
+ className="h-10 rounded-xl bg-primary/5 border border-primary/20 font-mono text-2xl font-black tracking-[0.3em] text-center text-primary shadow-inner"
  />
  <Button
  variant="outline"
- className="h-14 w-14 rounded-2xl border-2 shrink-0 transition-all hover:bg-primary hover:text-white group"
+ className="h-14 w-14 rounded-2xl border shrink-0 transition-all hover:bg-primary hover:text-white group"
  onClick={handleArtifactExport}
  >
  {copied ? (
@@ -186,7 +186,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
  <Button
  onClick={handleGenerateHandshake}
  disabled={generating}
- className="w-full h-16 rounded-[20px] font-black uppercase tracking-[0.3em] text-[11px] shadow-sm group relative overflow-hidden"
+ className="w-full h-16 rounded-[20px] font-medium tracking-[0.3em] text-[11px] shadow-sm group relative overflow-hidden"
  >
  <span className="relative z-10 flex items-center gap-3">
  {generating ? <Loader2 className="h-5 w-5 animate-spin" /> : <KeyRound className="h-5 w-5" />}
@@ -203,7 +203,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
  <Button
  variant="ghost"
  onClick={() => setOpen(false)}
- className="rounded-xl font-black uppercase text-[10px] tracking-widest w-full h-11"
+ className="rounded-xl font-medium text-xs w-full h-11"
  >
  Terminate Node
  </Button>

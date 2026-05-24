@@ -108,7 +108,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
  <Button
  variant="outline"
  size="sm"
- className="font-black uppercase text-[10px] tracking-widest gap-2 rounded-xl border-2 hover:bg-primary/5"
+ className="font-medium text-xs gap-2 rounded-xl border hover:bg-primary/5"
  >
  <KeyRound className="h-3 w-3" />
  Generate Code
@@ -118,7 +118,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
  <div className="h-2 w-full bg-primary" />
  <div className="p-8 space-y-6">
  <DialogHeader className="text-left">
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+ <DialogTitle className="text-2xl font-semibold flex items-center gap-3">
  <ShieldCheck className="h-6 w-6 text-primary" /> Access Deployment
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
@@ -128,32 +128,32 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
 
  <div className="space-y-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2 text-primary/80">
+ <Label className="text-[10px] font-medium italic tracking-widest flex items-center gap-2 text-primary/80">
  <Mail className="h-3 w-3" /> Target Email
  </Label>
  <Input
  value={leadEmail}
  disabled
- className="h-12 rounded-xl border-2 font-bold bg-muted/30 border-border/40"
+ className="h-12 rounded-xl border font-bold bg-muted/30 border-border/40"
  />
  </div>
 
  {generatedCode ? (
  <div className="space-y-3 animate-in zoom-in-95 duration-300">
- <Label className="text-[10px] font-black uppercase italic tracking-widest text-primary flex items-center gap-2">
+ <Label className="text-[10px] font-medium italic tracking-widest text-primary flex items-center gap-2">
  <Zap className="h-3 w-3 fill-current" /> Generated Key
  </Label>
  <div className="flex items-center gap-2">
  <Input
  value={generatedCode}
  readOnly
- className="h-16 font-mono text-2xl font-black tracking-[0.4em] text-center rounded-2xl border-2 border-primary/20 bg-primary/5 shadow-inner"
+ className="h-16 font-mono text-2xl font-black tracking-[0.4em] text-center rounded-2xl border border-primary/20 bg-primary/5 shadow-inner"
  />
  <Button
  variant="outline"
  size="icon"
  onClick={handleCopy}
- className="h-16 w-16 rounded-2xl border-2 hover:bg-primary hover:text-white transition-all shadow-md"
+ className="h-16 w-16 rounded-2xl border hover:bg-primary hover:text-white transition-all shadow-md"
  >
  {copied ? <Check className="h-6 w-6 text-green-500" /> : <Copy className="h-6 w-6" />}
  </Button>
@@ -171,7 +171,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
  <Button
  onClick={handleGenerate}
  disabled={generating}
- className="w-full h-10 rounded-xl font-black uppercase italic tracking-tighter text-lg shadow-xl hover:scale-[1.02] active:scale-95 transition-transform"
+ className="w-full h-10 rounded-xl font-semibold text-lg shadow-sm hover:scale-[1.02] active:scale-95 transition-transform"
  >
  {generating ? "Saving…" : "Generate"}
  </Button>
@@ -183,7 +183,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
  <Button
  variant="ghost"
  onClick={() => setOpen(false)}
- className="font-black uppercase text-[10px] tracking-widest italic opacity-50 hover:opacity-100 transition-opacity"
+ className="font-medium text-xs italic opacity-50 hover:opacity-100 transition-opacity"
  >
  Close Console
  </Button>

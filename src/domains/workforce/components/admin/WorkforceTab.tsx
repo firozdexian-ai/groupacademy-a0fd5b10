@@ -175,12 +175,12 @@ export function WorkforceManager() {
  </p>
  </div>
  <div className="flex gap-3">
- <Button variant="outline" onClick={fetchMembers} className="h-14 w-14 rounded-2xl border-2">
+ <Button variant="outline" onClick={fetchMembers} className="h-14 w-14 rounded-2xl border">
  <RefreshCw className={cn("h-5 w-5", loading && "animate-spin")} />
  </Button>
  <Button
  onClick={() => setShowAddDialog(true)}
- className="h-10 px-4 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-3 shadow-lg bg-primary text-primary-foreground"
+ className="h-10 px-4 rounded-xl font-semibold uppercase text-xs gap-3 shadow-lg bg-primary text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Deploy Member
  </Button>
@@ -202,11 +202,11 @@ export function WorkforceManager() {
  placeholder="SEARCH WORKFORCE REGISTRY..."
  value={search}
  onChange={(e) => setSearch(e.target.value)}
- className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card"
+ className="h-10 rounded-xl border pl-12 font-bold uppercase text-xs bg-card"
  />
  </div>
  <Select value={roleFilter} onValueChange={setRoleFilter}>
- <SelectTrigger className="w-full lg:w-[240px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] bg-background">
+ <SelectTrigger className="w-full lg:w-[240px] h-10 rounded-xl border font-semibold uppercase text-[10px] bg-background">
  <SelectValue placeholder="FILTER ROLE" />
  </SelectTrigger>
  <SelectContent>
@@ -244,7 +244,7 @@ export function WorkforceManager() {
  >
  <TableCell className="py-6 pl-8">
  <div className="text-left min-w-[200px]">
- <p className="font-semibold text-sm uppercase italic tracking-tight">{m.talent_name || "—"}</p>
+ <p className="font-semibold text-sm font-medium">{m.talent_name || "—"}</p>
  <p className="text-[9px] font-bold text-muted-foreground uppercase mt-0.5">{m.talent_email}</p>
  </div>
  </TableCell>
@@ -252,7 +252,7 @@ export function WorkforceManager() {
  <div className="space-y-1">
  <Badge
  variant="outline"
- className="font-semibold text-[9px] uppercase italic border-2 bg-primary/5"
+ className="font-semibold text-[9px] uppercase italic border bg-primary/5"
  >
  {ROLE_LABELS[m.role_type] || m.role_type}
  </Badge>
@@ -289,7 +289,7 @@ export function WorkforceManager() {
  <div className="h-2 w-full bg-primary" />
  <div className="p-10 space-y-8 text-left">
  <DialogHeader>
- <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight">
+ <DialogTitle className="text-3xl font-semibold font-medium">
  Deploy Workforce Node
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
@@ -306,10 +306,10 @@ export function WorkforceManager() {
  placeholder="SEARCH NAME OR EMAIL..."
  value={talentSearch}
  onChange={(e) => setTalentSearch(e.target.value)}
- className="h-12 border-2 rounded-xl"
+ className="h-12 border rounded-xl"
  />
  {talentOptions.length > 0 && !selectedTalent && (
- <Card className="absolute z-50 w-full mt-1 border-2 shadow-sm">
+ <Card className="absolute z-50 w-full mt-1 border shadow-sm">
  {talentOptions.map((t) => (
  <div
  key={t.id}
@@ -333,7 +333,7 @@ export function WorkforceManager() {
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase ml-1">Team Assignment *</Label>
  <Select value={formData.team_id} onValueChange={(v) => setFormData({ ...formData, team_id: v })}>
- <SelectTrigger className="h-12 border-2 rounded-xl">
+ <SelectTrigger className="h-12 border rounded-xl">
  <SelectValue placeholder="SELECT TEAM" />
  </SelectTrigger>
  <SelectContent>
@@ -350,7 +350,7 @@ export function WorkforceManager() {
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase ml-1">Workforce Grade *</Label>
  <Select value={formData.grade_id} onValueChange={(v) => setFormData({ ...formData, grade_id: v })}>
- <SelectTrigger className="h-12 border-2 rounded-xl">
+ <SelectTrigger className="h-12 border rounded-xl">
  <SelectValue placeholder="SELECT GRADE" />
  </SelectTrigger>
  <SelectContent>
@@ -366,7 +366,7 @@ export function WorkforceManager() {
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold uppercase ml-1">Role Type</Label>
  <Select value={formData.role_type} onValueChange={(v) => setFormData({ ...formData, role_type: v })}>
- <SelectTrigger className="h-12 border-2 rounded-xl">
+ <SelectTrigger className="h-12 border rounded-xl">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -385,7 +385,7 @@ export function WorkforceManager() {
  value={formData.city}
  onChange={(e) => setFormData({ ...formData, city: e.target.value })}
  placeholder="e.g. Dhaka"
- className="h-12 border-2 rounded-xl"
+ className="h-12 border rounded-xl"
  />
  </div>
  </div>
@@ -414,7 +414,7 @@ export function WorkforceManager() {
  <Button
  onClick={handleAdd}
  disabled={saving || !selectedTalent}
- className="h-12 px-10 rounded-2xl font-semibold uppercase italic text-[11px] gap-2 shadow-xl bg-primary text-primary-foreground"
+ className="h-12 px-10 rounded-2xl font-semibold uppercase italic text-[11px] gap-2 shadow-sm bg-primary text-primary-foreground"
  >
  {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />} Authorize
  Deployment
@@ -435,11 +435,11 @@ function KPIStat({ icon: Icon, label, value, color }: any) {
  blue: "bg-blue-500/10 border-blue-500/20 text-blue-600",
  };
  return (
- <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden group">
+ <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden group">
  <CardContent className="p-6 flex items-center gap-5">
  <div
  className={cn(
- "p-4 rounded-2xl border-2 group-hover:rotate-6 transition-transform shadow-inner",
+ "p-4 rounded-2xl border group-hover:rotate-6 transition-transform shadow-inner",
  colors[color],
  )}
  >

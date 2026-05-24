@@ -92,7 +92,7 @@ export function InstitutionTypesManager() {
  size="icon"
  onClick={() => typesQuery.refetch()}
  disabled={typesQuery.isRefetching}
- className="h-12 w-12 rounded-xl border-2 bg-background/50 hover:bg-primary/5 shrink-0 shadow-sm"
+ className="h-12 w-12 rounded-xl border bg-background/50 hover:bg-primary/5 shrink-0 shadow-sm"
  aria-label="Refresh"
  >
  <RefreshCw
@@ -101,7 +101,7 @@ export function InstitutionTypesManager() {
  </Button>
  <Button
  onClick={() => handleOpenDialog()}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-primary/20"
  >
  <Plus className="h-4 w-4" /> Inject Type
  </Button>
@@ -217,7 +217,7 @@ export function InstitutionTypesManager() {
  setEditingType({ ...editingType, label: e.target.value })
  }
  placeholder="E.g. University"
- className="h-14 rounded-xl border-2 font-bold bg-muted/20"
+ className="h-14 rounded-xl border font-bold bg-muted/20"
  />
  </div>
 
@@ -235,7 +235,7 @@ export function InstitutionTypesManager() {
  })
  }
  placeholder="e.g. university"
- className="h-14 rounded-xl border-2 font-mono text-xs bg-muted/20 lowercase"
+ className="h-14 rounded-xl border font-mono text-xs bg-muted/20 lowercase"
  // Prevent changing key after creation to protect relations
  disabled={!!editingType?.id}
  />
@@ -252,7 +252,7 @@ export function InstitutionTypesManager() {
  sort_order: Number(e.target.value),
  })
  }
- className="h-14 rounded-xl border-2 font-black text-center bg-muted/20"
+ className="h-14 rounded-xl border font-black text-center bg-muted/20"
  />
  </div>
  </div>
@@ -262,7 +262,7 @@ export function InstitutionTypesManager() {
  <Button
  variant="outline"
  onClick={() => setDialogOpen(false)}
- className="h-12 px-6 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest italic"
+ className="h-12 px-6 rounded-xl border font-medium text-xs italic"
  >
  Abort
  </Button>
@@ -271,7 +271,7 @@ export function InstitutionTypesManager() {
  disabled={
  upsertType.isPending || !editingType?.key || !editingType?.label
  }
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-primary/20"
  >
  <ShieldCheck className="h-4 w-4" /> Authorize
  </Button>

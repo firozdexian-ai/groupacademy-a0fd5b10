@@ -27,11 +27,11 @@ export function JobsTalentCrmTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-emerald-500">
  <UserCheck className="h-8 w-8 text-emerald-500 fill-emerald-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Talent CRM
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Candidate Relationship Pipeline
  </p>
  </div>
@@ -40,7 +40,7 @@ export function JobsTalentCrmTab() {
  setDraft({ stage: "lead" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
  >
  <Plus className="h-4 w-4" /> Add Relationship
  </Button>
@@ -53,12 +53,12 @@ export function JobsTalentCrmTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Talent Node
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Company Node</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Pipeline Stage</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">Added</TableHead>
+ <TableHead className="font-medium text-xs">Company Node</TableHead>
+ <TableHead className="font-medium text-xs">Pipeline Stage</TableHead>
+ <TableHead className="font-medium text-xs text-right">Added</TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
  </TableRow>
  </TableHeader>
@@ -73,7 +73,7 @@ export function JobsTalentCrmTab() {
  <TableRow>
  <TableCell
  colSpan={5}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero CRM records detected.
  </TableCell>
@@ -151,7 +151,7 @@ export function JobsTalentCrmTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-emerald-500 flex items-center gap-2">
  <UserCheck className="h-6 w-6" /> CRM Record
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -168,7 +168,7 @@ export function JobsTalentCrmTab() {
  placeholder="UUID"
  value={draft.talent_id || ""}
  onChange={(e) => setDraft({ ...draft, talent_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  <div className="space-y-2">
@@ -179,7 +179,7 @@ export function JobsTalentCrmTab() {
  placeholder="UUID"
  value={draft.company_id || ""}
  onChange={(e) => setDraft({ ...draft, company_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  </div>
@@ -188,7 +188,7 @@ export function JobsTalentCrmTab() {
  Pipeline Stage
  </Label>
  <Select value={draft.stage} onValueChange={(v) => setDraft({ ...draft, stage: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -217,7 +217,7 @@ export function JobsTalentCrmTab() {
  <Button
  disabled={!draft.talent_id || upsertCrmRecord.isPending}
  onClick={() => upsertCrmRecord.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-14 rounded-xl font-black uppercase bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="h-14 rounded-xl font-medium bg-emerald-600 hover:bg-emerald-700 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Enforce Stage
  </Button>

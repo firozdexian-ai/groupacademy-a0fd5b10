@@ -191,17 +191,17 @@ export default function CourseSessionsManager({
  <p className="text-[10px] text-muted-foreground mt-0.5">Default timezone: {tz}</p>
  </div>
  <div className="flex gap-2">
- <Button variant="outline" size="sm" className="rounded-xl text-[10px] font-bold uppercase" onClick={() => setRecurringOpen(true)}>
+ <Button variant="outline" size="sm" className="rounded-xl text-xs font-medium" onClick={() => setRecurringOpen(true)}>
  <Repeat className="w-3.5 h-3.5 mr-1.5" /> Generate Series
  </Button>
- <Button size="sm" className="rounded-xl text-[10px] font-bold uppercase" onClick={openNew}>
+ <Button size="sm" className="rounded-xl text-xs font-medium" onClick={openNew}>
  <Plus className="w-3.5 h-3.5 mr-1.5" /> Add Session
  </Button>
  </div>
  </div>
 
  {!loading && sessions.length === 0 && (
- <Card className="rounded-2xl border-2 border-dashed">
+ <Card className="rounded-2xl border border-dashed">
  <CardContent className="p-8 text-center space-y-3">
  <Calendar className="w-10 h-10 mx-auto text-muted-foreground/30" />
  <p className="text-sm font-bold">No sessions scheduled yet</p>
@@ -219,7 +219,7 @@ export default function CourseSessionsManager({
  {sessions.map((s, idx) => {
  const past = new Date(s.scheduled_date).getTime() < Date.now();
  return (
- <Card key={s.id} className={cn("rounded-2xl border-2 transition-colors", past && s.status === "scheduled" && "border-amber-500/30")}>
+ <Card key={s.id} className={cn("rounded-2xl border transition-colors", past && s.status === "scheduled" && "border-amber-500/30")}>
  <CardContent className="p-4 space-y-3">
  <div className="flex items-start justify-between gap-3">
  <div className="flex-1 min-w-0">
@@ -251,18 +251,18 @@ export default function CourseSessionsManager({
  )}
  </div>
  <div className="flex flex-col gap-1.5 shrink-0">
- <Button size="sm" variant="outline" className="h-8 rounded-lg text-[10px] font-bold uppercase"
+ <Button size="sm" variant="outline" className="h-8 rounded-lg text-xs font-medium"
  onClick={() => setEditing(s)}>
  <Edit2 className="w-3 h-3 mr-1" /> Edit
  </Button>
  {s.status === "scheduled" && (
- <Button size="sm" variant="outline" className="h-8 rounded-lg text-[10px] font-bold uppercase text-emerald-600"
+ <Button size="sm" variant="outline" className="h-8 rounded-lg text-xs font-medium text-emerald-600"
  onClick={() => setStatus(s, "completed")}>
  <CheckCircle2 className="w-3 h-3 mr-1" /> Done
  </Button>
  )}
  {s.status !== "cancelled" && s.status !== "completed" && (
- <Button size="sm" variant="ghost" className="h-8 rounded-lg text-[10px] font-bold uppercase text-destructive"
+ <Button size="sm" variant="ghost" className="h-8 rounded-lg text-xs font-medium text-destructive"
  onClick={() => setStatus(s, "cancelled")}>
  <X className="w-3 h-3 mr-1" /> Cancel
  </Button>
@@ -283,7 +283,7 @@ export default function CourseSessionsManager({
  <Dialog open={!!editing} onOpenChange={(o) => !o && setEditing(null)}>
  <DialogContent className="max-w-lg rounded-2xl">
  <DialogHeader>
- <DialogTitle className="font-black uppercase tracking-tight">
+ <DialogTitle className="font-medium tracking-tight">
  {editing?.id ? "Edit Session" : "New Session"}
  </DialogTitle>
  </DialogHeader>
@@ -353,7 +353,7 @@ export default function CourseSessionsManager({
  <Dialog open={recurringOpen} onOpenChange={setRecurringOpen}>
  <DialogContent className="max-w-md rounded-2xl">
  <DialogHeader>
- <DialogTitle className="font-black uppercase tracking-tight">Generate Recurring Series</DialogTitle>
+ <DialogTitle className="font-medium tracking-tight">Generate Recurring Series</DialogTitle>
  </DialogHeader>
  <div className="space-y-4">
  <EventDateTimeField

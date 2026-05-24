@@ -27,11 +27,11 @@ export function JobsSourcingTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-fuchsia-500">
  <UserPlus className="h-8 w-8 text-fuchsia-500 fill-fuchsia-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Sourcing
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Outbound Job Invitations
  </p>
  </div>
@@ -40,7 +40,7 @@ export function JobsSourcingTab() {
  setDraft({ status: "sent" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-fuchsia-500/20 bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-fuchsia-500/20 bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
  >
  <Plus className="h-4 w-4" /> Send Invite
  </Button>
@@ -53,10 +53,10 @@ export function JobsSourcingTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">Job Node</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Talent Node</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Invite Status</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">
+ <TableHead className="font-medium text-xs py-5 pl-8">Job Node</TableHead>
+ <TableHead className="font-medium text-xs">Talent Node</TableHead>
+ <TableHead className="font-medium text-xs">Invite Status</TableHead>
+ <TableHead className="font-medium text-xs text-right">
  Sent Date
  </TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
@@ -73,7 +73,7 @@ export function JobsSourcingTab() {
  <TableRow>
  <TableCell
  colSpan={5}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero invitations detected.
  </TableCell>
@@ -151,7 +151,7 @@ export function JobsSourcingTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-fuchsia-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-fuchsia-500 flex items-center gap-2">
  <UserPlus className="h-6 w-6" /> Sourcing Invite
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -168,7 +168,7 @@ export function JobsSourcingTab() {
  placeholder="UUID"
  value={draft.job_id || ""}
  onChange={(e) => setDraft({ ...draft, job_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  <div className="space-y-2">
@@ -179,7 +179,7 @@ export function JobsSourcingTab() {
  placeholder="UUID"
  value={draft.talent_id || ""}
  onChange={(e) => setDraft({ ...draft, talent_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  </div>
@@ -188,7 +188,7 @@ export function JobsSourcingTab() {
  Invite Status
  </Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -208,7 +208,7 @@ export function JobsSourcingTab() {
  <Button
  disabled={!draft.job_id || upsertInvitation.isPending}
  onClick={() => upsertInvitation.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-14 rounded-xl font-black uppercase bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
+ className="h-14 rounded-xl font-medium bg-fuchsia-600 hover:bg-fuchsia-700 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Enforce Status
  </Button>

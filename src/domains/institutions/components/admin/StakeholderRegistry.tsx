@@ -153,9 +153,9 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  <div className="space-y-1">
  <div className="flex items-center gap-3 text-primary">
  <Building2 className="h-8 w-8 text-primary" />
- <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">{title}</h2>
+ <h2 className="text-4xl font-medium tracking-tighter italic leading-none">{title}</h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Global Graph Registry · Total Nodes: {listQuery.data?.length || 0}
  </p>
  </div>
@@ -165,7 +165,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  setDraft({ type: typeOptions[0], status: "prospect" });
  setOpen(true);
  }}
- className="h-10 px-4 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-xl bg-primary text-primary-foreground"
+ className="h-10 px-4 rounded-xl font-medium text-xs gap-2 shadow-sm bg-primary text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Deploy Node
  </Button>
@@ -178,11 +178,11 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  placeholder="FILTER REGISTRY BY IDENTITY..."
  value={search}
  onChange={(e) => setSearch(e.target.value)}
- className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card"
+ className="h-10 rounded-xl border pl-12 font-bold uppercase text-xs bg-card"
  />
  </div>
  <Select value={statusFilter} onValueChange={setStatusFilter}>
- <SelectTrigger className="w-full md:w-[220px] h-10 rounded-xl border-2 font-black uppercase text-[10px] bg-background">
+ <SelectTrigger className="w-full md:w-[220px] h-10 rounded-xl border font-medium text-[10px] bg-background">
  <Filter className="h-4 w-4 mr-2" />
  <SelectValue placeholder="STATUS" />
  </SelectTrigger>
@@ -201,7 +201,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  {listQuery.isLoading ? (
  <div className="h-64 animate-pulse bg-muted/40 rounded-2xl" />
  ) : rows.length === 0 ? (
- <Card className="rounded-2xl border-2 border-dashed p-20 text-center opacity-30 font-black text-xs italic">
+ <Card className="rounded-2xl border border-dashed p-20 text-center opacity-30 font-black text-xs italic">
  No matching nodes detected
  </Card>
  ) : (
@@ -217,7 +217,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  </div>
  <div className="space-y-1 flex-1 min-w-0">
  <div className="flex items-center gap-3">
- <h4 className="font-black text-xl uppercase italic tracking-tighter truncate">{r.name}</h4>
+ <h4 className="font-black text-xl font-mediumer truncate">{r.name}</h4>
  <Badge
  variant={r.status === "active" ? "default" : "secondary"}
  className="font-black text-[8px] px-2"
@@ -299,7 +299,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  <div className="h-2 w-full bg-primary" />
  <div className="p-10 space-y-6 max-h-[85vh] overflow-y-auto no-scrollbar">
  <DialogHeader>
- <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter">
+ <DialogTitle className="text-3xl font-semibold">
  {editingRow ? "Recalibrate Node" : "Node Deployment"}
  </DialogTitle>
  </DialogHeader>
@@ -307,22 +307,22 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
  {/* Identity Block */}
  <div className="md:col-span-2 space-y-2 border-b border-border/10 pb-2">
- <Label className="text-[10px] font-black uppercase italic tracking-widest text-primary">
+ <Label className="text-[10px] font-medium italic tracking-widest text-primary">
  Identity & Status
  </Label>
  </div>
  <div className="space-y-2 md:col-span-2">
- <Label className="text-[10px] font-black uppercase ml-1">Entity Name *</Label>
+ <Label className="text-[10px] font-medium ml-1">Entity Name *</Label>
  <Input
  value={draft.name ?? ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Classification</Label>
+ <Label className="text-[10px] font-medium ml-1">Classification</Label>
  <Select value={draft.type || typeOptions[0]} onValueChange={(v) => setDraft({ ...draft, type: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -335,9 +335,9 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  </Select>
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Current Status</Label>
+ <Label className="text-[10px] font-medium ml-1">Current Status</Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -352,68 +352,68 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
 
  {/* R1 Fix: Geolocation & Web */}
  <div className="md:col-span-2 space-y-2 border-b border-border/10 pb-2 mt-4">
- <Label className="text-[10px] font-black uppercase italic tracking-widest text-primary">
+ <Label className="text-[10px] font-medium italic tracking-widest text-primary">
  Reach & Localization
  </Label>
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Country</Label>
+ <Label className="text-[10px] font-medium ml-1">Country</Label>
  <Input
  value={draft.country ?? ""}
  onChange={(e) => setDraft({ ...draft, country: e.target.value })}
  placeholder="e.g. United Kingdom"
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Website URL</Label>
+ <Label className="text-[10px] font-medium ml-1">Website URL</Label>
  <Input
  value={draft.website ?? ""}
  onChange={(e) => setDraft({ ...draft, website: e.target.value })}
  placeholder="https://"
- className="h-12 rounded-xl border-2 font-mono text-xs"
+ className="h-12 rounded-xl border font-mono text-xs"
  />
  </div>
 
  {/* R1 Fix: Point of Contact */}
  <div className="md:col-span-2 space-y-2 border-b border-border/10 pb-2 mt-4">
- <Label className="text-[10px] font-black uppercase italic tracking-widest text-primary">
+ <Label className="text-[10px] font-medium italic tracking-widest text-primary">
  Administrative POC
  </Label>
  </div>
  <div className="space-y-2 md:col-span-2">
- <Label className="text-[10px] font-black uppercase ml-1">Contact Full Name</Label>
+ <Label className="text-[10px] font-medium ml-1">Contact Full Name</Label>
  <Input
  value={draft.contact_name ?? ""}
  onChange={(e) => setDraft({ ...draft, contact_name: e.target.value })}
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Email Endpoint</Label>
+ <Label className="text-[10px] font-medium ml-1">Email Endpoint</Label>
  <Input
  value={draft.contact_email ?? ""}
  onChange={(e) => setDraft({ ...draft, contact_email: e.target.value })}
  type="email"
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Phone</Label>
+ <Label className="text-[10px] font-medium ml-1">Phone</Label>
  <Input
  value={draft.contact_phone ?? ""}
  onChange={(e) => setDraft({ ...draft, contact_phone: e.target.value })}
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  </div>
 
  {/* R1 Fix: Internal Notes */}
  <div className="md:col-span-2 space-y-2 mt-4">
- <Label className="text-[10px] font-black uppercase ml-1">Telemetry Notes</Label>
+ <Label className="text-[10px] font-medium ml-1">Telemetry Notes</Label>
  <Textarea
  value={draft.notes ?? ""}
  onChange={(e) => setDraft({ ...draft, notes: e.target.value })}
- className="min-h-[120px] rounded-2xl border-2 bg-muted/5"
+ className="min-h-[120px] rounded-2xl border bg-muted/5"
  placeholder="Contextual intelligence..."
  />
  </div>
@@ -423,14 +423,14 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  <Button
  variant="ghost"
  onClick={() => setOpen(false)}
- className="h-14 px-8 rounded-xl font-black uppercase text-[10px]"
+ className="h-14 px-8 rounded-xl font-medium text-[10px]"
  >
  Abort
  </Button>
  <Button
  onClick={() => saveMutation.mutate()}
  disabled={saveMutation.isPending}
- className="h-10 px-4 rounded-xl font-black uppercase italic text-lg flex-1 shadow-lg bg-primary"
+ className="h-10 px-4 rounded-xl font-medium italic text-lg flex-1 shadow-lg bg-primary"
  >
  {saveMutation.isPending ? "Syncing..." : editingRow ? "Commit Recalibration" : "Authorize Deployment"}
  </Button>
@@ -442,10 +442,10 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  <AlertDialog open={!!purgeId} onOpenChange={() => setPurgeId(null)}>
  <AlertDialogContent className="rounded-2xl border border-destructive/30 bg-background/95">
  <AlertDialogHeader className="items-center text-center">
- <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border-2 border-destructive/20">
+ <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border border-destructive/30">
  <AlertTriangle className="h-8 w-8 text-destructive" />
  </div>
- <AlertDialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
+ <AlertDialogTitle className="text-2xl font-semibold">
  Terminate Node?
  </AlertDialogTitle>
  <AlertDialogDescription className="text-xs font-bold text-muted-foreground/60 leading-relaxed">
@@ -453,10 +453,10 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  </AlertDialogDescription>
  </AlertDialogHeader>
  <AlertDialogFooter className="mt-8 gap-3">
- <AlertDialogCancel className="h-12 rounded-xl font-black uppercase text-[10px]">Cancel</AlertDialogCancel>
+ <AlertDialogCancel className="h-12 rounded-xl font-medium text-[10px]">Cancel</AlertDialogCancel>
  <AlertDialogAction
  onClick={() => purgeId && purgeMutation.mutate(purgeId)}
- className="h-12 bg-destructive text-white rounded-xl font-black uppercase text-[10px]"
+ className="h-12 bg-destructive text-white rounded-xl font-medium text-[10px]"
  >
  Confirm Termination
  </AlertDialogAction>

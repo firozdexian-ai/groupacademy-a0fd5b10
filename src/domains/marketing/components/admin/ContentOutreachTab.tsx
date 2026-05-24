@@ -275,10 +275,10 @@ export function ContentOutreachTab() {
  value={selectedContent?.id || ""}
  onValueChange={(v) => setSelectedContent(contents.find((x) => x.id === v) || null)}
  >
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold bg-muted/20">
+ <SelectTrigger className="h-10 rounded-xl border font-bold bg-muted/20">
  <SelectValue placeholder="Identify content node..." />
  </SelectTrigger>
- <SelectContent className="rounded-2xl border-2">
+ <SelectContent className="rounded-2xl border">
  {contents.map((c) => (
  <SelectItem key={c.id} value={c.id} className="font-bold uppercase text-[10px]">
  [{contentTypeLabel(c.content_type)}] {c.title}
@@ -293,10 +293,10 @@ export function ContentOutreachTab() {
  Audience filter
  </Label>
  <Select value={filterType} onValueChange={(v: any) => setFilterType(v)}>
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold bg-muted/20">
+ <SelectTrigger className="h-10 rounded-xl border font-bold bg-muted/20">
  <SelectValue />
  </SelectTrigger>
- <SelectContent className="rounded-2xl border-2">
+ <SelectContent className="rounded-2xl border">
  <SelectItem value="not_pitched" className="font-bold text-[10px] uppercase">
  Skip-pitched leads
  </SelectItem>
@@ -309,7 +309,7 @@ export function ContentOutreachTab() {
  </div>
 
  {selectedContent && (
- <div className="flex items-center justify-between p-8 rounded-2xl border-2 bg-primary/5 border-primary/20 shadow-inner animate-in slide-in-from-bottom-2">
+ <div className="flex items-center justify-between p-8 rounded-2xl border bg-primary/5 border-primary/20 shadow-inner animate-in slide-in-from-bottom-2">
  <div className="space-y-1 text-left">
  <h3 className="text-xl font-semibold uppercase tracking-tight italic text-primary">
  {selectedContent.title}
@@ -320,7 +320,7 @@ export function ContentOutreachTab() {
  </div>
  <Button
  onClick={() => setIsShareOpen(true)}
- className="h-10 px-4 rounded-xl font-semibold uppercase text-[10px] tracking-widest shadow-sm group"
+ className="h-10 px-4 rounded-xl font-semibold uppercase text-xs shadow-sm group"
  >
  <Share2 className="w-5 h-5 mr-3 group-hover:scale-110 transition-transform" /> Broad Distribution
  </Button>
@@ -367,9 +367,9 @@ export function ContentOutreachTab() {
  key={ch.id}
  onClick={() => setActiveTab(ch.id)}
  className={cn(
- "w-full flex items-center justify-between p-4 rounded-2xl text-[10px] font-black transition-all border-2",
+ "w-full flex items-center justify-between p-4 rounded-2xl text-[10px] font-black transition-all border",
  activeTab === ch.id
- ? "bg-primary border-primary text-white shadow-xl"
+ ? "bg-primary border-primary text-white shadow-sm"
  : "bg-muted/10 border-border/10 hover:border-primary/20",
  )}
  >
@@ -394,7 +394,7 @@ export function ContentOutreachTab() {
  value={activeTab === "linkedin" ? templates.english : templates.bangla}
  readOnly
  rows={6}
- className="rounded-2xl border-2 bg-muted/5 font-mono text-xs p-6 italic focus-visible:ring-0 leading-relaxed"
+ className="rounded-2xl border bg-muted/5 font-mono text-xs p-6 italic focus-visible:ring-0 leading-relaxed"
  />
  <Button
  variant="ghost"
@@ -423,7 +423,7 @@ export function ContentOutreachTab() {
  placeholder="e.g. CORE_NEWSLETTER_BETA"
  value={customChannel}
  onChange={(e) => setCustomChannel(e.target.value)}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-2 text-left">
@@ -434,7 +434,7 @@ export function ContentOutreachTab() {
  <Input
  readOnly
  value={getShareLink(customChannel || "custom")}
- className="h-12 rounded-xl border-2 bg-muted/5 font-mono text-xs"
+ className="h-12 rounded-xl border bg-muted/5 font-mono text-xs"
  />
  <Button
  onClick={() => copyLink(customChannel || "custom")}
@@ -446,7 +446,7 @@ export function ContentOutreachTab() {
  </div>
  <Button
  variant="outline"
- className="w-full h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest"
+ className="w-full h-10 rounded-xl border font-semibold uppercase text-xs"
  onClick={() => recordShare(customChannel || "custom")}
  >
  <ShieldCheck className="w-4 h-4 mr-3" /> Commit Share Record
@@ -520,7 +520,7 @@ export function ContentOutreachTab() {
  </Badge>
  {!isPitched(talent.id) && talent.phone && (
  <Button
- className="h-12 px-8 rounded-xl font-semibold uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20"
+ className="h-12 px-8 rounded-xl font-semibold uppercase text-xs shadow-sm"
  onClick={() => handleSendOutreach(talent)}
  disabled={isSending === talent.id}
  >

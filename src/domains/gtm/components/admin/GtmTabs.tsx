@@ -82,7 +82,7 @@ function GtmRegistryShell({
  <div className={cn("h-9 w-9 rounded-xl grid place-items-center", accentBg[accentColor])}>
  <Icon className="h-4 w-4" />
  </div>
- <h2 className="text-2xl font-black uppercase tracking-tight">{title}</h2>
+ <h2 className="text-2xl font-medium tracking-tight">{title}</h2>
  </div>
  <p className="text-sm text-muted-foreground">{description}</p>
  </div>
@@ -95,7 +95,7 @@ function GtmRegistryShell({
  </div>
 
  {/* Registry Table */}
- <Card className="border-2 overflow-hidden">
+ <Card className="border overflow-hidden">
  <CardContent className="p-0">
  <Table>
  <TableHeader>
@@ -232,7 +232,7 @@ export function GtmCountriesTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="rounded-2xl">
  <DialogHeader>
- <DialogTitle className="font-black uppercase tracking-tight">Deploy Country</DialogTitle>
+ <DialogTitle className="font-medium tracking-tight">Deploy Country</DialogTitle>
  </DialogHeader>
  <div className="space-y-4 py-2">
  <div className="grid grid-cols-4 gap-3">
@@ -243,7 +243,7 @@ export function GtmCountriesTab() {
  onChange={(e) =>
  setDraft({ ...draft, iso2: e.target.value.toUpperCase().slice(0, 2) })
  }
- className="h-12 rounded-xl border-2 font-black font-mono text-center"
+ className="h-12 rounded-xl border font-black font-mono text-center"
  maxLength={2}
  />
  </div>
@@ -252,7 +252,7 @@ export function GtmCountriesTab() {
  <Input
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  </div>
@@ -260,7 +260,7 @@ export function GtmCountriesTab() {
  <div className="space-y-1.5">
  <Label className="text-[10px] font-black">Tier</Label>
  <Select value={draft.tier || "Tier 3"} onValueChange={(v) => setDraft({ ...draft, tier: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -276,7 +276,7 @@ export function GtmCountriesTab() {
  value={draft.is_active ? "true" : "false"}
  onValueChange={(v) => setDraft({ ...draft, is_active: v === "true" })}
  >
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -352,7 +352,7 @@ export function GtmStatesTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="rounded-2xl">
  <DialogHeader>
- <DialogTitle className="font-black uppercase tracking-tight">Deploy Region</DialogTitle>
+ <DialogTitle className="font-medium tracking-tight">Deploy Region</DialogTitle>
  </DialogHeader>
  <div className="space-y-4 py-2">
  <div className="space-y-1.5">
@@ -360,7 +360,7 @@ export function GtmStatesTab() {
  <Input
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-1.5">
@@ -368,13 +368,13 @@ export function GtmStatesTab() {
  <Input
  value={draft.code || ""}
  onChange={(e) => setDraft({ ...draft, code: e.target.value })}
- className="h-12 rounded-xl border-2 font-mono"
+ className="h-12 rounded-xl border font-mono"
  />
  </div>
  <div className="space-y-1.5">
  <Label className="text-[10px] font-black">Parent Country</Label>
  <Select value={draft.country_id || ""} onValueChange={(v) => setDraft({ ...draft, country_id: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue placeholder="Select country" />
  </SelectTrigger>
  <SelectContent>
@@ -462,7 +462,7 @@ export function GtmCitiesTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="rounded-2xl">
  <DialogHeader>
- <DialogTitle className="font-black uppercase tracking-tight">Deploy City</DialogTitle>
+ <DialogTitle className="font-medium tracking-tight">Deploy City</DialogTitle>
  </DialogHeader>
  <div className="space-y-4 py-2">
  <div className="space-y-1.5">
@@ -470,13 +470,13 @@ export function GtmCitiesTab() {
  <Input
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-1.5">
  <Label className="text-[10px] font-black">Parent Region</Label>
  <Select value={draft.region_id || ""} onValueChange={(v) => setDraft({ ...draft, region_id: v })}>
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue placeholder="Select region" />
  </SelectTrigger>
  <SelectContent>
@@ -494,7 +494,7 @@ export function GtmCitiesTab() {
  value={draft.is_active ? "true" : "false"}
  onValueChange={(v) => setDraft({ ...draft, is_active: v === "true" })}
  >
- <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-12 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -578,7 +578,7 @@ export function GtmClustersTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="rounded-2xl max-w-2xl max-h-[90vh] overflow-y-auto">
  <DialogHeader>
- <DialogTitle className="font-black uppercase tracking-tight">Deploy Cluster</DialogTitle>
+ <DialogTitle className="font-medium tracking-tight">Deploy Cluster</DialogTitle>
  </DialogHeader>
  <div className="space-y-4 py-2">
  <div className="space-y-1.5">
@@ -586,7 +586,7 @@ export function GtmClustersTab() {
  <Input
  value={draft.name || ""}
  onChange={(e) => setDraft({ ...draft, name: e.target.value })}
- className="h-12 rounded-xl border-2 font-bold"
+ className="h-12 rounded-xl border font-bold"
  />
  </div>
  <div className="space-y-1.5">
@@ -594,7 +594,7 @@ export function GtmClustersTab() {
  <Input
  value={draft.description || ""}
  onChange={(e) => setDraft({ ...draft, description: e.target.value })}
- className="h-12 rounded-xl border-2"
+ className="h-12 rounded-xl border"
  />
  </div>
 
@@ -691,7 +691,7 @@ function ClusterCountryPicker({
  })}
  </div>
  )}
- <div className="max-h-40 overflow-y-auto rounded-xl border-2 p-2 grid grid-cols-2 gap-1">
+ <div className="max-h-40 overflow-y-auto rounded-xl border p-2 grid grid-cols-2 gap-1">
  {countries.length === 0 ? (
  <p className="col-span-2 text-xs text-muted-foreground text-center py-3">No countries available</p>
  ) : (
@@ -779,7 +779,7 @@ function ClusterCityPicker({
  })}
  </div>
  )}
- <div className="max-h-40 overflow-y-auto rounded-xl border-2 p-2 grid grid-cols-2 gap-1">
+ <div className="max-h-40 overflow-y-auto rounded-xl border p-2 grid grid-cols-2 gap-1">
  {eligibleCities.map((c) => (
  <button
  key={c.id}

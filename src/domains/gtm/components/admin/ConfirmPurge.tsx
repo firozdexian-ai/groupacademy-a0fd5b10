@@ -24,7 +24,7 @@ export function ConfirmPurge({
  <AlertDialogTrigger asChild>{children}</AlertDialogTrigger>
  <AlertDialogContent className="rounded-2xl">
  <AlertDialogHeader>
- <AlertDialogTitle className="font-black uppercase tracking-tight">{title}</AlertDialogTitle>
+ <AlertDialogTitle className="font-medium tracking-tight">{title}</AlertDialogTitle>
  <AlertDialogDescription>{description}</AlertDialogDescription>
  </AlertDialogHeader>
  <AlertDialogFooter>

@@ -34,11 +34,11 @@ export function GigsMarketplaceTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-blue-500">
  <Store className="h-8 w-8 text-blue-500 fill-blue-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Marketplace
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  B2B Long-Form Gig Contracts
  </p>
  </div>
@@ -47,7 +47,7 @@ export function GigsMarketplaceTab() {
  setDraft({ status: "draft", budget: 0 });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white"
  >
  <Plus className="h-4 w-4" /> Inject Contract
  </Button>
@@ -60,12 +60,12 @@ export function GigsMarketplaceTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Contract Definition
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Escrow Budget</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest text-right">
+ <TableHead className="font-medium text-xs">Escrow Budget</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
+ <TableHead className="font-medium text-xs text-right">
  Published
  </TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
@@ -82,7 +82,7 @@ export function GigsMarketplaceTab() {
  <TableRow>
  <TableCell
  colSpan={5}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero contracts detected.
  </TableCell>
@@ -95,7 +95,7 @@ export function GigsMarketplaceTab() {
  <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
  <Store className="h-3 w-3 text-blue-500" />
  </div>
- <span className="font-black text-sm uppercase italic tracking-tight">{row.title}</span>
+ <span className="font-black text-sm font-medium">{row.title}</span>
  </div>
  </TableCell>
  <TableCell>
@@ -157,7 +157,7 @@ export function GigsMarketplaceTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-blue-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-blue-500 flex items-center gap-2">
  <Store className="h-6 w-6" /> Inject Contract
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -173,7 +173,7 @@ export function GigsMarketplaceTab() {
  placeholder="Title"
  value={draft.title || ""}
  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold"
+ className="h-14 rounded-xl border font-bold"
  />
  </div>
  <div className="grid grid-cols-2 gap-4">
@@ -186,7 +186,7 @@ export function GigsMarketplaceTab() {
  placeholder="0"
  value={draft.budget || ""}
  onChange={(e) => setDraft({ ...draft, budget: Number(e.target.value) })}
- className="h-14 rounded-xl border-2 border-blue-500/20 bg-blue-500/5 font-black text-blue-600 text-lg"
+ className="h-14 rounded-xl border border-blue-500/30 bg-blue-500/5 font-black text-blue-600 text-lg"
  />
  </div>
  <div className="space-y-2">
@@ -194,7 +194,7 @@ export function GigsMarketplaceTab() {
  Contract Status
  </Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -218,7 +218,7 @@ export function GigsMarketplaceTab() {
  <Button
  disabled={!draft.title || upsertMarketplaceGig.isPending}
  onClick={() => upsertMarketplaceGig.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-14 rounded-xl font-black uppercase bg-blue-600 hover:bg-blue-700 text-white"
+ className="h-14 rounded-xl font-medium bg-blue-600 hover:bg-blue-700 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Authorize
  </Button>

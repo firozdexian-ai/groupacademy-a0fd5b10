@@ -86,15 +86,15 @@ export const TalentDetailDialog = ({
  <div className="flex justify-between items-start">
  <div className="space-y-1">
  <div className="flex items-center gap-4">
- <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight text-foreground">
+ <DialogTitle className="text-3xl font-semibold font-medium text-foreground">
  {displayTalent.full_name || "Unidentified Node"}
  </DialogTitle>
  {displayTalent.user_id ? (
- <Badge className="bg-green-500/10 text-green-600 border-2 border-green-500/20 font-semibold px-4">
+ <Badge className="bg-green-500/10 text-green-600 border border-green-500/20 font-semibold px-4">
  REGISTERED_NODE
  </Badge>
  ) : (
- <Badge className="bg-amber-500/10 text-amber-600 border-2 border-amber-200 font-semibold px-4 animate-pulse">
+ <Badge className="bg-amber-500/10 text-amber-600 border border-amber-200 font-semibold px-4 animate-pulse">
  PIPELINE_LEAD
  </Badge>
  )}
@@ -113,7 +113,7 @@ export const TalentDetailDialog = ({
  <Button
  size="sm"
  variant="outline"
- className="rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest h-10 px-4 hover:bg-primary hover:text-white transition-all"
+ className="rounded-xl border font-semibold uppercase text-xs h-10 px-4 hover:bg-primary hover:text-white transition-all"
  onClick={handleAwardCredits}
  >
  <Coins className="h-4 w-4 mr-2" /> Adjust Credits
@@ -126,7 +126,7 @@ export const TalentDetailDialog = ({
  <Button
  onClick={handlePlatformInvite}
  disabled={!displayTalent.id || !!displayTalent.user_id}
- className="bg-primary hover:bg-primary/90 text-white font-semibold uppercase italic tracking-widest h-10 px-4 rounded-xl shadow-xl shadow-primary/20 gap-3"
+ className="bg-primary hover:bg-primary/90 text-white font-semibold uppercase italic tracking-widest h-10 px-4 rounded-xl shadow-sm gap-3"
  >
  <UserPlus className="h-5 w-5" />
  {displayTalent.user_id ? "Activation Verified" : "Deploy Invite"}
@@ -134,7 +134,7 @@ export const TalentDetailDialog = ({
 
  <Button
  variant="secondary"
- className="h-10 px-4 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-3"
+ className="h-10 px-4 rounded-xl border font-semibold uppercase text-xs gap-3"
  onClick={() => window.open(`mailto:${displayTalent.email}`)}
  >
  <Mail className="h-5 w-5" /> Email Node
@@ -143,7 +143,7 @@ export const TalentDetailDialog = ({
  {displayTalent.phone && (
  <Button
  variant="outline"
- className="h-10 px-4 rounded-xl border-2 border-green-500/30 text-green-600 font-semibold uppercase text-[10px] tracking-widest hover:bg-green-50 gap-3"
+ className="h-10 px-4 rounded-xl border border-green-500/30 text-green-600 font-semibold uppercase text-xs hover:bg-green-50 gap-3"
  onClick={() => window.open(`https://wa.me/${displayTalent.phone.replace(/\D/g, "")}`, "_blank")}
  >
  <Phone className="h-5 w-5" /> WhatsApp Direct
@@ -155,19 +155,19 @@ export const TalentDetailDialog = ({
  <TabsList className="bg-muted/30 rounded-xl border border-border/60 p-1.5 mb-8 w-full max-w-2xl">
  <TabsTrigger
  value="overview"
- className="flex-1 rounded-xl font-semibold uppercase text-[10px] tracking-widest py-3"
+ className="flex-1 rounded-xl font-semibold uppercase text-xs py-3"
  >
  Overview
  </TabsTrigger>
  <TabsTrigger
  value="cv"
- className="flex-1 rounded-xl font-semibold uppercase text-[10px] tracking-widest py-3"
+ className="flex-1 rounded-xl font-semibold uppercase text-xs py-3"
  >
  CV Artifact
  </TabsTrigger>
  <TabsTrigger
  value="activity"
- className="flex-1 rounded-xl font-semibold uppercase text-[10px] tracking-widest py-3"
+ className="flex-1 rounded-xl font-semibold uppercase text-xs py-3"
  >
  Pulse Activity
  </TabsTrigger>
@@ -188,7 +188,7 @@ export const TalentDetailDialog = ({
  </p>
  <div className="flex items-center gap-3 mt-2">
  <span className="text-2xl">{getCountryFlag(displayTalent.country)}</span>
- <p className="text-lg font-semibold uppercase italic tracking-tight leading-none">
+ <p className="text-lg font-semibold font-medium leading-none">
  {displayTalent.country || "UNNORMALIZED_MARKET"}
  </p>
  </div>
@@ -209,7 +209,7 @@ export const TalentDetailDialog = ({
  <div className="flex gap-3 mt-3">
  {displayTalent.cv_url ? (
  <Badge
- className="cursor-pointer gap-2 bg-primary/10 text-primary border-2 border-primary/20 py-2 px-4 font-semibold text-[10px]"
+ className="cursor-pointer gap-2 bg-primary/10 text-primary border border-primary/20 py-2 px-4 font-semibold text-[10px]"
  onClick={() => window.open(displayTalent.cv_url)}
  >
  <FileText className="h-4 w-4" /> CV_READY
@@ -217,14 +217,14 @@ export const TalentDetailDialog = ({
  ) : (
  <Badge
  variant="outline"
- className="text-muted-foreground/40 border-dashed border-2 py-2 px-4 font-semibold text-[10px]"
+ className="text-muted-foreground/40 border-dashed border py-2 px-4 font-semibold text-[10px]"
  >
  CV_MISSING
  </Badge>
  )}
  {displayTalent.linkedin_url && (
  <Badge
- className="cursor-pointer gap-2 bg-blue-600/10 text-blue-600 border-2 border-blue-600/20 py-2 px-4 font-semibold text-[10px]"
+ className="cursor-pointer gap-2 bg-blue-600/10 text-blue-600 border border-blue-600/20 py-2 px-4 font-semibold text-[10px]"
  onClick={() => window.open(displayTalent.linkedin_url)}
  >
  <ExternalLink className="h-4 w-4" /> LINKEDIN_NODE
@@ -282,11 +282,11 @@ export const TalentDetailDialog = ({
  </div>
 
  {/* FIXED: Components below are now supported by restored imports */}
- <Card className="rounded-2xl border-2 border-primary/20 bg-primary/5 shadow-sm overflow-hidden">
+ <Card className="rounded-2xl border border-primary/20 bg-primary/5 shadow-sm overflow-hidden">
  <CardContent className="p-8">
  <div className="flex items-center gap-4 mb-4 text-left">
  <TrendingUp className="h-6 w-6 text-primary" />
- <h4 className="text-xl font-semibold uppercase italic tracking-tight">
+ <h4 className="text-xl font-semibold font-medium">
  Executive Commission Potential
  </h4>
  </div>
@@ -300,7 +300,7 @@ export const TalentDetailDialog = ({
  <span className="text-primary font-semibold">10% fractional commission</span> for the managing
  executive on all tool consumption.
  </p>
- <div className="flex flex-col items-center bg-background p-6 rounded-2xl border-2 border-primary/10 shadow-inner min-w-[160px]">
+ <div className="flex flex-col items-center bg-background p-6 rounded-2xl border border-primary/10 shadow-inner min-w-[160px]">
  <p className="text-5xl font-semibold text-primary italic leading-none">10%</p>
  <p className="text-[9px] font-semibold text-muted-foreground/40 uppercase tracking-[0.3em] mt-3">
  Yield Rate
@@ -331,15 +331,15 @@ function InfoCard({ label, value }: { label: string; value: string }) {
  return (
  <div className="bg-muted/20 p-5 rounded-xl border border-border/40 group hover:border-primary/20 transition-all text-left">
  <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">{label}</p>
- <p className="text-sm font-semibold text-foreground uppercase italic tracking-tight mt-1">{value}</p>
+ <p className="text-sm font-semibold text-foreground font-medium mt-1">{value}</p>
  </div>
  );
 }
 
 function StatMetric({ label, value, icon: Icon }: { label: string; value: string | number; icon: any }) {
  return (
- <div className="bg-card border border-border/60 rounded-2xl p-6 text-center space-y-3 shadow-xl group hover:border-primary/40 transition-all">
- <div className="mx-auto w-12 h-12 flex items-center justify-center bg-muted/50 rounded-2xl text-primary border-2 border-white/5 shadow-inner group-hover:rotate-6 transition-transform">
+ <div className="bg-card border border-border/60 rounded-2xl p-6 text-center space-y-3 shadow-sm group hover:border-primary/40 transition-all">
+ <div className="mx-auto w-12 h-12 flex items-center justify-center bg-muted/50 rounded-2xl text-primary border border-white/5 shadow-inner group-hover:rotate-6 transition-transform">
  <Icon className="h-6 w-6" />
  </div>
  <div>

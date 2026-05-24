@@ -177,14 +177,14 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  <DialogHeader className="p-8 pb-4 text-left">
  <div className="flex justify-between items-center">
  <div className="space-y-1">
- <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
+ <DialogTitle className="text-3xl font-semibold font-medium flex items-center gap-3">
  <Zap className="h-8 w-8 text-primary fill-current" /> Bridge Terminal
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold text-muted-foreground italic">
  External lead ingestion and AI artifact parsing
  </DialogDescription>
  </div>
- <Badge variant="outline" className="font-semibold text-[9px] border-2 uppercase italic px-3 py-1">
+ <Badge variant="outline" className="font-semibold text-[9px] border uppercase italic px-3 py-1">
  {step === "input" ? "Ingestion_Phase" : "Review_Phase"}
  </Badge>
  </div>
@@ -198,10 +198,10 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  <ShieldCheck className="h-3.5 w-3.5" /> Target Post Selection *
  </Label>
  <Select value={jobId} onValueChange={setJobId}>
- <SelectTrigger className="h-10 rounded-xl border-2 font-bold uppercase text-xs">
+ <SelectTrigger className="h-10 rounded-xl border font-bold uppercase text-xs">
  <SelectValue placeholder="SELECT TARGET INFRASTRUCTURE" />
  </SelectTrigger>
- <SelectContent className="rounded-xl border-2">
+ <SelectContent className="rounded-xl border">
  {jobs.map((j) => (
  <SelectItem key={j.id} value={j.id} className="font-bold text-[10px] uppercase">
  {j.title} — {j.company_name}
@@ -221,7 +221,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  type="file"
  accept=".pdf,.doc,.docx"
  onChange={(e) => setCvFile(e.target.files?.[0] || null)}
- className="h-10 rounded-xl border-2 border-dashed bg-muted/10 cursor-pointer file:hidden pr-12 font-bold"
+ className="h-10 rounded-xl border border-dashed bg-muted/10 cursor-pointer file:hidden pr-12 font-bold"
  />
  <Upload className="absolute right-4 top-1/2 -translate-y-1/2 h-5 w-5 text-muted-foreground group-hover:text-primary transition-colors" />
  {cvFile && (
@@ -241,7 +241,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  value={cvText}
  onChange={(e) => setCvText(e.target.value)}
  placeholder="PASTE UNSYNCED RESUME DATA..."
- className="rounded-2xl border-2 font-medium italic bg-muted/5 p-6"
+ className="rounded-2xl border font-medium italic bg-muted/5 p-6"
  />
  </div>
  </div>
@@ -249,7 +249,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  <Button
  onClick={handleParse}
  disabled={parsing || !jobId}
- className="w-full h-20 rounded-2xl font-semibold uppercase italic tracking-tight text-2xl gap-4 shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-transform"
+ className="w-full h-20 rounded-2xl font-semibold font-medium text-2xl gap-4 shadow-sm hover:scale-[1.01] active:scale-95 transition-transform"
  >
  {parsing ? <Loader2 className="h-8 w-8 animate-spin" /> : <Sparkles className="h-8 w-8 fill-current" />}
  Initialize Neural Extraction
@@ -290,11 +290,11 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  rows={2}
  value={skills}
  onChange={(e) => setSkills(e.target.value)}
- className="rounded-2xl border-2 font-semibold text-xs bg-muted/10"
+ className="rounded-2xl border font-semibold text-xs bg-muted/10"
  />
  </div>
 
- <div className="space-y-3 bg-primary/5 p-6 rounded-2xl border-2 border-primary/20">
+ <div className="space-y-3 bg-primary/5 p-6 rounded-2xl border border-primary/20">
  <Label className="text-[10px] font-semibold uppercase text-primary italic flex items-center gap-2">
  <FileText className="h-3.5 w-3.5" /> Registry Notes (Private)
  </Label>
@@ -311,14 +311,14 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  <Button
  variant="ghost"
  onClick={() => setStep("input")}
- className="font-semibold uppercase text-[10px] tracking-widest italic opacity-50"
+ className="font-semibold uppercase text-xs italic opacity-50"
  >
  Back
  </Button>
  <Button
  onClick={handleSave}
  disabled={saving}
- className="h-16 px-10 rounded-xl font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl"
+ className="h-16 px-10 rounded-xl font-semibold font-medium text-xl gap-3 shadow-sm"
  >
  {saving ? <Loader2 className="animate-spin" /> : <ShieldCheck className="fill-current" />}
  Deploy Application
@@ -332,7 +332,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  <div className="p-6 bg-muted/10 border-t border-border/10 flex justify-end">
  <Button
  variant="ghost"
- className="font-semibold uppercase text-[10px] tracking-widest italic opacity-50"
+ className="font-semibold uppercase text-xs italic opacity-50"
  onClick={() => handleClose(false)}
  >
  Abort Sync
@@ -352,7 +352,7 @@ function FieldNode({ label, value, onChange, type = "text" }: any) {
  type={type}
  value={value}
  onChange={(e) => onChange(e.target.value)}
- className="h-12 rounded-xl border-2 font-bold bg-muted/10"
+ className="h-12 rounded-xl border font-bold bg-muted/10"
  />
  </div>
  );

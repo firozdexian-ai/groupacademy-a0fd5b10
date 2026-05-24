@@ -102,7 +102,7 @@ export function NotificationsTab() {
  <div className="space-y-8 animate-in fade-in duration-700">
  <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
  <div className="text-left">
- <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
+ <h2 className="text-2xl font-semibold font-medium flex items-center gap-2">
  <BellRing className="h-6 w-6 text-primary" /> Notifications
  </h2>
  <p className="text-[10px] font-semibold text-muted-foreground/60">
@@ -111,13 +111,13 @@ export function NotificationsTab() {
  </div>
  <Button
  onClick={() => setSendDialog(true)}
- className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 h-12 px-6 shadow-xl"
+ className="rounded-xl font-semibold uppercase text-xs gap-2 h-12 px-6 shadow-sm"
  >
  <Send className="h-4 w-4" /> Deploy Transmission
  </Button>
  </div>
 
- <Card className="rounded-2xl border-2 overflow-hidden shadow-sm bg-card">
+ <Card className="rounded-2xl border overflow-hidden shadow-sm bg-card">
  <Table>
  <TableHeader className="bg-muted/20">
  <TableRow>
@@ -162,7 +162,7 @@ export function NotificationsTab() {
  size="icon"
  onClick={() => setPage((p) => Math.max(1, p - 1))}
  disabled={page === 1}
- className="rounded-xl border-2 h-10 w-10"
+ className="rounded-xl border h-10 w-10"
  >
  <ChevronLeft />
  </Button>
@@ -171,7 +171,7 @@ export function NotificationsTab() {
  size="icon"
  onClick={() => setPage((p) => p + 1)}
  disabled={notifications.length < ITEMS_PER_PAGE}
- className="rounded-xl border-2 h-10 w-10"
+ className="rounded-xl border h-10 w-10"
  >
  <ChevronRight />
  </Button>
@@ -195,7 +195,7 @@ export function NotificationsTab() {
  Audience Type
  </Label>
  <Select value={targetType} onValueChange={(v: any) => setTargetType(v)}>
- <SelectTrigger className="rounded-xl border-2 h-12 bg-muted/20 font-bold uppercase text-[10px]">
+ <SelectTrigger className="rounded-xl border h-12 bg-muted/20 font-bold uppercase text-[10px]">
  <SelectValue />
  </SelectTrigger>
  <SelectContent className="font-semibold uppercase text-[10px]">
@@ -212,7 +212,7 @@ export function NotificationsTab() {
  Select Identity
  </Label>
  <Select value={targetId} onValueChange={setTargetId}>
- <SelectTrigger className="rounded-xl border-2 h-12 bg-muted/20 text-xs">
+ <SelectTrigger className="rounded-xl border h-12 bg-muted/20 text-xs">
  <SelectValue placeholder="Choose target..." />
  </SelectTrigger>
  <SelectContent className="max-h-[200px]">
@@ -234,7 +234,7 @@ export function NotificationsTab() {
  value={payload.title}
  onChange={(e) => setPayload({ ...payload, title: e.target.value })}
  placeholder="Headline..."
- className="rounded-xl border-2 h-12 bg-muted/20 font-bold"
+ className="rounded-xl border h-12 bg-muted/20 font-bold"
  />
  </div>
 
@@ -246,7 +246,7 @@ export function NotificationsTab() {
  value={payload.message}
  onChange={(e) => setPayload({ ...payload, message: e.target.value })}
  placeholder="The message body..."
- className="rounded-xl border-2 min-h-[120px] bg-muted/20 resize-none p-4"
+ className="rounded-xl border min-h-[120px] bg-muted/20 resize-none p-4"
  />
  </div>
  </div>
@@ -255,7 +255,7 @@ export function NotificationsTab() {
  <Button
  onClick={executeBroadcast}
  disabled={isSending}
- className="w-full h-10 rounded-xl font-semibold text-[11px] gap-2 shadow-xl bg-primary hover:bg-primary/90"
+ className="w-full h-10 rounded-xl font-semibold text-[11px] gap-2 shadow-sm bg-primary hover:bg-primary/90"
  >
  {isSending ? <Loader2 className="animate-spin h-5 w-5" /> : <Activity className="h-5 w-5" />}
  Execute Dispatch

@@ -30,13 +30,13 @@ export function UgcFeedTab() {
  <div>
  <div className="flex items-center gap-2">
  <MessageSquare className="h-5 w-5 text-primary" />
- <h2 className="text-2xl font-black uppercase tracking-tight">Global Feed</h2>
+ <h2 className="text-2xl font-medium tracking-tight">Global Feed</h2>
  </div>
  <p className="text-sm text-muted-foreground mt-1">User Generated Posts &amp; Discussions</p>
  </div>
  <Button
  onClick={() => { setDraft({ content_type: "text" }); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-primary/20 bg-primary hover:bg-primary/90 text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Inject Post
  </Button>
@@ -44,13 +44,13 @@ export function UgcFeedTab() {
 
  <div className="relative max-w-sm">
  <Search className="h-4 w-4 absolute left-3 top-1/2 -translate-y-1/2 text-muted-foreground" />
- <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search content or author..." className="pl-10 h-11 rounded-xl border-2" />
+ <Input value={search} onChange={(e) => setSearch(e.target.value)} placeholder="Search content or author..." className="pl-10 h-11 rounded-xl border" />
  </div>
 
- <Card className="border-2">
+ <Card className="border">
  <CardHeader className="pb-2 flex flex-row items-center gap-2">
  <ShieldCheck className="h-4 w-4 text-primary" />
- <h3 className="text-sm font-black uppercase tracking-wide">Feed Registry ({rows.length})</h3>
+ <h3 className="text-sm font-medium tracking-wide">Feed Registry ({rows.length})</h3>
  </CardHeader>
  <CardContent className="p-0">
  <Table>
@@ -118,7 +118,7 @@ export function UgcFeedTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-lg">
  <DialogHeader>
- <DialogTitle className="flex items-center gap-2 text-xl font-black uppercase">
+ <DialogTitle className="flex items-center gap-2 text-xl font-medium">
  <MessageSquare className="h-5 w-5 text-primary" /> {draft.id ? "Edit" : "Inject"} Post
  </DialogTitle>
  <DialogDescription>
@@ -129,7 +129,7 @@ export function UgcFeedTab() {
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Type</Label>
  <Select value={draft.content_type || "text"} onValueChange={(v) => setDraft({ ...draft, content_type: v })}>
- <SelectTrigger className="h-11 rounded-xl border-2 font-bold"><SelectValue /></SelectTrigger>
+ <SelectTrigger className="h-11 rounded-xl border font-bold"><SelectValue /></SelectTrigger>
  <SelectContent>
  <SelectItem value="text">Text</SelectItem>
  <SelectItem value="poll">Poll</SelectItem>
@@ -142,14 +142,14 @@ export function UgcFeedTab() {
  </div>
  <div className="space-y-1.5">
  <Label className="text-xs font-bold uppercase tracking-wide">Body</Label>
- <Textarea value={draft.text_content || ""} onChange={(e) => setDraft({ ...draft, text_content: e.target.value })} className="min-h-[150px] rounded-xl border-2 font-mono text-sm" />
+ <Textarea value={draft.text_content || ""} onChange={(e) => setDraft({ ...draft, text_content: e.target.value })} className="min-h-[150px] rounded-xl border font-mono text-sm" />
  </div>
  </div>
  <DialogFooter>
  <Button
  disabled={!draft.text_content || upsertFeedPost.isPending}
  onClick={() => upsertFeedPost.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-12 rounded-xl font-black uppercase bg-primary hover:bg-primary/90 text-primary-foreground"
+ className="h-12 rounded-xl font-medium bg-primary hover:bg-primary/90 text-primary-foreground"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Authorize
  </Button>

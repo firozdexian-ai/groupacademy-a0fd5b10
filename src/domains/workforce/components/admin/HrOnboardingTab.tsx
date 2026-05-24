@@ -112,9 +112,9 @@ export function HrOnboardingTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-primary">
  <ClipboardList className="h-8 w-8 text-primary" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Onboarding</h2>
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none">Onboarding</h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Deployment Checklists & Orientation Cluster
  </p>
  </div>
@@ -123,7 +123,7 @@ export function HrOnboardingTab() {
  setDraft({ status: "pending" });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-xl bg-primary text-primary-foreground"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-sm bg-primary text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Inject Task
  </Button>
@@ -183,7 +183,7 @@ export function HrOnboardingTab() {
  <TableRow>
  <TableCell
  colSpan={4}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/30"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/30"
  >
  Registry clear in this segment
  </TableCell>
@@ -199,7 +199,7 @@ export function HrOnboardingTab() {
  t.status === "completed" ? "bg-emerald-500" : "bg-primary animate-pulse",
  )}
  />
- <p className="font-black text-sm uppercase italic tracking-tight">{t.title}</p>
+ <p className="font-black text-sm font-medium">{t.title}</p>
  </div>
  </TableCell>
  <TableCell>
@@ -261,24 +261,24 @@ export function HrOnboardingTab() {
  <div className="h-2 w-full bg-primary" />
  <div className="p-10 space-y-6 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic">New onboarding</DialogTitle>
+ <DialogTitle className="text-2xl font-medium italic">New onboarding</DialogTitle>
  </DialogHeader>
 
  <div className="space-y-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Task Identity</Label>
+ <Label className="text-[10px] font-medium ml-1">Task Identity</Label>
  <Input
  placeholder="e.g. Identity Access, Terminal Setup..."
  value={draft.title || ""}
  onChange={(e) => setDraft({ ...draft, title: e.target.value })}
- className="h-14 rounded-xl border-2 font-bold bg-muted/5"
+ className="h-14 rounded-xl border font-bold bg-muted/5"
  />
  </div>
 
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Assign to Member</Label>
+ <Label className="text-[10px] font-medium ml-1">Assign to Member</Label>
  <Select value={draft.user_id || ""} onValueChange={(v) => setDraft({ ...draft, user_id: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-14 rounded-xl border font-bold">
  <SelectValue placeholder="SELECT WORKFORCE NODE" />
  </SelectTrigger>
  <SelectContent>
@@ -295,18 +295,18 @@ export function HrOnboardingTab() {
 
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Deadline</Label>
+ <Label className="text-[10px] font-medium ml-1">Deadline</Label>
  <Input
  type="date"
  value={draft.due_date || ""}
  onChange={(e) => setDraft({ ...draft, due_date: e.target.value })}
- className="h-14 rounded-xl border-2"
+ className="h-14 rounded-xl border"
  />
  </div>
  <div className="space-y-2">
- <Label className="text-[10px] font-black uppercase ml-1">Current State</Label>
+ <Label className="text-[10px] font-medium ml-1">Current State</Label>
  <Select value={draft.status || "pending"} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold">
+ <SelectTrigger className="h-14 rounded-xl border font-bold">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -323,14 +323,14 @@ export function HrOnboardingTab() {
  <Button
  variant="ghost"
  onClick={() => setOpen(false)}
- className="h-12 rounded-xl font-black uppercase text-[10px]"
+ className="h-12 rounded-xl font-medium text-[10px]"
  >
  Abort
  </Button>
  <Button
  disabled={!draft.title || !draft.user_id || upsertTask.isPending}
  onClick={() => upsertTask.mutate(draft)}
- className="h-12 px-10 rounded-2xl font-black uppercase italic text-[11px] gap-2 shadow-xl bg-primary text-primary-foreground flex-1"
+ className="h-12 px-10 rounded-2xl font-medium italic text-[11px] gap-2 shadow-sm bg-primary text-primary-foreground flex-1"
  >
  <ShieldCheck className="h-4 w-4" /> Authorize Sequence
  </Button>
@@ -352,7 +352,7 @@ function TabBtn({ label, count, active, onClick, color }: any) {
  <button
  onClick={onClick}
  className={cn(
- "px-6 py-2.5 rounded-xl text-[10px] font-black transition-all flex items-center gap-3 border-2 border-transparent",
+ "px-6 py-2.5 rounded-xl text-[10px] font-black transition-all flex items-center gap-3 border border-transparent",
  active ? "bg-primary text-white shadow-lg scale-[1.02]" : "text-muted-foreground hover:bg-muted/50",
  )}
  >

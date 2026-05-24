@@ -27,11 +27,11 @@ export function LearningPayoutsTab() {
  <div className="space-y-1 text-left">
  <div className="flex items-center gap-3 text-emerald-500">
  <Wallet className="h-8 w-8 text-emerald-500 fill-emerald-500/20" />
- <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+ <h2 className="text-3xl font-medium tracking-tighter italic leading-none text-foreground">
  Instructor Payouts
  </h2>
  </div>
- <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+ <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic">
  Educational Revenue Ledgers
  </p>
  </div>
@@ -40,7 +40,7 @@ export function LearningPayoutsTab() {
  setDraft({ status: "pending", amount: 0 });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
  >
  <Plus className="h-4 w-4" /> Log Payout
  </Button>
@@ -53,12 +53,12 @@ export function LearningPayoutsTab() {
  <Table>
  <TableHeader className="bg-muted/10 border-b border-border/20">
  <TableRow className="hover:bg-transparent">
- <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+ <TableHead className="font-medium text-xs py-5 pl-8">
  Transaction ID
  </TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Instructor Node</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Disbursement</TableHead>
- <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
+ <TableHead className="font-medium text-xs">Instructor Node</TableHead>
+ <TableHead className="font-medium text-xs">Disbursement</TableHead>
+ <TableHead className="font-medium text-xs">Status</TableHead>
  <TableHead className="text-right py-5 pr-8">Manage</TableHead>
  </TableRow>
  </TableHeader>
@@ -73,7 +73,7 @@ export function LearningPayoutsTab() {
  <TableRow>
  <TableCell
  colSpan={5}
- className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/50 italic"
+ className="py-20 text-center font-medium text-xs text-muted-foreground/50 italic"
  >
  Zero payout requests detected.
  </TableCell>
@@ -153,7 +153,7 @@ export function LearningPayoutsTab() {
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
  <DialogHeader>
- <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
+ <DialogTitle className="text-2xl font-semibold text-emerald-500 flex items-center gap-2">
  <Wallet className="h-6 w-6" /> Process Payout
  </DialogTitle>
  <DialogDescription className="text-[10px] font-bold italic">
@@ -169,7 +169,7 @@ export function LearningPayoutsTab() {
  placeholder="UUID"
  value={draft.instructor_user_id || ""}
  onChange={(e) => setDraft({ ...draft, instructor_user_id: e.target.value })}
- className="h-14 rounded-xl border-2 font-mono text-xs"
+ className="h-14 rounded-xl border font-mono text-xs"
  />
  </div>
  <div className="grid grid-cols-2 gap-4">
@@ -182,7 +182,7 @@ export function LearningPayoutsTab() {
  placeholder="0"
  value={draft.amount || ""}
  onChange={(e) => setDraft({ ...draft, amount: Number(e.target.value) })}
- className="h-14 rounded-xl border-2 border-emerald-500/20 bg-emerald-500/5 font-black text-emerald-600 text-lg"
+ className="h-14 rounded-xl border border-emerald-500/30 bg-emerald-500/5 font-black text-emerald-600 text-lg"
  />
  </div>
  <div className="space-y-2">
@@ -190,7 +190,7 @@ export function LearningPayoutsTab() {
  Payout Status
  </Label>
  <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
- <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
+ <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase">
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
@@ -218,7 +218,7 @@ export function LearningPayoutsTab() {
  delete payload.amount;
  upsertPayout.mutate(payload, { onSuccess: () => setOpen(false) });
  }}
- className="h-14 rounded-xl font-black uppercase bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="h-14 rounded-xl font-medium bg-emerald-600 hover:bg-emerald-700 text-white"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Authorize Ledger
  </Button>

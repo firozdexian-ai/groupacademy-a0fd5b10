@@ -142,7 +142,7 @@ export function IndustriesTab() {
  {/* Header - Renders immediately to fix R4 loading regression */}
  <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
  <div className="text-left">
- <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
+ <h2 className="text-2xl font-semibold font-medium flex items-center gap-2">
  <Database className="h-6 w-6 text-primary" /> Sector Registry
  </h2>
  <p className="text-[10px] font-semibold text-muted-foreground/60 italic">
@@ -150,7 +150,7 @@ export function IndustriesTab() {
  </p>
  </div>
  <div className="flex gap-2">
- <Button variant="outline" size="icon" onClick={loadRegistry} className="rounded-xl h-12 w-12 border-2">
+ <Button variant="outline" size="icon" onClick={loadRegistry} className="rounded-xl h-12 w-12 border">
  <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
  </Button>
  {selected.size >= 2 && (
@@ -159,7 +159,7 @@ export function IndustriesTab() {
  setMergeTarget([...selected][0]);
  setMergeDialogOpen(true);
  }}
- className="rounded-xl h-12 px-6 font-semibold uppercase text-[10px] tracking-widest gap-2 bg-primary shadow-xl"
+ className="rounded-xl h-12 px-6 font-semibold uppercase text-xs gap-2 bg-primary shadow-sm"
  >
  <Merge className="h-4 w-4" /> Normalize ({selected.size})
  </Button>
@@ -192,7 +192,7 @@ export function IndustriesTab() {
  />
  </div>
 
- <Card className="rounded-2xl border-2 overflow-hidden shadow-sm bg-card">
+ <Card className="rounded-2xl border overflow-hidden shadow-sm bg-card">
  <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
  <div className="p-6 border-b border-border/10">
  <div className="relative group max-w-md">
@@ -204,7 +204,7 @@ export function IndustriesTab() {
  setSearchQuery(e.target.value);
  setPage(1);
  }}
- className="pl-12 h-12 bg-muted/10 border-2 rounded-xl font-bold uppercase text-[10px] tracking-widest"
+ className="pl-12 h-12 bg-muted/10 border rounded-xl font-bold uppercase text-xs"
  />
  </div>
  </div>
@@ -247,12 +247,12 @@ export function IndustriesTab() {
  {row.industry}
  </TableCell>
  <TableCell className="text-center">
- <Badge variant="outline" className="font-semibold text-[10px] border-2 bg-background/50">
+ <Badge variant="outline" className="font-semibold text-[10px] border bg-background/50">
  {row.company_count}
  </Badge>
  </TableCell>
  <TableCell className="text-center">
- <Badge variant="outline" className="font-semibold text-[10px] border-2 bg-background/50">
+ <Badge variant="outline" className="font-semibold text-[10px] border bg-background/50">
  {row.job_count}
  </Badge>
  </TableCell>
@@ -265,7 +265,7 @@ export function IndustriesTab() {
  setRenameTo(row.industry);
  setRenameDialogOpen(true);
  }}
- className="h-10 w-10 border-2 rounded-xl opacity-20 group-hover:opacity-100 transition-all"
+ className="h-10 w-10 border rounded-xl opacity-20 group-hover:opacity-100 transition-all"
  >
  <Edit className="h-4 w-4" />
  </Button>
@@ -283,7 +283,7 @@ export function IndustriesTab() {
  size="icon"
  onClick={() => setPage((p) => Math.max(1, p - 1))}
  disabled={page === 1}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  >
  <ChevronLeft />
  </Button>
@@ -295,7 +295,7 @@ export function IndustriesTab() {
  size="icon"
  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
  disabled={page >= totalPages}
- className="rounded-xl border-2"
+ className="rounded-xl border"
  >
  <ChevronRight />
  </Button>
@@ -320,7 +320,7 @@ export function IndustriesTab() {
  <Input
  value={renameTo}
  onChange={(e) => setRenameTo(e.target.value)}
- className="rounded-xl border-2 font-semibold uppercase h-12"
+ className="rounded-xl border font-semibold uppercase h-12"
  />
  </div>
  </div>
@@ -328,7 +328,7 @@ export function IndustriesTab() {
  <Button
  onClick={executeRename}
  disabled={isRenaming}
- className="w-full h-10 rounded-xl font-semibold uppercase text-[11px] tracking-widest gap-2 shadow-xl"
+ className="w-full h-10 rounded-xl font-semibold uppercase text-xs gap-2 shadow-sm"
  >
  {isRenaming ? <Loader2 className="animate-spin h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />} Commit
  Change
@@ -357,7 +357,7 @@ export function IndustriesTab() {
  <Input
  value={mergeTarget}
  onChange={(e) => setMergeTarget(e.target.value)}
- className="rounded-xl border-2 font-semibold h-12 uppercase"
+ className="rounded-xl border font-semibold h-12 uppercase"
  />
  </div>
  </div>
@@ -365,7 +365,7 @@ export function IndustriesTab() {
  <Button
  onClick={executeMerge}
  disabled={isMerging}
- className="w-full h-10 rounded-xl font-semibold uppercase text-[11px] tracking-widest gap-2 shadow-xl"
+ className="w-full h-10 rounded-xl font-semibold uppercase text-xs gap-2 shadow-sm"
  >
  {isMerging ? <Loader2 className="animate-spin h-4 w-4" /> : <Activity className="h-4 w-4" />} Execute
  Fusion
@@ -380,14 +380,14 @@ export function IndustriesTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
  return (
- <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group hover:border-primary/30 transition-all shadow-xl relative overflow-hidden">
+ <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group hover:border-primary/30 transition-all shadow-sm relative overflow-hidden">
  <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
  <Icon className="h-12 w-12" />
  </div>
  <div className="flex items-center gap-5 relative z-10">
  <div
  className={cn(
- "h-14 w-14 rounded-2xl flex items-center justify-center border-2 transition-transform group-hover:rotate-3 shadow-inner",
+ "h-14 w-14 rounded-2xl flex items-center justify-center border transition-transform group-hover:rotate-3 shadow-inner",
  bg,
  color,
  )}
