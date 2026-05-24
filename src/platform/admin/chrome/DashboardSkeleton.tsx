@@ -79,20 +79,20 @@ interface DashboardErrorStateProps {
 }
 
 export function DashboardErrorState({
-  title = "Registry Sync Fault",
-  message = "A logic mismatch occurred during artifact ingestion.",
+  title = "Something went wrong",
+  message = "We couldn't load this view. Please try again.",
   onRetry,
 }: DashboardErrorStateProps) {
   return (
-    <Card className="rounded-[32px] border-4 border-destructive/20 bg-destructive/5 backdrop-blur-md shadow-2xl overflow-hidden animate-in fade-in zoom-in-95 duration-500">
+    <Card className="rounded-[32px] border-2 border-destructive/20 bg-destructive/5 backdrop-blur-md overflow-hidden animate-in fade-in zoom-in-95 duration-500">
       <CardContent className="py-20 text-center flex flex-col items-center">
         <div className="h-20 w-20 rounded-[24px] bg-destructive/10 flex items-center justify-center mb-6 border-2 border-destructive/20">
           <AlertTriangle className="h-10 w-10 text-destructive" />
         </div>
 
         <div className="space-y-2 max-w-md">
-          <h3 className="text-2xl font-black uppercase tracking-tighter italic text-destructive">{title}</h3>
-          <p className="text-sm font-medium text-muted-foreground italic leading-relaxed">{message}</p>
+          <h3 className="text-2xl font-semibold tracking-tight text-destructive">{title}</h3>
+          <p className="text-sm text-muted-foreground leading-relaxed">{message}</p>
         </div>
 
         {onRetry && (
@@ -100,17 +100,17 @@ export function DashboardErrorState({
             <Button
               onClick={onRetry}
               variant="outline"
-              className="h-14 px-10 rounded-2xl border-2 font-black uppercase text-[10px] tracking-[0.2em] transition-all hover:bg-destructive hover:text-white hover:border-destructive shadow-xl shadow-destructive/10 group"
+              className="h-11 px-6 rounded-xl border-2 font-medium transition-all hover:bg-destructive hover:text-white hover:border-destructive group"
             >
-              <RefreshCw className="w-4 h-4 mr-3 group-hover:rotate-180 transition-transform duration-700" />
+              <RefreshCw className="w-4 h-4 mr-2 group-hover:rotate-180 transition-transform duration-700" />
               Try again
             </Button>
           </div>
         )}
 
-        <div className="mt-8 flex items-center gap-2 opacity-20">
+        <div className="mt-8 flex items-center gap-2 opacity-30">
           <Terminal className="h-3 w-3" />
-          <span className="text-[8px] font-black uppercase tracking-widest">Error code: 0x2A94F</span>
+          <span className="text-[10px] font-medium text-muted-foreground">Error code: 0x2A94F</span>
         </div>
       </CardContent>
     </Card>
