@@ -44,3 +44,24 @@ A11–A16 unified chrome (buttons, cards, modals, empty states, copy) across adm
 ### Why this phase
 
 It's the last visible inconsistency in the polish track. After A17, every chrome element — buttons, cards, modals, empty states, copy, loading — speaks the same vocabulary, and the next track (accessibility pass, JSDoc/identifier sweep, or feature work) starts from a clean baseline.
+---
+
+## A17 — Executed
+
+1. **`src/components/ui/page-loading-skeleton.tsx`** rewritten: stripped pre-A14 jargon JSDoc ("Authoritative Immersive Pre-render Suite Node", "MOCK FRAME LEVEL", "REGISTRY ROW", "Geometric & Token Balance Lock"), replaced `bg-card/40` → `bg-card`, `border-border/40` → `border-border/60`, dropped `backdrop-blur-md` + `opacity-40/50` decoration. Public API (`variant`, `showNavbar`, `showFooter`, `title`) unchanged.
+2. **`src/components/common/InlineSpinner.tsx`** added: `<InlineSpinner size="sm|md|lg" label?="..." className?="..." />`. Uses `Loader2` + `cn`, semantic role="status".
+3. **Sweep** (2 passes) across `src/pages/app/**`, `src/domains/*/components/talent/**`, `src/domains/*/components/admin/**`:
+   - Pass 1 (centered-spinner blocks): 10 files migrated.
+   - Pass 2 (standalone `<Loader2>` icons inside buttons): 80 files, 107 replacements.
+   - **Total: 85 files using `InlineSpinner`.**
+4. Fixed two collateral issues: A16 sed had left broken JSX in `CompanyBrandedCatalog.tsx` and `CompanyPublicProjects.tsx` (`</span>` mangled); restored. Restored `AIGeneral.tsx` streaming-avatar wrapper and `CVMaker.tsx` overlay-positioning wrapper that the first sweep had stripped.
+5. Vite reports no build errors after migration.
+
+### Acceptance check
+
+- `rg -i "Authoritative|Hardened|MOCK FRAME|REGISTRY|Pre-render|Suite Node" src/components/ui/page-loading-skeleton.tsx` → 0.
+- `InlineSpinner` exists and exported.
+- 85 files migrated (target ≥30 — well over).
+- Vite clean.
+
+Polish track A11–A17 complete: chrome, copy, empty states, and loading indicators all share one vocabulary across admin, talent, public, and gro10x surfaces.
