@@ -6,13 +6,13 @@ import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
 import { toast } from "sonner";
+import { supabase } from "@/integrations/supabase/client";
 
 /**
- * v0.5 ComingSoonGate — visual shell (B2).
+ * v0.5 ComingSoonGate — B4 wired to `join_feature_waitlist` RPC.
  *
  * Wraps a route/section that is not ready for launch. Shows a polished
- * "Coming soon" panel + waitlist form. Waitlist submission is wired in B4
- * (currently logs + toasts locally).
+ * "Coming soon" panel + waitlist form, persisting to `public.feature_waitlist`.
  *
  * Contract: see .lovable/v05/defer-matrix.md §5.
  */
@@ -70,35 +70,116 @@ function ComingSoonPanel({
   const emailRef = useRef<HTMLInputElement>(null);
   const [email, setEmail] = useState("");
   const [submitting, setSubmitting] = useState(false);
+  const [sessionReady, setSessionReady] = useState(false);
+  const [isAuthed, setIsAuthed] = useState(false);
   const [joined, setJoined] = useState<boolean>(() => {
     if (typeof window === "undefined") return false;
     return localStorage.getItem(LOCAL_KEY_PREFIX + featureKey) === "1";
   });
 
+  // Resolve auth + cross-device dedup once on mount.
   useEffect(() => {
-    emailRef.current?.focus();
-  }, []);
+    let cancelled = false;
+    (async () => {
+      const { data } = await supabase.auth.getSession();
+      if (cancelled) return;
+      const authed = !!data.session?.user;
+      setIsAuthed(authed);
+      setSessionReady(true);
+
+      // Cross-device dedup for logged-in users only.
+      if (authed && !joined) {
+        const { data: rows } = await supabase
+          .from("feature_waitlist")
+          .select("id")
+          .eq("feature_key", featureKey)
+          .limit(1);
+        if (!cancelled && rows && rows.length > 0) {
+          setJoined(true);
+          try {
+            localStorage.setItem(LOCAL_KEY_PREFIX + featureKey, "1");
+          } catch {
+            /* ignore */
+          }
+        }
+      }
+
+      // Focus email input for anon path.
+      if (!authed) emailRef.current?.focus();
+    })();
+    return () => {
+      cancelled = true;
+    };
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [featureKey]);
+
+  const markJoined = () => {
+    setJoined(true);
+    try {
+      localStorage.setItem(LOCAL_KEY_PREFIX + featureKey, "1");
+    } catch {
+      /* ignore */
+    }
+  };
 
   const handleSubmit = async (e: React.FormEvent) => {
     e.preventDefault();
-    if (submitting) return;
-    if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
-      toast.error("Please enter a valid email");
-      return;
+    if (submitting || !sessionReady) return;
+
+    let normEmail: string | null = null;
+    if (!isAuthed) {
+      if (!email || !/^\S+@\S+\.\S+$/.test(email)) {
+        toast.error("Please enter a valid email");
+        return;
+      }
+      normEmail = email.trim();
     }
+
     setSubmitting(true);
     try {
-      // B4 wires real `join_feature_waitlist` RPC; for now stub.
-      await new Promise((r) => setTimeout(r, 300));
-      localStorage.setItem(LOCAL_KEY_PREFIX + featureKey, "1");
-      setJoined(true);
-      toast.success("You're on the list — we'll email you when it opens.");
+      const sourcePath =
+        typeof window !== "undefined"
+          ? window.location.pathname + window.location.search
+          : null;
+      const metadata = {
+        ua:
+          typeof navigator !== "undefined"
+            ? navigator.userAgent.slice(0, 500)
+            : null,
+        referrer:
+          typeof document !== "undefined" ? document.referrer || null : null,
+      };
+
+      const { data, error } = await supabase.rpc("join_feature_waitlist", {
+        _feature_key: featureKey,
+        _email: normEmail,
+        _source_path: sourcePath,
+        _metadata: metadata,
+      });
+
+      if (error) throw error;
+
+      const status = (data as { status?: string } | null)?.status;
+      if (status === "already_joined") {
+        toast("You're already on the list.");
+      } else {
+        toast.success("You're on the list — we'll email you when it opens.");
+      }
+      markJoined();
     } catch (err) {
-      toast.error("Could not join the waitlist. Try again in a moment.");
+      const msg =
+        err instanceof Error ? err.message : "Could not join the waitlist.";
+      toast.error(msg);
     } finally {
       setSubmitting(false);
     }
   };
+
+  const authHref = `/auth?redirect=${encodeURIComponent(
+    typeof window !== "undefined"
+      ? window.location.pathname + window.location.search
+      : "/",
+  )}`;
 
   return (
     <div className="w-full px-3 py-6 sm:py-10">
@@ -129,29 +210,48 @@ function ComingSoonPanel({
             </div>
           ) : (
             <form onSubmit={handleSubmit} className="space-y-2">
-              <label htmlFor={`waitlist-${featureKey}`} className="sr-only">
-                Email address
-              </label>
-              <div className="flex flex-col gap-2 sm:flex-row">
-                <Input
-                  id={`waitlist-${featureKey}`}
-                  ref={emailRef}
-                  type="email"
-                  inputMode="email"
-                  autoComplete="email"
-                  placeholder="you@email.com"
-                  value={email}
-                  onChange={(e) => setEmail(e.target.value)}
-                  disabled={submitting}
-                  className="flex-1"
-                />
-                <Button type="submit" disabled={submitting}>
-                  {submitting ? "Joining…" : "Notify me"}
-                </Button>
-              </div>
+              {!isAuthed && (
+                <>
+                  <label
+                    htmlFor={`waitlist-${featureKey}`}
+                    className="sr-only"
+                  >
+                    Email address
+                  </label>
+                  <Input
+                    id={`waitlist-${featureKey}`}
+                    ref={emailRef}
+                    type="email"
+                    inputMode="email"
+                    autoComplete="email"
+                    placeholder="you@email.com"
+                    value={email}
+                    onChange={(e) => setEmail(e.target.value)}
+                    disabled={submitting || !sessionReady}
+                  />
+                </>
+              )}
+              <Button
+                type="submit"
+                disabled={submitting || !sessionReady}
+                className="w-full sm:w-auto"
+              >
+                {submitting ? "Joining…" : "Notify me"}
+              </Button>
               <p className="text-xs text-muted-foreground">
                 No spam. One email when it opens.
               </p>
+              {!isAuthed && sessionReady && (
+                <p className="text-xs text-muted-foreground">
+                  <Link
+                    to={authHref}
+                    className="underline underline-offset-2 hover:text-foreground"
+                  >
+                    Sign up
+                  </Link>{" "}
+                  for full updates and early access.
+                </p>
+              )}
             </form>
           )}
 
