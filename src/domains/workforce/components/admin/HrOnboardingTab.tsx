@@ -224,7 +224,7 @@ export function HrOnboardingTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(t);
  setOpen(true);
@@ -235,7 +235,7 @@ export function HrOnboardingTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  onClick={() =>
  deleteGraphRow("hr_onboarding_tasks", t.id).then(() =>
  qc.invalidateQueries({ queryKey: ["hr_onboarding"] }),

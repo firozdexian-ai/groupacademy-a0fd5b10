@@ -398,7 +398,7 @@ export function ContentOutreachTab() {
  />
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Copy"
  onClick={() => copyTemplate(activeTab === "linkedin" ? templates.english : templates.bangla)}
  className="absolute bottom-4 right-4 h-10 w-10 rounded-xl hover:bg-primary hover:text-white transition-all shadow-inner border border-border/40"
  >
@@ -474,7 +474,7 @@ export function ContentOutreachTab() {
  </div>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Refresh"
  onClick={loadTalents}
  className="h-12 w-12 rounded-full hover:bg-primary/10 transition-colors"
  >

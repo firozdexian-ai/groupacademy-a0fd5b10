@@ -204,7 +204,7 @@ export function MarketingAnalyticsTab() {
           </Select>
           <Button
             variant="outline"
-            size="icon"
+            size="icon" aria-label="Refresh"
             onClick={loadExecutiveTelemetry}
             className="h-12 w-12 rounded-xl border-2 hover:bg-orange-500 hover:text-white transition-all text-orange-500 border-orange-500/20 bg-orange-500/5"
           >

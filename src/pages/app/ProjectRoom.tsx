@@ -204,7 +204,7 @@ export default function ProjectRoom() {
  className="rounded-2xl"
  rows={2}
  />
- <Button size="icon" className="rounded-2xl shrink-0" onClick={sendMessage}>
+ <Button size="icon" aria-label="Send" className="rounded-2xl shrink-0" onClick={sendMessage}>
  <Send className="h-4 w-4" />
  </Button>
  </div>

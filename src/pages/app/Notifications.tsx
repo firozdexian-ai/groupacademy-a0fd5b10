@@ -68,7 +68,7 @@ export default function Notifications() {
  <div className="flex items-center gap-5">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="rounded-xl h-12 w-12 hover:bg-primary/10"
  onClick={() => navigate(-1)}
  >

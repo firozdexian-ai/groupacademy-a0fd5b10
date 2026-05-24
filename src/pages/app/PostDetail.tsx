@@ -141,7 +141,7 @@ export default function PostDetail() {
  <div className="max-w-2xl mx-auto px-3 py-2 flex items-center gap-2">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="h-9 w-9 rounded-full"
  onClick={() => (window.history.length > 1 ? navigate(-1) : navigate("/app/feed"))}
  >

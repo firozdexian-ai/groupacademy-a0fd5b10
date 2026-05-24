@@ -77,7 +77,7 @@ export default function NewGigWizard() {
  return (
  <div className="px-4 py-4 space-y-6 max-w-2xl mx-auto safe-bottom">
  <div className="flex items-center gap-2">
- <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => navigate(-1)}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="h-8 w-8" onClick={() => navigate(-1)}>
  <ArrowLeft className="h-4 w-4" />
  </Button>
  <h1 className="text-xl font-bold tracking-tight">Post a gig</h1>
@@ -136,7 +136,7 @@ export default function NewGigWizard() {
  <p className="text-sm text-slate-600 mt-1">{draft.description}</p>
  </div>
  <Button
- size="icon"
+ size="icon" aria-label="Refresh"
  variant="ghost"
  className="h-8 w-8 shrink-0 text-slate-500"
  disabled={scope.isPending}

@@ -333,7 +333,7 @@ export function MessagingChannelsTab({
 
                       <Button
                         variant="ghost"
-                        size="icon"
+                        size="icon" aria-label="Delete"
                         onClick={() => removeChannel()}
                         className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive shrink-0"
                       >

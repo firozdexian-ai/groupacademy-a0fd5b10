@@ -313,7 +313,7 @@ export default function AppJobDetail() {
  <Button
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Share this job"
  className="h-8 w-8"
  onClick={handleShare}
  title="Share this job"
@@ -323,7 +323,7 @@ export default function AppJobDetail() {
  <Button
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Save"
  className="h-8 w-8"
  onClick={handleToggleSave}
  title={jobSaved ? "Unsave job" : "Save job"}

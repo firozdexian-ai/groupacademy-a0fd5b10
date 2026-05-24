@@ -385,7 +385,7 @@ export function JobsApplicationsTab() {
                           {app.cv_url && (
                             <Button
                               variant="ghost"
-                              size="icon"
+                              size="icon" aria-label="VIEW_ARTIFACT"
                               className="h-8 w-8 hover:bg-primary/10"
                               asChild
                               title="VIEW_ARTIFACT"
@@ -397,7 +397,7 @@ export function JobsApplicationsTab() {
                           )}
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="icon" aria-label="DISPATCH_MAIL"
                             className="h-8 w-8 hover:bg-primary/10"
                             asChild
                             title="DISPATCH_MAIL"
@@ -409,7 +409,7 @@ export function JobsApplicationsTab() {
                           {app.talents?.phone && (
                             <Button
                               variant="ghost"
-                              size="icon"
+                              size="icon" aria-label="WHATSAPP_LINK"
                               className="h-8 w-8 hover:bg-primary/10"
                               asChild
                               title="WHATSAPP_LINK"

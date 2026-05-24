@@ -197,7 +197,7 @@ export function LeadHunterManager() {
  <div className="flex flex-col md:flex-row items-start md:items-center gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
  <Button
  variant="outline"
- size="icon"
+ size="icon" aria-label="Go back"
  onClick={() => setSelectedSession(null)}
  className="rounded-xl h-12 w-12 border hover:bg-background shrink-0"
  >
@@ -324,7 +324,7 @@ export function LeadHunterManager() {
  <div className="flex justify-end gap-2">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="View"
  className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all shadow-inner"
  onClick={() => {
  setSelectedTalent(m.talent);
@@ -337,7 +337,7 @@ export function LeadHunterManager() {
  <DropdownMenuTrigger asChild>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="More options"
  className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all border border-transparent hover:border-border"
  >
  <MoreHorizontal className="h-5 w-5" />

@@ -311,7 +311,7 @@ export default function PortfolioRequestsManager() {
  <div className="flex items-center gap-1">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="View Talent Profile"
  className="h-8 w-8"
  onClick={() => {
  setSelectedTalentEmail(request.email);
@@ -321,7 +321,7 @@ export default function PortfolioRequestsManager() {
  >
  <User className="h-4 w-4" />
  </Button>
- <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openDetail(request)}>
+ <Button variant="ghost" size="icon" aria-label="View" className="h-8 w-8" onClick={() => openDetail(request)}>
  <Eye className="h-4 w-4" />
  </Button>
  <Button
@@ -335,7 +335,7 @@ export default function PortfolioRequestsManager() {
  {request.cv_url && (
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Download CV"
  className="h-8 w-8"
  onClick={() => downloadFile(request.cv_url!, `${request.full_name}-CV.pdf`)}
  title="Download CV"

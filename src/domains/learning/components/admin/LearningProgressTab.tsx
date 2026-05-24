@@ -384,7 +384,7 @@ export function LearningProgressTab() {
  <div className="flex items-center justify-end gap-2">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="View Quiz Results"
  onClick={() => setSelectedEnrollment(learner)}
  title="View Quiz Results"
  className="hover:bg-violet-500/10 hover:text-violet-600"

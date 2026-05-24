@@ -194,7 +194,7 @@ export default function ProfileEdit() {
  )}
 
  <header className="flex items-center gap-4">
- <Button variant="ghost" size="icon" className="h-10 w-10" onClick={handleCancel}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="h-10 w-10" onClick={handleCancel}>
  <ArrowLeft className="h-5 w-5" />
  </Button>
  <div>
@@ -246,13 +246,13 @@ export default function ProfileEdit() {
  </div>
  </div>
  <div className="flex gap-1">
- <Button type="button" variant="ghost" size="icon" onClick={() => window.open(cvUrl, "_blank")}>
+ <Button type="button" variant="ghost" size="icon" aria-label="Open link" onClick={() => window.open(cvUrl, "_blank")}>
  <ExternalLink className="h-4 w-4" />
  </Button>
  <Button
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive"
  onClick={() => {
  setCvUrl("");
@@ -466,7 +466,7 @@ export default function ProfileEdit() {
  </select>
  <Button
  type="button"
- size="icon"
+ size="icon" aria-label="Close"
  variant="ghost"
  className="text-destructive"
  onClick={() => {
@@ -535,7 +535,7 @@ export default function ProfileEdit() {
  />
  <Button
  type="button"
- size="icon"
+ size="icon" aria-label="Close"
  variant="ghost"
  className="text-destructive"
  onClick={() => {

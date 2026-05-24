@@ -232,7 +232,7 @@ export default function AgentProfile() {
  <header className="sticky top-0 z-10 bg-background/95 border-b border-border/40 flex items-center gap-2 px-2 py-2 select-none w-full shrink-0">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="h-8 w-8 rounded-lg cursor-pointer shrink-0"
  onClick={handleReturnHistorySequence}
  >

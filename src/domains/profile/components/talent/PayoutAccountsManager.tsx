@@ -297,7 +297,7 @@ export function PayoutAccountsManager() {
                     </Button>
                   )}
                   <Button
-                    size="icon"
+                    size="icon" aria-label="Delete"
                     type="button"
                     variant="ghost"
                     onClick={() => handleAccountNodeExpunge(rowItem.id)}

@@ -341,7 +341,7 @@ export default function AppMockInterviewSetup() {
  <Button
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="h-9 w-9 rounded-lg cursor-pointer shrink-0 border border-border/5 bg-background"
  onClick={handleReturnToServicesDirectory}
  >

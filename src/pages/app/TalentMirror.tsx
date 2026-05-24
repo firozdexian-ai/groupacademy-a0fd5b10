@@ -23,7 +23,7 @@ export default function TalentMirror() {
  return (
  <div className={PAGE_SHELL}>
  <header className="sticky top-0 z-10 bg-background/95 backdrop-blur border-b border-border/40 px-6 py-4 flex items-center gap-4">
- <Button variant="ghost" size="icon" className="h-10 w-10 rounded-xl" onClick={() => navigate(-1)}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="h-10 w-10 rounded-xl" onClick={() => navigate(-1)}>
  <ArrowLeft className="h-5 w-5" />
  </Button>
  <div className="space-y-0.5">

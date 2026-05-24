@@ -90,11 +90,11 @@ export function UgcCompetitionsTab() {
  </TableCell>
  <TableCell className="text-right">
  <div className="flex items-center justify-end gap-1">
- <Button size="icon" variant="ghost" onClick={() => openEdit(row)} className="hover:bg-amber-500/10 hover:text-amber-600">
+ <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => openEdit(row)} className="hover:bg-amber-500/10 hover:text-amber-600">
  <Pencil className="h-4 w-4" />
  </Button>
  <ConfirmPurge title="Purge Tournament?" description="This permanently removes the competition." onConfirm={() => deleteCompetition.mutate(row.id)}>
- <Button size="icon" variant="ghost" className="hover:bg-destructive/10 hover:text-destructive">
+ <Button size="icon" aria-label="Delete" variant="ghost" className="hover:bg-destructive/10 hover:text-destructive">
  <Trash2 className="h-4 w-4" />
  </Button>
  </ConfirmPurge>

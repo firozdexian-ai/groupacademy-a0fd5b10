@@ -120,7 +120,7 @@ export function LearningCohortsTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Manage live sessions"
  disabled={!row.content_id}
  onClick={() => setSessionsRow(row)}
  className="hover:bg-indigo-500/10 hover:text-indigo-600"
@@ -130,7 +130,7 @@ export function LearningCohortsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(row);
  setOpen(true);
@@ -141,7 +141,7 @@ export function LearningCohortsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive hover:bg-destructive/10"
  onClick={() => {
  if (confirm("Purge Cohort?")) deleteCohort.mutate(row.id);

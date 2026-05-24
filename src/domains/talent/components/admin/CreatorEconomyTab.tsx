@@ -109,7 +109,7 @@ export function CreatorEconomyTab() {
           >
             <RefreshCw className="h-3 w-3 mr-2" /> Sweep Expired
           </Button>
-          <Button variant="outline" size="icon" onClick={load} className="rounded-xl border-2 h-12 w-12">
+          <Button variant="outline" size="icon" aria-label="Refresh" onClick={load} className="rounded-xl border-2 h-12 w-12">
             <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
           </Button>
         </div>

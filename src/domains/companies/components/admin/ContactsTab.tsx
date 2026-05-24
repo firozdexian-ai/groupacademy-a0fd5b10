@@ -113,7 +113,7 @@ export function ContactsTab() {
  </p>
  </div>
  <div className="flex gap-2">
- <Button variant="outline" size="icon" onClick={loadData} className="rounded-xl h-12 w-12 border">
+ <Button variant="outline" size="icon" aria-label="Refresh" onClick={loadData} className="rounded-xl h-12 w-12 border">
  <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
  </Button>
  <Button
@@ -210,7 +210,7 @@ export function ContactsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  className="h-9 w-9 rounded-lg hover:bg-primary hover:text-white"
  >
  <Edit className="h-4 w-4" />

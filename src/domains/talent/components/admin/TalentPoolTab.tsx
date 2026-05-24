@@ -119,7 +119,7 @@ export function TalentPoolTab() {
           </p>
         </div>
         <div className="flex items-center gap-2">
-          <Button variant="outline" size="icon" onClick={loadTalents} className="rounded-xl border-2 h-12 w-12">
+          <Button variant="outline" size="icon" aria-label="Refresh" onClick={loadTalents} className="rounded-xl border-2 h-12 w-12">
             <RefreshCw className={cn("h-5 w-5", isLoading && "animate-spin")} />
           </Button>
         </div>
@@ -238,7 +238,7 @@ export function TalentPoolTab() {
             <div className="flex gap-2">
               <Button
                 variant="outline"
-                size="icon"
+                size="icon" aria-label="Previous"
                 onClick={() => setPage((p) => Math.max(1, p - 1))}
                 disabled={page === 1}
                 className="rounded-xl border-2"
@@ -247,7 +247,7 @@ export function TalentPoolTab() {
               </Button>
               <Button
                 variant="outline"
-                size="icon"
+                size="icon" aria-label="Next"
                 onClick={() => setPage((p) => p + 1)}
                 disabled={talents.length < ITEMS_PER_PAGE}
                 className="rounded-xl border-2"
@@ -279,7 +279,7 @@ function OutreachDropdown({ talent, onOutreach, onView }: any) {
       <DropdownMenuTrigger asChild>
         <Button
           variant="ghost"
-          size="icon"
+          size="icon" aria-label="More options"
           className="h-10 w-10 rounded-xl hover:bg-primary/10 border-2 transition-all opacity-20 group-hover:opacity-100"
         >
           <MoreHorizontal className="h-5 w-5 text-primary" />
@@ -317,13 +317,13 @@ function OutreachItem({ icon: Icon, label, onClick }: any) {
       <div className="flex gap-1">
         <Button
           variant="ghost"
-          size="icon"
+          size="icon" aria-label="Message"
           className="h-8 w-8 hover:bg-emerald-500/10"
           onClick={() => onClick("whatsapp")}
         >
           <MessageSquare className="h-3.5 w-3.5 text-emerald-500" />
         </Button>
-        <Button variant="ghost" size="icon" className="h-8 w-8 hover:bg-blue-500/10" onClick={() => onClick("email")}>
+        <Button variant="ghost" size="icon" aria-label="Messages" className="h-8 w-8 hover:bg-blue-500/10" onClick={() => onClick("email")}>
           <Mail className="h-3.5 w-3.5 text-blue-500" />
         </Button>
       </div>

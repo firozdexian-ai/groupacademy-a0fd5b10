@@ -271,7 +271,7 @@ export function BulkResourceUpload({
                 <Button
                   type="button"
                   variant="ghost"
-                  size="icon"
+                  size="icon" aria-label="Refresh"
                   className="h-7 w-7 shrink-0"
                   onClick={() => retryItem(q.id)}
                   title={q.error}
@@ -282,7 +282,7 @@ export function BulkResourceUpload({
               <Button
                 type="button"
                 variant="ghost"
-                size="icon"
+                size="icon" aria-label="Close"
                 className="h-7 w-7 shrink-0 text-muted-foreground hover:text-destructive"
                 onClick={() => removeItem(q.id)}
                 disabled={q.status === "uploading"}

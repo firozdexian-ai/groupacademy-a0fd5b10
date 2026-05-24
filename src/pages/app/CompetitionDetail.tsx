@@ -240,7 +240,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  <Button 
  type="button"
  variant="ghost" 
- size="icon" 
+ size="icon" aria-label="Go back" 
  className="h-8 w-8 rounded-lg cursor-pointer transition-transform active:scale-95 shrink-0 border border-border/5" 
  onClick={handleReturnToDirectoryTrigger}
  >

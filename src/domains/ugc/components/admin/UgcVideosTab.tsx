@@ -102,11 +102,11 @@ export function UgcVideosTab() {
  </TableCell>
  <TableCell className="text-right">
  <div className="flex items-center justify-end gap-1">
- <Button size="icon" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-blue-500/10 hover:text-blue-600">
+ <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-blue-500/10 hover:text-blue-600">
  <Pencil className="h-4 w-4" />
  </Button>
  <ConfirmPurge title="Purge Video?" description="This removes the free video from the catalog." onConfirm={() => deleteVideo.mutate(row.id)}>
- <Button size="icon" variant="ghost" className="hover:bg-destructive/10 hover:text-destructive">
+ <Button size="icon" aria-label="Delete" variant="ghost" className="hover:bg-destructive/10 hover:text-destructive">
  <Trash2 className="h-4 w-4" />
  </Button>
  </ConfirmPurge>

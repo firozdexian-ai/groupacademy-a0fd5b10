@@ -255,7 +255,7 @@ export function InvestorsManager() {
  </Select>
  <Button
  variant="outline"
- size="icon"
+ size="icon" aria-label="Refresh"
  onClick={() => refetch()}
  disabled={isRefetching}
  className="h-14 w-14 rounded-2xl border shadow-sm shrink-0 bg-background/50"
@@ -366,7 +366,7 @@ export function InvestorsManager() {
  >
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => openEditDialog(investor)}
  className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary"
  >
@@ -374,7 +374,7 @@ export function InvestorsManager() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  onClick={() => setDeleteConfirmId(investor.id)}
  className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive"
  >

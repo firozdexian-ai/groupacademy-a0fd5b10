@@ -206,7 +206,7 @@ export function LearningCoursesTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Manage Modules"
  onClick={() => setSelectedModuleCourseId(row.id)}
  className="hover:bg-indigo-500/10 hover:text-indigo-600"
  title="Manage Modules"
@@ -226,7 +226,7 @@ export function LearningCoursesTab() {
  />
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  // Prep draft state matching legacy UI expectations
  setDraft({ ...row, status: isRowPublished ? "published" : "draft" });
@@ -238,7 +238,7 @@ export function LearningCoursesTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive hover:bg-destructive/10"
  onClick={() => {
  if (confirm("Purge Course?")) deleteContent.mutate(row.id);

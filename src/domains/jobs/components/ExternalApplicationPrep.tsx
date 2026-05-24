@@ -481,7 +481,7 @@ export function ExternalApplicationPrep({
                       </h3>
                       <Button
                         variant="outline"
-                        size="icon"
+                        size="icon" aria-label="Confirm"
                         type="button"
                         onClick={async () => {
                           await navigator.clipboard.writeText(generalSummary.trim());

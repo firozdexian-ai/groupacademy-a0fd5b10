@@ -165,7 +165,7 @@ export const SalaryAnalysisLeadsManager = () => {
           >
             <Download className="h-4 w-4" /> Export Registry
           </Button>
-          <Button variant="ghost" size="icon" onClick={loadLeads} className="h-14 w-14 rounded-2xl border-2">
+          <Button variant="ghost" size="icon" aria-label="Refresh" onClick={loadLeads} className="h-14 w-14 rounded-2xl border-2">
             <RefreshCw className="h-5 w-5" />
           </Button>
         </div>
@@ -266,7 +266,7 @@ export const SalaryAnalysisLeadsManager = () => {
                       <div className="flex justify-end gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="icon" aria-label="Profile"
                           onClick={() => {
                             setSelectedTalentEmail(lead.email);
                             setSelectedTalentName(lead.full_name);
@@ -278,7 +278,7 @@ export const SalaryAnalysisLeadsManager = () => {
                         {lead.status === "completed" && (
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="icon" aria-label="Open link"
                             onClick={() => navigate(`/salary-analysis/results/${lead.id}`)}
                             className="hover:bg-primary/10 hover:text-primary"
                           >

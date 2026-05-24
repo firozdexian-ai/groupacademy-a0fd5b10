@@ -138,7 +138,7 @@ export function HrVerticalsTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(row);
  setOpen(true);
@@ -148,7 +148,7 @@ export function HrVerticalsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive hover:bg-destructive/10"
  onClick={() => setPurgeTarget(row.id)}
  >
@@ -238,7 +238,7 @@ export function HrFunctionsTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(row);
  setOpen(true);
@@ -248,7 +248,7 @@ export function HrFunctionsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive hover:bg-destructive/10"
  onClick={() => setPurgeTarget(row.id)}
  >
@@ -345,7 +345,7 @@ export function HrTeamsTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(row);
  setOpen(true);
@@ -355,7 +355,7 @@ export function HrTeamsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive hover:bg-destructive/10"
  onClick={() => setPurgeTarget(row.id)}
  >
@@ -454,7 +454,7 @@ export function HrGradesTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(row);
  setOpen(true);
@@ -464,7 +464,7 @@ export function HrGradesTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive hover:bg-destructive/10"
  onClick={() => setPurgeTarget(row.id)}
  >

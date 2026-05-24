@@ -76,7 +76,7 @@ export function ChatThread({ agentKey, onAfterSend }: ChatThreadProps) {
         {messages.length > 0 && (
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Clear conversation"
             onClick={clear}
             title="Clear conversation"
           >

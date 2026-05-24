@@ -294,7 +294,7 @@ export function CompaniesTab() {
  <div className="flex items-center gap-4">
  <div className="h-10 w-10 rounded-lg bg-muted flex items-center justify-center border overflow-hidden shadow-inner shrink-0">
  {company.logo_url ? (
- <img src={company.logo_url} className="object-cover h-full w-full" />
+ <img src={company.logo_url} className="object-cover h-full w-full" alt="" />
  ) : (
  <Building2 className="h-5 w-5 opacity-20" />
  )}
@@ -348,7 +348,7 @@ export function CompaniesTab() {
  </Select>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  className="h-10 w-10 border rounded-xl"
  onClick={() => handleOpenDialog(company)}
  >
@@ -356,7 +356,7 @@ export function CompaniesTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="h-10 w-10 border rounded-xl hover:bg-destructive/10 hover:text-destructive"
  onClick={() => setDeleteTarget(company)}
  >

@@ -175,7 +175,7 @@ export default function ProfileBuilder() {
  <Button
  onClick={send}
  disabled={sending || !input.trim()}
- size="icon"
+ size="icon" aria-label="Send"
  className="rounded-full h-10 w-10 shrink-0"
  >
  <Send className="h-4 w-4" />

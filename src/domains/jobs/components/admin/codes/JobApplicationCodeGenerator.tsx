@@ -210,7 +210,7 @@ export function JobApplicationCodeGenerator() {
                   </div>
                   <Button
                     variant="ghost"
-                    size="icon"
+                    size="icon" aria-label="Confirm"
                     onClick={() => copyToClipboard(code)}
                     className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-colors"
                   >

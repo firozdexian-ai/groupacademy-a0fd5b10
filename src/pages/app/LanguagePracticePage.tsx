@@ -208,7 +208,7 @@ export default function LanguagePracticePage() {
  <Button
  onClick={handleDispatchMessageSequence}
  disabled={isInferenceProcessing || !userTextInputStr.trim()}
- size="icon"
+ size="icon" aria-label="Send"
  className="rounded-lg shrink-0"
  >
  <Send className="h-4 w-4" />

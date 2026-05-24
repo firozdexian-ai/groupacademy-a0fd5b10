@@ -299,7 +299,7 @@ export function QuizResultsViewer() {
  <TableCell className="text-right pr-8">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="View"
  className="h-10 w-10 rounded-xl hover:bg-primary/10"
  onClick={() => viewAttemptDetails(attempt)}
  >

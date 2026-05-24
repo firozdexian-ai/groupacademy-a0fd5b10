@@ -331,7 +331,7 @@ function AcademyCard({ academy, onEdit }: any) {
  </Badge>
  </div>
  </div>
- <Button variant="ghost" size="icon" className="opacity-20 group-hover:opacity-100" onClick={onEdit}>
+ <Button variant="ghost" size="icon" aria-label="Edit" className="opacity-20 group-hover:opacity-100" onClick={onEdit}>
  <Pencil className="h-4 w-4" />
  </Button>
  </Card>
@@ -350,7 +350,7 @@ function SchoolCard({ school, academyName, onEdit }: any) {
  <p className="text-[8px] font-bold text-muted-foreground uppercase">{academyName}</p>
  </div>
  </div>
- <Button variant="ghost" size="icon" className="opacity-20 group-hover:opacity-100" onClick={onEdit}>
+ <Button variant="ghost" size="icon" aria-label="Edit" className="opacity-20 group-hover:opacity-100" onClick={onEdit}>
  <Pencil className="h-4 w-4" />
  </Button>
  </Card>
@@ -369,7 +369,7 @@ function ProfessionCard({ profession, schoolName, onEdit }: any) {
  <p className="text-[8px] font-bold text-muted-foreground uppercase">{schoolName || "No School"}</p>
  </div>
  </div>
- <Button variant="ghost" size="icon" className="opacity-20 group-hover:opacity-100" onClick={onEdit}>
+ <Button variant="ghost" size="icon" aria-label="Edit" className="opacity-20 group-hover:opacity-100" onClick={onEdit}>
  <Pencil className="h-4 w-4" />
  </Button>
  </Card>

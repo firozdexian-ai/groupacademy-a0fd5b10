@@ -103,10 +103,10 @@ export function ThemesTab() {
  </TableCell>
  <TableCell className="text-right">
  <div className="flex justify-end gap-1">
- <Button variant="ghost" size="icon" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-fuchsia-500/10 hover:text-fuchsia-600">
+ <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-fuchsia-500/10 hover:text-fuchsia-600">
  <Pencil className="h-4 w-4" />
  </Button>
- <Button variant="ghost" size="icon" className="hover:bg-rose-500/10 hover:text-rose-600" onClick={() => { if (confirm("Purge Theme?")) deleteTheme.mutate(row.id); }}>
+ <Button variant="ghost" size="icon" aria-label="Delete" className="hover:bg-rose-500/10 hover:text-rose-600" onClick={() => { if (confirm("Purge Theme?")) deleteTheme.mutate(row.id); }}>
  <Trash2 className="h-4 w-4" />
  </Button>
  </div>

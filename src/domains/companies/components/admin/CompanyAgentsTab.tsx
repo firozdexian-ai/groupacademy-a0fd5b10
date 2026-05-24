@@ -707,7 +707,7 @@ export function CompanyAgentsManager() {
  />
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive/20 hover:text-destructive transition-all"
  onClick={() =>
  ca.ai_agents && setDeleteTarget({ agentId: ca.ai_agents.id, companyAgentId: ca.id })

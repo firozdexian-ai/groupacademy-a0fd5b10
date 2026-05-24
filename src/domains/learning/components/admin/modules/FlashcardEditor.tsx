@@ -199,7 +199,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                       <div className="flex items-center gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="icon" aria-label="Go back"
                           onClick={() => shiftSequence(index, "up")}
                           disabled={index === 0}
                           className="h-9 w-9 rounded-xl"
@@ -208,7 +208,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                         </Button>
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="icon" aria-label="Continue"
                           onClick={() => shiftSequence(index, "down")}
                           disabled={index === cards.length - 1}
                           className="h-9 w-9 rounded-xl"
@@ -217,7 +217,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                         </Button>
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="icon" aria-label="Delete"
                           onClick={() => purgeArtifact(card.id)}
                           className="h-9 w-9 rounded-xl text-destructive hover:bg-destructive/10"
                         >

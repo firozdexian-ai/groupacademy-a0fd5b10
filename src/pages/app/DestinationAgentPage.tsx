@@ -327,7 +327,7 @@ export default function DestinationAgentPage() {
  type="button"
  onClick={handleDispatchConsoleQuerySequence}
  disabled={isAIEngineProcessing || !consoleTextInputStr.trim()}
- size="icon"
+ size="icon" aria-label="Dispatch context parameter block query to target a"
  className="h-10 w-10 rounded-lg bg-primary text-primary-foreground shadow-2xs hover:bg-primary/90 cursor-pointer transition-transform transform-gpu active:scale-95 shrink-0 block"
  title="Dispatch context parameter block query to target agent container"
  >

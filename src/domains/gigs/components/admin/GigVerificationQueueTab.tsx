@@ -118,7 +118,7 @@ export function GigVerificationQueueTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(row);
  setOpen(true);
@@ -129,7 +129,7 @@ export function GigVerificationQueueTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive hover:bg-destructive/10"
  onClick={() => {
  if (confirm("Purge Audit?")) deleteVerification.mutate(row.id);

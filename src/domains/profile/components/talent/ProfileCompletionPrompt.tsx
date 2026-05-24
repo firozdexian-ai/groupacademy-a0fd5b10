@@ -229,7 +229,7 @@ export function ProfileCompletionPrompt({
           {showDismiss && (
             <Button
               variant="ghost"
-              size="icon"
+              size="icon" aria-label="Close"
               type="button"
               onClick={handleDismissProtocolTrigger}
               className="h-8 w-8 rounded-xl text-muted-foreground/40 hover:bg-rose-500/10 hover:text-rose-500 cursor-pointer transition-colors"
@@ -302,7 +302,7 @@ export function ProfileCompletionPrompt({
           {showDismiss && (
             <Button
               variant="ghost"
-              size="icon"
+              size="icon" aria-label="Close"
               type="button"
               onClick={handleDismissProtocolTrigger}
               className="h-8 w-8 rounded-xl text-muted-foreground/40 hover:bg-rose-500/10 hover:text-rose-500 cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none"

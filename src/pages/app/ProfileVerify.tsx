@@ -127,7 +127,7 @@ export default function ProfileVerify() {
  return (
  <div className="max-w-2xl mx-auto px-6 py-10 pb-40 space-y-8 animate-in fade-in duration-700">
  <header className="flex items-center gap-4">
- <Button variant="ghost" size="icon" className="h-10 w-10" onClick={() => navigate(-1)}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="h-10 w-10" onClick={() => navigate(-1)}>
  <ArrowLeft className="h-5 w-5 text-primary" />
  </Button>
  <div>

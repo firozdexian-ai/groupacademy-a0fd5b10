@@ -202,7 +202,7 @@ export default function KeyInfluencersTab() {
  <div className="flex gap-1 opacity-0 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => handleOpenDialog(r)}
  className="h-8 w-8 rounded-lg hover:bg-primary/10"
  >
@@ -210,7 +210,7 @@ export default function KeyInfluencersTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  onClick={() => executePurge(r.id)}
  className="h-8 w-8 rounded-lg hover:bg-destructive/10"
  >
