@@ -1,27 +1,52 @@
-# Phase A9 — DONE (Admin Shell Jargon Sweep)
+# Phase A10 — Admin Visual Polish
 
-Shipped 2026-05-23. Humanized `/dashboard/*` admin surfaces — route titles, hub headers, tab labels, toasts, and chrome strings.
+Soften the admin shell (`/dashboard/*`) so it matches the calmer, sentence-case tone we shipped across the talent app in A5–A8. Copy-only + class-level changes, no logic.
 
-## Files touched (~70)
-- `src/pages/Dashboard.tsx` — fallback page title.
-- `src/platform/admin/chrome/DashboardSkeleton.tsx` — error state copy.
-- `src/shells/admin/routes/{abroad,agents,companies,finance,gigs,gtm,hr,institutions,ir,jobs,learning,marketing,misc,overview,talent,ugc}.ts` — TITLES maps normalized to sentence case, no jargon.
-- High-visibility hubs rewritten: `JobsHub`, `JobsUploadTab`, `JobsManageTab`, `JobsApplicationsTab`, `JobsOutreachTab`, `PendingJobSubmissions`, `IRDashboard`, `TalentUploadTab`, `NotificationsTab`, `TalentOutreachConsoleTab`.
-- Bulk sweep (`/tmp/sweep*.mjs`) across ~50 admin tabs: toast prefixes, JSX text, placeholders, select options. Replaced Protocol/Handshake/Ledger/Matrix/Vector/Nexus/Ingress/Synchroniz patterns with plain English (e.g. `Protocol Fault:` → `Error:`, `Ledger` → `CSV / Unlocks / Submissions` per context, `Authority Matrix` → `Roles`, `Capital Ingress` → `Purchases`).
+## Why this next
+A9 fixed the *words* in admin but the *visual tone* is still "uppercase-italic-tracking-widest tech console" — clashing with the friendly talent UI. With launch close, admin needs to feel like the same product, not a different one.
 
-## Audit
-Initial: 228 jargon hits across ~80 admin files. After three sweep passes: 0 visible JSX-text hits matching `>...(Ledger|Matrix|Vector|Nexus|Protocol|Ingress|Handshake|Synchroniz|Ecosystem)...<`. Remaining matches are JSDoc / code comments / handler identifiers (`handleImportProtocol`) / `Handshake` icon import — all non-user-visible.
+## Scope (in)
+1. **Header chrome** (`src/pages/Dashboard.tsx`, `src/platform/admin/chrome/*`)
+   - Page title: drop `uppercase tracking-[0.2em] font-black` → `text-base font-semibold tracking-tight`.
+   - Sidebar group labels + active states: sentence case, normal tracking.
+   - Skeleton/error states: match talent app's soft empty-state style.
 
-## Status overview
-- A5 Jobs Hub — DONE
-- A6 Gigs Hub — DONE
-- A7 Profile / Talent Mirror / My Gigs — DONE
-- A8 Career Abroad (talent) — DONE
-- A9 Admin shell — DONE
-- B3–B5 Cross-cutting jargon cleanup — DONE
+2. **Hub headers across ~16 domain groups**
+   - Standard pattern: small icon + `text-2xl font-semibold` title + `text-sm text-muted-foreground` subtitle.
+   - Kill `uppercase tracking-widest` on H1/H2 in hub tabs (Jobs, Gigs, Talent, Companies, Agents, IR, Institutions, Workforce, GTM, UGC, Learn, Abroad, Marketing, Finance, Platform).
 
-## Suggested next phase
-- **JSDoc / identifier sweep** (low priority, zero user impact): drop `GroUp Academy: …`, `CTO Reference: …`, `Phase Z0 Hardened` headers and rename internal `handleImportProtocol` / `handleGenerateHandshake` identifiers.
-- **Admin visual polish**: many admin hubs still lean on uppercase-italic chrome; sentence-case + softer treatment would match the talent app.
+3. **Tab triggers + section labels**
+   - Remove uppercase on `TabsTrigger`, `CardTitle`, badge labels inside admin hubs.
+   - Keep numeric KPI tiles bold but lose the all-caps eyebrow.
 
-Ask for whichever you want next.
+4. **Buttons + toasts**
+   - Action buttons: sentence case ("Save changes", not "SAVE CHANGES").
+   - Toast titles: sentence case, no terminal-prompt prefixes.
+
+5. **Module-not-found fallback** in `Dashboard.tsx`
+   - "Module Decryption Failed: ..." → "Unknown tab: ..." with a "Back to overview" button.
+
+## Scope (out)
+- No route changes, no `?tab=` slug renames, no business logic, RPCs, edge functions, or schema.
+- No JSDoc/identifier sweep (separate low-priority phase).
+- No redesign of data tables, dialogs, or color tokens — only typographic/casing tone.
+- Gro10x and talent shells already done — untouched.
+
+## Approach
+1. **Audit** with `rg` for `uppercase`, `tracking-widest`, `tracking-\[0\.2em\]`, `font-black` inside `src/pages/Dashboard.tsx`, `src/platform/admin/**`, `src/domains/*/components/admin/**`, `src/shells/admin/**`.
+2. **Tokenize**: introduce one helper (or just a documented Tailwind pattern) for `adminH1`, `adminH2`, `adminEyebrow` so future hubs stay consistent.
+3. **Sweep by domain group** in this order (highest visibility first):
+   - Dashboard chrome + sidebar
+   - Jobs, Talent, Companies (biggest surfaces)
+   - IR, Agents, Learn
+   - Gigs, Abroad, Workforce, GTM, UGC, Institutions
+   - Marketing, Finance, Platform/misc
+4. **Verify** each group visually via preview after the sweep — no functional regressions expected since changes are class-level.
+
+## Estimated surface
+~60–90 files, mostly 1–5 class-string edits each. Two `sed`/script passes for the most common patterns (`uppercase tracking-widest` removal, `font-black` → `font-semibold` on headers) followed by hand-tuning the hub headers and the Dashboard shell.
+
+## Open question
+Keep the **sidebar group headers** (Talent, Companies, Agents…) in a subtle uppercase eyebrow for navigation hierarchy, or also flatten to sentence case? Default: keep them as small uppercase eyebrows (`text-[10px] uppercase tracking-wider text-muted-foreground/70`) since they aid scanning in a dense sidebar — this is the only place uppercase survives.
+
+Approve and I'll start with Dashboard chrome + sidebar, then sweep domain by domain.
