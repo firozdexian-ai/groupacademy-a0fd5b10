@@ -1,120 +1,178 @@
-# Road to v0.5 Publication — Consolidation Plan
+# v0.5 Plan — Revised (P1 audit + P2 micro-tasks + AI Agents v0.5 + Public Showcase)
 
-Launch personas confirmed: **Talent** + **Public**. Admin/Gro10x stay functional but are not part of the "publicly announced" surface for v0.5. Deferred features get a **"Coming soon + join waitlist"** treatment, not removal.
-
-Work is split into 4 sequential phases. Each phase produces a deliverable doc in `.lovable/v05/` so we can pick up across sessions without re-confusing state.
+I'll restructure so we move in **small, verifiable steps**. Each step = one chat turn, one deliverable, one approval. Nothing branches until the prior step is green.
 
 ---
 
-## Where we are today (snapshot)
+## Track A — P1 Completion Audit (do first, 1 turn)
 
-**Done (A1 → A19):** route lazy-loading, bundle trim, a11y pass, loading skeletons, copy normalization, mobile safe areas, admin lazy-loading, dashboard RBAC, native email, escrow/projects, public discovery, learning tracks, gig matchmaker/verification/disputes, instructor monetization, creator economy, hype/connections, scenario skill credentials, mastery-based job match.
+Before touching P2, verify P1 is actually complete.
 
-**Estimated launch-readiness for Talent+Public: ~75%.** The remaining 25% is not new features — it's **verification, regression hunting, and gating things that aren't ready**.
+**A1. P1 audit pass** — re-read `.lovable/v05/inventory.md`, cross-check against:
+- `src/App.tsx` (talent routes), `src/gro10x/Gro10xRoutes.tsx`, `src/shells/admin/routes/*.ts`
+- `mem://admin/*` group files (16 groups, 118 admin tabs)
+- Public routes in `src/App.tsx` (`/`, `/jobs`, `/projects`, `/leaderboards`, `/c/:slug`, `/t/:handle`, `/verify/*`)
 
----
+**Deliverable:** append `## P1 Audit Result` section to `inventory.md` listing:
+- Routes missed in first pass
+- Regression suspects re-confirmed or dismissed (with file evidence)
+- Coverage % for each shell
 
-## Phase P1 — Feature Inventory & Regression Diff (1.5 days)
-
-**Goal:** catch features that silently disappeared during A11–A19 polish/refactor before users do.
-
-1. Generate `.lovable/v05/inventory.md` listing every:
-   - Admin tab (from `src/shells/admin/routes/*.ts` — 16 groups)
-   - Talent route (from `src/App.tsx`)
-   - Public route
-   - For each: declared purpose, components rendered, primary actions
-2. Cross-check against existing memory files (`mem://admin/*`, `mem://product/*`) — any tab whose memory describes features not present in current code = **regression candidate**, flagged in the doc.
-3. Spot-check 10 highest-risk areas in browser: admin Talent group, admin Companies, admin Jobs, admin Learning, admin Gigs, talent Profile, talent Jobs Hub, talent Learning Hub, talent Gigs, talent Career Abroad.
-4. Deliverable: `inventory.md` with a **"Regression Suspects"** section listing each missing/changed feature, source memory, and suggested action (restore / accept / replace).
-
-**You review** this list before P2.
+**Stop and wait for your sign-off** before Track B.
 
 ---
 
-## Phase P2 — Defer/Hide Decisions & "Coming Soon" Surface (1 day)
+## Track B — P2 broken into 6 micro-steps
 
-**Goal:** stop shipping empty states that embarrass.
+Originally P2 was "defer matrix + ComingSoonGate + waitlist table + wire it up". Splitting:
 
-1. Produce `.lovable/v05/defer-matrix.md` listing every Talent+Public surface that has **no real data** or **no live workflow**, with a recommendation: `keep` / `coming-soon` / `hide`.
-   - Candidates I already see: Gig search (no projects), Marketplace browse, Company projects tab, Creator analytics on empty creators, Leaderboards with <10 entries, Reviewer cockpit for non-reviewers, parts of Career Abroad without programs in country.
-2. Build a single reusable `<ComingSoonGate>` component with: hero copy, illustration, **"Join waitlist"** button → writes to one shared `feature_waitlist` table (`user_id`, `feature_key`, `created_at`, `email`).
-3. One migration: `feature_waitlist` table + RLS (insert self, admin read).
-4. Wrap each `coming-soon` surface with the gate. Hidden surfaces get nav entries removed + 404 redirect.
-5. Admin gets a small "Waitlist signals" widget so we know what users want first.
+**B1. Defer matrix doc only** (1 turn)
+- Create `.lovable/v05/defer-matrix.md`
+- Every Talent + Public surface flagged "looks empty" in P1, classified `keep | coming-soon | hide`
+- Include rationale + data-readiness check per row
+- No code. You approve the matrix.
 
-**You approve** the defer-matrix before any wrapping happens.
+**B2. ComingSoonGate component** (1 turn)
+- Build `src/components/common/ComingSoonGate.tsx` only
+- Props: `featureKey`, `title`, `description`, optional `illustration`
+- No waitlist wiring yet — just visual shell using design tokens
+- Render-test on one surface as a preview
 
----
+**B3. Waitlist backend** (1 turn, migration only)
+- `feature_waitlist` table (`user_id`, `feature_key`, `email`, `created_at`) + RLS + unique constraint
+- One RPC `join_feature_waitlist(feature_key)`
+- Migration approval required before code
 
-## Phase P3 — Automated Smoke Test Suite (2–3 days)
+**B4. Wire waitlist into ComingSoonGate** (1 turn)
+- Add form + submit → RPC
+- Toast confirmation, idempotent re-submit
+- Test on one surface
 
-**Goal:** 70% bug catch without manual clicking, per your request. Full persona journeys.
+**B5. Apply gate to `coming-soon` surfaces** (1 turn per ~5 surfaces, batched)
+- Wrap each flagged surface per the approved matrix
+- Update nav labels where needed (small "Soon" pill)
 
-Use **Playwright** (already viable in Lovable; no new infra) writing tests under `tests/e2e/`. Tests run against the preview URL with seeded test accounts.
-
-**Talent persona journeys** (one spec file each, ~12 specs):
-- Signup (Aisha chat) → phone capture → profile builder
-- Login → feed loads → click 3 card types (post, course, video)
-- Jobs Hub → For You → open job → apply (each method: internal, external, mailto)
-- Learning Hub → enroll in free course → complete a module → certificate
-- Gigs → For You → place bid (or hit waitlist gate)
-- Career Abroad → roadmap builder → submit
-- Tools Hub → CV maker / Salary analysis / Mock interview
-- Profile → public `/t/:handle` view works + JSON-LD present
-- Credits → purchase sheet opens, gate works
-- Saved items + Notifications + Messages thread
-- Logout
-
-**Public persona journeys** (~6 specs):
-- `/` landing, `/jobs`, `/jobs/:id`, `/projects`, `/projects/:slug`, `/leaderboards/:kind`, `/c/:slug`, `/t/:handle`, `/verify/skill/:code`, `/verify/cert/:code`
-- Assertion: 200 response, H1 present, meta description present, no console errors, no white-screen, mobile viewport renders without horizontal scroll
-
-**Output:** `tests/e2e/REPORT.md` auto-generated per run with pass/fail per journey + screenshot of failures. Wire into Lovable's existing test runner.
-
-**Acceptance gate for v0.5:** all Talent + Public journeys green.
+**B6. Hide `hide` surfaces + admin waitlist signals widget** (1 turn)
+- Remove nav entries, add 404 redirect
+- Admin tab: `feature_waitlist` aggregated by `feature_key` with signup counts → drives "what to build next"
 
 ---
 
-## Phase P4 — Manual Punch List & Publish (1 day)
+## Track C — AI Agents v0.5 (new, agent-by-agent)
 
-1. Generated from P3 failures + P1 regression confirmations.
-2. Format: `.lovable/v05/punch-list.md` with severity (blocker / nice-to-have / post-v0.5), owner-action, est. time.
-3. Work through blockers only. Nice-to-haves become Phase P5 (post-launch).
-4. Final pre-publish checks: SEO findings cleared (`seo_chat--list_findings`), security linter clean (`supabase--linter`), bundle sizes recorded, custom domain confirmed.
-5. **Publish.**
+Per your direction: **one agent at a time, skip if too complex, ship minimum viable interaction.**
+
+Three capabilities defined as the v0.5 floor for every customer-facing agent:
+
+1. **Text chatbot wrapper** — info-only, uses agent persona + system prompt. No tool calls required. Already mostly built via `useAgentRuntime` — just verify each agent has a working persona.
+2. **Inbox push** — agent can send a transactional message to the talent's in-app inbox (existing `notifications` infra) on triggers (e.g. new job match, new course).
+3. **Daily feed post** — each agent posts 1 text post/day to `feed_posts` via cron. Variety driven by agent persona + light context (recent platform activity).
+
+### Micro-steps:
+
+**C0. Agent inventory & triage** (1 turn)
+- Read `ai_agents` table + `src/lib/constants/agents.ts`
+- Doc `.lovable/v05/agents-triage.md`: per agent → has persona? has working chat? credit cost set? — classify `ship | fix | defer`
+- You approve the shortlist
+
+**C1. Verify text-wrapper chat works for all `ship` agents** (1 turn)
+- Smoke test `/app/agents/:agentKey` in browser for each
+- Fix broken persona prompts only (no new features)
+
+**C2. Inbox-push infrastructure** (1 turn)
+- Edge function `agent-push-inbox` (input: `agent_key`, `user_id`, `subject`, `body`, `cta_url`)
+- Writes to `notifications` with `source='agent'` + agent metadata
+- RLS verified
+
+**C3. Wire 2-3 high-value inbox triggers** (1 turn)
+- Examples: Jobs agent on new high-match job; Learning agent on new course in tracked topic
+- Pick triggers WITH you before building
+
+**C4. Daily feed post — single agent pilot** (1 turn)
+- Edge function `agent-daily-post` for ONE agent (e.g. AI General or Career agent)
+- Cron daily, posts to `feed_posts` with `author_type='agent'` (new column if needed)
+- Feed UI shows agent badge
+
+**C5. Roll out daily-post to remaining `ship` agents** (1 turn)
+- Same function, parameterized by agent
+- Stagger post times to avoid feed flood
 
 ---
 
-## Out of scope for v0.5
+## Track D — Jobs UI Polish (talent-facing)
 
-- Gro10x B2B polish (works but not headline)
-- Admin UX polish (functional, not user-facing)
-- New features of any kind
-- Performance beyond what A19 shipped
+You called out text alignment is "fucking horrible" in `/app/jobs`. Treating as one focused pass.
 
----
+**D1. Jobs hub visual audit** (1 turn)
+- Browser screenshots of `/app/jobs` at 390px (your current viewport) + 768px + 1280px
+- Doc issues: alignment, hierarchy, spacing, card density, mobile horizontal-scroll violations
+- No code. You approve the fix list.
 
-## Total timeline estimate
+**D2. Job card + list polish** (1 turn)
+- Fix alignment per D1 findings
+- Apply mobile design system rules (py-2, space-y-2, no horizontal scroll, 3:1 banner if any)
+- Scoped to `JobCard`, `InfiniteJobsList`, hub tabs
 
-| Phase | Effort | Gate |
-|---|---|---|
-| P1 Inventory + regression diff | 1.5 days | You review the suspects list |
-| P2 Defer/hide + waitlist gate | 1 day | You approve defer-matrix |
-| P3 Smoke test suite | 2–3 days | All Talent+Public journeys green |
-| P4 Punch list + publish | 1 day | Blocker count = 0 |
-| **Total** | **~5.5–6.5 days** | |
+**D3. Job detail polish** (1 turn)
+- `/app/jobs/:id` + public `/jobs/:id` alignment + hierarchy pass
 
 ---
 
-## Technical notes (for the implementer)
+## Track E — Public AI Agent Network Showcase
 
-- **Inventory generation**: `rg` over `src/shells/admin/routes/*.ts` + `src/App.tsx` to enumerate; cross-ref with `mem://admin/*` memory files via filename grep.
-- **Coming-soon gate**: single component in `src/components/common/ComingSoonGate.tsx`, accepts `featureKey`, `title`, `description`, `eta`. Waitlist insert uses `supabase.from('feature_waitlist').insert(...)` with RLS `with check (auth.uid() = user_id)`.
-- **Playwright setup**: `playwright.config.ts` at repo root, single worker against preview URL, test accounts seeded via a one-time migration `tests/fixtures/seed.sql` (idempotent).
-- **No DB writes** in P1 or P3 reports — they're just markdown.
+Your point: we sell AI-agent-first but our public site never says so.
+
+**E1. Public AI Network landing section** (1 turn, design directions first)
+- New section on `/` (home) introducing the agent network
+- Carousel/grid of agent personas with name, role, avatar, "Chat" CTA → routes to public agent profile or signup
+- I'll generate 2-3 design directions for your approval
+
+**E2. Public agent profile pages** (1 turn)
+- Route `/agents/:agentKey` (public, SEO-indexed)
+- Persona bio, "institutions/credentials" panel, recent feed posts (from Track C5), chat CTA
+- JSON-LD `Person` schema so social platforms pick it up
+- This gives you the LinkedIn-shareable artifact you want
+
+**E3. Admin promo tools for agent network** (1 turn)
+- Admin tab under AI Agents group: "Public showcase" → toggle which agents appear on `/`, edit public bio, schedule social posts (text export for now; full social automation is post-v0.5)
 
 ---
 
-## Starting point
+## Execution order (proposed)
 
-If you approve, P1 begins immediately and produces the inventory + regression doc for your review before any code touches the app. Nothing gets hidden or deleted until you sign off on the defer-matrix in P2.
+```text
+A1                          → audit, gate to B
+B1 → B2 → B3 → B4 → B5 → B6 → defer/coming-soon shipped
+C0 → C1 → C2 → C3 → C4 → C5 → agents at v0.5 floor
+D1 → D2 → D3                → jobs polish
+E1 → E2 → E3                → public agent showcase
+P3 (smoke tests) — unchanged from prior plan, runs after B+C+D
+P4 (publish punch list)     — last
+```
+
+Each arrow = one chat turn = one approval gate. If a step balloons, we split it again.
+
+---
+
+## What's explicitly OUT of v0.5 (constraining your scope per your ask)
+
+- Agent tool-calling beyond text + inbox + feed-post
+- Full social-media automation for agents (LinkedIn/FB posting)
+- Gro10x B2B polish
+- Admin UX polish beyond the one waitlist widget
+- New features not listed above
+- Performance work beyond what A19 already did
+
+---
+
+## Technical notes (for me, not for the user-facing dashboard)
+
+- `feed_posts` likely needs `author_type` enum (`talent | agent`) + `author_agent_key` column — confirm in C4 migration
+- `agent-push-inbox` should respect notification preferences (existing prefs table from agentic-feed-notifications memory)
+- Daily-post cron: stagger via `pg_cron` with different minute offsets per agent
+- Public agent pages must be in public shell bundle (`src/shells/public/agents.ts` already exists, currently exports registry only — extend)
+- `ComingSoonGate` form submit blocked for unauthenticated users → show signup CTA instead
+
+---
+
+**Next turn after you approve this plan:** I execute A1 only (P1 completion audit), output the audit section, stop.
