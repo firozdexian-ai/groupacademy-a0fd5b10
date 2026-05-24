@@ -437,3 +437,12 @@ Scope: `Gro10xLanding`, `Gro10xWelcome`, `Gro10xSignIn`, `Gro10xTopBar`, `Gro10x
 
 **Implication for Track D plan:** D2–D5 (Work, Gigs, Learn, Inbox, Agents, Me) are very likely also clean. Recommend a single rg pass over D2–D5 to confirm, then close Track D and proceed directly to **Track C — Admin shell cleanup** (which we already know has heavy jargon from the deferral notes in A5–A8).
 
+
+## D2–D5 — Gro10x Work / Learn / Billing / Inbox / Agents / Me / CRM / Sourcing — verified clean 2026-05-24
+
+Single rg sweep across the remaining Gro10x pages (`Gro10xWork`, `pages/work/*`, `Gro10xLearn`, `Gro10xLearnOps`, `Gro10xBilling`, `Gro10xInbox`, `Gro10xChat`, `Gro10xAgentMarketplace`, `Gro10xMe`, `Gro10xCRM`, `Gro10xOfferings`, `Gro10xFeed`, `Gro10xCompanyPage`, `pages/sourcing/*`) for the full jargon glossary — **0 user-visible hits**.
+
+**Track D — closed without code edits.** The Gro10x employer shell ships as-is.
+
+**Next recommended track:** Track C — Admin shell cleanup (`/dashboard/*`, ~118 tabs across 16 groups). This is where the deferred jargon from A1–A8 actually lives.
+
