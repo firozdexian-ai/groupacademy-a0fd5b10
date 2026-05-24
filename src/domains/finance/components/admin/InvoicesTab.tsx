@@ -264,7 +264,7 @@ export function InvoicesTab() {
  <div className="font-semibold text-sm text-fuchsia-600">
  {inv.bundle_credits.toLocaleString()} CR
  </div>
- <div className="text-[10px] font-bold text-muted-foreground">
+ <div className="text-sm font-medium text-muted-foreground">
  ${Number(inv.bundle_price_usd).toFixed(2)}
  </div>
  </TableCell>
@@ -314,7 +314,7 @@ export function InvoicesTab() {
  <DialogTitle className="text-3xl font-semibold font-medium flex items-center gap-3">
  <Zap className="h-8 w-8 text-fuchsia-500 fill-fuchsia-500/20" /> {selected.invoice_number}
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold mt-1">
+ <DialogDescription className="text-sm font-medium mt-1">
  Transaction Audit Protocol Active
  </DialogDescription>
  </div>

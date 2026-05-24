@@ -191,7 +191,7 @@ export default function KeyInfluencersTab() {
  <div className="font-semibold text-xl uppercase tracking-tight italic group-hover:text-primary transition-colors truncate">
  {r.name}
  </div>
- <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/60">
+ <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground/60">
  <Briefcase className="h-3 w-3" />
  <span className="truncate">
  {r.role || "STAKEHOLDER"} {r.organization ? `· ${r.organization}` : ""}

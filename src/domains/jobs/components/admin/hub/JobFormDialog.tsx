@@ -251,7 +251,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
  <Briefcase className="h-8 w-8 text-primary" />
  {jobId ? "Recalibrate Infrastructure" : "Deploy Job Node"}
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground italic">
+ <DialogDescription className="text-sm font-medium text-muted-foreground italic">
  Strategic marketplace placement and AI content drafting
  </DialogDescription>
  </div>

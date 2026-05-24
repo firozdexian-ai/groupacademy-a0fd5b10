@@ -152,7 +152,7 @@ export function MRRTargetManager() {
  <AlertDialogTitle className="text-3xl font-semibold font-medium text-destructive leading-none">
  Terminate Period?
  </AlertDialogTitle>
- <AlertDialogDescription className="text-[10px] font-bold italic text-muted-foreground/80 mt-2">
+ <AlertDialogDescription className="text-sm text-muted-foreground text-muted-foreground/80 mt-2">
  This will finalize actual revenue nodes and lock the registry for this month.
  </AlertDialogDescription>
  </AlertDialogHeader>
@@ -192,7 +192,7 @@ export function MRRTargetManager() {
  <CardTitle className="text-xl font-semibold font-medium text-emerald-600">
  Revenue Calibration
  </CardTitle>
- <CardDescription className="text-[10px] font-bold">
+ <CardDescription className="text-sm font-medium">
  Define MRR parameters and user acquisition targets
  </CardDescription>
  </div>
@@ -260,7 +260,7 @@ export function MRRTargetManager() {
  {totalCreditsTarget.toLocaleString()}
  </h3>
  </div>
- <p className="text-[10px] font-bold text-muted-foreground leading-relaxed max-w-[200px] mx-auto border-t border-primary/10 pt-4">
+ <p className="text-sm font-medium text-muted-foreground leading-relaxed max-w-[200px] mx-auto border-t border-primary/10 pt-4">
  Total Credits required to satisfy {formatUSD(mrrTarget)} target
  </p>
  </CardContent>
@@ -274,7 +274,7 @@ export function MRRTargetManager() {
  <CardTitle className="text-xl font-semibold font-medium flex items-center gap-2">
  <Settings2 className="h-5 w-5 text-primary" /> Mix Infrastructure
  </CardTitle>
- <CardDescription className="text-[10px] font-bold">
+ <CardDescription className="text-sm font-medium">
  Distribute expected usage load across neural service nodes
  </CardDescription>
  </div>

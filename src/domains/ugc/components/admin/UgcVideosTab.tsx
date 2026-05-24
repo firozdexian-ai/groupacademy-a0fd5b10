@@ -90,7 +90,7 @@ export function UgcVideosTab() {
  <Badge
  variant="outline"
  className={cn(
- "uppercase text-[10px] font-bold",
+ "uppercase text-sm font-medium",
  row.is_published ? "border-emerald-500 text-emerald-600" : "border-muted-foreground text-muted-foreground"
  )}
  >

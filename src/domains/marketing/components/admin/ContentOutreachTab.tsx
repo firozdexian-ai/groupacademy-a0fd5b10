@@ -314,7 +314,7 @@ export function ContentOutreachTab() {
  <h3 className="text-xl font-semibold uppercase tracking-tight italic text-primary">
  {selectedContent.title}
  </h3>
- <p className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <p className="text-sm font-medium text-muted-foreground/60 italic">
  {talents.length} VALID TARGETS IN RANGE
  </p>
  </div>
@@ -341,7 +341,7 @@ export function ContentOutreachTab() {
  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
  Broad Distribution Node
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60">
  Bulk promotion
  </DialogDescription>
  </div>
@@ -468,7 +468,7 @@ export function ContentOutreachTab() {
  <CardTitle className="text-2xl font-semibold uppercase tracking-tight italic flex items-center gap-4">
  <Terminal className="h-6 w-6 text-primary" /> Target Registry
  </CardTitle>
- <p className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <p className="text-sm font-medium text-muted-foreground/60 italic">
  Interrogating individualized pitch logic nodes
  </p>
  </div>
@@ -503,7 +503,7 @@ export function ContentOutreachTab() {
  <p className="text-lg font-semibold uppercase tracking-tight italic leading-none group-hover:text-primary transition-colors">
  {talent.full_name}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground/60 italic flex items-center gap-3">
+ <p className="text-sm font-medium text-muted-foreground/60 italic flex items-center gap-3">
  <Globe className="h-3 w-3" /> {talent.email}{" "}
  <span className="h-1 w-1 rounded-full bg-border" /> {talent.phone}
  </p>

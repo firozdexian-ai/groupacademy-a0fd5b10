@@ -126,7 +126,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic leading-none">
  Log Interaction
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60 italic">
  Log meeting details
  </DialogDescription>
  </div>

@@ -225,7 +225,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  {r.status}
  </Badge>
  </div>
- <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-muted-foreground/60">
+ <div className="flex flex-wrap items-center gap-3 text-sm font-medium text-muted-foreground/60">
  <span className="flex items-center gap-1.5">
  <Activity className="h-3 w-3" /> {r.type}
  </span>
@@ -242,7 +242,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  href={r.website}
  target="_blank"
  rel="noreferrer"
- className="flex items-center gap-1 text-[10px] font-bold text-blue-500 uppercase hover:underline"
+ className="flex items-center gap-1 text-sm font-medium text-blue-500 uppercase hover:underline"
  >
  <ExternalLink className="h-3 w-3" /> Website
  </a>
@@ -253,7 +253,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  </span>
  )}
  {r.contact_name && (
- <span className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground uppercase tracking-tighter">
+ <span className="flex items-center gap-1 text-sm font-medium text-muted-foreground uppercase tracking-tighter">
  <User className="h-3 w-3" /> {r.contact_name}
  </span>
  )}

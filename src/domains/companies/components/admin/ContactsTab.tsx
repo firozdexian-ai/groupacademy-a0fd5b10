@@ -172,7 +172,7 @@ export function ContactsTab() {
  {contact.full_name}
  {contact.is_primary && <Star className="h-3 w-3 fill-amber-500 text-amber-500" />}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground/60 uppercase">
+ <p className="text-sm font-medium text-muted-foreground/60 uppercase">
  {contact.designation || "Stakeholder"}
  </p>
  </TableCell>
@@ -184,10 +184,10 @@ export function ContactsTab() {
  </TableCell>
  <TableCell>
  <div className="space-y-1">
- <p className="text-[10px] font-bold text-foreground/80 flex items-center gap-2">
+ <p className="text-sm font-medium text-foreground/80 flex items-center gap-2">
  <Mail className="h-3 w-3 opacity-40" /> {isAdmin ? contact.email : "pii_masked@groupacademy"}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground flex items-center gap-2">
+ <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
  <Phone className="h-3 w-3 opacity-40" /> {isAdmin ? contact.phone : "*******"}
  </p>
  </div>

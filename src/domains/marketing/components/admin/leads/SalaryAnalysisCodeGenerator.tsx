@@ -123,7 +123,7 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
  <DialogTitle className="text-2xl font-semibold flex items-center gap-3">
  <ShieldCheck className="h-6 w-6 text-primary" /> Access Deployment
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60 italic">
  Authorized key generation for {leadName}
  </DialogDescription>
  </DialogHeader>

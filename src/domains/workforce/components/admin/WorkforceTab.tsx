@@ -292,7 +292,7 @@ export function WorkforceManager() {
  <DialogTitle className="text-3xl font-semibold font-medium">
  Deploy Workforce Node
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60">
  Initialize executive authority and team binding
  </DialogDescription>
  </DialogHeader>

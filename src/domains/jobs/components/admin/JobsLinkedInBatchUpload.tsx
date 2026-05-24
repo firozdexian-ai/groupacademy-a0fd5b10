@@ -332,7 +332,7 @@ export function JobsLinkedInBatchUpload({
  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
  Registry Ingestion
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60 italic">
  LinkedIn bulk upload
  </DialogDescription>
  </div>
@@ -359,7 +359,7 @@ export function JobsLinkedInBatchUpload({
  <FileJson className="h-10 w-10 text-muted-foreground" />
  </div>
  <p className="text-xl font-semibold uppercase tracking-tight italic">Select LinkedIn Payload</p>
- <p className="text-[10px] font-bold text-muted-foreground mt-2">
+ <p className="text-sm font-medium text-muted-foreground mt-2">
  Supports .JSON Log Formats
  </p>
  <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleFileUpload} />

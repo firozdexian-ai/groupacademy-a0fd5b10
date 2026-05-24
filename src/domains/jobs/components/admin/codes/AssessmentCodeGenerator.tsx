@@ -126,7 +126,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
  <DialogTitle className="text-xl font-medium tracking-tighter italic leading-none">
  Generate Access Node
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60">
  Target Entity: {leadName}
  </DialogDescription>
  </div>

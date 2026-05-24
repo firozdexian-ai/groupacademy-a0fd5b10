@@ -264,7 +264,7 @@ export function LearningCoursesTab() {
  <DialogTitle className="text-2xl font-semibold text-cyan-500 flex items-center gap-2">
  <Tv className="h-6 w-6" /> Inject Course
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Update course catalog entry.
  </DialogDescription>
  </DialogHeader>
@@ -343,7 +343,7 @@ export function LearningCoursesTab() {
  <DialogTitle className="text-xl font-semibold text-indigo-500 flex items-center gap-2">
  <Layers className="h-5 w-5" /> Module Curriculum
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Manage modules and learning resources for this course.
  </DialogDescription>
  </DialogHeader>
@@ -392,7 +392,7 @@ export function LearningCoursesTab() {
  <DialogTitle className="text-xl font-semibold text-violet-500 flex items-center gap-2">
  <Wand2 className="h-5 w-5" /> Bulk Content Generator
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Generate multiple courses, modules, or resources in a single batch.
  </DialogDescription>
  </DialogHeader>
@@ -410,7 +410,7 @@ export function LearningCoursesTab() {
  <DialogTitle className="text-xl font-semibold text-emerald-500 flex items-center gap-2">
  <FileCheck2 className="h-5 w-5" /> Readiness Checklist
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Live diagnostic of platform readiness rules for this course.
  </DialogDescription>
  </DialogHeader>

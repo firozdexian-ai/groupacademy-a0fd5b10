@@ -158,7 +158,7 @@ export function GigsQuickActionsTab() {
  <DialogTitle className="text-2xl font-semibold text-amber-500 flex items-center gap-2">
  <Zap className="h-6 w-6" /> Deploy Action
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Update micro-task catalog entry.
  </DialogDescription>
  </DialogHeader>

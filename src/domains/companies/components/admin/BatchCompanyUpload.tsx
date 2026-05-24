@@ -240,7 +240,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
  Registry Ingestion
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60 italic">
  Bulk company upload
  </DialogDescription>
  </div>
@@ -272,7 +272,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
  <p className="text-xl font-semibold uppercase tracking-tight italic">
  {isUploading ? "Validating Logic..." : "Select Payload"}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground mt-2">
+ <p className="text-sm font-medium text-muted-foreground mt-2">
  Supports .XLSX / .XLS Logic Paths
  </p>
  </div>

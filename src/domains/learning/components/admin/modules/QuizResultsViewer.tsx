@@ -225,7 +225,7 @@ export function QuizResultsViewer() {
  <CardTitle className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
  <ShieldCheck className="h-5 w-5 text-primary" /> Performance Log
  </CardTitle>
- <CardDescription className="text-[10px] font-bold text-left">
+ <CardDescription className="text-sm font-medium text-left">
  Authorized audit trail for quiz logic cycles
  </CardDescription>
  </CardHeader>
@@ -270,7 +270,7 @@ export function QuizResultsViewer() {
  <p className="font-semibold text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
  {attempt.studentName}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground/40 italic">
+ <p className="text-sm font-medium text-muted-foreground/40 italic">
  {attempt.studentEmail}
  </p>
  </div>
@@ -293,7 +293,7 @@ export function QuizResultsViewer() {
  {attempt.passed ? "SUCCESS_SYNC" : "LOGIC_FAULT"}
  </Badge>
  </TableCell>
- <TableCell className="text-[10px] font-bold text-muted-foreground/40 italic text-left">
+ <TableCell className="text-sm font-medium text-muted-foreground/40 italic text-left">
  {format(new Date(attempt.attemptedAt), "MMM d, yyyy")}
  </TableCell>
  <TableCell className="text-right pr-8">
@@ -331,7 +331,7 @@ export function QuizResultsViewer() {
  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic leading-none">
  Attempt Forensics
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60 italic">
  {selectedAttempt?.studentName} •{" "}
  {selectedAttempt && format(new Date(selectedAttempt.attemptedAt), "MMM d, yyyy HH:mm")}
  </DialogDescription>

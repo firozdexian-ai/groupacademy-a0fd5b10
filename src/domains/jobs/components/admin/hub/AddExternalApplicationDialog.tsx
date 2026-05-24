@@ -180,7 +180,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
  <DialogTitle className="text-3xl font-semibold font-medium flex items-center gap-3">
  <Zap className="h-8 w-8 text-primary fill-current" /> Bridge Terminal
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground italic">
+ <DialogDescription className="text-sm font-medium text-muted-foreground italic">
  External lead ingestion and AI artifact parsing
  </DialogDescription>
  </div>

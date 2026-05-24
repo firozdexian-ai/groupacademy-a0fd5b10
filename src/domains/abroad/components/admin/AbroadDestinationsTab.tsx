@@ -145,7 +145,7 @@ export function AbroadDestinationsTab() {
  <DialogTitle className="text-2xl font-semibold text-pink-500 flex items-center gap-2">
  <Globe className="h-6 w-6" /> Register Agent
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Update regional partner network.
  </DialogDescription>
  </DialogHeader>

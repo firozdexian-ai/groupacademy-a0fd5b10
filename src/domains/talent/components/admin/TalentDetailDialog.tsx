@@ -99,7 +99,7 @@ export const TalentDetailDialog = ({
  </Badge>
  )}
  </div>
- <div className="flex items-center gap-6 text-[10px] font-bold text-muted-foreground/60 italic">
+ <div className="flex items-center gap-6 text-sm font-medium text-muted-foreground/60 italic">
  <span className="flex items-center gap-2">
  <Calendar className="h-3.5 w-3.5 text-primary" />
  LOGGED: {displayTalent.created_at ? new Date(displayTalent.created_at).toLocaleDateString() : "N/A"}

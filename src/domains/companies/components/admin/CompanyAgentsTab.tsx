@@ -356,7 +356,7 @@ export function CompanyAgentsManager() {
  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
  Create Sponsored Node
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60">
  Inject new AI logic under corporate sponsorship
  </DialogDescription>
  </div>
@@ -815,7 +815,7 @@ export function CompanyAgentsManager() {
  <p className="text-lg font-semibold uppercase tracking-tight italic leading-none group-hover:text-primary transition-colors">
  {lead.lead_name || "ANONYMOUS_ENTITY"}
  </p>
- <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/60 italic">
+ <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground/60 italic">
  <span>{lead.lead_email}</span>
  {lead.lead_phone && (
  <>

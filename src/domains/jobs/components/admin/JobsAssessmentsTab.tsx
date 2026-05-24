@@ -156,7 +156,7 @@ export function JobsAssessmentsTab() {
  <DialogTitle className="text-2xl font-semibold text-violet-500 flex items-center gap-2">
  <ClipboardList className="h-6 w-6" /> Grade Assessment
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Log evaluation results.
  </DialogDescription>
  </DialogHeader>

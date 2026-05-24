@@ -243,12 +243,12 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
  )}
  </div>
  <div className="flex flex-wrap items-center gap-2">
- <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded-md">
+ <span className="text-sm font-medium text-muted-foreground flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded-md">
  <Building2 className="h-3 w-3" /> {institutionsById[r.institution_id] ?? "Independent"}
  </span>
  </div>
  {/* R3 Fix: Rich Data Display for Reps/Clubs/Events */}
- <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-[10px] font-bold text-muted-foreground/60 uppercase">
+ <div className="flex flex-wrap gap-x-4 gap-y-1 mt-2 text-sm font-medium text-muted-foreground/60 uppercase">
  {r.role && (
  <span className="flex items-center gap-1">
  <Users className="h-3 w-3" /> {r.role}

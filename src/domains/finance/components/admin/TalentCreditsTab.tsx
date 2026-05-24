@@ -294,7 +294,7 @@ export function TalentCreditsTab() {
  <p className="text-3xl font-semibold tracking-tight italic text-destructive leading-none">
  {consumptionStats.totalConsumed.toLocaleString()}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 italic">
+ <p className="text-sm font-medium text-muted-foreground/40 mt-2 italic">
  Node Activity Verified
  </p>
  </CardContent>
@@ -311,7 +311,7 @@ export function TalentCreditsTab() {
  <p className="text-3xl font-semibold tracking-tight italic leading-none">
  {consumptionStats.monthlyConsumed.toLocaleString()}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 italic">
+ <p className="text-sm font-medium text-muted-foreground/40 mt-2 italic">
  Temporal Index: Active
  </p>
  </CardContent>
@@ -541,7 +541,7 @@ export function TalentCreditsTab() {
  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
  {adjustDialog.type === "add" ? "Executive Credit" : "Executive Debit"}
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60">
  Manual override of talent fiscal balance
  </DialogDescription>
  </div>

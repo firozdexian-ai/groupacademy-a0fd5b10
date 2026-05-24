@@ -365,7 +365,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  </div>
  <div className="space-y-1">
  <CardTitle className="text-3xl font-semibold uppercase tracking-tight italic">Registry Ingestion</CardTitle>
- <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <CardDescription className="text-sm font-medium text-muted-foreground/60 italic">
  Bulk talent upload
  </CardDescription>
  </div>
@@ -452,7 +452,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  </div>
  <div>
  <p className="text-xl font-semibold uppercase tracking-tight italic">Inject PDF Payloads</p>
- <p className="text-[10px] font-bold text-muted-foreground mt-2">
+ <p className="text-sm font-medium text-muted-foreground mt-2">
  {singleMode ? "1 Artifact Limit" : `Max ${MAX_FILES} Artifacts`} · {MAX_FILE_SIZE_MB}MB Limit
  </p>
  </div>
@@ -514,7 +514,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  </div>
  <div>
  <p className="text-xl font-semibold uppercase tracking-tight italic">Inject Database Payload</p>
- <p className="text-[10px] font-bold text-muted-foreground mt-2">
+ <p className="text-sm font-medium text-muted-foreground mt-2">
  {csvFile ? csvFile.name : "Accepts Shomvob .CSV Exports"}
  </p>
  </div>

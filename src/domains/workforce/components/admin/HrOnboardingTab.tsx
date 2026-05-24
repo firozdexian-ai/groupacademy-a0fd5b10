@@ -203,7 +203,7 @@ export function HrOnboardingTab() {
  </div>
  </TableCell>
  <TableCell>
- <span className="text-[10px] font-bold flex items-center gap-1.5 text-muted-foreground uppercase">
+ <span className="text-sm font-medium flex items-center gap-1.5 text-muted-foreground uppercase">
  <User className="h-3 w-3" /> {data?.userMap.get(t.user_id) || "Orphaned Identity"}
  </span>
  </TableCell>

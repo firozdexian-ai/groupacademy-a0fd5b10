@@ -149,7 +149,7 @@ export function AbroadIELTSPromptsTab() {
  <DialogTitle className="text-2xl font-semibold text-violet-500 flex items-center gap-2">
  <Mic className="h-6 w-6" /> Evaluate Attempt
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Update AI or manual band score.
  </DialogDescription>
  </DialogHeader>

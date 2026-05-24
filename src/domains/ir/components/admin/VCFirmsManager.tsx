@@ -365,7 +365,7 @@ export function VCFirmsManager() {
  <DialogTitle className="text-3xl font-semibold flex items-center gap-3">
  Identity Deployment
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic text-muted-foreground/60">
+ <DialogDescription className="text-sm text-muted-foreground text-muted-foreground/60">
  Update firm details
  </DialogDescription>
  </div>
@@ -536,7 +536,7 @@ export function VCFirmsManager() {
  <DialogTitle className="text-3xl font-semibold text-destructive leading-none">
  Terminate Node
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic text-muted-foreground/80">
+ <DialogDescription className="text-sm text-muted-foreground text-muted-foreground/80">
  This will permanently purge the institutional identity from the registry.
  </DialogDescription>
  </div>

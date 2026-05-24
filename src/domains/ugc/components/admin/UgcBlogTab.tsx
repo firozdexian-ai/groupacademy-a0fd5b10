@@ -104,7 +104,7 @@ export function UgcBlogTab() {
  <Badge
  variant="outline"
  className={cn(
- "uppercase text-[10px] font-bold",
+ "uppercase text-sm font-medium",
  row.status === "published" && "border-emerald-500 text-emerald-600",
  row.status === "draft" && "border-muted-foreground text-muted-foreground"
  )}

@@ -210,7 +210,7 @@ export function LeadHunterManager() {
  <Badge className="bg-primary/10 text-primary border-none font-semibold text-[10px] uppercase px-3">
  {selectedSession.company_name}
  </Badge>
- <p className="text-[10px] font-bold text-muted-foreground/40 italic">
+ <p className="text-sm font-medium text-muted-foreground/40 italic">
  Session ID: {selectedSession.id.slice(0, 8)}
  </p>
  </div>
@@ -260,7 +260,7 @@ export function LeadHunterManager() {
  <p className="font-semibold text-base uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
  {m.talent.full_name}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground/40 italic">
+ <p className="text-sm font-medium text-muted-foreground/40 italic">
  {m.talent.email}
  </p>
  </div>
@@ -453,7 +453,7 @@ export function LeadHunterManager() {
  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
  Hunt Orchestration
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
+ <DialogDescription className="text-sm font-medium text-muted-foreground/60 italic">
  Define logic parameters for AI Lead Extraction
  </DialogDescription>
  </div>

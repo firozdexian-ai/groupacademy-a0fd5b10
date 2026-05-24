@@ -148,7 +148,7 @@ export function LearningCourseBriefsTab() {
  <DialogTitle className="text-2xl font-semibold text-orange-500 flex items-center gap-2">
  <Sparkles className="h-6 w-6" /> Inject Brief
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Update B2B course specifications.
  </DialogDescription>
  </DialogHeader>

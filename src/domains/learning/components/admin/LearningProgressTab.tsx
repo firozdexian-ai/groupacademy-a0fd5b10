@@ -312,7 +312,7 @@ export function LearningProgressTab() {
  <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
  <CardHeader className="p-8 border-b border-border/10">
  <CardTitle className="text-xl font-semibold uppercase tracking-tight italic">Learner Artifact Log</CardTitle>
- <CardDescription className="text-[10px] font-bold">
+ <CardDescription className="text-sm font-medium">
  Authorized audit trail for individual node progression
  </CardDescription>
  </CardHeader>
@@ -354,14 +354,14 @@ export function LearningProgressTab() {
  <p className="font-semibold text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
  {learner.talentName}
  </p>
- <p className="text-[10px] font-bold text-muted-foreground/40 italic">
+ <p className="text-sm font-medium text-muted-foreground/40 italic">
  {learner.talentEmail}
  </p>
  </div>
  </TableCell>
  <TableCell className="text-left">{getStatusBadge(learner.status)}</TableCell>
  <TableCell className="text-left">
- <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground/40 uppercase italic">
+ <div className="flex items-center gap-2 text-sm font-medium text-muted-foreground/40 uppercase italic">
  <Clock className="h-3 w-3" /> {format(new Date(learner.enrolledAt), "MMM d, yyyy")}
  </div>
  </TableCell>
@@ -377,7 +377,7 @@ export function LearningProgressTab() {
  </span>
  </div>
  ) : (
- <span className="text-[10px] font-bold opacity-20 italic">NULL_MODULES</span>
+ <span className="text-sm font-medium opacity-20 italic">NULL_MODULES</span>
  )}
  </TableCell>
  <TableCell className="text-right pr-8 font-semibold text-[11px] italic text-primary">
@@ -427,7 +427,7 @@ export function LearningProgressTab() {
  <ClipboardCheck className="h-5 w-5" /> Quiz Results
  {selectedEnrollment && <span className="text-xs text-muted-foreground"> — {selectedEnrollment.talentName}</span>}
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Per-learner quiz attempts and outcomes.
  </DialogDescription>
  </DialogHeader>

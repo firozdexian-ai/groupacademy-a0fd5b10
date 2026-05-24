@@ -156,7 +156,7 @@ export function AbroadRoadmapLeadsTab() {
  <DialogTitle className="text-2xl font-semibold text-emerald-500 flex items-center gap-2">
  <Map className="h-6 w-6" /> Process Lead
  </DialogTitle>
- <DialogDescription className="text-[10px] font-bold italic">
+ <DialogDescription className="text-sm text-muted-foreground">
  Update CRM pipeline stage.
  </DialogDescription>
  </DialogHeader>
