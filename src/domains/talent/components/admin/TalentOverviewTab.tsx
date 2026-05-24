@@ -116,7 +116,7 @@ export function TalentOverviewTab() {
                 <AlertCircle className="h-5 w-5 text-blue-500" />
               </div>
               <div>
-                <h3 className="text-xl font-black uppercase tracking-tighter italic text-foreground">
+                <h3 className="text-xl font-semibold uppercase tracking-tight italic text-foreground">
                   Welcome AI Funnel
                 </h3>
                 <p className="text-[10px] font-bold text-muted-foreground/60">
@@ -157,7 +157,7 @@ export function TalentOverviewTab() {
         <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden text-left">
           <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-teal-500" />
           <CardHeader className="p-8 border-b border-border/10">
-            <h3 className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-3">
+            <h3 className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
               <Clock className="h-5 w-5 text-emerald-500" /> Recent Activations
             </h3>
           </CardHeader>
@@ -168,7 +168,7 @@ export function TalentOverviewTab() {
                 className="flex items-center justify-between p-4 rounded-2xl hover:bg-muted/40 transition-all border-2 border-transparent hover:border-border/40 group"
               >
                 <div className="min-w-0 flex-1">
-                  <div className="font-black text-sm uppercase italic truncate group-hover:text-emerald-500 transition-colors">
+                  <div className="font-semibold text-sm uppercase italic truncate group-hover:text-emerald-500 transition-colors">
                     {r.full_name || "Anonymous User"}
                   </div>
                   <div className="text-[10px] font-bold text-muted-foreground truncate flex items-center gap-2 mt-1">
@@ -176,7 +176,7 @@ export function TalentOverviewTab() {
                     <span>·</span>
                     <Badge
                       variant="outline"
-                      className="px-2 py-0 h-4 text-[8px] font-black bg-emerald-500/10 text-emerald-600 border-none"
+                      className="px-2 py-0 h-4 text-[8px] font-semibold bg-emerald-500/10 text-emerald-600 border-none"
                     >
                       ACTIVE
                     </Badge>
@@ -211,8 +211,8 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-[10px] font-black text-muted-foreground italic mb-1">{label}</p>
-          <p className="text-3xl font-black italic tracking-tighter text-foreground">{value.toLocaleString()}</p>
+          <p className="text-[10px] font-semibold text-muted-foreground italic mb-1">{label}</p>
+          <p className="text-3xl font-semibold tracking-tight text-foreground">{value.toLocaleString()}</p>
         </div>
       </div>
     </Card>
@@ -224,8 +224,8 @@ function FunnelRow({ label, value, max, color }: any) {
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-end">
-        <span className="font-black uppercase text-[10px] tracking-widest text-muted-foreground">{label}</span>
-        <span className="font-black text-xl italic tracking-tighter">
+        <span className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground">{label}</span>
+        <span className="font-semibold text-xl italic tracking-tight">
           {value.toLocaleString()} <span className="text-[10px] text-muted-foreground/40 not-italic">({pct}%)</span>
         </span>
       </div>
@@ -245,17 +245,17 @@ function BarBreakdown({ title, icon: Icon, data, color }: any) {
 
   return (
     <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 p-8 text-left">
-      <h3 className="text-[10px] font-black uppercase tracking-[0.3em] italic flex items-center gap-2 text-foreground/70 mb-6">
+      <h3 className="text-[10px] font-semibold uppercase tracking-[0.3em] italic flex items-center gap-2 text-foreground/70 mb-6">
         <Icon className="h-4 w-4 text-primary" /> {title}
       </h3>
       <div className="space-y-4">
         {data.map((d: any) => (
           <div key={d.label} className="space-y-1.5 group">
             <div className="flex justify-between items-end text-sm">
-              <span className="font-black uppercase text-[10px] tracking-widest text-muted-foreground truncate pr-4">
+              <span className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground truncate pr-4">
                 {d.label}
               </span>
-              <span className="font-black italic tracking-tighter text-foreground">{d.value.toLocaleString()}</span>
+              <span className="font-semibold tracking-tight text-foreground">{d.value.toLocaleString()}</span>
             </div>
             <div className="h-2 bg-muted rounded-full overflow-hidden border border-border/5">
               <div

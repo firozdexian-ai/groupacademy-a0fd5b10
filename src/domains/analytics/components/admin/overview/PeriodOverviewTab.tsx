@@ -118,7 +118,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
       {/* P2: Action row only. Header context provided by Dashboard shell. */}
       <div className="flex flex-col md:flex-row justify-between items-center gap-4 bg-muted/10 p-6 rounded-[32px] border-2 border-border/40 backdrop-blur-sm">
         <div className="flex flex-col">
-          <span className="text-[10px] font-black uppercase tracking-[0.3em] text-primary italic">
+          <span className="text-[10px] font-semibold uppercase tracking-[0.3em] text-primary italic">
             {mode === "month" ? "Monthly" : "Quarterly"} Performance
           </span>
           <span className="text-sm font-bold text-muted-foreground">
@@ -144,7 +144,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
               if (p) setPeriod(p);
             }}
           >
-            <SelectTrigger className="h-12 w-[220px] rounded-xl border-2 font-black uppercase text-xs tracking-wider">
+            <SelectTrigger className="h-12 w-[220px] rounded-xl border-2 font-semibold uppercase text-xs tracking-wider">
               <SelectValue />
             </SelectTrigger>
             <SelectContent>
@@ -194,7 +194,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
               <div className="absolute -right-4 -top-4 h-24 w-24 rounded-full blur-3xl opacity-10 group-hover:opacity-20 bg-gradient-to-br from-primary to-blue-600" />
               <CardHeader className="p-6 pb-2">
                 <div className="flex items-center justify-between">
-                  <CardTitle className="text-[10px] font-black text-muted-foreground/60 italic">
+                  <CardTitle className="text-[10px] font-semibold text-muted-foreground/60 italic">
                     {r.label}
                   </CardTitle>
                   <div className="h-10 w-10 rounded-xl flex items-center justify-center border-2 shadow-inner border-primary/20 text-primary bg-gradient-to-br from-primary/20 to-blue-600/20">
@@ -207,7 +207,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
                   <Skeleton className="h-10 w-24" />
                 ) : (
                   <>
-                    <p className="text-3xl font-black italic tracking-tighter leading-none">
+                    <p className="text-3xl font-semibold tracking-tight leading-none">
                       {formatValue(c, r.format)}
                     </p>
                     <div className="flex items-center pt-3">

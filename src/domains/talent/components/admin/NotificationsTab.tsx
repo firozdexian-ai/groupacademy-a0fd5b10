@@ -102,16 +102,16 @@ export function NotificationsTab() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <BellRing className="h-6 w-6 text-primary" /> Notifications
           </h2>
-          <p className="text-[10px] font-black text-muted-foreground/60">
+          <p className="text-[10px] font-semibold text-muted-foreground/60">
             Send push & in-app broadcasts
           </p>
         </div>
         <Button
           onClick={() => setSendDialog(true)}
-          className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 h-12 px-6 shadow-xl"
+          className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 h-12 px-6 shadow-xl"
         >
           <Send className="h-4 w-4" /> Deploy Transmission
         </Button>
@@ -121,10 +121,10 @@ export function NotificationsTab() {
         <Table>
           <TableHeader className="bg-muted/20">
             <TableRow>
-              <TableHead className="pl-8 text-[10px] font-black uppercase py-4">Temporal Index</TableHead>
-              <TableHead className="text-[10px] font-black uppercase">Recipient Node</TableHead>
-              <TableHead className="text-[10px] font-black uppercase">Payload</TableHead>
-              <TableHead className="text-right pr-8 text-[10px] font-black uppercase">Status</TableHead>
+              <TableHead className="pl-8 text-[10px] font-semibold uppercase py-4">Temporal Index</TableHead>
+              <TableHead className="text-[10px] font-semibold uppercase">Recipient Node</TableHead>
+              <TableHead className="text-[10px] font-semibold uppercase">Payload</TableHead>
+              <TableHead className="text-right pr-8 text-[10px] font-semibold uppercase">Status</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -133,7 +133,7 @@ export function NotificationsTab() {
                 <TableCell className="pl-8 py-4 font-mono text-[10px] opacity-60">
                   {format(new Date(n.created_at), "MMM d, HH:mm:ss")}
                 </TableCell>
-                <TableCell className="font-black text-xs uppercase italic truncate max-w-[150px]">
+                <TableCell className="font-semibold text-xs uppercase italic truncate max-w-[150px]">
                   {n.talent?.full_name || "Unknown Identity"}
                 </TableCell>
                 <TableCell>
@@ -143,7 +143,7 @@ export function NotificationsTab() {
                 <TableCell className="text-right pr-8">
                   <Badge
                     variant={n.is_read ? "secondary" : "default"}
-                    className="text-[9px] font-black uppercase rounded-lg"
+                    className="text-[9px] font-semibold uppercase rounded-lg"
                   >
                     {n.is_read ? "ACKNOWLEDGED" : "DISPATCHED"}
                   </Badge>
@@ -153,7 +153,7 @@ export function NotificationsTab() {
           </TableBody>
         </Table>
         <div className="p-4 border-t flex justify-between items-center bg-muted/5 px-8">
-          <p className="text-[10px] font-black uppercase text-muted-foreground/40 italic">
+          <p className="text-[10px] font-semibold uppercase text-muted-foreground/40 italic">
             Telemetry: {totalCount} total dispatches
           </p>
           <div className="flex gap-2">
@@ -184,21 +184,21 @@ export function NotificationsTab() {
           <div className="h-2 w-full bg-gradient-to-r from-primary to-fuchsia-600" />
           <div className="p-8 space-y-6">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black italic tracking-tighter uppercase flex items-center gap-2">
+              <DialogTitle className="text-2xl font-semibold tracking-tight uppercase flex items-center gap-2">
                 <Send className="h-6 w-6 text-primary" /> Transmission Setup
               </DialogTitle>
             </DialogHeader>
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black text-primary ml-1">
+                <Label className="text-[10px] font-semibold text-primary ml-1">
                   Audience Type
                 </Label>
                 <Select value={targetType} onValueChange={(v: any) => setTargetType(v)}>
                   <SelectTrigger className="rounded-xl border-2 h-12 bg-muted/20 font-bold uppercase text-[10px]">
                     <SelectValue />
                   </SelectTrigger>
-                  <SelectContent className="font-black uppercase text-[10px]">
+                  <SelectContent className="font-semibold uppercase text-[10px]">
                     <SelectItem value="all">Global Network</SelectItem>
                     <SelectItem value="category">Profession Segment</SelectItem>
                     <SelectItem value="single">Single Node ID</SelectItem>
@@ -208,7 +208,7 @@ export function NotificationsTab() {
 
               {targetType === "single" && (
                 <div className="space-y-2 animate-in slide-in-from-top-2">
-                  <Label className="text-[10px] font-black text-primary ml-1">
+                  <Label className="text-[10px] font-semibold text-primary ml-1">
                     Select Identity
                   </Label>
                   <Select value={targetId} onValueChange={setTargetId}>
@@ -227,7 +227,7 @@ export function NotificationsTab() {
               )}
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black text-primary ml-1">
+                <Label className="text-[10px] font-semibold text-primary ml-1">
                   Payload Title
                 </Label>
                 <Input
@@ -239,7 +239,7 @@ export function NotificationsTab() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black text-primary ml-1">
+                <Label className="text-[10px] font-semibold text-primary ml-1">
                   Transmission Detail
                 </Label>
                 <Textarea
@@ -255,7 +255,7 @@ export function NotificationsTab() {
               <Button
                 onClick={executeBroadcast}
                 disabled={isSending}
-                className="w-full h-14 rounded-2xl font-black text-[11px] gap-2 shadow-xl bg-primary hover:bg-primary/90"
+                className="w-full h-14 rounded-2xl font-semibold text-[11px] gap-2 shadow-xl bg-primary hover:bg-primary/90"
               >
                 {isSending ? <Loader2 className="animate-spin h-5 w-5" /> : <Activity className="h-5 w-5" />}
                 Execute Dispatch

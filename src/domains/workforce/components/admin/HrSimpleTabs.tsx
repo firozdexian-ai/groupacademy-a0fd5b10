@@ -44,15 +44,15 @@ function HrRegistryShell({ title, description, icon: Icon, data, isLoading, colu
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Icon className="h-8 w-8 text-primary" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">{title}</h2>
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">{title}</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             {description}
           </p>
         </div>
         <Button
           onClick={onAdd}
-          className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg bg-primary text-primary-foreground"
+          className="h-12 px-8 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg bg-primary text-primary-foreground"
         >
           <Plus className="h-4 w-4" /> Deploy Node
         </Button>
@@ -90,7 +90,7 @@ function HrRegistryShell({ title, description, icon: Icon, data, isLoading, colu
                   <TableRow>
                     <TableCell
                       colSpan={columns.length}
-                      className="py-20 text-center font-black uppercase text-[10px] tracking-widest text-muted-foreground/30 italic"
+                      className="py-20 text-center font-semibold uppercase text-[10px] tracking-widest text-muted-foreground/30 italic"
                     >
                       Zero records detected.
                     </TableCell>
@@ -132,7 +132,7 @@ export function HrVerticalsTab() {
         }}
         renderRow={(row: any) => (
           <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
-            <TableCell className="py-5 pl-8 font-black text-sm uppercase italic tracking-tight">{row.name}</TableCell>
+            <TableCell className="py-5 pl-8 font-semibold text-sm uppercase italic tracking-tight">{row.name}</TableCell>
             <TableCell className="text-xs text-muted-foreground">{row.description || "—"}</TableCell>
             <TableCell className="text-right pr-8">
               <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
@@ -163,11 +163,11 @@ export function HrVerticalsTab() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md rounded-[40px] p-8 border-4">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black uppercase italic">Vertical Node</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold uppercase italic">Vertical Node</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Name</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Name</Label>
               <Input
                 value={draft.name || ""}
                 onChange={(e) => setDraft({ ...draft, name: e.target.value })}
@@ -175,7 +175,7 @@ export function HrVerticalsTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Description</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Description</Label>
               <Input
                 value={draft.description || ""}
                 onChange={(e) => setDraft({ ...draft, description: e.target.value })}
@@ -189,7 +189,7 @@ export function HrVerticalsTab() {
               upsertVertical.mutate(draft);
               setOpen(false);
             }}
-            className="h-14 rounded-xl font-black uppercase"
+            className="h-14 rounded-xl font-semibold uppercase"
           >
             <ShieldCheck className="mr-2 h-4 w-4" /> Deploy
           </Button>
@@ -230,7 +230,7 @@ export function HrFunctionsTab() {
         }}
         renderRow={(row: any) => (
           <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
-            <TableCell className="py-5 pl-8 font-black text-sm uppercase italic tracking-tight">{row.name}</TableCell>
+            <TableCell className="py-5 pl-8 font-semibold text-sm uppercase italic tracking-tight">{row.name}</TableCell>
             <TableCell className="text-xs font-bold uppercase text-muted-foreground">
               {hrGraphQuery.data?.verticals.find((v) => v.id === row.vertical_id)?.name || "—"}
             </TableCell>
@@ -263,7 +263,7 @@ export function HrFunctionsTab() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md rounded-[40px] p-8 border-4">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black uppercase italic">Function Node</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold uppercase italic">Function Node</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <Input
@@ -291,7 +291,7 @@ export function HrFunctionsTab() {
               upsertFunction.mutate(draft);
               setOpen(false);
             }}
-            className="h-14 rounded-xl font-black uppercase"
+            className="h-14 rounded-xl font-semibold uppercase"
           >
             Deploy
           </Button>
@@ -332,7 +332,7 @@ export function HrTeamsTab() {
         }}
         renderRow={(row: any) => (
           <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
-            <TableCell className="py-5 pl-8 font-black text-sm uppercase italic tracking-tight">{row.name}</TableCell>
+            <TableCell className="py-5 pl-8 font-semibold text-sm uppercase italic tracking-tight">{row.name}</TableCell>
             <TableCell className="text-xs font-bold uppercase text-muted-foreground">
               {hrGraphQuery.data?.functions.find((f) => f.id === row.function_id)?.name || "—"}
             </TableCell>
@@ -370,7 +370,7 @@ export function HrTeamsTab() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md rounded-[40px] p-8 border-4">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black uppercase italic">Team Node</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold uppercase italic">Team Node</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <Input
@@ -398,7 +398,7 @@ export function HrTeamsTab() {
               upsertTeam.mutate(draft);
               setOpen(false);
             }}
-            className="h-14 rounded-xl font-black uppercase"
+            className="h-14 rounded-xl font-semibold uppercase"
           >
             Deploy
           </Button>
@@ -440,11 +440,11 @@ export function HrGradesTab() {
         renderRow={(row: any) => (
           <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
             <TableCell className="py-5 pl-8">
-              <span className="font-black italic text-muted-foreground/50 bg-muted/20 px-3 py-1 rounded-lg">
+              <span className="font-semibold text-muted-foreground/50 bg-muted/20 px-3 py-1 rounded-lg">
                 L{row.level}
               </span>
             </TableCell>
-            <TableCell className="font-black text-sm uppercase italic tracking-tight">{row.name}</TableCell>
+            <TableCell className="font-semibold text-sm uppercase italic tracking-tight">{row.name}</TableCell>
             <TableCell>
               <span className="font-mono text-[10px] bg-primary/10 text-primary px-2 py-1 rounded-md">
                 {hrGraphQuery.data?.headcountByGrade[row.id] || 0} FTE
@@ -479,7 +479,7 @@ export function HrGradesTab() {
       <Dialog open={open} onOpenChange={setOpen}>
         <DialogContent className="max-w-md rounded-[40px] p-8 border-4">
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black uppercase italic">Grade Node</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold uppercase italic">Grade Node</DialogTitle>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <Input
@@ -487,7 +487,7 @@ export function HrGradesTab() {
               placeholder="Level (e.g. 1)"
               value={draft.level || ""}
               onChange={(e) => setDraft({ ...draft, level: Number(e.target.value) })}
-              className="h-14 rounded-xl border-2 font-black"
+              className="h-14 rounded-xl border-2 font-semibold"
             />
             <Input
               placeholder="Name (e.g. Junior Engineer)"
@@ -502,7 +502,7 @@ export function HrGradesTab() {
               upsertGrade.mutate(draft);
               setOpen(false);
             }}
-            className="h-14 rounded-xl font-black uppercase"
+            className="h-14 rounded-xl font-semibold uppercase"
           >
             Deploy
           </Button>
@@ -527,7 +527,7 @@ function PurgeAlert({ targetId, onOpenChange, onConfirm }: any) {
           <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border-2 border-destructive/20">
             <AlertTriangle className="h-8 w-8 text-destructive" />
           </div>
-          <AlertDialogTitle className="font-black italic uppercase text-2xl tracking-tighter">
+          <AlertDialogTitle className="font-semibold uppercase text-2xl tracking-tight">
             Purge Taxonomy Node?
           </AlertDialogTitle>
           <AlertDialogDescription className="text-xs font-bold text-muted-foreground/60 leading-relaxed">
@@ -536,12 +536,12 @@ function PurgeAlert({ targetId, onOpenChange, onConfirm }: any) {
           </AlertDialogDescription>
         </AlertDialogHeader>
         <AlertDialogFooter className="mt-8 gap-3">
-          <AlertDialogCancel className="h-12 rounded-xl font-black uppercase text-[10px] flex-1">
+          <AlertDialogCancel className="h-12 rounded-xl font-semibold uppercase text-[10px] flex-1">
             Cancel
           </AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="h-12 bg-destructive text-white rounded-xl font-black uppercase text-[10px] flex-1 shadow-lg shadow-destructive/20"
+            className="h-12 bg-destructive text-white rounded-xl font-semibold uppercase text-[10px] flex-1 shadow-lg shadow-destructive/20"
           >
             Confirm Purge
           </AlertDialogAction>

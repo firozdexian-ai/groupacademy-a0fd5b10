@@ -237,7 +237,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                 <Database className="h-8 w-8 text-primary" />
               </div>
               <div className="space-y-1">
-                <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+                <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
                   Registry Ingestion
                 </DialogTitle>
                 <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
@@ -269,7 +269,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                         )}
                       </div>
                       <div>
-                        <p className="text-xl font-black uppercase tracking-tight italic">
+                        <p className="text-xl font-semibold uppercase tracking-tight italic">
                           {isUploading ? "Validating Logic..." : "Select Payload"}
                         </p>
                         <p className="text-[10px] font-bold text-muted-foreground mt-2">
@@ -283,7 +283,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     <Button
                       variant="outline"
                       onClick={downloadRegistryTemplate}
-                      className="h-16 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-3"
+                      className="h-16 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-3"
                     >
                       <Download className="h-5 w-5" /> Download Logic Template
                     </Button>
@@ -305,13 +305,13 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                 <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
                   <div className="flex items-center justify-between bg-muted/20 p-6 rounded-[28px] border-2 border-border/10">
                     <div className="flex items-center gap-4">
-                      <Badge className="bg-primary text-white text-lg font-black italic tracking-tighter px-6 py-2 rounded-xl">
+                      <Badge className="bg-primary text-white text-lg font-semibold tracking-tight px-6 py-2 rounded-xl">
                         {parsedData.length} ARTIFACTS
                       </Badge>
                       <Button
                         variant="ghost"
                         onClick={() => setParsedData([])}
-                        className="h-12 rounded-xl font-black uppercase text-[10px] tracking-widest text-destructive"
+                        className="h-12 rounded-xl font-semibold uppercase text-[10px] tracking-widest text-destructive"
                       >
                         Purge Buffer
                       </Button>
@@ -319,7 +319,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     <Button
                       onClick={handleImportSequence}
                       disabled={isImporting}
-                      className="h-14 px-10 rounded-2xl font-black text-[11px] shadow-2xl shadow-primary/30"
+                      className="h-14 px-10 rounded-2xl font-semibold text-[11px] shadow-2xl shadow-primary/30"
                     >
                       {isImporting ? (
                         <Loader2 className="mr-3 h-5 w-5 animate-spin" />
@@ -332,7 +332,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
 
                   {isImporting && (
                     <div className="space-y-4 p-8 rounded-[32px] border-2 bg-primary/5 border-primary/20">
-                      <div className="flex justify-between text-[10px] font-black italic text-primary">
+                      <div className="flex justify-between text-[10px] font-semibold text-primary">
                         <span>Registry Mapping...</span>
                         <span>{importProgress}%</span>
                       </div>
@@ -344,14 +344,14 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     <Table>
                       <TableHeader className="bg-muted/50">
                         <TableRow>
-                          <TableHead className="text-[9px] font-black px-6">Row</TableHead>
-                          <TableHead className="text-[9px] font-black">
+                          <TableHead className="text-[9px] font-semibold px-6">Row</TableHead>
+                          <TableHead className="text-[9px] font-semibold">
                             Company Node
                           </TableHead>
-                          <TableHead className="text-[9px] font-black">
+                          <TableHead className="text-[9px] font-semibold">
                             Contact Entity
                           </TableHead>
-                          <TableHead className="text-[9px] font-black">Industry</TableHead>
+                          <TableHead className="text-[9px] font-semibold">Industry</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -360,7 +360,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                             <TableCell className="px-6 text-[10px] font-mono opacity-40 italic">
                               {row.originalRow}
                             </TableCell>
-                            <TableCell className="font-black uppercase tracking-tight text-xs italic">
+                            <TableCell className="font-semibold uppercase tracking-tight text-xs italic">
                               {row.companyName}
                             </TableCell>
                             <TableCell className="text-[11px] font-medium text-muted-foreground">
@@ -369,7 +369,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                             <TableCell>
                               <Badge
                                 variant="outline"
-                                className="text-[8px] font-black border-2"
+                                className="text-[8px] font-semibold border-2"
                               >
                                 {row.industry || "N/A"}
                               </Badge>
@@ -389,7 +389,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     <div className="h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto border-4 border-emerald-500/20 rotate-6 shadow-2xl">
                       <CheckCircle className="h-10 w-10 text-emerald-500" />
                     </div>
-                    <h3 className="text-3xl font-black uppercase tracking-tighter italic">Ingestion Complete</h3>
+                    <h3 className="text-3xl font-semibold uppercase tracking-tight italic">Ingestion Complete</h3>
                   </div>
 
                   <div className="grid grid-cols-2 gap-6">
@@ -399,10 +399,10 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                           <Building2 className="h-8 w-8 text-white" />
                         </div>
                         <div>
-                          <p className="text-4xl font-black italic tracking-tighter leading-none">
+                          <p className="text-4xl font-semibold tracking-tight leading-none">
                             {importStats.companiesCreated}
                           </p>
-                          <p className="text-[10px] font-black mt-2 opacity-60">
+                          <p className="text-[10px] font-semibold mt-2 opacity-60">
                             Company Nodes Created
                           </p>
                         </div>
@@ -414,10 +414,10 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                           <Users className="h-8 w-8 text-white" />
                         </div>
                         <div>
-                          <p className="text-4xl font-black italic tracking-tighter leading-none">
+                          <p className="text-4xl font-semibold tracking-tight leading-none">
                             {importStats.contactsCreated}
                           </p>
-                          <p className="text-[10px] font-black mt-2 opacity-60">
+                          <p className="text-[10px] font-semibold mt-2 opacity-60">
                             Contact Entities Generated
                           </p>
                         </div>
@@ -435,8 +435,8 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                           { val: importStats.skipped, label: "Invalid/Skipped" },
                         ].map((stat, i) => (
                           <div key={i} className="space-y-1">
-                            <p className="text-2xl font-black italic tracking-tighter">{stat.val}</p>
-                            <p className="text-[8px] font-black opacity-40">{stat.label}</p>
+                            <p className="text-2xl font-semibold tracking-tight">{stat.val}</p>
+                            <p className="text-[8px] font-semibold opacity-40">{stat.label}</p>
                           </div>
                         ))}
                       </div>
@@ -447,7 +447,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     <Card className="rounded-[32px] border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
                       <div className="p-4 bg-destructive/10 border-b border-destructive/10 flex items-center gap-3">
                         <AlertCircle className="h-4 w-4 text-destructive" />
-                        <span className="text-[10px] font-black text-destructive">
+                        <span className="text-[10px] font-semibold text-destructive">
                           Logic Exceptions ({importStats.errors.length})
                         </span>
                       </div>
@@ -472,7 +472,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
           <div className="flex justify-end pt-8 border-t border-border/10">
             <Button
               onClick={handleClose}
-              className="rounded-xl h-12 px-12 font-black uppercase text-[10px] tracking-widest shadow-xl"
+              className="rounded-xl h-12 px-12 font-semibold uppercase text-[10px] tracking-widest shadow-xl"
             >
               {importStats ? "Terminate Session" : "Close Ingestion Node"}
             </Button>

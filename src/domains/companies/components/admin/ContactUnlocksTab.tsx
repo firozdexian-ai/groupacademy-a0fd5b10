@@ -82,10 +82,10 @@ export function ContactUnlocksTab() {
       {/* Header Action Bar */}
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2 text-primary">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2 text-primary">
             <Lock className="h-6 w-6" /> Contact Ledger
           </h2>
-          <p className="text-[10px] font-black text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold text-muted-foreground/60 italic">
             Institutional Audit Trail · Institutional Credit Burn
           </p>
         </div>
@@ -137,7 +137,7 @@ export function ContactUnlocksTab() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-muted/20 border-b-2">
-              <tr className="text-[10px] font-black text-muted-foreground/60">
+              <tr className="text-[10px] font-semibold text-muted-foreground/60">
                 <th className="px-8 py-6">Timestamp</th>
                 <th className="px-6 py-6">Employer Node</th>
                 <th className="px-6 py-6">Target Talent</th>
@@ -159,7 +159,7 @@ export function ContactUnlocksTab() {
                       {format(new Date(r.created_at), "MMM d · HH:mm")}
                     </td>
                     <td className="px-6 py-4">
-                      <p className="font-black text-sm uppercase italic group-hover:text-primary transition-colors">
+                      <p className="font-semibold text-sm uppercase italic group-hover:text-primary transition-colors">
                         {r.company_name}
                       </p>
                       <p className="text-[9px] font-bold text-muted-foreground uppercase opacity-60">
@@ -186,7 +186,7 @@ export function ContactUnlocksTab() {
                     <td className="px-6 py-4 text-right pr-8">
                       <Badge
                         variant="outline"
-                        className="font-black text-[10px] border-2 border-emerald-500/20 text-emerald-500 bg-emerald-500/5"
+                        className="font-semibold text-[10px] border-2 border-emerald-500/20 text-emerald-500 bg-emerald-500/5"
                       >
                         −{r.credits_spent} CR
                       </Badge>
@@ -216,8 +216,8 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-[10px] font-black text-muted-foreground italic mb-1">{label}</p>
-          <p className="text-2xl font-black italic tracking-tighter text-foreground">{value.toLocaleString()}</p>
+          <p className="text-[10px] font-semibold text-muted-foreground italic mb-1">{label}</p>
+          <p className="text-2xl font-semibold tracking-tight text-foreground">{value.toLocaleString()}</p>
         </div>
       </div>
     </Card>

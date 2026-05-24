@@ -156,30 +156,30 @@ export function MockInterviewLeadsManager() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Activity className="h-8 w-8" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Interview Pulse</h2>
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Interview Pulse</h2>
           </div>
           <div className="flex items-center gap-4 mt-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
               AI Career Service Radar [cite: 78, 135]
             </p>
-            <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] px-3 py-1 italic rounded-full">
+            <Badge className="bg-primary/10 text-primary border-none font-semibold text-[9px] px-3 py-1 italic rounded-full">
               <TrendingUp className="h-3 w-3 mr-1" /> {avgScore}% AVG SCORE
             </Badge>
           </div>
         </div>
         <div className="flex items-center gap-3">
           <div className="text-right hidden md:block mr-4">
-            <p className="text-[10px] font-black uppercase text-muted-foreground italic tracking-widest">
+            <p className="text-[10px] font-semibold uppercase text-muted-foreground italic tracking-widest">
               Active Conversions [cite: 117]
             </p>
-            <p className="text-xl font-black italic text-primary">
+            <p className="text-xl font-semibold text-primary">
               {completedCount} / {leads.length}
             </p>
           </div>
           <Button
             onClick={exportToCSV}
             variant="outline"
-            className="h-14 px-8 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-3"
+            className="h-14 px-8 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-3"
           >
             <Download className="h-4 w-4" /> Export Leads
           </Button>
@@ -200,7 +200,7 @@ export function MockInterviewLeadsManager() {
             </div>
             <div className="flex gap-3">
               <Select value={statusFilter} onValueChange={setStatusFilter}>
-                <SelectTrigger className="w-[180px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest">
+                <SelectTrigger className="w-[180px] h-14 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest">
                   <SelectValue placeholder="STATUS" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2">
@@ -219,7 +219,7 @@ export function MockInterviewLeadsManager() {
                 </SelectContent>
               </Select>
               <Select value={performanceFilter} onValueChange={setPerformanceFilter}>
-                <SelectTrigger className="w-[180px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest">
+                <SelectTrigger className="w-[180px] h-14 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest">
                   <SelectValue placeholder="PERFORMANCE" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2">
@@ -243,12 +243,12 @@ export function MockInterviewLeadsManager() {
           <Table>
             <TableHeader className="bg-muted/10">
               <TableRow className="hover:bg-transparent border-b-2">
-                <TableHead className="font-black uppercase text-[10px] tracking-widest py-6 pl-8">Lead Node</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Target Role</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Pulse Score</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Performance</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Deployment</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest py-6 pl-8">Lead Node</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Target Role</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Pulse Score</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Performance</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Status</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Deployment</TableHead>
                 <TableHead className="text-right py-6 pr-8"></TableHead>
               </TableRow>
             </TableHeader>
@@ -266,13 +266,13 @@ export function MockInterviewLeadsManager() {
                     className="group border-b border-border/5 hover:bg-muted/10 transition-colors"
                   >
                     <TableCell className="py-6 pl-8">
-                      <p className="font-black text-sm uppercase italic tracking-tight">{lead.full_name || "-"}</p>
+                      <p className="font-semibold text-sm uppercase italic tracking-tight">{lead.full_name || "-"}</p>
                       <p className="text-[9px] font-bold text-muted-foreground mt-0.5 italic flex items-center gap-1">
                         <Mail className="h-2 w-2" /> {lead.email}
                       </p>
                     </TableCell>
                     <TableCell>
-                      <p className="font-black uppercase italic text-xs leading-none">{lead.job_title || "-"}</p>
+                      <p className="font-semibold uppercase italic text-xs leading-none">{lead.job_title || "-"}</p>
                       {lead.company_name && (
                         <p className="text-[8px] font-bold text-muted-foreground/50 mt-1">
                           at {lead.company_name}
@@ -283,7 +283,7 @@ export function MockInterviewLeadsManager() {
                       {lead.selection_percentage !== null ? (
                         <div className="flex items-center gap-2">
                           <Zap className="h-3 w-3 text-primary fill-current" />
-                          <span className="font-black italic text-sm">{lead.selection_percentage}%</span>
+                          <span className="font-semibold text-sm">{lead.selection_percentage}%</span>
                         </div>
                       ) : (
                         <span className="text-muted-foreground text-xs italic">N/A</span>
@@ -318,7 +318,7 @@ export function MockInterviewLeadsManager() {
                     <TableCell>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        <span className="text-[10px] font-black italic">
+                        <span className="text-[10px] font-semibold">
                           {format(new Date(lead.created_at), "MMM d, yyyy")}
                         </span>
                       </div>

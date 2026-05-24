@@ -181,17 +181,17 @@ export function MarketingAnalyticsTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-orange-500">
             <Megaphone className="h-8 w-8 text-orange-500 fill-orange-500/20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Marketing Command
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Global Outbound & Community Telemetry
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-56 h-12 rounded-xl border-2 border-orange-500/20 font-black uppercase text-[10px] tracking-widest bg-orange-500/5 text-orange-600 shadow-inner">
+            <SelectTrigger className="w-56 h-12 rounded-xl border-2 border-orange-500/20 font-semibold uppercase text-[10px] tracking-widest bg-orange-500/5 text-orange-600 shadow-inner">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-2 shadow-2xl">
@@ -251,13 +251,13 @@ export function MarketingAnalyticsTab() {
           <TabsList className="bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1.5 mb-8 w-full max-w-lg">
             <TabsTrigger
               value="jobs"
-              className="flex-1 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 py-3"
+              className="flex-1 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 py-3"
             >
               <Briefcase className="w-4 h-4" /> Recruitment
             </TabsTrigger>
             <TabsTrigger
               value="content"
-              className="flex-1 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 py-3"
+              className="flex-1 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 py-3"
             >
               <BookOpen className="w-4 h-4" /> Academy
             </TabsTrigger>
@@ -281,7 +281,7 @@ export function MarketingAnalyticsTab() {
 
             <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30">
               <CardHeader className="p-8 border-b border-border/10">
-                <CardTitle className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-3 text-left">
+                <CardTitle className="text-xl font-semibold uppercase italic tracking-tight flex items-center gap-3 text-left">
                   <Zap className="h-5 w-5 text-primary" /> High-Intensity Roles
                 </CardTitle>
                 <CardDescription className="text-[10px] font-bold text-left">
@@ -299,12 +299,12 @@ export function MarketingAnalyticsTab() {
                       className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/5"
                     >
                       <div className="text-left">
-                        <p className="font-black uppercase text-sm italic">{job.title}</p>
+                        <p className="font-semibold uppercase text-sm italic">{job.title}</p>
                         <p className="text-[9px] font-bold text-muted-foreground/50 tracking-widest">
                           {job.company_name}
                         </p>
                       </div>
-                      <Badge className="bg-primary/20 text-primary font-black italic">{job.clicks} CLICKS</Badge>
+                      <Badge className="bg-primary/20 text-primary font-semibold">{job.clicks} CLICKS</Badge>
                     </div>
                   ))}
                 </div>
@@ -337,7 +337,7 @@ export function MarketingAnalyticsTab() {
         <div className="xl:col-span-2 space-y-6">
           <div className="flex items-center gap-2 mb-4 px-2">
             <Clock className="h-4 w-4 text-orange-500" />
-            <h3 className="text-xs font-black text-muted-foreground italic">
+            <h3 className="text-xs font-semibold text-muted-foreground italic">
               Live Outbound Telemetry
             </h3>
           </div>
@@ -349,7 +349,7 @@ export function MarketingAnalyticsTab() {
                   <div className="h-16 w-16 rounded-full bg-muted/10 flex items-center justify-center border-2 border-border/20">
                     <Target className="h-8 w-8 text-muted-foreground/50" />
                   </div>
-                  <p className="text-[10px] font-black text-muted-foreground/50 italic">
+                  <p className="text-[10px] font-semibold text-muted-foreground/50 italic">
                     Awaiting Outreach Signals
                   </p>
                 </div>
@@ -365,7 +365,7 @@ export function MarketingAnalyticsTab() {
                           <Send className="h-5 w-5 text-blue-500" />
                         </div>
                         <div>
-                          <h4 className="font-black text-sm uppercase italic tracking-tight text-foreground/90">
+                          <h4 className="font-semibold text-sm uppercase italic tracking-tight text-foreground/90">
                             Talent Ping
                           </h4>
                           <p className="text-[10px] font-bold text-muted-foreground mt-1">
@@ -393,7 +393,7 @@ export function MarketingAnalyticsTab() {
                           <Building2 className="h-5 w-5 text-emerald-500" />
                         </div>
                         <div>
-                          <h4 className="font-black text-sm uppercase italic tracking-tight text-foreground/90">
+                          <h4 className="font-semibold text-sm uppercase italic tracking-tight text-foreground/90">
                             Company Ping
                           </h4>
                           <p className="text-[10px] font-bold text-muted-foreground mt-1">
@@ -421,7 +421,7 @@ export function MarketingAnalyticsTab() {
         <div className="space-y-6">
           <div className="flex items-center gap-2 mb-4 px-2">
             <Activity className="h-4 w-4 text-orange-500" />
-            <h3 className="text-xs font-black text-muted-foreground italic">
+            <h3 className="text-xs font-semibold text-muted-foreground italic">
               Marketing Graph Pulse
             </h3>
           </div>
@@ -459,10 +459,10 @@ export function MarketingAnalyticsTab() {
 function SummaryBadgeRow({ totalClicks, totalShares }: { totalClicks: number; totalShares: number }) {
   return (
     <div className="flex flex-wrap gap-4">
-      <Badge className="bg-primary/10 text-primary border-none font-black text-xs px-6 py-3 italic gap-2 rounded-full">
+      <Badge className="bg-primary/10 text-primary border-none font-semibold text-xs px-6 py-3 italic gap-2 rounded-full">
         <MousePointerClick className="h-4 w-4" /> {totalClicks} PULSE CLICKS
       </Badge>
-      <Badge className="bg-green-500/10 text-green-600 border-none font-black text-xs px-6 py-3 italic gap-2 rounded-full">
+      <Badge className="bg-green-500/10 text-green-600 border-none font-semibold text-xs px-6 py-3 italic gap-2 rounded-full">
         <Share2 className="h-4 w-4" /> {totalShares} SOCIAL SHARES
       </Badge>
     </div>
@@ -473,7 +473,7 @@ function ChartCard({ title, sub, children }: any) {
   return (
     <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
-        <CardTitle className="text-lg font-black uppercase tracking-tighter italic">{title}</CardTitle>
+        <CardTitle className="text-lg font-semibold uppercase tracking-tight italic">{title}</CardTitle>
         <CardDescription className="text-[10px] font-bold">{sub}</CardDescription>
       </CardHeader>
       <CardContent className="p-8">{children}</CardContent>
@@ -539,10 +539,10 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] font-black text-muted-foreground italic mb-1 truncate">
+          <p className="text-[10px] font-semibold text-muted-foreground italic mb-1 truncate">
             {label}
           </p>
-          <p className="text-4xl font-black italic tracking-tighter leading-none text-foreground/90">
+          <p className="text-4xl font-semibold tracking-tight leading-none text-foreground/90">
             {value?.toLocaleString() || "0"}
           </p>
         </div>

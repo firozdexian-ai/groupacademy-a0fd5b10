@@ -75,18 +75,18 @@ function CommunicationHistory({ investorId }: { investorId?: string }) {
             className="p-4 rounded-2xl border-2 border-border/30 bg-card/40 hover:border-primary/30 transition-colors"
           >
             <div className="flex justify-between items-start gap-3 mb-1.5">
-              <p className="font-black uppercase italic tracking-tight text-sm text-foreground/90 line-clamp-1 flex-1">
+              <p className="font-semibold uppercase italic tracking-tight text-sm text-foreground/90 line-clamp-1 flex-1">
                 {row.subject}
               </p>
               <div className="flex items-center gap-1.5 shrink-0">
                 {row.ai_generated && (
-                  <Badge className="bg-primary/10 text-primary border-none font-black italic text-[8px] px-2 gap-1">
+                  <Badge className="bg-primary/10 text-primary border-none font-semibold text-[8px] px-2 gap-1">
                     <Sparkles className="h-2.5 w-2.5" /> AI
                   </Badge>
                 )}
                 <Badge
                   variant="outline"
-                  className="font-black uppercase italic text-[8px] px-2 border-2 tracking-widest"
+                  className="font-semibold uppercase italic text-[8px] px-2 border-2 tracking-widest"
                 >
                   {row.status || "logged"}
                 </Badge>
@@ -179,7 +179,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
       <div className="space-y-6 p-8 rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl animate-in zoom-in-95 duration-300 text-left">
         <div className="flex justify-between items-start border-b border-border/10 pb-6">
           <div className="space-y-1">
-            <h3 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+            <h3 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
               <ShieldCheck className="h-6 w-6 text-primary" /> Investor Pulse
             </h3>
             <p className="text-[10px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
@@ -197,7 +197,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
         </div>
 
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase italic tracking-widest text-primary ml-2 flex items-center gap-2">
+          <label className="text-[10px] font-semibold uppercase italic tracking-widest text-primary ml-2 flex items-center gap-2">
             <Mail className="h-3 w-3" /> Target Identity
           </label>
           <div className="relative">
@@ -208,7 +208,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
               className="h-12 rounded-xl border-2 font-bold bg-muted/30 border-border/40 pl-4 text-foreground/80"
             />
             {selectedInvestor?.full_name && (
-              <Badge className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary/10 text-primary border-none font-black italic text-[9px] px-3">
+              <Badge className="absolute right-3 top-1/2 -translate-y-1/2 bg-primary/10 text-primary border-none font-semibold text-[9px] px-3">
                 {selectedInvestor.full_name.toUpperCase()}
               </Badge>
             )}
@@ -217,24 +217,24 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
 
         <div className="grid grid-cols-1 md:grid-cols-[1fr_180px] gap-3">
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase italic tracking-widest text-primary ml-2">
+            <label className="text-[10px] font-semibold uppercase italic tracking-widest text-primary ml-2">
               Transmission Subject
             </label>
             <Input
               placeholder="ENTER STRATEGIC HEADLINE..."
-              className="h-14 rounded-2xl border-2 font-black uppercase italic text-sm tracking-widest bg-card/50 focus-visible:border-primary/40 focus-visible:ring-0 transition-colors"
+              className="h-14 rounded-2xl border-2 font-semibold uppercase italic text-sm tracking-widest bg-card/50 focus-visible:border-primary/40 focus-visible:ring-0 transition-colors"
               value={subject}
               onChange={(e) => setSubject(e.target.value)}
             />
           </div>
           <div className="space-y-2">
-            <label className="text-[10px] font-black uppercase italic tracking-widest text-primary ml-2">
+            <label className="text-[10px] font-semibold uppercase italic tracking-widest text-primary ml-2">
               Type
             </label>
             <select
               value={emailType}
               onChange={(e) => setEmailType(e.target.value)}
-              className="h-14 w-full rounded-2xl border-2 border-border/40 bg-card/50 px-4 font-black uppercase italic text-[10px] tracking-widest focus-visible:border-primary/40 focus-visible:outline-none"
+              className="h-14 w-full rounded-2xl border-2 border-border/40 bg-card/50 px-4 font-semibold uppercase italic text-[10px] tracking-widest focus-visible:border-primary/40 focus-visible:outline-none"
             >
               <option value="update">Update</option>
               <option value="intro">Intro</option>
@@ -246,7 +246,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
         </div>
 
         <div className="space-y-2">
-          <label className="text-[10px] font-black uppercase italic tracking-widest text-primary ml-2">
+          <label className="text-[10px] font-semibold uppercase italic tracking-widest text-primary ml-2">
             Core Payload (Message Body)
           </label>
           <Textarea
@@ -276,7 +276,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
         <div className="flex items-center gap-2 border-b border-border/10 pb-4">
           <History className="h-5 w-5 text-primary" />
           <div>
-            <h4 className="text-sm font-black uppercase italic tracking-tighter">Communication History</h4>
+            <h4 className="text-sm font-semibold uppercase italic tracking-tight">Communication History</h4>
             <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
               {selectedInvestor?.id ? "this investor · last 10" : "global · last 10"}
             </p>

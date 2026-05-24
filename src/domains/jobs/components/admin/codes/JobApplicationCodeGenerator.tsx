@@ -121,7 +121,7 @@ export function JobApplicationCodeGenerator() {
             <Key className="h-8 w-8 text-primary" />
           </div>
           <div className="text-left">
-            <CardTitle className="text-3xl font-black uppercase tracking-tighter italic">
+            <CardTitle className="text-3xl font-semibold uppercase tracking-tight italic">
               Credential Synthesis
             </CardTitle>
             <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
@@ -134,7 +134,7 @@ export function JobApplicationCodeGenerator() {
       <CardContent className="p-10 space-y-8">
         <div className="grid gap-8 md:grid-cols-2">
           <div className="space-y-3 text-left">
-            <Label className="text-[10px] font-black text-primary ml-1">
+            <Label className="text-[10px] font-semibold text-primary ml-1">
               Target Entity Email
             </Label>
             <Input
@@ -147,7 +147,7 @@ export function JobApplicationCodeGenerator() {
             />
           </div>
           <div className="space-y-3 text-left">
-            <Label className="text-[10px] font-black text-primary ml-1">Batch Quantity</Label>
+            <Label className="text-[10px] font-semibold text-primary ml-1">Batch Quantity</Label>
             <Input
               id="quantity"
               type="number"
@@ -155,7 +155,7 @@ export function JobApplicationCodeGenerator() {
               max={20}
               value={quantity}
               onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-              className="h-14 rounded-2xl border-2 font-black italic text-xl bg-muted/20"
+              className="h-14 rounded-2xl border-2 font-semibold text-xl bg-muted/20"
             />
           </div>
         </div>
@@ -163,7 +163,7 @@ export function JobApplicationCodeGenerator() {
         <Button
           onClick={handleExecuteSynthesis}
           disabled={isGenerating}
-          className="w-full h-16 rounded-[20px] font-black text-[11px] shadow-2xl shadow-primary/30 transition-all hover:scale-[1.01] active:scale-[0.99]"
+          className="w-full h-16 rounded-[20px] font-semibold text-[11px] shadow-2xl shadow-primary/30 transition-all hover:scale-[1.01] active:scale-[0.99]"
         >
           {isGenerating ? (
             <>
@@ -181,7 +181,7 @@ export function JobApplicationCodeGenerator() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <ShieldCheck className="h-5 w-5 text-emerald-500" />
-                <p className="text-[10px] font-black text-muted-foreground">
+                <p className="text-[10px] font-semibold text-muted-foreground">
                   Generated Artifacts:
                 </p>
               </div>
@@ -189,7 +189,7 @@ export function JobApplicationCodeGenerator() {
                 variant="outline"
                 size="sm"
                 onClick={downloadKeyManifest}
-                className="h-10 rounded-xl px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-2"
+                className="h-10 rounded-xl px-6 border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
               >
                 <Download className="h-3 w-3" /> Export Manifest
               </Button>
@@ -202,7 +202,7 @@ export function JobApplicationCodeGenerator() {
                   className="group flex items-center justify-between p-5 bg-muted/30 border-2 border-border/5 rounded-2xl transition-all hover:border-primary/40 hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-3">
-                    <span className="text-[9px] font-black text-muted-foreground/30">
+                    <span className="text-[9px] font-semibold text-muted-foreground/30">
                       #{String(index + 1).padStart(2, "0")}
                     </span>
                     <span className="font-mono text-sm font-bold tracking-widest">{code}</span>
@@ -225,7 +225,7 @@ export function JobApplicationCodeGenerator() {
 
             <div className="flex items-center gap-2 opacity-20 pt-4">
               <Terminal className="h-3 w-3" />
-              <span className="text-[8px] font-black">
+              <span className="text-[8px] font-semibold">
                 Codes generated
               </span>
             </div>

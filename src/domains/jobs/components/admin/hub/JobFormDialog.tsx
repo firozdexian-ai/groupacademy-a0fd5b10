@@ -247,7 +247,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
         <DialogHeader className="p-8 pb-4 text-left">
           <div className="flex justify-between items-center">
             <div className="space-y-1">
-              <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+              <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
                 <Briefcase className="h-8 w-8 text-primary" />
                 {jobId ? "Recalibrate Infrastructure" : "Deploy Job Node"}
               </DialogTitle>
@@ -255,7 +255,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                 Strategic marketplace placement and AI content drafting
               </DialogDescription>
             </div>
-            <Badge variant="outline" className="font-black text-[9px] border-2 uppercase italic px-3 py-1">
+            <Badge variant="outline" className="font-semibold text-[9px] border-2 uppercase italic px-3 py-1">
               {jobId ? "NODE_EDIT_MODE" : "NODE_PROVISIONING"}
             </Badge>
           </div>
@@ -265,7 +265,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
-              <p className="text-[10px] font-black animate-pulse">
+              <p className="text-[10px] font-semibold animate-pulse">
                 Ingesting Registry Data...
               </p>
             </div>
@@ -275,11 +275,11 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
               <section className="space-y-6">
                 <div className="flex items-center gap-2 mb-4 border-b border-border/10 pb-2">
                   <ShieldCheck className="h-4 w-4 text-primary" />
-                  <h4 className="text-[11px] font-black italic">Core Identity</h4>
+                  <h4 className="text-[11px] font-semibold">Core Identity</h4>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2 md:col-span-2">
-                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                       Job Architecture Title *
                     </Label>
                     <Input
@@ -290,7 +290,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                       Institutional Name *
                     </Label>
                     <Input
@@ -300,7 +300,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                       Geographical Node
                     </Label>
                     <Input
@@ -313,7 +313,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                     Institutional Artifact (Logo)
                   </Label>
                   <div className="flex items-center gap-4 p-4 rounded-3xl border-2 bg-muted/5 border-dashed">
@@ -360,7 +360,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
               <section className="space-y-6">
                 <div className="flex items-center gap-2 mb-4 border-b border-border/10 pb-2">
                   <Zap className="h-4 w-4 text-primary" />
-                  <h4 className="text-[11px] font-black italic">Technical Specs</h4>
+                  <h4 className="text-[11px] font-semibold">Technical Specs</h4>
                 </div>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
                   <SelectNode
@@ -385,7 +385,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6 items-end">
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                       Yield Floor (Min)
                     </Label>
                     <Input
@@ -396,7 +396,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                       Yield Ceiling (Max)
                     </Label>
                     <Input
@@ -407,7 +407,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Currency Node</Label>
+                    <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">Currency Node</Label>
                     <Select value={form.salary_currency} onValueChange={(v) => updateField("salary_currency", v)}>
                       <SelectTrigger className="h-14 rounded-2xl border-2 font-bold">
                         <SelectValue />
@@ -427,14 +427,14 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
               {/* SECTION: CORE PAYLOAD */}
               <section className="space-y-4">
                 <div className="flex items-center justify-between px-2">
-                  <Label className="text-[10px] font-black uppercase text-primary italic">Narrative Payload *</Label>
+                  <Label className="text-[10px] font-semibold uppercase text-primary italic">Narrative Payload *</Label>
                   <Button
                     type="button"
                     variant="ghost"
                     size="sm"
                     onClick={handleEnhanceDescription}
                     disabled={isEnhancing}
-                    className="h-8 rounded-xl border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 font-black text-[9px] uppercase italic tracking-widest gap-2"
+                    className="h-8 rounded-xl border-2 border-primary/20 bg-primary/5 hover:bg-primary/10 font-semibold text-[9px] uppercase italic tracking-widest gap-2"
                   >
                     {isEnhancing ? (
                       <Loader2 className="h-3 w-3 animate-spin" />
@@ -456,7 +456,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
               {/* SECTION: TRANSMISSION & LIFECYCLE */}
               <section className="grid grid-cols-1 md:grid-cols-2 gap-6 p-8 rounded-[40px] border-2 border-primary/10 bg-primary/5">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                     How to apply
                   </Label>
                   <Select
@@ -477,7 +477,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                 </div>
                 {form.application_type === "email" && (
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                       Transmission Email *
                     </Label>
                     <Input
@@ -490,7 +490,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                 )}
                 {form.application_type === "link" && (
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase text-primary italic ml-2">
+                    <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">
                       External Redirect URL *
                     </Label>
                     <Input
@@ -505,7 +505,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 
               <section className="grid grid-cols-2 md:grid-cols-4 gap-6 items-center">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Vacancies</Label>
+                  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">Vacancies</Label>
                   <Input
                     type="number"
                     min="1"
@@ -515,7 +515,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Expiry Deadline</Label>
+                  <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">Expiry Deadline</Label>
                   <Input
                     type="date"
                     value={form.deadline}
@@ -550,14 +550,14 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
             variant="ghost"
             onClick={() => onOpenChange(false)}
             disabled={isSaving}
-            className="font-black uppercase text-[10px] tracking-widest italic opacity-50"
+            className="font-semibold uppercase text-[10px] tracking-widest italic opacity-50"
           >
             Abort Sync
           </Button>
           <Button
             onClick={handleSave}
             disabled={isSaving || loading}
-            className="h-16 px-12 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
+            className="h-16 px-12 rounded-[24px] font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl shadow-primary/20 transition-all active:scale-95"
           >
             {isSaving ? <Loader2 className="h-6 w-6 animate-spin" /> : <ShieldCheck className="h-6 w-6 fill-current" />}
             {jobId ? "Commit Updates" : "Initialize Deployment"}
@@ -571,7 +571,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
 function SelectNode({ label, value, options, onChange }: any) {
   return (
     <div className="space-y-2">
-      <Label className="text-[10px] font-black uppercase text-primary italic ml-2">{label}</Label>
+      <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">{label}</Label>
       <Select value={value} onValueChange={onChange}>
         <SelectTrigger className="h-14 rounded-2xl border-2 font-bold uppercase text-[10px]">
           <SelectValue />
@@ -592,7 +592,7 @@ function SwitchNode({ label, checked, onChange }: any) {
   return (
     <label className="flex items-center gap-3 cursor-pointer group">
       <Switch checked={checked} onCheckedChange={onChange} />
-      <span className="text-[10px] font-black uppercase italic tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
+      <span className="text-[10px] font-semibold uppercase italic tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
         {label}
       </span>
     </label>

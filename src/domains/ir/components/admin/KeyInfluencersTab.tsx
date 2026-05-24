@@ -125,15 +125,15 @@ export default function KeyInfluencersTab() {
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <Star className="h-8 w-8 text-amber-500 fill-amber-500/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Multiplier Network</h2>
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Multiplier Network</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Strategic Ecosystem Amplifiers
           </p>
         </div>
         <Button
           onClick={() => handleOpenDialog()}
-          className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl bg-amber-500 hover:bg-amber-600 text-white"
+          className="h-12 px-8 rounded-xl font-semibold uppercase text-[10px] tracking-widest shadow-xl bg-amber-500 hover:bg-amber-600 text-white"
         >
           <Plus className="h-4 w-4 mr-2" /> Register Node
         </Button>
@@ -165,7 +165,7 @@ export default function KeyInfluencersTab() {
           ))}
         </div>
       ) : rows.length === 0 ? (
-        <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-40 uppercase font-black tracking-widest italic text-xs">
+        <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-40 uppercase font-semibold tracking-widest italic text-xs">
           Registry Frame Empty
         </Card>
       ) : (
@@ -188,7 +188,7 @@ export default function KeyInfluencersTab() {
               <CardContent className="p-6 space-y-6">
                 <div className="flex justify-between items-start gap-4">
                   <div className="min-w-0 space-y-1">
-                    <div className="font-black text-xl uppercase tracking-tighter italic group-hover:text-primary transition-colors truncate">
+                    <div className="font-semibold text-xl uppercase tracking-tight italic group-hover:text-primary transition-colors truncate">
                       {r.name}
                     </div>
                     <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/60">
@@ -246,14 +246,14 @@ export default function KeyInfluencersTab() {
         <DialogContent className="max-w-md rounded-[32px] border-4 bg-background text-left">
           <div className="p-2 space-y-6">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black italic tracking-tighter uppercase flex items-center gap-2">
+              <DialogTitle className="text-2xl font-semibold tracking-tight uppercase flex items-center gap-2">
                 <ShieldCheck className="h-6 w-6 text-amber-500" />{" "}
                 {editingNode ? "Recalibrate Node" : "Register Authority"}
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Identity Name</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Identity Name</Label>
                 <Input
                   value={form.name}
                   onChange={(e) => setForm({ ...form, name: e.target.value })}
@@ -262,7 +262,7 @@ export default function KeyInfluencersTab() {
               </div>
               <div className="grid grid-cols-2 gap-4">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase ml-1">Role</Label>
+                  <Label className="text-[10px] font-semibold uppercase ml-1">Role</Label>
                   <Input
                     value={form.role}
                     onChange={(e) => setForm({ ...form, role: e.target.value })}
@@ -270,9 +270,9 @@ export default function KeyInfluencersTab() {
                   />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase ml-1">Tier</Label>
+                  <Label className="text-[10px] font-semibold uppercase ml-1">Tier</Label>
                   <Select value={form.tier} onValueChange={(v) => setForm({ ...form, tier: v })}>
-                    <SelectTrigger className="h-12 rounded-xl border-2 font-black uppercase text-[10px]">
+                    <SelectTrigger className="h-12 rounded-xl border-2 font-semibold uppercase text-[10px]">
                       <SelectValue />
                     </SelectTrigger>
                     <SelectContent>
@@ -284,7 +284,7 @@ export default function KeyInfluencersTab() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Organization</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Organization</Label>
                 <Input
                   value={form.organization}
                   onChange={(e) => setForm({ ...form, organization: e.target.value })}
@@ -292,7 +292,7 @@ export default function KeyInfluencersTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Email Endpoint</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Email Endpoint</Label>
                 <Input
                   value={form.email}
                   onChange={(e) => setForm({ ...form, email: e.target.value })}
@@ -304,7 +304,7 @@ export default function KeyInfluencersTab() {
               <Button
                 onClick={executeDeployment}
                 disabled={busy}
-                className="w-full h-14 rounded-2xl font-black uppercase text-[11px] gap-2 shadow-xl bg-primary"
+                className="w-full h-14 rounded-2xl font-semibold uppercase text-[11px] gap-2 shadow-xl bg-primary"
               >
                 {busy ? <Loader2 className="animate-spin h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}{" "}
                 {editingNode ? "Commit Calibration" : "Authorize Node"}

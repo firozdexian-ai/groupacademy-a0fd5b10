@@ -93,10 +93,10 @@ export function CreatorEconomyTab() {
     <div className="space-y-8 animate-in fade-in duration-700">
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" /> Creator Economy
           </h2>
-          <p className="text-[10px] font-black text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold text-muted-foreground/60 italic">
             Hype, Connections & Boost activity telemetry
           </p>
         </div>
@@ -105,7 +105,7 @@ export function CreatorEconomyTab() {
             variant="outline"
             size="sm"
             onClick={sweep}
-            className="rounded-xl border-2 font-black uppercase text-[9px] tracking-widest"
+            className="rounded-xl border-2 font-semibold uppercase text-[9px] tracking-widest"
           >
             <RefreshCw className="h-3 w-3 mr-2" /> Sweep Expired
           </Button>
@@ -159,7 +159,7 @@ export function CreatorEconomyTab() {
           <Card className="rounded-[40px] border-2 bg-card/30 backdrop-blur-xl overflow-hidden text-left">
             <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 to-orange-600" />
             <CardHeader className="p-6 border-b border-border/10">
-              <CardTitle className="text-xs font-black flex items-center gap-2">
+              <CardTitle className="text-xs font-semibold flex items-center gap-2">
                 <Flame className="h-4 w-4 text-orange-500" /> Top Hyped Creators
               </CardTitle>
             </CardHeader>
@@ -184,7 +184,7 @@ export function CreatorEconomyTab() {
           <Card className="rounded-[40px] border-2 bg-card/30 backdrop-blur-xl overflow-hidden text-left">
             <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-blue-600" />
             <CardHeader className="p-6 border-b border-border/10">
-              <CardTitle className="text-xs font-black flex items-center gap-2">
+              <CardTitle className="text-xs font-semibold flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" /> Top Connection Earners
               </CardTitle>
             </CardHeader>
@@ -215,10 +215,10 @@ export function CreatorEconomyTab() {
               >
                 <Avatar className="h-12 w-12 border-2 border-primary/20">
                   <AvatarImage src={b.talents?.profile_photo_url} />
-                  <AvatarFallback className="font-black bg-primary/5">{b.talents?.full_name?.[0]}</AvatarFallback>
+                  <AvatarFallback className="font-semibold bg-primary/5">{b.talents?.full_name?.[0]}</AvatarFallback>
                 </Avatar>
                 <div className="flex-1 min-w-0">
-                  <p className="text-sm font-black uppercase truncate group-hover:text-primary transition-colors">
+                  <p className="text-sm font-semibold uppercase truncate group-hover:text-primary transition-colors">
                     {b.talents?.full_name}
                   </p>
                   <p className="text-[10px] text-muted-foreground uppercase font-bold">
@@ -229,7 +229,7 @@ export function CreatorEconomyTab() {
               </Card>
             ))}
             {boosts.length === 0 && !loading && (
-              <div className="col-span-full py-20 text-center text-muted-foreground/40 font-black uppercase text-xs tracking-widest">
+              <div className="col-span-full py-20 text-center text-muted-foreground/40 font-semibold uppercase text-xs tracking-widest">
                 No Active Marketplace Boosts
               </div>
             )}
@@ -247,8 +247,8 @@ function StatCard({ icon, label, value, suffix, loading }: any) {
         {icon}
       </div>
       <div>
-        <p className="text-[9px] font-black text-muted-foreground/60">{label}</p>
-        <p className="text-3xl font-black italic tracking-tighter">
+        <p className="text-[9px] font-semibold text-muted-foreground/60">{label}</p>
+        <p className="text-3xl font-semibold tracking-tight">
           {loading ? "..." : value}
           {suffix && <span className="text-sm ml-1 text-primary">{suffix}</span>}
         </p>
@@ -260,12 +260,12 @@ function StatCard({ icon, label, value, suffix, loading }: any) {
 function LeaderRow({ rank, name, val, sub }: any) {
   return (
     <div className="flex items-center gap-4 p-3 rounded-2xl hover:bg-muted/30 transition-colors">
-      <span className="text-[10px] font-black text-muted-foreground/40 w-6 italic">#{rank}</span>
+      <span className="text-[10px] font-semibold text-muted-foreground/40 w-6 italic">#{rank}</span>
       <div className="flex-1">
-        <p className="text-sm font-black uppercase tracking-tight truncate">{name || "Anonymous Node"}</p>
-        <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tighter">{sub}</p>
+        <p className="text-sm font-semibold uppercase tracking-tight truncate">{name || "Anonymous Node"}</p>
+        <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-tight">{sub}</p>
       </div>
-      <Badge variant="outline" className="font-black text-primary border-primary/20 bg-primary/5 rounded-lg px-3">
+      <Badge variant="outline" className="font-semibold text-primary border-primary/20 bg-primary/5 rounded-lg px-3">
         {val}
       </Badge>
     </div>

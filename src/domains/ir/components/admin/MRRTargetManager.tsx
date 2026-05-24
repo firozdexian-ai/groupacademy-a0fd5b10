@@ -123,15 +123,15 @@ export function MRRTargetManager() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <TargetIcon className="h-8 w-8 text-primary fill-primary/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Target Command</h2>
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Target Command</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             MRR Optimization · Service Mix Simulation
           </p>
         </div>
         <div className="flex items-center gap-3">
           {isClosed ? (
-            <Badge className="h-12 px-6 rounded-xl border-2 font-black italic gap-2 bg-muted text-muted-foreground border-border/40 text-[9px]">
+            <Badge className="h-12 px-6 rounded-xl border-2 font-semibold gap-2 bg-muted text-muted-foreground border-border/40 text-[9px]">
               <Lock className="h-3.5 w-3.5" /> REGISTRY_LOCKED
             </Badge>
           ) : (
@@ -140,7 +140,7 @@ export function MRRTargetManager() {
                 <AlertDialogTrigger asChild>
                   <Button
                     variant="outline"
-                    className="h-12 px-6 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest gap-2 bg-background/50 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
+                    className="h-12 px-6 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 bg-background/50 hover:bg-destructive/10 hover:text-destructive hover:border-destructive/30 transition-colors"
                   >
                     <Calendar className="h-4 w-4" /> Close Period
                   </Button>
@@ -149,7 +149,7 @@ export function MRRTargetManager() {
                   <div className="h-2 w-full bg-gradient-to-r from-destructive to-rose-600" />
                   <div className="p-10 space-y-8">
                     <AlertDialogHeader>
-                      <AlertDialogTitle className="text-3xl font-black uppercase italic tracking-tighter text-destructive leading-none">
+                      <AlertDialogTitle className="text-3xl font-semibold uppercase italic tracking-tight text-destructive leading-none">
                         Terminate Period?
                       </AlertDialogTitle>
                       <AlertDialogDescription className="text-[10px] font-bold italic text-muted-foreground/80 mt-2">
@@ -157,10 +157,10 @@ export function MRRTargetManager() {
                       </AlertDialogDescription>
                     </AlertDialogHeader>
                     <AlertDialogFooter className="gap-3 sm:gap-0">
-                      <AlertDialogCancel className="h-14 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest px-8">
+                      <AlertDialogCancel className="h-14 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest px-8">
                         Cancel
                       </AlertDialogCancel>
-                      <AlertDialogAction className="h-14 rounded-xl bg-destructive hover:bg-destructive/90 font-black uppercase text-[10px] tracking-[0.2em] px-10 shadow-lg shadow-destructive/20 gap-2">
+                      <AlertDialogAction className="h-14 rounded-xl bg-destructive hover:bg-destructive/90 font-semibold uppercase text-[10px] tracking-[0.2em] px-10 shadow-lg shadow-destructive/20 gap-2">
                         <Lock className="h-4 w-4" /> Confirm Termination
                       </AlertDialogAction>
                     </AlertDialogFooter>
@@ -170,7 +170,7 @@ export function MRRTargetManager() {
               <Button
                 onClick={() => saveMutation.mutate()}
                 disabled={saveMutation.isPending || !hasChanges}
-                className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 transition-all"
+                className="h-12 px-8 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 transition-all"
               >
                 {saveMutation.isPending ? (
                   <RefreshCw className="h-4 w-4 animate-spin" />
@@ -189,7 +189,7 @@ export function MRRTargetManager() {
           <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500" />
           <CardHeader className="p-8 border-b border-border/10 bg-muted/5 flex flex-row items-center justify-between">
             <div className="space-y-1 text-left">
-              <CardTitle className="text-xl font-black uppercase italic tracking-tighter text-emerald-600">
+              <CardTitle className="text-xl font-semibold uppercase italic tracking-tight text-emerald-600">
                 Revenue Calibration
               </CardTitle>
               <CardDescription className="text-[10px] font-bold">
@@ -201,11 +201,11 @@ export function MRRTargetManager() {
           <CardContent className="p-8 md:p-10 space-y-10 flex-1">
             <div className="grid gap-8 md:grid-cols-2">
               <div className="space-y-3 text-left">
-                <Label className="text-[10px] font-black text-emerald-600 italic ml-2">
+                <Label className="text-[10px] font-semibold text-emerald-600 italic ml-2">
                   MRR Target (USD)
                 </Label>
                 <div className="relative">
-                  <span className="absolute left-6 top-1/2 -translate-y-1/2 font-black text-emerald-500 italic text-xl">
+                  <span className="absolute left-6 top-1/2 -translate-y-1/2 font-semibold text-emerald-500 italic text-xl">
                     $
                   </span>
                   <Input
@@ -215,13 +215,13 @@ export function MRRTargetManager() {
                       setMrrTarget(Number(e.target.value));
                       setHasChanges(true);
                     }}
-                    className="h-16 rounded-[20px] border-2 border-border/40 pl-12 text-2xl md:text-3xl font-black italic tracking-tighter bg-background/50 focus-visible:border-emerald-500/50 transition-colors"
+                    className="h-16 rounded-[20px] border-2 border-border/40 pl-12 text-2xl md:text-3xl font-semibold tracking-tight bg-background/50 focus-visible:border-emerald-500/50 transition-colors"
                     disabled={isClosed}
                   />
                 </div>
               </div>
               <div className="space-y-3 text-left">
-                <Label className="text-[10px] font-black text-primary italic ml-2">
+                <Label className="text-[10px] font-semibold text-primary italic ml-2">
                   Target Paying Units
                 </Label>
                 <Input
@@ -231,7 +231,7 @@ export function MRRTargetManager() {
                     setTargetPayingUsers(Number(e.target.value));
                     setHasChanges(true);
                   }}
-                  className="h-16 rounded-[20px] border-2 border-border/40 px-6 text-2xl md:text-3xl font-black italic tracking-tighter bg-background/50 focus-visible:border-primary/50 transition-colors"
+                  className="h-16 rounded-[20px] border-2 border-border/40 px-6 text-2xl md:text-3xl font-semibold tracking-tight bg-background/50 focus-visible:border-primary/50 transition-colors"
                   disabled={isClosed}
                 />
               </div>
@@ -253,10 +253,10 @@ export function MRRTargetManager() {
               <TrendingUp className="h-10 w-10 text-white" />
             </div>
             <div className="space-y-2">
-              <p className="text-[10px] font-black uppercase tracking-[0.4em] text-primary italic">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-primary italic">
                 Credit Yield Protocol
               </p>
-              <h3 className="text-5xl md:text-6xl font-black italic tracking-tighter leading-none text-foreground drop-shadow-sm">
+              <h3 className="text-5xl md:text-6xl font-semibold tracking-tight leading-none text-foreground drop-shadow-sm">
                 {totalCreditsTarget.toLocaleString()}
               </h3>
             </div>
@@ -271,7 +271,7 @@ export function MRRTargetManager() {
         <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-indigo-500" />
         <CardHeader className="p-8 border-b border-border/10 bg-muted/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
-            <CardTitle className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2">
+            <CardTitle className="text-xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
               <Settings2 className="h-5 w-5 text-primary" /> Mix Infrastructure
             </CardTitle>
             <CardDescription className="text-[10px] font-bold">
@@ -280,7 +280,7 @@ export function MRRTargetManager() {
           </div>
           <Badge
             className={cn(
-              "font-black italic px-4 py-2 border-2 text-[10px]  rounded-xl shrink-0",
+              "font-semibold px-4 py-2 border-2 text-[10px]  rounded-xl shrink-0",
               totalMixPercent === 100
                 ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                 : "bg-amber-500/10 text-amber-600 border-amber-500/20",
@@ -300,11 +300,11 @@ export function MRRTargetManager() {
                   className="space-y-6 p-8 rounded-[32px] border-2 border-border/10 bg-muted/5 group hover:border-primary/20 hover:bg-primary/5 transition-all shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-4">
-                    <Label className="font-black uppercase italic text-sm tracking-widest group-hover:text-primary transition-colors">
+                    <Label className="font-semibold uppercase italic text-sm tracking-widest group-hover:text-primary transition-colors">
                       {IR_CONFIG.SERVICE_LABELS[service]}
                     </Label>
                     <div className="text-right shrink-0">
-                      <p className="text-lg font-black italic tracking-tight text-foreground/90">
+                      <p className="text-lg font-semibold tracking-tight text-foreground/90">
                         {formatUSD(serviceTarget?.revenueUsd || 0)}
                       </p>
                       <p className="text-[9px] font-bold text-muted-foreground mt-1">
@@ -326,12 +326,12 @@ export function MRRTargetManager() {
                         type="number"
                         value={mixValue}
                         onChange={(e) => handleMixChange(service, Number(e.target.value))}
-                        className="h-12 rounded-xl border-2 text-center font-black pr-6 bg-background/50"
+                        className="h-12 rounded-xl border-2 text-center font-semibold pr-6 bg-background/50"
                         disabled={isClosed}
                         max={100}
                         min={0}
                       />
-                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-black text-muted-foreground">
+                      <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[10px] font-semibold text-muted-foreground">
                         %
                       </span>
                     </div>
@@ -350,8 +350,8 @@ export function MRRTargetManager() {
 function StatNode({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="p-5 rounded-2xl bg-background/50 border-2 border-border/10 text-left hover:border-primary/20 transition-colors shadow-sm">
-      <p className="text-[9px] font-black text-muted-foreground mb-1">{label}</p>
-      <p className="font-black italic text-xl leading-none text-foreground/90 tracking-tight">{value}</p>
+      <p className="text-[9px] font-semibold text-muted-foreground mb-1">{label}</p>
+      <p className="font-semibold text-xl leading-none text-foreground/90 tracking-tight">{value}</p>
     </div>
   );
 }

@@ -40,17 +40,17 @@ export function FinOverviewTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-indigo-500">
             <Coins className="h-8 w-8 text-indigo-500 fill-indigo-500/20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               FinOps Command
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Global Capital Telemetry & Ledger Control
           </p>
         </div>
         <Badge
           variant="outline"
-          className="h-12 px-6 rounded-xl font-black uppercase text-xs tracking-widest gap-2 border-indigo-500/50 text-indigo-600 bg-indigo-500/10 animate-pulse"
+          className="h-12 px-6 rounded-xl font-semibold uppercase text-xs tracking-widest gap-2 border-indigo-500/50 text-indigo-600 bg-indigo-500/10 animate-pulse"
         >
           <Activity className="h-4 w-4" /> Ledgers Synced
         </Badge>
@@ -102,7 +102,7 @@ export function FinOverviewTab() {
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4 px-2">
                 <ArrowDownRight className="h-4 w-4 text-emerald-500" />
-                <h3 className="text-xs font-black text-muted-foreground italic">
+                <h3 className="text-xs font-semibold text-muted-foreground italic">
                   Capital Ingress (Purchases)
                 </h3>
               </div>
@@ -110,7 +110,7 @@ export function FinOverviewTab() {
                 <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-teal-500" />
                 <CardContent className="p-0">
                   {latestInvoices.length === 0 ? (
-                    <div className="p-12 text-center text-muted-foreground/50 font-black uppercase text-[10px] tracking-widest italic">
+                    <div className="p-12 text-center text-muted-foreground/50 font-semibold uppercase text-[10px] tracking-widest italic">
                       No recent ingress detected.
                     </div>
                   ) : (
@@ -125,7 +125,7 @@ export function FinOverviewTab() {
                               <Receipt className="h-5 w-5 text-emerald-500" />
                             </div>
                             <div className="text-left">
-                              <p className="font-black text-sm uppercase italic tracking-tight">
+                              <p className="font-semibold text-sm uppercase italic tracking-tight">
                                 {inv.talent.full_name}
                               </p>
                               <p className="text-[10px] font-bold text-muted-foreground">
@@ -160,7 +160,7 @@ export function FinOverviewTab() {
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4 px-2">
                 <ArrowUpRight className="h-4 w-4 text-orange-500" />
-                <h3 className="text-xs font-black text-muted-foreground italic">
+                <h3 className="text-xs font-semibold text-muted-foreground italic">
                   Capital Egress (Withdrawals)
                 </h3>
               </div>
@@ -168,7 +168,7 @@ export function FinOverviewTab() {
                 <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 to-rose-500" />
                 <CardContent className="p-0">
                   {latestWithdrawals.length === 0 ? (
-                    <div className="p-12 text-center text-muted-foreground/50 font-black uppercase text-[10px] tracking-widest italic">
+                    <div className="p-12 text-center text-muted-foreground/50 font-semibold uppercase text-[10px] tracking-widest italic">
                       No recent egress detected.
                     </div>
                   ) : (
@@ -183,7 +183,7 @@ export function FinOverviewTab() {
                               <Banknote className="h-5 w-5 text-orange-500" />
                             </div>
                             <div className="text-left">
-                              <p className="font-black text-sm uppercase italic tracking-tight">
+                              <p className="font-semibold text-sm uppercase italic tracking-tight">
                                 {req.talent.full_name}
                               </p>
                               <p className="text-[10px] font-bold text-muted-foreground">
@@ -237,10 +237,10 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div className="min-w-0 text-left">
-          <p className="text-[10px] font-black text-muted-foreground italic mb-1 truncate">
+          <p className="text-[10px] font-semibold text-muted-foreground italic mb-1 truncate">
             {label}
           </p>
-          <p className="text-4xl font-black italic tracking-tighter leading-none text-foreground/90">
+          <p className="text-4xl font-semibold tracking-tight leading-none text-foreground/90">
             {value?.toLocaleString() || "0"}
           </p>
         </div>

@@ -59,7 +59,7 @@ export function JobsOutreachTab() {
         <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-1">
-              <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+              <CardTitle className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
                 <Megaphone className="h-7 w-7 text-primary" /> Syndication_Pulse
               </CardTitle>
               <CardDescription className="text-[10px] font-bold text-muted-foreground italic leading-relaxed max-w-xl">
@@ -68,7 +68,7 @@ export function JobsOutreachTab() {
             </div>
             <Badge
               variant="outline"
-              className="h-10 px-4 rounded-xl border-2 font-black italic gap-2 bg-background/50 uppercase"
+              className="h-10 px-4 rounded-xl border-2 font-semibold gap-2 bg-background/50 uppercase"
             >
               <Share2 className="h-3.5 w-3.5" /> Outreach
             </Badge>
@@ -77,11 +77,11 @@ export function JobsOutreachTab() {
 
         <CardContent className="p-8 space-y-8">
           <div className="space-y-3 text-left">
-            <label className="text-[10px] font-black uppercase text-primary italic ml-2 flex items-center gap-2">
+            <label className="text-[10px] font-semibold uppercase text-primary italic ml-2 flex items-center gap-2">
               <ShieldCheck className="h-3.5 w-3.5" /> Select Target Infrastructure
             </label>
             <Select value={selectedJobId} onValueChange={setSelectedJobId}>
-              <SelectTrigger className="h-14 w-full max-w-2xl rounded-2xl border-2 font-black uppercase text-[11px] tracking-widest bg-background/50 shadow-inner">
+              <SelectTrigger className="h-14 w-full max-w-2xl rounded-2xl border-2 font-semibold uppercase text-[11px] tracking-widest bg-background/50 shadow-inner">
                 <SelectValue placeholder="PICK A JOB NODE TO PROMOTE" />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-2">
@@ -100,7 +100,7 @@ export function JobsOutreachTab() {
             </div>
           ) : (
             !loading && (
-              <div className="p-12 border-2 border-dashed rounded-[32px] text-center opacity-30 italic font-black uppercase text-xs tracking-widest">
+              <div className="p-12 border-2 border-dashed rounded-[32px] text-center opacity-30 font-semibold uppercase text-xs tracking-widest">
                 Zero active infrastructure nodes detected
               </div>
             )
@@ -113,7 +113,7 @@ export function JobsOutreachTab() {
         <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
           <div className="flex justify-between items-center">
             <div className="space-y-1">
-              <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+              <CardTitle className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
                 <Sparkles className="h-7 w-7 text-primary fill-primary/10" /> Identity_Outreach
               </CardTitle>
               <CardDescription className="text-[10px] font-bold text-muted-foreground italic">

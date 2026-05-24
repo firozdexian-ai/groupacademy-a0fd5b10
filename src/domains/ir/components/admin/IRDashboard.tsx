@@ -69,15 +69,15 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <TrendingUp className="h-8 w-8 text-primary fill-primary/20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Investor overview</h2>
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Investor overview</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Live revenue, targets & stakeholder activity
           </p>
         </div>
         <Button
           onClick={() => onNavigate("ir-targets")}
-          className="h-14 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-3 shadow-lg"
+          className="h-14 px-8 rounded-2xl font-semibold uppercase text-[10px] tracking-widest gap-3 shadow-lg"
         >
           <Target className="h-4 w-4" /> {telemetry?.target ? "Update targets" : "Set targets"}
         </Button>
@@ -119,14 +119,14 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
           <CardHeader className="p-8 border-b border-border/10">
             <div className="flex items-center justify-between">
               <div className="space-y-1">
-                <CardTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-600">
+                <CardTitle className="text-2xl font-semibold uppercase italic tracking-tight text-emerald-600">
                   Revenue
                 </CardTitle>
                 <CardDescription className="text-[10px] font-bold">
                   Live credit-to-USD conversion
                 </CardDescription>
               </div>
-              <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black italic px-3 py-1 shadow-sm">
+              <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-semibold px-3 py-1 shadow-sm">
                 Live
               </Badge>
             </div>
@@ -134,14 +134,14 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
           <CardContent className="p-10 flex-1 flex flex-col justify-center space-y-10">
             <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6">
               <div className="space-y-2">
-                <p className="text-6xl md:text-7xl font-black italic tracking-tighter text-foreground drop-shadow-sm">
+                <p className="text-6xl md:text-7xl font-semibold tracking-tight text-foreground drop-shadow-sm">
                   {formatUSD(currentMRR)}
                 </p>
-                <p className="text-[10px] font-black text-muted-foreground bg-muted/30 w-fit px-3 py-1 rounded-md border border-border/20">
+                <p className="text-[10px] font-semibold text-muted-foreground bg-muted/30 w-fit px-3 py-1 rounded-md border border-border/20">
                   Verified Monthly Revenue
                 </p>
               </div>
-              <p className="text-2xl md:text-3xl font-black text-muted-foreground/40 italic text-right">
+              <p className="text-2xl md:text-3xl font-semibold text-muted-foreground/40 italic text-right">
                 <span className="text-[10px] block font-bold not-italic text-muted-foreground/30 mb-1">
                   Benchmark
                 </span>
@@ -154,12 +154,12 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
                 className="h-5 rounded-full bg-muted/30 shadow-inner border border-border/5"
               />
               <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-                <p className="text-[10px] font-black text-emerald-600 italic">
+                <p className="text-[10px] font-semibold text-emerald-600 italic">
                   Delta: {(totalCreditsTarget - currentCredits).toLocaleString()} Credits
                 </p>
                 <Badge
                   variant="outline"
-                  className="font-black text-[9px] border-2 border-emerald-500/30 text-emerald-600 uppercase italic px-3 py-1 bg-emerald-500/5"
+                  className="font-semibold text-[9px] border-2 border-emerald-500/30 text-emerald-600 uppercase italic px-3 py-1 bg-emerald-500/5"
                 >
                   {progressPercent.toFixed(0)}% SYNCHRONIZED
                 </Badge>
@@ -195,7 +195,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
       <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
         <CardHeader className="p-8 border-b border-border/10 bg-muted/5">
-          <CardTitle className="text-xl font-black uppercase italic tracking-tighter text-primary">
+          <CardTitle className="text-xl font-semibold uppercase italic tracking-tight text-primary">
             Neural Service Distribution
           </CardTitle>
           <CardDescription className="text-[10px] font-bold italic mt-1 text-muted-foreground/60">
@@ -215,14 +215,14 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
                 >
                   <div className="flex justify-between items-start mb-5">
                     <div className="space-y-1.5">
-                      <p className="text-[11px] font-black uppercase italic tracking-[0.2em] group-hover:text-primary transition-colors">
+                      <p className="text-[11px] font-semibold uppercase italic tracking-[0.2em] group-hover:text-primary transition-colors">
                         {service.label}
                       </p>
                       <p className="text-xs font-mono font-bold text-muted-foreground/70">
                         {actualUsage.toLocaleString()} / {service.creditTarget.toLocaleString()} CR
                       </p>
                     </div>
-                    <Badge className="bg-primary/10 text-primary border-none font-black italic text-[9px] px-2.5 py-1">
+                    <Badge className="bg-primary/10 text-primary border-none font-semibold text-[9px] px-2.5 py-1">
                       {serviceProgress.toFixed(0)}%
                     </Badge>
                   </div>
@@ -242,7 +242,7 @@ function KPICard({ title, value, icon: Icon, subtext, variant = "default" }: any
   return (
     <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-md shadow-xl overflow-hidden group hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 text-left">
       <CardHeader className="flex flex-row items-center justify-between pb-2 p-6">
-        <p className="text-[10px] font-black text-muted-foreground italic group-hover:text-foreground transition-colors">
+        <p className="text-[10px] font-semibold text-muted-foreground italic group-hover:text-foreground transition-colors">
           {title}
         </p>
         <Icon
@@ -255,7 +255,7 @@ function KPICard({ title, value, icon: Icon, subtext, variant = "default" }: any
       <CardContent className="p-6 pt-0">
         <div
           className={cn(
-            "text-4xl font-black italic tracking-tighter leading-none mb-3",
+            "text-4xl font-semibold tracking-tighter leading-none mb-3",
             variant === "accent" && "text-primary",
           )}
         >
@@ -277,7 +277,7 @@ function ActionNode({ icon: Icon, label, count, onClick }: any) {
         <Icon className="h-6 w-6 text-primary" />
       </div>
       <div className="text-left flex-1 min-w-0">
-        <p className="font-black text-sm uppercase italic tracking-widest leading-tight truncate group-hover:text-primary transition-colors">
+        <p className="font-semibold text-sm uppercase italic tracking-widest leading-tight truncate group-hover:text-primary transition-colors">
           {label}
         </p>
         <p className="text-[10px] font-bold text-muted-foreground/60 mt-1.5 truncate">

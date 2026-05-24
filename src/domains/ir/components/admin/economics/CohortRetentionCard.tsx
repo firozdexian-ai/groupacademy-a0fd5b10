@@ -66,7 +66,7 @@ export function CohortRetentionCard() {
   if (cohorts.length === 0) {
     return (
       <div className="flex flex-col items-center justify-center py-12 text-center space-y-2">
-        <p className="text-sm font-black text-muted-foreground italic">
+        <p className="text-sm font-semibold text-muted-foreground italic">
           No cohort data yet
         </p>
         <p className="text-[10px] font-bold text-muted-foreground/50 italic max-w-md">
@@ -99,10 +99,10 @@ export function CohortRetentionCard() {
         <tbody>
           {cohorts.map((c) => (
             <tr key={c.month}>
-              <td className="px-2 py-1 font-black italic text-foreground/80 whitespace-nowrap">
+              <td className="px-2 py-1 font-semibold text-foreground/80 whitespace-nowrap">
                 {format(parseISO(c.month), "MMM yyyy")}
               </td>
-              <td className="px-2 py-1 text-right font-black tabular-nums text-foreground/70">
+              <td className="px-2 py-1 text-right font-semibold tabular-nums text-foreground/70">
                 {c.size.toLocaleString()}
               </td>
               {periodCols.map((p) => {

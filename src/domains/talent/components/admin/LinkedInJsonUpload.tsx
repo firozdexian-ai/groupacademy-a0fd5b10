@@ -192,7 +192,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
               <FileJson2 className="w-10 h-10 text-primary" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-xl font-black uppercase tracking-tighter italic">Initialize Data Ingestion</h3>
+              <h3 className="text-xl font-semibold uppercase tracking-tight italic">Initialize Data Ingestion</h3>
               <p className="text-xs font-bold text-muted-foreground opacity-60">
                 Authorized LinkedIn Artifacts Only (.json)
               </p>
@@ -211,12 +211,12 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                   <Activity className="h-5 w-5 text-primary" />
                 </div>
                 <div className="text-left">
-                  <CardTitle className="text-xl font-black uppercase tracking-tighter italic">Audit Queue</CardTitle>
+                  <CardTitle className="text-xl font-semibold uppercase tracking-tight italic">Audit Queue</CardTitle>
                   <p className="text-[10px] font-bold text-muted-foreground/60">{fileName}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
-                <Badge variant="outline" className="rounded-lg border-2 font-black text-[9px] uppercase px-3 py-1">
+                <Badge variant="outline" className="rounded-lg border-2 font-semibold text-[9px] uppercase px-3 py-1">
                   {selectedIndices.size} Authorized
                 </Badge>
                 <div className="flex items-center gap-2 bg-background/50 p-2 rounded-xl border border-border/10">
@@ -228,7 +228,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                       )
                     }
                   />
-                  <span className="text-[9px] font-black mr-2">Authorization Toggle</span>
+                  <span className="text-[9px] font-semibold mr-2">Authorization Toggle</span>
                 </div>
               </div>
             </div>
@@ -255,7 +255,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                       }}
                     />
                     <div className="flex-1 min-w-0 text-left">
-                      <p className="font-black text-sm uppercase italic leading-none truncate group-hover:text-primary transition-colors">
+                      <p className="font-semibold text-sm uppercase italic leading-none truncate group-hover:text-primary transition-colors">
                         {record.data.full_name}
                       </p>
                       <p className="text-[10px] font-bold text-muted-foreground/50 mt-1 truncate">
@@ -265,7 +265,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                     {record.data._companyName && (
                       <Badge
                         variant="outline"
-                        className="rounded-md border font-black text-[8px] uppercase gap-1 bg-background shadow-inner"
+                        className="rounded-md border font-semibold text-[8px] uppercase gap-1 bg-background shadow-inner"
                       >
                         <Building2 className="w-2 h-2" /> {record.data._companyName}
                       </Badge>
@@ -280,7 +280,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                 <Button
                   onClick={handleImportProtocol}
                   disabled={importing || !selectedIndices.size}
-                  className="flex-1 h-14 rounded-2xl font-black text-[11px] shadow-2xl shadow-primary/30"
+                  className="flex-1 h-14 rounded-2xl font-semibold text-[11px] shadow-2xl shadow-primary/30"
                 >
                   {importing ? <Loader2 className="animate-spin h-5 w-5" /> : <ShieldCheck className="h-5 w-5 mr-2" />}
                   Authorize Ingestion Sequence
@@ -291,7 +291,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                     setParsed([]);
                     setFileName(null);
                   }}
-                  className="h-14 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest text-muted-foreground/40 hover:text-destructive"
+                  className="h-14 px-8 rounded-2xl font-semibold uppercase text-[10px] tracking-widest text-muted-foreground/40 hover:text-destructive"
                 >
                   Abort
                 </Button>
@@ -309,7 +309,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
               <ShieldCheck className="w-10 h-10 text-white" />
             </div>
             <div className="space-y-2">
-              <h3 className="text-3xl font-black uppercase tracking-tighter italic">Import complete</h3>
+              <h3 className="text-3xl font-semibold uppercase tracking-tight italic">Import complete</h3>
               <p className="text-xs font-bold text-emerald-600/60">
                 Imported: {fileName}
               </p>
@@ -321,10 +321,10 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                 { label: "Logic Faults", val: importResult.failed, color: "text-destructive" },
               ].map((s, i) => (
                 <div key={i} className="p-6 bg-background rounded-3xl border-2 border-border/5">
-                  <p className={cn("text-4xl font-black italic tracking-tighter leading-none mb-2", s.color)}>
+                  <p className={cn("text-4xl font-semibold tracking-tighter leading-none mb-2", s.color)}>
                     {s.val}
                   </p>
-                  <p className="text-[8px] font-black opacity-40 leading-tight">{s.label}</p>
+                  <p className="text-[8px] font-semibold opacity-40 leading-tight">{s.label}</p>
                 </div>
               ))}
             </div>
@@ -333,7 +333,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                 setParsed([]);
                 setImportResult(null);
               }}
-              className="w-full h-14 rounded-2xl border-2 font-black uppercase text-[11px] tracking-widest"
+              className="w-full h-14 rounded-2xl border-2 font-semibold uppercase text-[11px] tracking-widest"
               variant="outline"
             >
               Initialize Next Ingestion

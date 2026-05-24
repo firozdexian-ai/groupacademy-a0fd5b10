@@ -143,9 +143,9 @@ export function ProfessionalRolesPanel() {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Briefcase className="h-8 w-8" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Taxonomy & Roles</h2>
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Taxonomy & Roles</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Workforce categorization & talent distribution
           </p>
         </div>
@@ -212,10 +212,10 @@ export function ProfessionalRolesPanel() {
 
           <CardHeader className="p-6 border-b border-border/20 bg-muted/5 z-10">
             <div className="space-y-1">
-              <h3 className="text-[10px] font-black uppercase tracking-[0.3em] italic text-muted-foreground/70 flex items-center gap-2">
+              <h3 className="text-[10px] font-semibold uppercase tracking-[0.3em] italic text-muted-foreground/70 flex items-center gap-2">
                 <Tags className="h-3 w-3" /> Mapping Roles For
               </h3>
-              <h2 className="text-2xl font-black italic tracking-tight">{activeCategory?.name ?? "—"}</h2>
+              <h2 className="text-2xl font-semibold tracking-tight">{activeCategory?.name ?? "—"}</h2>
             </div>
           </CardHeader>
 
@@ -267,7 +267,7 @@ export function ProfessionalRolesPanel() {
                         >
                           {r.name}
                         </div>
-                        <div className="text-[10px] font-black text-muted-foreground mt-1 flex items-center gap-1.5">
+                        <div className="text-[10px] font-semibold text-muted-foreground mt-1 flex items-center gap-1.5">
                           <Badge variant="secondary" className="px-1.5 py-0 text-[9px] h-4">
                             {tc}
                           </Badge>{" "}

@@ -364,7 +364,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <Database className="h-8 w-8 text-primary" />
           </div>
           <div className="space-y-1">
-            <CardTitle className="text-3xl font-black uppercase tracking-tighter italic">Registry Ingestion</CardTitle>
+            <CardTitle className="text-3xl font-semibold uppercase tracking-tight italic">Registry Ingestion</CardTitle>
             <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
               Bulk talent upload
             </CardDescription>
@@ -378,28 +378,28 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <TabsTrigger
               value="links"
               disabled={isUploading}
-              className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
             >
               <LinkIcon className="w-4 h-4" /> Links
             </TabsTrigger>
             <TabsTrigger
               value="files"
               disabled={isUploading}
-              className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
             >
               <FileUp className="w-4 h-4" /> PDFs
             </TabsTrigger>
             <TabsTrigger
               value="csv"
               disabled={isUploading}
-              className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
             >
               <FileSpreadsheet className="w-4 h-4" /> CSV DB
             </TabsTrigger>
             <TabsTrigger
               value="linkedin"
               disabled={isUploading}
-              className="rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
             >
               <FileJson2 className="w-4 h-4" /> LinkedIn
             </TabsTrigger>
@@ -407,7 +407,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
           <TabsContent value="links" className="mt-8 space-y-6 animate-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-3">
-              <Label className="text-[10px] font-black text-primary ml-1">
+              <Label className="text-[10px] font-semibold text-primary ml-1">
                 Payload URLs (One per line)
               </Label>
               <Textarea
@@ -421,7 +421,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <Button
               onClick={uploadUrlsAndProcess}
               disabled={isUploading || !urlsInput.trim()}
-              className="w-full h-16 rounded-[20px] font-black text-[11px] shadow-2xl shadow-primary/30 group relative overflow-hidden"
+              className="w-full h-16 rounded-[20px] font-semibold text-[11px] shadow-2xl shadow-primary/30 group relative overflow-hidden"
             >
               <span className="relative z-10 flex items-center gap-3">
                 {isUploading ? <Loader2 className="animate-spin h-5 w-5" /> : <Upload className="h-5 w-5" />}
@@ -451,7 +451,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                     <FileUp className="h-10 w-10 text-muted-foreground" />
                   </div>
                   <div>
-                    <p className="text-xl font-black uppercase tracking-tight italic">Inject PDF Payloads</p>
+                    <p className="text-xl font-semibold uppercase tracking-tight italic">Inject PDF Payloads</p>
                     <p className="text-[10px] font-bold text-muted-foreground mt-2">
                       {singleMode ? "1 Artifact Limit" : `Max ${MAX_FILES} Artifacts`} · {MAX_FILE_SIZE_MB}MB Limit
                     </p>
@@ -468,7 +468,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                     >
                       <div className="flex items-center gap-3 min-w-0">
                         <FileText className="w-4 h-4 text-primary opacity-40 shrink-0" />
-                        <span className="text-[11px] font-black uppercase tracking-tight truncate italic">
+                        <span className="text-[11px] font-semibold uppercase tracking-tight truncate italic">
                           {file.name}
                         </span>
                       </div>
@@ -483,7 +483,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <Button
               onClick={uploadFilesAndProcess}
               disabled={isUploading || selectedFiles.length === 0}
-              className="w-full h-16 rounded-[20px] font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-primary/30 group"
+              className="w-full h-16 rounded-[20px] font-semibold uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-primary/30 group"
             >
               {uploadingFiles ? (
                 <Loader2 className="animate-spin mr-3 h-5 w-5" />
@@ -513,7 +513,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                     <FileSpreadsheet className="h-10 w-10" />
                   </div>
                   <div>
-                    <p className="text-xl font-black uppercase tracking-tight italic">Inject Database Payload</p>
+                    <p className="text-xl font-semibold uppercase tracking-tight italic">Inject Database Payload</p>
                     <p className="text-[10px] font-bold text-muted-foreground mt-2">
                       {csvFile ? csvFile.name : "Accepts Shomvob .CSV Exports"}
                     </p>
@@ -524,7 +524,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <Button
               onClick={processCsvDatabase}
               disabled={isUploading || !csvFile}
-              className="w-full h-16 rounded-[20px] font-black uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-blue-500/30 bg-blue-600 hover:bg-blue-700 text-white group"
+              className="w-full h-16 rounded-[20px] font-semibold uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-blue-500/30 bg-blue-600 hover:bg-blue-700 text-white group"
             >
               {isUploading ? <Loader2 className="animate-spin mr-3 h-5 w-5" /> : <Database className="mr-3 h-5 w-5" />}
               Execute CSV Agent Sync
@@ -541,7 +541,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Zap className="h-5 w-5 text-amber-500 fill-current animate-pulse" />
-                <span className="text-xl font-black uppercase tracking-tighter italic">Process Telemetry</span>
+                <span className="text-xl font-semibold uppercase tracking-tight italic">Process Telemetry</span>
               </div>
               <Badge
                 className={cn(
@@ -568,8 +568,8 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
               ].map((stat, i) => (
                 <div key={i} className="bg-background/50 p-4 rounded-2xl border border-border/10 text-center space-y-1">
                   <stat.icon className={cn("h-4 w-4 mx-auto mb-1 opacity-40", stat.color)} />
-                  <p className="text-xl font-black italic tracking-tighter leading-none">{stat.val}</p>
-                  <p className="text-[8px] font-black opacity-40">{stat.label}</p>
+                  <p className="text-xl font-semibold tracking-tight leading-none">{stat.val}</p>
+                  <p className="text-[8px] font-semibold opacity-40">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -580,7 +580,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                   <Button
                     variant="ghost"
                     onClick={() => setShowErrorLog(true)}
-                    className="h-10 px-6 font-black uppercase text-[10px] tracking-widest text-destructive"
+                    className="h-10 px-6 font-semibold uppercase text-[10px] tracking-widest text-destructive"
                   >
                     Review Fault Log
                   </Button>
@@ -591,7 +591,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                     setShowProgress(false);
                     setCurrentBatch(null);
                   }}
-                  className="rounded-xl h-10 px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-2"
+                  className="rounded-xl h-10 px-6 border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
                 >
                   <RefreshCw className="w-3.5 h-3.5" /> Terminate Session
                 </Button>
@@ -606,7 +606,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
           <div className="h-2 w-full bg-destructive/40" />
           <div className="p-10">
             <DialogHeader className="mb-8">
-              <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+              <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
                 Exception Log Trace
               </DialogTitle>
             </DialogHeader>
@@ -617,7 +617,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                     <p className="font-mono text-[10px] text-destructive/40 mb-2">
                       Entry_{idx.toString().padStart(3, "0")}
                     </p>
-                    <p className="font-black text-sm uppercase tracking-tight italic truncate mb-1">
+                    <p className="font-semibold text-sm uppercase tracking-tight italic truncate mb-1">
                       {err.url || err.email || "System Anomaly"}
                     </p>
                     <p className="text-[11px] font-medium text-muted-foreground italic leading-relaxed">
@@ -630,7 +630,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <div className="flex justify-end pt-8">
               <Button
                 onClick={() => setShowErrorLog(false)}
-                className="rounded-xl h-12 px-10 font-black uppercase text-[10px] tracking-widest"
+                className="rounded-xl h-12 px-10 font-semibold uppercase text-[10px] tracking-widest"
               >
                 Acknowledge
               </Button>

@@ -194,10 +194,10 @@ export function CompaniesTab() {
       {/* Executive Action Bar */}
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <Building2 className="h-6 w-6 text-primary" /> Employer Registry
           </h2>
-          <p className="text-[10px] font-black text-muted-foreground/60">
+          <p className="text-[10px] font-semibold text-muted-foreground/60">
             {totalCount} Logic Nodes In Sector
           </p>
         </div>
@@ -205,13 +205,13 @@ export function CompaniesTab() {
           <Button
             variant="outline"
             onClick={() => setShowBatchUpload(true)}
-            className="rounded-xl border-2 font-black uppercase text-[10px] h-11 px-5"
+            className="rounded-xl border-2 font-semibold uppercase text-[10px] h-11 px-5"
           >
             Bulk Ingestion
           </Button>
           <Button
             onClick={() => handleOpenDialog()}
-            className="rounded-xl font-black uppercase text-[10px] h-11 px-6 shadow-xl bg-primary text-primary-foreground"
+            className="rounded-xl font-semibold uppercase text-[10px] h-11 px-6 shadow-xl bg-primary text-primary-foreground"
           >
             <Plus className="h-4 w-4 mr-2" /> Add Node
           </Button>
@@ -252,10 +252,10 @@ export function CompaniesTab() {
             />
           </div>
           <Select value={industryFilter} onValueChange={setIndustryFilter}>
-            <SelectTrigger className="w-[240px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] bg-muted/5">
+            <SelectTrigger className="w-[240px] h-14 rounded-2xl border-2 font-semibold uppercase text-[10px] bg-muted/5">
               <SelectValue placeholder="Industry Filter" />
             </SelectTrigger>
-            <SelectContent className="font-black text-[10px] uppercase">
+            <SelectContent className="font-semibold text-[10px] uppercase">
               <SelectItem value="all">Global Sector</SelectItem>
               <SelectItem value="none">Unclassed Nodes</SelectItem>
               {industryOptions.map((opt) => (
@@ -269,7 +269,7 @@ export function CompaniesTab() {
 
         <Table>
           <TableHeader className="bg-muted/20">
-            <TableRow className="text-[10px] font-black">
+            <TableRow className="text-[10px] font-semibold">
               <th className="pl-8 py-6">Employer Artifact</th>
               <th>Status</th>
               <th>Outreach Pulse</th>
@@ -299,7 +299,7 @@ export function CompaniesTab() {
                         )}
                       </div>
                       <div>
-                        <p className="font-black uppercase italic group-hover:text-primary transition-colors text-sm">
+                        <p className="font-semibold uppercase italic group-hover:text-primary transition-colors text-sm">
                           {company.name}
                         </p>
                         <p className="text-[9px] font-bold opacity-50 uppercase truncate max-w-[200px]">
@@ -322,13 +322,13 @@ export function CompaniesTab() {
                     {outreachHistory[company.id] ? (
                       <Badge
                         variant="outline"
-                        className="text-[8px] font-black bg-emerald-500/5 text-emerald-600 border-emerald-500/10"
+                        className="text-[8px] font-semibold bg-emerald-500/5 text-emerald-600 border-emerald-500/10"
                       >
                         SENT: {new Date(outreachHistory[company.id].sent_at).toLocaleDateString()} ·{" "}
                         {outreachHistory[company.id].message_type}
                       </Badge>
                     ) : (
-                      <span className="text-[9px] opacity-20 italic font-black uppercase">NO_HISTORY</span>
+                      <span className="text-[9px] opacity-20 font-semibold uppercase">NO_HISTORY</span>
                     )}
                   </TableCell>
                   <TableCell className="text-right pr-8">
@@ -337,7 +337,7 @@ export function CompaniesTab() {
                         <SelectTrigger className="w-10 h-10 p-0 border-2 rounded-xl hover:bg-primary/10 transition-all bg-transparent">
                           <Send className="w-4 h-4 text-primary m-auto" />
                         </SelectTrigger>
-                        <SelectContent className="font-black text-[10px] uppercase">
+                        <SelectContent className="font-semibold text-[10px] uppercase">
                           {EMAIL_TEMPLATE_OPTIONS.map((opt) => (
                             <SelectItem key={opt.value} value={opt.value}>
                               {opt.label}
@@ -375,18 +375,18 @@ export function CompaniesTab() {
             variant="ghost"
             onClick={() => setPage((p) => Math.max(1, p - 1))}
             disabled={page === 1}
-            className="font-black text-[10px] uppercase"
+            className="font-semibold text-[10px] uppercase"
           >
             Prev
           </Button>
-          <span className="text-[10px] font-black uppercase italic opacity-40">
+          <span className="text-[10px] font-semibold uppercase italic opacity-40">
             Sector {page} of {Math.ceil(totalCount / ITEMS_PER_PAGE)}
           </span>
           <Button
             variant="ghost"
             onClick={() => setPage((p) => p + 1)}
             disabled={page * ITEMS_PER_PAGE >= totalCount}
-            className="font-black text-[10px] uppercase"
+            className="font-semibold text-[10px] uppercase"
           >
             Next
           </Button>
@@ -400,11 +400,11 @@ export function CompaniesTab() {
           <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[85vh] overflow-y-auto no-scrollbar">
             <div className="col-span-full flex items-center gap-3 border-b pb-4 mb-2">
               <Activity className="h-6 w-6 text-primary" />
-              <h3 className="text-xl font-black uppercase italic tracking-tighter">Recalibrate Employer Node</h3>
+              <h3 className="text-xl font-semibold uppercase italic tracking-tight">Recalibrate Employer Node</h3>
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Identity*</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Identity*</Label>
               <Input
                 value={formData.name}
                 onChange={(e) => setFormData({ ...formData, name: e.target.value })}
@@ -412,7 +412,7 @@ export function CompaniesTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Industry Sector</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Industry Sector</Label>
               <Input
                 value={formData.industry}
                 onChange={(e) => setFormData({ ...formData, industry: e.target.value })}
@@ -420,7 +420,7 @@ export function CompaniesTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Website URL</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Website URL</Label>
               <Input
                 value={formData.website}
                 onChange={(e) => setFormData({ ...formData, website: e.target.value })}
@@ -428,7 +428,7 @@ export function CompaniesTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Primary Email</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Primary Email</Label>
               <Input
                 value={formData.primary_email}
                 onChange={(e) => setFormData({ ...formData, primary_email: e.target.value })}
@@ -436,7 +436,7 @@ export function CompaniesTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">LinkedIn Profile</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">LinkedIn Profile</Label>
               <Input
                 value={formData.linkedin_url}
                 onChange={(e) => setFormData({ ...formData, linkedin_url: e.target.value })}
@@ -444,7 +444,7 @@ export function CompaniesTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Facebook Handle</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Facebook Handle</Label>
               <Input
                 value={formData.facebook_url}
                 onChange={(e) => setFormData({ ...formData, facebook_url: e.target.value })}
@@ -452,7 +452,7 @@ export function CompaniesTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Logo Metadata URL</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Logo Metadata URL</Label>
               <Input
                 value={formData.logo_url}
                 onChange={(e) => setFormData({ ...formData, logo_url: e.target.value })}
@@ -461,7 +461,7 @@ export function CompaniesTab() {
             </div>
 
             <div className="col-span-full space-y-2">
-              <Label className="text-[10px] font-black uppercase ml-1">Registry Notes</Label>
+              <Label className="text-[10px] font-semibold uppercase ml-1">Registry Notes</Label>
               <Textarea
                 value={formData.notes}
                 onChange={(e) => setFormData({ ...formData, notes: e.target.value })}
@@ -471,7 +471,7 @@ export function CompaniesTab() {
 
             <div className="col-span-full flex items-center justify-between p-5 bg-muted/20 rounded-3xl border-2 border-border/10">
               <div className="space-y-1">
-                <p className="text-[10px] font-black">Verified Strategic Artifact</p>
+                <p className="text-[10px] font-semibold">Verified Strategic Artifact</p>
                 <p className="text-[9px] text-muted-foreground uppercase opacity-60">
                   High-priority node in B2B matching logic
                 </p>
@@ -486,14 +486,14 @@ export function CompaniesTab() {
               <Button
                 variant="ghost"
                 onClick={() => setIsDialogOpen(false)}
-                className="rounded-xl uppercase text-[10px] font-black px-8"
+                className="rounded-xl uppercase text-[10px] font-semibold px-8"
               >
                 Abort
               </Button>
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="rounded-xl px-12 uppercase text-[10px] font-black shadow-lg"
+                className="rounded-xl px-12 uppercase text-[10px] font-semibold shadow-lg"
               >
                 {saving ? <Loader2 className="animate-spin h-4 w-4" /> : <ShieldCheck className="h-4 w-4 mr-2" />}{" "}
                 Commit Node
@@ -507,7 +507,7 @@ export function CompaniesTab() {
       <AlertDialog open={!!deleteTarget} onOpenChange={() => setDeleteTarget(null)}>
         <AlertDialogContent className="rounded-3xl border-4 bg-background text-left">
           <AlertDialogHeader>
-            <AlertDialogTitle className="font-black italic uppercase text-2xl tracking-tighter">
+            <AlertDialogTitle className="font-semibold uppercase text-2xl tracking-tight">
               Purge Registry Node?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-xs font-bold text-muted-foreground uppercase leading-relaxed">
@@ -516,14 +516,14 @@ export function CompaniesTab() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-6">
-            <AlertDialogCancel className="rounded-xl font-black uppercase text-[10px]">Decline</AlertDialogCancel>
+            <AlertDialogCancel className="rounded-xl font-semibold uppercase text-[10px]">Decline</AlertDialogCancel>
             <AlertDialogAction
               onClick={async () => {
                 await deleteCompany(deleteTarget.id);
                 setDeleteTarget(null);
                 loadData();
               }}
-              className="bg-destructive text-white rounded-xl font-black uppercase text-[10px] px-10"
+              className="bg-destructive text-white rounded-xl font-semibold uppercase text-[10px] px-10"
             >
               Confirm Termination
             </AlertDialogAction>
@@ -553,8 +553,8 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-[10px] font-black text-muted-foreground italic mb-1">{label}</p>
-          <p className="text-3xl font-black italic tracking-tighter text-foreground">{value.toLocaleString()}</p>
+          <p className="text-[10px] font-semibold text-muted-foreground italic mb-1">{label}</p>
+          <p className="text-3xl font-semibold tracking-tight text-foreground">{value.toLocaleString()}</p>
         </div>
       </div>
     </Card>

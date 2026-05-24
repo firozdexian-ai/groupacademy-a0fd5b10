@@ -194,18 +194,18 @@ export function ServiceOutreachTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-emerald-500">
             <Sparkles className="h-8 w-8 text-emerald-500 fill-emerald-500/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Service Outreach
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Campaign Distribution & Attribution Registry
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Badge
             variant="outline"
-            className="h-14 px-6 rounded-2xl border-2 font-black italic gap-2 text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
+            className="h-14 px-6 rounded-2xl border-2 font-semibold gap-2 text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
           >
             <Activity className="h-4 w-4" /> {shareLogs.length} TOTAL TRANSMISSIONS
           </Badge>
@@ -239,7 +239,7 @@ export function ServiceOutreachTab() {
                     <Icon className={cn("h-8 w-8", service.color)} />
                   </div>
                   <div className="text-left">
-                    <h3 className="text-xl font-black uppercase italic tracking-tight">{service.title}</h3>
+                    <h3 className="text-xl font-semibold uppercase italic tracking-tight">{service.title}</h3>
                     <p className="text-[10px] font-bold text-muted-foreground mt-1 italic">
                       {service.description}
                     </p>
@@ -247,7 +247,7 @@ export function ServiceOutreachTab() {
                 </div>
                 <div className="flex flex-col items-end gap-2">
                   {sharedCount > 0 && (
-                    <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black text-[9px] italic px-3">
+                    <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-semibold text-[9px] italic px-3">
                       {sharedCount} NODES ACTIVE
                     </Badge>
                   )}
@@ -272,7 +272,7 @@ export function ServiceOutreachTab() {
                   {selectedService && <selectedService.icon className={cn("h-8 w-8", selectedService.color)} />}
                 </div>
                 <div className="space-y-1">
-                  <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter">
+                  <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight">
                     Promote: {selectedService?.title}
                   </DialogTitle>
                   <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
@@ -328,7 +328,7 @@ export function ServiceOutreachTab() {
                   >
                     <div className="flex items-center gap-4">
                       <ch.icon className={cn("w-5 h-5", ch.color)} />
-                      <span className="font-black uppercase italic text-[10px] tracking-widest">{ch.label}</span>
+                      <span className="font-semibold uppercase italic text-[10px] tracking-widest">{ch.label}</span>
                     </div>
                     {selectedService && isShared(selectedService, ch.id) && (
                       <CheckCircle2 className="w-4 h-4 text-emerald-500" />
@@ -342,7 +342,7 @@ export function ServiceOutreachTab() {
                 {activeTab !== "custom" ? (
                   <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
                     <div className="p-6 bg-emerald-500/5 rounded-[32px] border-2 border-emerald-500/10">
-                      <p className="text-[10px] font-black uppercase text-emerald-500 italic mb-3 flex items-center gap-2">
+                      <p className="text-[10px] font-semibold uppercase text-emerald-500 italic mb-3 flex items-center gap-2">
                         <Globe className="h-3 w-3" /> Regional Template
                       </p>
                       <Textarea
@@ -354,7 +354,7 @@ export function ServiceOutreachTab() {
                       />
                       <Button
                         variant="outline"
-                        className="w-full mt-4 rounded-xl font-black uppercase text-[10px] italic border-2"
+                        className="w-full mt-4 rounded-xl font-semibold uppercase text-[10px] italic border-2"
                         onClick={() =>
                           copyToClipboard(
                             activeTab === "linkedin" || activeTab === "telegram" ? templates.english : templates.bangla,
@@ -367,14 +367,14 @@ export function ServiceOutreachTab() {
                     </div>
                     <div className="grid grid-cols-2 gap-4">
                       <Button
-                        className="h-16 rounded-2xl font-black uppercase italic text-sm gap-3 shadow-lg bg-emerald-600 hover:bg-emerald-700 text-white"
+                        className="h-16 rounded-2xl font-semibold uppercase italic text-sm gap-3 shadow-lg bg-emerald-600 hover:bg-emerald-700 text-white"
                         onClick={() => handleSocialShare(activeTab)}
                       >
                         <ExternalLink className="h-5 w-5" /> Launch {activeTab.toUpperCase()}
                       </Button>
                       <Button
                         variant="outline"
-                        className="h-16 rounded-2xl font-black uppercase italic text-sm gap-3 border-2"
+                        className="h-16 rounded-2xl font-semibold uppercase italic text-sm gap-3 border-2"
                         onClick={() =>
                           copyToClipboard(selectedService ? getShareLink(selectedService, activeTab) : "", "link")
                         }
@@ -386,18 +386,18 @@ export function ServiceOutreachTab() {
                 ) : (
                   <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
                     <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase text-emerald-500 italic ml-2">
+                      <Label className="text-[10px] font-semibold uppercase text-emerald-500 italic ml-2">
                         Channel Identifier
                       </Label>
                       <Input
                         placeholder="e.g. UNIVERSITY_NEWSLETTER_Q2"
                         value={customChannel}
                         onChange={(e) => setCustomChannel(e.target.value)}
-                        className="h-14 rounded-2xl border-2 font-black uppercase text-xs tracking-widest"
+                        className="h-14 rounded-2xl border-2 font-semibold uppercase text-xs tracking-widest"
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase text-emerald-500 italic ml-2">
+                      <Label className="text-[10px] font-semibold uppercase text-emerald-500 italic ml-2">
                         Generated Telemetry URL
                       </Label>
                       <div className="flex gap-2">
@@ -421,7 +421,7 @@ export function ServiceOutreachTab() {
                       </div>
                     </div>
                     <Button
-                      className="w-full h-16 rounded-2xl font-black uppercase italic text-sm bg-emerald-600 hover:bg-emerald-700 text-white"
+                      className="w-full h-16 rounded-2xl font-semibold uppercase italic text-sm bg-emerald-600 hover:bg-emerald-700 text-white"
                       onClick={() => {
                         if (customChannel) recordShare(customChannel);
                       }}

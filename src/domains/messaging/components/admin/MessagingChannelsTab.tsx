@@ -163,10 +163,10 @@ export function MessagingChannelsTab({
           <div className="space-y-1">
             <div className="flex items-center gap-3 text-primary">
               <Network className="h-8 w-8" />
-              {title && <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">{title}</h2>}
+              {title && <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">{title}</h2>}
             </div>
             {description && (
-              <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+              <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
                 {description}
               </p>
             )}
@@ -178,18 +178,18 @@ export function MessagingChannelsTab({
         <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-lg overflow-hidden flex flex-col">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary to-blue-500" />
           <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
-            <CardTitle className="text-lg font-black italic tracking-tight flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold tracking-tight flex items-center gap-2">
               <Plus className="h-5 w-5 text-primary" /> Connect a new channel
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 space-y-6 flex-1 flex flex-col">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-muted-foreground">Label</Label>
+                <Label className="text-[10px] font-semibold text-muted-foreground">Label</Label>
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} className="h-12 rounded-xl border-2" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[10px] font-black text-muted-foreground">Region</Label>
+                <Label className="text-[10px] font-semibold text-muted-foreground">Region</Label>
                 <Input
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
@@ -213,7 +213,7 @@ export function MessagingChannelsTab({
             </div>
 
             <div className="border-t border-border/20 pt-6 space-y-3 mt-auto">
-              <Label className="text-[10px] font-black text-muted-foreground italic flex items-center gap-2">
+              <Label className="text-[10px] font-semibold text-muted-foreground italic flex items-center gap-2">
                 <QrCode className="h-3 w-3" /> Already scanned? Paste account ID
               </Label>
               <p className="text-xs text-muted-foreground">
@@ -252,7 +252,7 @@ export function MessagingChannelsTab({
         <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-lg overflow-hidden flex flex-col">
           <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-emerald-500" />
           <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
-            <CardTitle className="text-lg font-black italic tracking-tight flex items-center gap-2">
+            <CardTitle className="text-lg font-semibold tracking-tight flex items-center gap-2">
               <Network className="h-5 w-5 text-emerald-500" /> Connected channels
             </CardTitle>
           </CardHeader>
@@ -327,7 +327,7 @@ export function MessagingChannelsTab({
                         title="Toggle AI Auto-Reply"
                       >
                         <Switch checked={c.auto_reply_enabled} onCheckedChange={(v) => toggleAutoReply(c.id, v)} />
-                        <span className="text-[10px] font-black text-muted-foreground">
+                        <span className="text-[10px] font-semibold text-muted-foreground">
                           AI
                         </span>
                       </div>

@@ -87,9 +87,9 @@ export function IRPipelineBoard() {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Layers className="h-8 w-8 text-primary fill-primary/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Capital Pipeline</h2>
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Capital Pipeline</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Active Syndicate Mapping & Term Sheet Velocity
           </p>
         </div>
@@ -98,7 +98,7 @@ export function IRPipelineBoard() {
         <div className="flex items-center gap-3 bg-background/50 p-1.5 rounded-[20px] border-2 border-border/20 shadow-sm">
           <Filter className="h-4 w-4 text-muted-foreground ml-3" />
           <Select value={leadFilter} onValueChange={(v) => setLeadFilter(v as LeadFilter)}>
-            <SelectTrigger className="w-[200px] h-11 border-none bg-transparent font-black uppercase text-[10px] tracking-widest focus:ring-0">
+            <SelectTrigger className="w-[200px] h-11 border-none bg-transparent font-semibold uppercase text-[10px] tracking-widest focus:ring-0">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-2">
@@ -221,10 +221,10 @@ function KpiCard({
           {icon}
         </div>
         <div className="min-w-0">
-          <p className="text-[9px] font-black text-muted-foreground/50 mb-1 line-clamp-1">
+          <p className="text-[9px] font-semibold text-muted-foreground/50 mb-1 line-clamp-1">
             {label}
           </p>
-          <p className="text-2xl font-black italic tracking-tighter leading-none truncate">{value}</p>
+          <p className="text-2xl font-semibold tracking-tight leading-none truncate">{value}</p>
           <p className="text-[9px] font-bold text-muted-foreground/40 mt-1.5 truncate">
             {hint}
           </p>
