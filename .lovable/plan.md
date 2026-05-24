@@ -1,38 +1,40 @@
-# Phase A11 — Admin Button & Input Normalization
+# Phase A11 — DONE (Admin Button & Input Normalization)
 
-A10 calmed the typography; admin still ships oversized "mega buttons" (`h-14 px-12 rounded-2xl shadow-2xl`) that feel like a different product from the talent app. This phase normalizes admin controls to the same scale used elsewhere.
+Shipped 2026-05-24. Shrunk admin's oversized "mega buttons" to standard control size and finished the toast jargon sweep A9 left behind.
 
-## Why this next
-Highest remaining visual offender. Buttons are the most-touched element in admin — shrinking them ties the whole shell together without redesigning any feature.
+## Files touched (~60)
+- **Button sweep (`/tmp/admin-button-sweep.mjs`)** — 43 files in `src/domains/*/components/admin` + `src/shells/admin`:
+  - `h-14 px-{8,10,12} rounded-2xl` → `h-10 px-4 rounded-xl`
+  - `h-14 rounded-2xl` → `h-10 rounded-xl`
+  - `shadow-2xl shadow-{primary,destructive}/{10,20,30}` → `shadow-sm`
+  - `text-[11px]` button labels → `text-sm`
+  - `text-[10px] font-bold uppercase` → `text-xs font-medium`
+  - Collapsed double-spaces in className strings.
 
-## Scope (in)
-1. **Primary action buttons** in admin domain files
-   - `h-14 px-12 rounded-2xl` → `h-10 px-4 rounded-xl`
-   - `h-14 px-10 rounded-2xl` → `h-10 px-4 rounded-xl`
-   - `shadow-2xl shadow-primary/30` → `shadow-sm`
-   - `text-[11px]` button labels → default size (drop)
-2. **Dialog/sheet footers** — same shrink for confirm/cancel buttons.
-3. **Toast prefix spot-check** — `rg` for `Protocol Fault:`, `Handshake Failed:`, `Registry`, `Synchroniz` in admin toasts; rewrite the stragglers A9 missed.
-4. **Input/select heights** — only the obvious `h-14` form inputs in admin; leave shadcn defaults alone.
+- **Toast sweep (`/tmp/admin-toast-sweep*.mjs`)** — 19 files:
+  - `Registry Sync Failed` / `Failed` / `Fault` / `Complete` / `Ingestion Fault` / `Persistence Fault` → plain "Failed to save", "Save failed", "Saved", "Error".
+  - `Fiscal Registry Updated` → "Credits updated".
+  - `Artifact Purged from Registry` → "Deleted".
+  - `Ingested N Registry Artifacts` → "Imported N cards".
+  - `Target Synchronized` → "Target saved".
+  - `Telemetry Fault: Registry Sync Failed` → "Failed to load".
+  - String-concat variants (`"Registry Fault: " + err.message`) also normalized.
 
-## Scope (out)
-- No logic, routes, RPCs, schema, or icons.
-- No talent or gro10x shells (already normalized).
-- No table/card redesign — only control sizing.
-- Hero CTAs inside `IRDashboard`, `JobsHub`, `TalentUploadTab` may keep one larger primary if it anchors the page (case-by-case).
+## Audit
+- Before: 90 hits across 39 files for `h-14 px-* rounded-2xl` / `shadow-2xl shadow-primary`.
+- After: 0 mega-button hits, 0 jargon toast hits inside admin domains.
 
-## Approach
-1. **Audit**: `rg "h-14.*rounded-2xl" src/domains/*/components/admin src/shells/admin` + `rg "shadow-2xl.*primary" src/domains/*/components/admin`.
-2. **Automated sweep** (one script, regex-only, no AST):
-   - Replace the three class combos above inside `className="..."` strings.
-   - Collapse double spaces.
-3. **Hand-review** the ~5–10 hero hubs after the sweep to restore a single anchor CTA where the page reads flat.
-4. **Toast sweep**: small `sed`-style pass for remaining jargon prefixes.
+## Status overview
+- A5 Jobs Hub — DONE
+- A6 Gigs Hub — DONE
+- A7 Profile / Talent Mirror / My Gigs — DONE
+- A8 Career Abroad — DONE
+- A9 Admin shell jargon — DONE
+- A10 Admin visual polish — DONE
+- A11 Admin button normalization — DONE
+- B3–B5 Cross-cutting jargon cleanup — DONE
 
-## Estimated surface
-~40–60 admin files, mostly 1–3 class edits each.
-
-## Open question
-Keep one hero-sized primary per hub (e.g. "Upload jobs", "Add company"), or shrink uniformly? Default: shrink uniformly — the hub header + page title already anchor the page, an oversized button just adds visual weight.
-
-Approve and I'll run the sweep + hand-tune the hub anchors.
+## Suggested next phase
+- **JSDoc / identifier sweep** (low priority, zero user impact): drop `GroUp Academy: …`, `CTO Reference: …`, `Phase Z0 Hardened` JSDoc headers; rename internal `handleImportProtocol` / `handleGenerateHandshake` helpers.
+- **Admin card/table polish**: A11 finished controls; remaining inconsistency is `rounded-[32px]` / `rounded-[40px]` "premium" cards on data tables. Standardizing to `rounded-xl` / `rounded-2xl` would match the talent app.
+- **Empty-state pass**: many admin tabs still ship custom 200-line "no data" panels. Replacing with the shared `EmptyState` component would shrink code and unify tone.
