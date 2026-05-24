@@ -72,7 +72,7 @@ const Dashboard = () => {
 
         <main className="flex-1 overflow-y-auto relative bg-background/50">
           <ImpersonationBanner />
-          <header className="h-16 flex items-center gap-4 border-b bg-background/80 backdrop-blur-md px-6 sticky top-0 z-50">
+          <header className="h-16 flex items-center gap-4 border-b bg-background/80 px-6 sticky top-0 z-50">
             <SidebarTrigger className="hover:bg-primary/5 rounded-xl transition-all" />
             <div className="h-4 w-px bg-border" />
             <h1 className="text-base font-semibold tracking-tight text-foreground truncate">{pageTitle}</h1>
@@ -82,7 +82,7 @@ const Dashboard = () => {
             <Suspense
               fallback={
                 <div className="space-y-6">
-                  <Skeleton className="h-32 w-full rounded-[32px]" />
+                  <Skeleton className="h-32 w-full rounded-2xl" />
                   <DashboardTableSkeleton />
                 </div>
               }

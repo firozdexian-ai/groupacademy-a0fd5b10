@@ -112,7 +112,7 @@ export default function Organization() {
             {FEATURES.map((feature) => (
               <Card
                 key={feature.title}
-                className="rounded-[32px] border-border/40 bg-card/50 backdrop-blur-sm group hover:border-primary/20 transition-all"
+                className="rounded-2xl border-border/40 bg-card backdrop-blur-sm group hover:border-primary/20 transition-all"
               >
                 <CardHeader className="pb-4">
                   <div
@@ -135,9 +135,9 @@ export default function Organization() {
           {/* Waitlist Handshake */}
           <section className="relative">
             <div className="absolute inset-0 bg-primary/5 blur-3xl rounded-full opacity-50 pointer-events-none" />
-            <Card className="max-w-xl mx-auto rounded-[40px] border-primary/10 shadow-2xl overflow-hidden relative">
+            <Card className="max-w-xl mx-auto rounded-2xl border-primary/10 shadow-2xl overflow-hidden relative">
               <CardHeader className="text-center p-10 pb-6">
-                <div className="h-14 w-14 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+                <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
                   <Building2 className="h-7 w-7 text-primary" />
                 </div>
                 <CardTitle className="text-3xl font-black tracking-tighter">Reserve Priority Access</CardTitle>
@@ -188,7 +188,7 @@ export default function Organization() {
                     </div>
                     <Button
                       type="submit"
-                      className="w-full h-14 rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all mt-4"
+                      className="w-full h-10 rounded-xl font-black uppercase tracking-tight text-xs shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all mt-4"
                       disabled={isSubmitting}
                     >
                       {isSubmitting ? (

@@ -19,7 +19,7 @@ const NotFound = () => {
 
       <div className="text-center space-y-8 relative z-10 animate-in fade-in zoom-in-95 duration-700">
         <div className="space-y-4">
-          <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
+          <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto mb-6">
             <ShieldAlert className="h-8 w-8 text-primary" />
           </div>
           <h1 className="text-8xl font-black tracking-tighter text-foreground/20">404</h1>

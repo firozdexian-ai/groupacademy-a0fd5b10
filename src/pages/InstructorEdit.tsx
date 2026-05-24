@@ -94,7 +94,7 @@ const InstructorEdit = () => {
     return (
       <div className="h-screen flex flex-col items-center justify-center bg-background">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] mt-4 text-muted-foreground">
+        <p className="text-[10px] font-black uppercase tracking-tight mt-4 text-muted-foreground">
           Decoding Instructor Identity
         </p>
       </div>
@@ -102,7 +102,7 @@ const InstructorEdit = () => {
 
   return (
     <div className="min-h-screen bg-muted/20 pb-20 selection:bg-primary/10">
-      <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <Button
             variant="ghost"
@@ -132,7 +132,7 @@ const InstructorEdit = () => {
           <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-[280px,1fr] gap-8 items-start">
             {/* Sidebar: Profile Visuals */}
             <aside className="space-y-6">
-              <Card className="rounded-[32px] border-border/40 overflow-hidden shadow-xl shadow-primary/5">
+              <Card className="rounded-2xl border-border/40 overflow-hidden shadow-xl shadow-primary/5">
                 <CardHeader className="bg-muted/30 pb-4 border-b border-border/20">
                   <CardTitle className="text-[10px] font-black uppercase tracking-widest text-primary">
                     Identity Image
@@ -148,7 +148,7 @@ const InstructorEdit = () => {
                 </CardContent>
               </Card>
 
-              <Card className="rounded-3xl border-border/40 bg-card/50 backdrop-blur-sm">
+              <Card className="rounded-2xl border-border/40 bg-card backdrop-blur-sm">
                 <CardContent className="p-6 space-y-4">
                   <div className="space-y-2">
                     <Label className="text-[9px] font-black uppercase tracking-tighter text-muted-foreground">
@@ -190,9 +190,9 @@ const InstructorEdit = () => {
 
             {/* Main Information Stack */}
             <div className="space-y-6">
-              <Card className="rounded-[32px] border-border/40 overflow-hidden shadow-2xl shadow-primary/5">
+              <Card className="rounded-2xl border-border/40 overflow-hidden shadow-2xl shadow-primary/5">
                 <CardHeader className="bg-muted/30 pb-6 border-b border-border/20">
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                  <CardTitle className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
                     <UserCheck className="h-4 w-4 text-primary" /> Core Information
                   </CardTitle>
                 </CardHeader>
@@ -287,7 +287,7 @@ const InstructorEdit = () => {
                 <Button
                   type="submit"
                   disabled={isSaving}
-                  className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all"
+                  className="flex-1 h-10 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-all"
                 >
                   {isSaving ? <Loader2 className="animate-spin mr-2 h-4 w-4" /> : <Save className="mr-2 h-4 w-4" />}
                   Verify & Synchronize
@@ -296,7 +296,7 @@ const InstructorEdit = () => {
                   type="button"
                   variant="outline"
                   onClick={() => navigate("/instructors")}
-                  className="h-14 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest"
+                  className="h-10 px-4 rounded-xl font-black uppercase text-[10px] tracking-widest"
                 >
                   Abort
                 </Button>

@@ -198,7 +198,7 @@ export default function PublicLeaderboard() {
                   key={`deterministic-leaderboard-row-${baseIdentificationHashStr}`}
                   className="group block rounded-lg outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring overflow-hidden"
                 >
-                  <Card className="rounded-lg border border-border/60 bg-card/30 hover:border-border-foreground/10 transition-colors duration-100 shadow-none">
+                  <Card className="rounded-lg border border-border/60 bg-card hover:border-border-foreground/10 transition-colors duration-100 shadow-none">
                     <CardContent className="p-3 flex items-center gap-3.5 leading-none">
                       {/* Placement Marker */}
                       <span className="w-6 text-center font-mono text-xs font-extrabold text-muted-foreground/40 shrink-0 select-none tabular-nums">

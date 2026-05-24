@@ -134,7 +134,7 @@ const ResetPassword = () => {
   if (!sessionValid)
     return (
       <div className="min-h-screen flex items-center justify-center bg-muted/20 p-6">
-        <Card className="max-w-md w-full rounded-3xl border-border/40 shadow-xl">
+        <Card className="max-w-md w-full rounded-2xl border-border/40 shadow-xl">
           <CardContent className="pt-10 text-center space-y-6">
             <div className="h-14 w-14 rounded-2xl bg-rose-500/10 flex items-center justify-center mx-auto">
               <AlertCircle className="h-7 w-7 text-rose-500" />
@@ -184,7 +184,7 @@ const ResetPassword = () => {
           </div>
         </header>
 
-        <Card className="rounded-3xl border-border/40 shadow-xl">
+        <Card className="rounded-2xl border-border/40 shadow-xl">
           <CardHeader className="p-6 pb-2">
             <CardTitle className="text-base font-semibold">New password</CardTitle>
           </CardHeader>

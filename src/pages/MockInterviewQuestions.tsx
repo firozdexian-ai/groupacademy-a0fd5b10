@@ -179,7 +179,7 @@ export default function MockInterviewQuestions() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Initializing Terminal</p>
+        <p className="text-[10px] font-black uppercase tracking-tight text-muted-foreground">Initializing Terminal</p>
       </div>
     );
 
@@ -258,7 +258,7 @@ export default function MockInterviewQuestions() {
           </div>
         </header>
 
-        <Card className="rounded-[40px] border-border/40 shadow-2xl bg-card/50 backdrop-blur-xl overflow-hidden relative group">
+        <Card className="rounded-2xl border-border/40 shadow-2xl bg-card overflow-hidden relative group">
           <CardHeader className="p-8 md:p-12 pb-4">
             <Badge className="w-fit mb-4 bg-primary/10 text-primary border-none text-[9px] font-black uppercase tracking-widest">
               {currentQuestion.category.replace("_", " ")}
@@ -276,7 +276,7 @@ export default function MockInterviewQuestions() {
                 placeholder="Be descriptive. Use metrics where possible..."
                 value={currentAnswer}
                 onChange={(e) => setCurrentAnswer(e.target.value)}
-                className="min-h-[250px] rounded-3xl border-border/40 bg-background/50 focus-visible:ring-primary/20 text-lg p-6 resize-none leading-relaxed"
+                className="min-h-[250px] rounded-2xl border-border/40 bg-background/50 focus-visible:ring-primary/20 text-lg p-6 resize-none leading-relaxed"
                 autoFocus
               />
               <div className="flex justify-between px-2 pt-1">
@@ -347,7 +347,7 @@ export default function MockInterviewQuestions() {
       <Footer />
 
       <AlertDialog open={showSkipDialog} onOpenChange={setShowSkipDialog}>
-        <AlertDialogContent className="rounded-[32px] border-border/40 p-8">
+        <AlertDialogContent className="rounded-2xl border-border/40 p-8">
           <AlertDialogHeader>
             <div className="h-12 w-12 rounded-2xl bg-amber-500/10 flex items-center justify-center mb-4">
               <AlertCircle className="w-6 h-6 text-amber-600" />

@@ -258,12 +258,12 @@ export default function AdminMessagingInbox() {
                       }`}
                     >
                       {m.author === "agent" && (
-                        <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest opacity-70 mb-1.5">
+                        <div className="flex items-center gap-1 text-sm font-medium tracking-widest opacity-70 mb-1.5">
                           <Bot className="h-3 w-3" /> AI Workforce
                         </div>
                       )}
                       {m.author === "human_operator" && m.direction === "out" && (
-                        <div className="flex items-center gap-1 text-[10px] font-bold uppercase tracking-widest opacity-70 mb-1.5">
+                        <div className="flex items-center gap-1 text-sm font-medium tracking-widest opacity-70 mb-1.5">
                           <User className="h-3 w-3" /> Admin
                         </div>
                       )}

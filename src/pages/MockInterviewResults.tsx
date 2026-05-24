@@ -154,7 +154,7 @@ export default function MockInterviewResults() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-[10px] font-black uppercase tracking-tight text-muted-foreground">
           Decoding Performance Data
         </p>
       </div>
@@ -216,7 +216,7 @@ export default function MockInterviewResults() {
           </div>
         </header>
 
-        <Card className="rounded-[40px] border-border/40 bg-card/80 backdrop-blur-xl shadow-2xl overflow-hidden relative">
+        <Card className="rounded-2xl border-border/40 bg-card/80 shadow-2xl overflow-hidden relative">
           <CardContent className="p-10 flex flex-col lg:flex-row items-center gap-12">
             <div className="relative w-48 h-48 shrink-0">
               <svg className="w-full h-full transform -rotate-90" viewBox="0 0 100 100">
@@ -265,7 +265,7 @@ export default function MockInterviewResults() {
                 </Badge>
               </div>
               <div className="space-y-4">
-                <h3 className="text-sm font-black uppercase tracking-[0.2em] text-primary flex items-center gap-2 justify-center lg:justify-start">
+                <h3 className="text-sm font-black uppercase tracking-tight text-primary flex items-center gap-2 justify-center lg:justify-start">
                   <Sparkles className="h-4 w-4" /> AI Strategic Assessment
                 </h3>
                 <p className="text-base font-medium leading-relaxed text-foreground/80 italic">
@@ -278,7 +278,7 @@ export default function MockInterviewResults() {
 
         {/* Analytical Breakdown - FIX: Corrected Tag Closure */}
         <div className="grid md:grid-cols-2 gap-8">
-          <Card className="rounded-[32px] border-emerald-500/10 bg-emerald-500/[0.02]">
+          <Card className="rounded-2xl border-emerald-500/10 bg-emerald-500/[0.02]">
             <CardHeader>
               <CardTitle className="text-sm font-black uppercase tracking-widest text-emerald-600 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4" /> Competitive Edge
@@ -296,7 +296,7 @@ export default function MockInterviewResults() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[32px] border-rose-500/10 bg-rose-500/[0.02]">
+          <Card className="rounded-2xl border-rose-500/10 bg-rose-500/[0.02]">
             <CardHeader>
               <CardTitle className="text-sm font-black uppercase tracking-widest text-rose-600 flex items-center gap-2">
                 <TrendingDown className="h-4 w-4" /> Logic Vulnerabilities
@@ -324,7 +324,7 @@ export default function MockInterviewResults() {
               const q = interview.questions.find((x) => x.id === f.question_id);
               const a = interview.answers.find((x) => x.question_id === f.question_id);
               return (
-                <Card key={i} className="rounded-[32px] border-border/40 overflow-hidden">
+                <Card key={i} className="rounded-2xl border-border/40 overflow-hidden">
                   <div className="p-8 space-y-6">
                     <div className="flex justify-between items-start gap-4">
                       <div className="space-y-1">
@@ -359,7 +359,7 @@ export default function MockInterviewResults() {
           </div>
         </section>
 
-        <Card className="rounded-[40px] border-primary/20 bg-primary/5 overflow-hidden shadow-2xl">
+        <Card className="rounded-2xl border-primary/20 bg-primary/5 overflow-hidden shadow-2xl">
           <CardContent className="p-10 flex flex-col md:flex-row items-center justify-between gap-8">
             <div className="space-y-2 text-center md:text-left">
               <h3 className="text-2xl font-black tracking-tighter">Skill Deficit Detected?</h3>
@@ -372,7 +372,7 @@ export default function MockInterviewResults() {
                 <Button
                   key={c.id}
                   variant="secondary"
-                  className="h-14 rounded-2xl px-6 font-black uppercase text-[10px] tracking-widest"
+                  className="h-10 rounded-xl px-6 font-black uppercase text-[10px] tracking-widest"
                   onClick={() => navigate(`/courses/${c.slug}`)}
                 >
                   {c.title.split(" ")[0]} Masterclass <ArrowRight className="ml-2 h-4 w-4" />

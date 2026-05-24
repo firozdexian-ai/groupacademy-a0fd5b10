@@ -223,12 +223,12 @@ function MockInterviewSetupContent() {
         </header>
 
         {step === "job-description" && (
-          <Card className="rounded-[32px] border-border/40 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
+          <Card className="rounded-2xl border-border/40 shadow-2xl animate-in fade-in slide-in-from-bottom-4 duration-700">
             <CardHeader className="pb-4">
               <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
                 <BriefcaseIcon className="w-6 h-6 text-primary" />
               </div>
-              <CardTitle className="text-2xl font-black tracking-tighter uppercase">JD Ingestion</CardTitle>
+              <CardTitle className="text-2xl font-black tracking-tighter uppercase">Job description</CardTitle>
               <CardDescription className="text-xs font-medium tracking-widest uppercase">
                 Paste the target Job Description to begin neural mapping
               </CardDescription>
@@ -249,7 +249,7 @@ function MockInterviewSetupContent() {
                 </p>
               </div>
               <Button
-                className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs"
+                className="w-full h-10 rounded-xl font-black uppercase tracking-widest text-xs"
                 onClick={() => setStep("configuration")}
                 disabled={jobDescription.length < 50}
               >
@@ -260,7 +260,7 @@ function MockInterviewSetupContent() {
         )}
 
         {step === "configuration" && (
-          <Card className="rounded-[32px] border-border/40 shadow-2xl animate-in zoom-in-95 duration-500">
+          <Card className="rounded-2xl border-border/40 shadow-2xl animate-in zoom-in-95 duration-500">
             <CardHeader className="pb-4">
               <div className="w-12 h-12 bg-primary/10 rounded-2xl flex items-center justify-center mb-4">
                 <Settings className="w-6 h-6 text-primary" />
@@ -312,11 +312,11 @@ function MockInterviewSetupContent() {
                     <SelectValue placeholder="Select Domain" />
                   </SelectTrigger>
                   <SelectContent className="rounded-xl">
-                    <SelectItem value="none" className="text-[10px] font-bold uppercase">
+                    <SelectItem value="none" className="text-sm font-medium">
                       General Domain
                     </SelectItem>
                     {categories.map((c) => (
-                      <SelectItem key={c.id} value={c.id} className="text-[10px] font-bold uppercase">
+                      <SelectItem key={c.id} value={c.id} className="text-sm font-medium">
                         {c.name}
                       </SelectItem>
                     ))}
@@ -325,7 +325,7 @@ function MockInterviewSetupContent() {
               </div>
 
               {talent && (
-                <div className="flex items-start gap-3 p-5 rounded-[24px] border-border/40 bg-primary/[0.03] border relative overflow-hidden group">
+                <div className="flex items-start gap-3 p-5 rounded-xl border-border/40 bg-primary/[0.03] border relative overflow-hidden group">
                   <div className="absolute top-0 right-0 p-4 opacity-5">
                     <Sparkles className="h-10 w-10 text-primary" />
                   </div>
@@ -359,7 +359,7 @@ function MockInterviewSetupContent() {
                   Back
                 </Button>
                 <Button
-                  className="flex-1 h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
+                  className="flex-1 h-10 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
                   onClick={handleStartInterview}
                 >
                   Initialize Terminal
@@ -370,7 +370,7 @@ function MockInterviewSetupContent() {
         )}
 
         {step === "generating" && (
-          <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden py-20 text-center">
+          <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden py-20 text-center">
             <CardContent className="space-y-8">
               {generationError ? (
                 <RetryErrorCard
@@ -381,8 +381,8 @@ function MockInterviewSetupContent() {
               ) : (
                 <div className="animate-in zoom-in-95 duration-1000">
                   <div className="relative w-24 h-24 mx-auto mb-10">
-                    <div className="absolute inset-0 rounded-3xl bg-primary/10 animate-ping" />
-                    <div className="relative h-24 w-24 rounded-3xl bg-primary flex items-center justify-center shadow-2xl shadow-primary/40">
+                    <div className="absolute inset-0 rounded-2xl bg-primary/10 animate-ping" />
+                    <div className="relative h-24 w-24 rounded-2xl bg-primary flex items-center justify-center shadow-2xl shadow-primary/40">
                       <Sparkles className="h-10 w-10 text-white animate-pulse" />
                     </div>
                   </div>
@@ -397,8 +397,8 @@ function MockInterviewSetupContent() {
         )}
 
         {step === "cooldown" && (
-          <Card className="rounded-[40px] border-amber-500/20 bg-amber-500/[0.02] shadow-2xl p-10 text-center space-y-8">
-            <div className="h-16 w-16 bg-amber-500/10 rounded-3xl flex items-center justify-center mx-auto">
+          <Card className="rounded-2xl border-amber-500/20 bg-amber-500/[0.02] shadow-2xl p-10 text-center space-y-8">
+            <div className="h-16 w-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto">
               <Lock className="h-8 w-8 text-amber-600" />
             </div>
             <div className="space-y-2">
@@ -409,7 +409,7 @@ function MockInterviewSetupContent() {
             </div>
             <div className="flex flex-col gap-3">
               <Button
-                className="h-14 rounded-2xl font-black uppercase text-xs shadow-lg shadow-primary/20"
+                className="h-10 rounded-xl font-black uppercase text-xs shadow-lg shadow-primary/20"
                 onClick={() => setStep("access-code")}
               >
                 <KeyRound className="mr-2 h-4 w-4" /> Bypas with Priority Code

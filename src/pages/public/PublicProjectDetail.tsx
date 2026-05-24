@@ -169,7 +169,7 @@ export default function PublicProjectDetail() {
           </div>
           <Link
             to="/projects"
-            className="h-8 px-3 rounded-lg inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-wider bg-accent text-accent-foreground border border-border/40 transition-colors hover:bg-muted"
+            className="h-8 px-3 rounded-lg inline-flex items-center justify-center text-sm font-medium tracking-wider bg-accent text-accent-foreground border border-border/40 transition-colors hover:bg-muted"
           >
             Return to Core Index
           </Link>

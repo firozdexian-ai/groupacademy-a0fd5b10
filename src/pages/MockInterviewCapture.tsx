@@ -110,7 +110,7 @@ export default function MockInterviewCapture() {
     return (
       <div className="min-h-screen bg-background flex flex-col items-center justify-center gap-4">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">Synchronizing Session</p>
+        <p className="text-[10px] font-black uppercase tracking-tight text-muted-foreground">Loading session</p>
       </div>
     );
 
@@ -139,13 +139,13 @@ export default function MockInterviewCapture() {
       <Navbar />
 
       <main className="flex-1 container max-w-lg mx-auto px-6 py-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-        <Card className="rounded-[32px] border-border/40 shadow-2xl overflow-hidden bg-card/50 backdrop-blur-xl">
+        <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden bg-card">
           <CardHeader className="text-center pb-2">
             <div className="w-16 h-16 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4 border border-primary/20">
               <Sparkles className="w-8 h-8 text-primary" />
             </div>
             <CardTitle className="text-2xl font-black tracking-tighter">Final Handshake</CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+            <CardDescription className="text-sm font-medium tracking-widest text-muted-foreground/60">
               Session Artifact: {answered}/{total} Modules Completed
             </CardDescription>
           </CardHeader>
@@ -198,7 +198,7 @@ export default function MockInterviewCapture() {
             </div>
 
             <Button
-              className="w-full h-14 rounded-2xl font-black uppercase tracking-[0.2em] text-xs shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mt-4"
+              className="w-full h-10 rounded-xl font-black uppercase tracking-tight text-xs shadow-xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all mt-4"
               onClick={handleSubmitTrigger}
               disabled={!fullName.trim()}
             >

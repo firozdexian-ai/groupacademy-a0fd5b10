@@ -134,7 +134,7 @@ const AuthChat = () => {
   return (
     <div className="min-h-screen flex flex-col bg-slate-50 font-sans text-slate-900 selection:bg-blue-500/10">
       {/* Header */}
-      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white/80 backdrop-blur-xl sticky top-0 z-10">
+      <header className="flex items-center justify-between px-6 py-4 border-b border-slate-200 bg-white/80 sticky top-0 z-10">
         <button onClick={() => navigate("/")} className="hover:opacity-80 transition-opacity" aria-label="Go home">
           <img src={theme === "dark" ? logoLight : logoDark} alt="GroUp Academy" className="h-7" />
         </button>
@@ -184,8 +184,8 @@ const AuthChat = () => {
               className={cn(
                 "max-w-[85%] sm:max-w-[70%] px-6 py-4 text-sm md:text-base leading-relaxed shadow-sm",
                 msg.role === "user"
-                  ? "bg-blue-500 text-white rounded-[24px] rounded-br-sm font-medium"
-                  : "bg-white border border-slate-100 text-slate-700 rounded-[24px] rounded-bl-sm",
+                  ? "bg-blue-500 text-white rounded-xl rounded-br-sm font-medium"
+                  : "bg-white border border-slate-100 text-slate-700 rounded-xl rounded-bl-sm",
               )}
             >
               {msg.content}
@@ -195,7 +195,7 @@ const AuthChat = () => {
 
         {isLoading && (
           <div className="flex justify-start animate-in fade-in">
-            <div className="bg-white border border-slate-100 rounded-[24px] rounded-bl-sm px-6 py-5 shadow-sm">
+            <div className="bg-white border border-slate-100 rounded-xl rounded-bl-sm px-6 py-5 shadow-sm">
               <div className="flex gap-1.5">
                 {[150, 300].map((delay) => (
                   <div
@@ -231,7 +231,7 @@ const AuthChat = () => {
 
       {/* Conversation Controller */}
       {!isComplete && (
-        <div className="border-t border-slate-200 bg-white/95 backdrop-blur-2xl px-4 md:px-6 py-6 pb-8">
+        <div className="border-t border-slate-200 bg-white/95 px-4 md:px-6 py-6 pb-8">
           <form onSubmit={handleSubmit} className="max-w-3xl mx-auto space-y-4">
             {currentAction === "collect_password" && flow === "login" && (
               <button

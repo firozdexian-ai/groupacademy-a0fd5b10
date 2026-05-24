@@ -178,7 +178,7 @@ export default function ReportCard() {
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Curriculum Hub
             </Button>
-            <h1 className="text-4xl font-black tracking-tighter">Academic Artifact</h1>
+            <h1 className="text-4xl font-black tracking-tighter">Report card</h1>
             <p className="text-sm font-medium text-muted-foreground uppercase tracking-tight">
               {reportData?.content.title}
             </p>
@@ -217,7 +217,7 @@ export default function ReportCard() {
 
         {/* Global Verification Badge */}
         {certificate && (
-          <Card className="rounded-[32px] border-emerald-500/20 bg-emerald-500/[0.03] p-4 flex flex-col md:flex-row items-center justify-between gap-4">
+          <Card className="rounded-2xl border-emerald-500/20 bg-emerald-500/[0.03] p-4 flex flex-col md:flex-row items-center justify-between gap-4">
             <div className="flex items-center gap-3">
               <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center shrink-0">
                 <ShieldCheck className="h-6 w-6 text-emerald-600" />
@@ -254,7 +254,7 @@ export default function ReportCard() {
         )}
 
         {/* Core Report Artifact */}
-        <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden bg-white dark:bg-card/50">
+        <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden bg-white dark:bg-card">
           <CardContent className="p-0">
             <ReportCardTemplate data={reportData!} />
           </CardContent>

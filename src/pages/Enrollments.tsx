@@ -116,7 +116,7 @@ export default function Enrollments() {
         </header>
 
         {capacityAlerts.length > 0 && (
-          <Card className="rounded-[28px] border-amber-500/20 bg-amber-500/[0.03] overflow-hidden">
+          <Card className="rounded-2xl border-amber-500/20 bg-amber-500/[0.03] overflow-hidden">
             <CardContent className="p-6 flex items-start gap-4">
               <div className="h-10 w-10 rounded-2xl bg-amber-500/10 flex items-center justify-center shrink-0">
                 <AlertTriangle className="h-5 w-5 text-amber-600" />
@@ -144,9 +144,9 @@ export default function Enrollments() {
         )}
 
         <div className="grid grid-cols-1 lg:grid-cols-[400px,1fr] gap-8 items-start">
-          <Card className="rounded-[32px] border-border/40 bg-card/50 backdrop-blur-xl sticky top-24">
+          <Card className="rounded-2xl border-border/40 bg-card sticky top-24">
             <CardHeader>
-              <CardTitle className="text-xs font-black uppercase tracking-[0.2em] flex items-center gap-2">
+              <CardTitle className="text-xs font-black uppercase tracking-tight flex items-center gap-2">
                 <CalendarDays className="h-4 w-4 text-primary" /> Event Matrix
               </CardTitle>
             </CardHeader>
@@ -170,16 +170,16 @@ export default function Enrollments() {
           </Card>
 
           <div className="space-y-6">
-            <h2 className="text-xs font-black uppercase tracking-[0.2em] text-muted-foreground ml-2">Record Stream</h2>
+            <h2 className="text-xs font-black uppercase tracking-tight text-muted-foreground ml-2">Record Stream</h2>
 
             {loading ? (
               <CardGridSkeleton count={4} columns={2} />
             ) : loadError ? (
               <ErrorState type="server" title="Ingestion Failed" description={loadError} onRetry={loadEnrollments} />
             ) : filteredEnrollments.length === 0 ? (
-              <Card className="rounded-[32px] border-dashed border-border/40 py-20 text-center bg-transparent">
+              <Card className="rounded-2xl border-dashed border-border/40 py-20 text-center bg-transparent">
                 <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/40">
-                  Zero records found for this temporal slice
+                  No records yet for this temporal slice
                 </p>
               </Card>
             ) : (
@@ -189,7 +189,7 @@ export default function Enrollments() {
                   return (
                     <Card
                       key={e.id}
-                      className="rounded-[28px] border-border/40 bg-card hover:shadow-xl hover:border-primary/20 transition-all group"
+                      className="rounded-2xl border-border/40 bg-card hover:shadow-xl hover:border-primary/20 transition-all group"
                     >
                       <CardContent className="p-6">
                         <div className="flex flex-col md:flex-row justify-between gap-6">

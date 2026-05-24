@@ -122,7 +122,7 @@ const Instructors = () => {
   return (
     <div className="min-h-screen bg-muted/20 pb-20 animate-in fade-in duration-700">
       {/* Executive Header */}
-      <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between">
           <div className="flex items-center gap-4">
             <Button
@@ -153,7 +153,7 @@ const Instructors = () => {
 
       <main className="container mx-auto px-6 py-10 space-y-8">
         {/* Intelligence Filters */}
-        <Card className="rounded-[32px] border-border/40 bg-card/50 backdrop-blur-md shadow-2xl shadow-primary/5">
+        <Card className="rounded-2xl border-border/40 bg-card shadow-2xl shadow-primary/5">
           <CardContent className="p-6 flex flex-col md:flex-row gap-4">
             <div className="relative flex-1">
               <Search className="absolute left-4 top-3.5 text-muted-foreground w-4 h-4" />
@@ -210,12 +210,12 @@ const Instructors = () => {
               return (
                 <Card
                   key={instructor.id}
-                  className="rounded-[32px] border-border/40 bg-card hover:shadow-2xl hover:border-primary/20 transition-all group overflow-hidden"
+                  className="rounded-2xl border-border/40 bg-card hover:shadow-2xl hover:border-primary/20 transition-all group overflow-hidden"
                 >
                   <CardContent className="p-0">
                     <div className="p-8 space-y-6">
                       <div className="flex items-start justify-between">
-                        <Avatar className="w-20 h-20 rounded-[28px] border-4 border-background shadow-xl">
+                        <Avatar className="w-20 h-20 rounded-2xl border-4 border-background shadow-xl">
                           <AvatarImage src={instructor.profile_image_url || undefined} className="object-cover" />
                           <AvatarFallback className="bg-primary/5 text-primary font-black text-xl">
                             {instructor.full_name.charAt(0)}
@@ -303,7 +303,7 @@ const Instructors = () => {
       </main>
 
       <AlertDialog open={deleteDialogOpen} onOpenChange={setDeleteDialogOpen}>
-        <AlertDialogContent className="rounded-[32px] border-border/40 p-8">
+        <AlertDialogContent className="rounded-2xl border-border/40 p-8">
           <AlertDialogHeader>
             <div className="h-12 w-12 rounded-2xl bg-rose-500/10 flex items-center justify-center mb-4">
               <Trash2 className="w-6 h-6 text-rose-500" />

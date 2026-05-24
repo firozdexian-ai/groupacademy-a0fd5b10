@@ -208,7 +208,7 @@ export default function PublicTalentProfile() {
             type="button"
             asChild
             variant="outline"
-            className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider cursor-pointer"
+            className="h-8 rounded-lg text-sm font-medium tracking-wider cursor-pointer"
           >
             <Link to="/">Return to Platform Core</Link>
           </Button>
@@ -251,7 +251,7 @@ export default function PublicTalentProfile() {
               </p>
             )}
             {identityRecordNode.country && (
-              <p className="font-mono text-[10px] font-bold uppercase tracking-wide text-muted-foreground/40 inline-flex items-center gap-1 mt-0.5 select-text">
+              <p className="font-mono text-sm font-medium tracking-wide text-muted-foreground/40 inline-flex items-center gap-1 mt-0.5 select-text">
                 <MapPin className="h-3 w-3 stroke-[2.2]" /> {identityRecordNode.country}
               </p>
             )}
@@ -270,7 +270,7 @@ export default function PublicTalentProfile() {
                 type="button"
                 size="sm"
                 variant="outline"
-                className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider px-3 gap-1.5 cursor-pointer"
+                className="h-8 rounded-lg text-sm font-medium tracking-wider px-3 gap-1.5 cursor-pointer"
               >
                 <a href={identityRecordNode.linkedin_url} target="_blank" rel="noreferrer">
                   <Linkedin className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-foreground stroke-[1.8]" />{" "}
@@ -284,7 +284,7 @@ export default function PublicTalentProfile() {
                 type="button"
                 size="sm"
                 variant="outline"
-                className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider px-3 gap-1.5 cursor-pointer"
+                className="h-8 rounded-lg text-sm font-medium tracking-wider px-3 gap-1.5 cursor-pointer"
               >
                 <a href={identityRecordNode.portfolio_url} target="_blank" rel="noreferrer">
                   <Globe className="h-3.5 w-3.5 text-muted-foreground/60 group-hover:text-foreground stroke-[1.8]" />{" "}
@@ -296,7 +296,7 @@ export default function PublicTalentProfile() {
               asChild
               type="button"
               size="sm"
-              className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider ml-auto px-3 gap-1 cursor-pointer shadow-xs transform-gpu active:scale-[0.985]"
+              className="h-8 rounded-lg text-sm font-medium tracking-wider ml-auto px-3 gap-1 cursor-pointer shadow-xs transform-gpu active:scale-[0.985]"
             >
               <Link to={`/app/talents/${identityRecordNode.id}`}>
                 <span>Request Connection</span> <ArrowRight className="h-3.5 w-3.5 stroke-[2.2]" />
@@ -355,7 +355,7 @@ export default function PublicTalentProfile() {
                   {trackItemNode.certificate_code && (
                     <Link
                       to={`/verify/${trackItemNode.certificate_code}`}
-                      className="font-mono text-[10px] font-bold uppercase tracking-wider text-primary hover:text-primary/80 inline-flex items-center gap-0.5 shrink-0 select-none"
+                      className="font-mono text-sm font-medium tracking-wider text-primary hover:text-primary/80 inline-flex items-center gap-0.5 shrink-0 select-none"
                     >
                       <span>Verify</span> <ExternalLink className="h-3 w-3 stroke-[2.2]" />
                     </Link>
@@ -407,7 +407,7 @@ export default function PublicTalentProfile() {
 
                     <Link
                       to={`/verify/skill/${skillNodeItem.verify_code}`}
-                      className="font-mono text-[10px] font-bold uppercase tracking-wider inline-flex items-center gap-0.5 shrink-0 select-none hover:opacity-80"
+                      className="font-mono text-sm font-medium tracking-wider inline-flex items-center gap-0.5 shrink-0 select-none hover:opacity-80"
                     >
                       <span>Verify</span> <ExternalLink className="h-3 w-3 stroke-[2.2]" />
                     </Link>

@@ -66,7 +66,7 @@ function ReviewNudge({ moduleId, onClick }: { moduleId: string; onClick: () => v
     <button
       type="button"
       onClick={onClick}
-      className="rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-600 px-2 py-1 text-[10px] font-bold uppercase tracking-widest hover:bg-amber-500/20 transition"
+      className="rounded-xl border border-amber-500/40 bg-amber-500/10 text-amber-600 px-2 py-1 text-sm font-medium tracking-widest hover:bg-amber-500/20 transition"
       title="Items flagged for author review"
     >
       {flagged} need review
@@ -268,7 +268,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
 
   return (
     <div className="min-h-screen bg-muted/20 pb-20">
-      <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-40">
+      <header className="border-b bg-background/80 sticky top-0 z-40">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between gap-4">
           <div className="flex items-center gap-4 min-w-0">
             <Button
@@ -324,7 +324,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
             <span className="text-xs font-black uppercase tracking-widest">Loading modules…</span>
           </div>
         ) : modules.length === 0 ? (
-          <Card className="rounded-[24px] border-dashed border-border/60">
+          <Card className="rounded-xl border-dashed border-border/60">
             <CardContent className="py-16 flex flex-col items-center text-center gap-4">
               <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center">
                 <Layers className="h-6 w-6 text-primary" />
@@ -348,7 +348,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
             renderItem={(mod, index, dragHandle) => {
               const status = saveStates[mod.id] ?? "saved";
               return (
-                <Card key={mod.id} className="rounded-[24px] border-border/40 overflow-hidden">
+                <Card key={mod.id} className="rounded-xl border-border/40 overflow-hidden">
                   <CardContent className="p-5 space-y-4">
                   <div className="flex items-start justify-between gap-3">
                     <div className="flex items-center gap-3">

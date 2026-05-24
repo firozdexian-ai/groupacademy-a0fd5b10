@@ -141,7 +141,7 @@ export default function SessionNew() {
           </div>
         </header>
 
-        <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden bg-card/50 backdrop-blur-xl">
+        <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden bg-card">
           <CardContent className="p-8 md:p-12">
             <Form {...form}>
               <form onSubmit={form.handleSubmit((v) => createSession.mutate(v))} className="space-y-8">
@@ -168,7 +168,7 @@ export default function SessionNew() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage className="text-[10px] font-bold uppercase" />
+                      <FormMessage className="text-sm font-medium" />
                     </FormItem>
                   )}
                 />
@@ -189,7 +189,7 @@ export default function SessionNew() {
                             className="h-12 rounded-xl bg-background/50 border-border/40 font-bold"
                           />
                         </FormControl>
-                        <FormMessage className="text-[10px] font-bold uppercase" />
+                        <FormMessage className="text-sm font-medium" />
                       </FormItem>
                     )}
                   />
@@ -216,7 +216,7 @@ export default function SessionNew() {
                 </div>
 
                 {/* Temporal HUD */}
-                <div className="grid md:grid-cols-2 gap-6 p-6 rounded-[32px] bg-muted/30 border border-border/10">
+                <div className="grid md:grid-cols-2 gap-6 p-6 rounded-2xl bg-muted/30 border border-border/10">
                   <FormField
                     control={form.control}
                     name="scheduled_date"
@@ -408,14 +408,14 @@ export default function SessionNew() {
                     type="button"
                     variant="outline"
                     onClick={() => navigate("/sessions")}
-                    className="flex-1 h-14 rounded-2xl font-black uppercase text-[10px] tracking-widest border-border/40"
+                    className="flex-1 h-10 rounded-xl font-black uppercase text-[10px] tracking-widest border-border/40"
                   >
                     Abort
                   </Button>
                   <Button
                     type="submit"
                     disabled={createSession.isPending}
-                    className="flex-[2] h-14 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20"
+                    className="flex-[2] h-10 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20"
                   >
                     {createSession.isPending ? (
                       <Loader2 className="animate-spin h-4 w-4" />

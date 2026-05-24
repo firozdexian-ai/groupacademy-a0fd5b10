@@ -133,7 +133,7 @@ export default function CompanyBrandedCatalog() {
       >
         <div className="flex items-center gap-2">
           <div className="h-3.5 w-3.5 rounded-full border border-muted-foreground/20 border-t-muted-foreground/80 animate-spin shrink-0" />
-          <span>Synchronizing Catalog Matrix...</span>
+          <span>Loading catalog.../span>
         </div>
       </div>
     );
@@ -157,7 +157,7 @@ export default function CompanyBrandedCatalog() {
           </div>
           <Link
             to="/"
-            className="h-8 px-4 rounded-lg inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-wider bg-accent text-accent-foreground border border-border/40 transition-colors hover:bg-muted"
+            className="h-8 px-4 rounded-lg inline-flex items-center justify-center text-sm font-medium tracking-wider bg-accent text-accent-foreground border border-border/40 transition-colors hover:bg-muted"
           >
             Return to Core Index Grid
           </Link>

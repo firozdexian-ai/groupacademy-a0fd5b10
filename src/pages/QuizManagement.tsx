@@ -190,7 +190,7 @@ export default function QuizManagement() {
 
   return (
     <div className="min-h-screen bg-muted/20 pb-20 selection:bg-primary/10">
-      <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <Button
             variant="ghost"
@@ -211,7 +211,7 @@ export default function QuizManagement() {
       <main className="container max-w-4xl mx-auto px-6 py-12 space-y-8 animate-in fade-in duration-700">
         <div className="grid md:grid-cols-[1fr,300px] gap-8">
           <div className="space-y-6">
-            <Card className="rounded-[32px] border-border/40 shadow-2xl bg-card/50 backdrop-blur-sm">
+            <Card className="rounded-2xl border-border/40 shadow-2xl bg-card backdrop-blur-sm">
               <CardHeader className="pb-4">
                 <CardTitle className="text-xl font-black tracking-tighter uppercase flex items-center gap-2">
                   <GraduationCap className="h-5 w-5 text-primary" /> Global Logic Config
@@ -228,7 +228,7 @@ export default function QuizManagement() {
                     </SelectTrigger>
                     <SelectContent className="rounded-xl">
                       {modules.map((m, i) => (
-                        <SelectItem key={m.id} value={m.id} className="text-[10px] font-bold uppercase">
+                        <SelectItem key={m.id} value={m.id} className="text-sm font-medium">
                           Node 0{i + 1}: {m.title}
                         </SelectItem>
                       ))}
@@ -263,7 +263,7 @@ export default function QuizManagement() {
                         <Wand2 className="h-3 w-3 mr-1.5" /> Synthetic Import
                       </Button>
                     </DialogTrigger>
-                    <DialogContent className="rounded-[32px] max-w-2xl border-border/40 shadow-2xl">
+                    <DialogContent className="rounded-2xl max-w-2xl border-border/40 shadow-2xl">
                       <DialogHeader>
                         <DialogTitle className="text-2xl font-black tracking-tighter uppercase">
                           AI Ingestion
@@ -317,7 +317,7 @@ export default function QuizManagement() {
                 </div>
 
                 {questions.map((q, i) => (
-                  <Card key={i} className="rounded-[32px] border-border/40 shadow-xl overflow-hidden group">
+                  <Card key={i} className="rounded-2xl border-border/40 shadow-xl overflow-hidden group">
                     <CardHeader className="bg-muted/30 border-b border-border/20 py-4 px-8 flex flex-row items-center justify-between">
                       <CardTitle className="text-[10px] font-black uppercase tracking-widest">
                         Module Assessment Node <span className="text-primary">0{i + 1}</span>
@@ -410,14 +410,14 @@ export default function QuizManagement() {
                         },
                       ])
                     }
-                    className="h-14 rounded-2xl border-dashed border-2 border-primary/20 text-primary font-black uppercase tracking-widest text-[10px]"
+                    className="h-10 rounded-xl border-dashed border-2 border-primary/20 text-primary font-black uppercase tracking-widest text-[10px]"
                   >
                     <Plus className="h-4 w-4 mr-2" /> Add Logic Node
                   </Button>
                   <Button
                     onClick={handleSave}
                     disabled={saving}
-                    className="h-14 rounded-2xl shadow-2xl shadow-primary/20 font-black uppercase tracking-widest text-[10px]"
+                    className="h-10 rounded-xl shadow-sm font-black uppercase tracking-widest text-[10px]"
                   >
                     {saving ? <Loader2 className="animate-spin h-4 w-4" /> : <Save className="h-4 w-4 mr-2" />}{" "}
                     Synchronize Nodes
@@ -428,7 +428,7 @@ export default function QuizManagement() {
           </div>
 
           <aside className="space-y-6 hidden lg:block">
-            <Card className="rounded-3xl border-primary/10 bg-primary/[0.02] p-6 sticky top-24">
+            <Card className="rounded-2xl border-primary/10 bg-primary/[0.02] p-6 sticky top-24">
               <div className="space-y-4">
                 <div className="flex items-center gap-2 text-primary font-black uppercase text-[9px] tracking-widest">
                   <Sparkles className="h-3 w-3" /> System Guidelines

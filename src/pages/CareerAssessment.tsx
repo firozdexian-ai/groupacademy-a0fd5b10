@@ -155,7 +155,7 @@ function CareerAssessmentContent() {
 
         {step === "email-check" && (
           <div className="container max-w-md mx-auto px-4 py-20 animate-in fade-in slide-in-from-bottom-4 duration-700">
-            <Card className="rounded-[32px] border-border/40 shadow-2xl overflow-hidden">
+            <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden">
               <CardHeader className="text-center pb-2">
                 <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <ShieldCheck className="w-7 h-7 text-primary" />
@@ -194,9 +194,9 @@ function CareerAssessmentContent() {
 
         {step === "cooldown" && existingAssessment && (
           <div className="container max-w-lg mx-auto px-4 py-20 animate-in zoom-in-95 duration-500">
-            <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden">
+            <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden">
               <div className="bg-amber-500/5 p-8 text-center border-b border-amber-500/10">
-                <div className="w-16 h-16 bg-amber-500/10 rounded-3xl flex items-center justify-center mx-auto mb-4">
+                <div className="w-16 h-16 bg-amber-500/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Clock className="w-8 h-8 text-amber-600" />
                 </div>
                 <CardTitle className="text-2xl font-black tracking-tighter text-amber-900">Analysis Cooldown</CardTitle>
@@ -222,7 +222,7 @@ function CareerAssessmentContent() {
                   </div>
                 </div>
 
-                <div className="text-center py-6 px-4 bg-primary/5 rounded-3xl border border-primary/10 relative overflow-hidden group">
+                <div className="text-center py-6 px-4 bg-primary/5 rounded-2xl border border-primary/10 relative overflow-hidden group">
                   <div className="relative z-10">
                     <CalendarDays className="w-6 h-6 text-primary mx-auto mb-2 opacity-50" />
                     <p className="text-[10px] font-black uppercase tracking-widest text-primary/60">
@@ -234,7 +234,7 @@ function CareerAssessmentContent() {
 
                 <div className="space-y-3">
                   <Button
-                    className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs"
+                    className="w-full h-10 rounded-xl font-black uppercase tracking-widest text-xs"
                     variant="outline"
                     onClick={() => (window.location.href = `/assessment-results/${existingAssessment.id}`)}
                   >
@@ -249,7 +249,7 @@ function CareerAssessmentContent() {
                     </div>
                   </div>
                   <Button
-                    className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs bg-foreground text-background hover:bg-foreground/90"
+                    className="w-full h-10 rounded-xl font-black uppercase tracking-widest text-xs bg-foreground text-background hover:bg-foreground/90"
                     onClick={() => setStep("access-code")}
                   >
                     <KeyRound className="mr-2 h-4 w-4" /> Use Priority Access Code
@@ -262,13 +262,13 @@ function CareerAssessmentContent() {
 
         {step === "access-code" && (
           <div className="container max-w-md mx-auto px-4 py-20 animate-in fade-in duration-500">
-            <Card className="rounded-[32px] border-border/40 shadow-2xl">
+            <Card className="rounded-2xl border-border/40 shadow-2xl">
               <CardHeader className="text-center">
                 <div className="w-14 h-14 bg-primary/10 rounded-2xl flex items-center justify-center mx-auto mb-4">
                   <Zap className="w-7 h-7 text-primary fill-primary" />
                 </div>
                 <CardTitle className="text-2xl font-black tracking-tighter">Bypass Cooldown</CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+                <CardDescription className="text-sm font-medium tracking-widest">
                   Enter priority access sequence
                 </CardDescription>
               </CardHeader>
@@ -281,7 +281,7 @@ function CareerAssessmentContent() {
                   maxLength={8}
                 />
                 <Button
-                  className="w-full h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl shadow-primary/20"
+                  className="w-full h-10 rounded-xl font-black uppercase tracking-widest shadow-xl shadow-primary/20"
                   onClick={handleAccessCodeValidation}
                   disabled={validatingCode}
                 >
@@ -367,7 +367,7 @@ function LandingSection({ onStart }: { onStart: () => void }) {
             <Button
               size="lg"
               onClick={onStart}
-              className="h-16 px-10 rounded-[20px] text-sm font-black uppercase tracking-widest shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all"
+              className="h-16 px-10 rounded-[20px] text-sm font-black uppercase tracking-widest shadow-sm hover:scale-[1.02] active:scale-95 transition-all"
             >
               Analyze Readiness <ArrowRight className="ml-2 h-5 w-5" />
             </Button>
@@ -403,7 +403,7 @@ function LandingSection({ onStart }: { onStart: () => void }) {
             <div key={i} className="space-y-4 group">
               <div
                 className={cn(
-                  "w-14 h-14 rounded-2xl flex items-center justify-center transition-all group-hover:scale-110",
+                  "w-14 h-10 rounded-xl flex items-center justify-center transition-all group-hover:scale-110",
                   `bg-${feat.tint}/10`,
                 )}
               >
