@@ -12,6 +12,26 @@ import { useTalent } from "@/hooks/useTalent";
 import { AccountUpgradeModal } from "@/components/auth/AccountUpgradeModal";
 import { PhoneCaptureModal } from "@/components/onboarding/PhoneCaptureModal";
 import { PageLoadingSkeleton } from "@/components/ui/page-loading-skeleton";
+import { ComingSoonGate } from "@/components/launch/ComingSoonGate";
+
+// v0.5 launch: destination pages share one gate keyed by country slug.
+function DestinationGate() {
+  const { country } = useParams<{ country: string }>();
+  const slug = (country ?? "").toLowerCase().replace(/[^a-z0-9-]+/g, "-").replace(/^-+|-+$/g, "");
+  const featureKey = `abroad-country-${slug || "unknown"}`;
+  const label = country
+    ? country.replace(/-/g, " ").replace(/\b\w/g, (c) => c.toUpperCase())
+    : "this destination";
+  return (
+    <ComingSoonGate
+      featureKey={featureKey}
+      title={`Study in ${label}`}
+      description={`We're onboarding partner agents for ${label}. Join the waitlist to be the first to hear when they go live.`}
+      secondaryCtaLabel="Explore Study Abroad"
+      secondaryCtaHref="/app/abroad"
+    />
+  );
+}
 
 // Shell + guards (eager — small, used everywhere)
 import { ProtectedRoute } from "./components/ProtectedRoute";
@@ -423,15 +443,15 @@ export default function App() {
                     <Route path="learning/review" element={<LearningReview />} />
                     <Route path="services" element={<Navigate to="/app/jobs?tab=tools" replace />} />
                     <Route path="abroad" element={<AbroadHub />} />
-                    <Route path="abroad/destinations/:country" element={<DestinationAgentPage />} />
+                    <Route path="abroad/destinations/:country" element={<DestinationGate />} />
                     <Route path="abroad/applications" element={<AbroadApplications />} />
                     <Route path="counsellor" element={<AbroadCounsellor />} />
                     <Route path="abroad/ielts" element={<IELTSCoach />} />
                     <Route path="abroad/ielts/mock/:section" element={<IELTSMockRunner />} />
                     <Route path="abroad/ielts/results/:id" element={<IELTSResults />} />
-                    <Route path="languages" element={<LanguagesHub />} />
-                    <Route path="languages/:code/practice" element={<LanguagePracticePage />} />
-                    <Route path="languages/:code/instructors" element={<LanguageInstructorsPage />} />
+                    <Route path="languages" element={<ComingSoonGate featureKey="languages-hub" title="Languages Hub" description="Practice rooms and verified language instructors. Coming soon." />} />
+                    <Route path="languages/:code/practice" element={<ComingSoonGate featureKey="languages-practice" title="Language Practice" description="Live practice rooms with verified instructors are launching soon." />} />
+                    <Route path="languages/:code/instructors" element={<ComingSoonGate featureKey="languages-instructors" title="Language Instructors" description="We're onboarding verified language instructors. Get notified when they're live." />} />
                     <Route path="agents" element={<AIAgents />} />
                     <Route path="my-agents" element={<MyAgents />} />
                     <Route path="agent-marketplace" element={<AgentMarketplace />} />
@@ -439,8 +459,8 @@ export default function App() {
                     <Route path="gigs/new" element={<NewGigWizard />} />
                     <Route path="gigs/appeals" element={<GigAppeals />} />
                     <Route path="gigs/disputes" element={<GigDisputes />} />
-                    <Route path="reviewer" element={<ReviewerCockpit />} />
-                    <Route path="projects" element={<MyProjects />} />
+                    <Route path="reviewer" element={<ComingSoonGate featureKey="reviewer-program" title="Community Reviewer Program" description="Earn credits by reviewing submissions. Applications open soon — join the waitlist to be notified." secondaryCtaLabel="Explore gigs" secondaryCtaHref="/app/gigs" />} />
+                    <Route path="projects" element={<ComingSoonGate featureKey="managed-projects" title="Managed Projects" description="Escrow-backed multi-talent projects. Coming soon for talents." secondaryCtaLabel="Explore gigs" secondaryCtaHref="/app/gigs" />} />
                     <Route path="projects/:projectId" element={<ProjectRoom />} />
                     <Route path="marketplace" element={<Navigate to="/app/gigs?tab=projects" replace />} />
                     <Route path="marketplace/:id" element={<MarketplaceGigDetail />} />
@@ -448,7 +468,7 @@ export default function App() {
                     <Route path="me" element={<TalentHome />} />
                     <Route path="pitches" element={<TalentPitches />} />
                     <Route path="profile" element={<Profile />} />
-                    <Route path="talents" element={<TalentDirectory />} />
+                    <Route path="talents" element={<ComingSoonGate featureKey="talent-directory" title="Talent Directory" description="Browse public talent profiles. Opening once enough talents go public." secondaryCtaLabel="Build your profile" secondaryCtaHref="/app/profile" />} />
                     <Route path="talents/:id" element={<TalentPublicProfile />} />
                     <Route path="connections" element={<Connections />} />
 
@@ -485,7 +505,7 @@ export default function App() {
                     <Route path="submissions/:submissionId" element={<AppSubmissionDetail />} />
                     <Route path="learning/events" element={<AppEvents />} />
                     <Route path="learning/webinars" element={<AppEvents />} />
-                    <Route path="learning/competitions" element={<Competitions />} />
+                    <Route path="learning/competitions" element={<ComingSoonGate featureKey="competitions" title="Competitions" description="Time-boxed challenges with prizes. Next season opens soon — join the waitlist for early access." secondaryCtaLabel="Browse learning" secondaryCtaHref="/app/learning" />} />
                     <Route path="learning/competitions/:slug" element={<CompetitionDetail />} />
                     <Route path="learning/blog" element={<Blog />} />
                     <Route path="learning/blog/:slug" element={<BlogPost />} />
