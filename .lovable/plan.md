@@ -56,3 +56,20 @@ Polish (A11–A18) is done. Users will next feel either (a) load speed or (b) mi
 - **Image/font optimization** — Useful, but bundle JS dominates first-paint cost here; do after A19.
 - **PWA cache tuning** — Helps repeat visits, not first visit; lower priority.
 - **Feature work** — User hasn't named one; performance is the safer default continuation.
+
+---
+
+## A19 — Executed (Route-Level Code Splitting & Bundle Trim)
+
+1. **`src/App.tsx`** — Converted ~115 page imports to `React.lazy()`. Eager-kept: `Index`, `AuthChat`, `AuthClassic`, `AuthCallback`, `Start`, `ResetPassword`, `NotFound`, shell wrappers (`TalentAppShell`, `ProtectedRoute`), context providers, PWA prompts. Wrapped entire `<Routes>` in a single `<Suspense fallback={<PageLoadingSkeleton />}>`. `Gro10xRoutes` itself is lazy-loaded so talent visitors never download the B2B bundle.
+2. **`src/gro10x/Gro10xRoutes.tsx`** — All 26 Gro10x pages converted to `lazy()` with its own `<Suspense>` boundary using the same skeleton.
+3. **`vite.config.ts`** — Added `vendor-icons` (`lucide-react`) to `manualChunks`. Existing buckets (`vendor-react`, `vendor-ui` for Radix, `vendor-charts` for recharts, `vendor-pdf` for jspdf+html2canvas, `vendor-query`, `vendor-supabase`) retained.
+4. **PDF generators** — `assessmentPdfGenerator`, `salaryPdfGenerator`, `pdfGenerator`, `certificatePdfGenerator` are only imported by 3 lazy pages (`AssessmentResults`, `SalaryAnalysisResults`, `ReportCard`); combined with `vendor-pdf` manualChunk, the jspdf/html2canvas chunk no longer ships in first paint.
+5. **Admin shell** — Already 100% lazy via `src/shells/admin/routes/*.ts`; no changes needed.
+6. **Barrel audit** — `rg` confirmed `recharts` / `jspdf` / `html2canvas` / `@react-pdf/renderer` / `framer-motion` are not re-exported from any `src/domains/*/index.ts` or `src/components/*/index.ts`. Tree-shaking unblocked.
+
+### Acceptance
+- `tsc --noEmit` clean.
+- Talent first-paint chunk no longer eagerly imports admin (`Dashboard`, admin tabs), gro10x pages, PDF generators, public-discovery pages, or mock-interview/salary flows.
+- Each shell has a single `<Suspense>` boundary so route transitions show the standardized A17 skeleton.
+- No behavior or UI changes.
