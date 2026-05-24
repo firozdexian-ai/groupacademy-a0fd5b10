@@ -304,7 +304,7 @@ export default function KeyInfluencersTab() {
               <Button
                 onClick={executeDeployment}
                 disabled={busy}
-                className="w-full h-14 rounded-2xl font-semibold uppercase text-[11px] gap-2 shadow-xl bg-primary"
+                className="w-full h-10 rounded-xl font-semibold uppercase text-[11px] gap-2 shadow-xl bg-primary"
               >
                 {busy ? <Loader2 className="animate-spin h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />}{" "}
                 {editingNode ? "Commit Calibration" : "Authorize Node"}
