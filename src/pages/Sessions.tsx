@@ -74,7 +74,7 @@ export default function Sessions() {
         </div>
         <div className="grid gap-6">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-40 w-full rounded-[32px]" />
+            <Skeleton key={i} className="h-40 w-full rounded-2xl" />
           ))}
         </div>
       </div>
@@ -99,7 +99,7 @@ export default function Sessions() {
           <div className="space-y-3">
             <Badge
               variant="outline"
-              className="rounded-full px-4 py-1 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-[0.2em]"
+              className="rounded-full px-4 py-1 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-tight"
             >
               <Sparkles className="w-3 h-3 mr-2" /> Global Logic Ledger
             </Badge>
@@ -110,16 +110,16 @@ export default function Sessions() {
           </div>
           <Button
             onClick={() => navigate("/sessions/new")}
-            className="h-14 px-8 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary/20"
+            className="h-10 px-4 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-xl shadow-primary/20"
           >
             <Plus className="mr-2 h-4 w-4" /> Initialize Node
           </Button>
         </header>
 
         {!sessions || sessions.length === 0 ? (
-          <Card className="rounded-[40px] border-border/40 border-dashed bg-muted/30 py-24">
+          <Card className="rounded-2xl border-border/40 border-dashed bg-muted/30 py-24">
             <CardContent className="flex flex-col items-center justify-center space-y-6 text-center">
-              <div className="h-20 w-20 rounded-3xl bg-background flex items-center justify-center shadow-xl">
+              <div className="h-20 w-20 rounded-2xl bg-background flex items-center justify-center shadow-xl">
                 <CalendarIcon className="h-10 w-10 text-muted-foreground/30" />
               </div>
               <div className="space-y-2">
@@ -144,7 +144,7 @@ export default function Sessions() {
               return (
                 <Card
                   key={session.id}
-                  className="rounded-[32px] border-border/40 shadow-sm bg-card/50 backdrop-blur-xl hover:shadow-2xl hover:border-primary/20 transition-all duration-500 group cursor-pointer overflow-hidden"
+                  className="rounded-2xl border-border/40 shadow-sm bg-card hover:shadow-2xl hover:border-primary/20 transition-all duration-500 group cursor-pointer overflow-hidden"
                   onClick={() => navigate(`/sessions/${session.id}/edit`)}
                 >
                   <CardContent className="p-0">

@@ -242,7 +242,7 @@ export default function AdminLiveInbox() {
 
       <div className="flex-1 min-h-0 flex">
         {/* LEFT — thread list */}
-        <aside className="w-full md:w-[360px] border-r border-border/40 bg-card/30 flex flex-col flex-shrink-0">
+        <aside className="w-full md:w-[360px] border-r border-border/40 bg-card flex flex-col flex-shrink-0">
           <div className="p-3 flex gap-2 border-b border-border/30">
             {(["all", "ai", "human"] as const).map((k) => (
               <Button

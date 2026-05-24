@@ -55,7 +55,7 @@ export default function DashboardChat() {
         <aside
           className={`${
             showThread ? "hidden md:flex" : "flex"
-          } w-full md:w-[320px] flex-col border-r border-border/40 bg-card/30 flex-shrink-0`}
+          } w-full md:w-[320px] flex-col border-r border-border/40 bg-card flex-shrink-0`}
         >
           <AgentRail
             activeKey={activeKey}

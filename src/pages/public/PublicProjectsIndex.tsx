@@ -183,7 +183,7 @@ export default function PublicProjectsIndex() {
                 key={`showcase-directory-card-index-${projectRowItem.id}`}
                 className="group outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring block h-full rounded-lg transition-transform"
               >
-                <Card className="rounded-lg border border-border/60 bg-card/30 hover:border-border-foreground/10 transition-colors duration-100 flex flex-col h-full shadow-none overflow-hidden">
+                <Card className="rounded-lg border border-border/60 bg-card hover:border-border-foreground/10 transition-colors duration-100 flex flex-col h-full shadow-none overflow-hidden">
                   {/* Dynamic Project Imagery Banner */}
                   {projectRowItem.og_image_url && (
                     <div className="relative w-full overflow-hidden h-28 sm:h-32 shrink-0 pointer-events-none select-none border-b border-border/5 bg-muted/20">

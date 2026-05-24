@@ -127,7 +127,7 @@ const SalaryAnalysisResults = () => {
           <div className="space-y-3">
             <Badge
               variant="outline"
-              className="rounded-full px-4 py-1 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[9px] tracking-[0.2em]"
+              className="rounded-full px-4 py-1 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[9px] tracking-tight"
             >
               <Sparkles className="w-3 h-3 mr-2" /> Valuation Artifact Optimized
             </Badge>
@@ -156,7 +156,7 @@ const SalaryAnalysisResults = () => {
         <div className="grid lg:grid-cols-3 gap-8">
           <div className="lg:col-span-2 space-y-8">
             {/* Logic Score HUD */}
-            <Card className="rounded-[40px] border-border/40 shadow-2xl bg-card overflow-hidden">
+            <Card className="rounded-2xl border-border/40 shadow-2xl bg-card overflow-hidden">
               <CardContent className="p-10 flex flex-col md:flex-row items-center gap-10">
                 <div className="relative h-32 w-32 shrink-0">
                   <div className="absolute inset-0 rounded-full border-[8px] border-primary/10" />
@@ -201,10 +201,10 @@ const SalaryAnalysisResults = () => {
               ].map((node, i) => (
                 <Card
                   key={i}
-                  className={cn("rounded-3xl border-2 overflow-hidden transition-all hover:scale-[1.02]", node.color)}
+                  className={cn("rounded-2xl border-2 overflow-hidden transition-all hover:scale-[1.02]", node.color)}
                 >
                   <CardContent className="p-6 text-center space-y-1">
-                    <p className="text-[9px] font-black uppercase tracking-[0.2em] opacity-60">{node.label}</p>
+                    <p className="text-[9px] font-black uppercase tracking-tight opacity-60">{node.label}</p>
                     <p className="text-3xl font-black tracking-tighter">${formatSalary(node.val)}</p>
                     <p className="text-[10px] font-bold opacity-40">Monthly USD</p>
                   </CardContent>
@@ -213,7 +213,7 @@ const SalaryAnalysisResults = () => {
             </div>
 
             {/* Logic Gaps (Skills) */}
-            <Card className="rounded-[40px] border-border/40 shadow-xl bg-card overflow-hidden">
+            <Card className="rounded-2xl border-border/40 shadow-xl bg-card overflow-hidden">
               <CardHeader className="p-8 pb-4 border-b border-border/10 bg-muted/20">
                 <CardTitle className="text-xl font-black tracking-tight uppercase flex items-center gap-2">
                   <Target className="h-5 w-5 text-primary" /> Verification Matrix
@@ -255,7 +255,7 @@ const SalaryAnalysisResults = () => {
                 </div>
 
                 {skills?.recommendations && (
-                  <div className="p-6 rounded-3xl bg-primary/[0.03] border border-primary/10 space-y-4">
+                  <div className="p-6 rounded-2xl bg-primary/[0.03] border border-primary/10 space-y-4">
                     <p className="text-[10px] font-black uppercase tracking-widest text-primary">
                       Strategic Recommendations
                     </p>
@@ -272,7 +272,7 @@ const SalaryAnalysisResults = () => {
             </Card>
 
             {/* Negotiation Protocol */}
-            <Card className="rounded-[40px] border-border/40 shadow-xl bg-card overflow-hidden">
+            <Card className="rounded-2xl border-border/40 shadow-xl bg-card overflow-hidden">
               <CardHeader className="p-8 pb-4 bg-amber-500/[0.03] border-b border-amber-500/10">
                 <CardTitle className="text-xl font-black tracking-tight uppercase flex items-center gap-2">
                   <Lightbulb className="h-5 w-5 text-amber-500" /> Negotiation Protocols
@@ -295,7 +295,7 @@ const SalaryAnalysisResults = () => {
 
           {/* Upsell Sidebar HUD */}
           <aside className="space-y-8">
-            <Card className="rounded-[32px] border-primary/20 bg-primary/5 shadow-2xl overflow-hidden sticky top-24">
+            <Card className="rounded-2xl border-primary/20 bg-primary/5 shadow-2xl overflow-hidden sticky top-24">
               <CardContent className="p-8 space-y-8">
                 <div className="space-y-2">
                   <h4 className="font-black uppercase tracking-widest text-[10px] text-primary flex items-center gap-2">
@@ -325,7 +325,7 @@ const SalaryAnalysisResults = () => {
 
                 <Button
                   asChild
-                  className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20"
+                  className="w-full h-10 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20"
                 >
                   <Link to="/courses">
                     Explore Academy Hub <ArrowRight className="ml-2 h-4 w-4" />
@@ -334,7 +334,7 @@ const SalaryAnalysisResults = () => {
               </CardContent>
             </Card>
 
-            <Card className="rounded-[32px] border-border/40 bg-card p-8 space-y-6">
+            <Card className="rounded-2xl border-border/40 bg-card p-8 space-y-6">
               <div className="space-y-1">
                 <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Market Pulse</p>
                 <Badge className="bg-emerald-500/10 text-emerald-600 border-none uppercase text-[8px] font-black">
@@ -361,7 +361,7 @@ const SalaryAnalysisResults = () => {
           <Button
             variant="ghost"
             asChild
-            className="h-16 rounded-[24px] bg-muted/30 border border-border/40 font-black uppercase text-[10px] tracking-widest"
+            className="h-16 rounded-xl bg-muted/30 border border-border/40 font-black uppercase text-[10px] tracking-widest"
           >
             <Link to="/app/feed">
               <RefreshCw className="h-4 w-4 mr-2" /> Return to Sequence Feed
@@ -370,7 +370,7 @@ const SalaryAnalysisResults = () => {
           <Button
             variant="ghost"
             asChild
-            className="h-16 rounded-[24px] bg-primary/5 border border-primary/20 text-primary font-black uppercase text-[10px] tracking-widest"
+            className="h-16 rounded-xl bg-primary/5 border border-primary/20 text-primary font-black uppercase text-[10px] tracking-widest"
           >
             <Link to="/portfolio-request">
               <FileText className="h-4 w-4 mr-2" /> Engineering Artifact (Portfolio)

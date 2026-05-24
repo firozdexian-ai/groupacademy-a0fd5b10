@@ -112,7 +112,7 @@ export default function PublicBlogPost() {
     <div className="min-h-screen flex flex-col bg-background selection:bg-primary/10">
       {jsonLd && <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />}
 
-      <header className="border-b border-border/40 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-border/40 bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <img
             src={theme === "dark" ? logoLight : logoDark}
@@ -148,7 +148,7 @@ export default function PublicBlogPost() {
               <Skeleton className="h-4 w-32" />
               <Skeleton className="h-12 w-full" />
             </div>
-            <Skeleton className="h-[400px] w-full rounded-[32px]" />
+            <Skeleton className="h-[400px] w-full rounded-2xl" />
             <div className="space-y-4">
               <Skeleton className="h-4 w-full" />
               <Skeleton className="h-4 w-full" />
@@ -157,7 +157,7 @@ export default function PublicBlogPost() {
           </div>
         ) : !post ? (
           <div className="text-center py-24 space-y-6">
-            <div className="h-20 w-20 rounded-[32px] bg-muted flex items-center justify-center mx-auto">
+            <div className="h-20 w-20 rounded-2xl bg-muted flex items-center justify-center mx-auto">
               <FileText className="h-10 w-10 text-muted-foreground/40" />
             </div>
             <h2 className="text-2xl font-black tracking-tighter uppercase">Artifact Missing</h2>
@@ -200,7 +200,7 @@ export default function PublicBlogPost() {
                   {post.title}
                 </h1>
 
-                <div className="flex flex-wrap items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground pt-2">
+                <div className="flex flex-wrap items-center gap-6 text-[10px] font-black uppercase tracking-tight text-muted-foreground pt-2">
                   <div className="flex items-center gap-2">
                     <div className="h-6 w-6 rounded-full bg-primary/10 flex items-center justify-center">
                       <User className="h-3 w-3 text-primary" />
@@ -224,24 +224,24 @@ export default function PublicBlogPost() {
             </header>
 
             {post.featured_image && (
-              <div className="rounded-[40px] overflow-hidden mb-12 shadow-2xl border border-border/40 bg-muted">
+              <div className="rounded-2xl overflow-hidden mb-12 shadow-2xl border border-border/40 bg-muted">
                 <img src={post.featured_image} alt={post.title} className="w-full h-auto object-cover max-h-[500px]" />
               </div>
             )}
 
             {post.excerpt && (
-              <div className="mb-12 p-8 rounded-[32px] bg-primary/[0.03] border-l-4 border-primary">
+              <div className="mb-12 p-8 rounded-2xl bg-primary/[0.03] border-l-4 border-primary">
                 <p className="text-xl md:text-2xl font-medium text-foreground/80 leading-relaxed italic">
                   "{post.excerpt}"
                 </p>
               </div>
             )}
 
-            <div className="prose prose-neutral dark:prose-invert max-w-none mb-16 prose-p:leading-[1.8] prose-p:text-lg prose-headings:font-black prose-headings:tracking-tighter prose-img:rounded-[32px]">
+            <div className="prose prose-neutral dark:prose-invert max-w-none mb-16 prose-p:leading-[1.8] prose-p:text-lg prose-headings:font-black prose-headings:tracking-tighter prose-img:rounded-2xl">
               {post.external_url ? (
-                <Card className="rounded-[40px] border-primary/20 bg-card overflow-hidden shadow-xl border-dashed border-2">
+                <Card className="rounded-2xl border-primary/20 bg-card overflow-hidden shadow-xl border-dashed border-2">
                   <CardContent className="flex flex-col items-center justify-center p-12 text-center space-y-6">
-                    <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center">
+                    <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center">
                       <ExternalLink className="h-8 w-8 text-primary" />
                     </div>
                     <div className="space-y-2">
@@ -252,7 +252,7 @@ export default function PublicBlogPost() {
                     </div>
                     <Button
                       size="lg"
-                      className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
+                      className="h-10 px-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
                       onClick={() => window.open(post.external_url!, "_blank", "noopener,noreferrer")}
                     >
                       Access Full Article <ArrowRight className="ml-2 h-4 w-4" />
@@ -290,7 +290,7 @@ export default function PublicBlogPost() {
                 </div>
               </div>
 
-              <Card className="rounded-[40px] border-primary/20 bg-gradient-to-br from-primary/10 to-transparent shadow-2xl overflow-hidden relative">
+              <Card className="rounded-2xl border-primary/20 bg-gradient-to-br from-primary/10 to-transparent shadow-2xl overflow-hidden relative">
                 <div className="absolute top-0 right-0 p-8 opacity-5">
                   <Sparkles className="h-32 w-32 text-primary" />
                 </div>
@@ -304,7 +304,7 @@ export default function PublicBlogPost() {
                   <Button
                     size="lg"
                     onClick={() => navigate("/auth?tab=signup")}
-                    className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
+                    className="h-10 px-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
                   >
                     Join Academy <ShieldCheck className="ml-2 h-4 w-4" />
                   </Button>
@@ -316,7 +316,7 @@ export default function PublicBlogPost() {
       </main>
 
       <footer className="border-t border-border/40 bg-card py-12">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-tight text-muted-foreground">
           <div className="flex items-center gap-3">
             <img src={logoIcon} className="h-6 w-6 grayscale opacity-40" alt="Logo" />
             <span>© 2026 GroUp Academy</span>

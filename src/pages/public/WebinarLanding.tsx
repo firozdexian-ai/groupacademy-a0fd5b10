@@ -128,7 +128,7 @@ export default function WebinarLanding() {
           <Button
             type="button"
             onClick={() => executeNavigationHook("/")}
-            className="h-8 rounded-lg text-[10px] font-bold uppercase tracking-wider cursor-pointer"
+            className="h-8 rounded-lg text-sm font-medium tracking-wider cursor-pointer"
           >
             Return to Core Hub
           </Button>
@@ -176,7 +176,7 @@ export default function WebinarLanding() {
       </div>
 
       {/* HUD LEVEL 3: TIMING LOGS SPECIFICATIONS CARD */}
-      <Card className="rounded-xl border border-border/60 bg-card/30 shadow-none block w-full overflow-hidden">
+      <Card className="rounded-xl border border-border/60 bg-card shadow-none block w-full overflow-hidden">
         <CardContent className="p-4 space-y-3.5 text-xs sm:text-sm font-semibold leading-none text-foreground/80 w-full block">
           {/* Calendar Sync Tracks */}
           <div className="flex items-start gap-3 w-full leading-none">

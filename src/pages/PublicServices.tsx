@@ -111,7 +111,7 @@ export default function PublicServices() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* Glassmorphism Header */}
-      <header className="border-b border-border/40 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-border/40 bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <img
             src={theme === "dark" ? logoLight : logoDark}
@@ -146,7 +146,7 @@ export default function PublicServices() {
         <div className="container mx-auto px-6 text-center space-y-8 relative z-10 animate-in fade-in duration-700">
           <Badge
             variant="outline"
-            className="rounded-full px-4 py-1.5 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-[0.2em]"
+            className="rounded-full px-4 py-1.5 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-tight"
           >
             <Sparkles className="w-3 h-3 mr-2 fill-primary" /> Professional Verification Protocol
           </Badge>
@@ -165,7 +165,7 @@ export default function PublicServices() {
             <Button
               size="lg"
               onClick={() => navigate("/auth?tab=signup")}
-              className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
+              className="h-10 px-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
             >
               Claim 250 Grant Credits <ArrowRight className="ml-2 h-4 w-4" />
             </Button>
@@ -182,7 +182,7 @@ export default function PublicServices() {
           {SERVICES.map((service, idx) => (
             <Card
               key={service.slug}
-              className="rounded-[40px] border-border/40 shadow-xl overflow-hidden group hover:border-primary/20 transition-all duration-500 bg-card/50 backdrop-blur-sm animate-in slide-in-from-bottom-8"
+              className="rounded-2xl border-border/40 shadow-xl overflow-hidden group hover:border-primary/20 transition-all duration-500 bg-card backdrop-blur-sm animate-in slide-in-from-bottom-8"
               style={{ animationDelay: `${idx * 100}ms` }}
             >
               <CardContent className="p-8 md:p-12">
@@ -191,7 +191,7 @@ export default function PublicServices() {
                     <div className="flex items-center gap-5">
                       <div
                         className={cn(
-                          "w-16 h-16 rounded-3xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 duration-500",
+                          "w-16 h-16 rounded-2xl flex items-center justify-center shadow-lg transition-transform group-hover:scale-110 duration-500",
                           service.bgColor,
                         )}
                       >
@@ -233,12 +233,12 @@ export default function PublicServices() {
 
                   <div className="flex flex-col items-center justify-center lg:min-w-[200px] border-t lg:border-t-0 lg:border-l border-border/20 pt-8 lg:pt-0 lg:pl-8">
                     <Button
-                      className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg"
+                      className="w-full h-10 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-lg"
                       onClick={() => navigate(`/auth?tab=signup&returnTo=/app/services/${service.slug}`)}
                     >
                       Launch Sequence <Zap className="w-3.5 h-3.5 ml-2 fill-current" />
                     </Button>
-                    <p className="mt-4 text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground opacity-40">
+                    <p className="mt-4 text-[9px] font-black uppercase tracking-tight text-muted-foreground opacity-40">
                       Ready for handshake
                     </p>
                   </div>
@@ -251,7 +251,7 @@ export default function PublicServices() {
 
       {/* Executive Footer */}
       <footer className="border-t border-border/40 bg-card py-12">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-tight text-muted-foreground">
           <div className="flex items-center gap-3">
             <img src={logoIcon} className="h-6 w-6 grayscale opacity-40" alt="Logo" />
             <span>© 2026 GroUp Academy</span>

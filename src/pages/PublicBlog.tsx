@@ -67,7 +67,7 @@ export default function PublicBlog() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* Glassmorphism Header */}
-      <header className="border-b border-border/40 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-border/40 bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <img
             src={theme === "dark" ? logoLight : logoDark}
@@ -102,7 +102,7 @@ export default function PublicBlog() {
         <div className="container mx-auto px-6 text-center space-y-6 relative z-10">
           <Badge
             variant="outline"
-            className="rounded-full px-4 py-1.5 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-[0.2em] animate-in slide-in-from-top-4 duration-700"
+            className="rounded-full px-4 py-1.5 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-tight animate-in slide-in-from-top-4 duration-700"
           >
             <Sparkles className="w-3 h-3 mr-2 fill-primary" /> Intelligence Lab
           </Badge>
@@ -148,10 +148,10 @@ export default function PublicBlog() {
 
         {isLoading ? (
           <div className="space-y-12">
-            <Skeleton className="h-[450px] w-full rounded-[40px]" />
+            <Skeleton className="h-[450px] w-full rounded-2xl" />
             <div className="grid gap-8 md:grid-cols-2 lg:grid-cols-3">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-80 rounded-[32px]" />
+                <Skeleton key={i} className="h-80 rounded-2xl" />
               ))}
             </div>
           </div>
@@ -160,7 +160,7 @@ export default function PublicBlog() {
             {/* Featured Narrative */}
             {featuredPost && (
               <Card
-                className="rounded-[40px] border-border/40 bg-card/50 overflow-hidden group cursor-pointer hover:shadow-2xl transition-all duration-700"
+                className="rounded-2xl border-border/40 bg-card overflow-hidden group cursor-pointer hover:shadow-2xl transition-all duration-700"
                 onClick={() => navigate(`/blog/${featuredPost.slug}`)}
               >
                 <div className="lg:flex min-h-[450px]">
@@ -201,7 +201,7 @@ export default function PublicBlog() {
                         {featuredPost.excerpt}
                       </p>
                     )}
-                    <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground pt-4">
+                    <div className="flex items-center gap-6 text-[10px] font-black uppercase tracking-tight text-muted-foreground pt-4">
                       {featuredPost.published_at && (
                         <span className="flex items-center gap-2">
                           <Calendar className="h-3.5 w-3.5" />
@@ -226,7 +226,7 @@ export default function PublicBlog() {
                 {regularPosts.map((post) => (
                   <Card
                     key={post.id}
-                    className="rounded-[32px] border-border/40 bg-card overflow-hidden group cursor-pointer hover:shadow-xl hover:border-primary/20 transition-all duration-500 flex flex-col"
+                    className="rounded-2xl border-border/40 bg-card overflow-hidden group cursor-pointer hover:shadow-xl hover:border-primary/20 transition-all duration-500 flex flex-col"
                     onClick={() => navigate(`/blog/${post.slug}`)}
                   >
                     {post.featured_image && (
@@ -268,9 +268,9 @@ export default function PublicBlog() {
             )}
           </div>
         ) : (
-          <Card className="rounded-[40px] border-border/40 bg-muted/20 py-24 border-dashed">
+          <Card className="rounded-2xl border-border/40 bg-muted/20 py-24 border-dashed">
             <CardContent className="text-center space-y-4">
-              <div className="h-16 w-16 rounded-3xl bg-background flex items-center justify-center mx-auto shadow-xl">
+              <div className="h-16 w-16 rounded-2xl bg-background flex items-center justify-center mx-auto shadow-xl">
                 <FileText className="h-8 w-8 text-muted-foreground/40" />
               </div>
               <h3 className="text-2xl font-black tracking-tighter uppercase">No Intelligence Found</h3>
@@ -308,7 +308,7 @@ export default function PublicBlog() {
               </p>
             </div>
           </div>
-          <nav className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+          <nav className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-tight text-muted-foreground">
             <button onClick={() => navigate("/")} className="hover:text-primary transition-colors">
               Hub
             </button>

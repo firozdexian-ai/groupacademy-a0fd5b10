@@ -59,7 +59,7 @@ export default function PublicServiceLanding() {
           </p>
         </div>
 
-        <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/30 pt-12">
+        <p className="text-[9px] font-black uppercase tracking-tight text-muted-foreground/30 pt-12">
           GroUp Academy Intelligence Network
         </p>
       </div>

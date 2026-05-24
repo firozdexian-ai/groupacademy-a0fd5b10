@@ -188,7 +188,7 @@ export default function AssessmentResults() {
     return (
       <div className="min-h-screen bg-slate-50 flex flex-col items-center justify-center">
         <Loader2 className="h-10 w-10 animate-spin text-blue-500" />
-        <p className="text-[10px] font-bold uppercase tracking-widest mt-4 text-slate-500">Compiling Report</p>
+        <p className="text-sm font-medium tracking-widest mt-4 text-slate-500">Compiling Report</p>
       </div>
     );
   }
@@ -214,7 +214,7 @@ export default function AssessmentResults() {
         <section className="grid lg:grid-cols-[1fr,350px] gap-8">
           <div className="space-y-8">
             <header className="space-y-3">
-              <Badge className="bg-blue-50 text-blue-500 border-none px-4 py-1.5 text-[10px] font-bold uppercase tracking-widest rounded-full">
+              <Badge className="bg-blue-50 text-blue-500 border-none px-4 py-1.5 text-sm font-medium tracking-widest rounded-full">
                 Growth Audit
               </Badge>
               <h1 className="text-4xl md:text-5xl font-black tracking-tighter leading-tight text-slate-900">
@@ -225,7 +225,7 @@ export default function AssessmentResults() {
               </p>
             </header>
 
-            <Card className="rounded-[32px] border-none bg-white shadow-sm relative overflow-hidden">
+            <Card className="rounded-2xl border-none bg-white shadow-sm relative overflow-hidden">
               <CardContent className="p-8 md:p-12 flex flex-col md:flex-row items-center gap-12">
                 <div className="relative h-44 w-44 flex items-center justify-center shrink-0">
                   <svg className="h-full w-full transform -rotate-90">
@@ -255,7 +255,7 @@ export default function AssessmentResults() {
                     <span className="text-5xl font-black tracking-tighter text-slate-900">
                       {assessment.percentage}%
                     </span>
-                    <span className="text-[10px] font-bold uppercase text-slate-400 tracking-widest mt-1">Index</span>
+                    <span className="text-sm font-medium text-slate-400 tracking-widest mt-1">Index</span>
                   </div>
                 </div>
 
@@ -263,7 +263,7 @@ export default function AssessmentResults() {
                   <div className="space-y-2">
                     <Badge
                       className={cn(
-                        "rounded-full px-4 py-1.5 text-[10px] font-bold uppercase border-none tracking-widest",
+                        "rounded-full px-4 py-1.5 text-sm font-medium border-none tracking-widest",
                         level.color,
                       )}
                     >
@@ -272,15 +272,15 @@ export default function AssessmentResults() {
                     <p className="text-lg font-medium text-slate-600 leading-relaxed">{level.desc}</p>
                   </div>
                   <div className="grid grid-cols-2 gap-4">
-                    <div className="p-5 bg-slate-50 rounded-[24px] border border-slate-100">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-slate-400 mb-1">Score</p>
+                    <div className="p-5 bg-slate-50 rounded-xl border border-slate-100">
+                      <p className="text-sm font-medium tracking-widest text-slate-400 mb-1">Score</p>
                       <p className="text-2xl font-black text-slate-900">
                         {assessment.total_score}{" "}
                         <span className="text-slate-400 text-lg">/ {assessment.max_score}</span>
                       </p>
                     </div>
-                    <div className="p-5 bg-emerald-50 rounded-[24px] border border-emerald-100">
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-emerald-600/70 mb-1">Status</p>
+                    <div className="p-5 bg-emerald-50 rounded-xl border border-emerald-100">
+                      <p className="text-sm font-medium tracking-widest text-emerald-600/70 mb-1">Status</p>
                       <p className="text-2xl font-black text-emerald-600">Verified</p>
                     </div>
                   </div>
@@ -290,7 +290,7 @@ export default function AssessmentResults() {
           </div>
 
           <aside className="space-y-4">
-            <Card className="rounded-[32px] border-none bg-white shadow-sm sticky top-24">
+            <Card className="rounded-2xl border-none bg-white shadow-sm sticky top-24">
               <CardContent className="p-8 space-y-4">
                 <Button
                   className="w-full h-14 rounded-full bg-slate-800 hover:bg-slate-900 text-white font-bold uppercase tracking-widest text-[10px] shadow-sm"
@@ -343,9 +343,9 @@ export default function AssessmentResults() {
         </section>
 
         <section className="grid md:grid-cols-2 gap-6">
-          <Card className="rounded-[32px] border-none bg-white shadow-sm">
+          <Card className="rounded-2xl border-none bg-white shadow-sm">
             <CardHeader className="px-8 pt-8">
-              <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
+              <CardTitle className="text-sm font-medium tracking-widest text-slate-500 flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-emerald-500" /> Competitive Strengths
               </CardTitle>
             </CardHeader>
@@ -363,9 +363,9 @@ export default function AssessmentResults() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[32px] border-none bg-white shadow-sm">
+          <Card className="rounded-2xl border-none bg-white shadow-sm">
             <CardHeader className="px-8 pt-8">
-              <CardTitle className="text-[10px] font-bold uppercase tracking-widest text-slate-500 flex items-center gap-2">
+              <CardTitle className="text-sm font-medium tracking-widest text-slate-500 flex items-center gap-2">
                 <TrendingUp className="h-4 w-4 text-rose-500" /> Improvement Gaps
               </CardTitle>
             </CardHeader>
@@ -392,13 +392,13 @@ export default function AssessmentResults() {
           <div className="grid md:grid-cols-3 gap-6">
             {isAnalyzing ? (
               <>
-                <Skeleton className="h-40 w-full rounded-[32px] bg-slate-100" />
-                <Skeleton className="h-40 w-full rounded-[32px] bg-slate-100" />
-                <Skeleton className="h-40 w-full rounded-[32px] bg-slate-100" />
+                <Skeleton className="h-40 w-full rounded-2xl bg-slate-100" />
+                <Skeleton className="h-40 w-full rounded-2xl bg-slate-100" />
+                <Skeleton className="h-40 w-full rounded-2xl bg-slate-100" />
               </>
             ) : (
               assessment.ai_analysis?.recommendations.map((rec, i) => (
-                <Card key={i} className="rounded-[32px] border-none bg-white shadow-sm">
+                <Card key={i} className="rounded-2xl border-none bg-white shadow-sm">
                   <CardContent className="p-8 space-y-5">
                     <div className="h-10 w-10 rounded-full bg-blue-50 text-blue-500 flex items-center justify-center text-sm font-black">
                       {i + 1}
@@ -411,7 +411,7 @@ export default function AssessmentResults() {
           </div>
         </section>
 
-        <section className="bg-white rounded-[40px] p-8 md:p-12 shadow-sm border-none relative overflow-hidden">
+        <section className="bg-white rounded-2xl p-8 md:p-12 shadow-sm border-none relative overflow-hidden">
           <div className="absolute top-0 right-0 w-64 h-64 bg-blue-50 rounded-full blur-3xl -mr-20 -mt-20 opacity-50 pointer-events-none"></div>
 
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-8 mb-12 relative z-10">
@@ -432,7 +432,7 @@ export default function AssessmentResults() {
             {recommendedCourses.map((course) => (
               <Card
                 key={course.id}
-                className="rounded-[32px] border border-slate-100 shadow-sm overflow-hidden hover:-translate-y-1 transition-all cursor-pointer bg-white group"
+                className="rounded-2xl border border-slate-100 shadow-sm overflow-hidden hover:-translate-y-1 transition-all cursor-pointer bg-white group"
                 onClick={() => navigate(`/app/learning/courses/${course.slug}`)}
               >
                 <div className="aspect-video bg-slate-100 relative overflow-hidden">
@@ -446,7 +446,7 @@ export default function AssessmentResults() {
                 </div>
                 <CardContent className="p-6">
                   <h4 className="font-bold text-base text-slate-900 line-clamp-1">{course.title}</h4>
-                  <p className="text-[10px] font-bold uppercase text-blue-500 tracking-widest mt-3">
+                  <p className="text-sm font-medium text-blue-500 tracking-widest mt-3">
                     Recommended Course
                   </p>
                 </CardContent>

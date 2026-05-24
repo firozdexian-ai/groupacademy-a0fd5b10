@@ -221,7 +221,7 @@ export default function PublicCompanyPage() {
           </div>
           <Link
             to="/"
-            className="h-8 px-4 rounded-lg inline-flex items-center justify-center text-[10px] font-bold uppercase tracking-wider bg-accent text-accent-foreground border border-border/40 transition-colors hover:bg-muted"
+            className="h-8 px-4 rounded-lg inline-flex items-center justify-center text-sm font-medium tracking-wider bg-accent text-accent-foreground border border-border/40 transition-colors hover:bg-muted"
           >
             ← Back to Home Matrix
           </Link>
@@ -245,7 +245,7 @@ export default function PublicCompanyPage() {
 
         {/* HUD LEVEL 2: COMPOSITE HEAD DESCRIPTION PROFILE IDENTIFIER CARD */}
         <div className="-mt-10 px-4 select-none block w-full">
-          <div className="bg-card/95 border border-border/60 rounded-xl p-4 sm:p-5 shadow-xs backdrop-blur-md block w-full">
+          <div className="bg-card/95 border border-border/60 rounded-xl p-4 sm:p-5 shadow-xs block w-full">
             <div className="flex flex-col sm:flex-row items-start sm:items-center gap-4 w-full">
               <div className="h-14 w-14 sm:h-16 sm:w-16 rounded-lg bg-background border border-border/60 grid place-items-center text-sm font-bold uppercase tracking-wide text-primary overflow-hidden shrink-0 pointer-events-none shadow-inner">
                 {companyRecordState.logo_url ? (

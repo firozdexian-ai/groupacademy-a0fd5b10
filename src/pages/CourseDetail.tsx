@@ -198,7 +198,7 @@ const CourseDetail = () => {
         <Navbar />
         <main className="flex-1 p-8 container max-w-6xl mx-auto">
           <Skeleton className="h-10 w-64 mb-8" />
-          <Skeleton className="h-[400px] rounded-3xl" />
+          <Skeleton className="h-[400px] rounded-2xl" />
         </main>
       </div>
     );
@@ -246,7 +246,7 @@ const CourseDetail = () => {
             <Button
               variant="ghost"
               onClick={() => navigate("/courses")}
-              className="rounded-full bg-background/10 backdrop-blur-md border border-white/10 text-white hover:bg-white/20 px-4 h-9 uppercase text-[10px] font-black tracking-widest"
+              className="rounded-full bg-background/10 border border-white/10 text-white hover:bg-white/20 px-4 h-9 uppercase text-[10px] font-black tracking-widest"
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Back to Nexus
             </Button>
@@ -286,10 +286,10 @@ const CourseDetail = () => {
         <div className="grid lg:grid-cols-[1fr,380px] gap-12 items-start">
           <div className="space-y-10">
             <section className="space-y-4">
-              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-[0.2em] text-primary">
+              <div className="flex items-center gap-2 text-[10px] font-black uppercase tracking-tight text-primary">
                 <Sparkles className="h-4 w-4" /> Executive Summary
               </div>
-              <Card className="rounded-[32px] border-border/40 bg-card/50 backdrop-blur-sm shadow-2xl shadow-primary/5">
+              <Card className="rounded-2xl border-border/40 bg-card backdrop-blur-sm shadow-2xl shadow-primary/5">
                 <CardContent className="p-8">
                   <p className="text-lg leading-relaxed font-medium text-foreground/80 whitespace-pre-wrap">
                     {course.description}
@@ -302,7 +302,7 @@ const CourseDetail = () => {
               <section className="space-y-4">
                 <AspectRatio
                   ratio={16 / 9}
-                  className="rounded-[32px] overflow-hidden shadow-2xl border border-border/40 bg-muted"
+                  className="rounded-2xl overflow-hidden shadow-2xl border border-border/40 bg-muted"
                 >
                   <iframe
                     src={`https://www.youtube.com/embed/${course.youtube_url.match(/(?:youtube\.com\/watch\?v=|youtu\.be\/)([^&\s]+)/)?.[1]}`}
@@ -336,7 +336,7 @@ const CourseDetail = () => {
           </div>
 
           <aside className="sticky top-24">
-            <Card className="rounded-[40px] border-primary/10 shadow-2xl bg-card/80 backdrop-blur-xl overflow-hidden">
+            <Card className="rounded-2xl border-primary/10 shadow-2xl bg-card/80 overflow-hidden">
               <CardHeader className="p-8 pb-4 text-center">
                 <CardTitle className="text-2xl font-black tracking-tighter">
                   {isEnrolled ? "Access Active" : user ? "Enroll Now" : "Platform Entry"}
@@ -345,7 +345,7 @@ const CourseDetail = () => {
               <CardContent className="p-8 pt-0 space-y-6">
                 {isEnrolled ? (
                   <Button
-                    className="w-full h-14 rounded-2xl font-black uppercase tracking-widest shadow-lg shadow-primary/20"
+                    className="w-full h-10 rounded-xl font-black uppercase tracking-widest shadow-lg shadow-primary/20"
                     onClick={() => navigate("/my-learning")}
                   >
                     Enter Classroom
@@ -356,7 +356,7 @@ const CourseDetail = () => {
                       <p className="text-4xl font-black text-primary">${course.price}</p>
                     </div>
                     <Button
-                      className="w-full h-14 rounded-2xl font-black uppercase tracking-widest shadow-xl"
+                      className="w-full h-10 rounded-xl font-black uppercase tracking-widest shadow-xl"
                       onClick={handleQuickEnroll}
                       disabled={isEnrolling || isFull}
                     >
@@ -407,7 +407,7 @@ const CourseDetail = () => {
                     </div>
                     <Button
                       type="submit"
-                      className="w-full h-14 rounded-2xl font-black uppercase tracking-widest"
+                      className="w-full h-10 rounded-xl font-black uppercase tracking-widest"
                       disabled={isEnrolling}
                     >
                       Authorize & Enroll

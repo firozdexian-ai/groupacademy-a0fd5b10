@@ -246,9 +246,9 @@ export default function ContentEdit() {
         <form onSubmit={handleSubmit} className="grid grid-cols-1 md:grid-cols-[1fr,300px] gap-8">
           <div className="space-y-6">
             {/* Core Identity Section */}
-            <Card className="rounded-3xl border-border/40 overflow-hidden">
+            <Card className="rounded-2xl border-border/40 overflow-hidden">
               <CardHeader className="bg-muted/30 pb-4 border-b border-border/20">
-                <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                <CardTitle className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
                   <Layers className="h-4 w-4 text-primary" /> Content Blueprint
                 </CardTitle>
               </CardHeader>
@@ -265,7 +265,7 @@ export default function ContentEdit() {
                       variant="outline"
                       size="sm"
                       onClick={() => setAiCoverOpen(true)}
-                      className="h-7 px-2 text-[10px] font-bold uppercase tracking-widest gap-1 rounded-lg border-primary/30 text-primary hover:bg-primary/10"
+                      className="h-7 px-2 text-sm font-medium tracking-widest gap-1 rounded-lg border-primary/30 text-primary hover:bg-primary/10"
                     >
                       ✨ AI cover
                     </Button>
@@ -352,9 +352,9 @@ export default function ContentEdit() {
 
             {/* Logistics & Delivery Section (Conditional) */}
             {formData.content_type !== "free_video" && (
-              <Card className="rounded-3xl border-border/40 overflow-hidden animate-in fade-in slide-in-from-top-2">
+              <Card className="rounded-2xl border-border/40 overflow-hidden animate-in fade-in slide-in-from-top-2">
                 <CardHeader className="bg-muted/30 pb-4 border-b border-border/20">
-                  <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                  <CardTitle className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
                     <Globe className="h-4 w-4 text-primary" /> Delivery Logic
                   </CardTitle>
                 </CardHeader>
@@ -452,9 +452,9 @@ export default function ContentEdit() {
             )}
 
             {/* Media & Community */}
-            <Card className="rounded-3xl border-border/40 overflow-hidden">
+            <Card className="rounded-2xl border-border/40 overflow-hidden">
               <CardHeader className="bg-muted/30 pb-4 border-b border-border/20">
-                <CardTitle className="text-sm font-black uppercase tracking-[0.2em] flex items-center gap-2">
+                <CardTitle className="text-sm font-black uppercase tracking-tight flex items-center gap-2">
                   <Youtube className="h-4 w-4 text-primary" /> Integration Channels
                 </CardTitle>
               </CardHeader>
@@ -487,7 +487,7 @@ export default function ContentEdit() {
 
           {/* Sidebar Panel */}
           <aside className="space-y-6">
-            <Card className="rounded-[32px] border-primary/20 bg-primary/[0.02] shadow-xl overflow-hidden sticky top-8">
+            <Card className="rounded-2xl border-primary/20 bg-primary/[0.02] shadow-xl overflow-hidden sticky top-8">
               <CardHeader className="bg-primary/5 pb-4">
                 <CardTitle className="text-xs font-black uppercase tracking-widest text-primary">
                   Financial Engine
@@ -564,7 +564,7 @@ export default function ContentEdit() {
                 </div>
 
                 <Button
-                  className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 group"
+                  className="w-full h-10 rounded-xl font-black uppercase tracking-widest text-xs shadow-lg shadow-primary/20 group"
                   disabled={saving}
                   type="submit"
                 >
@@ -594,7 +594,7 @@ export default function ContentEdit() {
             <div className="grid gap-4">
               <Button
                 variant="outline"
-                className="h-16 rounded-[24px] border-border/40 justify-between group"
+                className="h-16 rounded-xl border-border/40 justify-between group"
                 onClick={() => navigate(`/content/${id}/modules`)}
               >
                 <div className="text-left">
@@ -607,7 +607,7 @@ export default function ContentEdit() {
               </Button>
               <Button
                 variant="outline"
-                className="h-16 rounded-[24px] border-border/40 justify-between group"
+                className="h-16 rounded-xl border-border/40 justify-between group"
                 onClick={() => navigate(`/quiz-manage/${id}`)}
               >
                 <div className="text-left">
@@ -623,10 +623,10 @@ export default function ContentEdit() {
         </Tabs>
 
         {formData.is_private && (
-          <Card className="rounded-[32px] border-dashed border-primary/40 bg-primary/[0.01] animate-in zoom-in-95">
+          <Card className="rounded-2xl border-dashed border-primary/40 bg-primary/[0.01] animate-in zoom-in-95">
             <CardContent className="p-6 flex items-center justify-between gap-4">
               <div className="min-w-0">
-                <p className="text-[9px] font-black uppercase tracking-[0.2em] text-primary mb-1">
+                <p className="text-[9px] font-black uppercase tracking-tight text-primary mb-1">
                   Direct Secure Access URL
                 </p>
                 <code className="text-xs text-muted-foreground truncate block font-mono">{`${window.location.origin}/courses/${formData.slug}`}</code>

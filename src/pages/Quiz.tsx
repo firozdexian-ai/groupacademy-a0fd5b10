@@ -188,8 +188,8 @@ export default function Quiz() {
     return (
       <div className="min-h-screen bg-muted/20 flex flex-col">
         <div className="flex-1 container max-w-xl mx-auto px-6 flex items-center justify-center">
-          <Card className="rounded-[40px] border-border/40 shadow-2xl p-10 text-center space-y-6">
-            <div className="h-20 w-20 rounded-3xl bg-primary/5 flex items-center justify-center mx-auto">
+          <Card className="rounded-2xl border-border/40 shadow-2xl p-10 text-center space-y-6">
+            <div className="h-20 w-20 rounded-2xl bg-primary/5 flex items-center justify-center mx-auto">
               <Clock className="h-10 w-10 text-primary/40" />
             </div>
             <div className="space-y-2">
@@ -200,7 +200,7 @@ export default function Quiz() {
             </div>
             <Button
               variant="outline"
-              className="w-full h-14 rounded-2xl font-black uppercase text-[10px] tracking-widest"
+              className="w-full h-10 rounded-xl font-black uppercase text-[10px] tracking-widest"
               onClick={() => navigate(`/learn/${slug}`)}
             >
               <ArrowLeft className="mr-2 h-4 w-4" /> Return to Course
@@ -215,7 +215,7 @@ export default function Quiz() {
     return (
       <div className="min-h-screen bg-muted/10 flex flex-col py-20">
         <div className="container max-w-2xl mx-auto px-6">
-          <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-700">
+          <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden animate-in zoom-in-95 duration-700">
             <div className={cn("p-12 text-center space-y-6", passed ? "bg-emerald-500/[0.03]" : "bg-rose-500/[0.03]")}>
               <div className="relative mx-auto w-24 h-24">
                 <div
@@ -226,7 +226,7 @@ export default function Quiz() {
                 />
                 <div
                   className={cn(
-                    "relative h-24 w-24 rounded-[32px] flex items-center justify-center shadow-2xl",
+                    "relative h-24 w-24 rounded-2xl flex items-center justify-center shadow-2xl",
                     passed ? "bg-emerald-500 text-white" : "bg-rose-500 text-white",
                   )}
                 >
@@ -240,7 +240,7 @@ export default function Quiz() {
               </div>
             </div>
             <CardContent className="p-12 space-y-10">
-              <div className="flex justify-between items-center bg-muted/30 p-8 rounded-[32px] border border-border/20">
+              <div className="flex justify-between items-center bg-muted/30 p-8 rounded-2xl border border-border/20">
                 <div className="space-y-1">
                   <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Raw Score</p>
                   <p className="text-3xl font-black tracking-tight">
@@ -259,7 +259,7 @@ export default function Quiz() {
               <div className="grid gap-3">
                 {passed && (
                   <Button
-                    className="h-14 rounded-2xl font-black uppercase text-xs shadow-xl shadow-primary/20"
+                    className="h-10 rounded-xl font-black uppercase text-xs shadow-xl shadow-primary/20"
                     onClick={() => navigate(`/report-card/${enrollmentId}`)}
                   >
                     <Sparkles className="mr-2 h-4 w-4" /> Generate Certificate
@@ -267,7 +267,7 @@ export default function Quiz() {
                 )}
                 <Button
                   variant="outline"
-                  className="h-14 rounded-2xl font-black uppercase text-[10px] tracking-widest"
+                  className="h-10 rounded-xl font-black uppercase text-[10px] tracking-widest"
                   onClick={() => navigate(`/learn/${slug}`)}
                 >
                   Course Hub
@@ -305,7 +305,7 @@ export default function Quiz() {
           <Progress value={progress} className="h-1.5" />
         </header>
 
-        <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden bg-card/80 backdrop-blur-xl">
+        <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden bg-card/80">
           <CardHeader className="p-10 pb-6">
             <CardTitle className="text-2xl font-black tracking-tight leading-tight">{currentQ.question_text}</CardTitle>
           </CardHeader>

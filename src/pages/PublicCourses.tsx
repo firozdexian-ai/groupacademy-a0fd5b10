@@ -71,7 +71,7 @@ export default function PublicCourses() {
       <script type="application/ld+json" dangerouslySetInnerHTML={{ __html: JSON.stringify(jsonLd) }} />
 
       {/* Glassmorphism Header */}
-      <header className="border-b border-border/40 bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b border-border/40 bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 h-16 flex items-center justify-between">
           <img
             src={theme === "dark" ? logoLight : logoDark}
@@ -107,7 +107,7 @@ export default function PublicCourses() {
           <div className="container mx-auto px-6 text-center space-y-8 relative z-10 animate-in fade-in duration-700">
             <Badge
               variant="outline"
-              className="rounded-full px-4 py-1.5 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-[0.2em]"
+              className="rounded-full px-4 py-1.5 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-tight"
             >
               <GraduationCap className="w-3 h-3 mr-2" /> Verified Career Tracks
             </Badge>
@@ -126,7 +126,7 @@ export default function PublicCourses() {
               <Button
                 size="lg"
                 onClick={() => navigate("/auth?tab=signup&returnTo=/app/learning")}
-                className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
+                className="h-10 px-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
               >
                 Claim Welcome Credits <ArrowRight className="ml-2 h-4 w-4" />
               </Button>
@@ -150,7 +150,7 @@ export default function PublicCourses() {
               {tracks.map((track) => (
                 <Card
                   key={track.id}
-                  className="group cursor-pointer rounded-[24px] border-border/40 bg-card/50 hover:bg-primary/5 hover:border-primary/20 transition-all text-center"
+                  className="group cursor-pointer rounded-xl border-border/40 bg-card hover:bg-primary/5 hover:border-primary/20 transition-all text-center"
                   onClick={() => navigate(`/auth?tab=signup&returnTo=/app/learning/tracks/${track.slug}`)}
                 >
                   <CardContent className="p-6 space-y-4">
@@ -177,7 +177,7 @@ export default function PublicCourses() {
           {coursesLoading ? (
             <div className="grid md:grid-cols-3 gap-8 max-w-6xl mx-auto">
               {[1, 2, 3, 4, 5, 6].map((i) => (
-                <Skeleton key={i} className="h-80 rounded-[32px]" />
+                <Skeleton key={i} className="h-80 rounded-2xl" />
               ))}
             </div>
           ) : (
@@ -185,7 +185,7 @@ export default function PublicCourses() {
               {courses.map((course) => (
                 <Card
                   key={course.id}
-                  className="rounded-[32px] border-border/40 bg-card overflow-hidden group cursor-pointer hover:shadow-2xl hover:border-primary/20 transition-all duration-500 flex flex-col"
+                  className="rounded-2xl border-border/40 bg-card overflow-hidden group cursor-pointer hover:shadow-2xl hover:border-primary/20 transition-all duration-500 flex flex-col"
                   onClick={() => navigate(`/courses/${course.slug}`)}
                 >
                   <div className="aspect-video overflow-hidden relative">
@@ -202,7 +202,7 @@ export default function PublicCourses() {
                       </div>
                     )}
                     <div className="absolute top-4 left-4">
-                      <Badge className="bg-background/80 backdrop-blur-md text-foreground border-none text-[9px] font-black uppercase px-3 py-1">
+                      <Badge className="bg-background/80 text-foreground border-none text-[9px] font-black uppercase px-3 py-1">
                         {course.content_type?.replace("_", " ") || "Artifact"}
                       </Badge>
                     </div>
@@ -255,7 +255,7 @@ export default function PublicCourses() {
         {/* Strategic CTA */}
         <section className="bg-card border-y border-border/40 py-24">
           <div className="container mx-auto px-6 text-center space-y-8">
-            <div className="h-16 w-16 rounded-3xl bg-primary/10 flex items-center justify-center mx-auto">
+            <div className="h-16 w-16 rounded-2xl bg-primary/10 flex items-center justify-center mx-auto">
               <TrendingUp className="h-8 w-8 text-primary" />
             </div>
             <div className="space-y-2">
@@ -267,7 +267,7 @@ export default function PublicCourses() {
             <Button
               size="lg"
               onClick={() => navigate("/auth?tab=signup")}
-              className="h-16 px-12 rounded-2xl font-black uppercase tracking-widest text-sm shadow-2xl shadow-primary/20 hover:scale-[1.02] transition-all"
+              className="h-16 px-12 rounded-2xl font-black uppercase tracking-widest text-sm shadow-sm hover:scale-[1.02] transition-all"
             >
               Initialize Free Onboarding
             </Button>
@@ -276,7 +276,7 @@ export default function PublicCourses() {
       </main>
 
       <footer className="bg-background py-12 border-t border-border/40">
-        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+        <div className="container mx-auto px-6 flex flex-col md:flex-row items-center justify-between gap-8 text-[10px] font-black uppercase tracking-tight text-muted-foreground">
           <div className="flex items-center gap-3">
             <img src={logoIcon} className="h-6 w-6 grayscale opacity-40" alt="Logo" />
             <span>© 2026 GroUp Academy</span>

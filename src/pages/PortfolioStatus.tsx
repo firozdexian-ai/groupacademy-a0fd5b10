@@ -105,7 +105,7 @@ export default function PortfolioStatus() {
       <main className="flex-1 container max-w-3xl mx-auto px-6 py-20 animate-in fade-in duration-700">
         <div className="space-y-12">
           <header className="text-center space-y-4">
-            <div className="h-16 w-16 rounded-3xl bg-primary/5 border border-primary/10 flex items-center justify-center mx-auto mb-6">
+            <div className="h-16 w-16 rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center mx-auto mb-6">
               <Zap className="h-8 w-8 text-primary" />
             </div>
             <h1 className="text-4xl font-black tracking-tighter">Build Sequence Monitor</h1>
@@ -114,7 +114,7 @@ export default function PortfolioStatus() {
             </p>
           </header>
 
-          <Card className="rounded-[32px] border-border/40 shadow-2xl overflow-hidden bg-card/50 backdrop-blur-xl">
+          <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden bg-card">
             <CardContent className="p-8">
               <form onSubmit={handleSearch} className="flex flex-col sm:flex-row gap-4">
                 <div className="flex-1 space-y-2">
@@ -155,7 +155,7 @@ export default function PortfolioStatus() {
                 return (
                   <Card
                     key={request.id}
-                    className="rounded-[40px] border-border/40 shadow-xl overflow-hidden animate-in slide-in-from-bottom-4"
+                    className="rounded-2xl border-border/40 shadow-xl overflow-hidden animate-in slide-in-from-bottom-4"
                   >
                     <CardHeader className="p-8 border-b border-border/10 bg-muted/20">
                       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4">
@@ -223,7 +223,7 @@ export default function PortfolioStatus() {
 
                       {/* Ready Artifact State */}
                       {request.status === "completed" && request.portfolio_url && (
-                        <div className="bg-emerald-500/[0.03] border-2 border-emerald-500/10 rounded-[32px] p-8 space-y-6 animate-in zoom-in-95">
+                        <div className="bg-emerald-500/[0.03] border-2 border-emerald-500/10 rounded-2xl p-8 space-y-6 animate-in zoom-in-95">
                           <div className="flex items-center gap-3">
                             <div className="h-10 w-10 rounded-2xl bg-emerald-500/10 flex items-center justify-center">
                               <ShieldCheck className="h-6 w-6 text-emerald-500" />

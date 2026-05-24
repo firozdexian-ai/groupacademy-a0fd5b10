@@ -39,7 +39,7 @@ export default function MockInterview() {
             </div>
 
             <div className="space-y-4 max-w-4xl mx-auto">
-              <Badge className="bg-primary/10 text-primary border-none text-[10px] font-black uppercase tracking-[0.2em] px-4 py-1.5 rounded-full">
+              <Badge className="bg-primary/10 text-primary border-none text-[10px] font-black uppercase tracking-tight px-4 py-1.5 rounded-full">
                 <Sparkles className="w-3 h-3 mr-2 fill-primary" /> Neural Practice Engine
               </Badge>
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9]">
@@ -56,7 +56,7 @@ export default function MockInterview() {
               <Button
                 size="lg"
                 onClick={() => navigate("/mock-interview/setup")}
-                className="h-16 px-10 rounded-[20px] text-sm font-black uppercase tracking-widest shadow-2xl shadow-primary/20 hover:scale-[1.02] active:scale-95 transition-all group"
+                className="h-16 px-10 rounded-[20px] text-sm font-black uppercase tracking-widest shadow-sm hover:scale-[1.02] active:scale-95 transition-all group"
               >
                 Start Mission Prep{" "}
                 <ArrowRight className="ml-2 h-4 w-4 group-hover:translate-x-1 transition-transform" />
@@ -106,7 +106,7 @@ export default function MockInterview() {
             ].map((item, i) => (
               <Card
                 key={i}
-                className="rounded-[32px] border-border/40 bg-card/50 backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all"
+                className="rounded-2xl border-border/40 bg-card backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all"
               >
                 <CardContent className="p-8 space-y-6">
                   <div className="flex items-center justify-between">
@@ -170,7 +170,7 @@ export default function MockInterview() {
               </p>
             </header>
 
-            <Card className="rounded-[40px] border-primary/20 bg-primary/[0.02] shadow-2xl overflow-hidden relative">
+            <Card className="rounded-2xl border-primary/20 bg-primary/[0.02] shadow-2xl overflow-hidden relative">
               <div className="absolute top-0 right-0 p-8 opacity-5">
                 <Sparkles className="h-32 w-32 text-primary" />
               </div>

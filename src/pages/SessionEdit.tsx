@@ -168,7 +168,7 @@ export default function SessionEdit() {
     return (
       <div className="container max-w-3xl mx-auto py-12 px-6 space-y-8 animate-pulse">
         <Skeleton className="h-10 w-48 rounded-xl" />
-        <Card className="rounded-[32px] border-border/40 p-8 space-y-6">
+        <Card className="rounded-2xl border-border/40 p-8 space-y-6">
           <Skeleton className="h-12 w-full rounded-xl" />
           <Skeleton className="h-32 w-full rounded-xl" />
           <div className="grid grid-cols-2 gap-4">
@@ -205,7 +205,7 @@ export default function SessionEdit() {
                 <Trash2 className="h-4 w-4 mr-2" /> Purge Node
               </Button>
             </AlertDialogTrigger>
-            <AlertDialogContent className="rounded-[32px] border-border/40 shadow-2xl">
+            <AlertDialogContent className="rounded-2xl border-border/40 shadow-2xl">
               <AlertDialogHeader>
                 <AlertDialogTitle className="text-2xl font-black tracking-tighter uppercase">
                   Confirm Purge
@@ -228,7 +228,7 @@ export default function SessionEdit() {
           </AlertDialog>
         </header>
 
-        <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden bg-card/50 backdrop-blur-xl">
+        <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden bg-card">
           <CardContent className="p-8 md:p-12">
             <Form {...form}>
               <form onSubmit={form.handleSubmit((v) => updateSession.mutate(v))} className="space-y-8">
@@ -255,7 +255,7 @@ export default function SessionEdit() {
                           ))}
                         </SelectContent>
                       </Select>
-                      <FormMessage className="text-[10px] font-bold uppercase" />
+                      <FormMessage className="text-sm font-medium" />
                     </FormItem>
                   )}
                 />
@@ -276,7 +276,7 @@ export default function SessionEdit() {
                             className="h-12 rounded-xl bg-background/50 border-border/40 font-bold"
                           />
                         </FormControl>
-                        <FormMessage className="text-[10px] font-bold uppercase" />
+                        <FormMessage className="text-sm font-medium" />
                       </FormItem>
                     )}
                   />
@@ -303,7 +303,7 @@ export default function SessionEdit() {
                 </div>
 
                 {/* Scheduling HUD */}
-                <div className="grid md:grid-cols-2 gap-6 p-6 rounded-[32px] bg-muted/30 border border-border/10">
+                <div className="grid md:grid-cols-2 gap-6 p-6 rounded-2xl bg-muted/30 border border-border/10">
                   <FormField
                     control={form.control}
                     name="scheduled_date"
@@ -496,14 +496,14 @@ export default function SessionEdit() {
                     type="button"
                     variant="outline"
                     onClick={() => navigate("/sessions")}
-                    className="flex-1 h-14 rounded-2xl font-black uppercase text-[10px] tracking-widest border-border/40"
+                    className="flex-1 h-10 rounded-xl font-black uppercase text-[10px] tracking-widest border-border/40"
                   >
                     Abort Changes
                   </Button>
                   <Button
                     type="submit"
                     disabled={updateSession.isPending}
-                    className="flex-[2] h-14 rounded-2xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20"
+                    className="flex-[2] h-10 rounded-xl font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20"
                   >
                     {updateSession.isPending ? (
                       <Loader2 className="animate-spin" />

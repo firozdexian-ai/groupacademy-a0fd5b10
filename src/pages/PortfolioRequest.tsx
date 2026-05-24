@@ -159,11 +159,11 @@ function PortfolioRequestContent() {
       <div className="min-h-screen bg-background flex flex-col">
         <Navbar />
         <main className="flex-1 container max-w-2xl mx-auto px-6 py-20 animate-in fade-in zoom-in-95 duration-700">
-          <Card className="rounded-[40px] border-border/40 shadow-2xl overflow-hidden text-center">
+          <Card className="rounded-2xl border-border/40 shadow-2xl overflow-hidden text-center">
             <div className="bg-emerald-500/5 py-12 border-b border-emerald-500/10">
               <ShieldCheck className="h-16 w-16 text-emerald-500 mx-auto mb-4" />
               <CardTitle className="text-3xl font-black tracking-tighter uppercase">Protocol Authorized</CardTitle>
-              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-[0.2em] mt-2">
+              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-tight mt-2">
                 Engineering ID: {requestId.slice(0, 8)}
               </p>
             </div>
@@ -173,7 +173,7 @@ function PortfolioRequestContent() {
                 48-72 standard operating hours.
               </p>
               <Button
-                className="w-full h-14 rounded-2xl font-black uppercase text-xs"
+                className="w-full h-10 rounded-xl font-black uppercase text-xs"
                 onClick={() => navigate("/app/feed")}
               >
                 Return to Hub
@@ -194,13 +194,13 @@ function PortfolioRequestContent() {
         <div className="max-w-3xl mx-auto space-y-12">
           {/* Executive Header */}
           <header className="text-center space-y-6">
-            <div className="h-16 w-16 rounded-3xl bg-primary/5 border border-primary/10 flex items-center justify-center mx-auto shadow-sm">
+            <div className="h-16 w-16 rounded-2xl bg-primary/5 border border-primary/10 flex items-center justify-center mx-auto shadow-sm">
               <BriefcaseIcon className="h-8 w-8 text-primary" />
             </div>
             <div className="space-y-2">
               <Badge
                 variant="outline"
-                className="rounded-full border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-[0.2em] px-4 py-1"
+                className="rounded-full border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-tight px-4 py-1"
               >
                 <Sparkles className="h-3 w-3 mr-2" /> Digital Blueprint
               </Badge>
@@ -231,7 +231,7 @@ function PortfolioRequestContent() {
             ))}
           </nav>
 
-          <Card className="rounded-[40px] border-border/40 shadow-2xl bg-card/50 backdrop-blur-xl overflow-hidden">
+          <Card className="rounded-2xl border-border/40 shadow-2xl bg-card overflow-hidden">
             <CardHeader className="p-10 pb-6 border-b border-border/10 bg-muted/10">
               <CardTitle className="text-2xl font-black tracking-tighter uppercase">
                 {steps[currentStepIndex].label}
@@ -271,7 +271,7 @@ function PortfolioRequestContent() {
                       </SelectTrigger>
                       <SelectContent className="rounded-xl">
                         {professionCategories.map((c) => (
-                          <SelectItem key={c.id} value={c.id} className="text-[10px] font-bold uppercase">
+                          <SelectItem key={c.id} value={c.id} className="text-sm font-medium">
                             {c.name}
                           </SelectItem>
                         ))}
@@ -359,7 +359,7 @@ function PortfolioRequestContent() {
 
               {currentStep === "review" && (
                 <div className="space-y-6 animate-in fade-in duration-500">
-                  <div className="p-6 bg-emerald-500/5 rounded-[32px] border border-emerald-500/10 flex items-start gap-4">
+                  <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/10 flex items-start gap-4">
                     <ShieldCheck className="h-6 w-6 text-emerald-500 mt-1" />
                     <div className="space-y-1">
                       <h4 className="font-black uppercase text-xs tracking-tight">Final Validation</h4>
@@ -395,7 +395,7 @@ function PortfolioRequestContent() {
                     currentStep === "review" ? handleSubmit : () => setCurrentStep(steps[currentStepIndex + 1].id)
                   }
                   disabled={isSubmitting}
-                  className="h-14 px-10 rounded-2xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
+                  className="h-10 px-4 rounded-xl font-black uppercase tracking-widest text-xs shadow-xl shadow-primary/20"
                 >
                   {isSubmitting ? (
                     <Loader2 className="animate-spin" />

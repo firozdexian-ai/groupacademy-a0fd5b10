@@ -195,7 +195,7 @@ export default function ImmersiveCoursePlayer() {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center gap-4 bg-background">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+        <p className="text-[10px] font-black uppercase tracking-tight text-muted-foreground">
           Booting Learning Environment
         </p>
       </div>
@@ -204,7 +204,7 @@ export default function ImmersiveCoursePlayer() {
   if (contentError || !enrollment)
     return (
       <div className="min-h-screen flex items-center justify-center p-6 bg-background">
-        <Card className="max-w-md w-full rounded-[32px] border-border/40 shadow-2xl">
+        <Card className="max-w-md w-full rounded-2xl border-border/40 shadow-2xl">
           <CardContent className="pt-10 text-center space-y-6">
             <AlertCircle className="h-16 w-16 text-rose-500 mx-auto" />
             <h2 className="text-xl font-black uppercase">Sync Terminated</h2>
@@ -223,7 +223,7 @@ export default function ImmersiveCoursePlayer() {
 
   return (
     <div className="min-h-screen bg-background flex flex-col selection:bg-primary/10">
-      <header className="sticky top-0 z-50 bg-background/80 backdrop-blur-xl border-b border-border/40 px-6 py-4">
+      <header className="sticky top-0 z-50 bg-background/80 border-b border-border/40 px-6 py-4">
         <div className="max-w-5xl mx-auto flex items-center justify-between gap-6">
           <div className="flex items-center gap-4 min-w-0">
             <Button variant="ghost" size="icon" asChild className="rounded-full shrink-0">
@@ -255,7 +255,7 @@ export default function ImmersiveCoursePlayer() {
             <CollapsibleTrigger asChild>
               <Button
                 variant="outline"
-                className="w-full h-14 rounded-2xl justify-between px-6 border-border/40 bg-card/50"
+                className="w-full h-10 rounded-xl justify-between px-6 border-border/40 bg-card"
               >
                 <div className="flex items-center gap-3">
                   <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary">
@@ -269,7 +269,7 @@ export default function ImmersiveCoursePlayer() {
               </Button>
             </CollapsibleTrigger>
             <CollapsibleContent className="mt-3">
-              <div className="rounded-[28px] border border-border/40 bg-card p-4 shadow-xl overflow-hidden">
+              <div className="rounded-2xl border border-border/40 bg-card p-4 shadow-xl overflow-hidden">
                 <ImmersiveModuleList
                   modules={modules}
                   currentModuleId={currentModuleId}
@@ -283,7 +283,7 @@ export default function ImmersiveCoursePlayer() {
             </CollapsibleContent>
           </Collapsible>
 
-          <div className="sticky top-[68px] z-30 -mx-6 px-6 py-3 bg-background/85 backdrop-blur-xl border-b border-border/30">
+          <div className="sticky top-[68px] z-30 -mx-6 px-6 py-3 bg-background/85 border-b border-border/30">
             <StageNavigation
               currentStage={currentStage}
               completedStages={completedStages}

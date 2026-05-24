@@ -231,7 +231,7 @@ const Auth = () => {
             </TabsList>
 
             <TabsContent value="login" className="mt-6">
-              <Card className="rounded-[32px] border-border/40 shadow-2xl">
+              <Card className="rounded-2xl border-border/40 shadow-2xl">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold tracking-tight">Welcome back</CardTitle>
                   <CardDescription className="text-sm">Sign in to continue</CardDescription>
@@ -301,7 +301,7 @@ const Auth = () => {
             </TabsContent>
 
             <TabsContent value="signup" className="mt-6">
-              <Card className="rounded-[32px] border-border/40 shadow-2xl">
+              <Card className="rounded-2xl border-border/40 shadow-2xl">
                 <CardHeader>
                   <CardTitle className="text-xl font-bold tracking-tight">Create your account</CardTitle>
                   <CardDescription className="text-sm">Get 250 bonus credits to start</CardDescription>
@@ -421,7 +421,7 @@ const Auth = () => {
         </div>
 
       <Dialog open={showForgotPassword} onOpenChange={setShowForgotPassword}>
-        <DialogContent className="rounded-[32px] border-border/40">
+        <DialogContent className="rounded-2xl border-border/40">
           <DialogHeader>
             <DialogTitle className="text-xl font-bold tracking-tight">Reset password</DialogTitle>
             <DialogDescription className="text-sm text-muted-foreground">

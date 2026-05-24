@@ -310,7 +310,7 @@ export default function ModuleResourcesManager() {
 
   return (
     <div className="min-h-screen bg-muted/20 pb-20">
-      <header className="border-b bg-background/80 backdrop-blur-xl sticky top-0 z-50">
+      <header className="border-b bg-background/80 sticky top-0 z-50">
         <div className="container mx-auto px-6 py-4 flex items-center justify-between gap-4 flex-wrap">
           <div className="flex items-center gap-4 min-w-0">
             <Button
@@ -355,7 +355,7 @@ export default function ModuleResourcesManager() {
 
       <main className="container max-w-5xl mx-auto px-6 py-8 space-y-6">
         <Tabs value={activeStage} onValueChange={setActiveStage}>
-          <TabsList className="grid grid-cols-3 md:grid-cols-6 h-auto p-1.5 bg-card/50 rounded-2xl border border-border/40 mb-6">
+          <TabsList className="grid grid-cols-3 md:grid-cols-6 h-auto p-1.5 bg-card rounded-2xl border border-border/40 mb-6">
             {stageConfig.map((stage) => {
               const count = resources.filter((r) => r.stage_number === stage.number).length;
               return (
@@ -376,7 +376,7 @@ export default function ModuleResourcesManager() {
             const stageResources = resources.filter((r) => r.stage_number === stage.number);
             return (
               <TabsContent key={stage.number} value={String(stage.number)} className="space-y-4 focus-visible:outline-none">
-                <Card className="rounded-3xl border-border/40 overflow-hidden">
+                <Card className="rounded-2xl border-border/40 overflow-hidden">
                   <CardHeader className="bg-muted/30 border-b border-border/20 py-5 px-6 flex flex-row items-center justify-between flex-wrap gap-3">
                     <div className="space-y-1">
                       <CardTitle className="text-lg font-black tracking-tight uppercase flex items-center gap-2">
