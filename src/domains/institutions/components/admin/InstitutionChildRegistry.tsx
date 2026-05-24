@@ -225,7 +225,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
             >
               <CardContent className="p-6 flex flex-col md:flex-row items-start justify-between gap-6">
                 <div className="flex items-start gap-5 flex-1 min-w-0">
-                  <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border-2 border-border/20 shrink-0 group-hover:border-primary/30 transition-colors">
+                  <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border border-border/40 shrink-0 group-hover:border-primary/30 transition-colors">
                     <Icon className="h-6 w-6 text-primary" />
                   </div>
                   <div className="space-y-1 flex-1 min-w-0">

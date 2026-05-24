@@ -188,7 +188,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
         >
           <input ref={fileInputRef} type="file" accept=".json" onChange={handleFileSelect} className="hidden" />
           <CardContent className="py-20 text-center space-y-6">
-            <div className="h-20 w-20 rounded-xl bg-background flex items-center justify-center mx-auto shadow-xl border-2 border-border/10 group-hover:scale-110 transition-transform">
+            <div className="h-20 w-20 rounded-xl bg-background flex items-center justify-center mx-auto shadow-xl border border-border/40 group-hover:scale-110 transition-transform">
               <FileJson2 className="w-10 h-10 text-primary" />
             </div>
             <div className="space-y-2">
@@ -320,7 +320,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                 { label: "Duplicates Recalibrated", val: importResult.duplicates, color: "text-amber-600" },
                 { label: "Logic Faults", val: importResult.failed, color: "text-destructive" },
               ].map((s, i) => (
-                <div key={i} className="p-6 bg-background rounded-3xl border-2 border-border/5">
+                <div key={i} className="p-6 bg-background rounded-3xl border border-border/40">
                   <p className={cn("text-4xl font-semibold tracking-tighter leading-none mb-2", s.color)}>
                     {s.val}
                   </p>

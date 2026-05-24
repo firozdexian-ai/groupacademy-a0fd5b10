@@ -381,13 +381,13 @@ export function JobsLinkedInBatchUpload({
             {step === "preview" && (
               <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="rounded-[28px] border-2 bg-card p-6 shadow-sm">
+                  <Card className="rounded-2xl border-2 bg-card p-6 shadow-sm">
                     <p className="text-[9px] font-semibold uppercase text-muted-foreground/60 tracking-widest mb-2 italic">
                       Total Artifacts
                     </p>
                     <p className="text-3xl font-semibold tracking-tight leading-none">{mappedJobs.length}</p>
                   </Card>
-                  <Card className="rounded-[28px] border-2 border-emerald-500/20 bg-emerald-500/5 p-6 shadow-sm">
+                  <Card className="rounded-2xl border-2 border-emerald-500/20 bg-emerald-500/5 p-6 shadow-sm">
                     <p className="text-[9px] font-semibold uppercase text-emerald-600 tracking-widest mb-2 italic">
                       Ready for Injection
                     </p>
@@ -395,7 +395,7 @@ export function JobsLinkedInBatchUpload({
                       {newJobs.length}
                     </p>
                   </Card>
-                  <Card className="rounded-[28px] border-2 border-amber-500/20 bg-amber-500/5 p-6 shadow-sm">
+                  <Card className="rounded-2xl border-2 border-amber-500/20 bg-amber-500/5 p-6 shadow-sm">
                     <p className="text-[9px] font-semibold uppercase text-amber-600 tracking-widest mb-2 italic">
                       Duplicate Nodes Purged
                     </p>
@@ -405,7 +405,7 @@ export function JobsLinkedInBatchUpload({
                   </Card>
                 </div>
 
-                <div className="rounded-2xl border-2 border-border/20 overflow-hidden bg-background">
+                <div className="rounded-2xl border border-border/40 overflow-hidden bg-background">
                   <Table>
                     <TableHeader className="bg-muted/50">
                       <TableRow>

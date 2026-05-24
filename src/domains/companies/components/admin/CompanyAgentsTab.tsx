@@ -808,7 +808,7 @@ export function CompanyAgentsManager() {
                         className="p-8 hover:bg-primary/[0.02] transition-all flex items-center justify-between group"
                       >
                         <div className="flex items-center gap-6">
-                          <div className="h-12 w-12 rounded-2xl bg-muted/50 flex items-center justify-center border-2 border-border/20 shadow-inner group-hover:rotate-3 transition-transform">
+                          <div className="h-12 w-12 rounded-2xl bg-muted/50 flex items-center justify-center border border-border/40 shadow-inner group-hover:rotate-3 transition-transform">
                             <UserCheck className="h-6 w-6 text-muted-foreground/40" />
                           </div>
                           <div className="space-y-1">

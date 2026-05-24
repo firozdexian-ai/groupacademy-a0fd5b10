@@ -236,7 +236,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                       interactions.map((interaction) => (
                         <div
                           key={interaction.id}
-                          className="group flex gap-4 p-5 rounded-xl bg-muted/10 border-2 border-border/10 hover:border-primary/20 hover:bg-muted/20 transition-all"
+                          className="group flex gap-4 p-5 rounded-xl bg-muted/10 border border-border/40 hover:border-primary/20 hover:bg-muted/20 transition-all"
                         >
                           <div
                             className={cn(
@@ -294,7 +294,7 @@ function ChannelNode({ icon: Icon, value, href }: { icon: any; value: string; hr
   return (
     <a
       href={href}
-      className="group flex items-center justify-between p-4 rounded-[20px] bg-card border-2 border-border/20 hover:border-primary/40 hover:shadow-md transition-all"
+      className="group flex items-center justify-between p-4 rounded-[20px] bg-card border border-border/40 hover:border-primary/40 hover:shadow-md transition-all"
     >
       <div className="flex items-center gap-3 text-xs font-bold italic truncate pr-4">
         <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center shrink-0">
@@ -313,7 +313,7 @@ function SocialBadge({ icon: Icon, href, label }: { icon: any; href: string; lab
       href={href}
       target="_blank"
       rel="noopener noreferrer"
-      className="flex-1 flex items-center justify-center gap-2 p-3.5 rounded-[16px] border-2 border-border/20 bg-card hover:border-primary/30 hover:shadow-sm transition-all group"
+      className="flex-1 flex items-center justify-center gap-2 p-3.5 rounded-[16px] border border-border/40 bg-card hover:border-primary/30 hover:shadow-sm transition-all group"
     >
       <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
       <span className="text-[9px] font-semibold uppercase italic tracking-widest group-hover:text-primary transition-colors">

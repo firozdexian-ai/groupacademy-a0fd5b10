@@ -182,7 +182,7 @@ export const TalentDetailDialog = ({
                   <div className="grid gap-4">
                     <InfoCard label="Registry Email" value={displayTalent.email || "MISSING"} />
                     <InfoCard label="Contact String" value={displayTalent.phone || "MISSING"} />
-                    <div className="bg-muted/20 p-5 rounded-xl border-2 border-border/5">
+                    <div className="bg-muted/20 p-5 rounded-xl border border-border/40">
                       <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">
                         Regional Mapping
                       </p>
@@ -202,7 +202,7 @@ export const TalentDetailDialog = ({
                   </h3>
                   <div className="grid gap-4">
                     <InfoCard label="Profession" value={displayTalent.custom_profession || "UNCLASSIFIED"} />
-                    <div className="bg-muted/20 p-5 rounded-xl border-2 border-border/5">
+                    <div className="bg-muted/20 p-5 rounded-xl border border-border/40">
                       <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">
                         Verified Artifacts
                       </p>
@@ -329,7 +329,7 @@ export const TalentDetailDialog = ({
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-muted/20 p-5 rounded-xl border-2 border-border/5 group hover:border-primary/20 transition-all text-left">
+    <div className="bg-muted/20 p-5 rounded-xl border border-border/40 group hover:border-primary/20 transition-all text-left">
       <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">{label}</p>
       <p className="text-sm font-semibold text-foreground uppercase italic tracking-tight mt-1">{value}</p>
     </div>

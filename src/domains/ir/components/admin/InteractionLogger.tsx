@@ -257,7 +257,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-muted/20 p-6 rounded-2xl border-2 border-border/10 gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-muted/20 p-6 rounded-2xl border border-border/40 gap-4">
                 <div className="flex items-center gap-4">
                   <Switch
                     id="followup"

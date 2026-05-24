@@ -189,7 +189,7 @@ export function StandaloneSalaryCodeGenerator() {
               {generatedCodes.map((code, index) => (
                 <div
                   key={index}
-                  className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5 group hover:border-primary/20 transition-all"
+                  className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/40 group hover:border-primary/20 transition-all"
                 >
                   <div className="flex items-center gap-4">
                     <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-semibold text-primary italic">

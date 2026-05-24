@@ -311,7 +311,7 @@ export function SupportAITab() {
             </div>
           ) : (
             <Card className="rounded-2xl border-4 border-dashed border-border/40 bg-transparent flex flex-col items-center justify-center p-12 min-h-[600px]">
-              <div className="h-24 w-24 rounded-2xl bg-muted/30 flex items-center justify-center mb-6 animate-pulse border-2 border-border/10">
+              <div className="h-24 w-24 rounded-2xl bg-muted/30 flex items-center justify-center mb-6 animate-pulse border border-border/40">
                 <Sparkles className="h-10 w-10 text-muted-foreground/30" />
               </div>
               <p className="text-sm font-semibold text-muted-foreground/40 italic">

@@ -288,7 +288,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
               </Button>
             </CardHeader>
             <CardContent className="p-8">
-              <pre className="bg-background/50 p-8 rounded-2xl text-xs font-mono border-2 border-border/10 overflow-x-auto max-h-[400px] leading-relaxed italic text-primary/80">
+              <pre className="bg-background/50 p-8 rounded-2xl text-xs font-mono border border-border/40 overflow-x-auto max-h-[400px] leading-relaxed italic text-primary/80">
                 <code>{getPayloadSynthesis()}</code>
               </pre>
             </CardContent>

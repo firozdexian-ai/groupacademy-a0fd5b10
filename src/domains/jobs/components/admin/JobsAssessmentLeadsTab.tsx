@@ -196,7 +196,7 @@ export function JobsAssessmentLeadsTab() {
                 placeholder="Interrogate registry by name, email, or telemetry..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-14 bg-card border-2 border-border/10 rounded-2xl font-bold tracking-tight text-base"
+                className="pl-12 h-14 bg-card border border-border/40 rounded-2xl font-bold tracking-tight text-base"
               />
             </div>
             <div className="flex gap-3">

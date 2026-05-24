@@ -496,10 +496,10 @@ export function LeadHunterManager() {
                       placeholder="Identify target spec from active listings..."
                       value={jobSearch}
                       onChange={(e) => setJobSearch(e.target.value)}
-                      className="pl-12 h-14 bg-muted/20 border-2 border-border/10 rounded-2xl font-bold"
+                      className="pl-12 h-14 bg-muted/20 border border-border/40 rounded-2xl font-bold"
                     />
                   </div>
-                  <div className="rounded-[28px] border-2 border-border/10 overflow-hidden bg-background/50">
+                  <div className="rounded-2xl border border-border/40 overflow-hidden bg-background/50">
                     <ScrollArea className="h-[300px] p-2">
                       <div className="space-y-2">
                         {filteredJobs.map((job) => (

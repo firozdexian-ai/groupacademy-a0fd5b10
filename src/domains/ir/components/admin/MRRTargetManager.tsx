@@ -297,7 +297,7 @@ export function MRRTargetManager() {
               return (
                 <div
                   key={service}
-                  className="space-y-6 p-8 rounded-2xl border-2 border-border/10 bg-muted/5 group hover:border-primary/20 hover:bg-primary/5 transition-all shadow-sm"
+                  className="space-y-6 p-8 rounded-2xl border border-border/40 bg-muted/5 group hover:border-primary/20 hover:bg-primary/5 transition-all shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <Label className="font-semibold uppercase italic text-sm tracking-widest group-hover:text-primary transition-colors">
@@ -349,7 +349,7 @@ export function MRRTargetManager() {
 // ATOMIC SUB-COMPONENTS
 function StatNode({ label, value }: { label: string; value: string | number }) {
   return (
-    <div className="p-5 rounded-2xl bg-background/50 border-2 border-border/10 text-left hover:border-primary/20 transition-colors shadow-sm">
+    <div className="p-5 rounded-2xl bg-background/50 border border-border/40 text-left hover:border-primary/20 transition-colors shadow-sm">
       <p className="text-[9px] font-semibold text-muted-foreground mb-1">{label}</p>
       <p className="font-semibold text-xl leading-none text-foreground/90 tracking-tight">{value}</p>
     </div>

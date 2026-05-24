@@ -346,7 +346,7 @@ export function MarketingAnalyticsTab() {
             <CardContent className="p-0">
               {latestTalentOutreach.length === 0 && latestCompanyOutreach.length === 0 ? (
                 <div className="p-20 text-center flex flex-col items-center justify-center space-y-3">
-                  <div className="h-16 w-16 rounded-full bg-muted/10 flex items-center justify-center border-2 border-border/20">
+                  <div className="h-16 w-16 rounded-full bg-muted/10 flex items-center justify-center border border-border/40">
                     <Target className="h-8 w-8 text-muted-foreground/50" />
                   </div>
                   <p className="text-[10px] font-semibold text-muted-foreground/50 italic">

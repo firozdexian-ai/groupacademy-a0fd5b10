@@ -243,7 +243,7 @@ export function PaymentInfraTab() {
                 </Select>
               </div>
 
-              <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5">
+              <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/40">
                 <div>
                   <Label className="text-[10px] font-black text-primary">
                     WhatsApp Purchase Node
@@ -306,7 +306,7 @@ export function PaymentInfraTab() {
               </div>
             </CardHeader>
             <CardContent className="p-8 space-y-6 text-left">
-              <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5">
+              <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border border-border/40">
                 <div>
                   <Label className="text-[10px] font-black text-primary">
                     Execution Environment

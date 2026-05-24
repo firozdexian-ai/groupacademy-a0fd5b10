@@ -400,7 +400,7 @@ export function ContentOutreachTab() {
                           variant="ghost"
                           size="icon"
                           onClick={() => copyTemplate(activeTab === "linkedin" ? templates.english : templates.bangla)}
-                          className="absolute bottom-4 right-4 h-10 w-10 rounded-xl hover:bg-primary hover:text-white transition-all shadow-inner border-2 border-border/10"
+                          className="absolute bottom-4 right-4 h-10 w-10 rounded-xl hover:bg-primary hover:text-white transition-all shadow-inner border border-border/40"
                         >
                           <Copy className="w-4 h-4" />
                         </Button>
@@ -438,7 +438,7 @@ export function ContentOutreachTab() {
                         />
                         <Button
                           onClick={() => copyLink(customChannel || "custom")}
-                          className="h-12 w-12 rounded-xl border-2 border-border/10"
+                          className="h-12 w-12 rounded-xl border border-border/40"
                         >
                           <Copy className="w-4 h-4" />
                         </Button>

@@ -211,7 +211,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
               return (
                 <div
                   key={service.service}
-                  className="p-6 rounded-xl border-2 border-border/20 bg-background/50 group hover:border-primary/30 hover:bg-primary/5 transition-all shadow-sm"
+                  className="p-6 rounded-xl border border-border/40 bg-background/50 group hover:border-primary/30 hover:bg-primary/5 transition-all shadow-sm"
                 >
                   <div className="flex justify-between items-start mb-5">
                     <div className="space-y-1.5">
@@ -273,7 +273,7 @@ function ActionNode({ icon: Icon, label, count, onClick }: any) {
       onClick={onClick}
       className="w-full h-full flex flex-row items-center gap-5 p-6 md:p-8 rounded-2xl border border-border/60 bg-card hover:bg-primary/5 hover:border-primary/40 hover:shadow-xl transition-all group shadow-md"
     >
-      <div className="h-14 w-14 rounded-2xl bg-background flex items-center justify-center border-2 border-border/20 group-hover:rotate-6 group-hover:border-primary/30 transition-all shadow-sm shrink-0">
+      <div className="h-14 w-14 rounded-2xl bg-background flex items-center justify-center border border-border/40 group-hover:rotate-6 group-hover:border-primary/30 transition-all shadow-sm shrink-0">
         <Icon className="h-6 w-6 text-primary" />
       </div>
       <div className="text-left flex-1 min-w-0">

@@ -498,7 +498,7 @@ export function BatchContentGenerator() {
 
                   <div className="space-y-6">
                     {GENERATORS[key].needsSchool && (
-                      <div className="flex items-center justify-between p-6 rounded-[28px] border-2 bg-primary/5 border-primary/10 shadow-inner">
+                      <div className="flex items-center justify-between p-6 rounded-2xl border-2 bg-primary/5 border-primary/10 shadow-inner">
                         <div className="space-y-1">
                           <p className="text-sm font-black uppercase tracking-tight italic">Purge & Recalibrate</p>
                           <p className="text-[9px] font-bold text-muted-foreground italic">
@@ -559,7 +559,7 @@ export function BatchContentGenerator() {
                         System Log Trace
                       </span>
                     </div>
-                    <div className="bg-black/90 rounded-[28px] p-8 max-h-64 overflow-y-auto font-mono text-[11px] text-emerald-500 shadow-sm border-2 border-border/10 selection:bg-emerald-500/20">
+                    <div className="bg-black/90 rounded-2xl p-8 max-h-64 overflow-y-auto font-mono text-[11px] text-emerald-500 shadow-sm border border-border/40 selection:bg-emerald-500/20">
                       {batchLog.map((log, i) => (
                         <div
                           key={i}
@@ -591,7 +591,7 @@ export function BatchContentGenerator() {
                       {drafts.map((draft) => (
                         <Collapsible
                           key={draft.id}
-                          className="group rounded-[28px] border border-border/60 bg-background/50 hover:border-primary/40 transition-all"
+                          className="group rounded-2xl border border-border/60 bg-background/50 hover:border-primary/40 transition-all"
                         >
                           <CollapsibleTrigger className="w-full flex items-center justify-between p-6 text-left">
                             <div className="space-y-1 flex-1">

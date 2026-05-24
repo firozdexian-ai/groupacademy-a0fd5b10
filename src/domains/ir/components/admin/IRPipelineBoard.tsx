@@ -95,7 +95,7 @@ export function IRPipelineBoard() {
         </div>
 
         {/* Filter */}
-        <div className="flex items-center gap-3 bg-background/50 p-1.5 rounded-[20px] border-2 border-border/20 shadow-sm">
+        <div className="flex items-center gap-3 bg-background/50 p-1.5 rounded-[20px] border border-border/40 shadow-sm">
           <Filter className="h-4 w-4 text-muted-foreground ml-3" />
           <Select value={leadFilter} onValueChange={(v) => setLeadFilter(v as LeadFilter)}>
             <SelectTrigger className="w-[200px] h-11 border-none bg-transparent font-semibold uppercase text-[10px] tracking-widest focus:ring-0">

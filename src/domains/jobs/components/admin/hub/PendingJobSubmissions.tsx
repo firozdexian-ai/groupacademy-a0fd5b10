@@ -123,7 +123,7 @@ export function PendingJobSubmissions() {
               return (
                 <div
                   key={sub.id}
-                  className="group flex items-center justify-between gap-4 p-5 rounded-xl border-2 border-border/20 bg-muted/5 hover:border-primary/40 hover:bg-primary/5 transition-all"
+                  className="group flex items-center justify-between gap-4 p-5 rounded-xl border border-border/40 bg-muted/5 hover:border-primary/40 hover:bg-primary/5 transition-all"
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">

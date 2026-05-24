@@ -341,7 +341,7 @@ export function QuizResultsViewer() {
 
             {selectedAttempt && (
               <div className="space-y-8 text-left">
-                <div className="flex items-center justify-between p-8 bg-muted/20 rounded-2xl border-2 border-border/10 shadow-inner">
+                <div className="flex items-center justify-between p-8 bg-muted/20 rounded-2xl border border-border/40 shadow-inner">
                   <div className="space-y-1">
                     <p className="text-[10px] font-semibold text-muted-foreground/40">
                       Logic Match Yield
@@ -398,7 +398,7 @@ export function QuizResultsViewer() {
                             </p>
                             <p className="font-bold text-sm leading-relaxed">{answer.questionText}</p>
                             <div className="grid grid-cols-1 md:grid-cols-2 gap-4 pt-2">
-                              <div className="p-3 rounded-xl bg-background border-2 border-border/5">
+                              <div className="p-3 rounded-xl bg-background border border-border/40">
                                 <p className="text-[8px] font-semibold uppercase opacity-30">Input_Node</p>
                                 <p
                                   className={cn(

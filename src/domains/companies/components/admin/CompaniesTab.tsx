@@ -469,7 +469,7 @@ export function CompaniesTab() {
               />
             </div>
 
-            <div className="col-span-full flex items-center justify-between p-5 bg-muted/20 rounded-3xl border-2 border-border/10">
+            <div className="col-span-full flex items-center justify-between p-5 bg-muted/20 rounded-3xl border border-border/40">
               <div className="space-y-1">
                 <p className="text-[10px] font-semibold">Verified Strategic Artifact</p>
                 <p className="text-[9px] text-muted-foreground uppercase opacity-60">

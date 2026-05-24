@@ -91,7 +91,7 @@ export function AccessCodesTab() {
       </div>
 
       <Tabs defaultValue="courses" className="w-full">
-        <TabsList className="h-14 w-full grid grid-cols-5 bg-muted/20 border-2 border-border/10 p-1.5 rounded-2xl mb-6">
+        <TabsList className="h-14 w-full grid grid-cols-5 bg-muted/20 border border-border/40 p-1.5 rounded-2xl mb-6">
           {tabs.map((tab) => (
             <TabsTrigger
               key={tab.v}

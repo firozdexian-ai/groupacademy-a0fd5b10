@@ -69,7 +69,7 @@ export function DataRoomManager() {
                   className="flex flex-col md:flex-row md:items-center justify-between gap-4 p-8 hover:bg-primary/[0.02] transition-colors group"
                 >
                   <div className="flex items-start gap-5 min-w-0">
-                    <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border-2 border-border/20 shadow-sm shrink-0 group-hover:border-primary/30 transition-colors">
+                    <div className="h-14 w-14 rounded-2xl bg-background/50 flex items-center justify-center border border-border/40 shadow-sm shrink-0 group-hover:border-primary/30 transition-colors">
                       <FileText className="h-6 w-6 text-primary" />
                     </div>
                     <div className="space-y-2 min-w-0">

@@ -199,7 +199,7 @@ export function JobApplicationCodeGenerator() {
               {generatedCodes.map((code, index) => (
                 <div
                   key={index}
-                  className="group flex items-center justify-between p-5 bg-muted/30 border-2 border-border/5 rounded-2xl transition-all hover:border-primary/40 hover:bg-muted/50"
+                  className="group flex items-center justify-between p-5 bg-muted/30 border border-border/40 rounded-2xl transition-all hover:border-primary/40 hover:bg-muted/50"
                 >
                   <div className="flex items-center gap-3">
                     <span className="text-[9px] font-semibold text-muted-foreground/30">

@@ -164,7 +164,7 @@ export function ProfessionsTab() {
       </div>
 
       <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="h-14 w-full max-w-2xl mx-auto grid grid-cols-4 bg-muted/20 border-2 border-border/10 p-1.5 rounded-2xl mb-8">
+        <TabsList className="h-14 w-full max-w-2xl mx-auto grid grid-cols-4 bg-muted/20 border border-border/40 p-1.5 rounded-2xl mb-8">
           {["academies", "schools", "professions", "roles"].map((t) => (
             <TabsTrigger
               key={t}
@@ -319,7 +319,7 @@ function StructuralDialog({ title, open, setOpen, onSave, children }: any) {
 function AcademyCard({ academy, onEdit }: any) {
   const Icon = getIcon(academy.icon || "building-2");
   return (
-    <Card className="rounded-[28px] border-2 bg-card/40 p-5 flex items-center justify-between group">
+    <Card className="rounded-2xl border-2 bg-card/40 p-5 flex items-center justify-between group">
       <div className="flex items-center gap-4">
         <div className="h-12 w-12 rounded-xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">
           <Icon className="h-5 w-5 text-primary" />
@@ -340,7 +340,7 @@ function AcademyCard({ academy, onEdit }: any) {
 
 function SchoolCard({ school, academyName, onEdit }: any) {
   return (
-    <Card className="rounded-[28px] border-2 bg-card/40 p-5 flex items-center justify-between group">
+    <Card className="rounded-2xl border-2 bg-card/40 p-5 flex items-center justify-between group">
       <div className="flex items-center gap-4">
         <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border-2 border-emerald-500/20">
           <GraduationCap className="h-5 w-5 text-emerald-500" />
@@ -359,7 +359,7 @@ function SchoolCard({ school, academyName, onEdit }: any) {
 
 function ProfessionCard({ profession, schoolName, onEdit }: any) {
   return (
-    <Card className="rounded-[28px] border-2 bg-card/40 p-5 flex items-center justify-between group">
+    <Card className="rounded-2xl border-2 bg-card/40 p-5 flex items-center justify-between group">
       <div className="flex items-center gap-4">
         <div className="h-12 w-12 rounded-xl bg-orange-500/10 flex items-center justify-center border-2 border-orange-500/20">
           <Briefcase className="h-5 w-5 text-orange-500" />

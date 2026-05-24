@@ -28,7 +28,7 @@ export function LeadsActivitiesTab() {
       </header>
 
       <Tabs defaultValue="hunts" className="w-full">
-        <TabsList className="h-14 w-full max-w-2xl mx-auto grid grid-cols-4 bg-muted/20 border-2 border-border/10 p-1.5 rounded-2xl mb-8">
+        <TabsList className="h-14 w-full max-w-2xl mx-auto grid grid-cols-4 bg-muted/20 border border-border/40 p-1.5 rounded-2xl mb-8">
           <TabsTrigger
             value="hunts"
             className="rounded-xl font-black uppercase italic text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg py-3"
@@ -68,7 +68,7 @@ export function LeadsActivitiesTab() {
         </TabsContent>
 
         <TabsContent value="portfolio" className="mt-0 flex flex-col items-center justify-center p-20 space-y-4">
-          <div className="h-16 w-16 rounded-2xl bg-muted/10 flex items-center justify-center border-2 border-border/20">
+          <div className="h-16 w-16 rounded-2xl bg-muted/10 flex items-center justify-center border border-border/40">
             <Folder className="h-8 w-8 text-muted-foreground/30" />
           </div>
           <p className="text-muted-foreground/50 font-black uppercase text-[10px] tracking-widest italic">

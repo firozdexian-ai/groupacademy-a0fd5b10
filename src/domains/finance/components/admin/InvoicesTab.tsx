@@ -184,7 +184,7 @@ export function InvoicesTab() {
               <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-fuchsia-500 transition-colors" />
               <Input
                 placeholder="Search identity or invoice string..."
-                className="pl-11 h-12 w-full bg-muted/20 border-2 border-border/10 rounded-xl font-bold"
+                className="pl-11 h-12 w-full bg-muted/20 border border-border/40 rounded-xl font-bold"
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
               />
@@ -358,7 +358,7 @@ export function InvoicesTab() {
               </div>
 
               {selected.admin_notes && (
-                <div className="p-6 bg-muted/20 rounded-xl border-2 border-border/5">
+                <div className="p-6 bg-muted/20 rounded-xl border border-border/40">
                   <p className="text-[9px] font-semibold uppercase text-fuchsia-500 italic mb-2 tracking-widest">
                     Executive Audit Notes
                   </p>

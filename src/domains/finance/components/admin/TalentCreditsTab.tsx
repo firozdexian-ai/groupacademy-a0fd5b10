@@ -343,7 +343,7 @@ export function TalentCreditsTab() {
         <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-blue-600" />
         <CardHeader className="p-8 border-b border-border/10">
           <div className="flex flex-col lg:flex-row gap-6 justify-between lg:items-center">
-            <div className="flex gap-2 bg-muted/20 p-1 rounded-2xl border-2 border-border/10 w-fit">
+            <div className="flex gap-2 bg-muted/20 p-1 rounded-2xl border border-border/40 w-fit">
               <button
                 onClick={() => setSelectedTab("balances")}
                 className={cn(
@@ -374,7 +374,7 @@ export function TalentCreditsTab() {
                   placeholder="Search registry..."
                   value={searchQuery}
                   onChange={(e) => setSearchQuery(e.target.value)}
-                  className="pl-11 h-12 w-full sm:w-72 bg-muted/20 border-2 border-border/10 rounded-xl font-bold"
+                  className="pl-11 h-12 w-full sm:w-72 bg-muted/20 border border-border/40 rounded-xl font-bold"
                 />
               </div>
             </div>
@@ -548,7 +548,7 @@ export function TalentCreditsTab() {
               </div>
             </DialogHeader>
             <div className="space-y-8 py-4">
-              <div className="p-6 rounded-[28px] border-2 bg-muted/20 border-border/10 flex items-center justify-between">
+              <div className="p-6 rounded-2xl border-2 bg-muted/20 border-border/10 flex items-center justify-between">
                 <div>
                   <p className="text-[10px] font-semibold text-muted-foreground/40 mb-1">
                     Target Node

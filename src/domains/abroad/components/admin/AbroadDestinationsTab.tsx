@@ -82,7 +82,7 @@ export function AbroadDestinationsTab() {
                     <TableRow key={row.id} className="group hover:bg-pink-500/[0.02]">
                       <TableCell className="py-6 pl-8">
                         <div className="flex items-center gap-3">
-                          <div className="h-8 w-8 rounded-lg bg-background border-2 border-border/20 flex items-center justify-center shrink-0">
+                          <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
                             <Globe className="h-3 w-3 text-pink-500" />
                           </div>
                           <span className="font-black text-sm uppercase italic tracking-tight">{row.name}</span>

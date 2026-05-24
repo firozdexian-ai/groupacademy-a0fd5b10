@@ -231,7 +231,7 @@ export function VCFirmsManager() {
                     <TableRow key={firm.id} className="group hover:bg-primary/[0.02] transition-colors">
                       <TableCell className="py-5 pl-8 min-w-[250px]">
                         <div className="flex items-center gap-4">
-                          <div className="h-12 w-12 rounded-xl border-2 border-border/20 bg-background/50 flex items-center justify-center overflow-hidden shadow-sm shrink-0">
+                          <div className="h-12 w-12 rounded-xl border border-border/40 bg-background/50 flex items-center justify-center overflow-hidden shadow-sm shrink-0">
                             {firm.logo_url ? (
                               <img src={firm.logo_url} alt={firm.name} className="h-full w-full object-cover" />
                             ) : (

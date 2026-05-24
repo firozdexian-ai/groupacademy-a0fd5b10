@@ -303,7 +303,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
               {/* State 2: Preview & Synthesis */}
               {parsedData.length > 0 && !importStats && (
                 <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
-                  <div className="flex items-center justify-between bg-muted/20 p-6 rounded-[28px] border-2 border-border/10">
+                  <div className="flex items-center justify-between bg-muted/20 p-6 rounded-2xl border border-border/40">
                     <div className="flex items-center gap-4">
                       <Badge className="bg-primary text-white text-lg font-semibold tracking-tight px-6 py-2 rounded-xl">
                         {parsedData.length} ARTIFACTS
@@ -340,7 +340,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     </div>
                   )}
 
-                  <div className="rounded-2xl border-2 border-border/20 overflow-hidden bg-background">
+                  <div className="rounded-2xl border border-border/40 overflow-hidden bg-background">
                     <Table>
                       <TableHeader className="bg-muted/50">
                         <TableRow>
