@@ -89,7 +89,7 @@ export function ContactUnlocksTab() {
             Institutional Audit Trail · Institutional Credit Burn
           </p>
         </div>
-        <Button variant="outline" size="icon" onClick={loadLedger} className="rounded-xl h-12 w-12 border-2">
+        <Button variant="outline" size="icon" aria-label="Refresh" onClick={loadLedger} className="rounded-xl h-12 w-12 border-2">
           <RefreshCw className={cn("h-4 w-4", loading && "animate-spin")} />
         </Button>
       </div>

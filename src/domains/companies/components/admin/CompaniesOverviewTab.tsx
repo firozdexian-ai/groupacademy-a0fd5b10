@@ -102,7 +102,7 @@ export function CompaniesOverviewTab() {
           >
             <Activity className="h-3 w-3 animate-pulse" /> LIVE_SYNC
           </Badge>
-          <Button variant="outline" size="icon" onClick={loadData} className="rounded-xl border-2 h-10 w-10">
+          <Button variant="outline" size="icon" aria-label="Refresh" onClick={loadData} className="rounded-xl border-2 h-10 w-10">
             <RefreshCw className="h-4 w-4" />
           </Button>
         </div>

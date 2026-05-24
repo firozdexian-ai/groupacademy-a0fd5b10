@@ -255,7 +255,7 @@ export function CourseSharingGigForm({ gig, talentId, onSubmitted }: Props) {
               />
               <Button
                 variant="outline"
-                size="icon"
+                size="icon" aria-label="Copy"
                 type="button"
                 className="h-10 w-10 rounded-xl border-border/60 hover:bg-accent shrink-0 active:scale-90 transition-transform cursor-pointer shadow-sm"
                 onClick={() => {

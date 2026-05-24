@@ -160,7 +160,7 @@ export function NotificationsTab() {
  <div className="flex gap-2">
  <Button
  variant="outline"
- size="icon"
+ size="icon" aria-label="Previous"
  onClick={() => setPage((p) => Math.max(1, p - 1))}
  disabled={page === 1}
  className="rounded-xl border h-10 w-10"
@@ -169,7 +169,7 @@ export function NotificationsTab() {
  </Button>
  <Button
  variant="outline"
- size="icon"
+ size="icon" aria-label="Next"
  onClick={() => setPage((p) => p + 1)}
  disabled={notifications.length < ITEMS_PER_PAGE}
  className="rounded-xl border h-10 w-10"

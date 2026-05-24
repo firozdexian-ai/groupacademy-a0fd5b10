@@ -129,7 +129,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
         <div className="flex items-center gap-2">
           <Button
             variant="outline"
-            size="icon"
+            size="icon" aria-label="Previous"
             onClick={() => setPeriod(shiftPeriod(cur, mode, -1))}
             disabled={isRefreshing}
             className="rounded-xl h-12 w-12 border-2"
@@ -158,7 +158,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
 
           <Button
             variant="outline"
-            size="icon"
+            size="icon" aria-label="Next"
             onClick={() => setPeriod(shiftPeriod(cur, mode, 1))}
             disabled={isRefreshing}
             className="rounded-xl h-12 w-12 border-2"
@@ -168,7 +168,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
 
           <Button
             variant="outline"
-            size="icon"
+            size="icon" aria-label="Refresh"
             onClick={() => load(true)}
             disabled={isRefreshing}
             className="rounded-xl h-12 w-12 border-2"

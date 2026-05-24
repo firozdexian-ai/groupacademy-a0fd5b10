@@ -106,7 +106,7 @@ export function JobApplyCTA({
         </Button>
         <Button
           variant="outline"
-          size="icon"
+          size="icon" aria-label="Copy email address"
           onClick={() => {
             navigator.clipboard.writeText(job.application_email!);
             toast.success("Email copied");

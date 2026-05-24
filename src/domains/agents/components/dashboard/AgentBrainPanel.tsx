@@ -350,7 +350,7 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
                     )}
                     {key !== "A" && (
                       <Button
-                        size="icon"
+                        size="icon" aria-label="Delete"
                         variant="ghost"
                         onClick={() => deleteVariant(key)}
                         className="h-8 w-8 rounded-lg text-destructive/60 hover:bg-destructive/10 hover:text-destructive transition-colors"

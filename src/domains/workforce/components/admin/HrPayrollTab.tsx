@@ -247,7 +247,7 @@ export function HrPayrollTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(r);
  setOpen(true);
@@ -258,7 +258,7 @@ export function HrPayrollTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  onClick={() =>
  deleteGraphRow("hr_payroll_runs", r.id).then(() =>
  qc.invalidateQueries({ queryKey: ["hr_payroll"] }),

@@ -180,7 +180,7 @@ export default function SavedItems() {
  </div>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="h-10 w-10 text-muted-foreground hover:text-destructive"
  onClick={(e) => handleRemove(item, e)}
  >
@@ -194,7 +194,7 @@ export default function SavedItems() {
  return (
  <div className="max-w-2xl mx-auto px-6 py-10 pb-40 space-y-8 animate-in fade-in duration-700">
  <header className="flex items-center gap-4">
- <Button variant="ghost" size="icon" className="h-11 w-11 rounded-xl" onClick={() => navigate(-1)}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="h-11 w-11 rounded-xl" onClick={() => navigate(-1)}>
  <ArrowLeft className="h-6 w-6" />
  </Button>
  <div>

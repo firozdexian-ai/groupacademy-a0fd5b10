@@ -160,7 +160,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
  <Button
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="h-8 w-8 rounded-lg cursor-pointer transition-transform active:scale-95 shrink-0"
  onClick={handleReturnNavigationTrigger}
  >
@@ -187,7 +187,7 @@ export default function AppCourseDetail({ inlineSlug, onBack }: AppCourseDetailP
  <div className="absolute inset-0 bg-gradient-to-t from-black/40 to-transparent flex items-center justify-center">
  <Button
  type="button"
- size="icon"
+ size="icon" aria-label="Launch dynamic streaming framework container"
  className="h-12 w-12 rounded-lg bg-background text-foreground hover:bg-accent cursor-pointer transition-transform transform-gpu active:scale-95 shadow-md shrink-0 block"
  onClick={handleLaunchLearningEnvironmentRedirect}
  title="Launch dynamic streaming framework container"

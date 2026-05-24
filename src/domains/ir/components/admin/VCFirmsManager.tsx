@@ -170,7 +170,7 @@ export function VCFirmsManager() {
  <div className="flex gap-3">
  <Button
  variant="outline"
- size="icon"
+ size="icon" aria-label="Refresh"
  onClick={() => refetch()}
  disabled={isRefetching}
  className="h-14 w-14 rounded-2xl border bg-background/50 hover:bg-primary/5 shrink-0"
@@ -329,7 +329,7 @@ export function VCFirmsManager() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => openEditDialog(firm)}
  className="h-10 w-10 rounded-xl hover:bg-primary/10 hover:text-primary transition-all"
  >
@@ -337,7 +337,7 @@ export function VCFirmsManager() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  onClick={() => setDeleteConfirmId(firm.id)}
  className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive transition-all"
  >

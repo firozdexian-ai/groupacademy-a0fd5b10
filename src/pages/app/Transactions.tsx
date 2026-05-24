@@ -102,7 +102,7 @@ export default function Transactions() {
  <header className="flex items-center gap-5">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="rounded-xl h-11 w-11 hover:bg-primary/5"
  onClick={() => navigate(-1)}
  >

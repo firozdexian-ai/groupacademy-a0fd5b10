@@ -128,7 +128,7 @@ export default function StudyAbroadRoadmapResults() {
  return (
  <div className={PAGE_SHELL}>
  <header className="flex items-center gap-6">
- <Button variant="ghost" size="icon" className="rounded-xl h-12 w-12" onClick={() => navigate("/app/abroad")}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="rounded-xl h-12 w-12" onClick={() => navigate("/app/abroad")}>
  <ArrowLeft className="h-6 w-6 text-primary" />
  </Button>
  <div className="space-y-0.5">

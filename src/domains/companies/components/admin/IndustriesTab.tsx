@@ -151,7 +151,7 @@ export function IndustriesTab() {
  </p>
  </div>
  <div className="flex gap-2">
- <Button variant="outline" size="icon" onClick={loadRegistry} className="rounded-xl h-12 w-12 border">
+ <Button variant="outline" size="icon" aria-label="Refresh" onClick={loadRegistry} className="rounded-xl h-12 w-12 border">
  <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} />
  </Button>
  {selected.size >= 2 && (
@@ -260,7 +260,7 @@ export function IndustriesTab() {
  <TableCell className="text-right pr-8">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setRenameFrom(row.industry);
  setRenameTo(row.industry);
@@ -281,7 +281,7 @@ export function IndustriesTab() {
  <div className="p-6 border-t flex justify-center items-center gap-6 bg-muted/5">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Previous"
  onClick={() => setPage((p) => Math.max(1, p - 1))}
  disabled={page === 1}
  className="rounded-xl border"
@@ -293,7 +293,7 @@ export function IndustriesTab() {
  </span>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Next"
  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
  disabled={page >= totalPages}
  className="rounded-xl border"

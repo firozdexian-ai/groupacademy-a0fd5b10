@@ -181,7 +181,7 @@ export default function CreatorAnalytics() {
  asChild
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="h-8 w-8 rounded-lg cursor-pointer border border-border/5 bg-background hover:bg-muted shrink-0"
  >
  <Link to="/app/feed" aria-label="Return to parent index track link">

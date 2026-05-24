@@ -436,7 +436,7 @@ export const BannerManager = () => {
           </div>
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Refresh"
             onClick={loadRegistryData}
             className="rounded-full h-10 w-10 hover:bg-primary/10"
           >
@@ -509,7 +509,7 @@ export const BannerManager = () => {
 
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon" aria-label="Delete"
                       onClick={() => handlePurgeArtifact(banner.id)}
                       className="h-12 w-12 rounded-2xl text-muted-foreground/20 hover:text-destructive hover:bg-destructive/10 transition-all"
                     >

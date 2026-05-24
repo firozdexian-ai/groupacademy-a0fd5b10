@@ -83,7 +83,7 @@ export function ModuleResourceFileUpload({ value, onChange, accept, resourceId, 
             <Button
               type="button"
               variant="ghost"
-              size="icon"
+              size="icon" aria-label="Clear file"
               className="h-8 w-8 rounded-lg text-destructive hover:text-destructive"
               onClick={() => onChange("")}
               title="Clear file"

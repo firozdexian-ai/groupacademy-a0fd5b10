@@ -251,7 +251,7 @@ export function ServiceOutreachTab() {
  {sharedCount} NODES ACTIVE
  </Badge>
  )}
- <Button variant="ghost" size="icon" className="rounded-xl h-12 w-12 hover:bg-emerald-500/10">
+ <Button variant="ghost" size="icon" aria-label="Open link" className="rounded-xl h-12 w-12 hover:bg-emerald-500/10">
  <ExternalLink className="h-5 w-5 text-emerald-500" />
  </Button>
  </div>

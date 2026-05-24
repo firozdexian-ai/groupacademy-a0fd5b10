@@ -430,7 +430,7 @@ export function TalentCreditsTab() {
  <div className="flex gap-2 justify-end opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Add"
  className="h-10 w-10 rounded-xl hover:bg-emerald-500 hover:text-white transition-all border"
  onClick={() => setAdjustDialog({ open: true, talent: credit, type: "add" })}
  >
@@ -438,7 +438,7 @@ export function TalentCreditsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Remove"
  className="h-10 w-10 rounded-xl hover:bg-destructive text-destructive hover:text-white transition-all border"
  onClick={() => setAdjustDialog({ open: true, talent: credit, type: "deduct" })}
  >
@@ -498,7 +498,7 @@ export function TalentCreditsTab() {
  <div className="flex gap-4">
  <Button
  variant="outline"
- size="icon"
+ size="icon" aria-label="Previous"
  className="h-12 w-12 rounded-xl border hover:bg-blue-600 hover:text-white transition-all"
  onClick={() => setPage((p) => Math.max(1, p - 1))}
  disabled={page === 1}
@@ -507,7 +507,7 @@ export function TalentCreditsTab() {
  </Button>
  <Button
  variant="outline"
- size="icon"
+ size="icon" aria-label="Next"
  className="h-12 w-12 rounded-xl border hover:bg-blue-600 hover:text-white transition-all"
  onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
  disabled={page === totalPages}

@@ -407,7 +407,7 @@ export default function AppJobApplication() {
  <Button
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="rounded-lg h-9 w-9 hover:bg-muted cursor-pointer shrink-0 border border-border/5"
  onClick={handleReturnHistoryTrigger}
  >

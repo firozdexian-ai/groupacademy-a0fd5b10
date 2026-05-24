@@ -113,7 +113,7 @@ export default function MessageThread() {
  <div className={cn(PAGE_SHELL, "flex flex-col h-[100dvh] max-w-2xl mx-auto bg-background")}>
  {/* HUD LEVEL 1: CONTEXT HEADER */}
  <header className="sticky top-0 z-20 bg-background/95 border-b border-border/40 flex items-center gap-3 px-4 py-3">
- <Button variant="ghost" size="icon" className="h-9 w-9 shrink-0" onClick={() => navigateHook("/app/messages")}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="h-9 w-9 shrink-0" onClick={() => navigateHook("/app/messages")}>
  <ArrowLeft className="h-5 w-5" />
  </Button>
 
@@ -181,7 +181,7 @@ export default function MessageThread() {
  disabled={isStreaming || isBootstrapping}
  />
  <Button
- size="icon"
+ size="icon" aria-label="Send"
  className="h-11 w-11 rounded-xl shrink-0"
  onClick={handleDispatchMessage}
  disabled={!textComposerInput.trim() || isStreaming}

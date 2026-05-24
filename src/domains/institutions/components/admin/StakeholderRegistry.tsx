@@ -272,7 +272,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  <div className="flex gap-2">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => handleEdit(r)}
  className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all"
  >
@@ -280,7 +280,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  onClick={() => setPurgeId(r.id)}
  className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive transition-all"
  >

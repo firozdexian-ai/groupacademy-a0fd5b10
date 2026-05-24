@@ -118,7 +118,7 @@ export function LearningWebinarsTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Manage sessions"
  onClick={() => setSessionsRow(row)}
  className="hover:bg-pink-500/10 hover:text-pink-600"
  title="Manage sessions"
@@ -127,7 +127,7 @@ export function LearningWebinarsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(row);
  setOpen(true);
@@ -138,7 +138,7 @@ export function LearningWebinarsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive hover:bg-destructive/10"
  onClick={() => {
  if (confirm("Purge Webinar?")) deleteContent.mutate(row.id);

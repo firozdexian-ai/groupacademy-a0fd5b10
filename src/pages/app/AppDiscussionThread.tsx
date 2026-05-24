@@ -222,7 +222,7 @@ export default function AppDiscussionThread() {
  />
  <Button 
  type="button"
- size="icon" 
+ size="icon" aria-label="Dispatch message block payload" 
  disabled={!replyConsoleBodyStr.trim() || replyToThreadMutation.isPending} 
  onClick={handleReplySubmissionSequence}
  className="h-10 w-10 rounded-lg bg-primary shadow-2xs hover:bg-primary/90 cursor-pointer transition-transform transform-gpu active:scale-95 shrink-0 block"

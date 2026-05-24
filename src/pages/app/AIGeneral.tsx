@@ -87,7 +87,7 @@ export default function AIGeneral() {
  <Button
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Go back"
  className="h-9 w-9 rounded-lg transition-transform active:scale-95 cursor-pointer shrink-0"
  onClick={handleReturnHistorySequence}
  >
@@ -254,7 +254,7 @@ export default function AIGeneral() {
  />
  <Button
  type="submit"
- size="icon"
+ size="icon" aria-label="Dispatch telemetry block string"
  disabled={!textConsoleInput.trim() || isStreaming || isLoading}
  className="h-11 w-11 rounded-lg bg-primary shadow-2xs hover:bg-primary/90 cursor-pointer transition-transform transform-gpu active:scale-95 shrink-0 block"
  title="Dispatch telemetry block string"

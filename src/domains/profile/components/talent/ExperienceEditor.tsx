@@ -203,7 +203,7 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
                     <Button
                       type="button"
                       variant="ghost"
-                      size="icon"
+                      size="icon" aria-label="Expunge this specific operational record row from "
                       onClick={() => removeExperienceNode(index)}
                       className="h-7 w-7 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none"
                       title="Expunge this specific operational record row from user database parameters"

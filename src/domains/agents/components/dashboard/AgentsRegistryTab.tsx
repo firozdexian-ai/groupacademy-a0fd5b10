@@ -251,7 +251,7 @@ export function AIAgentsManager() {
                     />
                     <Button
                       variant="ghost"
-                      size="icon"
+                      size="icon" aria-label="Edit"
                       className="h-10 w-10 rounded-xl hover:bg-primary hover:text-white transition-all shadow-inner"
                       onClick={() => handleEdit(agent)}
                     >

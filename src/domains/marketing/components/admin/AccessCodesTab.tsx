@@ -201,7 +201,7 @@ export function AccessCodesTab() {
                             <div className="flex justify-end gap-1">
                               <Button
                                 variant="ghost"
-                                size="icon"
+                                size="icon" aria-label="Copy"
                                 onClick={() => {
                                   navigator.clipboard.writeText(row.code);
                                   toast.success("KEY COPIED");
@@ -212,7 +212,7 @@ export function AccessCodesTab() {
                               </Button>
                               <Button
                                 variant="ghost"
-                                size="icon"
+                                size="icon" aria-label="Delete"
                                 className="hover:bg-rose-500/10 hover:text-rose-600"
                                 onClick={() => {
                                   if (confirm("Purge Code?")) deleteAccessCode.mutate(row.id);

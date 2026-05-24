@@ -377,12 +377,12 @@ export function JobsManagerLegacyTab() {
  </TableCell>
  <TableCell className="text-xs text-muted-foreground">{job.location || "Remote"}</TableCell>
  <TableCell className="text-right space-x-1">
- <Button variant="ghost" size="icon" className="h-8 w-8" onClick={() => openEdit(job)}>
+ <Button variant="ghost" size="icon" aria-label="Edit" className="h-8 w-8" onClick={() => openEdit(job)}>
  <Edit className="w-4 h-4" />
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="h-8 w-8 text-destructive"
  onClick={async () => {
  if (confirm("Remove listing?")) {

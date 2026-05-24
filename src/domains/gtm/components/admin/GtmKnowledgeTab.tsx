@@ -91,7 +91,7 @@ export function GtmKnowledgeTab() {
  </TableCell>
  <TableCell className="text-right">
  <div className="flex justify-end gap-1">
- <Button size="icon" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-indigo-500/10 hover:text-indigo-600">
+ <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-indigo-500/10 hover:text-indigo-600">
  <Pencil className="h-4 w-4" />
  </Button>
  <ConfirmPurge
@@ -99,7 +99,7 @@ export function GtmKnowledgeTab() {
  description="This will permanently remove the knowledge pack."
  onConfirm={() => deleteKnowledgePack.mutate(row.id)}
  >
- <Button size="icon" variant="ghost" className="hover:bg-destructive/10 hover:text-destructive">
+ <Button size="icon" aria-label="Delete" variant="ghost" className="hover:bg-destructive/10 hover:text-destructive">
  <Trash2 className="h-4 w-4" />
  </Button>
  </ConfirmPurge>

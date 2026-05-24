@@ -284,7 +284,7 @@ export function ProfessionalRolesPanel() {
                         />
                         <Button
                           variant="ghost"
-                          size="icon"
+                          size="icon" aria-label="Delete role"
                           onClick={() => remove(r)}
                           className="h-8 w-8 text-destructive hover:bg-destructive/10 hover:text-destructive opacity-0 group-hover:opacity-100 transition-opacity"
                           title="Delete role"

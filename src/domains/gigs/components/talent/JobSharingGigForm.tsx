@@ -393,7 +393,7 @@ export function JobSharingGigForm({ gig, talentId, onSubmitted }: JobSharingGigF
               />
               <Button
                 variant="outline"
-                size="icon"
+                size="icon" aria-label="Copy"
                 type="button"
                 className="absolute top-3 right-3 rounded-xl h-8 w-8 border border-border/40 bg-background/60 hover:bg-primary/5 cursor-pointer active:scale-90 transition-transform shadow-sm"
                 onClick={() => {

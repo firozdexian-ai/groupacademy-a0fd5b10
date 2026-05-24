@@ -401,7 +401,7 @@ export function JobsManageTab() {
                           <div className="flex justify-end gap-1 opacity-20 group-hover:opacity-100 transition-opacity">
                             <Button
                               variant="ghost"
-                              size="icon"
+                              size="icon" aria-label="Edit"
                               className="h-9 w-9 hover:bg-primary/10"
                               onClick={() => {
                                 setEditingJobId(job.id);
@@ -412,7 +412,7 @@ export function JobsManageTab() {
                             </Button>
                             <Button
                               variant="ghost"
-                              size="icon"
+                              size="icon" aria-label="Delete"
                               className="h-9 w-9 text-destructive hover:bg-destructive/10"
                               onClick={async () => {
                                 if (confirm("Terminate listing node?")) {

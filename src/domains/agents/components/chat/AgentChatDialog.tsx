@@ -86,7 +86,7 @@ export function AgentChatDialog({
   return (
     <div className="flex flex-col h-full bg-background rounded-[32px] border-2 border-border/40 overflow-hidden shadow-2xl relative animate-in fade-in zoom-in-95 duration-500 max-h-[85vh] text-left select-none">
       <header className="p-4 sm:p-6 border-b border-border/10 bg-card/30 flex items-center gap-4 flex-shrink-0 z-10 backdrop-blur-md">
-        <Button variant="ghost" size="icon" onClick={onBack} disabled={isStreaming || isSyncing}>
+        <Button variant="ghost" size="icon" aria-label="Previous" onClick={onBack} disabled={isStreaming || isSyncing}>
           <ChevronLeft className="h-5 w-5" />
         </Button>
 

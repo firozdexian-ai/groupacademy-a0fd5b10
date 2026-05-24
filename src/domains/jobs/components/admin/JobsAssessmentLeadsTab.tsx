@@ -302,7 +302,7 @@ export function JobsAssessmentLeadsTab() {
                         <div className="flex justify-end items-center gap-3">
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="icon" aria-label="Profile"
                             className="h-10 w-10 rounded-xl hover:bg-primary/10 transition-all shadow-inner group/btn"
                             onClick={() => {
                               setSelectedTalentEmail(lead.email);

@@ -189,7 +189,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
           </div>
           <Button
             variant="ghost"
-            size="icon"
+            size="icon" aria-label="Close"
             onClick={onClose}
             className="rounded-xl hover:bg-destructive/10 hover:text-destructive h-10 w-10 transition-colors"
           >

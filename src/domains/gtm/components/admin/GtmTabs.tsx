@@ -147,7 +147,7 @@ function GtmRegistryShell({
 function RowActions({ onEdit, onDelete, label = "node" }: { onEdit: () => void; onDelete: () => void; label?: string }) {
  return (
  <div className="flex items-center justify-end gap-1">
- <Button size="icon" variant="ghost" className="h-8 w-8 rounded-lg" onClick={onEdit}>
+ <Button size="icon" aria-label="Edit" variant="ghost" className="h-8 w-8 rounded-lg" onClick={onEdit}>
  <Pencil className="h-3.5 w-3.5" />
  </Button>
  <ConfirmPurge
@@ -156,7 +156,7 @@ function RowActions({ onEdit, onDelete, label = "node" }: { onEdit: () => void; 
  onConfirm={onDelete}
  >
  <Button
- size="icon"
+ size="icon" aria-label="Delete"
  variant="ghost"
  className="h-8 w-8 rounded-lg text-destructive hover:text-destructive"
  >

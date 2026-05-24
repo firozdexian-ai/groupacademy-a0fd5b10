@@ -338,7 +338,7 @@ export function AgentSessionsManager() {
                         <TableCell className="text-right pr-6">
                           <Button
                             variant="ghost"
-                            size="icon"
+                            size="icon" aria-label="View"
                             className="h-8 w-8 rounded-lg hover:bg-primary hover:text-white transition-all shadow-sm"
                             onClick={() => setViewSession(session)}
                           >

@@ -258,7 +258,7 @@ export function HrTargetsTab() {
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Edit"
  onClick={() => {
  setDraft(t);
  setOpen(true);
@@ -269,7 +269,7 @@ export function HrTargetsTab() {
  </Button>
  <Button
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Delete"
  className="text-destructive"
  onClick={() => {
  if (confirm("Purge Target?")) deleteTarget.mutate(t.id);

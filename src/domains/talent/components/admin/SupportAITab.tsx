@@ -140,7 +140,7 @@ export function SupportAITab() {
                   <img src={imagePreview} alt="Conversation" className="w-full max-h-[400px] object-contain" />
                   <Button
                     variant="destructive"
-                    size="icon"
+                    size="icon" aria-label="Close"
                     className="absolute top-4 right-4 h-12 w-12 rounded-xl opacity-0 group-hover:opacity-100 transition-all shadow-xl scale-95 group-hover:scale-100"
                     onClick={reset}
                   >

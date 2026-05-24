@@ -369,7 +369,7 @@ function AgentDetailPanel({
             </div>
             <div className="w-px h-6 bg-border/50" />
             <Button
-              size="icon"
+              size="icon" aria-label="Delete"
               variant="ghost"
               onClick={onDelete}
               className="h-8 w-8 rounded-xl text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-colors"
@@ -881,7 +881,7 @@ function KnowledgePanel({ agentId }: { agentId: string }) {
                     {s.status ?? "PENDING"}
                   </Badge>
                   <Button
-                    size="icon"
+                    size="icon" aria-label="Delete"
                     variant="ghost"
                     onClick={() => handleDelete(s.id)}
                     className="h-8 w-8 rounded-lg text-destructive/60 hover:text-destructive hover:bg-destructive/10 transition-colors"

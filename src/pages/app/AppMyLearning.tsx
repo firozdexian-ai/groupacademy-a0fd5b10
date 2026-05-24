@@ -31,7 +31,7 @@ export default function AppMyLearning() {
  <Button
  type="button"
  variant="ghost"
- size="icon"
+ size="icon" aria-label="Return to target reference directory"
  onClick={handleDefensiveReturnSequence}
  className="group rounded-lg hover:bg-muted h-9 w-9 cursor-pointer transition-transform active:scale-95 shrink-0"
  title="Return to target reference directory"
