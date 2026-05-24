@@ -233,7 +233,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
       onOpenChange(false);
       onSaved?.();
     } catch (err: any) {
-      toast.error("Registry Persistence Fault: " + err.message);
+      toast.error("Save failed: " + err.message);
     } finally {
       setIsSaving(false);
     }

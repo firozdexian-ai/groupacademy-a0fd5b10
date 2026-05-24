@@ -81,7 +81,7 @@ export function IndustriesTab() {
       setIndustries(rollupData || []);
       setUnassignedCount(unassignedCountVal);
     } catch (err: any) {
-      toast.error("Registry Sync Failed: " + err.message);
+      toast.error("Failed to save: " + err.message);
     } finally {
       setIsLoading(false);
     }

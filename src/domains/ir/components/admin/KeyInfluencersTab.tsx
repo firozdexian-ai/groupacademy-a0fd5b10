@@ -64,7 +64,7 @@ export default function KeyInfluencersTab() {
       const data = await listInfluencers(filter);
       setRows(data || []);
     } catch (err: any) {
-      toast.error("Registry Sync Failed: " + err.message);
+      toast.error("Failed to save: " + err.message);
     } finally {
       setLoading(false);
     }
