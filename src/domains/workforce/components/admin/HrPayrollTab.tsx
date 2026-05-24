@@ -145,7 +145,7 @@ export function HrPayrollTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/10 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/10 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-emerald-600">
             <Banknote className="h-8 w-8" />
@@ -181,7 +181,7 @@ export function HrPayrollTab() {
       </div>
 
       {isLoading ? (
-        <Skeleton className="h-96 w-full rounded-[40px]" />
+        <Skeleton className="h-96 w-full rounded-2xl" />
       ) : (
         <div className="space-y-8">
           {Object.entries(data?.groupedRuns || {}).map(([month, runs]: [string, any]) => (
@@ -193,10 +193,10 @@ export function HrPayrollTab() {
                 <div className="h-px flex-1 bg-border/40" />
               </div>
 
-              <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden">
+              <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden">
                 <Table>
                   <TableHeader className="bg-muted/10 text-[10px] font-black">
-                    <TableRow className="border-b-2">
+                    <TableRow className="border-b">
                       <TableHead className="py-5 pl-8">Beneficiary Node</TableHead>
                       <TableHead>Temporal Window</TableHead>
                       <TableHead>Financial Yield</TableHead>
@@ -283,7 +283,7 @@ export function HrPayrollTab() {
 
       {/* Deployment Dialog */}
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl rounded-[40px] p-0 overflow-hidden border-4 shadow-2xl">
+        <DialogContent className="max-w-2xl rounded-2xl p-0 overflow-hidden border-4 shadow-sm">
           <div className="h-2 w-full bg-emerald-500" />
           <div className="p-10 space-y-6">
             <DialogHeader>
@@ -376,7 +376,7 @@ export function HrPayrollTab() {
 function KpiTile({ icon: Icon, label, value, accent }: any) {
   const accentText = accent === "emerald" ? "text-emerald-600" : "text-amber-600";
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 p-6 flex items-center gap-5">
+    <Card className="rounded-2xl border border-border/60 bg-card p-6 flex items-center gap-5">
       <div
         className={cn(
           "h-14 w-14 rounded-2xl flex items-center justify-center border-2 border-border/10 shadow-inner bg-background",

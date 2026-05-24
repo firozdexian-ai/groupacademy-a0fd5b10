@@ -193,7 +193,7 @@ export function LeadHunterManager() {
   if (selectedSession) {
     return (
       <div className="space-y-8 animate-in fade-in slide-in-from-left-4 duration-500">
-        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+        <div className="flex flex-col md:flex-row items-start md:items-center gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
           <Button
             variant="outline"
             size="icon"
@@ -217,11 +217,11 @@ export function LeadHunterManager() {
           </div>
         </div>
 
-        <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
+        <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <Table>
             <TableHeader className="bg-muted/30">
-              <TableRow className="hover:bg-transparent border-b-2">
+              <TableRow className="hover:bg-transparent border-b">
                 <TableHead className="text-[10px] font-semibold py-8 px-8 text-left w-1/3">
                   Candidate Artifact
                 </TableHead>
@@ -344,7 +344,7 @@ export function LeadHunterManager() {
                           </DropdownMenuTrigger>
                           <DropdownMenuContent
                             align="end"
-                            className="w-56 rounded-2xl border-2 shadow-2xl p-2 bg-background/95 backdrop-blur-xl"
+                            className="w-56 rounded-2xl border-2 shadow-sm p-2 bg-background/95"
                           >
                             <DropdownMenuItem
                               className="rounded-xl font-bold p-3 gap-3 cursor-pointer"
@@ -382,7 +382,7 @@ export function LeadHunterManager() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Target className="h-8 w-8" />
@@ -404,7 +404,7 @@ export function LeadHunterManager() {
         {sessions.map((s) => (
           <Card
             key={s.id}
-            className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm overflow-hidden group hover:border-primary/40 transition-all duration-500 cursor-pointer shadow-lg"
+            className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm overflow-hidden group hover:border-primary/40 transition-all duration-500 cursor-pointer shadow-lg"
             onClick={() => loadSessionMatches(s)}
           >
             <div className="h-1 w-full bg-primary/20 group-hover:bg-primary transition-colors" />
@@ -433,7 +433,7 @@ export function LeadHunterManager() {
           </Card>
         ))}
         {sessions.length === 0 && !isLoading && (
-          <div className="col-span-full text-center py-20 bg-muted/10 rounded-[40px] border-2 border-dashed border-border/40">
+          <div className="col-span-full text-center py-20 bg-muted/10 rounded-2xl border-2 border-dashed border-border/40">
             <Database className="h-10 w-10 mx-auto text-muted-foreground/30 mb-4" />
             <p className="text-sm font-semibold text-muted-foreground/50 italic">
               No Extraction Logs Found. Initialize a Hunt to begin.
@@ -443,7 +443,7 @@ export function LeadHunterManager() {
       </div>
 
       <Dialog open={showNewHunt} onOpenChange={setShowNewHunt}>
-        <DialogContent className="max-w-4xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-4xl rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
           <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <div className="p-10 max-h-[85vh] overflow-y-auto no-scrollbar">
             <DialogHeader className="mb-10 text-left">

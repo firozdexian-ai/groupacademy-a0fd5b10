@@ -356,7 +356,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
   };
 
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
+    <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
       <div className="h-1.5 w-full bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
       <CardHeader className="p-8 pb-4">
         <div className="flex items-center gap-5">
@@ -374,7 +374,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
       <CardContent className="p-8 pt-0 space-y-8">
         <Tabs defaultValue="links" className="w-full">
-          <TabsList className="grid w-full grid-cols-4 h-16 bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1.5 shadow-xl">
+          <TabsList className="grid w-full grid-cols-4 h-16 bg-muted/30 rounded-xl border border-border/60 p-1.5 shadow-xl">
             <TabsTrigger
               value="links"
               disabled={isUploading}
@@ -435,7 +435,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <div className="space-y-4">
               <div
                 onClick={() => !isUploading && fileInputRef.current?.click()}
-                className="group relative border-4 border-dashed rounded-[32px] p-16 text-center transition-all hover:border-primary/40 hover:bg-primary/5 cursor-pointer"
+                className="group relative border-4 border-dashed rounded-2xl p-16 text-center transition-all hover:border-primary/40 hover:bg-primary/5 cursor-pointer"
               >
                 <input
                   ref={fileInputRef}
@@ -447,7 +447,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                   disabled={isUploading}
                 />
                 <div className="space-y-6">
-                  <div className="h-20 w-20 rounded-[24px] bg-muted/50 flex items-center justify-center mx-auto border-2 border-border/40 group-hover:rotate-6 transition-transform">
+                  <div className="h-20 w-20 rounded-xl bg-muted/50 flex items-center justify-center mx-auto border border-border/60 group-hover:rotate-6 transition-transform">
                     <FileUp className="h-10 w-10 text-muted-foreground" />
                   </div>
                   <div>
@@ -498,7 +498,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <div className="space-y-4">
               <div
                 onClick={() => !isUploading && csvInputRef.current?.click()}
-                className="group relative border-4 border-dashed rounded-[32px] p-16 text-center transition-all hover:border-primary/40 hover:bg-primary/5 cursor-pointer"
+                className="group relative border-4 border-dashed rounded-2xl p-16 text-center transition-all hover:border-primary/40 hover:bg-primary/5 cursor-pointer"
               >
                 <input
                   ref={csvInputRef}
@@ -509,7 +509,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                   disabled={isUploading}
                 />
                 <div className="space-y-6">
-                  <div className="h-20 w-20 rounded-[24px] bg-muted/50 flex items-center justify-center mx-auto border-2 border-border/40 group-hover:rotate-6 transition-transform text-blue-500">
+                  <div className="h-20 w-20 rounded-xl bg-muted/50 flex items-center justify-center mx-auto border border-border/60 group-hover:rotate-6 transition-transform text-blue-500">
                     <FileSpreadsheet className="h-10 w-10" />
                   </div>
                   <div>
@@ -524,7 +524,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
             <Button
               onClick={processCsvDatabase}
               disabled={isUploading || !csvFile}
-              className="w-full h-16 rounded-[20px] font-semibold uppercase tracking-[0.3em] text-[11px] shadow-2xl shadow-blue-500/30 bg-blue-600 hover:bg-blue-700 text-white group"
+              className="w-full h-16 rounded-[20px] font-semibold uppercase tracking-[0.3em] text-[11px] shadow-sm shadow-blue-500/30 bg-blue-600 hover:bg-blue-700 text-white group"
             >
               {isUploading ? <Loader2 className="animate-spin mr-3 h-5 w-5" /> : <Database className="mr-3 h-5 w-5" />}
               Execute CSV Agent Sync
@@ -537,7 +537,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
         </Tabs>
 
         {showProgress && currentBatch && (
-          <div className="p-8 rounded-[32px] border-2 bg-muted/10 space-y-6 shadow-inner animate-in zoom-in-95 duration-700">
+          <div className="p-8 rounded-2xl border-2 bg-muted/10 space-y-6 shadow-inner animate-in zoom-in-95 duration-700">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
                 <Zap className="h-5 w-5 text-amber-500 fill-current animate-pulse" />
@@ -602,7 +602,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
       </CardContent>
 
       <Dialog open={showErrorLog} onOpenChange={setShowErrorLog}>
-        <DialogContent className="max-w-3xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-3xl rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
           <div className="h-2 w-full bg-destructive/40" />
           <div className="p-10">
             <DialogHeader className="mb-8">
@@ -610,7 +610,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                 Exception Log Trace
               </DialogTitle>
             </DialogHeader>
-            <ScrollArea className="h-[400px] rounded-[32px] border-2 border-border/40 p-8 bg-card/50 shadow-inner">
+            <ScrollArea className="h-[400px] rounded-2xl border border-border/60 p-8 bg-card shadow-inner">
               <div className="space-y-4">
                 {(currentBatch?.error_log as any[])?.map((err, idx) => (
                   <div key={idx} className="p-6 rounded-2xl bg-destructive/5 border-2 border-destructive/10 group">

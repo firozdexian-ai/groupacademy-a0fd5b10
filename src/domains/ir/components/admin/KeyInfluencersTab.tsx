@@ -121,7 +121,7 @@ export default function KeyInfluencersTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700 p-4 md:p-6 text-left">
       {/* Executive Header */}
-      <header className="flex justify-between items-center bg-muted/10 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex justify-between items-center bg-muted/10 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3">
             <Star className="h-8 w-8 text-amber-500 fill-amber-500/20" />
@@ -140,7 +140,7 @@ export default function KeyInfluencersTab() {
       </header>
 
       {/* Registry Filters */}
-      <div className="flex flex-wrap gap-2 p-2 rounded-2xl bg-muted/20 border-2 border-border/40 w-fit">
+      <div className="flex flex-wrap gap-2 p-2 rounded-2xl bg-muted/20 border border-border/60 w-fit">
         {["all", "vip", "strategic", "standard"].map((t) => (
           <button
             key={t}
@@ -161,11 +161,11 @@ export default function KeyInfluencersTab() {
       {loading ? (
         <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-48 w-full rounded-[32px] bg-muted/40" />
+            <Skeleton key={i} className="h-48 w-full rounded-2xl bg-muted/40" />
           ))}
         </div>
       ) : rows.length === 0 ? (
-        <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-40 uppercase font-semibold tracking-widest italic text-xs">
+        <Card className="rounded-2xl border-2 border-dashed p-20 text-center opacity-40 uppercase font-semibold tracking-widest italic text-xs">
           Registry Frame Empty
         </Card>
       ) : (
@@ -173,7 +173,7 @@ export default function KeyInfluencersTab() {
           {rows.map((r) => (
             <Card
               key={r.id}
-              className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm group hover:border-primary/40 transition-all overflow-hidden flex flex-col"
+              className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm group hover:border-primary/40 transition-all overflow-hidden flex flex-col"
             >
               <div
                 className={cn(
@@ -243,7 +243,7 @@ export default function KeyInfluencersTab() {
 
       {/* Recalibration Dialog (CRUD Restored) */}
       <Dialog open={dialogOpen} onOpenChange={setDialogOpen}>
-        <DialogContent className="max-w-md rounded-[32px] border-4 bg-background text-left">
+        <DialogContent className="max-w-md rounded-2xl border-4 bg-background text-left">
           <div className="p-2 space-y-6">
             <DialogHeader>
               <DialogTitle className="text-2xl font-semibold tracking-tight uppercase flex items-center gap-2">

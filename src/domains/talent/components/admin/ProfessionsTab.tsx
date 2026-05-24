@@ -116,7 +116,7 @@ export function ProfessionsTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-700 p-4">
       {/* Deduped Header Action Row (P2 Fix) */}
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight">Academic Governance</h2>
           <p className="text-[10px] font-semibold text-muted-foreground/60">
@@ -299,7 +299,7 @@ export function ProfessionsTab() {
 function StructuralDialog({ title, open, setOpen, onSave, children }: any) {
   return (
     <Dialog open={open} onOpenChange={setOpen}>
-      <DialogContent className="max-w-md rounded-[32px] border-4">
+      <DialogContent className="max-w-md rounded-2xl border-4">
         <form onSubmit={onSave}>
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold tracking-tight uppercase">{title}</DialogTitle>

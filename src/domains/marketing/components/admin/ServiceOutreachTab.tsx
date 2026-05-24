@@ -182,15 +182,15 @@ export function ServiceOutreachTab() {
   if (isLoading)
     return (
       <div className="grid gap-6 md:grid-cols-2 p-4">
-        <Skeleton className="h-40 w-full rounded-[32px]" />
-        <Skeleton className="h-40 w-full rounded-[32px]" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
+        <Skeleton className="h-40 w-full rounded-2xl" />
       </div>
     );
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-emerald-500">
             <Sparkles className="h-8 w-8 text-emerald-500 fill-emerald-500/20" />
@@ -220,7 +220,7 @@ export function ServiceOutreachTab() {
           return (
             <Card
               key={service.id}
-              className="group cursor-pointer rounded-[32px] border-2 border-border/40 bg-card/30 hover:border-emerald-500/40 transition-all duration-500 overflow-hidden shadow-xl"
+              className="group cursor-pointer rounded-2xl border border-border/60 bg-card hover:border-emerald-500/40 transition-all duration-500 overflow-hidden shadow-xl"
               onClick={() => {
                 setSelectedService(service);
                 setIsShareOpen(true);
@@ -263,7 +263,7 @@ export function ServiceOutreachTab() {
 
       {/* Distribution Dialog */}
       <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
-        <DialogContent className="max-w-3xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl shadow-2xl">
+        <DialogContent className="max-w-3xl rounded-2xl border-4 border-border/40 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl shadow-sm">
           <div className="h-2 w-full bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-600" />
           <div className="p-10">
             <DialogHeader className="mb-8 text-left">
@@ -341,7 +341,7 @@ export function ServiceOutreachTab() {
               <div className="flex-1 space-y-6 text-left">
                 {activeTab !== "custom" ? (
                   <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
-                    <div className="p-6 bg-emerald-500/5 rounded-[32px] border-2 border-emerald-500/10">
+                    <div className="p-6 bg-emerald-500/5 rounded-2xl border-2 border-emerald-500/10">
                       <p className="text-[10px] font-semibold uppercase text-emerald-500 italic mb-3 flex items-center gap-2">
                         <Globe className="h-3 w-3" /> Regional Template
                       </p>

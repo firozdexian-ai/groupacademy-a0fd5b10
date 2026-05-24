@@ -116,7 +116,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
         onOpenChange(val);
       }}
     >
-      <DialogContent className="max-w-2xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+      <DialogContent className="max-w-2xl rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
         <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
         <div className="p-10 pb-0">
           <DialogHeader className="mb-8">
@@ -257,7 +257,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                 )}
               </div>
 
-              <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-muted/20 p-6 rounded-[32px] border-2 border-border/10 gap-4">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between bg-muted/20 p-6 rounded-2xl border-2 border-border/10 gap-4">
                 <div className="flex items-center gap-4">
                   <Switch
                     id="followup"
@@ -297,7 +297,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
           <Button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}
-            className="h-14 px-10 rounded-[24px] font-semibold uppercase italic tracking-tight text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="h-14 px-10 rounded-xl font-semibold uppercase italic tracking-tight text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             {saveMutation.isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />

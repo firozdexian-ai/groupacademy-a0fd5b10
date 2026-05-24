@@ -55,7 +55,7 @@ export function JobsOutreachTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-500">
       {/* SECTION: MULTI-CHANNEL PROMOTION */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
           <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
             <div className="space-y-1">
@@ -100,7 +100,7 @@ export function JobsOutreachTab() {
             </div>
           ) : (
             !loading && (
-              <div className="p-12 border-2 border-dashed rounded-[32px] text-center opacity-30 font-semibold uppercase text-xs tracking-widest">
+              <div className="p-12 border-2 border-dashed rounded-2xl text-center opacity-30 font-semibold uppercase text-xs tracking-widest">
                 Zero active infrastructure nodes detected
               </div>
             )
@@ -109,7 +109,7 @@ export function JobsOutreachTab() {
       </Card>
 
       {/* SECTION: CANDIDATE-DRIVEN OUTREACH */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
           <div className="flex justify-between items-center">
             <div className="space-y-1">

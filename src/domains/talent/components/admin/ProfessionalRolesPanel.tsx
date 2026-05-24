@@ -128,10 +128,10 @@ export function ProfessionalRolesPanel() {
   if (loading) {
     return (
       <div className="space-y-6">
-        <Skeleton className="h-32 w-full rounded-[40px]" />
+        <Skeleton className="h-32 w-full rounded-2xl" />
         <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
-          <Skeleton className="h-[600px] rounded-[32px]" />
-          <Skeleton className="h-[600px] rounded-[32px]" />
+          <Skeleton className="h-[600px] rounded-2xl" />
+          <Skeleton className="h-[600px] rounded-2xl" />
         </div>
       </div>
     );
@@ -139,7 +139,7 @@ export function ProfessionalRolesPanel() {
 
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Briefcase className="h-8 w-8" />
@@ -153,7 +153,7 @@ export function ProfessionalRolesPanel() {
 
       <div className="grid grid-cols-1 lg:grid-cols-[320px_1fr] gap-6">
         {/* Categories list */}
-        <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl flex flex-col h-[70vh] overflow-hidden shadow-lg">
+        <Card className="rounded-2xl border border-border/60 bg-card flex flex-col h-[70vh] overflow-hidden shadow-lg">
           <div className="p-5 border-b border-border/20 bg-muted/10">
             <div className="relative">
               <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
@@ -207,7 +207,7 @@ export function ProfessionalRolesPanel() {
         </Card>
 
         {/* Roles for selected category */}
-        <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-xl flex flex-col h-[70vh] overflow-hidden shadow-lg relative">
+        <Card className="rounded-2xl border border-border/60 bg-card flex flex-col h-[70vh] overflow-hidden shadow-lg relative">
           <div className="absolute -right-12 -top-12 h-40 w-40 rounded-full blur-3xl opacity-10 bg-primary pointer-events-none" />
 
           <CardHeader className="p-6 border-b border-border/20 bg-muted/5 z-10">
@@ -256,7 +256,7 @@ export function ProfessionalRolesPanel() {
                   return (
                     <div
                       key={r.id}
-                      className="group flex items-center justify-between gap-4 p-4 rounded-2xl border-2 border-border/40 bg-card hover:border-primary/30 transition-all hover:shadow-sm"
+                      className="group flex items-center justify-between gap-4 p-4 rounded-2xl border border-border/60 bg-card hover:border-primary/30 transition-all hover:shadow-sm"
                     >
                       <div className="min-w-0 flex-1">
                         <div

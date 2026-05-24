@@ -108,7 +108,7 @@ export function HrOnboardingTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/10 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/10 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <ClipboardList className="h-8 w-8 text-primary" />
@@ -130,7 +130,7 @@ export function HrOnboardingTab() {
       </header>
 
       {/* W9: Operational Tabs */}
-      <div className="flex flex-wrap gap-3 p-1.5 bg-muted/20 rounded-2xl border-2 border-border/40 w-fit">
+      <div className="flex flex-wrap gap-3 p-1.5 bg-muted/20 rounded-2xl border border-border/60 w-fit">
         <TabBtn
           label="Active onboardings"
           count={stats.pending}
@@ -154,7 +154,7 @@ export function HrOnboardingTab() {
         />
       </div>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div
           className={cn(
             "h-1.5 w-full bg-gradient-to-r",
@@ -165,7 +165,7 @@ export function HrOnboardingTab() {
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-muted/10 text-[10px] font-black">
-                <TableRow className="border-b-2">
+                <TableRow className="border-b">
                   <TableHead className="py-6 pl-8">Task Definition</TableHead>
                   <TableHead>Assigned Agent</TableHead>
                   <TableHead>Deadline</TableHead>
@@ -257,7 +257,7 @@ export function HrOnboardingTab() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl rounded-[40px] p-0 overflow-hidden border-4 shadow-2xl">
+        <DialogContent className="max-w-2xl rounded-2xl p-0 overflow-hidden border-4 shadow-sm">
           <div className="h-2 w-full bg-primary" />
           <div className="p-10 space-y-6 text-left">
             <DialogHeader>

@@ -13,7 +13,7 @@ export function LeadsActivitiesTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-indigo-500">
             <ClipboardList className="h-8 w-8 text-indigo-500 fill-indigo-500/20" />

@@ -113,7 +113,7 @@ export function JobApplicationCodeGenerator() {
   };
 
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden animate-in fade-in duration-700">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden animate-in fade-in duration-700">
       <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
       <CardHeader className="p-10 border-b border-border/10 bg-muted/10">
         <div className="flex items-center gap-5">

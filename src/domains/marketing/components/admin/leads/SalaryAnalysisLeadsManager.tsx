@@ -142,7 +142,7 @@ export const SalaryAnalysisLeadsManager = () => {
   return (
     <div className="space-y-6 animate-in fade-in duration-700">
       {/* EXECUTIVE KPI BAR */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Activity className="h-8 w-8" />
@@ -171,7 +171,7 @@ export const SalaryAnalysisLeadsManager = () => {
         </div>
       </div>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <CardHeader className="p-8 border-b border-border/10 bg-muted/10">
           <div className="flex flex-col lg:flex-row gap-6">
             <div className="relative flex-1">
@@ -203,7 +203,7 @@ export const SalaryAnalysisLeadsManager = () => {
         <CardContent className="p-0">
           <Table>
             <TableHeader className="bg-muted/10">
-              <TableRow className="hover:bg-transparent border-b-2">
+              <TableRow className="hover:bg-transparent border-b">
                 <TableHead className="font-semibold uppercase text-[10px] tracking-widest py-6 pl-8">Lead Node</TableHead>
                 <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Target Role</TableHead>
                 <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Structural Class</TableHead>

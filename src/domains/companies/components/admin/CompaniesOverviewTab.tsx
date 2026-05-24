@@ -67,9 +67,9 @@ export function CompaniesOverviewTab() {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-4">
         {Array.from({ length: 8 }).map((_, i) => (
-          <Skeleton key={i} className="h-32 rounded-[32px] bg-muted/40 border-2" />
+          <Skeleton key={i} className="h-32 rounded-2xl bg-muted/40 border-2" />
         ))}
-        <Skeleton className="col-span-full h-96 rounded-[40px] bg-muted/40 border-2" />
+        <Skeleton className="col-span-full h-96 rounded-2xl bg-muted/40 border-2" />
       </div>
     );
   }
@@ -86,7 +86,7 @@ export function CompaniesOverviewTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Header Action Row */}
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2 text-primary">
             <Network className="h-6 w-6" /> B2B Intelligence
@@ -123,7 +123,7 @@ export function CompaniesOverviewTab() {
 
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
         {/* Riya Onboarding Funnel (Restored Logic) */}
-        <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden relative text-left">
+        <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden relative text-left">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <CardHeader className="p-8 pb-4">
             <CardTitle className="text-sm font-semibold flex items-center gap-2">
@@ -192,7 +192,7 @@ function BarBreakdown({ title, icon: Icon, data, color }: any) {
   const gradient = color === "blue" ? "from-blue-400 to-indigo-600" : "from-indigo-400 to-violet-600";
 
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-lg flex flex-col overflow-hidden text-left">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-lg flex flex-col overflow-hidden text-left">
       <div className={cn("h-1.5 w-full bg-gradient-to-r", gradient)} />
       <div className="p-6 border-b border-border/10">
         <h3 className="text-[10px] font-semibold uppercase tracking-[0.3em] italic flex items-center gap-2 text-muted-foreground/70">

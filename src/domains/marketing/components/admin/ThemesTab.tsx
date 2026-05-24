@@ -53,7 +53,7 @@ export function ThemesTab() {
         </Button>
       </div>
 
-      <Card className="rounded-3xl border-2 border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden">
+      <Card className="rounded-3xl border border-border/60 bg-card/40 overflow-hidden">
         <CardContent className="p-0">
           <Table>
             <TableHeader>
@@ -75,7 +75,7 @@ export function ThemesTab() {
                     <TableCell>
                       <div className="flex items-center gap-3">
                         <div
-                          className="h-12 w-12 rounded-xl border-2 border-border/40 shrink-0 overflow-hidden"
+                          className="h-12 w-12 rounded-xl border border-border/60 shrink-0 overflow-hidden"
                           style={{ background: row.gradient_css || "#2A7DDE" }}
                         >
                           {row.media_type !== "gradient" && (row.poster_url || row.media_url) && (
@@ -155,7 +155,7 @@ export function ThemesTab() {
                   onChange={(e) => setDraft({ ...draft, gradient_css: e.target.value })}
                   className="h-12 rounded-xl border-2 font-mono text-xs"
                 />
-                <div className="h-16 rounded-xl border-2 border-border/40" style={{ background: draft.gradient_css }} />
+                <div className="h-16 rounded-xl border border-border/60" style={{ background: draft.gradient_css }} />
               </div>
             ) : (
               <div className="space-y-2">

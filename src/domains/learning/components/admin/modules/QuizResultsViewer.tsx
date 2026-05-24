@@ -130,7 +130,7 @@ export function QuizResultsViewer() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000">
       {/* Executive Header */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Activity className="h-8 w-8" />
@@ -141,11 +141,11 @@ export function QuizResultsViewer() {
           </p>
         </div>
         <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-          <SelectTrigger className="w-full md:w-[320px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-card/50 shadow-inner">
+          <SelectTrigger className="w-full md:w-[320px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-card shadow-inner">
             <Layers className="w-4 h-4 mr-2 text-primary" />
             <SelectValue placeholder="Logic Context" />
           </SelectTrigger>
-          <SelectContent className="rounded-2xl border-2 shadow-2xl">
+          <SelectContent className="rounded-2xl border-2 shadow-sm">
             <SelectItem value="all" className="font-bold">
               GLOBAL_REGISTRY
             </SelectItem>
@@ -194,7 +194,7 @@ export function QuizResultsViewer() {
         ].map((kpi, i) => (
           <Card
             key={i}
-            className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm group hover:border-primary/20 transition-all"
+            className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm group hover:border-primary/20 transition-all"
           >
             <CardContent className="p-6 space-y-4">
               <div
@@ -219,7 +219,7 @@ export function QuizResultsViewer() {
       </div>
 
       {/* Main Registry */}
-      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
         <CardHeader className="p-8 border-b border-border/10">
           <CardTitle className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
@@ -238,7 +238,7 @@ export function QuizResultsViewer() {
           ) : quizAttempts?.length ? (
             <Table>
               <TableHeader className="bg-muted/30">
-                <TableRow className="hover:bg-transparent border-b-2 border-border/10">
+                <TableRow className="hover:bg-transparent border-b border-border/10">
                   <TableHead className="text-[10px] font-semibold py-8 px-8 text-left text-muted-foreground">
                     Learner Artifact
                   </TableHead>
@@ -321,7 +321,7 @@ export function QuizResultsViewer() {
 
       {/* Audit Forensics (Detail Dialog) */}
       <Dialog open={detailDialogOpen} onOpenChange={setDetailDialogOpen}>
-        <DialogContent className="max-w-3xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+        <DialogContent className="max-w-3xl rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
           <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <div className="p-10 max-h-[85vh] overflow-y-auto no-scrollbar">
             <DialogHeader className="mb-10 text-left">
@@ -341,7 +341,7 @@ export function QuizResultsViewer() {
 
             {selectedAttempt && (
               <div className="space-y-8 text-left">
-                <div className="flex items-center justify-between p-8 bg-muted/20 rounded-[32px] border-2 border-border/10 shadow-inner">
+                <div className="flex items-center justify-between p-8 bg-muted/20 rounded-2xl border-2 border-border/10 shadow-inner">
                   <div className="space-y-1">
                     <p className="text-[10px] font-semibold text-muted-foreground/40">
                       Logic Match Yield
@@ -448,13 +448,13 @@ export function QuizResultsViewer() {
 function DashboardLoadingSkeleton() {
   return (
     <div className="space-y-10 animate-pulse">
-      <Skeleton className="h-32 w-full rounded-[40px]" />
+      <Skeleton className="h-32 w-full rounded-2xl" />
       <div className="grid grid-cols-4 gap-6">
         {[...Array(4)].map((_, i) => (
-          <Skeleton key={i} className="h-32 w-full rounded-[32px]" />
+          <Skeleton key={i} className="h-32 w-full rounded-2xl" />
         ))}
       </div>
-      <Skeleton className="h-96 w-full rounded-[40px]" />
+      <Skeleton className="h-96 w-full rounded-2xl" />
     </div>
   );
 }

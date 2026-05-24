@@ -245,7 +245,7 @@ export function TalentCreditsTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-blue-500">
             <CircleDollarSign className="h-8 w-8 text-blue-500 fill-blue-500/20" />
@@ -269,7 +269,7 @@ export function TalentCreditsTab() {
       {/* KPI Cards */}
       {selectedTab === "balances" && (
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-6">
-          <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-sm group">
+          <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-sm group">
             <CardContent className="p-6 flex items-center gap-6">
               <div className="h-14 w-14 rounded-2xl bg-blue-500/10 flex items-center justify-center border-2 border-white/5 transition-transform group-hover:rotate-6">
                 <Coins className="h-7 w-7 text-blue-500" />
@@ -285,7 +285,7 @@ export function TalentCreditsTab() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[32px] border-2 border-destructive/20 bg-destructive/5 shadow-sm text-left">
+          <Card className="rounded-2xl border-2 border-destructive/20 bg-destructive/5 shadow-sm text-left">
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingDown className="h-4 w-4 text-destructive" />
@@ -300,7 +300,7 @@ export function TalentCreditsTab() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-sm text-left">
+          <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-sm text-left">
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <Calendar className="h-4 w-4 text-primary" />
@@ -317,7 +317,7 @@ export function TalentCreditsTab() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-sm flex flex-col justify-center text-left">
+          <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-sm flex flex-col justify-center text-left">
             <CardContent className="p-6 space-y-3">
               <p className="text-[9px] font-semibold text-muted-foreground/40 border-b border-border/10 pb-2">
                 Service breakout
@@ -339,7 +339,7 @@ export function TalentCreditsTab() {
       )}
 
       {/* Main Ledger Component */}
-      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
         <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-blue-600" />
         <CardHeader className="p-8 border-b border-border/10">
           <div className="flex flex-col lg:flex-row gap-6 justify-between lg:items-center">
@@ -390,7 +390,7 @@ export function TalentCreditsTab() {
           ) : (
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+                <TableHeader className="bg-muted/10 border-b border-border/20">
                   <TableRow className="hover:bg-transparent">
                     <TableHead className="text-[10px] font-semibold py-6 pl-8">
                       {selectedTab === "balances" ? "Talent Entity" : "Temporal Index"}
@@ -522,7 +522,7 @@ export function TalentCreditsTab() {
 
       {/* RPC Adjust Dialog */}
       <Dialog open={adjustDialog.open} onOpenChange={(open) => !open && setAdjustDialog({ open: false, type: "add" })}>
-        <DialogContent className="max-w-xl rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl text-left">
+        <DialogContent className="max-w-xl rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm text-left">
           <div
             className={cn(
               "h-2 w-full",

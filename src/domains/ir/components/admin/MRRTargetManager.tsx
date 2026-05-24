@@ -119,7 +119,7 @@ export function MRRTargetManager() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* EXECUTIVE COMMAND HEADER */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <TargetIcon className="h-8 w-8 text-primary fill-primary/20" />
@@ -145,7 +145,7 @@ export function MRRTargetManager() {
                     <Calendar className="h-4 w-4" /> Close Period
                   </Button>
                 </AlertDialogTrigger>
-                <AlertDialogContent className="rounded-[40px] border-4 border-destructive/20 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl">
+                <AlertDialogContent className="rounded-2xl border border-destructive/30 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm">
                   <div className="h-2 w-full bg-gradient-to-r from-destructive to-rose-600" />
                   <div className="p-10 space-y-8">
                     <AlertDialogHeader>
@@ -185,7 +185,7 @@ export function MRRTargetManager() {
       </header>
 
       <div className="grid grid-cols-1 xl:grid-cols-3 gap-8">
-        <Card className="xl:col-span-2 rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl flex flex-col">
+        <Card className="xl:col-span-2 rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden flex flex-col">
           <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500" />
           <CardHeader className="p-8 border-b border-border/10 bg-muted/5 flex flex-row items-center justify-between">
             <div className="space-y-1 text-left">
@@ -215,7 +215,7 @@ export function MRRTargetManager() {
                       setMrrTarget(Number(e.target.value));
                       setHasChanges(true);
                     }}
-                    className="h-16 rounded-[20px] border-2 border-border/40 pl-12 text-2xl md:text-3xl font-semibold tracking-tight bg-background/50 focus-visible:border-emerald-500/50 transition-colors"
+                    className="h-16 rounded-[20px] border border-border/60 pl-12 text-2xl md:text-3xl font-semibold tracking-tight bg-background/50 focus-visible:border-emerald-500/50 transition-colors"
                     disabled={isClosed}
                   />
                 </div>
@@ -231,7 +231,7 @@ export function MRRTargetManager() {
                     setTargetPayingUsers(Number(e.target.value));
                     setHasChanges(true);
                   }}
-                  className="h-16 rounded-[20px] border-2 border-border/40 px-6 text-2xl md:text-3xl font-semibold tracking-tight bg-background/50 focus-visible:border-primary/50 transition-colors"
+                  className="h-16 rounded-[20px] border border-border/60 px-6 text-2xl md:text-3xl font-semibold tracking-tight bg-background/50 focus-visible:border-primary/50 transition-colors"
                   disabled={isClosed}
                 />
               </div>
@@ -246,10 +246,10 @@ export function MRRTargetManager() {
           </CardContent>
         </Card>
 
-        <Card className="rounded-[40px] border-2 border-primary/20 bg-primary/5 shadow-2xl overflow-hidden flex flex-col justify-center relative">
+        <Card className="rounded-2xl border-2 border-primary/20 bg-primary/5 shadow-sm overflow-hidden flex flex-col justify-center relative">
           <div className="absolute top-0 right-0 -mt-10 -mr-10 h-40 w-40 bg-primary/10 rounded-full blur-3xl" />
           <CardContent className="p-10 text-center space-y-6 relative z-10">
-            <div className="mx-auto h-20 w-20 rounded-[24px] bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-xl shadow-primary/20 mb-2">
+            <div className="mx-auto h-20 w-20 rounded-xl bg-gradient-to-br from-primary to-blue-600 flex items-center justify-center shadow-xl shadow-primary/20 mb-2">
               <TrendingUp className="h-10 w-10 text-white" />
             </div>
             <div className="space-y-2">
@@ -267,7 +267,7 @@ export function MRRTargetManager() {
         </Card>
       </div>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden text-left backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden text-left">
         <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-indigo-500" />
         <CardHeader className="p-8 border-b border-border/10 bg-muted/5 flex flex-col sm:flex-row sm:items-center justify-between gap-4">
           <div className="space-y-1">
@@ -297,7 +297,7 @@ export function MRRTargetManager() {
               return (
                 <div
                   key={service}
-                  className="space-y-6 p-8 rounded-[32px] border-2 border-border/10 bg-muted/5 group hover:border-primary/20 hover:bg-primary/5 transition-all shadow-sm"
+                  className="space-y-6 p-8 rounded-2xl border-2 border-border/10 bg-muted/5 group hover:border-primary/20 hover:bg-primary/5 transition-all shadow-sm"
                 >
                   <div className="flex items-start justify-between gap-4">
                     <Label className="font-semibold uppercase italic text-sm tracking-widest group-hover:text-primary transition-colors">
@@ -359,10 +359,10 @@ function StatNode({ label, value }: { label: string; value: string | number }) {
 function SkeletonGrid() {
   return (
     <div className="space-y-10 p-4 md:p-6 animate-pulse">
-      <Skeleton className="h-32 w-full rounded-[40px] bg-muted/40" />
+      <Skeleton className="h-32 w-full rounded-2xl bg-muted/40" />
       <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <Skeleton className="h-[400px] lg:col-span-2 rounded-[40px] bg-muted/40" />
-        <Skeleton className="h-[400px] rounded-[40px] bg-muted/40" />
+        <Skeleton className="h-[400px] lg:col-span-2 rounded-2xl bg-muted/40" />
+        <Skeleton className="h-[400px] rounded-2xl bg-muted/40" />
       </div>
     </div>
   );

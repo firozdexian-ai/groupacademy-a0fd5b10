@@ -27,7 +27,7 @@ export function AnalystChatTab() {
   return (
     <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 animate-in fade-in duration-700">
       <div className="relative">
-        <div className="h-24 w-24 rounded-[32px] bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
+        <div className="h-24 w-24 rounded-2xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
           <MessageSquare className="h-10 w-10 text-primary animate-pulse" />
         </div>
         <div className="absolute -bottom-2 -right-2">
@@ -42,7 +42,7 @@ export function AnalystChatTab() {
         </p>
       </div>
 
-      <div className="max-w-md w-full bg-muted/10 border-2 border-border/40 p-6 rounded-[32px] backdrop-blur-sm">
+      <div className="max-w-md w-full bg-muted/10 border border-border/60 p-6 rounded-2xl backdrop-blur-sm">
         <p className="text-xs text-muted-foreground leading-relaxed text-center">
           We have unified all 27 admin agents into a single secure terminal. Your session with the{" "}
           <strong>Business Analyst</strong> is being transferred to maintain thread persistence.

@@ -65,7 +65,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6 text-left">
       {/* EXECUTIVE COMMAND HEADER */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <TrendingUp className="h-8 w-8 text-primary fill-primary/20" />
@@ -114,7 +114,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
 
       <div className="grid gap-6 lg:grid-cols-3 items-stretch">
         {/* MRR PROGRESS TRACKER */}
-        <Card className="lg:col-span-2 rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl flex flex-col h-full">
+        <Card className="lg:col-span-2 rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden flex flex-col h-full">
           <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 via-emerald-500 to-teal-500" />
           <CardHeader className="p-8 border-b border-border/10">
             <div className="flex items-center justify-between">
@@ -148,7 +148,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
                 {formatUSD(mrrTarget)}
               </p>
             </div>
-            <div className="space-y-5 bg-muted/5 p-6 rounded-[24px] border border-border/10 shadow-inner">
+            <div className="space-y-5 bg-muted/5 p-6 rounded-xl border border-border/10 shadow-inner">
               <Progress
                 value={progressPercent}
                 className="h-5 rounded-full bg-muted/30 shadow-inner border border-border/5"
@@ -192,7 +192,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
       </div>
 
       {/* SERVICE PERFORMANCE TERMINAL */}
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
         <CardHeader className="p-8 border-b border-border/10 bg-muted/5">
           <CardTitle className="text-xl font-semibold uppercase italic tracking-tight text-primary">
@@ -211,7 +211,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
               return (
                 <div
                   key={service.service}
-                  className="p-6 rounded-[24px] border-2 border-border/20 bg-background/50 group hover:border-primary/30 hover:bg-primary/5 transition-all shadow-sm"
+                  className="p-6 rounded-xl border-2 border-border/20 bg-background/50 group hover:border-primary/30 hover:bg-primary/5 transition-all shadow-sm"
                 >
                   <div className="flex justify-between items-start mb-5">
                     <div className="space-y-1.5">
@@ -240,7 +240,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
 // ATOMIC SUB-COMPONENTS
 function KPICard({ title, value, icon: Icon, subtext, variant = "default" }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-md shadow-xl overflow-hidden group hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 text-left">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden group hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 text-left">
       <CardHeader className="flex flex-row items-center justify-between pb-2 p-6">
         <p className="text-[10px] font-semibold text-muted-foreground italic group-hover:text-foreground transition-colors">
           {title}
@@ -271,7 +271,7 @@ function ActionNode({ icon: Icon, label, count, onClick }: any) {
   return (
     <button
       onClick={onClick}
-      className="w-full h-full flex flex-row items-center gap-5 p-6 md:p-8 rounded-[32px] border-2 border-border/40 bg-card/30 hover:bg-primary/5 hover:border-primary/40 hover:shadow-xl transition-all group shadow-md backdrop-blur-md"
+      className="w-full h-full flex flex-row items-center gap-5 p-6 md:p-8 rounded-2xl border border-border/60 bg-card hover:bg-primary/5 hover:border-primary/40 hover:shadow-xl transition-all group shadow-md"
     >
       <div className="h-14 w-14 rounded-2xl bg-background flex items-center justify-center border-2 border-border/20 group-hover:rotate-6 group-hover:border-primary/30 transition-all shadow-sm shrink-0">
         <Icon className="h-6 w-6 text-primary" />
@@ -292,17 +292,17 @@ function ActionNode({ icon: Icon, label, count, onClick }: any) {
 function SkeletonGrid() {
   return (
     <div className="space-y-8 p-4 md:p-6 animate-pulse">
-      <Skeleton className="h-32 w-full rounded-[40px] bg-muted/40" />
+      <Skeleton className="h-32 w-full rounded-2xl bg-muted/40" />
       <div className="grid gap-6 md:grid-cols-4">
         {[1, 2, 3, 4].map((i) => (
-          <Skeleton key={i} className="h-40 rounded-[32px] bg-muted/40" />
+          <Skeleton key={i} className="h-40 rounded-2xl bg-muted/40" />
         ))}
       </div>
       <div className="grid gap-6 lg:grid-cols-3">
-        <Skeleton className="h-[400px] lg:col-span-2 rounded-[40px] bg-muted/40" />
+        <Skeleton className="h-[400px] lg:col-span-2 rounded-2xl bg-muted/40" />
         <div className="flex flex-col gap-4">
           {[1, 2, 3].map((i) => (
-            <Skeleton key={i} className="h-full rounded-[32px] bg-muted/40" />
+            <Skeleton key={i} className="h-full rounded-2xl bg-muted/40" />
           ))}
         </div>
       </div>

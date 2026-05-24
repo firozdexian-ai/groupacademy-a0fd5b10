@@ -93,7 +93,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
 
   return (
     <Sheet open={open} onOpenChange={onOpenChange}>
-      <SheetContent className="w-full sm:max-w-xl border-l-2 border-border/40 bg-background/80 backdrop-blur-2xl p-0 overflow-hidden flex flex-col shadow-2xl">
+      <SheetContent className="w-full sm:max-w-xl border-l-2 border-border/40 bg-background/80 backdrop-blur-2xl p-0 overflow-hidden flex flex-col shadow-sm">
         <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary shrink-0" />
 
         {isLoadingInvestor || !investor ? (
@@ -103,8 +103,8 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
               <Skeleton className="h-10 w-3/4 rounded-xl bg-muted/40" />
               <Skeleton className="h-4 w-1/2 rounded-md bg-muted/40" />
             </div>
-            <Skeleton className="h-24 w-full rounded-[24px] bg-muted/40" />
-            <Skeleton className="h-64 w-full rounded-[32px] bg-muted/40" />
+            <Skeleton className="h-24 w-full rounded-xl bg-muted/40" />
+            <Skeleton className="h-64 w-full rounded-2xl bg-muted/40" />
           </div>
         ) : (
           <>
@@ -155,7 +155,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
 
                 {/* NEURAL FEEDBACK SUMMARY */}
                 {(investor.relationship_summary || investor.last_feedback_summary) && (
-                  <section className="space-y-4 bg-primary/5 p-6 rounded-[32px] border-2 border-primary/10">
+                  <section className="space-y-4 bg-primary/5 p-6 rounded-2xl border-2 border-primary/10">
                     <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary italic flex items-center gap-2">
                       <Zap className="h-4 w-4 fill-primary/20" /> Neural Context
                     </h4>
@@ -229,14 +229,14 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                     {isLoadingInteractions ? (
                       <div className="space-y-3">
                         {[1, 2, 3].map((i) => (
-                          <Skeleton key={i} className="h-24 w-full rounded-[24px] bg-muted/40" />
+                          <Skeleton key={i} className="h-24 w-full rounded-xl bg-muted/40" />
                         ))}
                       </div>
                     ) : interactions && interactions.length > 0 ? (
                       interactions.map((interaction) => (
                         <div
                           key={interaction.id}
-                          className="group flex gap-4 p-5 rounded-[24px] bg-muted/10 border-2 border-border/10 hover:border-primary/20 hover:bg-muted/20 transition-all"
+                          className="group flex gap-4 p-5 rounded-xl bg-muted/10 border-2 border-border/10 hover:border-primary/20 hover:bg-muted/20 transition-all"
                         >
                           <div
                             className={cn(
@@ -272,7 +272,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                         </div>
                       ))
                     ) : (
-                      <div className="text-center py-10 opacity-40 font-semibold uppercase text-[10px] tracking-widest border-2 border-dashed border-border/40 rounded-[24px]">
+                      <div className="text-center py-10 opacity-40 font-semibold uppercase text-[10px] tracking-widest border-2 border-dashed border-border/40 rounded-xl">
                         Zero interaction artifacts found
                       </div>
                     )}

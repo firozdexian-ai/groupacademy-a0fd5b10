@@ -21,7 +21,7 @@ export function AbroadLanguageLabTab() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-fuchsia-500">
             <Languages className="h-8 w-8 text-fuchsia-500 fill-fuchsia-500/20" />
@@ -38,7 +38,7 @@ export function AbroadLanguageLabTab() {
       {isLoading ? (
         <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-[32px] bg-muted/40" />
+            <Skeleton key={i} className="h-32 rounded-2xl bg-muted/40" />
           ))}
         </div>
       ) : (
@@ -76,7 +76,7 @@ export function AbroadLanguageLabTab() {
           </div>
 
           {/* Telemetry Stream */}
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
             <div className="h-1.5 w-full bg-gradient-to-r from-fuchsia-400 via-pink-500 to-rose-600" />
             <CardContent className="p-8 flex flex-col items-center justify-center min-h-[300px] text-center space-y-4">
               <div className="h-20 w-20 rounded-full bg-fuchsia-500/10 flex items-center justify-center border-2 border-fuchsia-500/20">
@@ -99,7 +99,7 @@ export function AbroadLanguageLabTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
+    <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
       <CardContent className="p-6 flex items-center gap-5">
         <div
           className={cn(

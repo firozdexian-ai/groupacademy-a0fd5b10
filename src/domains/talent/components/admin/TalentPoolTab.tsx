@@ -109,7 +109,7 @@ export function TalentPoolTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* P2 Fix: Unified CRM Action Bar */}
-      <div className="flex flex-col md:flex-row justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40 gap-4">
+      <div className="flex flex-col md:flex-row justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60 gap-4">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <Users className="h-6 w-6 text-primary" /> Talent Artifacts
@@ -125,7 +125,7 @@ export function TalentPoolTab() {
         </div>
       </div>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-indigo-500" />
         <CardHeader className="p-8 border-b border-border/10">
           <div className="flex flex-col md:flex-row gap-6">
@@ -287,7 +287,7 @@ function OutreachDropdown({ talent, onOutreach, onView }: any) {
       </DropdownMenuTrigger>
       <DropdownMenuContent
         align="end"
-        className="w-64 rounded-[24px] border-2 shadow-2xl p-3 bg-background/95 backdrop-blur-xl"
+        className="w-64 rounded-xl border-2 shadow-sm p-3 bg-background/95"
       >
         <DropdownMenuItem
           onClick={onView}

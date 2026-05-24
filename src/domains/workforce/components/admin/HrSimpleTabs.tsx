@@ -40,7 +40,7 @@ import { cn } from "@/lib/utils";
 function HrRegistryShell({ title, description, icon: Icon, data, isLoading, columns, renderRow, onAdd }: any) {
   return (
     <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Icon className="h-8 w-8 text-primary" />
@@ -58,12 +58,12 @@ function HrRegistryShell({ title, description, icon: Icon, data, isLoading, colu
         </Button>
       </header>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-500 to-indigo-600" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/10 border-b-2">
+              <TableHeader className="bg-muted/10 border-b">
                 <TableRow className="hover:bg-transparent">
                   {columns.map((c: string, i: number) => (
                     <TableHead
@@ -161,7 +161,7 @@ export function HrVerticalsTab() {
       />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] p-8 border-4">
+        <DialogContent className="max-w-md rounded-2xl p-8 border-4">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold uppercase italic">Vertical Node</DialogTitle>
           </DialogHeader>
@@ -261,7 +261,7 @@ export function HrFunctionsTab() {
       />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] p-8 border-4">
+        <DialogContent className="max-w-md rounded-2xl p-8 border-4">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold uppercase italic">Function Node</DialogTitle>
           </DialogHeader>
@@ -368,7 +368,7 @@ export function HrTeamsTab() {
       />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] p-8 border-4">
+        <DialogContent className="max-w-md rounded-2xl p-8 border-4">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold uppercase italic">Team Node</DialogTitle>
           </DialogHeader>
@@ -477,7 +477,7 @@ export function HrGradesTab() {
       />
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] p-8 border-4">
+        <DialogContent className="max-w-md rounded-2xl p-8 border-4">
           <DialogHeader>
             <DialogTitle className="text-2xl font-semibold uppercase italic">Grade Node</DialogTitle>
           </DialogHeader>

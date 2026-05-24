@@ -106,7 +106,7 @@ export function StandaloneAssessmentCodeGenerator() {
   };
 
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden animate-in fade-in duration-700">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden animate-in fade-in duration-700">
       <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
         <div className="flex items-center justify-between">
@@ -133,7 +133,7 @@ export function StandaloneAssessmentCodeGenerator() {
               placeholder="lead@example.com"
               value={email}
               onChange={(e) => setEmail(e.target.value)}
-              className="h-10 rounded-xl border-2 font-bold bg-card/50"
+              className="h-10 rounded-xl border-2 font-bold bg-card"
             />
           </div>
           <div className="space-y-2 text-left">
@@ -154,7 +154,7 @@ export function StandaloneAssessmentCodeGenerator() {
         <Button
           onClick={handleGenerate}
           disabled={isGenerating}
-          className="w-full h-16 rounded-[24px] font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl hover:scale-[1.01] active:scale-95 transition-transform"
+          className="w-full h-16 rounded-xl font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl hover:scale-[1.01] active:scale-95 transition-transform"
         >
           {isGenerating ? (
             <>

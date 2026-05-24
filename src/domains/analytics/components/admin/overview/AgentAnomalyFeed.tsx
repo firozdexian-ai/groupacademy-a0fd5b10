@@ -72,7 +72,7 @@ export function AgentAnomalyFeed() {
   }, []);
 
   return (
-    <Card className="rounded-[40px] border-2 border-primary/20 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden flex flex-col h-full relative">
+    <Card className="rounded-2xl border-2 border-primary/20 bg-card shadow-sm overflow-hidden flex flex-col h-full relative">
       {/* Active Pulse for Critical Alerts */}
       {events.some((e) => e.severity === "critical") && (
         <div className="absolute top-0 right-0 p-8">

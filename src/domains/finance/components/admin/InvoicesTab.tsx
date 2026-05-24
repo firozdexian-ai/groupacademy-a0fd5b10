@@ -136,7 +136,7 @@ export function InvoicesTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-fuchsia-500">
             <Receipt className="h-8 w-8 text-fuchsia-500 fill-fuchsia-500/20" />
@@ -176,7 +176,7 @@ export function InvoicesTab() {
       </div>
 
       {/* COMMAND BAR */}
-      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
         <div className="h-1.5 w-full bg-gradient-to-r from-fuchsia-400 via-pink-500 to-rose-600" />
         <CardHeader className="p-8 border-b border-border/10">
           <div className="flex flex-col lg:flex-row gap-6 justify-between lg:items-center">
@@ -224,7 +224,7 @@ export function InvoicesTab() {
           ) : (
             <div className="overflow-x-auto">
               <Table>
-                <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+                <TableHeader className="bg-muted/10 border-b border-border/20">
                   <TableRow className="hover:bg-transparent">
                     <TableHead className="font-semibold uppercase text-[10px] tracking-widest py-6 pl-8">
                       Invoice Node
@@ -305,7 +305,7 @@ export function InvoicesTab() {
       {/* DETAIL DIALOG */}
       {selected && (
         <Dialog open={!!selected} onOpenChange={(o) => !o && setSelected(null)}>
-          <DialogContent className="max-w-2xl border-4 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl rounded-[40px] shadow-2xl text-left">
+          <DialogContent className="max-w-2xl border-4 p-0 overflow-hidden bg-background/95 backdrop-blur-2xl rounded-2xl shadow-sm text-left">
             <div className="h-2 w-full bg-gradient-to-r from-fuchsia-400 to-pink-600" />
             <div className="p-10 space-y-8 max-h-[85vh] overflow-y-auto no-scrollbar">
               <DialogHeader>
@@ -358,7 +358,7 @@ export function InvoicesTab() {
               </div>
 
               {selected.admin_notes && (
-                <div className="p-6 bg-muted/20 rounded-[24px] border-2 border-border/5">
+                <div className="p-6 bg-muted/20 rounded-xl border-2 border-border/5">
                   <p className="text-[9px] font-semibold uppercase text-fuchsia-500 italic mb-2 tracking-widest">
                     Executive Audit Notes
                   </p>
@@ -436,7 +436,7 @@ export function InvoicesTab() {
 
 function KpiNode({ label, value, subtext, icon: Icon, color }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden group hover:border-fuchsia-500/40 transition-all">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden group hover:border-fuchsia-500/40 transition-all">
       <CardContent className="p-6 flex items-center gap-4">
         <div
           className={cn(
@@ -502,7 +502,7 @@ function ApproveDialog({ open, onOpenChange, invoice, onDone }: any) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-[32px] border-4 text-left">
+      <DialogContent className="max-w-md rounded-2xl border-4 text-left">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold uppercase italic tracking-tight">
             Finalize Settlement
@@ -597,7 +597,7 @@ function CancelDialog({ open, onOpenChange, invoice, onDone }: any) {
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-md rounded-[32px] border-4 text-left">
+      <DialogContent className="max-w-md rounded-2xl border-4 text-left">
         <DialogHeader>
           <DialogTitle className="text-2xl font-semibold uppercase italic tracking-tight text-destructive">
             Terminate Node?

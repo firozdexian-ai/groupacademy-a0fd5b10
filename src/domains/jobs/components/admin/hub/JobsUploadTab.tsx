@@ -62,7 +62,7 @@ export function JobsUploadTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-500">
       {/* SECTION HEADER */}
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md text-left">
+      <div className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60 text-left">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Database className="h-8 w-8" />
@@ -85,7 +85,7 @@ export function JobsUploadTab() {
 
       <Tabs defaultValue="ai-parse" className="w-full">
         {/* TAB NAVIGATION */}
-        <div className="bg-card/30 p-2 rounded-[32px] border-2 border-border/40 backdrop-blur-sm shadow-xl inline-block mb-8">
+        <div className="bg-card p-2 rounded-2xl border border-border/60 backdrop-blur-sm shadow-xl inline-block mb-8">
           <TabsList className="bg-transparent h-auto gap-2">
             <TabTriggerNode value="ai-parse" icon={Sparkles} label="AI parse" />
             <TabTriggerNode value="batch" icon={Upload} label="Batch import" />
@@ -95,7 +95,7 @@ export function JobsUploadTab() {
 
         {/* AI PARSER CONTENT */}
         <TabsContent value="ai-parse" className="focus-visible:ring-0">
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden text-left">
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden text-left">
             <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
             <CardHeader className="p-8 pb-4">
               <div className="flex justify-between items-center">
@@ -127,7 +127,7 @@ export function JobsUploadTab() {
                 <Button
                   onClick={runAIParse}
                   disabled={parsing || !rawText.trim()}
-                  className="h-16 px-10 rounded-[24px] font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl shadow-primary/20 active:scale-95 transition-all"
+                  className="h-16 px-10 rounded-xl font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl shadow-primary/20 active:scale-95 transition-all"
                 >
                   {parsing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Zap className="h-6 w-6 fill-current" />}
                   Parse with AI
@@ -138,7 +138,7 @@ export function JobsUploadTab() {
                     setPrefill({ description: rawText });
                     setShowForm(true);
                   }}
-                  className="h-16 px-8 rounded-[24px] border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
+                  className="h-16 px-8 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
                 >
                   <LinkIcon className="h-4 w-4" /> Skip AI
                 </Button>
@@ -149,7 +149,7 @@ export function JobsUploadTab() {
 
         {/* BATCH CONTENT */}
         <TabsContent value="batch" className="focus-visible:ring-0">
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden text-left">
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden text-left">
             <CardHeader className="p-8">
               <div className="flex items-center gap-4">
                 <div className="h-14 w-14 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">
@@ -183,7 +183,7 @@ export function JobsUploadTab() {
                 </div>
                 <Button
                   onClick={() => setShowBatch(true)}
-                  className="h-20 px-12 rounded-[32px] font-semibold uppercase italic tracking-tight text-2xl gap-4 shadow-xl active:scale-95 transition-transform"
+                  className="h-20 px-12 rounded-2xl font-semibold uppercase italic tracking-tight text-2xl gap-4 shadow-xl active:scale-95 transition-transform"
                 >
                   <Plus className="h-8 w-8" /> Initialize Importer
                 </Button>

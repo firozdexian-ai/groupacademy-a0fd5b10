@@ -149,7 +149,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Building2 className="h-8 w-8 text-primary" />
@@ -178,7 +178,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
             placeholder="FILTER REGISTRY BY IDENTITY..."
             value={search}
             onChange={(e) => setSearch(e.target.value)}
-            className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card/30"
+            className="h-10 rounded-xl border-2 pl-12 font-bold uppercase text-[11px] tracking-widest bg-card"
           />
         </div>
         <Select value={statusFilter} onValueChange={setStatusFilter}>
@@ -199,16 +199,16 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
 
       <div className="grid gap-4">
         {listQuery.isLoading ? (
-          <div className="h-64 animate-pulse bg-muted/40 rounded-[40px]" />
+          <div className="h-64 animate-pulse bg-muted/40 rounded-2xl" />
         ) : rows.length === 0 ? (
-          <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-30 font-black text-xs italic">
+          <Card className="rounded-2xl border-2 border-dashed p-20 text-center opacity-30 font-black text-xs italic">
             No matching nodes detected
           </Card>
         ) : (
           rows.map((r) => (
             <Card
               key={r.id}
-              className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm group hover:border-primary/20 transition-all"
+              className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm group hover:border-primary/20 transition-all"
             >
               <CardContent className="p-6 flex flex-col md:flex-row items-center justify-between gap-6">
                 <div className="flex items-start gap-5 flex-1 min-w-0">
@@ -295,7 +295,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-2xl rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background shadow-2xl">
+        <DialogContent className="max-w-2xl rounded-2xl border-4 border-border/40 p-0 overflow-hidden bg-background shadow-sm">
           <div className="h-2 w-full bg-primary" />
           <div className="p-10 space-y-6 max-h-[85vh] overflow-y-auto no-scrollbar">
             <DialogHeader>
@@ -440,7 +440,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
       </Dialog>
 
       <AlertDialog open={!!purgeId} onOpenChange={() => setPurgeId(null)}>
-        <AlertDialogContent className="rounded-[32px] border-4 border-destructive/20 bg-background/95">
+        <AlertDialogContent className="rounded-2xl border border-destructive/30 bg-background/95">
           <AlertDialogHeader className="items-center text-center">
             <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border-2 border-destructive/20">
               <AlertTriangle className="h-8 w-8 text-destructive" />

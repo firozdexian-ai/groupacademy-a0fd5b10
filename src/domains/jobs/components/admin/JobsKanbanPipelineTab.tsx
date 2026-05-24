@@ -54,7 +54,7 @@ export function JobsKanbanPipelineTab() {
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6 h-[calc(100vh-100px)] flex flex-col">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md shrink-0">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60 shrink-0">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-cyan-500">
             <KanbanSquare className="h-8 w-8 text-cyan-500 fill-cyan-500/20" />
@@ -77,7 +77,7 @@ export function JobsKanbanPipelineTab() {
       {isLoading ? (
         <div className="flex gap-6 overflow-x-auto pb-4 flex-1">
           {[1, 2, 3, 4, 5].map((i) => (
-            <Skeleton key={i} className="min-w-[300px] rounded-[32px] bg-muted/40 h-full" />
+            <Skeleton key={i} className="min-w-[300px] rounded-2xl bg-muted/40 h-full" />
           ))}
         </div>
       ) : (
@@ -117,7 +117,7 @@ export function JobsKanbanPipelineTab() {
                     columnApps.map((app) => (
                       <Card
                         key={app.id}
-                        className="rounded-3xl border-2 border-border/40 bg-card/50 hover:bg-card hover:border-primary/30 transition-all shadow-lg hover:shadow-xl cursor-pointer group"
+                        className="rounded-3xl border border-border/60 bg-card hover:bg-card hover:border-primary/30 transition-all shadow-lg hover:shadow-xl cursor-pointer group"
                       >
                         <CardContent className="p-5 space-y-4">
                           <div className="flex justify-between items-start">

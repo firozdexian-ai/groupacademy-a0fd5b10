@@ -171,7 +171,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
 
   return (
     <Dialog open={open} onOpenChange={handleClose}>
-      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-2xl rounded-[40px]">
+      <DialogContent className="max-w-2xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-sm rounded-2xl">
         <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
 
         <DialogHeader className="p-8 pb-4 text-left">
@@ -249,7 +249,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
               <Button
                 onClick={handleParse}
                 disabled={parsing || !jobId}
-                className="w-full h-20 rounded-[32px] font-semibold uppercase italic tracking-tight text-2xl gap-4 shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-transform"
+                className="w-full h-20 rounded-2xl font-semibold uppercase italic tracking-tight text-2xl gap-4 shadow-xl shadow-primary/20 hover:scale-[1.01] active:scale-95 transition-transform"
               >
                 {parsing ? <Loader2 className="h-8 w-8 animate-spin" /> : <Sparkles className="h-8 w-8 fill-current" />}
                 Initialize Neural Extraction
@@ -294,7 +294,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
                 />
               </div>
 
-              <div className="space-y-3 bg-primary/5 p-6 rounded-[32px] border-2 border-primary/20">
+              <div className="space-y-3 bg-primary/5 p-6 rounded-2xl border-2 border-primary/20">
                 <Label className="text-[10px] font-semibold uppercase text-primary italic flex items-center gap-2">
                   <FileText className="h-3.5 w-3.5" /> Registry Notes (Private)
                 </Label>
@@ -318,7 +318,7 @@ export function AddExternalApplicationDialog({ open, onOpenChange, defaultJobId,
                 <Button
                   onClick={handleSave}
                   disabled={saving}
-                  className="h-16 px-10 rounded-[24px] font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl"
+                  className="h-16 px-10 rounded-xl font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl"
                 >
                   {saving ? <Loader2 className="animate-spin" /> : <ShieldCheck className="fill-current" />}
                   Deploy Application

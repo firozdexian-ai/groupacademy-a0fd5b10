@@ -71,9 +71,9 @@ export function TalentOverviewTab() {
     return (
       <div className="grid grid-cols-2 md:grid-cols-4 gap-6 p-6">
         {Array.from({ length: 4 }).map((_, i) => (
-          <Skeleton key={i} className="h-32 rounded-[32px] bg-muted/40" />
+          <Skeleton key={i} className="h-32 rounded-2xl bg-muted/40" />
         ))}
-        <Skeleton className="col-span-4 h-96 rounded-[40px] bg-muted/40" />
+        <Skeleton className="col-span-4 h-96 rounded-2xl bg-muted/40" />
       </div>
     );
   }
@@ -108,7 +108,7 @@ export function TalentOverviewTab() {
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Restored: Welcome AI Funnel visualization */}
-        <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden relative text-left">
+        <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden relative text-left">
           <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 to-indigo-600" />
           <div className="p-8 space-y-8">
             <div className="flex items-center gap-3 border-b border-border/10 pb-4">
@@ -154,7 +154,7 @@ export function TalentOverviewTab() {
         </Card>
 
         {/* Restored: Recent Registrations with Badge Status */}
-        <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl flex flex-col overflow-hidden text-left">
+        <Card className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col overflow-hidden text-left">
           <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-teal-500" />
           <CardHeader className="p-8 border-b border-border/10">
             <h3 className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
@@ -199,7 +199,7 @@ export function TalentOverviewTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 p-6 text-left group hover:border-primary/30 transition-all shadow-xl">
+    <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group hover:border-primary/30 transition-all shadow-xl">
       <div className="flex items-center gap-5">
         <div
           className={cn(
@@ -244,7 +244,7 @@ function BarBreakdown({ title, icon: Icon, data, color }: any) {
   const gradient = color === "blue" ? "from-blue-400 to-indigo-600" : "from-fuchsia-400 to-pink-600";
 
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 p-8 text-left">
+    <Card className="rounded-2xl border border-border/60 bg-card p-8 text-left">
       <h3 className="text-[10px] font-semibold uppercase tracking-[0.3em] italic flex items-center gap-2 text-foreground/70 mb-6">
         <Icon className="h-4 w-4 text-primary" /> {title}
       </h3>

@@ -177,7 +177,7 @@ export function MarketingAnalyticsTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-orange-500">
             <Megaphone className="h-8 w-8 text-orange-500 fill-orange-500/20" />
@@ -194,7 +194,7 @@ export function MarketingAnalyticsTab() {
             <SelectTrigger className="w-56 h-12 rounded-xl border-2 border-orange-500/20 font-semibold uppercase text-[10px] tracking-widest bg-orange-500/5 text-orange-600 shadow-inner">
               <SelectValue />
             </SelectTrigger>
-            <SelectContent className="rounded-2xl border-2 shadow-2xl">
+            <SelectContent className="rounded-2xl border-2 shadow-sm">
               {DATE_RANGES.map((range) => (
                 <SelectItem key={range.value} value={range.value} className="font-bold">
                   {range.label}
@@ -248,7 +248,7 @@ export function MarketingAnalyticsTab() {
       {/* Legacy Deep-Dive Analytics */}
       <div className="pt-4">
         <Tabs value={activeCategory} onValueChange={setActiveCategory} className="w-full">
-          <TabsList className="bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1.5 mb-8 w-full max-w-lg">
+          <TabsList className="bg-muted/30 rounded-xl border border-border/60 p-1.5 mb-8 w-full max-w-lg">
             <TabsTrigger
               value="jobs"
               className="flex-1 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 py-3"
@@ -279,7 +279,7 @@ export function MarketingAnalyticsTab() {
               totalShares={analyticsData?.totals.jobShares || 0}
             />
 
-            <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30">
+            <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
               <CardHeader className="p-8 border-b border-border/10">
                 <CardTitle className="text-xl font-semibold uppercase italic tracking-tight flex items-center gap-3 text-left">
                   <Zap className="h-5 w-5 text-primary" /> High-Intensity Roles
@@ -332,7 +332,7 @@ export function MarketingAnalyticsTab() {
       </div>
 
       {/* Graph Data Splits: Outbound Feed & System Health */}
-      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 pt-6 border-t-2 border-border/20">
+      <div className="grid grid-cols-1 xl:grid-cols-3 gap-8 pt-6 border-t border-border/20">
         {/* Live Outreach Feed */}
         <div className="xl:col-span-2 space-y-6">
           <div className="flex items-center gap-2 mb-4 px-2">
@@ -341,7 +341,7 @@ export function MarketingAnalyticsTab() {
               Live Outbound Telemetry
             </h3>
           </div>
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
             <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 via-rose-500 to-fuchsia-500" />
             <CardContent className="p-0">
               {latestTalentOutreach.length === 0 && latestCompanyOutreach.length === 0 ? (
@@ -425,7 +425,7 @@ export function MarketingAnalyticsTab() {
               Marketing Graph Pulse
             </h3>
           </div>
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl backdrop-blur-xl">
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm">
             <CardContent className="p-8">
               <div className="space-y-6">
                 <PulseBar
@@ -471,7 +471,7 @@ function SummaryBadgeRow({ totalClicks, totalShares }: { totalClicks: number; to
 
 function ChartCard({ title, sub, children }: any) {
   return (
-    <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
         <CardTitle className="text-lg font-semibold uppercase tracking-tight italic">{title}</CardTitle>
         <CardDescription className="text-[10px] font-bold">{sub}</CardDescription>
@@ -527,7 +527,7 @@ function SourcePieChart({ data }: { data: { name: string; value: number }[] }) {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
+    <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
       <CardContent className="p-6 flex items-center gap-5">
         <div
           className={cn(
@@ -572,11 +572,11 @@ function PulseBar({ label, value, max, color }: any) {
 function DashboardLoadingSkeleton() {
   return (
     <div className="space-y-10 animate-pulse p-8">
-      <Skeleton className="h-32 w-full rounded-[40px]" />
+      <Skeleton className="h-32 w-full rounded-2xl" />
       <Skeleton className="h-16 w-1/3 rounded-xl" />
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
-        <Skeleton className="h-80 w-full rounded-[40px]" />
-        <Skeleton className="h-80 w-full rounded-[40px]" />
+        <Skeleton className="h-80 w-full rounded-2xl" />
+        <Skeleton className="h-80 w-full rounded-2xl" />
       </div>
     </div>
   );

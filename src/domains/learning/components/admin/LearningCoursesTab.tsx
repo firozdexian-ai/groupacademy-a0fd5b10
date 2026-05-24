@@ -77,7 +77,7 @@ export function LearningCoursesTab() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-1000 p-4 md:p-6">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-cyan-500">
             <Tv className="h-8 w-8 text-cyan-500 fill-cyan-500/20" />
@@ -120,12 +120,12 @@ export function LearningCoursesTab() {
         </div>
       </div>
 
-      <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 via-blue-500 to-indigo-500" />
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+              <TableHeader className="bg-muted/10 border-b border-border/20">
                 <TableRow className="hover:bg-transparent">
                   <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
                     Course Definition
@@ -259,7 +259,7 @@ export function LearningCoursesTab() {
       </Card>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] p-8 border-4 border-border/40 text-left">
+        <DialogContent className="max-w-md rounded-2xl p-8 border-4 border-border/40 text-left">
           <DialogHeader>
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-cyan-500 flex items-center gap-2">
               <Tv className="h-6 w-6" /> Inject Course
@@ -338,7 +338,7 @@ export function LearningCoursesTab() {
 
       {/* Module Management Dialog */}
       <Dialog open={!!selectedModuleCourseId} onOpenChange={(o) => !o && setSelectedModuleCourseId(null)}>
-        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-[32px] p-6 border-2 border-border/40">
+        <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 border border-border/60">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-indigo-500 flex items-center gap-2">
               <Layers className="h-5 w-5" /> Module Curriculum
@@ -387,7 +387,7 @@ export function LearningCoursesTab() {
 
       {/* Bulk Content Generator */}
       <Dialog open={showBatchGenerator} onOpenChange={setShowBatchGenerator}>
-        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-[32px] p-6 border-2 border-border/40">
+        <DialogContent className="max-w-5xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 border border-border/60">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
               <Wand2 className="h-5 w-5" /> Bulk Content Generator
@@ -405,7 +405,7 @@ export function LearningCoursesTab() {
         open={!!selectedCourseForChecklist}
         onOpenChange={(o) => !o && setSelectedCourseForChecklist(null)}
       >
-        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-[32px] p-6 border-2 border-border/40">
+        <DialogContent className="max-w-2xl max-h-[90vh] overflow-y-auto rounded-2xl p-6 border border-border/60">
           <DialogHeader>
             <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
               <FileCheck2 className="h-5 w-5" /> Readiness Checklist

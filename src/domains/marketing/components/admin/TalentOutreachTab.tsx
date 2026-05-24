@@ -66,7 +66,7 @@ export function TalentOutreachTab() {
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
       {/* Phase 6 Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-blue-500">
             <Send className="h-8 w-8 text-blue-500 fill-blue-500/20" />
@@ -87,7 +87,7 @@ export function TalentOutreachTab() {
       </header>
 
       <Tabs value={activeTab} onValueChange={(v) => setActiveTab(v as any)} className="w-full">
-        <TabsList className="bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1.5 mb-8 w-full max-w-2xl mx-auto flex">
+        <TabsList className="bg-muted/30 rounded-xl border border-border/60 p-1.5 mb-8 w-full max-w-2xl mx-auto flex">
           <TabsTrigger
             value="ledger"
             className="flex-1 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg py-3"
@@ -109,12 +109,12 @@ export function TalentOutreachTab() {
         </TabsList>
 
         <TabsContent value="ledger" className="mt-0">
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
             <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-blue-600" />
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
-                  <TableHeader className="bg-muted/10 border-b-2 border-border/20">
+                  <TableHeader className="bg-muted/10 border-b border-border/20">
                     <TableRow className="hover:bg-transparent">
                       <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
                         Talent Node
@@ -178,7 +178,7 @@ export function TalentOutreachTab() {
         </TabsContent>
 
         <TabsContent value="generator" className="mt-0 space-y-10">
-          <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden text-left">
+          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden text-left">
             <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
             <CardHeader className="p-10 border-b border-border/10 bg-muted/10">
               <div className="flex items-center gap-4">
@@ -206,10 +206,10 @@ export function TalentOutreachTab() {
 
         <TabsContent value="analytics" className="mt-0 space-y-8">
           {isLoadingAnalytics ? (
-            <Skeleton className="h-96 rounded-[40px]" />
+            <Skeleton className="h-96 rounded-2xl" />
           ) : (
             <div className="grid gap-8 md:grid-cols-2">
-              <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 p-8">
+              <Card className="rounded-2xl border border-border/60 bg-card p-8">
                 <p className="text-[10px] font-black text-muted-foreground/40 mb-6 italic text-left">
                   Distribution Breakdown
                 </p>

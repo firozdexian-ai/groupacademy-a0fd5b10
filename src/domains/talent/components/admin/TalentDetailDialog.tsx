@@ -79,7 +79,7 @@ export const TalentDetailDialog = ({
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-2xl rounded-[40px]">
+      <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 backdrop-blur-2xl shadow-sm rounded-2xl">
         <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
 
         <DialogHeader className="p-8 bg-muted/20 border-b border-border/10 text-left">
@@ -152,7 +152,7 @@ export const TalentDetailDialog = ({
           </div>
 
           <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-            <TabsList className="bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1.5 mb-8 w-full max-w-2xl">
+            <TabsList className="bg-muted/30 rounded-xl border border-border/60 p-1.5 mb-8 w-full max-w-2xl">
               <TabsTrigger
                 value="overview"
                 className="flex-1 rounded-xl font-semibold uppercase text-[10px] tracking-widest py-3"
@@ -182,7 +182,7 @@ export const TalentDetailDialog = ({
                   <div className="grid gap-4">
                     <InfoCard label="Registry Email" value={displayTalent.email || "MISSING"} />
                     <InfoCard label="Contact String" value={displayTalent.phone || "MISSING"} />
-                    <div className="bg-muted/20 p-5 rounded-[24px] border-2 border-border/5">
+                    <div className="bg-muted/20 p-5 rounded-xl border-2 border-border/5">
                       <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">
                         Regional Mapping
                       </p>
@@ -202,7 +202,7 @@ export const TalentDetailDialog = ({
                   </h3>
                   <div className="grid gap-4">
                     <InfoCard label="Profession" value={displayTalent.custom_profession || "UNCLASSIFIED"} />
-                    <div className="bg-muted/20 p-5 rounded-[24px] border-2 border-border/5">
+                    <div className="bg-muted/20 p-5 rounded-xl border-2 border-border/5">
                       <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">
                         Verified Artifacts
                       </p>
@@ -247,7 +247,7 @@ export const TalentDetailDialog = ({
                     <Badge className="bg-primary text-white font-semibold rounded-lg">VERIFIED_READ</Badge>
                   )}
                 </div>
-                <div className="bg-muted/30 border-4 border-muted rounded-[32px] p-8 min-h-[400px] max-h-[500px] overflow-y-auto no-scrollbar shadow-inner">
+                <div className="bg-muted/30 border-4 border-muted rounded-2xl p-8 min-h-[400px] max-h-[500px] overflow-y-auto no-scrollbar shadow-inner">
                   {displayTalent.cv_text ? (
                     <p className="text-sm font-medium text-foreground whitespace-pre-wrap leading-relaxed italic">
                       {displayTalent.cv_text}
@@ -282,7 +282,7 @@ export const TalentDetailDialog = ({
               </div>
 
               {/* FIXED: Components below are now supported by restored imports */}
-              <Card className="rounded-[40px] border-2 border-primary/20 bg-primary/5 shadow-2xl overflow-hidden">
+              <Card className="rounded-2xl border-2 border-primary/20 bg-primary/5 shadow-sm overflow-hidden">
                 <CardContent className="p-8">
                   <div className="flex items-center gap-4 mb-4 text-left">
                     <TrendingUp className="h-6 w-6 text-primary" />
@@ -329,7 +329,7 @@ export const TalentDetailDialog = ({
 
 function InfoCard({ label, value }: { label: string; value: string }) {
   return (
-    <div className="bg-muted/20 p-5 rounded-[24px] border-2 border-border/5 group hover:border-primary/20 transition-all text-left">
+    <div className="bg-muted/20 p-5 rounded-xl border-2 border-border/5 group hover:border-primary/20 transition-all text-left">
       <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">{label}</p>
       <p className="text-sm font-semibold text-foreground uppercase italic tracking-tight mt-1">{value}</p>
     </div>
@@ -338,7 +338,7 @@ function InfoCard({ label, value }: { label: string; value: string }) {
 
 function StatMetric({ label, value, icon: Icon }: { label: string; value: string | number; icon: any }) {
   return (
-    <div className="bg-card border-2 border-border/40 rounded-[32px] p-6 text-center space-y-3 shadow-xl group hover:border-primary/40 transition-all">
+    <div className="bg-card border border-border/60 rounded-2xl p-6 text-center space-y-3 shadow-xl group hover:border-primary/40 transition-all">
       <div className="mx-auto w-12 h-12 flex items-center justify-center bg-muted/50 rounded-2xl text-primary border-2 border-white/5 shadow-inner group-hover:rotate-6 transition-transform">
         <Icon className="h-6 w-6" />
       </div>

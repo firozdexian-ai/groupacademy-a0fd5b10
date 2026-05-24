@@ -114,13 +114,13 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
       {/* Program Identifier */}
       <div className="relative group">
         <Select value={values.programId} onValueChange={(v) => updateLogic("programId", v)}>
-          <SelectTrigger className="w-[200px] h-11 rounded-xl border-2 bg-card/50 font-black uppercase text-[10px] tracking-widest transition-all hover:border-primary/40 focus:ring-0">
+          <SelectTrigger className="w-[200px] h-11 rounded-xl border-2 bg-card font-black uppercase text-[10px] tracking-widest transition-all hover:border-primary/40 focus:ring-0">
             <div className="flex items-center gap-2">
               <Layers className="w-3.5 h-3.5 text-primary/60" />
               <SelectValue placeholder="All" />
             </div>
           </SelectTrigger>
-          <SelectContent className="rounded-xl border-2 shadow-2xl">
+          <SelectContent className="rounded-xl border-2 shadow-sm">
             <SelectItem value="all" className="font-bold uppercase text-[9px]">
               All
             </SelectItem>
@@ -135,13 +135,13 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
 
       {/* Tier Level Selector */}
       <Select value={values.levelId} onValueChange={(v) => updateLogic("levelId", v)}>
-        <SelectTrigger className="w-[160px] h-11 rounded-xl border-2 bg-card/50 font-black uppercase text-[10px] tracking-widest transition-all hover:border-primary/40 focus:ring-0">
+        <SelectTrigger className="w-[160px] h-11 rounded-xl border-2 bg-card font-black uppercase text-[10px] tracking-widest transition-all hover:border-primary/40 focus:ring-0">
           <div className="flex items-center gap-2">
             <Zap className="w-3.5 h-3.5 text-amber-500/60" />
             <SelectValue placeholder="Tier: Global" />
           </div>
         </SelectTrigger>
-        <SelectContent className="rounded-xl border-2 shadow-2xl">
+        <SelectContent className="rounded-xl border-2 shadow-sm">
           <SelectItem value="all" className="font-bold uppercase text-[9px]">
             All Logic Tiers
           </SelectItem>
@@ -155,13 +155,13 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
 
       {/* Readiness Telemetry */}
       <Select value={values.readiness} onValueChange={(v) => updateLogic("readiness", v)}>
-        <SelectTrigger className="w-[180px] h-11 rounded-xl border-2 bg-card/50 font-black uppercase text-[10px] tracking-widest transition-all hover:border-primary/40 focus:ring-0">
+        <SelectTrigger className="w-[180px] h-11 rounded-xl border-2 bg-card font-black uppercase text-[10px] tracking-widest transition-all hover:border-primary/40 focus:ring-0">
           <div className="flex items-center gap-2">
             <Filter className="w-3.5 h-3.5 text-primary/60" />
             <SelectValue placeholder="Status: Telemetry" />
           </div>
         </SelectTrigger>
-        <SelectContent className="rounded-xl border-2 shadow-2xl">
+        <SelectContent className="rounded-xl border-2 shadow-sm">
           <SelectItem value="all" className="font-bold uppercase text-[9px]">
             All Statuses
           </SelectItem>
@@ -182,13 +182,13 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
 
       {/* Sorting Sequence */}
       <Select value={values.sortBy} onValueChange={(v) => updateLogic("sortBy", v)}>
-        <SelectTrigger className="w-[150px] h-11 rounded-xl border-2 bg-card/50 font-black uppercase text-[10px] tracking-widest transition-all hover:border-primary/40 focus:ring-0">
+        <SelectTrigger className="w-[150px] h-11 rounded-xl border-2 bg-card font-black uppercase text-[10px] tracking-widest transition-all hover:border-primary/40 focus:ring-0">
           <div className="flex items-center gap-2">
             <ArrowDownWideNarrow className="w-3.5 h-3.5 text-primary/60" />
             <SelectValue placeholder="Sequence" />
           </div>
         </SelectTrigger>
-        <SelectContent className="rounded-xl border-2 shadow-2xl">
+        <SelectContent className="rounded-xl border-2 shadow-sm">
           <SelectItem value="newest" className="font-bold uppercase text-[9px]">
             Newest
           </SelectItem>

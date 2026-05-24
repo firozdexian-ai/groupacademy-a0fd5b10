@@ -105,7 +105,7 @@ export function AccessCodesTab() {
         </TabsList>
 
         <TabsContent value="courses" className="space-y-6 mt-0">
-          <Card className="rounded-3xl border-2 border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden">
+          <Card className="rounded-3xl border border-border/60 bg-card/40 overflow-hidden">
             <CardContent className="p-6 space-y-4">
               <div className="grid lg:grid-cols-3 gap-4">
                 <div className="lg:col-span-2 space-y-2">
@@ -158,7 +158,7 @@ export function AccessCodesTab() {
             </CardContent>
           </Card>
 
-          <Card className="rounded-3xl border-2 border-border/40 bg-card/40 backdrop-blur-xl overflow-hidden">
+          <Card className="rounded-3xl border border-border/60 bg-card/40 overflow-hidden">
             <CardContent className="p-0">
               <Table>
                 <TableHeader>

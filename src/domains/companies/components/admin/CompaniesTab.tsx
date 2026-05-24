@@ -192,7 +192,7 @@ export function CompaniesTab() {
   return (
     <div className="space-y-8 animate-in fade-in duration-700">
       {/* Executive Action Bar */}
-      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
+      <div className="flex justify-between items-center bg-muted/10 p-6 rounded-2xl border border-border/60">
         <div className="text-left">
           <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <Building2 className="h-6 w-6 text-primary" /> Employer Registry
@@ -237,7 +237,7 @@ export function CompaniesTab() {
         <MetricTile label="Outreach Gap" value={kpis.pending} icon={Zap} color="text-amber-500" bg="bg-amber-500/10" />
       </div>
 
-      <Card className="rounded-[40px] border-2 shadow-2xl bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border-2 shadow-sm bg-card">
         <div className="h-1.5 w-full bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
 
         {/* Search & Filter Terminal */}
@@ -395,7 +395,7 @@ export function CompaniesTab() {
 
       {/* Full Registry Recalibration Dialog (Restored 100%) */}
       <Dialog open={isDialogOpen} onOpenChange={setIsDialogOpen}>
-        <DialogContent className="max-w-3xl rounded-[40px] border-4 p-0 overflow-hidden shadow-2xl bg-background text-left">
+        <DialogContent className="max-w-3xl rounded-2xl border-4 p-0 overflow-hidden shadow-sm bg-background text-left">
           <div className="h-2 w-full bg-primary" />
           <div className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 max-h-[85vh] overflow-y-auto no-scrollbar">
             <div className="col-span-full flex items-center gap-3 border-b pb-4 mb-2">
@@ -538,7 +538,7 @@ export function CompaniesTab() {
 
 function MetricTile({ label, value, icon: Icon, color, bg }: any) {
   return (
-    <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 p-6 text-left group transition-all hover:border-primary/30 shadow-xl overflow-hidden relative">
+    <Card className="rounded-2xl border border-border/60 bg-card p-6 text-left group transition-all hover:border-primary/30 shadow-xl overflow-hidden relative">
       <div className="absolute top-0 right-0 p-4 opacity-5 group-hover:opacity-10 transition-opacity">
         <Icon className="h-12 w-12" />
       </div>

@@ -374,13 +374,13 @@ export function BatchContentGenerator() {
   return (
     <div className="max-w-6xl mx-auto space-y-8 animate-in fade-in duration-1000 pb-20">
       <Tabs value={activeTab} onValueChange={(v) => !isRunning && setActiveTab(v as GeneratorType)}>
-        <TabsList className="flex flex-wrap h-auto bg-muted/30 backdrop-blur-md rounded-[32px] border-2 border-border/40 p-1.5 shadow-xl">
+        <TabsList className="flex flex-wrap h-auto bg-muted/30 rounded-2xl border border-border/60 p-1.5 shadow-xl">
           {(Object.entries(GENERATORS) as [GeneratorType, (typeof GENERATORS)[GeneratorType]][]).map(([key, gen]) => (
             <TabsTrigger
               key={key}
               value={key}
               disabled={isRunning}
-              className="rounded-[24px] px-6 py-2.5 font-black uppercase text-[9px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all relative"
+              className="rounded-xl px-6 py-2.5 font-black uppercase text-[9px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all relative"
             >
               <gen.icon className="w-4 h-4" />
               <span className="hidden lg:inline">{gen.label}</span>
@@ -399,7 +399,7 @@ export function BatchContentGenerator() {
             value={key}
             className="mt-8 outline-none animate-in slide-in-from-bottom-4 duration-700"
           >
-            <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
+            <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
               <div className="h-1.5 w-full bg-gradient-to-r from-primary/20 via-primary to-primary/20" />
               <CardHeader className="p-10 border-b border-border/10 bg-muted/10">
                 <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
@@ -527,7 +527,7 @@ export function BatchContentGenerator() {
 
                 {/* Telemetry: Progress Monitor */}
                 {(isRunning || processed > 0) && (
-                  <div className="p-8 rounded-[32px] border-2 bg-muted/10 space-y-6 shadow-inner">
+                  <div className="p-8 rounded-2xl border-2 bg-muted/10 space-y-6 shadow-inner">
                     <div className="flex items-center justify-between">
                       <div className="flex items-center gap-4">
                         {isRunning ? (
@@ -559,7 +559,7 @@ export function BatchContentGenerator() {
                         System Log Trace
                       </span>
                     </div>
-                    <div className="bg-black/90 rounded-[28px] p-8 max-h-64 overflow-y-auto font-mono text-[11px] text-emerald-500 shadow-2xl border-2 border-border/10 selection:bg-emerald-500/20">
+                    <div className="bg-black/90 rounded-[28px] p-8 max-h-64 overflow-y-auto font-mono text-[11px] text-emerald-500 shadow-sm border-2 border-border/10 selection:bg-emerald-500/20">
                       {batchLog.map((log, i) => (
                         <div
                           key={i}
@@ -591,7 +591,7 @@ export function BatchContentGenerator() {
                       {drafts.map((draft) => (
                         <Collapsible
                           key={draft.id}
-                          className="group rounded-[28px] border-2 border-border/40 bg-background/50 hover:border-primary/40 transition-all"
+                          className="group rounded-[28px] border border-border/60 bg-background/50 hover:border-primary/40 transition-all"
                         >
                           <CollapsibleTrigger className="w-full flex items-center justify-between p-6 text-left">
                             <div className="space-y-1 flex-1">
@@ -612,7 +612,7 @@ export function BatchContentGenerator() {
                           </CollapsibleTrigger>
                           <CollapsibleContent>
                             <div className="px-8 pb-8 space-y-8 animate-in slide-in-from-top-2 duration-300">
-                              <div className="p-8 rounded-[24px] bg-muted/10 border-2 border-dashed border-border/60 prose prose-sm dark:prose-invert max-w-none italic">
+                              <div className="p-8 rounded-xl bg-muted/10 border-2 border-dashed border-border/60 prose prose-sm dark:prose-invert max-w-none italic">
                                 {key === "blog-posts" ? (
                                   <ReactMarkdown>{draft.content || ""}</ReactMarkdown>
                                 ) : (

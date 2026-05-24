@@ -176,7 +176,7 @@ export function JobsManageTab() {
 
   return (
     <div className="space-y-6 animate-in fade-in duration-500">
-      <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-md shadow-xl overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden">
         <CardHeader className="p-6 border-b border-border/10 bg-muted/10">
           <div className="flex flex-col lg:flex-row gap-4 items-start lg:items-center justify-between">
             <div className="flex flex-wrap gap-3 items-center w-full lg:w-auto">
@@ -255,7 +255,7 @@ export function JobsManageTab() {
           </div>
 
           {selected.size > 0 && (
-            <div className="flex items-center gap-3 mt-4 p-4 bg-primary/5 rounded-[24px] border-2 border-primary/20 animate-in slide-in-from-top-2">
+            <div className="flex items-center gap-3 mt-4 p-4 bg-primary/5 rounded-xl border-2 border-primary/20 animate-in slide-in-from-top-2">
               <p className="text-[10px] font-semibold text-primary italic mr-4">
                 {selected.size} NODES_SELECTED
               </p>
@@ -312,7 +312,7 @@ export function JobsManageTab() {
             <div className="overflow-x-auto">
               <Table>
                 <TableHeader className="bg-muted/5">
-                  <TableRow className="hover:bg-transparent border-b-2">
+                  <TableRow className="hover:bg-transparent border-b">
                     <TableHead className="w-8 pl-6">
                       <Checkbox
                         checked={jobs.length > 0 && selected.size === jobs.length}

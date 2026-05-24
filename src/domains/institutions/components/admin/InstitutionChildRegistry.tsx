@@ -146,7 +146,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
 
   return (
     <div className="space-y-10 animate-in fade-in duration-700 p-4 md:p-6 text-left">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Icon className="h-8 w-8 text-primary" />
@@ -172,7 +172,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
         <div className="relative w-full md:w-[300px]">
           <Filter className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40" />
           <Select value={instFilter} onValueChange={setInstFilter}>
-            <SelectTrigger className="h-12 rounded-xl border-2 pl-10 font-black uppercase text-[10px] bg-card/30">
+            <SelectTrigger className="h-12 rounded-xl border-2 pl-10 font-black uppercase text-[10px] bg-card">
               <SelectValue placeholder="FILTER BY INSTITUTION" />
             </SelectTrigger>
             <SelectContent>
@@ -187,7 +187,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
         </div>
 
         {table === "institution_events" && (
-          <div className="flex p-1 bg-muted/20 rounded-xl border-2 border-border/40">
+          <div className="flex p-1 bg-muted/20 rounded-xl border border-border/60">
             <button
               onClick={() => setEventTab("upcoming")}
               className={cn(
@@ -212,16 +212,16 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
 
       <div className="grid gap-4">
         {listQ.isLoading ? (
-          <div className="h-48 animate-pulse bg-muted/40 rounded-[32px]" />
+          <div className="h-48 animate-pulse bg-muted/40 rounded-2xl" />
         ) : listQ.data?.length === 0 ? (
-          <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-30 font-black text-xs italic">
+          <Card className="rounded-2xl border-2 border-dashed p-20 text-center opacity-30 font-black text-xs italic">
             Registry Context Empty
           </Card>
         ) : (
           listQ.data?.map((r) => (
             <Card
               key={r.id}
-              className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm group hover:border-primary/20 transition-all"
+              className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm group hover:border-primary/20 transition-all"
             >
               <CardContent className="p-6 flex flex-col md:flex-row items-start justify-between gap-6">
                 <div className="flex items-start gap-5 flex-1 min-w-0">
@@ -311,7 +311,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
       </div>
 
       <Dialog open={open} onOpenChange={setOpen}>
-        <DialogContent className="max-w-md rounded-[40px] border-4 border-border/40 p-0 overflow-hidden bg-background shadow-2xl">
+        <DialogContent className="max-w-md rounded-2xl border-4 border-border/40 p-0 overflow-hidden bg-background shadow-sm">
           <div className="h-2 w-full bg-primary" />
           <div className="p-8 space-y-6 max-h-[80vh] overflow-y-auto no-scrollbar">
             <DialogHeader>
@@ -417,7 +417,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
       </Dialog>
 
       <AlertDialog open={!!purgeId} onOpenChange={() => setPurgeId(null)}>
-        <AlertDialogContent className="rounded-[32px] border-4 border-destructive/20 bg-background/95">
+        <AlertDialogContent className="rounded-2xl border border-destructive/30 bg-background/95">
           <AlertDialogHeader className="items-center text-center">
             <div className="h-16 w-16 rounded-full bg-destructive/10 flex items-center justify-center mb-4 border-2 border-destructive/20">
               <AlertTriangle className="h-8 w-8 text-destructive" />

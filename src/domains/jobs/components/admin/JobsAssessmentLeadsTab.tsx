@@ -187,7 +187,7 @@ export function JobsAssessmentLeadsTab() {
       </div>
 
       {/* Query Console */}
-      <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-md shadow-sm overflow-hidden">
+      <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
         <CardContent className="p-6">
           <div className="flex flex-col md:flex-row gap-4">
             <div className="relative flex-1 group">
@@ -196,14 +196,14 @@ export function JobsAssessmentLeadsTab() {
                 placeholder="Interrogate registry by name, email, or telemetry..."
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
-                className="pl-12 h-14 bg-card/50 border-2 border-border/10 rounded-2xl font-bold tracking-tight text-base"
+                className="pl-12 h-14 bg-card border-2 border-border/10 rounded-2xl font-bold tracking-tight text-base"
               />
             </div>
             <div className="flex gap-3">
               <div className="relative flex items-center">
                 <Filter className="absolute left-4 h-4 w-4 text-muted-foreground/40 pointer-events-none" />
                 <Select value={readinessFilter} onValueChange={setReadinessFilter}>
-                  <SelectTrigger className="w-[200px] h-14 pl-11 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-card/50">
+                  <SelectTrigger className="w-[200px] h-14 pl-11 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-card">
                     <SelectValue placeholder="Logic Status" />
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl border-2">
@@ -224,12 +224,12 @@ export function JobsAssessmentLeadsTab() {
       </Card>
 
       {/* Registry Viewport */}
-      <Card className="rounded-[40px] border-2 border-border/40 overflow-hidden shadow-2xl bg-card/30 backdrop-blur-xl">
+      <Card className="rounded-2xl border border-border/60 overflow-hidden shadow-sm bg-card">
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
               <TableHeader className="bg-muted/30">
-                <TableRow className="hover:bg-transparent border-b-2">
+                <TableRow className="hover:bg-transparent border-b">
                   <TableHead className="text-[10px] font-semibold py-8 px-8">
                     Entity Spec
                   </TableHead>
@@ -325,7 +325,7 @@ export function JobsAssessmentLeadsTab() {
 
       {/* Logic Pagination HUD */}
       {totalPages > 1 && (
-        <div className="flex items-center justify-between p-6 bg-muted/20 rounded-[32px] border-2 border-border/40 backdrop-blur-md">
+        <div className="flex items-center justify-between p-6 bg-muted/20 rounded-2xl border border-border/60">
           <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Registry Frame: Cycle {page + 1} / {totalPages}
           </p>

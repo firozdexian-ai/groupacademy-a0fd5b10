@@ -319,7 +319,7 @@ export function JobsLinkedInBatchUpload({
         }
       }}
     >
-      <DialogContent className="max-w-5xl h-[85vh] max-h-[85vh] rounded-[40px] border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-2xl flex flex-col">
+      <DialogContent className="max-w-5xl h-[85vh] max-h-[85vh] rounded-2xl border-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden shadow-sm flex flex-col">
         <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary shrink-0" />
 
         <div className="flex flex-col flex-1 min-h-0 overflow-hidden">
@@ -352,10 +352,10 @@ export function JobsLinkedInBatchUpload({
                 ) : (
                   <>
                     <div
-                      className="group relative border-4 border-dashed rounded-[32px] p-20 text-center transition-all hover:border-primary/40 hover:bg-primary/5 cursor-pointer"
+                      className="group relative border-4 border-dashed rounded-2xl p-20 text-center transition-all hover:border-primary/40 hover:bg-primary/5 cursor-pointer"
                       onClick={() => fileRef.current?.click()}
                     >
-                      <div className="h-20 w-20 rounded-[24px] bg-muted/50 flex items-center justify-center mx-auto mb-6 border-2 border-border/40 group-hover:rotate-6 transition-transform">
+                      <div className="h-20 w-20 rounded-xl bg-muted/50 flex items-center justify-center mx-auto mb-6 border border-border/60 group-hover:rotate-6 transition-transform">
                         <FileJson className="h-10 w-10 text-muted-foreground" />
                       </div>
                       <p className="text-xl font-semibold uppercase tracking-tight italic">Select LinkedIn Payload</p>
@@ -381,7 +381,7 @@ export function JobsLinkedInBatchUpload({
             {step === "preview" && (
               <div className="space-y-8 animate-in slide-in-from-bottom-4 duration-500">
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-                  <Card className="rounded-[28px] border-2 bg-card/30 p-6 shadow-sm">
+                  <Card className="rounded-[28px] border-2 bg-card p-6 shadow-sm">
                     <p className="text-[9px] font-semibold uppercase text-muted-foreground/60 tracking-widest mb-2 italic">
                       Total Artifacts
                     </p>
@@ -487,16 +487,16 @@ export function JobsLinkedInBatchUpload({
             {step === "results" && (
               <div className="py-8 space-y-10 animate-in zoom-in-95">
                 <div className="text-center space-y-4">
-                  <div className="h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto border-4 border-emerald-500/20 rotate-6 shadow-2xl">
+                  <div className="h-20 w-20 rounded-full bg-emerald-500/10 flex items-center justify-center mx-auto border-4 border-emerald-500/20 rotate-6 shadow-sm">
                     <CheckCircle2 className="h-10 w-10 text-emerald-500" />
                   </div>
                   <h3 className="text-3xl font-semibold uppercase tracking-tight italic">Upload complete</h3>
                 </div>
 
                 <div className="grid grid-cols-2 gap-6">
-                  <Card className="rounded-[32px] border-2 border-emerald-500/20 bg-emerald-500/5 p-8 shadow-xl group">
+                  <Card className="rounded-2xl border-2 border-emerald-500/20 bg-emerald-500/5 p-8 shadow-xl group">
                     <div className="flex items-center gap-6">
-                      <div className="h-16 w-16 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-emerald-500/40 shadow-2xl transition-transform group-hover:rotate-6">
+                      <div className="h-16 w-16 rounded-2xl bg-emerald-500 flex items-center justify-center shadow-emerald-500/40 shadow-sm transition-transform group-hover:rotate-6">
                         <Zap className="h-8 w-8 text-white" />
                       </div>
                       <div>
@@ -507,9 +507,9 @@ export function JobsLinkedInBatchUpload({
                       </div>
                     </div>
                   </Card>
-                  <Card className="rounded-[32px] border-2 border-blue-500/20 bg-blue-500/5 p-8 shadow-xl group">
+                  <Card className="rounded-2xl border-2 border-blue-500/20 bg-blue-500/5 p-8 shadow-xl group">
                     <div className="flex items-center gap-6">
-                      <div className="h-16 w-16 rounded-2xl bg-blue-500 flex items-center justify-center shadow-blue-500/40 shadow-2xl transition-transform group-hover:rotate-6">
+                      <div className="h-16 w-16 rounded-2xl bg-blue-500 flex items-center justify-center shadow-blue-500/40 shadow-sm transition-transform group-hover:rotate-6">
                         <Building2 className="h-8 w-8 text-white" />
                       </div>
                       <div>
@@ -525,7 +525,7 @@ export function JobsLinkedInBatchUpload({
                 </div>
 
                 {stats.errors.length > 0 && (
-                  <Card className="rounded-[32px] border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
+                  <Card className="rounded-2xl border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
                     <div className="p-4 bg-destructive/10 border-b border-destructive/10 flex items-center gap-3">
                       <AlertCircle className="h-4 w-4 text-destructive" />
                       <span className="text-[10px] font-semibold text-destructive">
@@ -549,7 +549,7 @@ export function JobsLinkedInBatchUpload({
             )}
           </ScrollArea>
 
-          <div className="flex justify-between items-center gap-4 px-10 py-5 border-t-2 border-border/20 bg-background/95 backdrop-blur-xl shrink-0">
+          <div className="flex justify-between items-center gap-4 px-10 py-5 border-t border-border/20 bg-background/95 shrink-0">
             {step === "preview" ? (
               <Button
                 variant="ghost"
