@@ -443,7 +443,7 @@ export function BatchContentGenerator() {
                   <div className="space-y-6">
                     {GENERATORS[key].needsSchool ? (
                       <div className="space-y-3">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-2">
+                        <Label className="text-[10px] font-black text-primary ml-2">
                           Target Faculty Node
                         </Label>
                         <Select value={selectedSchool} onValueChange={setSelectedSchool} disabled={isRunning}>
@@ -462,7 +462,7 @@ export function BatchContentGenerator() {
                     ) : (
                       <div className="space-y-4">
                         <div className="space-y-2">
-                          <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                          <Label className="text-[10px] font-black text-primary ml-1">
                             Logic Topic
                           </Label>
                           <Input
@@ -475,7 +475,7 @@ export function BatchContentGenerator() {
                         </div>
                         {key === "blog-posts" && (
                           <div className="space-y-2">
-                            <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                            <Label className="text-[10px] font-black text-primary ml-1">
                               Intel Class
                             </Label>
                             <Select value={blogCategory} onValueChange={setBlogCategory} disabled={isRunning}>
@@ -501,7 +501,7 @@ export function BatchContentGenerator() {
                       <div className="flex items-center justify-between p-6 rounded-[28px] border-2 bg-primary/5 border-primary/10 shadow-inner">
                         <div className="space-y-1">
                           <p className="text-sm font-black uppercase tracking-tight italic">Purge & Recalibrate</p>
-                          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest italic">
+                          <p className="text-[9px] font-bold text-muted-foreground italic">
                             Overwrite existing artifacts
                           </p>
                         </div>
@@ -510,7 +510,7 @@ export function BatchContentGenerator() {
                     )}
                     {!GENERATORS[key].needsSchool && (
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                        <Label className="text-[10px] font-black text-primary ml-1">
                           Context Payload
                         </Label>
                         <Textarea
@@ -581,7 +581,7 @@ export function BatchContentGenerator() {
                         <h4 className="text-2xl font-black uppercase tracking-tighter italic flex items-center gap-3">
                           <Eye className="h-6 w-6 text-primary" /> Review Registry
                         </h4>
-                        <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest italic">
+                        <p className="text-[9px] font-bold text-muted-foreground italic">
                           {drafts.length} drafts awaiting review
                         </p>
                       </div>
@@ -598,7 +598,7 @@ export function BatchContentGenerator() {
                               <p className="font-black uppercase tracking-tight italic text-sm group-hover:text-primary transition-colors">
                                 {draft.title || (draft.text_content || "").slice(0, 100) + "..."}
                               </p>
-                              <div className="flex items-center gap-3 text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest">
+                              <div className="flex items-center gap-3 text-[9px] font-bold text-muted-foreground/40">
                                 <Calendar className="h-3 w-3" /> {new Date(draft.created_at).toLocaleDateString()}
                                 <span className="h-1 w-1 rounded-full bg-muted-foreground/20" />
                                 <Badge variant="outline" className="text-[8px] h-4">
@@ -660,7 +660,7 @@ export function BatchContentGenerator() {
                   <p className="text-[9px] font-black uppercase tracking-[0.4em] italic">
                     Autonomous Content Factory v2.6.4
                   </p>
-                  <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+                  <p className="text-[8px] font-bold text-muted-foreground">
                     AI generation active
                   </p>
                 </div>

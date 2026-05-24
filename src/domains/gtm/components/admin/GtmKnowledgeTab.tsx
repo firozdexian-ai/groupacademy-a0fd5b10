@@ -32,7 +32,7 @@ export function GtmKnowledgeTab() {
             <FileText className="h-7 w-7 text-indigo-600" />
             <h1 className="text-3xl font-black uppercase tracking-tight">Knowledge Packs</h1>
           </div>
-          <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">
+          <p className="text-sm text-muted-foreground font-bold">
             Country-Scoped CMS & Informational Nodes
           </p>
         </div>
@@ -47,7 +47,7 @@ export function GtmKnowledgeTab() {
       {/* Registry Table */}
       <Card className="border-2">
         <CardHeader>
-          <CardTitle className="text-sm font-black uppercase tracking-widest">Content Registry</CardTitle>
+          <CardTitle className="text-sm font-black">Content Registry</CardTitle>
           <CardDescription>{packs.length} content nodes deployed</CardDescription>
         </CardHeader>
         <CardContent>
@@ -128,7 +128,7 @@ export function GtmKnowledgeTab() {
 
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Node Title</Label>
+              <Label className="text-[10px] font-black text-muted-foreground ml-1">Node Title</Label>
               <Input
                 placeholder="e.g. Bangladesh Visa Guide"
                 value={draft.title || ""}
@@ -139,7 +139,7 @@ export function GtmKnowledgeTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Target Country</Label>
+                <Label className="text-[10px] font-black text-muted-foreground ml-1">Target Country</Label>
                 <Select value={draft.country_code || ""} onValueChange={(v) => setDraft({ ...draft, country_code: v })}>
                   <SelectTrigger className="h-12 rounded-xl border-2"><SelectValue placeholder="Select country" /></SelectTrigger>
                   <SelectContent>
@@ -151,7 +151,7 @@ export function GtmKnowledgeTab() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Classification</Label>
+                <Label className="text-[10px] font-black text-muted-foreground ml-1">Classification</Label>
                 <Select value={draft.kind || "general"} onValueChange={(v) => setDraft({ ...draft, kind: v })}>
                   <SelectTrigger className="h-12 rounded-xl border-2"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -164,7 +164,7 @@ export function GtmKnowledgeTab() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Deployment Status</Label>
+                <Label className="text-[10px] font-black text-muted-foreground ml-1">Deployment Status</Label>
                 <Select value={String(draft.is_published)} onValueChange={(v) => setDraft({ ...draft, is_published: v === "true" })}>
                   <SelectTrigger className="h-12 rounded-xl border-2"><SelectValue /></SelectTrigger>
                   <SelectContent>
@@ -176,7 +176,7 @@ export function GtmKnowledgeTab() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Markdown Body</Label>
+              <Label className="text-[10px] font-black text-muted-foreground ml-1">Markdown Body</Label>
               <Tabs defaultValue="edit">
                 <TabsList className="grid grid-cols-2 w-full max-w-xs">
                   <TabsTrigger value="edit">Edit</TabsTrigger>
@@ -204,11 +204,11 @@ export function GtmKnowledgeTab() {
 
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Source URL (Optional)</Label>
+                <Label className="text-[10px] font-black text-muted-foreground ml-1">Source URL (Optional)</Label>
                 <Input placeholder="https://" value={draft.source_url || ""} onChange={(e) => setDraft({ ...draft, source_url: e.target.value })} className="h-12 rounded-xl border-2 font-mono text-xs bg-background/50" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">Sort Priority</Label>
+                <Label className="text-[10px] font-black text-muted-foreground ml-1">Sort Priority</Label>
                 <Input type="number" placeholder="0" value={draft.display_order || 0} onChange={(e) => setDraft({ ...draft, display_order: Number(e.target.value) })} className="h-12 rounded-xl border-2 font-black bg-background/50" />
               </div>
             </div>

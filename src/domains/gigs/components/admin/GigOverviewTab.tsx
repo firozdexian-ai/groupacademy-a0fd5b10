@@ -25,7 +25,7 @@ export function GigOverviewTab() {
             <Briefcase className="h-5 w-5 text-primary" />
             <h2 className="text-2xl font-black uppercase tracking-tight">Gig Command</h2>
           </div>
-          <p className="text-sm text-muted-foreground uppercase tracking-widest font-bold">
+          <p className="text-sm text-muted-foreground font-bold">
             Workforce Telemetry &amp; Transaction Ledger
           </p>
         </div>
@@ -82,7 +82,7 @@ export function GigOverviewTab() {
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <AlertCircle className="h-4 w-4 text-rose-600" />
-                  <h3 className="text-sm font-black uppercase tracking-widest">Priority Financial &amp; Trust Queue</h3>
+                  <h3 className="text-sm font-black">Priority Financial &amp; Trust Queue</h3>
                 </div>
               </CardHeader>
               <CardContent>
@@ -92,7 +92,7 @@ export function GigOverviewTab() {
                       <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
                         <CheckCircle2 className="h-6 w-6 text-emerald-600" />
                       </div>
-                      <p className="text-sm font-bold uppercase tracking-widest text-muted-foreground">Zero Active Escalations</p>
+                      <p className="text-sm font-bold text-muted-foreground">Zero Active Escalations</p>
                     </div>
                   ) : (
                     <div className="space-y-2">
@@ -152,7 +152,7 @@ export function GigOverviewTab() {
               <CardHeader className="pb-3">
                 <div className="flex items-center gap-2">
                   <Activity className="h-4 w-4 text-primary" />
-                  <h3 className="text-sm font-black uppercase tracking-widest">Gig Distribution Pulse</h3>
+                  <h3 className="text-sm font-black">Gig Distribution Pulse</h3>
                 </div>
               </CardHeader>
               <CardContent>
@@ -199,7 +199,7 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className={cn("h-5 w-5", color)} />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground truncate">
+          <p className="text-[10px] font-black text-muted-foreground truncate">
             {label}
           </p>
           <p className="text-2xl font-black tracking-tight">
@@ -216,7 +216,7 @@ function PulseBar({ label, value, max, color }: any) {
   return (
     <div className="space-y-1.5">
       <div className="flex items-center justify-between text-xs">
-        <span className="font-bold uppercase tracking-widest text-muted-foreground">{label}</span>
+        <span className="font-bold text-muted-foreground">{label}</span>
         <span className="font-black tabular-nums">{value} Nodes</span>
       </div>
       <div className="h-2 rounded-full bg-muted overflow-hidden">

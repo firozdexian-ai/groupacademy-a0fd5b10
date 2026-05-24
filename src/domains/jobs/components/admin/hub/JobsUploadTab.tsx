@@ -103,7 +103,7 @@ export function JobsUploadTab() {
                   <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
                     <Sparkles className="h-6 w-6 text-primary fill-primary/10" /> Parse a single job
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+                  <CardDescription className="text-[10px] font-bold">
                     Paste raw text and AI fills the structured fields.
                   </CardDescription>
                 </div>
@@ -159,7 +159,7 @@ export function JobsUploadTab() {
                   <CardTitle className="text-2xl font-black uppercase italic tracking-tighter">
                     Bulk import
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">
+                  <CardDescription className="text-[10px] font-bold mt-1">
                     Upload a JSON file of jobs in bulk.
                   </CardDescription>
                 </div>

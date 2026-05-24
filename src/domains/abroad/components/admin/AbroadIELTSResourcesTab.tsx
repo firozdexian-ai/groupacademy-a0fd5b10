@@ -89,14 +89,14 @@ export function AbroadIELTSResourcesTab() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-2">
+                        <Badge variant="outline" className="font-mono text-[9px] border-2">
                           {row.resource_type}
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "active"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : "bg-amber-500/10 text-amber-600",
@@ -145,13 +145,13 @@ export function AbroadIELTSResourcesTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-orange-500 flex items-center gap-2">
               <BookOpen className="h-6 w-6" /> Inject Resource
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update IELTS prep material catalog.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Resource Title
               </Label>
               <Input
@@ -163,26 +163,26 @@ export function AbroadIELTSResourcesTab() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Asset Type</Label>
+                <Label className="text-[10px] font-black text-primary ml-1">Asset Type</Label>
                 <Select value={draft.resource_type} onValueChange={(v) => setDraft({ ...draft, resource_type: v })}>
                   <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pdf" className="font-bold text-xs uppercase tracking-widest">
+                    <SelectItem value="pdf" className="font-bold text-xs">
                       PDF
                     </SelectItem>
-                    <SelectItem value="video" className="font-bold text-xs uppercase tracking-widest">
+                    <SelectItem value="video" className="font-bold text-xs">
                       Video
                     </SelectItem>
-                    <SelectItem value="audio" className="font-bold text-xs uppercase tracking-widest">
+                    <SelectItem value="audio" className="font-bold text-xs">
                       Audio
                     </SelectItem>
                   </SelectContent>
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Catalog Status
                 </Label>
                 <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
@@ -190,10 +190,10 @@ export function AbroadIELTSResourcesTab() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="active" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                    <SelectItem value="active" className="font-bold text-xs text-emerald-500">
                       Active
                     </SelectItem>
-                    <SelectItem value="inactive" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                    <SelectItem value="inactive" className="font-bold text-xs text-amber-500">
                       Inactive
                     </SelectItem>
                   </SelectContent>

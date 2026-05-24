@@ -174,7 +174,7 @@ export function BulkResourceUpload({
       <div className="flex items-center justify-between gap-2 flex-wrap">
         <div className="flex items-center gap-2">
           <FileUp className="h-4 w-4 text-primary" />
-          <span className="text-[10px] font-black uppercase tracking-widest text-primary">
+          <span className="text-[10px] font-black text-primary">
             Bulk Upload to Stage {stageNumber}
           </span>
         </div>
@@ -234,7 +234,7 @@ export function BulkResourceUpload({
         )}
       >
         <Upload className="h-5 w-5 mx-auto mb-1.5 text-primary" />
-        <p className="text-[11px] font-bold uppercase tracking-widest">
+        <p className="text-[11px] font-bold">
           Drop files or click to upload
         </p>
         <p className="text-[10px] text-muted-foreground mt-1">

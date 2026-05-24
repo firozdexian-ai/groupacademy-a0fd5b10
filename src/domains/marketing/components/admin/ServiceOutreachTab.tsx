@@ -240,7 +240,7 @@ export function ServiceOutreachTab() {
                   </div>
                   <div className="text-left">
                     <h3 className="text-xl font-black uppercase italic tracking-tight">{service.title}</h3>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1 italic">
+                    <p className="text-[10px] font-bold text-muted-foreground mt-1 italic">
                       {service.description}
                     </p>
                   </div>
@@ -275,7 +275,7 @@ export function ServiceOutreachTab() {
                   <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter">
                     Promote: {selectedService?.title}
                   </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+                  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
                     Campaign distribution for platform nodes
                   </DialogDescription>
                 </div>

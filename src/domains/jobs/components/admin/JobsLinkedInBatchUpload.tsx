@@ -332,7 +332,7 @@ export function JobsLinkedInBatchUpload({
                 <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
                   Registry Ingestion
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+                <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
                   LinkedIn bulk upload
                 </DialogDescription>
               </div>
@@ -345,7 +345,7 @@ export function JobsLinkedInBatchUpload({
                 {isProcessingFile ? (
                   <div className="space-y-4 text-center">
                     <Loader2 className="h-16 w-16 animate-spin text-primary mx-auto stroke-[1.5px]" />
-                    <p className="text-[11px] font-black uppercase tracking-widest text-primary animate-pulse">
+                    <p className="text-[11px] font-black text-primary animate-pulse">
                       Checking Deduplication Logic...
                     </p>
                   </div>
@@ -359,7 +359,7 @@ export function JobsLinkedInBatchUpload({
                         <FileJson className="h-10 w-10 text-muted-foreground" />
                       </div>
                       <p className="text-xl font-black uppercase tracking-tight italic">Select LinkedIn Payload</p>
-                      <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2">
+                      <p className="text-[10px] font-bold text-muted-foreground mt-2">
                         Supports .JSON Log Formats
                       </p>
                       <input ref={fileRef} type="file" accept=".json" className="hidden" onChange={handleFileUpload} />
@@ -409,12 +409,12 @@ export function JobsLinkedInBatchUpload({
                   <Table>
                     <TableHeader className="bg-muted/50">
                       <TableRow>
-                        <TableHead className="text-[9px] font-black uppercase tracking-widest px-6">
+                        <TableHead className="text-[9px] font-black px-6">
                           Role Artifact
                         </TableHead>
-                        <TableHead className="text-[9px] font-black uppercase tracking-widest">Entity Node</TableHead>
-                        <TableHead className="text-[9px] font-black uppercase tracking-widest">Logic Path</TableHead>
-                        <TableHead className="text-[9px] font-black uppercase tracking-widest">Status</TableHead>
+                        <TableHead className="text-[9px] font-black">Entity Node</TableHead>
+                        <TableHead className="text-[9px] font-black">Logic Path</TableHead>
+                        <TableHead className="text-[9px] font-black">Status</TableHead>
                       </TableRow>
                     </TableHeader>
                     <TableBody>
@@ -437,7 +437,7 @@ export function JobsLinkedInBatchUpload({
                             <TableCell>
                               <Badge
                                 variant="outline"
-                                className="text-[8px] font-black uppercase tracking-widest border-2"
+                                className="text-[8px] font-black border-2"
                               >
                                 {job.applyVia}
                               </Badge>
@@ -445,7 +445,7 @@ export function JobsLinkedInBatchUpload({
                             <TableCell>
                               <Badge
                                 className={cn(
-                                  "rounded-lg font-black text-[8px] uppercase tracking-widest border-none px-3 py-1",
+                                  "rounded-lg font-black text-[8px]  border-none px-3 py-1",
                                   isDupe ? "bg-amber-500 text-white" : "bg-emerald-500 text-white",
                                 )}
                               >
@@ -501,7 +501,7 @@ export function JobsLinkedInBatchUpload({
                       </div>
                       <div>
                         <p className="text-4xl font-black italic tracking-tighter leading-none">{stats.created}</p>
-                        <p className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-60">
+                        <p className="text-[10px] font-black mt-2 opacity-60">
                           Role Artifacts Generated
                         </p>
                       </div>
@@ -516,7 +516,7 @@ export function JobsLinkedInBatchUpload({
                         <p className="text-4xl font-black italic tracking-tighter leading-none">
                           {stats.companiesCreated}
                         </p>
-                        <p className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-60">
+                        <p className="text-[10px] font-black mt-2 opacity-60">
                           Company Nodes Synced
                         </p>
                       </div>
@@ -528,7 +528,7 @@ export function JobsLinkedInBatchUpload({
                   <Card className="rounded-[32px] border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
                     <div className="p-4 bg-destructive/10 border-b border-destructive/10 flex items-center gap-3">
                       <AlertCircle className="h-4 w-4 text-destructive" />
-                      <span className="text-[10px] font-black uppercase tracking-widest text-destructive">
+                      <span className="text-[10px] font-black text-destructive">
                         Logic Exceptions ({stats.errors.length})
                       </span>
                     </div>

@@ -90,7 +90,7 @@ export function PendingJobSubmissions() {
             <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
               <ClipboardCheck className="h-7 w-7 text-primary" /> Verification queue
             </CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+            <CardDescription className="text-[10px] font-bold text-muted-foreground italic">
               Review community-submitted jobs before publishing
             </CardDescription>
           </div>
@@ -107,7 +107,7 @@ export function PendingJobSubmissions() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3 opacity-50">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-[10px] font-black uppercase tracking-widest italic">Loading queue…</p>
+            <p className="text-[10px] font-black italic">Loading queue…</p>
           </div>
         ) : !data || data.length === 0 ? (
           <div className="py-16 border-2 border-dashed rounded-[32px] text-center opacity-30 italic font-black uppercase text-xs tracking-widest">
@@ -134,7 +134,7 @@ export function PendingJobSubmissions() {
                         {cd.title || ai.title || "NULL_ARTIFACT_TITLE"}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground italic">
                       <Users className="h-3 w-3" />
                       <span className="truncate">{cd.company || ai.company_name || "UNKNOWN_CORP"}</span>
                       <span className="opacity-30">|</span>

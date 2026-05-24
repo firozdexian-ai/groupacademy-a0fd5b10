@@ -134,7 +134,7 @@ export function JobApplicationCodeGenerator() {
       <CardContent className="p-10 space-y-8">
         <div className="grid gap-8 md:grid-cols-2">
           <div className="space-y-3 text-left">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+            <Label className="text-[10px] font-black text-primary ml-1">
               Target Entity Email
             </Label>
             <Input
@@ -147,7 +147,7 @@ export function JobApplicationCodeGenerator() {
             />
           </div>
           <div className="space-y-3 text-left">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Batch Quantity</Label>
+            <Label className="text-[10px] font-black text-primary ml-1">Batch Quantity</Label>
             <Input
               id="quantity"
               type="number"
@@ -181,7 +181,7 @@ export function JobApplicationCodeGenerator() {
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-3">
                 <ShieldCheck className="h-5 w-5 text-emerald-500" />
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                <p className="text-[10px] font-black text-muted-foreground">
                   Generated Artifacts:
                 </p>
               </div>
@@ -225,7 +225,7 @@ export function JobApplicationCodeGenerator() {
 
             <div className="flex items-center gap-2 opacity-20 pt-4">
               <Terminal className="h-3 w-3" />
-              <span className="text-[8px] font-black uppercase tracking-widest">
+              <span className="text-[8px] font-black">
                 Codes generated
               </span>
             </div>

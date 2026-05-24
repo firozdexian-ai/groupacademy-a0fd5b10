@@ -256,7 +256,7 @@ export function JobsManageTab() {
 
           {selected.size > 0 && (
             <div className="flex items-center gap-3 mt-4 p-4 bg-primary/5 rounded-[24px] border-2 border-primary/20 animate-in slide-in-from-top-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary italic mr-4">
+              <p className="text-[10px] font-black text-primary italic mr-4">
                 {selected.size} NODES_SELECTED
               </p>
               <Button
@@ -346,7 +346,7 @@ export function JobsManageTab() {
                         </TableCell>
                         <TableCell className="py-5 text-left">
                           <p className="font-black text-sm uppercase italic tracking-tight">{job.title}</p>
-                          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
+                          <p className="text-[9px] font-bold text-muted-foreground mt-0.5">
                             {job.company_name} · {job.location || "REMOTE_ACCESS"}
                           </p>
                         </TableCell>

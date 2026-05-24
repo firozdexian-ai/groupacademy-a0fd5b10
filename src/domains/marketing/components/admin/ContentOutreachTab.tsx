@@ -254,7 +254,7 @@ export function ContentOutreachTab() {
         </div>
         <div className="flex items-center gap-4">
           <div className="space-y-1 text-right">
-            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
+            <p className="text-[9px] font-black text-muted-foreground/40 italic">
               Artifact Pool
             </p>
             <p className="text-2xl font-black italic tracking-tighter leading-none">{contents.length}</p>
@@ -268,7 +268,7 @@ export function ContentOutreachTab() {
         <CardContent className="p-10 space-y-8">
           <div className="grid gap-8 md:grid-cols-2">
             <div className="space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Target Artifact
               </Label>
               <Select
@@ -289,7 +289,7 @@ export function ContentOutreachTab() {
             </div>
 
             <div className="space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Audience filter
               </Label>
               <Select value={filterType} onValueChange={(v: any) => setFilterType(v)}>
@@ -314,7 +314,7 @@ export function ContentOutreachTab() {
                 <h3 className="text-xl font-black uppercase tracking-tighter italic text-primary">
                   {selectedContent.title}
                 </h3>
-                <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest italic">
+                <p className="text-[10px] font-bold text-muted-foreground/60 italic">
                   {talents.length} VALID TARGETS IN RANGE
                 </p>
               </div>
@@ -341,7 +341,7 @@ export function ContentOutreachTab() {
                   <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
                     Broad Distribution Node
                   </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
                     Bulk promotion
                   </DialogDescription>
                 </div>
@@ -367,7 +367,7 @@ export function ContentOutreachTab() {
                     key={ch.id}
                     onClick={() => setActiveTab(ch.id)}
                     className={cn(
-                      "w-full flex items-center justify-between p-4 rounded-2xl text-[10px] font-black uppercase tracking-widest transition-all border-2",
+                      "w-full flex items-center justify-between p-4 rounded-2xl text-[10px] font-black  transition-all border-2",
                       activeTab === ch.id
                         ? "bg-primary border-primary text-white shadow-xl"
                         : "bg-muted/10 border-border/10 hover:border-primary/20",
@@ -386,7 +386,7 @@ export function ContentOutreachTab() {
                 {activeTab !== "custom" ? (
                   <div className="space-y-6">
                     <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1 text-left block">
+                      <Label className="text-[10px] font-black text-primary ml-1 text-left block">
                         Synthesis Payload ({activeTab})
                       </Label>
                       <div className="relative">
@@ -416,7 +416,7 @@ export function ContentOutreachTab() {
                 ) : (
                   <div className="space-y-8 animate-in slide-in-from-top-4">
                     <div className="space-y-2 text-left">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      <Label className="text-[10px] font-black text-primary ml-1">
                         Channel Logic Name
                       </Label>
                       <Input
@@ -427,7 +427,7 @@ export function ContentOutreachTab() {
                       />
                     </div>
                     <div className="space-y-2 text-left">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      <Label className="text-[10px] font-black text-primary ml-1">
                         Tracking Artifact Link
                       </Label>
                       <div className="flex gap-2">
@@ -468,7 +468,7 @@ export function ContentOutreachTab() {
                 <CardTitle className="text-2xl font-black uppercase tracking-tighter italic flex items-center gap-4">
                   <Terminal className="h-6 w-6 text-primary" /> Target Registry
                 </CardTitle>
-                <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest italic">
+                <p className="text-[10px] font-bold text-muted-foreground/60 italic">
                   Interrogating individualized pitch logic nodes
                 </p>
               </div>
@@ -503,7 +503,7 @@ export function ContentOutreachTab() {
                         <p className="text-lg font-black uppercase tracking-tight italic leading-none group-hover:text-primary transition-colors">
                           {talent.full_name}
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest italic flex items-center gap-3">
+                        <p className="text-[10px] font-bold text-muted-foreground/60 italic flex items-center gap-3">
                           <Globe className="h-3 w-3" /> {talent.email}{" "}
                           <span className="h-1 w-1 rounded-full bg-border" /> {talent.phone}
                         </p>
@@ -512,7 +512,7 @@ export function ContentOutreachTab() {
                     <div className="flex items-center gap-8">
                       <Badge
                         className={cn(
-                          "rounded-lg font-black text-[9px] uppercase tracking-widest px-4 py-1.5 border-none shadow-sm",
+                          "rounded-lg font-black text-[9px]  px-4 py-1.5 border-none shadow-sm",
                           isPitched(talent.id) ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground",
                         )}
                       >

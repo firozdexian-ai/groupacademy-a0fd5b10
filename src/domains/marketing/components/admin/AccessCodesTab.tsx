@@ -84,7 +84,7 @@ export function AccessCodesTab() {
         </div>
         <div>
           <h2 className="text-xl font-black uppercase italic tracking-tighter">Access Codes</h2>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+          <p className="text-[10px] font-bold text-muted-foreground/60 italic">
             Institutional Entitlement Engine
           </p>
         </div>

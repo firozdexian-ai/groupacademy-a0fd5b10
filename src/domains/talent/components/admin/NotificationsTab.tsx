@@ -105,7 +105,7 @@ export function NotificationsTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <BellRing className="h-6 w-6 text-primary" /> Notifications
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] font-black text-muted-foreground/60">
             Send push & in-app broadcasts
           </p>
         </div>
@@ -191,7 +191,7 @@ export function NotificationsTab() {
 
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Audience Type
                 </Label>
                 <Select value={targetType} onValueChange={(v: any) => setTargetType(v)}>
@@ -208,7 +208,7 @@ export function NotificationsTab() {
 
               {targetType === "single" && (
                 <div className="space-y-2 animate-in slide-in-from-top-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-black text-primary ml-1">
                     Select Identity
                   </Label>
                   <Select value={targetId} onValueChange={setTargetId}>
@@ -227,7 +227,7 @@ export function NotificationsTab() {
               )}
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Payload Title
                 </Label>
                 <Input
@@ -239,7 +239,7 @@ export function NotificationsTab() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Transmission Detail
                 </Label>
                 <Textarea

@@ -117,7 +117,7 @@ export function StandaloneSalaryCodeGenerator() {
             <CardTitle className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-3">
               <TrendingUp className="h-5 w-5 text-primary" /> Salary Pulse
             </CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+            <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
               Authorization keys for AI Intelligence retakes (50 Credits/Key)
             </CardDescription>
           </div>
@@ -175,7 +175,7 @@ export function StandaloneSalaryCodeGenerator() {
         {generatedCodes.length > 0 && (
           <div className="space-y-4 pt-6 border-t border-border/10 animate-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">Deployed Keys:</p>
+              <p className="text-[10px] font-black text-primary italic">Deployed Keys:</p>
               <Button
                 variant="outline"
                 size="sm"

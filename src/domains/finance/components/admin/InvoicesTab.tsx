@@ -256,7 +256,7 @@ export function InvoicesTab() {
                           <p className="font-black text-sm uppercase italic tracking-tight">
                             {inv.talents?.full_name || "NULL_ENTITY"}
                           </p>
-                          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
+                          <p className="text-[9px] font-bold text-muted-foreground mt-0.5">
                             {inv.talents?.email}
                           </p>
                         </TableCell>
@@ -447,7 +447,7 @@ function KpiNode({ label, value, subtext, icon: Icon, color }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div className="min-w-0 text-left">
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">{label}</p>
+          <p className="text-[10px] font-black text-muted-foreground/60 italic">{label}</p>
           <p className="text-2xl font-black italic tracking-tighter leading-none mt-1">{value}</p>
           {subtext && <p className="text-[9px] font-bold text-muted-foreground uppercase mt-1">{subtext}</p>}
         </div>
@@ -459,7 +459,7 @@ function KpiNode({ label, value, subtext, icon: Icon, color }: any) {
 function DetailRow({ label, value }: { label: string; value: string }) {
   return (
     <div className="flex justify-between items-center gap-4">
-      <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">{label}</span>
+      <span className="text-[10px] font-black text-muted-foreground/60 italic">{label}</span>
       <span className="font-bold text-sm tracking-tight text-right">{value}</span>
     </div>
   );

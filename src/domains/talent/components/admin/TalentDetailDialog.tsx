@@ -176,7 +176,7 @@ export const TalentDetailDialog = ({
             <TabsContent value="overview" className="space-y-8 animate-in fade-in duration-500 text-left">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                 <div className="space-y-4">
-                  <h3 className="font-black text-xs uppercase tracking-widest text-primary italic flex items-center gap-3">
+                  <h3 className="font-black text-xs text-primary italic flex items-center gap-3">
                     <Globe className="h-4 w-4" /> Core Telemetry
                   </h3>
                   <div className="grid gap-4">
@@ -197,7 +197,7 @@ export const TalentDetailDialog = ({
                 </div>
 
                 <div className="space-y-4">
-                  <h3 className="font-black text-xs uppercase tracking-widest text-primary italic flex items-center gap-3">
+                  <h3 className="font-black text-xs text-primary italic flex items-center gap-3">
                     <Briefcase className="h-4 w-4" /> Structural Class
                   </h3>
                   <div className="grid gap-4">
@@ -291,7 +291,7 @@ export const TalentDetailDialog = ({
                     </h4>
                   </div>
                   <div className="flex flex-col md:flex-row justify-between items-center gap-6">
-                    <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest max-w-xl leading-loose italic text-left">
+                    <p className="text-xs font-bold text-muted-foreground/60 max-w-xl leading-loose italic text-left">
                       This talent node is currently in{" "}
                       <span className="text-primary">
                         {displayTalent.onboarding_completed_at ? "Active Learner" : "Raw Lead"}
@@ -344,7 +344,7 @@ function StatMetric({ label, value, icon: Icon }: { label: string; value: string
       </div>
       <div>
         <p className="text-2xl font-black text-foreground italic leading-none">{value}</p>
-        <p className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest mt-2">{label}</p>
+        <p className="text-[9px] font-bold text-muted-foreground/40 mt-2">{label}</p>
       </div>
     </div>
   );

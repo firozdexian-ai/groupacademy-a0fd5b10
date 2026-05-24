@@ -186,7 +186,7 @@ export default function CourseSessionsManager({
     <div className="space-y-4">
       <div className="flex flex-wrap items-center justify-between gap-3">
         <div>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Sessions for</p>
+          <p className="text-[10px] font-black text-muted-foreground">Sessions for</p>
           <h3 className="text-lg font-black tracking-tight">{contentTitle}</h3>
           <p className="text-[10px] text-muted-foreground mt-0.5">Default timezone: {tz}</p>
         </div>
@@ -224,8 +224,8 @@ export default function CourseSessionsManager({
                 <div className="flex items-start justify-between gap-3">
                   <div className="flex-1 min-w-0">
                     <div className="flex items-center gap-2 mb-1">
-                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">Session {idx + 1}</span>
-                      <Badge className={cn("text-[8px] font-black uppercase tracking-widest border", STATUS_STYLES[s.status])}>
+                      <span className="text-[9px] font-black text-muted-foreground">Session {idx + 1}</span>
+                      <Badge className={cn("text-[8px] font-black  border", STATUS_STYLES[s.status])}>
                         {s.status}
                       </Badge>
                     </div>
@@ -290,11 +290,11 @@ export default function CourseSessionsManager({
           {editing && (
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Title</Label>
+                <Label className="text-[10px] font-black">Title</Label>
                 <Input value={editing.title || ""} onChange={(e) => setEditing({ ...editing, title: e.target.value })} className="rounded-xl" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Description</Label>
+                <Label className="text-[10px] font-black">Description</Label>
                 <Textarea value={editing.description || ""} onChange={(e) => setEditing({ ...editing, description: e.target.value })} rows={2} className="rounded-xl" />
               </div>
               <EventDateTimeField
@@ -305,12 +305,12 @@ export default function CourseSessionsManager({
               />
               <div className="grid grid-cols-2 gap-3">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest">Duration (min)</Label>
+                  <Label className="text-[10px] font-black">Duration (min)</Label>
                   <Input type="number" value={editing.duration_minutes ?? 60}
                     onChange={(e) => setEditing({ ...editing, duration_minutes: parseInt(e.target.value) || 60 })} className="rounded-xl" />
                 </div>
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest">Status</Label>
+                  <Label className="text-[10px] font-black">Status</Label>
                   <Select value={editing.status || "scheduled"} onValueChange={(v) => setEditing({ ...editing, status: v as SessionStatus })}>
                     <SelectTrigger className="rounded-xl"><SelectValue /></SelectTrigger>
                     <SelectContent>
@@ -323,7 +323,7 @@ export default function CourseSessionsManager({
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Instructor</Label>
+                <Label className="text-[10px] font-black">Instructor</Label>
                 <Select value={editing.instructor_id || "none"} onValueChange={(v) => setEditing({ ...editing, instructor_id: v === "none" ? null : v })}>
                   <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select instructor" /></SelectTrigger>
                   <SelectContent>
@@ -333,11 +333,11 @@ export default function CourseSessionsManager({
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Meeting link</Label>
+                <Label className="text-[10px] font-black">Meeting link</Label>
                 <Input value={editing.meeting_link || ""} placeholder="https://zoom.us/..." onChange={(e) => setEditing({ ...editing, meeting_link: e.target.value })} className="rounded-xl" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Recording link</Label>
+                <Label className="text-[10px] font-black">Recording link</Label>
                 <Input value={editing.recording_link || ""} placeholder="https://youtube.com/..." onChange={(e) => setEditing({ ...editing, recording_link: e.target.value })} className="rounded-xl" />
               </div>
             </div>
@@ -364,17 +364,17 @@ export default function CourseSessionsManager({
             />
             <div className="grid grid-cols-3 gap-3">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Sessions</Label>
+                <Label className="text-[10px] font-black">Sessions</Label>
                 <Input type="number" min={1} max={52} value={recurDraft.count}
                   onChange={(e) => setRecurDraft({ ...recurDraft, count: parseInt(e.target.value) || 1 })} className="rounded-xl" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Every (days)</Label>
+                <Label className="text-[10px] font-black">Every (days)</Label>
                 <Input type="number" min={1} value={recurDraft.intervalDays}
                   onChange={(e) => setRecurDraft({ ...recurDraft, intervalDays: parseInt(e.target.value) || 7 })} className="rounded-xl" />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Mins</Label>
+                <Label className="text-[10px] font-black">Mins</Label>
                 <Input type="number" value={recurDraft.duration}
                   onChange={(e) => setRecurDraft({ ...recurDraft, duration: parseInt(e.target.value) || 60 })} className="rounded-xl" />
               </div>

@@ -121,7 +121,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
               <ShieldCheck className="h-6 w-6 text-primary" /> Access Deployment
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+            <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
               Authorized key generation for {leadName} [cite: 455]
             </DialogDescription>
           </DialogHeader>
@@ -158,7 +158,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
                     {copied ? <Check className="h-6 w-6 text-green-500" /> : <Copy className="h-6 w-6" />}
                   </Button>
                 </div>
-                <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest text-center italic">
+                <p className="text-[9px] font-bold text-muted-foreground text-center italic">
                   Key valid for 30 days. Copy for outreach template.
                 </p>
               </div>

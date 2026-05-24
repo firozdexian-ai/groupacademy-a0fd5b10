@@ -113,7 +113,7 @@ export function WithdrawalsTab() {
             <TabsTrigger
               key={s}
               value={s}
-              className="flex-1 capitalize rounded-xl text-[10px] font-black uppercase tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all"
+              className="flex-1 capitalize rounded-xl text-[10px] font-black py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all"
             >
               {s} ({rows.filter((r) => r.status === s).length})
             </TabsTrigger>
@@ -128,7 +128,7 @@ export function WithdrawalsTab() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-muted/10 border-2 border-dashed border-border/40 rounded-[40px]">
             <Banknote className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/50">
+            <p className="text-xs font-black text-muted-foreground/50">
               No {filter} requests in queue
             </p>
           </div>
@@ -157,7 +157,7 @@ export function WithdrawalsTab() {
                       <p className="font-black text-lg truncate flex items-center gap-2">
                         {r.talent?.full_name || "Unknown Talent"}
                       </p>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground truncate">
+                      <p className="text-[10px] font-bold text-muted-foreground truncate">
                         {r.talent?.email}
                       </p>
                     </div>
@@ -192,7 +192,7 @@ export function WithdrawalsTab() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
                     <Clock className="h-3 w-3" /> {format(new Date(r.created_at), "MMM dd, yyyy · HH:mm")}
                   </div>
 

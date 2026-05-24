@@ -113,7 +113,7 @@ export function LearningCoursesTab() {
       <div className="flex flex-col sm:flex-row gap-4 px-2 items-start">
         <div className="flex items-center gap-2 text-muted-foreground pt-2">
           <Filter className="h-4 w-4" />
-          <span className="text-[10px] font-black uppercase tracking-widest">Filters:</span>
+          <span className="text-[10px] font-black">Filters:</span>
         </div>
         <div className="flex-1">
           <ContentFilters values={filters} onChange={setFilters} />
@@ -167,7 +167,7 @@ export function LearningCoursesTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-2">
+                          <Badge variant="outline" className="font-mono text-[9px] border-2">
                             {row.content_type?.replace("_", " ")}
                           </Badge>
                         </TableCell>
@@ -175,7 +175,7 @@ export function LearningCoursesTab() {
                           <div className="flex items-center gap-2 flex-wrap">
                             <Badge
                               className={cn(
-                                "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                                "font-bold text-[9px]  border-none px-3",
                                 isRowPublished ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600",
                               )}
                             >
@@ -264,13 +264,13 @@ export function LearningCoursesTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-cyan-500 flex items-center gap-2">
               <Tv className="h-6 w-6" /> Inject Course
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update course catalog entry.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Course Title</Label>
+              <Label className="text-[10px] font-black text-primary ml-1">Course Title</Label>
               <Input
                 placeholder="Title"
                 value={draft.title || ""}
@@ -280,19 +280,19 @@ export function LearningCoursesTab() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Content Type</Label>
+              <Label className="text-[10px] font-black text-primary ml-1">Content Type</Label>
               <Select value={draft.content_type} onValueChange={(v) => setDraft({ ...draft, content_type: v })}>
                 <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="recorded_course" className="font-bold text-xs uppercase tracking-widest">
+                  <SelectItem value="recorded_course" className="font-bold text-xs">
                     Recorded Course
                   </SelectItem>
-                  <SelectItem value="batch_class" className="font-bold text-xs uppercase tracking-widest">
+                  <SelectItem value="batch_class" className="font-bold text-xs">
                     Batch Class
                   </SelectItem>
-                  <SelectItem value="live_webinar" className="font-bold text-xs uppercase tracking-widest">
+                  <SelectItem value="live_webinar" className="font-bold text-xs">
                     Live Webinar
                   </SelectItem>
                 </SelectContent>
@@ -300,7 +300,7 @@ export function LearningCoursesTab() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Deployment Status
               </Label>
               <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
@@ -308,12 +308,12 @@ export function LearningCoursesTab() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                  <SelectItem value="draft" className="font-bold text-xs text-amber-500">
                     Draft / Unpublished
                   </SelectItem>
                   <SelectItem
                     value="published"
-                    className="font-bold text-xs uppercase tracking-widest text-emerald-500"
+                    className="font-bold text-xs text-emerald-500"
                   >
                     Published
                   </SelectItem>
@@ -343,20 +343,20 @@ export function LearningCoursesTab() {
             <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-indigo-500 flex items-center gap-2">
               <Layers className="h-5 w-5" /> Module Curriculum
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Manage modules and learning resources for this course.
             </DialogDescription>
           </DialogHeader>
           {selectedModuleCourseId && (
             <Tabs defaultValue="modules" className="w-full">
               <TabsList className="grid grid-cols-3 mb-4">
-                <TabsTrigger value="modules" className="text-[10px] font-black uppercase tracking-widest gap-2">
+                <TabsTrigger value="modules" className="text-[10px] font-black gap-2">
                   <Layers className="h-3.5 w-3.5" /> Modules
                 </TabsTrigger>
-                <TabsTrigger value="flashcards" className="text-[10px] font-black uppercase tracking-widest gap-2">
+                <TabsTrigger value="flashcards" className="text-[10px] font-black gap-2">
                   <Sparkles className="h-3.5 w-3.5" /> Flashcards
                 </TabsTrigger>
-                <TabsTrigger value="resources" className="text-[10px] font-black uppercase tracking-widest gap-2">
+                <TabsTrigger value="resources" className="text-[10px] font-black gap-2">
                   <BookOpen className="h-3.5 w-3.5" /> Resources
                 </TabsTrigger>
               </TabsList>
@@ -371,7 +371,7 @@ export function LearningCoursesTab() {
               </TabsContent>
               <TabsContent value="resources">
                 <div className="space-y-3 p-4 border-2 border-dashed border-border/40 rounded-2xl">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <p className="text-[10px] font-black text-muted-foreground">
                     Attach a resource file or link for this course.
                   </p>
                   <ModuleResourceFileUpload
@@ -392,7 +392,7 @@ export function LearningCoursesTab() {
             <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
               <Wand2 className="h-5 w-5" /> Bulk Content Generator
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Generate multiple courses, modules, or resources in a single batch.
             </DialogDescription>
           </DialogHeader>
@@ -410,7 +410,7 @@ export function LearningCoursesTab() {
             <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
               <FileCheck2 className="h-5 w-5" /> Readiness Checklist
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Live diagnostic of platform readiness rules for this course.
             </DialogDescription>
           </DialogHeader>

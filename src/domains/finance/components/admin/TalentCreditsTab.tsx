@@ -275,7 +275,7 @@ export function TalentCreditsTab() {
                 <Coins className="h-7 w-7 text-blue-500" />
               </div>
               <div className="text-left">
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                <p className="text-[9px] font-black text-muted-foreground/40 mb-1">
                   Circulation
                 </p>
                 <p className="text-3xl font-black tracking-tighter italic leading-none">
@@ -289,12 +289,12 @@ export function TalentCreditsTab() {
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingDown className="h-4 w-4 text-destructive" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-destructive/60">Burn Rate (Total)</p>
+                <p className="text-[9px] font-black text-destructive/60">Burn Rate (Total)</p>
               </div>
               <p className="text-3xl font-black tracking-tighter italic text-destructive leading-none">
                 {consumptionStats.totalConsumed.toLocaleString()}
               </p>
-              <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 uppercase tracking-widest italic">
+              <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 italic">
                 Node Activity Verified
               </p>
             </CardContent>
@@ -304,14 +304,14 @@ export function TalentCreditsTab() {
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <Calendar className="h-4 w-4 text-primary" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">
+                <p className="text-[9px] font-black text-muted-foreground/40">
                   Current Cycle
                 </p>
               </div>
               <p className="text-3xl font-black tracking-tighter italic leading-none">
                 {consumptionStats.monthlyConsumed.toLocaleString()}
               </p>
-              <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 uppercase tracking-widest italic">
+              <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 italic">
                 Temporal Index: Active
               </p>
             </CardContent>
@@ -319,7 +319,7 @@ export function TalentCreditsTab() {
 
           <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-sm flex flex-col justify-center text-left">
             <CardContent className="p-6 space-y-3">
-              <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 border-b border-border/10 pb-2">
+              <p className="text-[9px] font-black text-muted-foreground/40 border-b border-border/10 pb-2">
                 Service breakout
               </p>
               <div className="space-y-2">
@@ -347,7 +347,7 @@ export function TalentCreditsTab() {
               <button
                 onClick={() => setSelectedTab("balances")}
                 className={cn(
-                  "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  "px-6 py-2 rounded-xl text-[10px] font-black  transition-all",
                   selectedTab === "balances"
                     ? "bg-blue-600 text-white shadow-lg"
                     : "hover:bg-muted/50 text-muted-foreground",
@@ -358,7 +358,7 @@ export function TalentCreditsTab() {
               <button
                 onClick={() => setSelectedTab("transactions")}
                 className={cn(
-                  "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  "px-6 py-2 rounded-xl text-[10px] font-black  transition-all",
                   selectedTab === "transactions"
                     ? "bg-blue-600 text-white shadow-lg"
                     : "hover:bg-muted/50 text-muted-foreground",
@@ -392,16 +392,16 @@ export function TalentCreditsTab() {
               <Table>
                 <TableHeader className="bg-muted/10 border-b-2 border-border/20">
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest py-6 pl-8">
+                    <TableHead className="text-[10px] font-black py-6 pl-8">
                       {selectedTab === "balances" ? "Talent Entity" : "Temporal Index"}
                     </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                    <TableHead className="text-[10px] font-black">
                       {selectedTab === "balances" ? "Logic Endpoint" : "Target Entity"}
                     </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                    <TableHead className="text-[10px] font-black">
                       {selectedTab === "balances" ? "Current balance" : "Type"}
                     </TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                    <TableHead className="text-right text-[10px] font-black pr-8">
                       Interrogate
                     </TableHead>
                   </TableRow>
@@ -461,7 +461,7 @@ export function TalentCreditsTab() {
                           <TableCell className="text-left">
                             <Badge
                               className={cn(
-                                "rounded-lg font-black text-[8px] uppercase tracking-widest px-3 py-1 border-none",
+                                "rounded-lg font-black text-[8px]  px-3 py-1 border-none",
                                 tx.amount > 0 ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground",
                               )}
                             >
@@ -541,7 +541,7 @@ export function TalentCreditsTab() {
                   <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
                     {adjustDialog.type === "add" ? "Executive Credit" : "Executive Debit"}
                   </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
                     Manual override of talent fiscal balance
                   </DialogDescription>
                 </div>
@@ -550,7 +550,7 @@ export function TalentCreditsTab() {
             <div className="space-y-8 py-4">
               <div className="p-6 rounded-[28px] border-2 bg-muted/20 border-border/10 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                  <p className="text-[10px] font-black text-muted-foreground/40 mb-1">
                     Target Node
                   </p>
                   <p className="text-lg font-black italic tracking-tight uppercase leading-none">
@@ -558,7 +558,7 @@ export function TalentCreditsTab() {
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                  <p className="text-[10px] font-black text-muted-foreground/40 mb-1">
                     Status Balance
                   </p>
                   <p className="text-lg font-black italic tracking-tight leading-none text-blue-500">
@@ -567,7 +567,7 @@ export function TalentCreditsTab() {
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Amount (credits)
                 </Label>
                 <Input
@@ -579,7 +579,7 @@ export function TalentCreditsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Override Justification
                 </Label>
                 <Textarea

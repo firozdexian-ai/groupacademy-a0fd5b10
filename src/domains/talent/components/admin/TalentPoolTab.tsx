@@ -114,7 +114,7 @@ export function TalentPoolTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <Users className="h-6 w-6 text-primary" /> Talent Artifacts
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] font-black text-muted-foreground/60">
             {totalCount.toLocaleString()} Nodes Found in Sector
           </p>
         </div>

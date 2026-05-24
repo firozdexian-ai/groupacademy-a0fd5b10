@@ -16,7 +16,7 @@ export function AgentRail({ activeKey, threads, onSelect }: AgentRailProps) {
   return (
     <div className="flex flex-col h-full">
       <div className="px-4 py-3 border-b border-border/40">
-        <h2 className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+        <h2 className="text-sm font-bold text-muted-foreground">
           Agents
         </h2>
         <p className="text-xs text-muted-foreground/70 mt-0.5">

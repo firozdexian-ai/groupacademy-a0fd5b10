@@ -242,11 +242,11 @@ export function InvestorsManager() {
             <SelectValue placeholder="GLOBAL FIRMS" />
           </SelectTrigger>
           <SelectContent className="rounded-xl border-2">
-            <SelectItem value="all" className="font-bold text-[10px] uppercase tracking-widest text-primary">
+            <SelectItem value="all" className="font-bold text-[10px] text-primary">
               🌍 ALL AUTHORITIES
             </SelectItem>
             {vcFirms?.map((firm) => (
-              <SelectItem key={firm.id} value={firm.id} className="font-bold text-[10px] uppercase tracking-widest">
+              <SelectItem key={firm.id} value={firm.id} className="font-bold text-[10px]">
                 {firm.name}
               </SelectItem>
             ))}
@@ -285,7 +285,7 @@ export function InvestorsManager() {
                   <TableRow>
                     <TableCell
                       colSpan={5}
-                      className="text-center py-32 italic font-bold opacity-50 uppercase tracking-widest text-xs"
+                      className="text-center py-32 italic font-bold opacity-50 text-xs"
                     >
                       <div className="flex flex-col items-center gap-4">
                         <RefreshCw className="h-6 w-6 animate-spin text-primary" />
@@ -297,7 +297,7 @@ export function InvestorsManager() {
                   <TableRow>
                     <TableCell
                       colSpan={5}
-                      className="text-center py-32 italic font-bold opacity-50 uppercase tracking-widest text-xs"
+                      className="text-center py-32 italic font-bold opacity-50 text-xs"
                     >
                       Zero matching authorities found in current frame.
                     </TableCell>
@@ -313,7 +313,7 @@ export function InvestorsManager() {
                         <p className="font-black text-sm uppercase italic tracking-tight group-hover:text-primary transition-colors">
                           {investor.full_name}
                         </p>
-                        <p className="text-[9px] font-bold text-muted-foreground/80 uppercase tracking-widest mt-1 truncate max-w-[250px]">
+                        <p className="text-[9px] font-bold text-muted-foreground/80 mt-1 truncate max-w-[250px]">
                           {investor.title || "STRATEGIC_NODE"}
                         </p>
                       </TableCell>
@@ -419,7 +419,7 @@ export function InvestorsManager() {
               <div className="space-y-8 pb-8">
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Stakeholder Name *
                     </Label>
                     <Input
@@ -430,7 +430,7 @@ export function InvestorsManager() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Authority Title
                     </Label>
                     <Input
@@ -443,7 +443,7 @@ export function InvestorsManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-black text-primary ml-1">
                     Firm Authority
                   </Label>
                   <Select
@@ -456,7 +456,7 @@ export function InvestorsManager() {
                     <SelectContent className="rounded-xl border-2">
                       <SelectItem
                         value=""
-                        className="font-bold text-xs uppercase tracking-widest text-muted-foreground"
+                        className="font-bold text-xs text-muted-foreground"
                       >
                         INDEPENDENT_CAPITAL
                       </SelectItem>
@@ -464,7 +464,7 @@ export function InvestorsManager() {
                         <SelectItem
                           key={firm.id}
                           value={firm.id}
-                          className="font-bold text-xs uppercase tracking-widest"
+                          className="font-bold text-xs"
                         >
                           {firm.name}
                         </SelectItem>
@@ -475,7 +475,7 @@ export function InvestorsManager() {
 
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Transmission Email
                     </Label>
                     <Input
@@ -487,7 +487,7 @@ export function InvestorsManager() {
                     />
                   </div>
                   <div className="space-y-2">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Investment Stage
                     </Label>
                     <Select
@@ -499,7 +499,7 @@ export function InvestorsManager() {
                       </SelectTrigger>
                       <SelectContent className="rounded-xl border-2">
                         {IR_CONFIG.STAGE_FOCUS_OPTIONS.map((stage) => (
-                          <SelectItem key={stage} value={stage} className="font-bold text-xs uppercase tracking-widest">
+                          <SelectItem key={stage} value={stage} className="font-bold text-xs">
                             {stage}
                           </SelectItem>
                         ))}
@@ -509,7 +509,7 @@ export function InvestorsManager() {
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-black text-primary ml-1">
                     Relationship Context
                   </Label>
                   <Textarea

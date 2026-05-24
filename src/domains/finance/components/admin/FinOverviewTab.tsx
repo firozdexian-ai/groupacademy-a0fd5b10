@@ -102,7 +102,7 @@ export function FinOverviewTab() {
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4 px-2">
                 <ArrowDownRight className="h-4 w-4 text-emerald-500" />
-                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground italic">
+                <h3 className="text-xs font-black text-muted-foreground italic">
                   Capital Ingress (Purchases)
                 </h3>
               </div>
@@ -128,7 +128,7 @@ export function FinOverviewTab() {
                               <p className="font-black text-sm uppercase italic tracking-tight">
                                 {inv.talent.full_name}
                               </p>
-                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                              <p className="text-[10px] font-bold text-muted-foreground">
                                 {inv.invoice_number}
                               </p>
                             </div>
@@ -136,7 +136,7 @@ export function FinOverviewTab() {
                           <div className="text-right">
                             <Badge
                               className={cn(
-                                "font-black text-[9px] uppercase tracking-widest px-3 border-none",
+                                "font-black text-[9px]  px-3 border-none",
                                 inv.status === "paid"
                                   ? "bg-emerald-500/20 text-emerald-600"
                                   : "bg-amber-500/20 text-amber-600",
@@ -160,7 +160,7 @@ export function FinOverviewTab() {
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4 px-2">
                 <ArrowUpRight className="h-4 w-4 text-orange-500" />
-                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground italic">
+                <h3 className="text-xs font-black text-muted-foreground italic">
                   Capital Egress (Withdrawals)
                 </h3>
               </div>
@@ -186,7 +186,7 @@ export function FinOverviewTab() {
                               <p className="font-black text-sm uppercase italic tracking-tight">
                                 {req.talent.full_name}
                               </p>
-                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest">
+                              <p className="text-[10px] font-bold text-muted-foreground">
                                 {req.method}
                               </p>
                             </div>
@@ -195,7 +195,7 @@ export function FinOverviewTab() {
                             <Badge
                               variant="outline"
                               className={cn(
-                                "font-black text-[9px] uppercase tracking-widest px-3 border-2",
+                                "font-black text-[9px]  px-3 border-2",
                                 req.status === "completed"
                                   ? "border-emerald-500/20 text-emerald-500"
                                   : req.status === "pending"

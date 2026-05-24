@@ -201,7 +201,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
         {listQuery.isLoading ? (
           <div className="h-64 animate-pulse bg-muted/40 rounded-[40px]" />
         ) : rows.length === 0 ? (
-          <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-30 font-black uppercase tracking-widest text-xs italic">
+          <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-30 font-black text-xs italic">
             No matching nodes detected
           </Card>
         ) : (
@@ -220,12 +220,12 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
                       <h4 className="font-black text-xl uppercase italic tracking-tighter truncate">{r.name}</h4>
                       <Badge
                         variant={r.status === "active" ? "default" : "secondary"}
-                        className="font-black text-[8px] uppercase tracking-widest px-2"
+                        className="font-black text-[8px] px-2"
                       >
                         {r.status}
                       </Badge>
                     </div>
-                    <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                    <div className="flex flex-wrap items-center gap-3 text-[10px] font-bold text-muted-foreground/60">
                       <span className="flex items-center gap-1.5">
                         <Activity className="h-3 w-3" /> {r.type}
                       </span>
@@ -448,7 +448,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
             <AlertDialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
               Terminate Node?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 leading-relaxed">
+            <AlertDialogDescription className="text-xs font-bold text-muted-foreground/60 leading-relaxed">
               This action is immutable. Linked graph dependencies will be orphaned.
             </AlertDialogDescription>
           </AlertDialogHeader>

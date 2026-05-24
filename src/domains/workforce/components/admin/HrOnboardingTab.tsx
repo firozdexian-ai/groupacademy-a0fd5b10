@@ -164,7 +164,7 @@ export function HrOnboardingTab() {
         <CardContent className="p-0">
           <div className="overflow-x-auto">
             <Table>
-              <TableHeader className="bg-muted/10 text-[10px] font-black uppercase tracking-widest">
+              <TableHeader className="bg-muted/10 text-[10px] font-black">
                 <TableRow className="border-b-2">
                   <TableHead className="py-6 pl-8">Task Definition</TableHead>
                   <TableHead>Assigned Agent</TableHead>
@@ -209,7 +209,7 @@ export function HrOnboardingTab() {
                       </TableCell>
                       <TableCell>
                         <div className="flex flex-col gap-1">
-                          <span className="font-mono text-[10px] uppercase tracking-widest text-muted-foreground/70 flex items-center gap-1.5">
+                          <span className="font-mono text-[10px] text-muted-foreground/70 flex items-center gap-1.5">
                             <Calendar className="h-3 w-3" />{" "}
                             {t.due_date ? format(new Date(t.due_date), "MMM dd, yyyy") : "OPEN"}
                           </span>
@@ -352,7 +352,7 @@ function TabBtn({ label, count, active, onClick, color }: any) {
     <button
       onClick={onClick}
       className={cn(
-        "px-6 py-2.5 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all flex items-center gap-3 border-2 border-transparent",
+        "px-6 py-2.5 rounded-xl text-[10px] font-black  transition-all flex items-center gap-3 border-2 border-transparent",
         active ? "bg-primary text-white shadow-lg scale-[1.02]" : "text-muted-foreground hover:bg-muted/50",
       )}
     >

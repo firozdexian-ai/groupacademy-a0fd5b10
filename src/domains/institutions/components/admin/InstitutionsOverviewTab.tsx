@@ -113,7 +113,7 @@ function MetricTile({ title, value, icon: Icon, hint, color, bg }: any) {
         <div className="text-4xl font-black italic tracking-tighter leading-none mb-3">
           {value?.toLocaleString() || "0"}
         </div>
-        <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest">{hint}</p>
+        <p className="text-[9px] font-bold text-muted-foreground/60">{hint}</p>
       </CardContent>
     </Card>
   );

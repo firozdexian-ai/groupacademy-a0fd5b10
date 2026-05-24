@@ -221,7 +221,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
                         )}
                         <span>{Math.abs(delta)}%</span>
                       </div>
-                      <span className="ml-2 text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                      <span className="ml-2 text-[9px] font-bold text-muted-foreground/40 italic">
                         prev: {formatValue(p, r.format)}
                       </span>
                     </div>

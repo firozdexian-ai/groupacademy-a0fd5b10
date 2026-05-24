@@ -94,7 +94,7 @@ export function ChatThread({ agentKey, onAfterSend }: ChatThreadProps) {
 
         {!loading && messages.length === 0 && (
           <div className="space-y-3 max-w-xl mx-auto py-8">
-            <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 text-center">
+            <p className="text-xs font-bold text-muted-foreground/60 text-center">
               Start the conversation
             </p>
             <div className="grid grid-cols-1 sm:grid-cols-2 gap-2">

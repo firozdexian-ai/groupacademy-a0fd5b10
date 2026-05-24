@@ -284,7 +284,7 @@ export function MarketingAnalyticsTab() {
                 <CardTitle className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-3 text-left">
                   <Zap className="h-5 w-5 text-primary" /> High-Intensity Roles
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-left">
+                <CardDescription className="text-[10px] font-bold text-left">
                   Individual Job Pulse Distribution
                 </CardDescription>
               </CardHeader>
@@ -337,7 +337,7 @@ export function MarketingAnalyticsTab() {
         <div className="xl:col-span-2 space-y-6">
           <div className="flex items-center gap-2 mb-4 px-2">
             <Clock className="h-4 w-4 text-orange-500" />
-            <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground italic">
+            <h3 className="text-xs font-black text-muted-foreground italic">
               Live Outbound Telemetry
             </h3>
           </div>
@@ -349,7 +349,7 @@ export function MarketingAnalyticsTab() {
                   <div className="h-16 w-16 rounded-full bg-muted/10 flex items-center justify-center border-2 border-border/20">
                     <Target className="h-8 w-8 text-muted-foreground/50" />
                   </div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 italic">
+                  <p className="text-[10px] font-black text-muted-foreground/50 italic">
                     Awaiting Outreach Signals
                   </p>
                 </div>
@@ -368,13 +368,13 @@ export function MarketingAnalyticsTab() {
                           <h4 className="font-black text-sm uppercase italic tracking-tight text-foreground/90">
                             Talent Ping
                           </h4>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                          <p className="text-[10px] font-bold text-muted-foreground mt-1">
                             Channel: <span className="text-blue-500">{log.channel}</span>
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-2">
+                        <Badge variant="outline" className="font-mono text-[9px] border-2">
                           Talent ID: {log.talent_id.substring(0, 8)}
                         </Badge>
                         <span className="text-[10px] font-mono text-muted-foreground">
@@ -396,13 +396,13 @@ export function MarketingAnalyticsTab() {
                           <h4 className="font-black text-sm uppercase italic tracking-tight text-foreground/90">
                             Company Ping
                           </h4>
-                          <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                          <p className="text-[10px] font-bold text-muted-foreground mt-1">
                             Channel: <span className="text-emerald-500">{log.channel}</span>
                           </p>
                         </div>
                       </div>
                       <div className="flex items-center gap-3">
-                        <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-2">
+                        <Badge variant="outline" className="font-mono text-[9px] border-2">
                           Org ID: {log.company_id.substring(0, 8)}
                         </Badge>
                         <span className="text-[10px] font-mono text-muted-foreground">
@@ -421,7 +421,7 @@ export function MarketingAnalyticsTab() {
         <div className="space-y-6">
           <div className="flex items-center gap-2 mb-4 px-2">
             <Activity className="h-4 w-4 text-orange-500" />
-            <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground italic">
+            <h3 className="text-xs font-black text-muted-foreground italic">
               Marketing Graph Pulse
             </h3>
           </div>
@@ -474,7 +474,7 @@ function ChartCard({ title, sub, children }: any) {
     <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden">
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
         <CardTitle className="text-lg font-black uppercase tracking-tighter italic">{title}</CardTitle>
-        <CardDescription className="text-[10px] font-bold uppercase tracking-widest">{sub}</CardDescription>
+        <CardDescription className="text-[10px] font-bold">{sub}</CardDescription>
       </CardHeader>
       <CardContent className="p-8">{children}</CardContent>
     </Card>
@@ -556,7 +556,7 @@ function PulseBar({ label, value, max, color }: any) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs font-bold">
-        <span className="uppercase tracking-widest text-muted-foreground">{label}</span>
+        <span className="text-muted-foreground">{label}</span>
         <span className="font-mono text-[10px] text-foreground">{value} Nodes</span>
       </div>
       <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden">

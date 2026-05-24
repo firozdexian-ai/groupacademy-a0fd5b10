@@ -195,7 +195,7 @@ export function HrPayrollTab() {
 
               <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden">
                 <Table>
-                  <TableHeader className="bg-muted/10 text-[10px] font-black uppercase tracking-widest">
+                  <TableHeader className="bg-muted/10 text-[10px] font-black">
                     <TableRow className="border-b-2">
                       <TableHead className="py-5 pl-8">Beneficiary Node</TableHead>
                       <TableHead>Temporal Window</TableHead>
@@ -385,7 +385,7 @@ function KpiTile({ icon: Icon, label, value, accent }: any) {
         <Icon className={cn("h-7 w-7", accentText)} />
       </div>
       <div>
-        <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">{label}</p>
+        <p className="text-[10px] font-black text-muted-foreground/60 italic">{label}</p>
         <p className={cn("text-3xl font-black tracking-tighter italic", accentText)}>
           ${value?.toLocaleString() || "0"}
         </p>

@@ -91,7 +91,7 @@ function KpiCard({ title, value, subtitle, icon: Icon, color, bg }: any) {
         <div className="mt-auto">
           <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic mb-2">{title}</p>
           <p className="text-5xl font-black italic tracking-tighter leading-none text-foreground/90 mb-2">{value}</p>
-          <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">{subtitle}</p>
+          <p className="text-xs font-bold text-muted-foreground/60">{subtitle}</p>
         </div>
       </CardContent>
     </Card>

@@ -26,7 +26,7 @@ function DeltaBadge({ value, invert = false }: { value: number | null; invert?: 
   return (
     <Badge
       className={cn(
-        "font-black text-[9px] uppercase tracking-widest px-2 py-0.5 border-none gap-1 shadow-sm",
+        "font-black text-[9px]  px-2 py-0.5 border-none gap-1 shadow-sm",
         isGood ? "bg-emerald-500/10 text-emerald-600" : "bg-destructive/10 text-destructive",
       )}
     >
@@ -119,7 +119,7 @@ export function UnitEconomics() {
                 <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
                   Retention Velocity
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                   NRR / GRR / Usage Retention
                 </CardDescription>
               </CardHeader>
@@ -134,7 +134,7 @@ export function UnitEconomics() {
                 <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
                   COGS Distribution
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                   AI Inference vs Human-in-the-Loop Labor
                 </CardDescription>
               </CardHeader>
@@ -150,7 +150,7 @@ export function UnitEconomics() {
                   <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
                     Capital Efficiency
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                  <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                     Revenue per Employee vs Target Benchmark
                   </CardDescription>
                 </div>
@@ -170,7 +170,7 @@ export function UnitEconomics() {
                 <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
                   Cohort Retention Triangle
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                   Monthly cohorts × periods · active_users / cohort_size
                 </CardDescription>
               </CardHeader>

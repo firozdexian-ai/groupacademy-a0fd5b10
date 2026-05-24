@@ -82,7 +82,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
     return (
       <Badge
         className={cn(
-          "font-black text-[10px] uppercase tracking-widest border-none px-3 py-1",
+          "font-black text-[10px]  border-none px-3 py-1",
           status === "active" ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground/60",
         )}
       >
@@ -195,13 +195,13 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                         <Badge
                           key={interest}
                           variant="outline"
-                          className="bg-background/50 border-2 font-black text-[9px] uppercase tracking-widest rounded-xl px-3 py-1.5 shadow-sm"
+                          className="bg-background/50 border-2 font-black text-[9px] rounded-xl px-3 py-1.5 shadow-sm"
                         >
                           {interest}
                         </Badge>
                       ))}
                       {investor.investment_stage_pref && (
-                        <Badge className="bg-blue-600/10 text-blue-600 border-none font-black text-[9px] uppercase tracking-widest rounded-xl px-3 py-1.5 shadow-sm">
+                        <Badge className="bg-blue-600/10 text-blue-600 border-none font-black text-[9px] rounded-xl px-3 py-1.5 shadow-sm">
                           STAGE: {investor.investment_stage_pref}
                         </Badge>
                       )}
@@ -256,7 +256,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                                 {IR_CONFIG.INTERACTION_TYPES.find((t) => t.value === interaction.interaction_type)
                                   ?.label || interaction.interaction_type}
                               </p>
-                              <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest shrink-0">
+                              <span className="text-[9px] font-bold text-muted-foreground/50 shrink-0">
                                 {format(new Date(interaction.created_at), "MMM d")}
                               </span>
                             </div>

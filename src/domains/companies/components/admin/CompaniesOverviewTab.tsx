@@ -91,7 +91,7 @@ export function CompaniesOverviewTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2 text-primary">
             <Network className="h-6 w-6" /> B2B Intelligence
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+          <p className="text-[10px] font-black text-muted-foreground/60 italic">
             Employer Pipeline & Contact Telemetry Command
           </p>
         </div>
@@ -126,7 +126,7 @@ export function CompaniesOverviewTab() {
         <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden relative text-left">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <CardHeader className="p-8 pb-4">
-            <CardTitle className="text-sm font-black uppercase tracking-widest italic flex items-center gap-2">
+            <CardTitle className="text-sm font-black italic flex items-center gap-2">
               <AlertCircle className="h-4 w-4 text-primary" /> Onboarding Funnel (Riya)
             </CardTitle>
           </CardHeader>

@@ -102,15 +102,15 @@ export function IRPipelineBoard() {
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-xl border-2">
-              <SelectItem value="all" className="font-bold text-[10px] uppercase tracking-widest">
+              <SelectItem value="all" className="font-bold text-[10px]">
                 Global Pipeline
               </SelectItem>
-              <SelectItem value="leads" className="font-bold text-[10px] uppercase tracking-widest text-primary">
+              <SelectItem value="leads" className="font-bold text-[10px] text-primary">
                 True Leads Only
               </SelectItem>
               <SelectItem
                 value="followers"
-                className="font-bold text-[10px] uppercase tracking-widest text-muted-foreground"
+                className="font-bold text-[10px] text-muted-foreground"
               >
                 Momentum / Followers
               </SelectItem>
@@ -221,11 +221,11 @@ function KpiCard({
           {icon}
         </div>
         <div className="min-w-0">
-          <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50 mb-1 line-clamp-1">
+          <p className="text-[9px] font-black text-muted-foreground/50 mb-1 line-clamp-1">
             {label}
           </p>
           <p className="text-2xl font-black italic tracking-tighter leading-none truncate">{value}</p>
-          <p className="text-[9px] font-bold uppercase tracking-widest text-muted-foreground/40 mt-1.5 truncate">
+          <p className="text-[9px] font-bold text-muted-foreground/40 mt-1.5 truncate">
             {hint}
           </p>
         </div>

@@ -251,7 +251,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
                 <Briefcase className="h-8 w-8 text-primary" />
                 {jobId ? "Recalibrate Infrastructure" : "Deploy Job Node"}
               </DialogTitle>
-              <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+              <DialogDescription className="text-[10px] font-bold text-muted-foreground italic">
                 Strategic marketplace placement and AI content drafting
               </DialogDescription>
             </div>
@@ -265,7 +265,7 @@ export function JobFormDialog({ open, onOpenChange, jobId, initialForm, onSaved 
           {loading ? (
             <div className="flex flex-col items-center justify-center py-24 gap-4">
               <Loader2 className="h-12 w-12 animate-spin text-primary" />
-              <p className="text-[10px] font-black uppercase tracking-widest animate-pulse">
+              <p className="text-[10px] font-black animate-pulse">
                 Ingesting Registry Data...
               </p>
             </div>

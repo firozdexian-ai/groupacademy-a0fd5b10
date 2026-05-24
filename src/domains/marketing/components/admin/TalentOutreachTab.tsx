@@ -159,7 +159,7 @@ export function TalentOutreachTab() {
                           <TableCell>
                             <Badge
                               variant="outline"
-                              className="font-mono text-[9px] uppercase tracking-widest border-2 text-blue-500 border-blue-500/20 bg-blue-500/10"
+                              className="font-mono text-[9px] border-2 text-blue-500 border-blue-500/20 bg-blue-500/10"
                             >
                               {row.channel}
                             </Badge>
@@ -189,7 +189,7 @@ export function TalentOutreachTab() {
                   <CardTitle className="text-3xl font-black uppercase tracking-tighter italic">
                     Outreach Generator
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+                  <CardDescription className="text-[10px] font-black text-muted-foreground/60 italic">
                     Personalized CV Artifact Synthesis
                   </CardDescription>
                 </div>
@@ -197,7 +197,7 @@ export function TalentOutreachTab() {
             </CardHeader>
             <CardContent className="p-10">
               {/* NOTE: Paste your original Input/Select fields and form logic here */}
-              <div className="py-20 text-center font-black uppercase tracking-widest text-xs text-muted-foreground/40 italic border-2 border-dashed border-border/40 rounded-2xl">
+              <div className="py-20 text-center font-black text-xs text-muted-foreground/40 italic border-2 border-dashed border-border/40 rounded-2xl">
                 [ LEGACY FORM LOGIC RESERVED FOR MANUAL PASTE ]
               </div>
             </CardContent>
@@ -210,7 +210,7 @@ export function TalentOutreachTab() {
           ) : (
             <div className="grid gap-8 md:grid-cols-2">
               <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 p-8">
-                <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-6 italic text-left">
+                <p className="text-[10px] font-black text-muted-foreground/40 mb-6 italic text-left">
                   Distribution Breakdown
                 </p>
                 <div className="space-y-6 text-left">

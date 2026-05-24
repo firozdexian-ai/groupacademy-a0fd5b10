@@ -191,7 +191,7 @@ export default function KeyInfluencersTab() {
                     <div className="font-black text-xl uppercase tracking-tighter italic group-hover:text-primary transition-colors truncate">
                       {r.name}
                     </div>
-                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">
+                    <div className="flex items-center gap-1.5 text-[10px] font-bold text-muted-foreground/60">
                       <Briefcase className="h-3 w-3" />
                       <span className="truncate">
                         {r.role || "STAKEHOLDER"} {r.organization ? `· ${r.organization}` : ""}
@@ -224,7 +224,7 @@ export default function KeyInfluencersTab() {
                   </div>
                   <Badge
                     className={cn(
-                      "text-[8px] font-black uppercase tracking-widest border-none px-3",
+                      "text-[8px] font-black  border-none px-3",
                       r.tier === "vip"
                         ? "bg-amber-500/10 text-amber-600"
                         : r.tier === "strategic"

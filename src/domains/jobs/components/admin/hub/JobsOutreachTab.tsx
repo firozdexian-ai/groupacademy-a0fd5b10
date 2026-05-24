@@ -62,7 +62,7 @@ export function JobsOutreachTab() {
               <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
                 <Megaphone className="h-7 w-7 text-primary" /> Syndication_Pulse
               </CardTitle>
-              <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic leading-relaxed max-w-xl">
+              <CardDescription className="text-[10px] font-bold text-muted-foreground italic leading-relaxed max-w-xl">
                 Generate neural captions for global channels. Copy artifacts and log distribution across the ecosystem.
               </CardDescription>
             </div>
@@ -116,7 +116,7 @@ export function JobsOutreachTab() {
               <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
                 <Sparkles className="h-7 w-7 text-primary fill-primary/10" /> Identity_Outreach
               </CardTitle>
-              <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+              <CardDescription className="text-[10px] font-bold text-muted-foreground italic">
                 Extract intelligence from CV artifacts to generate hyper-personalized engagement scripts.
               </CardDescription>
             </div>

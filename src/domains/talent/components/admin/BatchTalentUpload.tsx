@@ -365,7 +365,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
           </div>
           <div className="space-y-1">
             <CardTitle className="text-3xl font-black uppercase tracking-tighter italic">Registry Ingestion</CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+            <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
               Bulk talent upload
             </CardDescription>
           </div>
@@ -407,7 +407,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
 
           <TabsContent value="links" className="mt-8 space-y-6 animate-in slide-in-from-bottom-4 duration-500">
             <div className="space-y-3">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Payload URLs (One per line)
               </Label>
               <Textarea
@@ -452,7 +452,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                   </div>
                   <div>
                     <p className="text-xl font-black uppercase tracking-tight italic">Inject PDF Payloads</p>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2">
+                    <p className="text-[10px] font-bold text-muted-foreground mt-2">
                       {singleMode ? "1 Artifact Limit" : `Max ${MAX_FILES} Artifacts`} · {MAX_FILE_SIZE_MB}MB Limit
                     </p>
                   </div>
@@ -514,7 +514,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                   </div>
                   <div>
                     <p className="text-xl font-black uppercase tracking-tight italic">Inject Database Payload</p>
-                    <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2">
+                    <p className="text-[10px] font-bold text-muted-foreground mt-2">
                       {csvFile ? csvFile.name : "Accepts Shomvob .CSV Exports"}
                     </p>
                   </div>
@@ -569,7 +569,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
                 <div key={i} className="bg-background/50 p-4 rounded-2xl border border-border/10 text-center space-y-1">
                   <stat.icon className={cn("h-4 w-4 mx-auto mb-1 opacity-40", stat.color)} />
                   <p className="text-xl font-black italic tracking-tighter leading-none">{stat.val}</p>
-                  <p className="text-[8px] font-black uppercase tracking-widest opacity-40">{stat.label}</p>
+                  <p className="text-[8px] font-black opacity-40">{stat.label}</p>
                 </div>
               ))}
             </div>
@@ -614,7 +614,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
               <div className="space-y-4">
                 {(currentBatch?.error_log as any[])?.map((err, idx) => (
                   <div key={idx} className="p-6 rounded-2xl bg-destructive/5 border-2 border-destructive/10 group">
-                    <p className="font-mono text-[10px] text-destructive/40 mb-2 uppercase tracking-widest">
+                    <p className="font-mono text-[10px] text-destructive/40 mb-2">
                       Entry_{idx.toString().padStart(3, "0")}
                     </p>
                     <p className="font-black text-sm uppercase tracking-tight italic truncate mb-1">

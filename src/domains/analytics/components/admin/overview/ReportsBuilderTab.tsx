@@ -101,7 +101,7 @@ export function ReportsBuilderTab() {
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+            <span className="text-[10px] font-black text-muted-foreground/60 italic">
               AI Canvas Engine
             </span>
           </div>
@@ -127,7 +127,7 @@ export function ReportsBuilderTab() {
           <Button
             onClick={() => generate(brief)}
             disabled={loading || !brief.trim()}
-            className="rounded-2xl h-12 px-8 font-black uppercase tracking-widest text-xs gap-2"
+            className="rounded-2xl h-12 px-8 font-black text-xs gap-2"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             Compile Leadership Report

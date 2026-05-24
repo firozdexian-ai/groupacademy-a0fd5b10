@@ -107,7 +107,7 @@ export function ContactsTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary" /> Authority Matrix
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] font-black text-muted-foreground/60">
             Secure Registry of {totalCount} Stakeholder Nodes
           </p>
         </div>

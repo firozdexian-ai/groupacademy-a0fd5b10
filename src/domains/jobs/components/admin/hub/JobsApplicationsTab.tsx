@@ -325,7 +325,7 @@ export function JobsApplicationsTab() {
                         <p className="font-black text-sm uppercase italic tracking-tight">
                           {app.talents?.full_name || "NULL_ENTITY"}
                         </p>
-                        <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 italic">
+                        <p className="text-[9px] font-bold text-muted-foreground mt-0.5 italic">
                           {app.talents?.email}
                         </p>
                       </TableCell>

@@ -12,7 +12,7 @@ export default function ModuleDropoffTable({ modules }: Props) {
     <div className="overflow-x-auto -mx-2">
       <table className="w-full text-sm">
         <thead>
-          <tr className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+          <tr className="text-[10px] font-black text-muted-foreground">
             <th className="text-left px-2 py-2">#</th>
             <th className="text-left px-2 py-2">Module</th>
             <th className="text-right px-2 py-2">Reached</th>

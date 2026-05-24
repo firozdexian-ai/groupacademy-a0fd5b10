@@ -240,7 +240,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                 <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
                   Registry Ingestion
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+                <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
                   Bulk company upload
                 </DialogDescription>
               </div>
@@ -272,7 +272,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                         <p className="text-xl font-black uppercase tracking-tight italic">
                           {isUploading ? "Validating Logic..." : "Select Payload"}
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2">
+                        <p className="text-[10px] font-bold text-muted-foreground mt-2">
                           Supports .XLSX / .XLS Logic Paths
                         </p>
                       </div>
@@ -332,7 +332,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
 
                   {isImporting && (
                     <div className="space-y-4 p-8 rounded-[32px] border-2 bg-primary/5 border-primary/20">
-                      <div className="flex justify-between text-[10px] font-black uppercase tracking-widest italic text-primary">
+                      <div className="flex justify-between text-[10px] font-black italic text-primary">
                         <span>Registry Mapping...</span>
                         <span>{importProgress}%</span>
                       </div>
@@ -344,14 +344,14 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     <Table>
                       <TableHeader className="bg-muted/50">
                         <TableRow>
-                          <TableHead className="text-[9px] font-black uppercase tracking-widest px-6">Row</TableHead>
-                          <TableHead className="text-[9px] font-black uppercase tracking-widest">
+                          <TableHead className="text-[9px] font-black px-6">Row</TableHead>
+                          <TableHead className="text-[9px] font-black">
                             Company Node
                           </TableHead>
-                          <TableHead className="text-[9px] font-black uppercase tracking-widest">
+                          <TableHead className="text-[9px] font-black">
                             Contact Entity
                           </TableHead>
-                          <TableHead className="text-[9px] font-black uppercase tracking-widest">Industry</TableHead>
+                          <TableHead className="text-[9px] font-black">Industry</TableHead>
                         </TableRow>
                       </TableHeader>
                       <TableBody>
@@ -369,7 +369,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                             <TableCell>
                               <Badge
                                 variant="outline"
-                                className="text-[8px] font-black uppercase tracking-widest border-2"
+                                className="text-[8px] font-black border-2"
                               >
                                 {row.industry || "N/A"}
                               </Badge>
@@ -402,7 +402,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                           <p className="text-4xl font-black italic tracking-tighter leading-none">
                             {importStats.companiesCreated}
                           </p>
-                          <p className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-60">
+                          <p className="text-[10px] font-black mt-2 opacity-60">
                             Company Nodes Created
                           </p>
                         </div>
@@ -417,7 +417,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                           <p className="text-4xl font-black italic tracking-tighter leading-none">
                             {importStats.contactsCreated}
                           </p>
-                          <p className="text-[10px] font-black uppercase tracking-widest mt-2 opacity-60">
+                          <p className="text-[10px] font-black mt-2 opacity-60">
                             Contact Entities Generated
                           </p>
                         </div>
@@ -436,7 +436,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                         ].map((stat, i) => (
                           <div key={i} className="space-y-1">
                             <p className="text-2xl font-black italic tracking-tighter">{stat.val}</p>
-                            <p className="text-[8px] font-black uppercase tracking-widest opacity-40">{stat.label}</p>
+                            <p className="text-[8px] font-black opacity-40">{stat.label}</p>
                           </div>
                         ))}
                       </div>
@@ -447,7 +447,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                     <Card className="rounded-[32px] border-2 border-destructive/20 bg-destructive/5 overflow-hidden">
                       <div className="p-4 bg-destructive/10 border-b border-destructive/10 flex items-center gap-3">
                         <AlertCircle className="h-4 w-4 text-destructive" />
-                        <span className="text-[10px] font-black uppercase tracking-widest text-destructive">
+                        <span className="text-[10px] font-black text-destructive">
                           Logic Exceptions ({importStats.errors.length})
                         </span>
                       </div>

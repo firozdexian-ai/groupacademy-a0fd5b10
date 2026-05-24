@@ -75,7 +75,7 @@ export default function CoursePerformanceDashboard({ contentId, contentTitle }: 
           variant="outline"
           size="sm"
           onClick={handleExport}
-          className="rounded-xl text-[10px] font-black uppercase tracking-widest"
+          className="rounded-xl text-[10px] font-black"
         >
           <Download className="mr-2 h-3.5 w-3.5" /> Export CSV
         </Button>

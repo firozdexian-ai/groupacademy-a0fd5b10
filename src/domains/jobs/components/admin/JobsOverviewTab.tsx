@@ -88,7 +88,7 @@ export function JobsOverviewTab() {
             <div className="xl:col-span-2 space-y-6">
               <div className="flex items-center gap-2 mb-4 px-2">
                 <Clock className="h-4 w-4 text-indigo-500" />
-                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground italic">
+                <h3 className="text-xs font-black text-muted-foreground italic">
                   Priority Recruitment Queue
                 </h3>
               </div>
@@ -101,7 +101,7 @@ export function JobsOverviewTab() {
                       <div className="h-16 w-16 rounded-full bg-emerald-500/10 flex items-center justify-center border-2 border-emerald-500/20">
                         <CheckCircle2 className="h-8 w-8 text-emerald-500" />
                       </div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 italic">
+                      <p className="text-[10px] font-black text-muted-foreground/50 italic">
                         Inbox Zero Achieved
                       </p>
                     </div>
@@ -121,7 +121,7 @@ export function JobsOverviewTab() {
                               <h4 className="font-black text-sm uppercase italic tracking-tight text-foreground/90">
                                 Job Application
                               </h4>
-                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                              <p className="text-[10px] font-bold text-muted-foreground mt-1">
                                 Submitted:{" "}
                                 <span className="text-blue-500">{new Date(app.created_at).toLocaleDateString()}</span>
                               </p>
@@ -130,7 +130,7 @@ export function JobsOverviewTab() {
                           <div className="flex items-center gap-3">
                             <Badge
                               variant="outline"
-                              className="font-mono text-[9px] uppercase tracking-widest border-2"
+                              className="font-mono text-[9px] border-2"
                             >
                               Talent ID: {app.talent_id.substring(0, 8)}
                             </Badge>
@@ -155,7 +155,7 @@ export function JobsOverviewTab() {
                               <h4 className="font-black text-sm uppercase italic tracking-tight text-foreground/90">
                                 Skill Assessment
                               </h4>
-                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                              <p className="text-[10px] font-bold text-muted-foreground mt-1">
                                 Pending Evaluation
                               </p>
                             </div>
@@ -163,7 +163,7 @@ export function JobsOverviewTab() {
                           <div className="flex items-center gap-3">
                             <Badge
                               variant="outline"
-                              className="font-mono text-[9px] uppercase tracking-widest border-2"
+                              className="font-mono text-[9px] border-2"
                             >
                               Talent ID: {assess.talent_id.substring(0, 8)}
                             </Badge>
@@ -183,7 +183,7 @@ export function JobsOverviewTab() {
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4 px-2">
                 <Activity className="h-4 w-4 text-indigo-500" />
-                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground italic">
+                <h3 className="text-xs font-black text-muted-foreground italic">
                   Pipeline Distribution
                 </h3>
               </div>
@@ -247,7 +247,7 @@ function PulseBar({ label, value, max, color }: any) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs font-bold">
-        <span className="uppercase tracking-widest text-muted-foreground">{label}</span>
+        <span className="text-muted-foreground">{label}</span>
         <span className="font-mono text-[10px] text-foreground">{value} Nodes</span>
       </div>
       <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden">

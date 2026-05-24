@@ -126,7 +126,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                 <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic leading-none">
                   Log Interaction
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+                <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
                   Log meeting details
                 </DialogDescription>
               </div>
@@ -137,7 +137,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
             <div className="space-y-8 pb-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-black text-primary ml-1">
                     Interaction
                   </Label>
                   <Select
@@ -152,7 +152,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                         <SelectItem
                           key={type.value}
                           value={type.value}
-                          className="font-bold text-xs uppercase tracking-widest"
+                          className="font-bold text-xs"
                         >
                           {type.label}
                         </SelectItem>
@@ -162,7 +162,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-black text-primary ml-1">
                     Investor Sentiment
                   </Label>
                   <Select value={formData.sentiment} onValueChange={(v) => setFormData({ ...formData, sentiment: v })}>
@@ -170,14 +170,14 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                       <SelectValue placeholder="NEUTRAL" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2">
-                      <SelectItem value="" className="font-bold text-xs uppercase tracking-widest">
+                      <SelectItem value="" className="font-bold text-xs">
                         UNSPECIFIED
                       </SelectItem>
                       {IR_CONFIG.SENTIMENT_OPTIONS.map((opt) => (
                         <SelectItem
                           key={opt.value}
                           value={opt.value}
-                          className="font-bold text-xs uppercase tracking-widest"
+                          className="font-bold text-xs"
                         >
                           {opt.label}
                         </SelectItem>
@@ -188,7 +188,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Strategic Subject
                 </Label>
                 <Input
@@ -200,7 +200,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   {formData.interaction_type === "reply_received"
                     ? "Neural Payload (Reply Text)"
                     : "Core Artifact (Notes)"}
@@ -218,7 +218,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
               </div>
 
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Key Pulse Points
                 </Label>
                 <div className="flex flex-col sm:flex-row gap-3">

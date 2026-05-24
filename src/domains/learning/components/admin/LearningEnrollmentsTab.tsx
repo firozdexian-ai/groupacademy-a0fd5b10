@@ -102,7 +102,7 @@ export function LearningEnrollmentsTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "completed"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : row.status === "dropped"
@@ -156,14 +156,14 @@ export function LearningEnrollmentsTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-blue-500 flex items-center gap-2">
               <Users className="h-6 w-6" /> Evaluate Enrollment
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update student status manually.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Content Node ID
                 </Label>
                 <Input
@@ -174,7 +174,7 @@ export function LearningEnrollmentsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Talent Node ID
                 </Label>
                 <Input
@@ -186,7 +186,7 @@ export function LearningEnrollmentsTab() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Enrollment Status
               </Label>
               <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
@@ -194,16 +194,16 @@ export function LearningEnrollmentsTab() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active" className="font-bold text-xs uppercase tracking-widest text-blue-500">
+                  <SelectItem value="active" className="font-bold text-xs text-blue-500">
                     Active
                   </SelectItem>
                   <SelectItem
                     value="completed"
-                    className="font-bold text-xs uppercase tracking-widest text-emerald-500"
+                    className="font-bold text-xs text-emerald-500"
                   >
                     Completed
                   </SelectItem>
-                  <SelectItem value="dropped" className="font-bold text-xs uppercase tracking-widest text-rose-500">
+                  <SelectItem value="dropped" className="font-bold text-xs text-rose-500">
                     Dropped
                   </SelectItem>
                 </SelectContent>

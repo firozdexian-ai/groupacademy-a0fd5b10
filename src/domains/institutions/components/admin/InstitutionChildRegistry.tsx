@@ -214,7 +214,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
         {listQ.isLoading ? (
           <div className="h-48 animate-pulse bg-muted/40 rounded-[32px]" />
         ) : listQ.data?.length === 0 ? (
-          <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-30 font-black uppercase tracking-widest text-xs italic">
+          <Card className="rounded-[40px] border-2 border-dashed p-20 text-center opacity-30 font-black text-xs italic">
             Registry Context Empty
           </Card>
         ) : (
@@ -236,14 +236,14 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
                       {badgeKey && r[badgeKey] && (
                         <Badge
                           variant="outline"
-                          className="font-black text-[8px] uppercase tracking-widest border-2 bg-primary/5"
+                          className="font-black text-[8px] border-2 bg-primary/5"
                         >
                           {r[badgeKey].replace("_", " ")}
                         </Badge>
                       )}
                     </div>
                     <div className="flex flex-wrap items-center gap-2">
-                      <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded-md">
+                      <span className="text-[10px] font-bold text-muted-foreground flex items-center gap-1.5 bg-muted/30 px-2 py-0.5 rounded-md">
                         <Building2 className="h-3 w-3" /> {institutionsById[r.institution_id] ?? "Independent"}
                       </span>
                     </div>
@@ -425,7 +425,7 @@ function ChildRegistry({ table, title, description, fields, badgeKey, icon: Icon
             <AlertDialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-destructive">
               Terminate Node?
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 leading-relaxed">
+            <AlertDialogDescription className="text-xs font-bold text-muted-foreground/60 leading-relaxed">
               System warning: This protocol permanently purges the entity from the Global Graph.
             </AlertDialogDescription>
           </AlertDialogHeader>

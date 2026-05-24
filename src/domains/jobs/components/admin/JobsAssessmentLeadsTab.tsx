@@ -230,15 +230,15 @@ export function JobsAssessmentLeadsTab() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow className="hover:bg-transparent border-b-2">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8">
+                  <TableHead className="text-[10px] font-black py-8 px-8">
                     Entity Spec
                   </TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Uplink Telemetry</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Logic Class</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-center">Score</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Readiness</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Sync Date</TableHead>
-                  <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                  <TableHead className="text-[10px] font-black">Uplink Telemetry</TableHead>
+                  <TableHead className="text-[10px] font-black">Logic Class</TableHead>
+                  <TableHead className="text-[10px] font-black text-center">Score</TableHead>
+                  <TableHead className="text-[10px] font-black">Readiness</TableHead>
+                  <TableHead className="text-[10px] font-black">Sync Date</TableHead>
+                  <TableHead className="text-right text-[10px] font-black pr-8">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -274,7 +274,7 @@ export function JobsAssessmentLeadsTab() {
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className="rounded-lg border-2 font-black text-[9px] uppercase tracking-widest bg-background"
+                          className="rounded-lg border-2 font-black text-[9px] bg-background"
                         >
                           {lead.profession_category?.name || "UNCLASSED"}
                         </Badge>
@@ -293,7 +293,7 @@ export function JobsAssessmentLeadsTab() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest italic">
+                        <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground/40 italic">
                           <Calendar className="h-3.5 w-3.5" />
                           {format(new Date(lead.created_at), "MMM d, yyyy")}
                         </div>

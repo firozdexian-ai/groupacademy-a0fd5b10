@@ -145,7 +145,7 @@ export function IndustriesTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <Database className="h-6 w-6 text-primary" /> Sector Registry
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+          <p className="text-[10px] font-black text-muted-foreground/60 italic">
             Normalization & Institutional Deduplication
           </p>
         </div>

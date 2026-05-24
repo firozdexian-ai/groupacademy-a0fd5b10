@@ -170,7 +170,7 @@ export function ProfessionalRolesPanel() {
             {filteredCats.length === 0 ? (
               <div className="text-center py-10">
                 <LayoutList className="h-8 w-8 mx-auto text-muted-foreground/30 mb-3" />
-                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">
+                <p className="text-xs font-bold text-muted-foreground/50">
                   No categories found
                 </p>
               </div>
@@ -234,7 +234,7 @@ export function ProfessionalRolesPanel() {
               <Button
                 onClick={addRole}
                 disabled={saving || !newRole.trim() || !activeCat}
-                className="h-12 rounded-xl px-6 font-bold uppercase tracking-wider text-[10px]"
+                className="h-12 rounded-xl px-6 font-bold text-[10px]"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <Plus className="h-4 w-4 mr-2" />}
                 Add Role
@@ -245,7 +245,7 @@ export function ProfessionalRolesPanel() {
               {catRoles.length === 0 ? (
                 <div className="flex flex-col items-center justify-center h-full border-2 border-dashed border-border/40 rounded-2xl bg-muted/5">
                   <Tags className="h-8 w-8 text-muted-foreground/30 mb-3" />
-                  <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">
+                  <p className="text-xs font-bold text-muted-foreground/50">
                     No roles mapped
                   </p>
                   <p className="text-xs text-muted-foreground mt-1">Add the first specific role above.</p>
@@ -267,7 +267,7 @@ export function ProfessionalRolesPanel() {
                         >
                           {r.name}
                         </div>
-                        <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground mt-1 flex items-center gap-1.5">
+                        <div className="text-[10px] font-black text-muted-foreground mt-1 flex items-center gap-1.5">
                           <Badge variant="secondary" className="px-1.5 py-0 text-[9px] h-4">
                             {tc}
                           </Badge>{" "}

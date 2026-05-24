@@ -222,7 +222,7 @@ export function LifetimeOverviewTab() {
                 { label: "AI Sessions", val: stats.aiAgents.totalSessions, icon: Zap },
               ].map((item, i) => (
                 <div key={i} className="space-y-2">
-                  <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">
+                  <p className="text-[10px] font-black text-muted-foreground/40">
                     {item.label}
                   </p>
                   <div className="flex items-end gap-2">
@@ -242,7 +242,7 @@ export function LifetimeOverviewTab() {
             </CardHeader>
             <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
               <div className="space-y-1">
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+                <p className="text-[9px] font-black text-muted-foreground/60 italic">
                   Active Nodes
                 </p>
                 <div className="flex items-center gap-4">

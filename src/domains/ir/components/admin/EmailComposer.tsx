@@ -59,7 +59,7 @@ function CommunicationHistory({ investorId }: { investorId?: string }) {
 
   if (!data || data.length === 0) {
     return (
-      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/50 italic py-6 text-center">
+      <p className="text-[10px] font-bold text-muted-foreground/50 italic py-6 text-center">
         No prior transmissions logged
         {investorId ? " for this investor" : ""}.
       </p>
@@ -92,7 +92,7 @@ function CommunicationHistory({ investorId }: { investorId?: string }) {
                 </Badge>
               </div>
             </div>
-            <div className="flex justify-between items-center text-[9px] font-bold uppercase tracking-widest text-muted-foreground/60">
+            <div className="flex justify-between items-center text-[9px] font-bold text-muted-foreground/60">
               <span>
                 {row.email_type} · {format(new Date(row.sent_at || row.created_at), "dd MMM yyyy HH:mm")}
               </span>

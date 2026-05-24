@@ -197,7 +197,7 @@ export function CompaniesTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <Building2 className="h-6 w-6 text-primary" /> Employer Registry
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] font-black text-muted-foreground/60">
             {totalCount} Logic Nodes In Sector
           </p>
         </div>
@@ -269,7 +269,7 @@ export function CompaniesTab() {
 
         <Table>
           <TableHeader className="bg-muted/20">
-            <TableRow className="text-[10px] font-black uppercase tracking-widest">
+            <TableRow className="text-[10px] font-black">
               <th className="pl-8 py-6">Employer Artifact</th>
               <th>Status</th>
               <th>Outreach Pulse</th>
@@ -471,7 +471,7 @@ export function CompaniesTab() {
 
             <div className="col-span-full flex items-center justify-between p-5 bg-muted/20 rounded-3xl border-2 border-border/10">
               <div className="space-y-1">
-                <p className="text-[10px] font-black uppercase tracking-widest">Verified Strategic Artifact</p>
+                <p className="text-[10px] font-black">Verified Strategic Artifact</p>
                 <p className="text-[9px] text-muted-foreground uppercase opacity-60">
                   High-priority node in B2B matching logic
                 </p>

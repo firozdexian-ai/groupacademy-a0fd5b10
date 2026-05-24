@@ -105,7 +105,7 @@ export function AbroadRoadmapLeadsTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "converting"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : row.status === "closed"
@@ -156,13 +156,13 @@ export function AbroadRoadmapLeadsTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
               <Map className="h-6 w-6" /> Process Lead
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update CRM pipeline stage.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Talent Node ID
               </Label>
               <Input
@@ -174,7 +174,7 @@ export function AbroadRoadmapLeadsTab() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Target Destination
                 </Label>
                 <Input
@@ -185,7 +185,7 @@ export function AbroadRoadmapLeadsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Pipeline Status
                 </Label>
                 <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
@@ -193,19 +193,19 @@ export function AbroadRoadmapLeadsTab() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="new" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                    <SelectItem value="new" className="font-bold text-xs text-amber-500">
                       New
                     </SelectItem>
-                    <SelectItem value="contacted" className="font-bold text-xs uppercase tracking-widest text-blue-500">
+                    <SelectItem value="contacted" className="font-bold text-xs text-blue-500">
                       Contacted
                     </SelectItem>
                     <SelectItem
                       value="converting"
-                      className="font-bold text-xs uppercase tracking-widest text-emerald-500"
+                      className="font-bold text-xs text-emerald-500"
                     >
                       Converting
                     </SelectItem>
-                    <SelectItem value="closed" className="font-bold text-xs uppercase tracking-widest text-rose-500">
+                    <SelectItem value="closed" className="font-bold text-xs text-rose-500">
                       Closed
                     </SelectItem>
                   </SelectContent>

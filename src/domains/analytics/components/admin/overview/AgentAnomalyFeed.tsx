@@ -99,7 +99,7 @@ export function AgentAnomalyFeed() {
           {isLoading ? (
             <div className="p-20 flex flex-col items-center justify-center gap-4 text-muted-foreground">
               <Loader2 className="h-8 w-8 animate-spin" />
-              <p className="text-[10px] font-black uppercase tracking-widest">Scanning Agents...</p>
+              <p className="text-[10px] font-black">Scanning Agents...</p>
             </div>
           ) : events.length > 0 ? (
             events.map((event) => {
@@ -122,13 +122,13 @@ export function AgentAnomalyFeed() {
                     <div className="space-y-1 flex-1">
                       <div className="flex items-center justify-between">
                         <p className="text-sm font-bold">{event.title}</p>
-                        <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground">
+                        <span className="text-[9px] font-black text-muted-foreground">
                           {formatDistanceToNow(new Date(event.created_at))} ago
                         </span>
                       </div>
                       <p className="text-xs text-muted-foreground/80 leading-relaxed">{event.description}</p>
                       <div className="flex items-center gap-2 pt-2">
-                        <span className="text-[9px] font-black uppercase tracking-widest text-primary bg-primary/10 px-2 py-0.5 rounded-sm">
+                        <span className="text-[9px] font-black text-primary bg-primary/10 px-2 py-0.5 rounded-sm">
                           {event.agent_key.replace(/-/g, " ")}
                         </span>
                       </div>
@@ -140,7 +140,7 @@ export function AgentAnomalyFeed() {
           ) : (
             <div className="p-20 flex flex-col items-center justify-center gap-4 text-muted-foreground">
               <CheckCircle2 className="h-8 w-8 text-primary/40" />
-              <p className="text-[10px] font-black uppercase tracking-widest">All agents nominal — 24h clear</p>
+              <p className="text-[10px] font-black">All agents nominal — 24h clear</p>
             </div>
           )}
         </div>

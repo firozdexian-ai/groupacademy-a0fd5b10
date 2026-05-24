@@ -122,11 +122,11 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
                 <CardTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-600">
                   Revenue
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+                <CardDescription className="text-[10px] font-bold">
                   Live credit-to-USD conversion
                 </CardDescription>
               </div>
-              <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black italic px-3 py-1 shadow-sm uppercase tracking-widest">
+              <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black italic px-3 py-1 shadow-sm">
                 Live
               </Badge>
             </div>
@@ -137,12 +137,12 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
                 <p className="text-6xl md:text-7xl font-black italic tracking-tighter text-foreground drop-shadow-sm">
                   {formatUSD(currentMRR)}
                 </p>
-                <p className="text-[10px] font-black text-muted-foreground uppercase tracking-widest bg-muted/30 w-fit px-3 py-1 rounded-md border border-border/20">
+                <p className="text-[10px] font-black text-muted-foreground bg-muted/30 w-fit px-3 py-1 rounded-md border border-border/20">
                   Verified Monthly Revenue
                 </p>
               </div>
               <p className="text-2xl md:text-3xl font-black text-muted-foreground/40 italic text-right">
-                <span className="text-[10px] block font-bold uppercase tracking-widest not-italic text-muted-foreground/30 mb-1">
+                <span className="text-[10px] block font-bold not-italic text-muted-foreground/30 mb-1">
                   Benchmark
                 </span>
                 {formatUSD(mrrTarget)}
@@ -154,7 +154,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
                 className="h-5 rounded-full bg-muted/30 shadow-inner border border-border/5"
               />
               <div className="flex flex-col sm:flex-row justify-between items-center gap-3">
-                <p className="text-[10px] font-black uppercase tracking-widest text-emerald-600 italic">
+                <p className="text-[10px] font-black text-emerald-600 italic">
                   Delta: {(totalCreditsTarget - currentCredits).toLocaleString()} Credits
                 </p>
                 <Badge
@@ -198,7 +198,7 @@ export function IRDashboard({ onNavigate }: IRDashboardProps) {
           <CardTitle className="text-xl font-black uppercase italic tracking-tighter text-primary">
             Neural Service Distribution
           </CardTitle>
-          <CardDescription className="text-[10px] font-bold uppercase tracking-widest italic mt-1 text-muted-foreground/60">
+          <CardDescription className="text-[10px] font-bold italic mt-1 text-muted-foreground/60">
             Real-time resource utilization against strategic benchmarks
           </CardDescription>
         </CardHeader>
@@ -261,7 +261,7 @@ function KPICard({ title, value, icon: Icon, subtext, variant = "default" }: any
         >
           {value}
         </div>
-        <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest">{subtext}</p>
+        <p className="text-[9px] font-bold text-muted-foreground/60">{subtext}</p>
       </CardContent>
     </Card>
   );
@@ -280,7 +280,7 @@ function ActionNode({ icon: Icon, label, count, onClick }: any) {
         <p className="font-black text-sm uppercase italic tracking-widest leading-tight truncate group-hover:text-primary transition-colors">
           {label}
         </p>
-        <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest mt-1.5 truncate">
+        <p className="text-[10px] font-bold text-muted-foreground/60 mt-1.5 truncate">
           {count}
         </p>
       </div>

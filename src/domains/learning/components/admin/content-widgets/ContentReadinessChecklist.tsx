@@ -95,12 +95,12 @@ export default function ContentReadinessChecklist({
   return (
     <Card className="rounded-[32px] border-border/40 overflow-hidden">
       <CardHeader className="pb-3">
-        <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center justify-between">
+        <CardTitle className="text-xs font-black flex items-center justify-between">
           <span>Readiness</span>
           <Badge
             variant="outline"
             className={cn(
-              "rounded-md text-[9px] font-black uppercase tracking-widest border",
+              "rounded-md text-[9px] font-black  border",
               sum.blockers > 0
                 ? "border-destructive/40 text-destructive bg-destructive/5"
                 : sum.warnings > 0
@@ -143,7 +143,7 @@ export default function ContentReadinessChecklist({
 
         {moduleAudit.length > 0 && (
           <div className="pt-2 mt-2 border-t border-border/20 space-y-1">
-            <p className="text-[9px] font-black uppercase tracking-widest text-amber-600">Modules blocking</p>
+            <p className="text-[9px] font-black text-amber-600">Modules blocking</p>
             {moduleAudit.slice(0, 5).map((m) => (
               <p key={m.id} className="text-[10px] text-muted-foreground">
                 <span className="font-semibold text-foreground">{m.title}</span> — {m.reason}
@@ -162,7 +162,7 @@ export default function ContentReadinessChecklist({
             size="sm"
             disabled={busy}
             onClick={recompute}
-            className="rounded-xl text-[10px] font-bold uppercase tracking-widest"
+            className="rounded-xl text-[10px] font-bold"
           >
             <RefreshCw className={cn("w-3 h-3 mr-1.5", busy && "animate-spin")} /> Recompute
           </Button>
@@ -175,7 +175,7 @@ export default function ContentReadinessChecklist({
                   size="sm"
                   disabled={busy}
                   onClick={forcePublish}
-                  className="rounded-xl text-[10px] font-bold uppercase tracking-widest text-amber-600 border-amber-500/30"
+                  className="rounded-xl text-[10px] font-bold text-amber-600 border-amber-500/30"
                 >
                   <Zap className="w-3 h-3 mr-1.5" /> Force Publish
                 </Button>

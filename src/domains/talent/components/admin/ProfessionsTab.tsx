@@ -119,7 +119,7 @@ export function ProfessionsTab() {
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
           <h2 className="text-2xl font-black uppercase italic tracking-tighter">Academic Governance</h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] font-black text-muted-foreground/60">
             Manage Academies, Schools & Programs
           </p>
         </div>

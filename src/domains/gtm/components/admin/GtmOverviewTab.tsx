@@ -44,13 +44,13 @@ export function GtmOverviewTab() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2">
                 <Globe className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-black uppercase tracking-widest">Active Deployment Zones</h3>
+                <h3 className="text-sm font-black">Active Deployment Zones</h3>
               </div>
 
               <Card className="border-2">
                 <CardContent className="p-4">
                   {data.countries.length === 0 ? (
-                    <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground text-center py-10">
+                    <p className="text-sm font-bold text-muted-foreground text-center py-10">
                       Zero Countries Deployed
                     </p>
                   ) : (
@@ -76,12 +76,12 @@ export function GtmOverviewTab() {
                           </div>
                           <div className="flex items-center gap-4 shrink-0">
                             <div className="text-right">
-                              <p className="text-[10px] uppercase tracking-widest text-muted-foreground font-bold">Identities</p>
+                              <p className="text-[10px] text-muted-foreground font-bold">Identities</p>
                               <p className="text-base font-black tabular-nums">{country.talent_count}</p>
                             </div>
                             <div className="flex items-center gap-1.5">
                               <span className={cn("h-2 w-2 rounded-full", country.is_active ? "bg-emerald-500 animate-pulse" : "bg-muted-foreground/40")} />
-                              <span className="text-[11px] font-bold uppercase tracking-wider">
+                              <span className="text-[11px] font-bold">
                                 {country.is_active ? "Live" : "Dark"}
                               </span>
                             </div>
@@ -112,7 +112,7 @@ export function GtmOverviewTab() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <BarChart3 className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-black uppercase tracking-widest">Talent Density</h3>
+                <h3 className="text-sm font-black">Talent Density</h3>
               </div>
 
               <Card className="border-2">
@@ -153,7 +153,7 @@ export function GtmOverviewTab() {
                     <Users className="h-5 w-5 text-amber-500" />
                   </div>
                   <div className="min-w-0">
-                    <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">Knowledge Packs</p>
+                    <p className="text-[10px] font-bold text-muted-foreground">Knowledge Packs</p>
                     <p className="text-2xl font-black tabular-nums">{data.totals.knowledge_packs.toLocaleString()}</p>
                   </div>
                 </CardContent>
@@ -174,7 +174,7 @@ function MetricTile({ label, value, icon: Icon, color, bg }: { label: string; va
           <Icon className={cn("h-5 w-5", color)} />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">{label}</p>
+          <p className="text-[10px] font-bold text-muted-foreground">{label}</p>
           <p className="text-2xl font-black tabular-nums">{value?.toLocaleString() || "0"}</p>
         </div>
       </CardContent>

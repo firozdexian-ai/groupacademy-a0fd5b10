@@ -85,7 +85,7 @@ export function ContactUnlocksTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2 text-primary">
             <Lock className="h-6 w-6" /> Contact Ledger
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+          <p className="text-[10px] font-black text-muted-foreground/60 italic">
             Institutional Audit Trail · Institutional Credit Burn
           </p>
         </div>
@@ -137,7 +137,7 @@ export function ContactUnlocksTab() {
         <div className="overflow-x-auto">
           <table className="w-full text-left">
             <thead className="bg-muted/20 border-b-2">
-              <tr className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+              <tr className="text-[10px] font-black text-muted-foreground/60">
                 <th className="px-8 py-6">Timestamp</th>
                 <th className="px-6 py-6">Employer Node</th>
                 <th className="px-6 py-6">Target Talent</th>

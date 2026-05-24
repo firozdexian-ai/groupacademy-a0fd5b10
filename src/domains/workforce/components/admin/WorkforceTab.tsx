@@ -227,7 +227,7 @@ export function WorkforceManager() {
             </div>
           ) : (
             <Table>
-              <TableHeader className="bg-muted/10 text-[10px] font-black uppercase tracking-widest">
+              <TableHeader className="bg-muted/10 text-[10px] font-black">
                 <TableRow className="border-b-2">
                   <TableHead className="py-6 pl-8">Executive Identity</TableHead>
                   <TableHead>Assignment / Grade</TableHead>
@@ -292,7 +292,7 @@ export function WorkforceManager() {
               <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter">
                 Deploy Workforce Node
               </DialogTitle>
-              <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+              <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
                 Initialize executive authority and team binding
               </DialogDescription>
             </DialogHeader>
@@ -446,7 +446,7 @@ function KPIStat({ icon: Icon, label, value, color }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div className="text-left">
-          <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground italic">{label}</p>
+          <p className="text-[9px] font-black text-muted-foreground italic">{label}</p>
           <p className="text-3xl font-black italic tracking-tighter leading-none">{value}</p>
         </div>
       </CardContent>

@@ -193,7 +193,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
             </div>
             <div className="space-y-2">
               <h3 className="text-xl font-black uppercase tracking-tighter italic">Initialize Data Ingestion</h3>
-              <p className="text-xs font-bold text-muted-foreground uppercase tracking-widest opacity-60">
+              <p className="text-xs font-bold text-muted-foreground opacity-60">
                 Authorized LinkedIn Artifacts Only (.json)
               </p>
             </div>
@@ -212,7 +212,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                 </div>
                 <div className="text-left">
                   <CardTitle className="text-xl font-black uppercase tracking-tighter italic">Audit Queue</CardTitle>
-                  <p className="text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest">{fileName}</p>
+                  <p className="text-[10px] font-bold text-muted-foreground/60">{fileName}</p>
                 </div>
               </div>
               <div className="flex items-center gap-3">
@@ -228,7 +228,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                       )
                     }
                   />
-                  <span className="text-[9px] font-black uppercase tracking-widest mr-2">Authorization Toggle</span>
+                  <span className="text-[9px] font-black mr-2">Authorization Toggle</span>
                 </div>
               </div>
             </div>
@@ -258,7 +258,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                       <p className="font-black text-sm uppercase italic leading-none truncate group-hover:text-primary transition-colors">
                         {record.data.full_name}
                       </p>
-                      <p className="text-[10px] font-bold text-muted-foreground/50 uppercase tracking-widest mt-1 truncate">
+                      <p className="text-[10px] font-bold text-muted-foreground/50 mt-1 truncate">
                         {record.data.email || record.data.title || "NULL_DESCRIPTOR"}
                       </p>
                     </div>
@@ -310,7 +310,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
             </div>
             <div className="space-y-2">
               <h3 className="text-3xl font-black uppercase tracking-tighter italic">Import complete</h3>
-              <p className="text-xs font-bold text-emerald-600/60 uppercase tracking-widest">
+              <p className="text-xs font-bold text-emerald-600/60">
                 Imported: {fileName}
               </p>
             </div>
@@ -324,7 +324,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
                   <p className={cn("text-4xl font-black italic tracking-tighter leading-none mb-2", s.color)}>
                     {s.val}
                   </p>
-                  <p className="text-[8px] font-black uppercase tracking-widest opacity-40 leading-tight">{s.label}</p>
+                  <p className="text-[8px] font-black opacity-40 leading-tight">{s.label}</p>
                 </div>
               ))}
             </div>

@@ -96,7 +96,7 @@ export function CreatorEconomyTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <Sparkles className="h-6 w-6 text-primary" /> Creator Economy
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+          <p className="text-[10px] font-black text-muted-foreground/60 italic">
             Hype, Connections & Boost activity telemetry
           </p>
         </div>
@@ -142,13 +142,13 @@ export function CreatorEconomyTab() {
         <TabsList className="bg-muted/30 border-2 border-border/40 p-1 h-auto rounded-2xl mb-6">
           <TabsTrigger
             value="leaders"
-            className="rounded-xl text-xs font-bold uppercase tracking-wider py-2.5 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
+            className="rounded-xl text-xs font-bold py-2.5 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
           >
             Top Earners
           </TabsTrigger>
           <TabsTrigger
             value="boosts"
-            className="rounded-xl text-xs font-bold uppercase tracking-wider py-2.5 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
+            className="rounded-xl text-xs font-bold py-2.5 px-6 data-[state=active]:bg-primary data-[state=active]:text-primary-foreground transition-all"
           >
             Active Boosts
           </TabsTrigger>
@@ -159,7 +159,7 @@ export function CreatorEconomyTab() {
           <Card className="rounded-[40px] border-2 bg-card/30 backdrop-blur-xl overflow-hidden text-left">
             <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 to-orange-600" />
             <CardHeader className="p-6 border-b border-border/10">
-              <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+              <CardTitle className="text-xs font-black flex items-center gap-2">
                 <Flame className="h-4 w-4 text-orange-500" /> Top Hyped Creators
               </CardTitle>
             </CardHeader>
@@ -184,7 +184,7 @@ export function CreatorEconomyTab() {
           <Card className="rounded-[40px] border-2 bg-card/30 backdrop-blur-xl overflow-hidden text-left">
             <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-blue-600" />
             <CardHeader className="p-6 border-b border-border/10">
-              <CardTitle className="text-xs font-black uppercase tracking-widest flex items-center gap-2">
+              <CardTitle className="text-xs font-black flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" /> Top Connection Earners
               </CardTitle>
             </CardHeader>
@@ -247,7 +247,7 @@ function StatCard({ icon, label, value, suffix, loading }: any) {
         {icon}
       </div>
       <div>
-        <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">{label}</p>
+        <p className="text-[9px] font-black text-muted-foreground/60">{label}</p>
         <p className="text-3xl font-black italic tracking-tighter">
           {loading ? "..." : value}
           {suffix && <span className="text-sm ml-1 text-primary">{suffix}</span>}

@@ -131,7 +131,7 @@ export function MRRTargetManager() {
         </div>
         <div className="flex items-center gap-3">
           {isClosed ? (
-            <Badge className="h-12 px-6 rounded-xl border-2 font-black italic gap-2 bg-muted text-muted-foreground border-border/40 uppercase tracking-widest text-[9px]">
+            <Badge className="h-12 px-6 rounded-xl border-2 font-black italic gap-2 bg-muted text-muted-foreground border-border/40 text-[9px]">
               <Lock className="h-3.5 w-3.5" /> REGISTRY_LOCKED
             </Badge>
           ) : (
@@ -192,7 +192,7 @@ export function MRRTargetManager() {
               <CardTitle className="text-xl font-black uppercase italic tracking-tighter text-emerald-600">
                 Revenue Calibration
               </CardTitle>
-              <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+              <CardDescription className="text-[10px] font-bold">
                 Define MRR parameters and user acquisition targets
               </CardDescription>
             </div>
@@ -201,7 +201,7 @@ export function MRRTargetManager() {
           <CardContent className="p-8 md:p-10 space-y-10 flex-1">
             <div className="grid gap-8 md:grid-cols-2">
               <div className="space-y-3 text-left">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-emerald-600 italic ml-2">
+                <Label className="text-[10px] font-black text-emerald-600 italic ml-2">
                   MRR Target (USD)
                 </Label>
                 <div className="relative">
@@ -221,7 +221,7 @@ export function MRRTargetManager() {
                 </div>
               </div>
               <div className="space-y-3 text-left">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary italic ml-2">
+                <Label className="text-[10px] font-black text-primary italic ml-2">
                   Target Paying Units
                 </Label>
                 <Input
@@ -260,7 +260,7 @@ export function MRRTargetManager() {
                 {totalCreditsTarget.toLocaleString()}
               </h3>
             </div>
-            <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest leading-relaxed max-w-[200px] mx-auto border-t border-primary/10 pt-4">
+            <p className="text-[10px] font-bold text-muted-foreground leading-relaxed max-w-[200px] mx-auto border-t border-primary/10 pt-4">
               Total Credits required to satisfy {formatUSD(mrrTarget)} target
             </p>
           </CardContent>
@@ -274,13 +274,13 @@ export function MRRTargetManager() {
             <CardTitle className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-2">
               <Settings2 className="h-5 w-5 text-primary" /> Mix Infrastructure
             </CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+            <CardDescription className="text-[10px] font-bold">
               Distribute expected usage load across neural service nodes
             </CardDescription>
           </div>
           <Badge
             className={cn(
-              "font-black italic px-4 py-2 border-2 text-[10px] uppercase tracking-widest rounded-xl shrink-0",
+              "font-black italic px-4 py-2 border-2 text-[10px]  rounded-xl shrink-0",
               totalMixPercent === 100
                 ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
                 : "bg-amber-500/10 text-amber-600 border-amber-500/20",
@@ -307,7 +307,7 @@ export function MRRTargetManager() {
                       <p className="text-lg font-black italic tracking-tight text-foreground/90">
                         {formatUSD(serviceTarget?.revenueUsd || 0)}
                       </p>
-                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                      <p className="text-[9px] font-bold text-muted-foreground mt-1">
                         {serviceTarget?.creditTarget.toLocaleString()} CR
                       </p>
                     </div>
@@ -350,7 +350,7 @@ export function MRRTargetManager() {
 function StatNode({ label, value }: { label: string; value: string | number }) {
   return (
     <div className="p-5 rounded-2xl bg-background/50 border-2 border-border/10 text-left hover:border-primary/20 transition-colors shadow-sm">
-      <p className="text-[9px] font-black text-muted-foreground uppercase tracking-widest mb-1">{label}</p>
+      <p className="text-[9px] font-black text-muted-foreground mb-1">{label}</p>
       <p className="font-black italic text-xl leading-none text-foreground/90 tracking-tight">{value}</p>
     </div>
   );

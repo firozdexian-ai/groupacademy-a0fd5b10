@@ -31,7 +31,7 @@ export function ConfirmPurge({
           <AlertDialogCancel className="rounded-xl">Cancel</AlertDialogCancel>
           <AlertDialogAction
             onClick={onConfirm}
-            className="rounded-xl bg-destructive hover:bg-destructive/90 font-black uppercase tracking-wider"
+            className="rounded-xl bg-destructive hover:bg-destructive/90 font-black"
           >
             Purge
           </AlertDialogAction>

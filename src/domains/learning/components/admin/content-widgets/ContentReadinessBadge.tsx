@@ -91,7 +91,7 @@ const ContentReadinessBadge = ({
       <div className={cn("space-y-2", className)}>
         <Badge
           variant="outline"
-          className={cn("rounded-md font-black text-[9px] uppercase tracking-widest gap-1.5", toneClasses[status.tone])}
+          className={cn("rounded-md font-black text-[9px]  gap-1.5", toneClasses[status.tone])}
         >
           <ToneIcon className="w-3 h-3" /> {status.label}
         </Badge>
@@ -114,7 +114,7 @@ const ContentReadinessBadge = ({
       <div className="flex items-center justify-between gap-2">
         <Badge
           variant="outline"
-          className={cn("rounded-md font-black text-[9px] uppercase tracking-widest gap-1.5", toneClasses[status.tone])}
+          className={cn("rounded-md font-black text-[9px]  gap-1.5", toneClasses[status.tone])}
         >
           <ToneIcon className="w-3 h-3" /> {status.label}
         </Badge>
@@ -136,7 +136,7 @@ const ContentReadinessBadge = ({
         />
       </div>
 
-      <div className="flex items-center gap-3 text-[9px] font-black uppercase tracking-widest flex-wrap">
+      <div className="flex items-center gap-3 text-[9px] font-black flex-wrap">
         <div className="flex items-center gap-1 text-muted-foreground/70 italic">
           <Layers className="w-3 h-3 opacity-70" />
           {stats.module_count} MODULES

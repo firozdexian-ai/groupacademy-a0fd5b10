@@ -207,7 +207,7 @@ export function QuizResultsViewer() {
                 <kpi.icon className={cn("h-6 w-6", kpi.color)} />
               </div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                <p className="text-[9px] font-black text-muted-foreground/40 mb-1">
                   {kpi.label}
                 </p>
                 <p className="text-3xl font-black tracking-tighter italic leading-none">{kpi.val}</p>
@@ -225,7 +225,7 @@ export function QuizResultsViewer() {
           <CardTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-3">
             <ShieldCheck className="h-5 w-5 text-primary" /> Performance Log
           </CardTitle>
-          <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-left">
+          <CardDescription className="text-[10px] font-bold text-left">
             Authorized audit trail for quiz logic cycles
           </CardDescription>
         </CardHeader>
@@ -239,22 +239,22 @@ export function QuizResultsViewer() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow className="hover:bg-transparent border-b-2 border-border/10">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8 text-left text-muted-foreground">
+                  <TableHead className="text-[10px] font-black py-8 px-8 text-left text-muted-foreground">
                     Learner Artifact
                   </TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-left text-muted-foreground">
+                  <TableHead className="text-[10px] font-black text-left text-muted-foreground">
                     Logic Node
                   </TableHead>
-                  <TableHead className="text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <TableHead className="text-center text-[10px] font-black text-muted-foreground">
                     Yield (Score)
                   </TableHead>
-                  <TableHead className="text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+                  <TableHead className="text-center text-[10px] font-black text-muted-foreground">
                     Status
                   </TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-left text-muted-foreground">
+                  <TableHead className="text-[10px] font-black text-left text-muted-foreground">
                     Temporal Log
                   </TableHead>
-                  <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8 text-muted-foreground">
+                  <TableHead className="text-right text-[10px] font-black pr-8 text-muted-foreground">
                     Audit
                   </TableHead>
                 </TableRow>
@@ -270,7 +270,7 @@ export function QuizResultsViewer() {
                         <p className="font-black text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
                           {attempt.studentName}
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                        <p className="text-[10px] font-bold text-muted-foreground/40 italic">
                           {attempt.studentEmail}
                         </p>
                       </div>
@@ -293,7 +293,7 @@ export function QuizResultsViewer() {
                         {attempt.passed ? "SUCCESS_SYNC" : "LOGIC_FAULT"}
                       </Badge>
                     </TableCell>
-                    <TableCell className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic text-left">
+                    <TableCell className="text-[10px] font-bold text-muted-foreground/40 italic text-left">
                       {format(new Date(attempt.attemptedAt), "MMM d, yyyy")}
                     </TableCell>
                     <TableCell className="text-right pr-8">
@@ -313,7 +313,7 @@ export function QuizResultsViewer() {
           ) : (
             <div className="py-32 text-center opacity-20">
               <Layers className="h-16 w-16 mx-auto mb-4" />
-              <p className="font-black uppercase tracking-widest text-xs">Registry Empty</p>
+              <p className="font-black text-xs">Registry Empty</p>
             </div>
           )}
         </CardContent>
@@ -331,7 +331,7 @@ export function QuizResultsViewer() {
                   <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic leading-none">
                     Attempt Forensics
                   </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+                  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
                     {selectedAttempt?.studentName} •{" "}
                     {selectedAttempt && format(new Date(selectedAttempt.attemptedAt), "MMM d, yyyy HH:mm")}
                   </DialogDescription>
@@ -343,7 +343,7 @@ export function QuizResultsViewer() {
               <div className="space-y-8 text-left">
                 <div className="flex items-center justify-between p-8 bg-muted/20 rounded-[32px] border-2 border-border/10 shadow-inner">
                   <div className="space-y-1">
-                    <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40">
+                    <p className="text-[10px] font-black text-muted-foreground/40">
                       Logic Match Yield
                     </p>
                     <p
@@ -431,7 +431,7 @@ export function QuizResultsViewer() {
                 <DialogFooter className="pt-8 border-t border-border/10">
                   <Button
                     onClick={() => setDetailDialogOpen(false)}
-                    className="w-full h-14 rounded-2xl font-black uppercase tracking-widest text-[11px] shadow-xl shadow-primary/30"
+                    className="w-full h-14 rounded-2xl font-black text-[11px] shadow-xl shadow-primary/30"
                   >
                     Close Audit
                   </Button>

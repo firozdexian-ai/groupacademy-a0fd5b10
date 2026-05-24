@@ -530,7 +530,7 @@ function PurgeAlert({ targetId, onOpenChange, onConfirm }: any) {
           <AlertDialogTitle className="font-black italic uppercase text-2xl tracking-tighter">
             Purge Taxonomy Node?
           </AlertDialogTitle>
-          <AlertDialogDescription className="text-xs font-bold uppercase tracking-widest text-muted-foreground/60 leading-relaxed">
+          <AlertDialogDescription className="text-xs font-bold text-muted-foreground/60 leading-relaxed">
             System Warning: This protocol will permanently orphan linked workforce members and logic nodes. This action
             is immutable.
           </AlertDialogDescription>

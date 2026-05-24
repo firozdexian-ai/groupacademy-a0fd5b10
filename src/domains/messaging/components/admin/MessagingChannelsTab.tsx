@@ -185,11 +185,11 @@ export function MessagingChannelsTab({
           <CardContent className="p-6 space-y-6 flex-1 flex flex-col">
             <div className="grid gap-4 sm:grid-cols-2">
               <div className="space-y-1.5">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Label</Label>
+                <Label className="text-[10px] font-black text-muted-foreground">Label</Label>
                 <Input value={label} onChange={(e) => setLabel(e.target.value)} className="h-12 rounded-xl border-2" />
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">Region</Label>
+                <Label className="text-[10px] font-black text-muted-foreground">Region</Label>
                 <Input
                   value={region}
                   onChange={(e) => setRegion(e.target.value)}
@@ -202,7 +202,7 @@ export function MessagingChannelsTab({
               <Button
                 onClick={connectWhatsApp}
                 disabled={creating}
-                className="w-full sm:w-auto h-12 rounded-xl px-6 font-bold uppercase tracking-wider text-[10px]"
+                className="w-full sm:w-auto h-12 rounded-xl px-6 font-bold text-[10px]"
               >
                 {creating ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : <Phone className="h-4 w-4 mr-2" />}
                 Connect WhatsApp
@@ -232,7 +232,7 @@ export function MessagingChannelsTab({
                   onClick={verifyAndSave}
                   disabled={verifying || !accountId.trim()}
                   variant="secondary"
-                  className="h-12 rounded-xl px-6 font-bold uppercase tracking-wider text-[10px]"
+                  className="h-12 rounded-xl px-6 font-bold text-[10px]"
                 >
                   {verifying ? <Loader2 className="h-4 w-4 mr-2 animate-spin" /> : null}
                   Verify
@@ -264,7 +264,7 @@ export function MessagingChannelsTab({
             ) : channels.length === 0 ? (
               <div className="flex flex-col items-center justify-center h-full min-h-[200px] border-2 border-dashed border-border/40 rounded-2xl bg-muted/5">
                 <Phone className="h-8 w-8 text-muted-foreground/30 mb-3" />
-                <p className="text-xs font-bold uppercase tracking-widest text-muted-foreground/50">No channels yet</p>
+                <p className="text-xs font-bold text-muted-foreground/50">No channels yet</p>
               </div>
             ) : (
               <div className="space-y-3">
@@ -327,7 +327,7 @@ export function MessagingChannelsTab({
                         title="Toggle AI Auto-Reply"
                       >
                         <Switch checked={c.auto_reply_enabled} onCheckedChange={(v) => toggleAutoReply(c.id, v)} />
-                        <span className="text-[10px] font-black uppercase tracking-wider text-muted-foreground">
+                        <span className="text-[10px] font-black text-muted-foreground">
                           AI
                         </span>
                       </div>

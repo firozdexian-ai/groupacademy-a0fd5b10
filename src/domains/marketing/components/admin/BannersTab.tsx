@@ -201,7 +201,7 @@ export const BannerManager = () => {
               <CardTitle className="text-2xl font-black uppercase tracking-tighter italic">
                 Initialize Artifact
               </CardTitle>
-              <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+              <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
                 1536×512PX Registry Injection (3:1 Ratio)
               </CardDescription>
             </div>
@@ -211,7 +211,7 @@ export const BannerManager = () => {
           <form onSubmit={handleCreateArtifact} className="grid grid-cols-1 md:grid-cols-2 gap-10">
             <div className="space-y-6">
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Visual Payload (Image)
                 </Label>
                 <div className="p-4 rounded-[24px] border-2 border-dashed border-border/40 bg-muted/5 group transition-all hover:border-primary/40">
@@ -228,7 +228,7 @@ export const BannerManager = () => {
             <div className="space-y-6">
               <div className="grid grid-cols-1 gap-6">
                 <div className="space-y-3">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-black text-primary ml-1">
                     Logic Link (Optional)
                   </Label>
                   <Select
@@ -253,7 +253,7 @@ export const BannerManager = () => {
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Spatial Placement
                     </Label>
                     <Select
@@ -277,7 +277,7 @@ export const BannerManager = () => {
                     </Select>
                   </div>
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Logic Order
                     </Label>
                     <Input
@@ -291,7 +291,7 @@ export const BannerManager = () => {
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Media Type
                     </Label>
                     <Select
@@ -309,7 +309,7 @@ export const BannerManager = () => {
                     </Select>
                   </div>
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Focal Point
                     </Label>
                     <Select
@@ -332,7 +332,7 @@ export const BannerManager = () => {
 
                 {(newBanner.media_type === "video" || newBanner.media_type === "gif") && (
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       {newBanner.media_type === "video" ? "Video URL (MP4)" : "GIF URL"}
                     </Label>
                     <Input
@@ -349,7 +349,7 @@ export const BannerManager = () => {
 
                 {newBanner.media_type === "video" && (
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Poster Frame URL (optional)
                     </Label>
                     <Input
@@ -363,7 +363,7 @@ export const BannerManager = () => {
 
                 <div className="grid grid-cols-1 gap-6">
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       External Link URL (optional)
                     </Label>
                     <Input
@@ -374,7 +374,7 @@ export const BannerManager = () => {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       CTA Label (optional)
                     </Label>
                     <Input
@@ -388,7 +388,7 @@ export const BannerManager = () => {
 
                 <div className="grid grid-cols-2 gap-6">
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Schedule Start (optional)
                     </Label>
                     <Input
@@ -399,7 +399,7 @@ export const BannerManager = () => {
                     />
                   </div>
                   <div className="space-y-3">
-                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                    <Label className="text-[10px] font-black text-primary ml-1">
                       Schedule End (optional)
                     </Label>
                     <Input
@@ -447,7 +447,7 @@ export const BannerManager = () => {
           {banners.length === 0 ? (
             <div className="py-24 text-center space-y-4 opacity-20 italic">
               <ImageIcon className="h-12 w-12 mx-auto" />
-              <p className="text-[10px] font-black uppercase tracking-widest">Registry Node Null</p>
+              <p className="text-[10px] font-black">Registry Node Null</p>
             </div>
           ) : (
             <div className="divide-y divide-border/10">
@@ -483,7 +483,7 @@ export const BannerManager = () => {
                         >
                           {banner.placement} NODE
                         </Badge>
-                        <span className="text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                        <span className="text-[9px] font-bold text-muted-foreground/40 italic">
                           Sequence Index: {banner.display_order}
                         </span>
                       </div>
@@ -499,7 +499,7 @@ export const BannerManager = () => {
                       />
                       <span
                         className={cn(
-                          "text-[9px] font-black uppercase tracking-widest",
+                          "text-[9px] font-black ",
                           banner.is_active ? "text-emerald-500" : "text-muted-foreground/40",
                         )}
                       >

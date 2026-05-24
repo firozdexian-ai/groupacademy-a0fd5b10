@@ -126,7 +126,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
                 <DialogTitle className="text-xl font-black uppercase tracking-tighter italic leading-none">
                   Generate Access Node
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
                   Target Entity: {leadName}
                 </DialogDescription>
               </div>
@@ -135,7 +135,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
 
           <div className="space-y-6">
             <div className="space-y-2 px-1">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Entity Telemetry (Email)
               </Label>
               <Input value={leadEmail} disabled className="h-11 rounded-xl bg-muted/20 border-2 font-bold opacity-60" />
@@ -144,7 +144,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
             {generatedCode ? (
               <div className="space-y-4 animate-in zoom-in-95 duration-500">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-emerald-500 ml-1">
+                  <Label className="text-[10px] font-black text-emerald-500 ml-1">
                     Logic Artifact (Code)
                   </Label>
                   <div className="flex items-center gap-3">
@@ -168,7 +168,7 @@ export function AssessmentCodeGenerator({ leadEmail, leadName }: AssessmentCodeG
                 </div>
                 <div className="p-4 rounded-2xl bg-muted/30 border border-border/40 flex items-start gap-3">
                   <Zap className="h-4 w-4 text-amber-500 shrink-0 mt-0.5" />
-                  <p className="text-[9px] font-bold leading-relaxed text-muted-foreground uppercase tracking-widest italic text-left">
+                  <p className="text-[9px] font-bold leading-relaxed text-muted-foreground italic text-left">
                     Artifact expires in 30 days. Export payload to transmit credentials via secondary channel.
                   </p>
                 </div>

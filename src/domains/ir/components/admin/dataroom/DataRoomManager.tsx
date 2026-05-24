@@ -53,7 +53,7 @@ export function DataRoomManager() {
                 <FileText className="h-8 w-8 text-muted-foreground/40" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-black uppercase tracking-widest italic text-muted-foreground/60">
+                <p className="text-sm font-black italic text-muted-foreground/60">
                   Registry Empty
                 </p>
                 <p className="text-xs font-medium text-muted-foreground">
@@ -77,14 +77,14 @@ export function DataRoomManager() {
                         {doc.title}
                       </h4>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="font-black text-[9px] uppercase tracking-widest border-2">
+                        <Badge variant="outline" className="font-black text-[9px] border-2">
                           {doc.doc_type.replace("_", " ")}
                         </Badge>
-                        <Badge variant="secondary" className="font-bold text-[9px] uppercase tracking-widest">
+                        <Badge variant="secondary" className="font-bold text-[9px]">
                           v{doc.version}
                         </Badge>
                         {doc.total_slides && (
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">
+                          <span className="text-[10px] font-bold text-muted-foreground ml-1">
                             {doc.total_slides} slides
                           </span>
                         )}

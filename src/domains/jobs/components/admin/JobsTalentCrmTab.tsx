@@ -100,7 +100,7 @@ export function JobsTalentCrmTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.stage === "hired"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : row.stage === "rejected"
@@ -154,14 +154,14 @@ export function JobsTalentCrmTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
               <UserCheck className="h-6 w-6" /> CRM Record
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update talent pipeline stage.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Talent Node ID
                 </Label>
                 <Input
@@ -172,7 +172,7 @@ export function JobsTalentCrmTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Company Node ID
                 </Label>
                 <Input
@@ -184,7 +184,7 @@ export function JobsTalentCrmTab() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Pipeline Stage
               </Label>
               <Select value={draft.stage} onValueChange={(v) => setDraft({ ...draft, stage: v })}>
@@ -192,22 +192,22 @@ export function JobsTalentCrmTab() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="lead" className="font-bold text-xs uppercase tracking-widest">
+                  <SelectItem value="lead" className="font-bold text-xs">
                     Lead
                   </SelectItem>
-                  <SelectItem value="contacted" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                  <SelectItem value="contacted" className="font-bold text-xs text-amber-500">
                     Contacted
                   </SelectItem>
                   <SelectItem
                     value="interviewing"
-                    className="font-bold text-xs uppercase tracking-widest text-blue-500"
+                    className="font-bold text-xs text-blue-500"
                   >
                     Interviewing
                   </SelectItem>
-                  <SelectItem value="hired" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                  <SelectItem value="hired" className="font-bold text-xs text-emerald-500">
                     Hired
                   </SelectItem>
-                  <SelectItem value="rejected" className="font-bold text-xs uppercase tracking-widest text-rose-500">
+                  <SelectItem value="rejected" className="font-bold text-xs text-rose-500">
                     Rejected
                   </SelectItem>
                 </SelectContent>

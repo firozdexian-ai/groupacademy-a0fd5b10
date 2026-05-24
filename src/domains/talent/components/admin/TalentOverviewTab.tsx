@@ -119,7 +119,7 @@ export function TalentOverviewTab() {
                 <h3 className="text-xl font-black uppercase tracking-tighter italic text-foreground">
                   Welcome AI Funnel
                 </h3>
-                <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                <p className="text-[10px] font-bold text-muted-foreground/60">
                   Node Onboarding Pipeline
                 </p>
               </div>
@@ -171,7 +171,7 @@ export function TalentOverviewTab() {
                   <div className="font-black text-sm uppercase italic truncate group-hover:text-emerald-500 transition-colors">
                     {r.full_name || "Anonymous User"}
                   </div>
-                  <div className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground truncate flex items-center gap-2 mt-1">
+                  <div className="text-[10px] font-bold text-muted-foreground truncate flex items-center gap-2 mt-1">
                     <span>{r.country || "Global"}</span>
                     <span>·</span>
                     <Badge

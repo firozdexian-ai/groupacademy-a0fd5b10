@@ -65,7 +65,7 @@ export function PipelineCard({ investor, index, onSelect }: Props) {
               <h4 className="font-black text-sm uppercase italic tracking-tight truncate group-hover:text-primary transition-colors">
                 {investor.full_name}
               </h4>
-              <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 truncate">
+              <div className="flex items-center gap-1.5 text-[9px] font-bold text-muted-foreground mt-0.5 truncate">
                 {investor.vc_firm?.name ? (
                   <>
                     <Building2 className="h-3 w-3 shrink-0" />
@@ -81,7 +81,7 @@ export function PipelineCard({ investor, index, onSelect }: Props) {
           <div className="flex flex-wrap items-center gap-2 mb-3">
             <span
               className={cn(
-                "flex items-center gap-1 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md border",
+                "flex items-center gap-1 text-[8px] font-black  px-2 py-0.5 rounded-md border",
                 lead.className,
               )}
             >
@@ -89,7 +89,7 @@ export function PipelineCard({ investor, index, onSelect }: Props) {
               {lead.label}
             </span>
             {investor.probability_pct > 0 && (
-              <span className="flex items-center gap-1 text-[8px] font-black uppercase tracking-widest px-2 py-0.5 rounded-md bg-muted text-foreground/70 border border-border/40">
+              <span className="flex items-center gap-1 text-[8px] font-black px-2 py-0.5 rounded-md bg-muted text-foreground/70 border border-border/40">
                 <TrendingUp className="h-2.5 w-2.5 text-emerald-500" />
                 {investor.probability_pct}%
               </span>
@@ -108,7 +108,7 @@ export function PipelineCard({ investor, index, onSelect }: Props) {
               )}
               {investor.expected_close_date && (
                 <div className="text-[10px] font-bold text-muted-foreground flex items-center justify-between">
-                  <span className="text-[8px] uppercase tracking-widest flex items-center gap-1">
+                  <span className="text-[8px] flex items-center gap-1">
                     <CalIcon className="h-2.5 w-2.5" /> ETA
                   </span>
                   {new Date(investor.expected_close_date).toLocaleDateString(undefined, {

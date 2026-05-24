@@ -227,14 +227,14 @@ export const SalaryAnalysisLeadsManager = () => {
                   >
                     <TableCell className="py-6 pl-8">
                       <p className="font-black text-sm uppercase italic tracking-tight">{lead.full_name}</p>
-                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 italic flex items-center gap-1">
+                      <p className="text-[9px] font-bold text-muted-foreground mt-0.5 italic flex items-center gap-1">
                         <Mail className="h-2 w-2" /> {lead.email}
                       </p>
                     </TableCell>
                     <TableCell>
                       <p className="font-black uppercase italic text-xs leading-none">{lead.job_title || "-"}</p>
                       {lead.company_name && (
-                        <p className="text-[8px] font-bold text-muted-foreground/50 uppercase tracking-widest mt-1">
+                        <p className="text-[8px] font-bold text-muted-foreground/50 mt-1">
                           at {lead.company_name}
                         </p>
                       )}
@@ -247,7 +247,7 @@ export const SalaryAnalysisLeadsManager = () => {
                     <TableCell>
                       <Badge
                         className={cn(
-                          "font-black text-[9px] uppercase tracking-widest italic rounded-full px-4",
+                          "font-black text-[9px]  italic rounded-full px-4",
                           statusColors[lead.status || "pending"],
                         )}
                       >

@@ -150,7 +150,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
         <Button
           onClick={handleCommit}
           disabled={validCards.length === 0}
-          className="h-12 px-8 rounded-xl font-black uppercase tracking-widest text-[11px] shadow-2xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+          className="h-12 px-8 rounded-xl font-black text-[11px] shadow-2xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
         >
           <ShieldCheck className="mr-2 h-4 w-4" /> Commit Registry
         </Button>
@@ -191,7 +191,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                       <div className="flex items-center gap-3">
                         <Badge
                           variant="outline"
-                          className="rounded-lg border-2 font-black text-[9px] bg-background uppercase tracking-widest px-3"
+                          className="rounded-lg border-2 font-black text-[9px] bg-background px-3"
                         >
                           Node_{String(index + 1).padStart(3, "0")}
                         </Badge>
@@ -228,7 +228,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                   </CardHeader>
                   <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      <Label className="text-[10px] font-black text-primary ml-1">
                         Stimulus (Front)
                       </Label>
                       <Textarea
@@ -239,7 +239,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                       />
                     </div>
                     <div className="space-y-3">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-emerald-500 ml-1">
+                      <Label className="text-[10px] font-black text-emerald-500 ml-1">
                         Resolution (Back)
                       </Label>
                       <Textarea
@@ -258,7 +258,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                 className="w-full h-24 rounded-[32px] border-4 border-dashed border-border/40 bg-muted/5 hover:bg-primary/5 hover:border-primary/40 transition-all group"
               >
                 <Plus className="h-6 w-6 mr-3 text-muted-foreground group-hover:scale-125 transition-transform" />
-                <span className="font-black uppercase tracking-widest text-xs opacity-40">
+                <span className="font-black text-xs opacity-40">
                   Initialize New Registry Node
                 </span>
               </Button>
@@ -273,7 +273,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                 <CardTitle className="text-xl font-black uppercase tracking-tighter italic">
                   Payload Synthesis
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+                <CardDescription className="text-[10px] font-bold">
                   Artifact raw logic schema
                 </CardDescription>
               </div>
@@ -299,7 +299,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
               <CardTitle className="text-xl font-black uppercase tracking-tighter italic">
                 Ingest Logic Schema
               </CardTitle>
-              <CardDescription className="text-[10px] font-bold uppercase tracking-widest italic opacity-60">
+              <CardDescription className="text-[10px] font-bold italic opacity-60">
                 Paste external artifact payload for injection
               </CardDescription>
             </CardHeader>
@@ -361,7 +361,7 @@ export function FlashcardEditor({ initialCards = [], onChange, onSave }: Flashca
                     </p>
                     <div className="mt-12 flex items-center gap-2 opacity-20">
                       <Activity className="h-4 w-4 animate-pulse" />
-                      <span className="text-[9px] font-bold uppercase tracking-widest italic">
+                      <span className="text-[9px] font-bold italic">
                         Awaiting Interaction
                       </span>
                     </div>
