@@ -20,6 +20,7 @@ import { MySubmissions } from "@/domains/gigs/components/talent/MySubmissions";
 import { GigUploader, type UploadedFile } from "@/domains/gigs/components/talent/GigUploader";
 import { GigForYouTab } from "@/domains/gigs/components/talent/GigForYouTab";
 import { AvailabilityWidget } from "@/domains/gigs/components/talent/AvailabilityWidget";
+import { ComingSoonGate } from "@/components/launch/ComingSoonGate";
 import { Skeleton } from "@/components/ui/skeleton";
 import {
  Search,
@@ -488,6 +489,13 @@ export default function Gigs() {
  value="client"
  className="space-y-4 focus:outline-none outline-none mt-2 block w-full animate-in fade-in duration-200"
  >
+ <ComingSoonGate
+   featureKey="gigs-marketplace"
+   title="Open Marketplace"
+   description="Browse public gigs from verified clients. Opening once we onboard the first wave."
+   secondaryCtaLabel="See For-You picks"
+   secondaryCtaHref="/app/gigs?tab=for-you"
+ >
  <div className="relative w-full block shrink-0">
  <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 stroke-[2.2] select-none pointer-events-none" />
  <Input
@@ -557,7 +565,9 @@ export default function Gigs() {
  ))
  )}
  </div>
+ </ComingSoonGate>
  </TabsContent>
+
 
  {/* My activity */}
  <TabsContent
