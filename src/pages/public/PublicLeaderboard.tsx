@@ -258,3 +258,50 @@ function PublicLeaderboardInner() {
     </div>
   );
 }
+
+const KIND_TO_DB: Record<string, "talent" | "company" | "reviewer"> = {
+  talents: "talent",
+  companies: "company",
+  reviewers: "reviewer",
+};
+
+export default function PublicLeaderboard() {
+  const { kind } = useParams<{ kind: string }>();
+  const safeKind = (kind && KIND_TO_DB[kind] ? kind : "talents") as "talents" | "companies" | "reviewers";
+  const dbKind = KIND_TO_DB[safeKind];
+
+  const [hasEnough, setHasEnough] = React.useState<boolean | null>(null);
+
+  React.useEffect(() => {
+    let cancelled = false;
+    (async () => {
+      try {
+        const rows = await getLeaderboard<Record<string, unknown>>({
+          kind: dbKind,
+          period: "alltime",
+          category: null,
+        });
+        if (!cancelled) setHasEnough((rows?.length ?? 0) >= 10);
+      } catch {
+        if (!cancelled) setHasEnough(false);
+      }
+    })();
+    return () => {
+      cancelled = true;
+    };
+  }, [dbKind]);
+
+  return (
+    <ComingSoonGate
+      featureKey={`leaderboards-${safeKind}`}
+      title={`Top ${safeKind} · Coming soon`}
+      description="Rankings open once enough entries qualify. Join the waitlist to be notified the moment this leaderboard goes live."
+      secondaryCtaLabel="Browse projects"
+      secondaryCtaHref="/projects"
+      showWhen={hasEnough === true}
+    >
+      <PublicLeaderboardInner />
+    </ComingSoonGate>
+  );
+}
+
