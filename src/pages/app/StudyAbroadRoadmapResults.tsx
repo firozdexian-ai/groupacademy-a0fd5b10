@@ -171,7 +171,7 @@ export default function StudyAbroadRoadmapResults() {
  </Card>
 
  <Tabs defaultValue="universities" className="w-full space-y-8">
- <TabsList className="grid w-full grid-cols-4 h-16 bg-muted/30 rounded-2xl p-1.5 shadow-xl">
+ <TabsList className="grid w-full grid-cols-4 h-16 bg-muted/30 rounded-2xl p-1.5 shadow-sm">
  <TabsTrigger value="universities" className="rounded-xl font-black text-[9px] uppercase tracking-widest">
  Universities
  </TabsTrigger>

@@ -134,7 +134,7 @@ export default function ServicesHub() {
  <Card className={cn(CARD, "min-w-[320px] shadow-sm")}>
  <CardContent className="p-6 flex items-center justify-between gap-6">
  <div className="flex items-center gap-4">
- <div className="h-14 w-14 rounded-xl bg-primary flex items-center justify-center rotate-3 shadow-xl">
+ <div className="h-14 w-14 rounded-xl bg-primary flex items-center justify-center rotate-3 shadow-sm">
  <Coins className="h-7 w-7 text-white" />
  </div>
  <div>

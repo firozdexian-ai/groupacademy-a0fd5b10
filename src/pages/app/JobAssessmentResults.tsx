@@ -314,7 +314,7 @@ export default function JobAssessmentResults() {
  </Card>
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
- <Card className="rounded-2xl border-border/40 shadow-xl overflow-hidden">
+ <Card className="rounded-2xl border-border/40 shadow-sm overflow-hidden">
  <CardHeader className="bg-muted/20 px-8 py-5 border-b">
  <CardTitle className="text-[11px] font-bold uppercase tracking-tight text-primary flex items-center gap-3">
  <Target className="h-4 w-4" /> Skill breakdown
@@ -342,7 +342,7 @@ export default function JobAssessmentResults() {
  </CardContent>
  </Card>
 
- <Card className="rounded-2xl border-border/40 shadow-xl overflow-hidden">
+ <Card className="rounded-2xl border-border/40 shadow-sm overflow-hidden">
  <CardHeader className="bg-muted/20 px-8 py-5 border-b">
  <CardTitle className="text-[11px] font-bold uppercase tracking-tight text-primary flex items-center gap-3">
  <ShieldCheck className="h-4 w-4" /> AI feedback
