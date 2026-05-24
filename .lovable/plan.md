@@ -57,3 +57,12 @@ Inline form elements *inside* modals already covered by A11/A12 — no re-sweep 
 ## Why this phase next
 
 A11 + A12 normalized 90% of admin surface area but modals are the last "loud" element. After A13, the entire admin shell shares one chrome vocabulary, unblocking the lower-priority empty-state and JSDoc sweeps as pure cleanup.
+
+---
+
+## A13 — Executed
+
+- Swept 76 admin files containing Dialog/Sheet/AlertDialog/Popover content.
+- Normalized: `rounded-3xl`→`rounded-2xl`, `shadow-2xl`/`shadow-xl`→`shadow-lg`/`shadow-sm`, removed `backdrop-blur-{xl,2xl,md}` from modal panels, `border-2 border-*`→`border border-*/60`, `border-b-2`/`border-t-2`→`border-b`/`border-t`, `tracking-[0.2em]`→`tracking-tight`.
+- Header/footer text: `text-[10px] font-bold italic`→`text-sm text-muted-foreground`, `text-[10px] font-bold`/`text-[11px] font-black`→`text-sm font-medium`, `font-black uppercase italic tracking-tighter`→`font-semibold`.
+- Final audit: 0 hits across 76 files.
