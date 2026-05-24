@@ -1,79 +1,83 @@
-# B5 — Apply ComingSoonGate to "coming-soon" surfaces (Batch 1)
+# B5 Batch 2 — Remaining coming-soon surfaces
 
-Scope: wrap defer-matrix routes whose action is **coming-soon** with `<ComingSoonGate>`. No new components, no schema, no nav edits (B6 handles hide-nav and admin widget).
+Batch 1 wrapped 8 full routes. Batch 2 finishes the **coming-soon** column of the defer matrix: 2 surfaces, both needing custom logic instead of a plain route wrap.
 
-To keep blast radius small, B5 ships in **two batches**. This plan covers **Batch 1 only** (8 surfaces). Batch 2 = remaining surfaces + dynamic abroad-country gating.
+## Scope — 2 surfaces
 
-## Batch 1 — 8 surfaces
-
-Each is a single-line wrapper at the **page component top-level** (not in `App.tsx`). This keeps lazy-loading + route layout untouched, and means dynamic params (e.g. `:country`) are available inside the gate's source-path metadata.
-
-| # | Page file | featureKey | Title / description |
+| # | Surface | featureKey | Mechanism |
 |---|---|---|---|
-| 1 | `src/pages/app/ReviewerCockpit.tsx` | `reviewer-program` | "Community Reviewer Program" / "Earn credits by reviewing submissions. Applications open soon." |
-| 2 | `src/pages/app/MyProjects.tsx` | `managed-projects` | "Managed Projects" / "Escrow-backed multi-talent projects. Coming soon for talents." |
-| 3 | `src/pages/app/TalentDirectory.tsx` | `talent-directory` | "Talent Directory" / "Browse public talent profiles. Opening once enough talents go public." |
-| 4 | `src/pages/app/LanguagesHub.tsx` | `languages-hub` | "Languages Hub" / "Practice rooms + verified language instructors. Coming soon." |
-| 5 | `src/pages/app/LanguagePracticePage.tsx` | `languages-practice` | "Language Practice" / same theme |
-| 6 | `src/pages/app/LanguageInstructorsPage.tsx` | `languages-instructors` | "Language Instructors" / same theme |
-| 7 | `src/pages/app/Competitions.tsx` | `competitions` | "Competitions" / "Time-boxed challenges with prizes. Next season opens soon." |
-| 8 | `src/pages/app/DestinationAgentPage.tsx` | `abroad-country-${country}` | "Study in {Country}" / "We're onboarding partner agents for {Country}." — uses `useParams().country` for slug + label |
+| 1 | `/app/gigs` **Marketplace sub-tab** | `gigs-marketplace` | Tab-level gate (not route) — `For-You` tab stays open, only the Marketplace tab content renders the gate |
+| 2 | `/leaderboards/:kind` | `leaderboards-${kind}` | Route-level gate with `showWhen` threshold — auto-unlocks when `leaderboard_snapshots` rowcount ≥ 10 for that kind |
 
-For #8 the `featureKey` must satisfy the RPC regex `^[a-z0-9][a-z0-9-]{0,79}$`. We'll normalize: `country.toLowerCase().replace(/[^a-z0-9-]/g, "-")` and prefix with `abroad-country-`. If empty after normalization → fallback to `abroad-country-unknown`.
+Out of scope: hide-nav / hide actions, admin signals widget, nav pruning — all B6.
 
-## Per-page wrapper pattern
+## 1. Gigs Marketplace sub-tab
 
-Each page becomes:
+Find the tab switch in `src/pages/app/Gigs.tsx` (or equivalent). Locate the `TabsContent value="marketplace"` block. Replace its children with:
 
 ```tsx
-import { ComingSoonGate } from "@/components/launch/ComingSoonGate";
-
-export default function ReviewerCockpit() {
-  return (
-    <ComingSoonGate
-      featureKey="reviewer-program"
-      title="Community Reviewer Program"
-      description="Earn credits by reviewing submissions. Applications open soon."
-      secondaryCtaLabel="Explore gigs"
-      secondaryCtaHref="/app/gigs"
-    >
-      {/* …existing render… */}
-    </ComingSoonGate>
-  );
-}
+<TabsContent value="marketplace">
+  <ComingSoonGate
+    featureKey="gigs-marketplace"
+    title="Open Marketplace"
+    description="Browse public gigs from verified clients. Opening once we onboard the first wave."
+    secondaryCtaLabel="See For-You picks"
+    secondaryCtaHref="/app/gigs"
+  >
+    {/* existing marketplace content */}
+  </ComingSoonGate>
+</TabsContent>
 ```
 
-If a page already does work in its `default export` body (hooks etc.), we'll split into an inner `*Inner` component so hooks don't run behind the gate. Pattern:
+The For-You tab is untouched. Default tab stays whatever it currently is.
+
+## 2. Leaderboards threshold gate
+
+`src/pages/public/LeaderboardPage.tsx` (or equivalent under `/leaderboards/:kind`). Wrap top-level render with:
 
 ```tsx
-function ReviewerCockpitInner() { /* original body */ }
-export default function ReviewerCockpit() {
-  return <ComingSoonGate ...><ReviewerCockpitInner /></ComingSoonGate>;
-}
+const { kind } = useParams<{ kind: string }>();
+const safeKind = (kind ?? "talent").toLowerCase().replace(/[^a-z0-9-]/g, "-");
+
+return (
+  <ComingSoonGate
+    featureKey={`leaderboards-${safeKind}`}
+    title={`${capitalize(safeKind)} Leaderboard`}
+    description="Rankings open once enough entries qualify. Join the waitlist to be notified."
+    secondaryCtaLabel="Browse projects"
+    secondaryCtaHref="/projects"
+    showWhen={async () => {
+      const { count } = await supabase
+        .from("leaderboard_snapshots")
+        .select("id", { count: "exact", head: true })
+        .eq("kind", safeKind);
+      return (count ?? 0) >= 10;
+    }}
+  >
+    <LeaderboardInner />
+  </ComingSoonGate>
+);
 ```
 
-This avoids wasted RPC calls / data fetches while gated.
+This requires **B2's `showWhen` contract** to accept an async predicate. Need to verify the current `ComingSoonGate` implementation supports async — if it only accepts sync, this batch adds a small extension (still purely component-level, no schema).
 
 ## Verification
 
 - Build passes (auto).
-- Manual smoke (1 surface): user navigates to `/app/reviewer` in preview → sees gate → submit email → `supabase--read_query` confirms row in `feature_waitlist`.
-- After Batch 1 sign-off, plan Batch 2 (gigs Marketplace sub-tab, leaderboards threshold mode, hide-nav items).
-
-## Out of scope for Batch 1
-
-- Gigs Marketplace **sub-tab** gating (it's a tab inside `/app/gigs`, not its own route) — Batch 2.
-- Leaderboards threshold gating (`showWhen` predicate against snapshot count) — Batch 2.
-- Hide-nav surfaces (`/app/gigs/appeals`, `/app/gigs/disputes`, `/app/pitches`, `/app/creator/analytics`, `/app/blog`, `/app/abroad/ielts-legacy`) — B6.
-- Admin signals widget — B6.
-- Nav/sidebar pruning — B6.
+- `/app/gigs` → For-You renders normally; switching to Marketplace tab shows gate.
+- `/leaderboards/talent` → gate (zero rows currently). After seeding ≥10 snapshot rows, refresh → leaderboard renders.
+- `supabase--read_query` to confirm `feature_waitlist` rows for both keys after a test submit.
 
 ## Risks
 
-- Per-page split may break a page that exports named helpers from the same file. Mitigation: only split the default export, leave other exports untouched.
-- A page that relies on a specific URL search param for state may not get to read it. Mitigation: gate is at top-level so `useParams`/`useSearchParams` inside `…Inner` still works once gate releases (which is currently always closed in v0.5 launch posture, so this is moot for Batch 1).
-- `DestinationAgentPage` country slug — confirm `useParams<{country: string}>()` is the existing convention before edit (will verify in first file read of build phase).
+- Marketplace tab may use lazy-loaded children; gate goes inside `TabsContent` so lazy still works.
+- `showWhen` async support — confirm in build phase; if missing, extend `ComingSoonGate` to accept `() => Promise<boolean>` with a small loading state. Trivial change.
+- Need exact file paths for the gigs page and leaderboards page — will locate in build phase via `rg`.
 
----
+## Files (estimated)
 
-Awaiting "go" to switch to build mode and apply 8 file edits.
+1. `src/pages/app/Gigs.tsx` (or actual marketplace tab file) — 1 edit
+2. `src/pages/public/LeaderboardPage.tsx` (or actual path) — 1 edit + extract `LeaderboardInner`
+3. *(maybe)* `src/components/launch/ComingSoonGate.tsx` — async `showWhen` support
+
+Then plan updated, ready for B6 (hide-nav, admin signals widget, nav pruning).
