@@ -416,9 +416,9 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
           </div>
           {!isCollapsed && (
             <div className="flex flex-col overflow-hidden transition-all duration-300">
-              <span className="font-black text-sm tracking-tight truncate italic">GRO10X OS</span>
-              <span className="text-[9px] text-muted-foreground uppercase tracking-[0.2em] font-bold truncate">
-                {userRole === "talent_exec" ? "Talent Operations" : "Executive Console"}
+              <span className="font-semibold text-sm tracking-tight truncate">Gro10x Admin</span>
+              <span className="text-[10px] text-muted-foreground tracking-tight truncate">
+                {userRole === "talent_exec" ? "Talent operations" : "Executive console"}
               </span>
             </div>
           )}
@@ -440,14 +440,14 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
                       onClick={() => navigate("/dashboard/chat")}
                       isActive={isChat}
                       className={cn(
-                        "h-12 transition-all duration-300",
+                        "h-11 transition-all duration-200 rounded-xl",
                         isChat
-                          ? "bg-primary text-primary-foreground font-black uppercase tracking-widest shadow-md rounded-xl"
-                          : "hover:bg-primary/10 text-muted-foreground font-bold uppercase tracking-widest text-[10px] rounded-xl",
+                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                          : "hover:bg-primary/10 text-muted-foreground font-medium text-sm",
                       )}
                     >
                       <MessageCircle className="w-4 h-4" />
-                      <span className="text-[10px]">AI Co-Pilot</span>
+                      <span className="text-sm">AI co-pilot</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                   <SidebarMenuItem>
@@ -456,14 +456,14 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
                       onClick={() => navigate("/admin/inbox")}
                       isActive={isInbox}
                       className={cn(
-                        "h-12 transition-all duration-300",
+                        "h-11 transition-all duration-200 rounded-xl",
                         isInbox
-                          ? "bg-primary text-primary-foreground font-black uppercase tracking-widest shadow-md rounded-xl"
-                          : "hover:bg-primary/10 text-muted-foreground font-bold uppercase tracking-widest text-[10px] rounded-xl",
+                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                          : "hover:bg-primary/10 text-muted-foreground font-medium text-sm",
                       )}
                     >
                       <Inbox className="w-4 h-4" />
-                      <span className="text-[10px]">Live Inbox</span>
+                      <span className="text-sm">Live inbox</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>
@@ -484,10 +484,10 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
                 <SidebarMenuButton
                   tooltip={group.title}
                   className={cn(
-                    "font-black uppercase tracking-wider text-[11px] h-10 transition-colors",
+                    "uppercase tracking-wider text-[10px] font-semibold h-9 transition-colors rounded-lg",
                     openGroups.has(group.title)
-                      ? "text-foreground"
-                      : "text-muted-foreground/70 hover:text-foreground hover:bg-muted/50 rounded-xl",
+                      ? "text-foreground/80"
+                      : "text-muted-foreground/60 hover:text-foreground hover:bg-muted/40",
                   )}
                 >
                   <group.icon className="w-4 h-4" />
@@ -509,10 +509,10 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
                           onClick={() => onTabChange(item.value)}
                           isActive={isItemActive}
                           className={cn(
-                            "h-10 text-[10px] uppercase tracking-widest transition-all duration-300",
+                            "h-9 text-sm transition-all duration-200",
                             isItemActive
-                              ? "bg-primary/10 text-primary font-black border-r-4 border-primary rounded-none shadow-sm"
-                              : "text-muted-foreground font-bold hover:bg-muted/30 hover:text-foreground rounded-lg",
+                              ? "bg-primary/10 text-primary font-semibold border-r-4 border-primary rounded-none"
+                              : "text-muted-foreground font-medium hover:bg-muted/30 hover:text-foreground rounded-lg",
                           )}
                         >
                           <item.icon className="w-4 h-4" />
@@ -534,10 +534,10 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
               <SidebarMenuButton
                 onClick={() => window.open("/company", "_blank")}
                 tooltip="Open Company Portal"
-                className="hover:bg-blue-500/10 text-blue-500/70 hover:text-blue-600 font-black uppercase text-[10px] tracking-widest h-10 rounded-xl transition-colors"
+                className="hover:bg-blue-500/10 text-blue-500/80 hover:text-blue-600 font-medium text-sm h-9 rounded-lg transition-colors"
               >
                 <Building2 className="w-4 h-4" />
-                <span>B2B Portal View</span>
+                <span>Company portal</span>
               </SidebarMenuButton>
             </SidebarMenuItem>
           </SidebarMenu>
@@ -550,10 +550,10 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
             <SidebarMenuButton
               onClick={handleLogout}
               tooltip="Sign out"
-              className="text-destructive/70 hover:bg-destructive/10 hover:text-destructive font-black uppercase text-[10px] tracking-widest h-10 rounded-xl transition-colors"
+              className="text-destructive/80 hover:bg-destructive/10 hover:text-destructive font-medium text-sm h-9 rounded-lg transition-colors"
             >
               <LogOut className="w-4 h-4" />
-              <span>Terminate Session</span>
+              <span>Sign out</span>
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
