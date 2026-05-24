@@ -97,11 +97,11 @@ export function WithdrawalsTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-orange-500">
             <Wallet className="h-8 w-8 text-orange-500 fill-orange-500/20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Liquidity Output
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Gig Worker Payout Execution
           </p>
         </div>
@@ -113,7 +113,7 @@ export function WithdrawalsTab() {
             <TabsTrigger
               key={s}
               value={s}
-              className="flex-1 capitalize rounded-xl text-[10px] font-black uppercase tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all"
+              className="flex-1 capitalize rounded-xl text-[10px] font-semibold py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg transition-all"
             >
               {s} ({rows.filter((r) => r.status === s).length})
             </TabsTrigger>
@@ -128,7 +128,7 @@ export function WithdrawalsTab() {
         ) : filtered.length === 0 ? (
           <div className="flex flex-col items-center justify-center py-20 bg-muted/10 border-2 border-dashed border-border/40 rounded-[40px]">
             <Banknote className="h-12 w-12 text-muted-foreground/30 mb-4" />
-            <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/50">
+            <p className="text-xs font-semibold text-muted-foreground/50">
               No {filter} requests in queue
             </p>
           </div>
@@ -154,10 +154,10 @@ export function WithdrawalsTab() {
                 <CardContent className="p-6 space-y-5">
                   <div className="flex items-start justify-between gap-4">
                     <div className="space-y-1 min-w-0">
-                      <p className="font-black text-lg truncate flex items-center gap-2">
+                      <p className="font-semibold text-lg truncate flex items-center gap-2">
                         {r.talent?.full_name || "Unknown Talent"}
                       </p>
-                      <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground truncate">
+                      <p className="text-[10px] font-bold text-muted-foreground truncate">
                         {r.talent?.email}
                       </p>
                     </div>
@@ -174,15 +174,15 @@ export function WithdrawalsTab() {
 
                   <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-2xl border border-border/50">
                     <div className="space-y-1 flex-1">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic">
+                      <p className="text-[9px] font-semibold text-muted-foreground/60 italic">
                         Requested Capital
                       </p>
-                      <p className="text-2xl font-black italic tracking-tighter text-foreground leading-none">
+                      <p className="text-2xl font-semibold tracking-tight text-foreground leading-none">
                         {Number(r.amount_credits).toFixed(1)} <span className="text-sm text-orange-500">CR</span>
                       </p>
                     </div>
                     <div className="space-y-1 flex-1 border-l border-border/50 pl-4">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic">
+                      <p className="text-[9px] font-semibold text-muted-foreground/60 italic">
                         Routing
                       </p>
                       <p className="text-sm font-bold truncate">{r.method}</p>
@@ -192,7 +192,7 @@ export function WithdrawalsTab() {
                     </div>
                   </div>
 
-                  <div className="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-muted-foreground">
+                  <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground">
                     <Clock className="h-3 w-3" /> {format(new Date(r.created_at), "MMM dd, yyyy · HH:mm")}
                   </div>
 
@@ -233,7 +233,7 @@ export function WithdrawalsTab() {
                         size="sm"
                         onClick={() => processWithdrawal(r.id, "paid")}
                         disabled={processingId === r.id}
-                        className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-black uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-emerald-500/20"
+                        className="w-full h-12 rounded-xl bg-emerald-500 hover:bg-emerald-600 text-white font-semibold uppercase text-[10px] tracking-[0.2em] shadow-lg shadow-emerald-500/20"
                       >
                         {processingId === r.id ? <Loader2 className="h-4 w-4 animate-spin" /> : "Execute Fiat Payout"}{" "}
                         <ArrowUpRight className="h-4 w-4 ml-2" />
@@ -243,7 +243,7 @@ export function WithdrawalsTab() {
 
                   {r.admin_notes && (
                     <div className="p-3 rounded-xl bg-muted/20 border border-border/30">
-                      <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic mb-1">
+                      <p className="text-[9px] font-semibold text-muted-foreground/60 italic mb-1">
                         Audit Trail
                       </p>
                       <p className="text-xs text-foreground/80">{r.admin_notes}</p>

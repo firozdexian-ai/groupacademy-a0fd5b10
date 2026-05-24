@@ -168,7 +168,7 @@ export function PaymentInfraTab() {
         <Button
           onClick={() => saveMutation.mutate()}
           disabled={saveMutation.isPending}
-          className="h-14 px-10 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-primary/30 flex items-center gap-3"
+          className="h-14 px-10 rounded-2xl font-black text-[11px] shadow-2xl shadow-primary/30 flex items-center gap-3"
         >
           {saveMutation.isPending ? (
             <Loader2 className="mr-2 h-4 w-4 animate-spin" />
@@ -222,13 +222,13 @@ export function PaymentInfraTab() {
             <div className="h-1.5 w-full bg-primary" />
             <CardHeader className="p-8 border-b border-border/10 text-left">
               <CardTitle className="text-xl font-black uppercase italic tracking-tighter">Core Gateway Rules</CardTitle>
-              <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+              <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                 Configure primary payment rails
               </CardDescription>
             </CardHeader>
             <CardContent className="p-8 space-y-6 text-left">
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Active Gateway Router
                 </Label>
                 <Select value={gateway} onValueChange={(v) => setGateway(v as GatewayOption)}>
@@ -245,10 +245,10 @@ export function PaymentInfraTab() {
 
               <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5">
                 <div>
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary">
+                  <Label className="text-[10px] font-black text-primary">
                     WhatsApp Purchase Node
                   </Label>
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                  <p className="text-[9px] font-bold text-muted-foreground mt-1">
                     Manual purchase via WhatsApp chat
                   </p>
                 </div>
@@ -260,7 +260,7 @@ export function PaymentInfraTab() {
               </div>
 
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Global Currency Base
                 </Label>
                 <Select value={currency} onValueChange={setCurrency}>
@@ -294,12 +294,12 @@ export function PaymentInfraTab() {
                   <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
                     Stripe API Vault
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                  <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                     Configure Stripe for card processing
                   </CardDescription>
                 </div>
                 {!stripeUsed && (
-                  <Badge variant="outline" className="text-[9px] uppercase tracking-widest">
+                  <Badge variant="outline" className="text-[9px]">
                     Router Disabled
                   </Badge>
                 )}
@@ -308,17 +308,17 @@ export function PaymentInfraTab() {
             <CardContent className="p-8 space-y-6 text-left">
               <div className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5">
                 <div>
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary">
+                  <Label className="text-[10px] font-black text-primary">
                     Execution Environment
                   </Label>
-                  <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                  <p className="text-[9px] font-bold text-muted-foreground mt-1">
                     {stripeMode === "live" ? "Processing Real Capital" : "Development Test Mode"}
                   </p>
                 </div>
                 <div className="flex items-center gap-3">
                   <span
                     className={cn(
-                      "text-[9px] font-black uppercase tracking-widest",
+                      "text-[9px] font-black ",
                       stripeMode === "test" ? "text-primary" : "text-muted-foreground",
                     )}
                   >
@@ -332,7 +332,7 @@ export function PaymentInfraTab() {
                   />
                   <span
                     className={cn(
-                      "text-[9px] font-black uppercase tracking-widest",
+                      "text-[9px] font-black ",
                       stripeMode === "live" ? "text-rose-500" : "text-muted-foreground",
                     )}
                   >
@@ -342,7 +342,7 @@ export function PaymentInfraTab() {
               </div>
 
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Publishable Key
                 </Label>
                 <Input
@@ -355,7 +355,7 @@ export function PaymentInfraTab() {
               </div>
 
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1 flex items-center gap-2">
+                <Label className="text-[10px] font-black text-primary ml-1 flex items-center gap-2">
                   <Key className="h-3 w-3" /> {secretKeyConfigured ? "Replace Secret Key" : "Inject Secret Key"}
                 </Label>
                 <div className="flex gap-2">
@@ -370,7 +370,7 @@ export function PaymentInfraTab() {
                   <Button
                     onClick={handleSaveSecretKey}
                     disabled={!stripeUsed || !secretKey || savingSecret}
-                    className="h-14 px-6 rounded-2xl font-black uppercase tracking-widest text-[10px]"
+                    className="h-14 px-6 rounded-2xl font-black text-[10px]"
                   >
                     {savingSecret ? <Loader2 className="h-4 w-4 animate-spin" /> : "Vault Key"}
                   </Button>
@@ -378,14 +378,14 @@ export function PaymentInfraTab() {
               </div>
 
               <div className="space-y-3 pt-4 border-t border-border/10">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1 flex items-center gap-2">
+                <Label className="text-[10px] font-black text-primary ml-1 flex items-center gap-2">
                   <LinkIcon className="h-3 w-3" /> Webhook Target Node
                 </Label>
                 <code className="flex items-center h-12 w-full bg-background border-2 rounded-xl text-[9px] text-muted-foreground font-mono px-4 tracking-widest overflow-hidden">
                   https://{import.meta.env.VITE_SUPABASE_PROJECT_ID}.supabase.co/functions/v1/stripe-webhook
                 </code>
 
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1 flex items-center gap-2 mt-4">
+                <Label className="text-[10px] font-black text-primary ml-1 flex items-center gap-2 mt-4">
                   <Shield className="h-3 w-3" />{" "}
                   {webhookConfigured ? "Replace Webhook Secret" : "Inject Webhook Secret"}
                 </Label>
@@ -401,7 +401,7 @@ export function PaymentInfraTab() {
                   <Button
                     onClick={handleSaveWebhookSecret}
                     disabled={!stripeUsed || !webhookSecret || savingWebhook}
-                    className="h-14 px-6 rounded-2xl font-black uppercase tracking-widest text-[10px]"
+                    className="h-14 px-6 rounded-2xl font-black text-[10px]"
                   >
                     {savingWebhook ? <Loader2 className="h-4 w-4 animate-spin" /> : "Vault Webhook"}
                   </Button>
@@ -425,7 +425,7 @@ function StatusTile({ icon: Icon, label, value, active, color, bg }: any) {
           <Icon className={cn("h-5 w-5", active ? color : "text-muted-foreground")} />
         </div>
         <div className="min-w-0">
-          <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 italic">{label}</p>
+          <p className="text-[9px] font-black text-muted-foreground/60 italic">{label}</p>
           <p className="font-bold text-sm uppercase tracking-tight capitalize mt-0.5">{value}</p>
         </div>
       </CardContent>

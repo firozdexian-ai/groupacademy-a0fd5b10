@@ -113,16 +113,16 @@ export function ChannelPromotionCard({ job }: Props) {
       <CardHeader className="p-6 border-b border-border/10 bg-muted/10">
         <div className="flex items-center justify-between">
           <div className="text-left">
-            <CardTitle className="text-lg font-black uppercase italic tracking-tighter leading-none">
+            <CardTitle className="text-lg font-semibold uppercase italic tracking-tight leading-none">
               {job.title}
             </CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">
+            <CardDescription className="text-[10px] font-bold mt-1">
               Syndication Node — {job.company_name}
             </CardDescription>
           </div>
           <Badge
             variant="outline"
-            className="h-7 px-3 rounded-full border-2 font-black italic text-[9px] gap-1.5 uppercase"
+            className="h-7 px-3 rounded-full border-2 font-semibold text-[9px] gap-1.5 uppercase"
           >
             <Share2 className="h-3 w-3" /> {posted.size}/{CHANNELS.length} SYNCED
           </Badge>
@@ -161,7 +161,7 @@ export function ChannelPromotionCard({ job }: Props) {
         <div className="space-y-4 animate-in slide-in-from-bottom-2 duration-300">
           <div className="relative group">
             <div className="absolute top-3 right-3 z-10">
-              <Badge className="bg-background/80 backdrop-blur-sm border-2 font-black italic text-[8px] uppercase">
+              <Badge className="bg-background/80 backdrop-blur-sm border-2 font-semibold text-[8px] uppercase">
                 {captions[activeChannel]?.length || 0} CH_COUNT
               </Badge>
             </div>
@@ -178,7 +178,7 @@ export function ChannelPromotionCard({ job }: Props) {
             <Button
               size="sm"
               variant="outline"
-              className="h-11 px-5 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest gap-2 hover:bg-primary/5"
+              className="h-11 px-5 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 hover:bg-primary/5"
               onClick={() => handleGenerate(activeChannel)}
               disabled={generating}
             >
@@ -193,7 +193,7 @@ export function ChannelPromotionCard({ job }: Props) {
             <Button
               size="sm"
               variant="outline"
-              className="h-11 px-5 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest gap-2"
+              className="h-11 px-5 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
               disabled={!captions[activeChannel]}
               onClick={() => {
                 navigator.clipboard.writeText(captions[activeChannel]);
@@ -205,7 +205,7 @@ export function ChannelPromotionCard({ job }: Props) {
 
             <Button
               size="sm"
-              className="h-11 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg ml-auto"
+              className="h-11 px-6 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg ml-auto"
               disabled={!captions[activeChannel] || posted.has(activeChannel)}
               onClick={() => handleMarkPosted(activeChannel)}
             >

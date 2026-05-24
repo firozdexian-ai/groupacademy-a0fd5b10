@@ -227,7 +227,7 @@ export function HrTargetsTab() {
                       <TableRow key={t.id} className="group hover:bg-primary/[0.02]">
                         <TableCell className="py-5 pl-8">
                           <p className="font-black text-sm uppercase italic tracking-tight">{t.metric}</p>
-                          <p className="text-[10px] font-mono uppercase tracking-widest text-muted-foreground/60 mt-1">
+                          <p className="text-[10px] font-mono text-muted-foreground/60 mt-1">
                             GOAL: {t.target_value}
                           </p>
                         </TableCell>
@@ -242,7 +242,7 @@ export function HrTargetsTab() {
                           </div>
                         </TableCell>
                         <TableCell>
-                          <div className="flex flex-col gap-0.5 font-mono text-[10px] uppercase tracking-widest text-muted-foreground/70">
+                          <div className="flex flex-col gap-0.5 font-mono text-[10px] text-muted-foreground/70">
                             <span>STR: {t.period_start ? new Date(t.period_start).toLocaleDateString() : "N/A"}</span>
                             <span>END: {t.period_end ? new Date(t.period_end).toLocaleDateString() : "N/A"}</span>
                           </div>
@@ -299,7 +299,7 @@ export function HrTargetsTab() {
                 <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter">
                   Target Deployment
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-black uppercase tracking-widest">
+                <DialogDescription className="text-[10px] font-black">
                   Define parameters and set temporal windows.
                 </DialogDescription>
               </div>
@@ -309,7 +309,7 @@ export function HrTargetsTab() {
           <div className="space-y-5 py-4">
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Graph Scope</Label>
+                <Label className="text-[10px] font-black">Graph Scope</Label>
                 <Select
                   value={draft.scope || "team"}
                   onValueChange={(v) => setDraft({ ...draft, scope: v, scope_id: "" })}
@@ -326,7 +326,7 @@ export function HrTargetsTab() {
                 </Select>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Target Node</Label>
+                <Label className="text-[10px] font-black">Target Node</Label>
                 <Select value={draft.scope_id || ""} onValueChange={(v) => setDraft({ ...draft, scope_id: v })}>
                   <SelectTrigger className="h-14 rounded-xl border-2 font-bold bg-muted/20">
                     <SelectValue placeholder="Select node" />
@@ -337,7 +337,7 @@ export function HrTargetsTab() {
             </div>
 
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest">Metric Definition</Label>
+              <Label className="text-[10px] font-black">Metric Definition</Label>
               <Input
                 placeholder="e.g. Quarterly Revenue, Closed Deals"
                 value={draft.metric || ""}
@@ -348,7 +348,7 @@ export function HrTargetsTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Target Value</Label>
+                <Label className="text-[10px] font-black">Target Value</Label>
                 <Input
                   type="number"
                   value={draft.target_value ?? ""}
@@ -357,7 +357,7 @@ export function HrTargetsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Incentive Yield (₵)</Label>
+                <Label className="text-[10px] font-black">Incentive Yield (₵)</Label>
                 <Input
                   type="number"
                   value={draft.incentive_amount ?? ""}
@@ -369,7 +369,7 @@ export function HrTargetsTab() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">Start Window</Label>
+                <Label className="text-[10px] font-black">Start Window</Label>
                 <Input
                   type="date"
                   value={draft.period_start || ""}
@@ -378,7 +378,7 @@ export function HrTargetsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest">End Window</Label>
+                <Label className="text-[10px] font-black">End Window</Label>
                 <Input
                   type="date"
                   value={draft.period_end || ""}

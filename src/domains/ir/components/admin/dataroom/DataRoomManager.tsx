@@ -23,15 +23,15 @@ export function DataRoomManager() {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Database className="h-8 w-8 text-primary fill-primary/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Data Room</h2>
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Data Room</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Secure Document Telemetry & Share Links
           </p>
         </div>
         <Button
           onClick={() => setUploadOpen(true)}
-          className="h-12 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+          className="h-12 px-8 rounded-2xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus className="h-4 w-4" /> Upload Document
         </Button>
@@ -53,7 +53,7 @@ export function DataRoomManager() {
                 <FileText className="h-8 w-8 text-muted-foreground/40" />
               </div>
               <div className="space-y-1">
-                <p className="text-sm font-black uppercase tracking-widest italic text-muted-foreground/60">
+                <p className="text-sm font-semibold text-muted-foreground/60">
                   Registry Empty
                 </p>
                 <p className="text-xs font-medium text-muted-foreground">
@@ -73,18 +73,18 @@ export function DataRoomManager() {
                       <FileText className="h-6 w-6 text-primary" />
                     </div>
                     <div className="space-y-2 min-w-0">
-                      <h4 className="font-black text-xl uppercase italic tracking-tighter truncate group-hover:text-primary transition-colors">
+                      <h4 className="font-semibold text-xl uppercase italic tracking-tight truncate group-hover:text-primary transition-colors">
                         {doc.title}
                       </h4>
                       <div className="flex flex-wrap items-center gap-2">
-                        <Badge variant="outline" className="font-black text-[9px] uppercase tracking-widest border-2">
+                        <Badge variant="outline" className="font-semibold text-[9px] border-2">
                           {doc.doc_type.replace("_", " ")}
                         </Badge>
-                        <Badge variant="secondary" className="font-bold text-[9px] uppercase tracking-widest">
+                        <Badge variant="secondary" className="font-bold text-[9px]">
                           v{doc.version}
                         </Badge>
                         {doc.total_slides && (
-                          <span className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest ml-1">
+                          <span className="text-[10px] font-bold text-muted-foreground ml-1">
                             {doc.total_slides} slides
                           </span>
                         )}
@@ -96,13 +96,13 @@ export function DataRoomManager() {
                     <Button
                       variant="outline"
                       onClick={() => setTelemetryDoc(doc)}
-                      className="h-12 px-6 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest gap-2 bg-background/50 hover:border-primary/40 hover:text-primary transition-all"
+                      className="h-12 px-6 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 bg-background/50 hover:border-primary/40 hover:text-primary transition-all"
                     >
                       <Activity className="h-4 w-4" /> Telemetry
                     </Button>
                     <Button
                       onClick={() => setShareDoc(doc)}
-                      className="h-12 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-md shadow-primary/10 transition-all"
+                      className="h-12 px-6 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-md shadow-primary/10 transition-all"
                     >
                       <Share2 className="h-4 w-4" /> Share
                     </Button>

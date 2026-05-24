@@ -82,7 +82,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
     return (
       <Badge
         className={cn(
-          "font-black text-[10px] uppercase tracking-widest border-none px-3 py-1",
+          "font-black text-[10px]  border-none px-3 py-1",
           status === "active" ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground/60",
         )}
       >
@@ -111,11 +111,11 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
             <SheetHeader className="p-8 border-b border-border/10 text-left bg-muted/10 shrink-0">
               <div className="flex justify-between items-start gap-4">
                 <div className="space-y-1 min-w-0">
-                  <SheetTitle className="text-3xl font-black uppercase italic tracking-tighter flex items-center gap-3 truncate">
+                  <SheetTitle className="text-3xl font-semibold uppercase italic tracking-tight flex items-center gap-3 truncate">
                     <ShieldCheck className="h-8 w-8 text-primary shrink-0" />
                     <span className="truncate">{investor.full_name}</span>
                   </SheetTitle>
-                  <SheetDescription className="text-[10px] font-bold uppercase tracking-[0.2em] text-muted-foreground/60 italic truncate">
+                  <SheetDescription className="text-[10px] font-bold text-muted-foreground/60 italic truncate">
                     {investor.title ? `${investor.title.toUpperCase()} @ ` : ""}
                     <span className="text-primary">{investor.vc_firm?.name?.toUpperCase() || "INDEPENDENT_NODE"}</span>
                   </SheetDescription>
@@ -128,7 +128,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
               <div className="space-y-10 pb-12">
                 {/* CORE CHANNELS */}
                 <section className="space-y-4">
-                  <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic flex items-center gap-2">
+                  <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary italic flex items-center gap-2">
                     <Activity className="h-4 w-4" /> Routing Channels
                   </h4>
                   <div className="grid grid-cols-1 gap-3">
@@ -156,13 +156,13 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                 {/* NEURAL FEEDBACK SUMMARY */}
                 {(investor.relationship_summary || investor.last_feedback_summary) && (
                   <section className="space-y-4 bg-primary/5 p-6 rounded-[32px] border-2 border-primary/10">
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic flex items-center gap-2">
+                    <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary italic flex items-center gap-2">
                       <Zap className="h-4 w-4 fill-primary/20" /> Neural Context
                     </h4>
                     <div className="space-y-4">
                       {investor.relationship_summary && (
                         <div>
-                          <p className="text-[9px] font-black text-muted-foreground uppercase mb-1 tracking-widest">
+                          <p className="text-[9px] font-semibold text-muted-foreground uppercase mb-1 tracking-widest">
                             Relationship Pulse
                           </p>
                           <p className="text-sm font-medium italic leading-relaxed text-foreground/80">
@@ -172,10 +172,10 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                       )}
                       {investor.last_feedback_summary && (
                         <div className={cn("pt-4", investor.relationship_summary && "border-t border-primary/10")}>
-                          <p className="text-[9px] font-black text-primary uppercase mb-1 tracking-widest">
+                          <p className="text-[9px] font-semibold text-primary uppercase mb-1 tracking-widest">
                             Latest Feedback Artifact
                           </p>
-                          <p className="text-sm font-black italic leading-relaxed">
+                          <p className="text-sm font-semibold leading-relaxed">
                             "{investor.last_feedback_summary}"
                           </p>
                         </div>
@@ -187,7 +187,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                 {/* PREFERENCE MAPPING */}
                 {(investor.investor_interests?.length > 0 || investor.investment_stage_pref) && (
                   <section className="space-y-4">
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground italic flex items-center gap-2">
+                    <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground italic flex items-center gap-2">
                       <TrendingUp className="h-4 w-4" /> Sector Preferences
                     </h4>
                     <div className="flex flex-wrap gap-2">
@@ -195,13 +195,13 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                         <Badge
                           key={interest}
                           variant="outline"
-                          className="bg-background/50 border-2 font-black text-[9px] uppercase tracking-widest rounded-xl px-3 py-1.5 shadow-sm"
+                          className="bg-background/50 border-2 font-semibold text-[9px] rounded-xl px-3 py-1.5 shadow-sm"
                         >
                           {interest}
                         </Badge>
                       ))}
                       {investor.investment_stage_pref && (
-                        <Badge className="bg-blue-600/10 text-blue-600 border-none font-black text-[9px] uppercase tracking-widest rounded-xl px-3 py-1.5 shadow-sm">
+                        <Badge className="bg-blue-600/10 text-blue-600 border-none font-semibold text-[9px] rounded-xl px-3 py-1.5 shadow-sm">
                           STAGE: {investor.investment_stage_pref}
                         </Badge>
                       )}
@@ -212,14 +212,14 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                 {/* INTERACTION TELEMETRY */}
                 <section className="space-y-6">
                   <div className="flex items-center justify-between">
-                    <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-muted-foreground italic">
+                    <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-muted-foreground italic">
                       Interaction Registry
                     </h4>
                     <Button
                       variant="outline"
                       size="sm"
                       onClick={() => setShowLogger(true)}
-                      className="rounded-xl border-2 font-black uppercase text-[9px] tracking-widest h-9 bg-background/50 hover:bg-primary/5"
+                      className="rounded-xl border-2 font-semibold uppercase text-[9px] tracking-widest h-9 bg-background/50 hover:bg-primary/5"
                     >
                       <Zap className="h-3 w-3 mr-1.5 text-primary" /> Log Pulse
                     </Button>
@@ -252,11 +252,11 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                           </div>
                           <div className="flex-1 space-y-1.5 min-w-0">
                             <div className="flex items-center justify-between gap-2">
-                              <p className="text-[11px] font-black uppercase italic tracking-tighter truncate">
+                              <p className="text-[11px] font-semibold uppercase italic tracking-tight truncate">
                                 {IR_CONFIG.INTERACTION_TYPES.find((t) => t.value === interaction.interaction_type)
                                   ?.label || interaction.interaction_type}
                               </p>
-                              <span className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest shrink-0">
+                              <span className="text-[9px] font-bold text-muted-foreground/50 shrink-0">
                                 {format(new Date(interaction.created_at), "MMM d")}
                               </span>
                             </div>
@@ -272,7 +272,7 @@ export function InvestorDetailSheet({ investorId, open, onOpenChange }: Investor
                         </div>
                       ))
                     ) : (
-                      <div className="text-center py-10 opacity-40 italic font-black uppercase text-[10px] tracking-widest border-2 border-dashed border-border/40 rounded-[24px]">
+                      <div className="text-center py-10 opacity-40 font-semibold uppercase text-[10px] tracking-widest border-2 border-dashed border-border/40 rounded-[24px]">
                         Zero interaction artifacts found
                       </div>
                     )}
@@ -316,7 +316,7 @@ function SocialBadge({ icon: Icon, href, label }: { icon: any; href: string; lab
       className="flex-1 flex items-center justify-center gap-2 p-3.5 rounded-[16px] border-2 border-border/20 bg-card hover:border-primary/30 hover:shadow-sm transition-all group"
     >
       <Icon className="h-4 w-4 text-muted-foreground group-hover:text-primary transition-colors" />
-      <span className="text-[9px] font-black uppercase italic tracking-widest group-hover:text-primary transition-colors">
+      <span className="text-[9px] font-semibold uppercase italic tracking-widest group-hover:text-primary transition-colors">
         {label}
       </span>
     </a>

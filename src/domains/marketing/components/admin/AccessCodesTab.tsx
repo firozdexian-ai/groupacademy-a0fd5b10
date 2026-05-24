@@ -83,8 +83,8 @@ export function AccessCodesTab() {
           <Key className="h-6 w-6 text-indigo-600" />
         </div>
         <div>
-          <h2 className="text-xl font-black uppercase italic tracking-tighter">Access Codes</h2>
-          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+          <h2 className="text-xl font-semibold uppercase italic tracking-tight">Access Codes</h2>
+          <p className="text-[10px] font-bold text-muted-foreground/60 italic">
             Institutional Entitlement Engine
           </p>
         </div>
@@ -96,7 +96,7 @@ export function AccessCodesTab() {
             <TabsTrigger
               key={tab.v}
               value={tab.v}
-              className="rounded-xl font-black uppercase italic text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+              className="rounded-xl font-semibold uppercase italic text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg"
             >
               <tab.i className="w-3.5 h-3.5" />
               <span className="hidden lg:inline">{tab.l}</span>
@@ -130,7 +130,7 @@ export function AccessCodesTab() {
                     min={1}
                     value={maxUses}
                     onChange={(e) => setMaxUses(parseInt(e.target.value) || 1)}
-                    className="h-14 bg-muted/20 border-2 rounded-2xl font-black italic text-lg"
+                    className="h-14 bg-muted/20 border-2 rounded-2xl font-semibold text-lg"
                   />
                 </div>
               </div>
@@ -146,7 +146,7 @@ export function AccessCodesTab() {
               <Button
                 onClick={handleInitializeKey}
                 disabled={upsertAccessCode.isPending || !selectedContentId}
-                className="w-full h-14 rounded-2xl font-black uppercase italic tracking-[0.2em] gap-3 bg-indigo-600 hover:bg-indigo-700 text-white"
+                className="w-full h-14 rounded-2xl font-semibold uppercase italic tracking-[0.2em] gap-3 bg-indigo-600 hover:bg-indigo-700 text-white"
               >
                 {upsertAccessCode.isPending ? (
                   <RefreshCw className="h-5 w-5 animate-spin" />
@@ -173,14 +173,14 @@ export function AccessCodesTab() {
                   {isLoading ? (
                     <TableRow><TableCell colSpan={4}><Skeleton className="h-16 w-full" /></TableCell></TableRow>
                   ) : data?.accessCodes?.length === 0 ? (
-                    <TableRow><TableCell colSpan={4} className="text-center py-12 italic uppercase font-black text-xs tracking-widest opacity-30">Zero codes minted.</TableCell></TableRow>
+                    <TableRow><TableCell colSpan={4} className="text-center py-12 italic uppercase font-semibold text-xs tracking-widest opacity-30">Zero codes minted.</TableCell></TableRow>
                   ) : (
                     data?.accessCodes?.map((row: any) => {
                       const isExhausted = row.current_uses >= row.max_uses;
                       return (
                         <TableRow key={row.id}>
                           <TableCell>
-                            <code className="text-base font-black font-mono tracking-tighter">{row.code}</code>
+                            <code className="text-base font-semibold font-mono tracking-tight">{row.code}</code>
                           </TableCell>
                           <TableCell>
                             <Badge

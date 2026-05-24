@@ -40,7 +40,7 @@ export function ThemesTab() {
           </div>
           <div>
             <h2 className="text-xl font-black uppercase italic tracking-tighter">Themes</h2>
-            <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+            <p className="text-[10px] font-bold text-muted-foreground/60 italic">
               Profile Card Aesthetics
             </p>
           </div>
@@ -84,7 +84,7 @@ export function ThemesTab() {
                         </div>
                         <div>
                           <p className="font-black uppercase text-sm">{row.name || "Untitled"}</p>
-                          <p className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">Rank {row.priority}</p>
+                          <p className="text-[10px] font-bold text-muted-foreground/60">Rank {row.priority}</p>
                         </div>
                       </div>
                     </TableCell>
@@ -98,7 +98,7 @@ export function ThemesTab() {
                           onCheckedChange={(checked) => upsertTheme.mutate({ id: row.id, is_active: checked })}
                           className="data-[state=checked]:bg-emerald-500"
                         />
-                        <span className="text-[10px] font-black uppercase tracking-widest">{row.is_active ? "LIVE" : "IDLE"}</span>
+                        <span className="text-[10px] font-black">{row.is_active ? "LIVE" : "IDLE"}</span>
                       </div>
                     </TableCell>
                     <TableCell className="text-right">

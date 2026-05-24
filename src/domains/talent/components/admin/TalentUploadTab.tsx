@@ -24,7 +24,7 @@ export function TalentUploadTab() {
           <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
             <UploadIcon className="h-6 w-6 text-primary" /> Upload talents
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] font-black text-muted-foreground/60">
             Bulk CV import with AI parsing
           </p>
         </div>
@@ -55,14 +55,14 @@ export function TalentUploadTab() {
               <Briefcase className="h-5 w-5 text-primary" />
             </div>
             <div className="space-y-1">
-              <h4 className="text-xs font-black uppercase tracking-widest">Review Gig Submissions</h4>
+              <h4 className="text-xs font-black">Review Gig Submissions</h4>
               <p className="text-[10px] text-muted-foreground leading-normal">
                 CV-upload gigs submitted by talents are managed in the canonical Gig Economy terminal.
               </p>
             </div>
             <Button
               variant="outline"
-              className="w-full rounded-xl h-10 text-[10px] font-black uppercase tracking-widest border-2"
+              className="w-full rounded-xl h-10 text-[10px] font-black border-2"
               // N2 Hotfix: Corrected tab key to include hyphen
               onClick={() => navigate("/dashboard?tab=gigs-submissions")}
             >
@@ -71,7 +71,7 @@ export function TalentUploadTab() {
           </Card>
 
           <Card className="rounded-[32px] border-2 border-border/40 bg-muted/5 p-6">
-            <p className="text-[9px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic mb-3">
+            <p className="text-[9px] font-black text-muted-foreground/60 italic mb-3">
               Ingestion Telemetry
             </p>
             <div className="space-y-2">

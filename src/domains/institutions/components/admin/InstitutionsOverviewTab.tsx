@@ -18,9 +18,9 @@ export default function InstitutionsOverviewTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Network className="h-8 w-8 text-primary fill-primary/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Global Graph</h2>
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Global Graph</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Institutional Telemetry & Relational Mapping
           </p>
         </div>
@@ -78,7 +78,7 @@ export default function InstitutionsOverviewTab() {
             <Activity className="h-10 w-10 text-white" />
           </div>
           <div className="space-y-2 text-left">
-            <h3 className="text-2xl font-black uppercase italic tracking-tighter text-foreground">
+            <h3 className="text-2xl font-semibold uppercase italic tracking-tight text-foreground">
               Relational Architecture Active
             </h3>
             <p className="text-sm font-medium text-muted-foreground leading-relaxed max-w-3xl">
@@ -97,7 +97,7 @@ function MetricTile({ title, value, icon: Icon, hint, color, bg }: any) {
   return (
     <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 hover:-translate-y-1 transition-all duration-300 group">
       <CardHeader className="flex flex-row items-center justify-between pb-2 p-6">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic group-hover:text-foreground transition-colors">
+        <p className="text-[10px] font-semibold text-muted-foreground italic group-hover:text-foreground transition-colors">
           {title}
         </p>
         <div
@@ -110,10 +110,10 @@ function MetricTile({ title, value, icon: Icon, hint, color, bg }: any) {
         </div>
       </CardHeader>
       <CardContent className="p-6 pt-0">
-        <div className="text-4xl font-black italic tracking-tighter leading-none mb-3">
+        <div className="text-4xl font-semibold tracking-tight leading-none mb-3">
           {value?.toLocaleString() || "0"}
         </div>
-        <p className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-widest">{hint}</p>
+        <p className="text-[9px] font-bold text-muted-foreground/60">{hint}</p>
       </CardContent>
     </Card>
   );

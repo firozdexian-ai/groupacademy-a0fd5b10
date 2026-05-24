@@ -66,9 +66,9 @@ export function JobsUploadTab() {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Database className="h-8 w-8" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Upload jobs</h2>
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Upload jobs</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             AI parse, batch import & verification queue
           </p>
         </div>
@@ -77,7 +77,7 @@ export function JobsUploadTab() {
             setPrefill(undefined);
             setShowForm(true);
           }}
-          className="h-14 px-8 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-3 shadow-lg group"
+          className="h-14 px-8 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-3 shadow-lg group"
         >
           <Plus className="h-5 w-5 transition-transform group-hover:rotate-90" /> Add job manually
         </Button>
@@ -100,21 +100,21 @@ export function JobsUploadTab() {
             <CardHeader className="p-8 pb-4">
               <div className="flex justify-between items-center">
                 <div className="space-y-1">
-                  <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+                  <CardTitle className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
                     <Sparkles className="h-6 w-6 text-primary fill-primary/10" /> Parse a single job
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+                  <CardDescription className="text-[10px] font-bold">
                     Paste raw text and AI fills the structured fields.
                   </CardDescription>
                 </div>
-                <Badge variant="outline" className="font-black italic px-4 py-1.5 border-2 text-[10px]">
+                <Badge variant="outline" className="font-semibold px-4 py-1.5 border-2 text-[10px]">
                   AI parser
                 </Badge>
               </div>
             </CardHeader>
             <CardContent className="p-8 pt-0 space-y-6">
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase text-primary italic ml-2">Raw text</Label>
+                <Label className="text-[10px] font-semibold uppercase text-primary italic ml-2">Raw text</Label>
                 <Textarea
                   value={rawText}
                   onChange={(e) => setRawText(e.target.value)}
@@ -127,7 +127,7 @@ export function JobsUploadTab() {
                 <Button
                   onClick={runAIParse}
                   disabled={parsing || !rawText.trim()}
-                  className="h-16 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl shadow-primary/20 active:scale-95 transition-all"
+                  className="h-16 px-10 rounded-[24px] font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl shadow-primary/20 active:scale-95 transition-all"
                 >
                   {parsing ? <Loader2 className="h-6 w-6 animate-spin" /> : <Zap className="h-6 w-6 fill-current" />}
                   Parse with AI
@@ -138,7 +138,7 @@ export function JobsUploadTab() {
                     setPrefill({ description: rawText });
                     setShowForm(true);
                   }}
-                  className="h-16 px-8 rounded-[24px] border-2 font-black uppercase text-[10px] tracking-widest gap-2"
+                  className="h-16 px-8 rounded-[24px] border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
                 >
                   <LinkIcon className="h-4 w-4" /> Skip AI
                 </Button>
@@ -156,10 +156,10 @@ export function JobsUploadTab() {
                   <Upload className="h-7 w-7 text-primary" />
                 </div>
                 <div>
-                  <CardTitle className="text-2xl font-black uppercase italic tracking-tighter">
+                  <CardTitle className="text-2xl font-semibold uppercase italic tracking-tight">
                     Bulk import
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase tracking-widest mt-1">
+                  <CardDescription className="text-[10px] font-bold mt-1">
                     Upload a JSON file of jobs in bulk.
                   </CardDescription>
                 </div>
@@ -173,17 +173,17 @@ export function JobsUploadTab() {
                     (Companies) and provision new job nodes in draft mode for final executive approval.
                   </p>
                   <div className="flex gap-3">
-                    <Badge className="bg-primary/5 text-primary border-none font-black italic text-[9px]">
+                    <Badge className="bg-primary/5 text-primary border-none font-semibold text-[9px]">
                       AUTO_RESOLVE_INSTITUTIONS
                     </Badge>
-                    <Badge className="bg-primary/5 text-primary border-none font-black italic text-[9px]">
+                    <Badge className="bg-primary/5 text-primary border-none font-semibold text-[9px]">
                       JSON_PAYLOAD_V2
                     </Badge>
                   </div>
                 </div>
                 <Button
                   onClick={() => setShowBatch(true)}
-                  className="h-20 px-12 rounded-[32px] font-black uppercase italic tracking-tighter text-2xl gap-4 shadow-xl active:scale-95 transition-transform"
+                  className="h-20 px-12 rounded-[32px] font-semibold uppercase italic tracking-tight text-2xl gap-4 shadow-xl active:scale-95 transition-transform"
                 >
                   <Plus className="h-8 w-8" /> Initialize Importer
                 </Button>
@@ -224,7 +224,7 @@ function TabTriggerNode({ value, icon: Icon, label }: any) {
   return (
     <TabsTrigger
       value={value}
-      className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-2xl px-6 py-3 transition-all font-black uppercase italic text-[10px] tracking-widest gap-3 border-2 border-transparent"
+      className="data-[state=active]:bg-primary data-[state=active]:text-white rounded-2xl px-6 py-3 transition-all font-semibold uppercase italic text-[10px] tracking-widest gap-3 border-2 border-transparent"
     >
       <Icon className="h-4 w-4" />
       {label}

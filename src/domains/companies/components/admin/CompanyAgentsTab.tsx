@@ -335,14 +335,14 @@ export function CompanyAgentsManager() {
       {/* Executive Header */}
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
         <div className="space-y-2">
-          <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Partnership Terminal</h2>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Partnership Terminal</h2>
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             B2B Sponsored Intelligence & Lead Telemetry
           </p>
         </div>
         <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
           <DialogTrigger asChild>
-            <Button className="rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
+            <Button className="rounded-xl h-12 px-8 font-semibold uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95">
               <Plus className="h-4 w-4 mr-2" /> Initialize Artifact
             </Button>
           </DialogTrigger>
@@ -353,10 +353,10 @@ export function CompanyAgentsManager() {
                 <div className="flex items-center gap-4">
                   <Terminal className="h-8 w-8 text-primary" />
                   <div className="space-y-1">
-                    <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+                    <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
                       Create Sponsored Node
                     </DialogTitle>
-                    <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                    <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
                       Inject new AI logic under corporate sponsorship
                     </DialogDescription>
                   </div>
@@ -365,7 +365,7 @@ export function CompanyAgentsManager() {
 
               <div className="space-y-10 py-2">
                 <div className="space-y-4">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-2">
+                  <Label className="text-[10px] font-semibold text-primary ml-2">
                     Partnership Entity *
                   </Label>
                   <Select value={selectedCompany} onValueChange={setSelectedCompany}>
@@ -385,7 +385,7 @@ export function CompanyAgentsManager() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      <Label className="text-[10px] font-semibold text-primary ml-1">
                         Artifact Name *
                       </Label>
                       <Input
@@ -396,7 +396,7 @@ export function CompanyAgentsManager() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      <Label className="text-[10px] font-semibold text-primary ml-1">
                         Logic Category
                       </Label>
                       <Select
@@ -418,7 +418,7 @@ export function CompanyAgentsManager() {
                   </div>
                   <div className="space-y-4">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      <Label className="text-[10px] font-semibold text-primary ml-1">
                         External Briefing *
                       </Label>
                       <Input
@@ -429,7 +429,7 @@ export function CompanyAgentsManager() {
                       />
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                      <Label className="text-[10px] font-semibold text-primary ml-1">
                         Expertise
                       </Label>
                       <Input
@@ -443,7 +443,7 @@ export function CompanyAgentsManager() {
                 </div>
 
                 <div className="space-y-4">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-2">
+                  <Label className="text-[10px] font-semibold text-primary ml-2">
                     Core System Prompt *
                   </Label>
                   <Textarea
@@ -456,12 +456,12 @@ export function CompanyAgentsManager() {
                 </div>
 
                 <div className="p-8 rounded-[32px] border-2 bg-muted/10 space-y-8 shadow-inner">
-                  <h4 className="text-[11px] font-black uppercase tracking-[0.3em] text-primary italic border-b border-border/10 pb-4 flex items-center gap-3">
+                  <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary italic border-b border-border/10 pb-4 flex items-center gap-3">
                     <ShieldCheck className="h-4 w-4" /> Sponsorship Protocol
                   </h4>
                   <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-1">
+                      <Label className="text-[10px] font-semibold opacity-40 ml-1">
                         Billing Type
                       </Label>
                       <Select
@@ -482,14 +482,14 @@ export function CompanyAgentsManager() {
                       </Select>
                     </div>
                     <div className="space-y-2">
-                      <Label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-1">
+                      <Label className="text-[10px] font-semibold opacity-40 ml-1">
                         Monthly Token Budget
                       </Label>
                       <Input
                         type="number"
                         value={formData.monthly_budget}
                         onChange={(e) => setFormData({ ...formData, monthly_budget: parseInt(e.target.value) || 0 })}
-                        className="h-12 rounded-xl border-2 font-black italic text-lg"
+                        className="h-12 rounded-xl border-2 font-semibold text-lg"
                       />
                     </div>
                   </div>
@@ -498,8 +498,8 @@ export function CompanyAgentsManager() {
                 <div className="p-8 rounded-[32px] border-2 bg-primary/5 border-primary/10 space-y-6">
                   <div className="flex items-center justify-between">
                     <div className="space-y-1">
-                      <h4 className="text-sm font-black uppercase tracking-tight italic">Lead Ingestion Node</h4>
-                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest italic">
+                      <h4 className="text-sm font-semibold uppercase tracking-tight italic">Lead Ingestion Node</h4>
+                      <p className="text-[9px] font-bold text-muted-foreground italic">
                         Extract contact telemetry during runtime
                       </p>
                     </div>
@@ -512,7 +512,7 @@ export function CompanyAgentsManager() {
                   {formData.lead_enabled && (
                     <div className="space-y-6 animate-in slide-in-from-top-4">
                       <div className="space-y-3">
-                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-40">
+                        <Label className="text-[10px] font-semibold opacity-40">
                           Target Metadata
                         </Label>
                         <div className="flex flex-wrap gap-3">
@@ -528,7 +528,7 @@ export function CompanyAgentsManager() {
                               />
                               <label
                                 htmlFor={`lead-${f.value}`}
-                                className="text-[10px] font-black uppercase tracking-widest cursor-pointer"
+                                className="text-[10px] font-semibold cursor-pointer"
                               >
                                 {f.label}
                               </label>
@@ -537,7 +537,7 @@ export function CompanyAgentsManager() {
                         </div>
                       </div>
                       <div className="space-y-2">
-                        <Label className="text-[10px] font-black uppercase tracking-widest opacity-40 ml-1">
+                        <Label className="text-[10px] font-semibold opacity-40 ml-1">
                           Telemetry Notification Email
                         </Label>
                         <Input
@@ -557,14 +557,14 @@ export function CompanyAgentsManager() {
                 <Button
                   variant="ghost"
                   onClick={() => setIsCreateOpen(false)}
-                  className="h-14 px-8 font-black uppercase text-[10px] tracking-widest"
+                  className="h-14 px-8 font-semibold uppercase text-[10px] tracking-widest"
                 >
                   Abort
                 </Button>
                 <Button
                   onClick={() => createAgentMutation.mutate({ ...formData, company_id: selectedCompany })}
                   disabled={createAgentMutation.isPending || !selectedCompany || !formData.name.trim()}
-                  className="h-14 px-12 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-primary/30"
+                  className="h-14 px-12 rounded-2xl font-semibold text-[11px] shadow-2xl shadow-primary/30"
                 >
                   {createAgentMutation.isPending ? (
                     <Loader2 className="animate-spin mr-2" />
@@ -626,10 +626,10 @@ export function CompanyAgentsManager() {
                 <stat.icon className={cn("h-6 w-6", stat.color)} />
               </div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                <p className="text-[9px] font-semibold text-muted-foreground/40 mb-1">
                   {stat.label}
                 </p>
-                <p className="text-2xl font-black tracking-tighter italic leading-none">{stat.val}</p>
+                <p className="text-2xl font-semibold tracking-tight italic leading-none">{stat.val}</p>
               </div>
             </CardContent>
           </Card>
@@ -641,13 +641,13 @@ export function CompanyAgentsManager() {
         <TabsList className="bg-muted/30 backdrop-blur-md rounded-[24px] border-2 border-border/40 p-1 mb-8 w-full max-w-md">
           <TabsTrigger
             value="agents"
-            className="flex-1 rounded-[18px] font-black uppercase text-[10px] tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            className="flex-1 rounded-[18px] font-semibold uppercase text-[10px] tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
           >
             Registry Artifacts ({totalAgents})
           </TabsTrigger>
           <TabsTrigger
             value="leads"
-            className="flex-1 rounded-[18px] font-black uppercase text-[10px] tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
+            className="flex-1 rounded-[18px] font-semibold uppercase text-[10px] tracking-widest py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
           >
             Lead Registry ({totalLeads})
           </TabsTrigger>
@@ -680,17 +680,17 @@ export function CompanyAgentsManager() {
                           <Bot className={cn("h-7 w-7", ca.ai_agents?.color || "text-primary")} />
                         </div>
                         <div className="space-y-1">
-                          <CardTitle className="text-2xl font-black uppercase tracking-tighter italic leading-none">
+                          <CardTitle className="text-2xl font-semibold uppercase tracking-tight italic leading-none">
                             {ca.ai_agents?.name}
                           </CardTitle>
                           <div className="flex items-center gap-2">
                             <Avatar className="h-5 w-5 border border-primary/20">
                               <AvatarImage src={ca.companies?.logo_url || ""} />
-                              <AvatarFallback className="text-[8px] font-black">
+                              <AvatarFallback className="text-[8px] font-semibold">
                                 {ca.companies?.name?.slice(0, 2)}
                               </AvatarFallback>
                             </Avatar>
-                            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+                            <span className="text-[10px] font-semibold text-muted-foreground/60 italic">
                               {ca.companies?.name}
                             </span>
                             <BadgeCheck className="h-3 w-3 text-blue-500" />
@@ -723,11 +723,11 @@ export function CompanyAgentsManager() {
                     <div className="flex flex-wrap gap-3">
                       <Badge
                         variant="outline"
-                        className="rounded-lg border-2 font-black text-[9px] uppercase tracking-widest bg-background px-3 py-1"
+                        className="rounded-lg border-2 font-semibold text-[9px] bg-background px-3 py-1"
                       >
                         {ca.sponsorship_type || "branded"} PROTOCOL
                       </Badge>
-                      <div className="flex items-center gap-4 ml-auto text-muted-foreground/60 italic font-black uppercase text-[9px] tracking-widest">
+                      <div className="flex items-center gap-4 ml-auto text-muted-foreground/60 font-semibold uppercase text-[9px] tracking-widest">
                         <span className="flex items-center gap-1.5">
                           <MessageSquare className="h-3 w-3" /> {ca.ai_agents?.total_conversations || 0}
                         </span>
@@ -740,16 +740,16 @@ export function CompanyAgentsManager() {
                     <div className="space-y-3">
                       <div className="flex justify-between items-end">
                         <div className="space-y-1">
-                          <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
+                          <p className="text-[9px] font-semibold text-muted-foreground/40 italic">
                             Resource Consumption
                           </p>
-                          <p className="text-lg font-black italic tracking-tight">
+                          <p className="text-lg font-semibold tracking-tight">
                             {ca.credits_used?.toLocaleString()} / {ca.monthly_budget?.toLocaleString()} TOKENS
                           </p>
                         </div>
                         <p
                           className={cn(
-                            "text-[10px] font-black italic",
+                            "text-[10px] font-semibold",
                             budgetPct > 90 ? "text-destructive" : "text-primary",
                           )}
                         >
@@ -771,7 +771,7 @@ export function CompanyAgentsManager() {
               <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
                 <div className="flex items-center gap-4 flex-1 max-w-md">
                   <Select value={leadFilter} onValueChange={setLeadFilter}>
-                    <SelectTrigger className="h-12 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest bg-muted/20">
+                    <SelectTrigger className="h-12 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-muted/20">
                       <Filter className="h-4 w-4 mr-2 text-primary" />
                       <SelectValue placeholder="Filter" />
                     </SelectTrigger>
@@ -788,7 +788,7 @@ export function CompanyAgentsManager() {
                   </Select>
                   <Button
                     variant="outline"
-                    className="h-12 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest gap-2"
+                    className="h-12 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
                     onClick={exportLeadsCSV}
                   >
                     <Download className="h-4 w-4" /> Export Ledger
@@ -812,10 +812,10 @@ export function CompanyAgentsManager() {
                             <UserCheck className="h-6 w-6 text-muted-foreground/40" />
                           </div>
                           <div className="space-y-1">
-                            <p className="text-lg font-black uppercase tracking-tight italic leading-none group-hover:text-primary transition-colors">
+                            <p className="text-lg font-semibold uppercase tracking-tight italic leading-none group-hover:text-primary transition-colors">
                               {lead.lead_name || "ANONYMOUS_ENTITY"}
                             </p>
-                            <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/60 uppercase tracking-widest italic">
+                            <div className="flex items-center gap-3 text-[10px] font-bold text-muted-foreground/60 italic">
                               <span>{lead.lead_email}</span>
                               {lead.lead_phone && (
                                 <>
@@ -829,16 +829,16 @@ export function CompanyAgentsManager() {
                         </div>
                         <div className="flex items-center gap-12">
                           <div className="hidden md:flex flex-col items-end">
-                            <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/30 italic">
+                            <p className="text-[9px] font-semibold text-muted-foreground/30 italic">
                               Ingested Via
                             </p>
-                            <p className="text-xs font-black uppercase tracking-tighter italic">
+                            <p className="text-xs font-semibold uppercase tracking-tight italic">
                               {agent?.ai_agents?.name}
                             </p>
                           </div>
                           <Badge
                             className={cn(
-                              "rounded-lg font-black text-[9px] uppercase tracking-widest px-4 py-1.5 border-none",
+                              "rounded-lg font-black text-[9px]  px-4 py-1.5 border-none",
                               lead.status === "new" ? "bg-primary text-white" : "bg-muted text-muted-foreground",
                             )}
                           >
@@ -860,7 +860,7 @@ export function CompanyAgentsManager() {
             <div className="h-12 w-12 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
               <Trash2 className="h-6 w-6 text-destructive" />
             </div>
-            <AlertDialogTitle className="text-2xl font-black uppercase tracking-tighter italic">
+            <AlertDialogTitle className="text-2xl font-semibold uppercase tracking-tight italic">
               Purge Artifact?
             </AlertDialogTitle>
             <AlertDialogDescription className="text-sm font-medium text-muted-foreground italic leading-relaxed">
@@ -869,12 +869,12 @@ export function CompanyAgentsManager() {
             </AlertDialogDescription>
           </AlertDialogHeader>
           <AlertDialogFooter className="mt-8 gap-4">
-            <AlertDialogCancel className="rounded-xl font-black uppercase text-[10px] tracking-widest border-2 h-12 px-8">
+            <AlertDialogCancel className="rounded-xl font-semibold uppercase text-[10px] tracking-widest border-2 h-12 px-8">
               Decline Purge
             </AlertDialogCancel>
             <AlertDialogAction
               onClick={() => deleteTarget && deleteAgentMutation.mutate(deleteTarget)}
-              className="bg-destructive text-white rounded-xl font-black uppercase text-[10px] tracking-widest h-12 px-10 hover:bg-destructive/90"
+              className="bg-destructive text-white rounded-xl font-semibold uppercase text-[10px] tracking-widest h-12 px-10 hover:bg-destructive/90"
             >
               Confirm Termination
             </AlertDialogAction>
@@ -885,10 +885,10 @@ export function CompanyAgentsManager() {
       {/* Operational Trace Footer */}
       <footer className="mt-20 pt-10 border-t border-border/40 flex items-center justify-between opacity-30">
         <div className="space-y-1">
-          <p className="text-[9px] font-black uppercase tracking-[0.4em] italic">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.4em] italic">
             Partnership Terminal: Authorized Access Only
           </p>
-          <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+          <p className="text-[8px] font-bold text-muted-foreground">
             B2B contacts
           </p>
         </div>

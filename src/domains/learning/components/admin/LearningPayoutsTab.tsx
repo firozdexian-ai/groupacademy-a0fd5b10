@@ -105,7 +105,7 @@ export function LearningPayoutsTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "completed"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : row.status === "rejected"
@@ -156,13 +156,13 @@ export function LearningPayoutsTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
               <Wallet className="h-6 w-6" /> Process Payout
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update instructor withdrawal ledger.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Instructor User ID
               </Label>
               <Input
@@ -174,7 +174,7 @@ export function LearningPayoutsTab() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-emerald-500 ml-1">
+                <Label className="text-[10px] font-black text-emerald-500 ml-1">
                   Disbursement
                 </Label>
                 <Input
@@ -186,7 +186,7 @@ export function LearningPayoutsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Payout Status
                 </Label>
                 <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
@@ -194,16 +194,16 @@ export function LearningPayoutsTab() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pending" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                    <SelectItem value="pending" className="font-bold text-xs text-amber-500">
                       Pending
                     </SelectItem>
                     <SelectItem
                       value="completed"
-                      className="font-bold text-xs uppercase tracking-widest text-emerald-500"
+                      className="font-bold text-xs text-emerald-500"
                     >
                       Completed
                     </SelectItem>
-                    <SelectItem value="rejected" className="font-bold text-xs uppercase tracking-widest text-rose-500">
+                    <SelectItem value="rejected" className="font-bold text-xs text-rose-500">
                       Rejected
                     </SelectItem>
                   </SelectContent>

@@ -106,7 +106,7 @@ export function GigsMarketplaceTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "open"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : row.status === "assigned"
@@ -160,13 +160,13 @@ export function GigsMarketplaceTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-blue-500 flex items-center gap-2">
               <Store className="h-6 w-6" /> Inject Contract
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update B2B marketplace parameters.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Contract Title
               </Label>
               <Input
@@ -178,7 +178,7 @@ export function GigsMarketplaceTab() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-blue-500 ml-1">
+                <Label className="text-[10px] font-black text-blue-500 ml-1">
                   Budget (USD)
                 </Label>
                 <Input
@@ -190,7 +190,7 @@ export function GigsMarketplaceTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Contract Status
                 </Label>
                 <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
@@ -198,16 +198,16 @@ export function GigsMarketplaceTab() {
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="draft" className="font-bold text-xs uppercase tracking-widest">
+                    <SelectItem value="draft" className="font-bold text-xs">
                       Draft
                     </SelectItem>
-                    <SelectItem value="open" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                    <SelectItem value="open" className="font-bold text-xs text-emerald-500">
                       Open Bidding
                     </SelectItem>
-                    <SelectItem value="assigned" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                    <SelectItem value="assigned" className="font-bold text-xs text-amber-500">
                       Assigned
                     </SelectItem>
-                    <SelectItem value="completed" className="font-bold text-xs uppercase tracking-widest text-blue-500">
+                    <SelectItem value="completed" className="font-bold text-xs text-blue-500">
                       Completed
                     </SelectItem>
                   </SelectContent>

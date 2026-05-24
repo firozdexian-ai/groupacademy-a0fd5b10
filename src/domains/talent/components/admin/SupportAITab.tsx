@@ -112,17 +112,17 @@ export function SupportAITab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-cyan-500">
             <Bot className="h-8 w-8 text-cyan-500 fill-cyan-500/20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Support AI
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Visual Conversation OCR & Neural Response
           </p>
         </div>
         <Badge
           variant="outline"
-          className="h-12 px-6 rounded-xl font-black uppercase text-xs tracking-widest gap-2 border-cyan-500/50 text-cyan-600 bg-cyan-500/10 animate-pulse"
+          className="h-12 px-6 rounded-xl font-semibold uppercase text-xs tracking-widest gap-2 border-cyan-500/50 text-cyan-600 bg-cyan-500/10 animate-pulse"
         >
           <ShieldCheck className="h-4 w-4" /> AI_ASSIST_ENABLED
         </Badge>
@@ -163,10 +163,10 @@ export function SupportAITab() {
                   <div className="h-20 w-20 rounded-[24px] bg-cyan-500/10 flex items-center justify-center mb-6 shadow-lg border-2 border-cyan-500/20">
                     <ImageIcon className="h-10 w-10 text-cyan-500" />
                   </div>
-                  <p className="text-xl font-black uppercase italic tracking-tight text-foreground">
+                  <p className="text-xl font-semibold uppercase italic tracking-tight text-foreground">
                     Drop Screenshot Here
                   </p>
-                  <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-2">
+                  <p className="text-[10px] font-bold text-muted-foreground mt-2">
                     PNG, JPG or WebP (Node limit 10MB)
                   </p>
                   <input
@@ -180,7 +180,7 @@ export function SupportAITab() {
               )}
 
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase italic tracking-widest text-cyan-500 ml-1 flex items-center gap-2">
+                <Label className="text-[10px] font-semibold uppercase italic tracking-widest text-cyan-500 ml-1 flex items-center gap-2">
                   <User className="h-3 w-3" /> Additional Context Node
                 </Label>
                 <Textarea
@@ -194,7 +194,7 @@ export function SupportAITab() {
               <Button
                 onClick={analyze}
                 disabled={!imagePreview || loading}
-                className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-[0.2em] text-sm gap-3 shadow-xl bg-cyan-600 hover:bg-cyan-700 text-white transition-all"
+                className="w-full h-16 rounded-[24px] font-semibold uppercase italic tracking-[0.2em] text-sm gap-3 shadow-xl bg-cyan-600 hover:bg-cyan-700 text-white transition-all"
               >
                 {loading ? (
                   <>
@@ -219,14 +219,14 @@ export function SupportAITab() {
                   <Activity className="h-6 w-6 text-cyan-500" />
                 </div>
                 <div>
-                  <p className="text-[9px] font-black uppercase text-muted-foreground/60 italic tracking-widest">
+                  <p className="text-[9px] font-semibold uppercase text-muted-foreground/60 italic tracking-widest">
                     Neural Tone Detection
                   </p>
-                  <p className="font-black uppercase italic text-lg tracking-tight leading-none mt-0.5">
+                  <p className="font-semibold uppercase italic text-lg tracking-tight leading-none mt-0.5">
                     {response.tone}
                   </p>
                 </div>
-                <Badge className="ml-auto bg-emerald-500/10 text-emerald-500 border-none font-black italic uppercase tracking-widest text-[9px] px-3">
+                <Badge className="ml-auto bg-emerald-500/10 text-emerald-500 border-none font-semibold text-[9px] px-3">
                   VERIFIED_LOGIC
                 </Badge>
               </div>
@@ -235,10 +235,10 @@ export function SupportAITab() {
                 <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 to-blue-500" />
                 <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between">
                   <div>
-                    <CardTitle className="text-xl font-black uppercase italic tracking-tight flex items-center gap-2">
+                    <CardTitle className="text-xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
                       <MessageSquare className="h-5 w-5 text-cyan-500" /> Deployed Reply Node
                     </CardTitle>
-                    <CardDescription className="text-[9px] font-bold uppercase tracking-widest mt-1">
+                    <CardDescription className="text-[9px] font-bold mt-1">
                       Optimized for high-fidelity conversion
                     </CardDescription>
                   </div>
@@ -266,7 +266,7 @@ export function SupportAITab() {
               <div className="grid gap-6">
                 <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden backdrop-blur-xl text-left">
                   <CardHeader className="p-6 pb-2 border-b border-border/5 bg-muted/5">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest italic flex items-center gap-2 text-amber-500">
+                    <CardTitle className="text-xs font-semibold flex items-center gap-2 text-amber-500">
                       <Lightbulb className="h-4 w-4" /> Feature Mapping
                     </CardTitle>
                   </CardHeader>
@@ -277,7 +277,7 @@ export function SupportAITab() {
                           key={i}
                           className="flex items-center gap-4 p-4 bg-muted/20 rounded-2xl border border-border/10"
                         >
-                          <span className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center text-[11px] font-black shrink-0">
+                          <span className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center text-[11px] font-semibold shrink-0">
                             {i + 1}
                           </span>
                           <span className="text-xs font-bold italic text-foreground/80">{s}</span>
@@ -289,7 +289,7 @@ export function SupportAITab() {
 
                 <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 shadow-xl overflow-hidden backdrop-blur-xl text-left">
                   <CardHeader className="p-6 pb-2 border-b border-border/5 bg-muted/5">
-                    <CardTitle className="text-xs font-black uppercase tracking-widest italic flex items-center gap-2 text-emerald-500">
+                    <CardTitle className="text-xs font-semibold flex items-center gap-2 text-emerald-500">
                       <ListChecks className="h-4 w-4" /> Strategic Follow-up
                     </CardTitle>
                   </CardHeader>
@@ -314,7 +314,7 @@ export function SupportAITab() {
               <div className="h-24 w-24 rounded-[32px] bg-muted/30 flex items-center justify-center mb-6 animate-pulse border-2 border-border/10">
                 <Sparkles className="h-10 w-10 text-muted-foreground/30" />
               </div>
-              <p className="text-sm font-black uppercase tracking-widest text-muted-foreground/40 italic">
+              <p className="text-sm font-semibold text-muted-foreground/40 italic">
                 Awaiting Neural Ingestion
               </p>
             </Card>

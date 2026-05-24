@@ -88,17 +88,17 @@ export function CompaniesOverviewTab() {
       {/* Header Action Row */}
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2 text-primary">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2 text-primary">
             <Network className="h-6 w-6" /> B2B Intelligence
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold text-muted-foreground/60 italic">
             Employer Pipeline & Contact Telemetry Command
           </p>
         </div>
         <div className="flex items-center gap-3">
           <Badge
             variant="outline"
-            className="h-10 px-4 rounded-xl font-black border-2 border-emerald-500/20 text-emerald-500 bg-emerald-500/5 gap-2"
+            className="h-10 px-4 rounded-xl font-semibold border-2 border-emerald-500/20 text-emerald-500 bg-emerald-500/5 gap-2"
           >
             <Activity className="h-3 w-3 animate-pulse" /> LIVE_SYNC
           </Badge>
@@ -126,7 +126,7 @@ export function CompaniesOverviewTab() {
         <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden relative text-left">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <CardHeader className="p-8 pb-4">
-            <CardTitle className="text-sm font-black uppercase tracking-widest italic flex items-center gap-2">
+            <CardTitle className="text-sm font-semibold flex items-center gap-2">
               <AlertCircle className="h-4 w-4 text-primary" /> Onboarding Funnel (Riya)
             </CardTitle>
           </CardHeader>
@@ -169,8 +169,8 @@ function FunnelRow({ label, value, max, color }: any) {
   return (
     <div className="space-y-2">
       <div className="flex justify-between items-end">
-        <span className="font-black uppercase text-[10px] tracking-widest text-muted-foreground/60">{label}</span>
-        <span className="font-black text-xl italic tracking-tighter text-foreground">
+        <span className="font-semibold uppercase text-[10px] tracking-widest text-muted-foreground/60">{label}</span>
+        <span className="font-semibold text-xl italic tracking-tight text-foreground">
           {value.toLocaleString()} <span className="text-[10px] text-muted-foreground/30 not-italic">({pct}%)</span>
         </span>
       </div>
@@ -195,21 +195,21 @@ function BarBreakdown({ title, icon: Icon, data, color }: any) {
     <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-lg flex flex-col overflow-hidden text-left">
       <div className={cn("h-1.5 w-full bg-gradient-to-r", gradient)} />
       <div className="p-6 border-b border-border/10">
-        <h3 className="text-[10px] font-black uppercase tracking-[0.3em] italic flex items-center gap-2 text-muted-foreground/70">
+        <h3 className="text-[10px] font-semibold uppercase tracking-[0.3em] italic flex items-center gap-2 text-muted-foreground/70">
           <Icon className="h-4 w-4 text-primary" /> {title}
         </h3>
       </div>
       <div className="flex-1 overflow-y-auto p-6 space-y-4">
         {data.length === 0 ? (
-          <p className="text-center text-[10px] font-black opacity-20 uppercase py-10">No Sector Data</p>
+          <p className="text-center text-[10px] font-semibold opacity-20 uppercase py-10">No Sector Data</p>
         ) : (
           data.map((d: any) => (
             <div key={d.label} className="space-y-1.5 group">
               <div className="flex justify-between items-end text-sm px-1">
-                <span className="truncate pr-4 font-black uppercase text-[10px] tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
+                <span className="truncate pr-4 font-semibold uppercase text-[10px] tracking-widest text-muted-foreground group-hover:text-primary transition-colors">
                   {d.label}
                 </span>
-                <span className="font-black italic tracking-tighter text-foreground group-hover:scale-110 transition-transform">
+                <span className="font-semibold tracking-tight text-foreground group-hover:scale-110 transition-transform">
                   {d.value.toLocaleString()}
                 </span>
               </div>

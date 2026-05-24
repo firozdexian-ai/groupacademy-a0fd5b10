@@ -30,7 +30,7 @@ export function PipelineColumn({ stage, label, accent, investors, onSelect }: Pr
         </div>
 
         {totalValue > 0 ? (
-          <div className="text-[10px] font-black text-muted-foreground/60 uppercase tracking-widest flex items-center gap-1.5 mt-1 border-t border-border/10 pt-2">
+          <div className="text-[10px] font-black text-muted-foreground/60 flex items-center gap-1.5 mt-1 border-t border-border/10 pt-2">
             Vol:{" "}
             <span
               className={cn("italic font-mono", stage === "term_sheet" ? "text-emerald-500" : "text-foreground/80")}
@@ -61,7 +61,7 @@ export function PipelineColumn({ stage, label, accent, investors, onSelect }: Pr
               {provided.placeholder}
 
               {investors.length === 0 && !snapshot.isDraggingOver && (
-                <div className="h-32 rounded-[20px] border-2 border-dashed border-border/20 flex items-center justify-center text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 italic m-2">
+                <div className="h-32 rounded-[20px] border-2 border-dashed border-border/20 flex items-center justify-center text-[9px] font-black text-muted-foreground/40 italic m-2">
                   Drop Node Here
                 </div>
               )}

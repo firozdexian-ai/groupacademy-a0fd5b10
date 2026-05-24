@@ -45,7 +45,7 @@ const StatsCard = ({ title, value, icon: Icon, trend, trendLabel, variant = "def
 
       <CardHeader className="p-6 pb-2">
         <div className="flex items-center justify-between">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic">{title}</p>
+          <p className="text-xs font-medium text-muted-foreground">{title}</p>
           <div
             className={cn(
               "h-10 w-10 rounded-xl flex items-center justify-center border-2 shadow-inner group-hover:rotate-6 transition-all duration-500",
@@ -60,7 +60,7 @@ const StatsCard = ({ title, value, icon: Icon, trend, trendLabel, variant = "def
       <CardContent className="p-6 pt-0">
         <div className="space-y-1">
           <div className="flex items-baseline gap-2">
-            <h3 className="text-3xl font-black italic tracking-tighter leading-none">{value}</h3>
+            <h3 className="text-3xl font-semibold tracking-tight leading-none">{value}</h3>
             <Zap className={cn("h-3 w-3 fill-current opacity-20", variant === "default" ? "text-primary" : "")} />
           </div>
 
@@ -68,7 +68,7 @@ const StatsCard = ({ title, value, icon: Icon, trend, trendLabel, variant = "def
             <div className="flex items-center pt-2">
               <div
                 className={cn(
-                  "flex items-center px-2 py-0.5 rounded-full text-[9px] font-black uppercase italic tracking-wider border",
+                  "flex items-center px-2 py-0.5 rounded-full text-[10px] font-semibold border",
                   variant === "warning"
                     ? "bg-destructive/10 text-destructive border-destructive/20"
                     : "bg-emerald-500/10 text-emerald-500 border-emerald-500/20",
@@ -78,7 +78,7 @@ const StatsCard = ({ title, value, icon: Icon, trend, trendLabel, variant = "def
                 <span>{trend}</span>
               </div>
               {trendLabel && (
-                <span className="ml-2 text-[9px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                <span className="ml-2 text-[10px] font-medium text-muted-foreground/60">
                   {trendLabel}
                 </span>
               )}

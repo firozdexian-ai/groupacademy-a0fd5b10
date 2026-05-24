@@ -142,10 +142,10 @@ export function IndustriesTab() {
       {/* Header - Renders immediately to fix R4 loading regression */}
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <Database className="h-6 w-6 text-primary" /> Sector Registry
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold text-muted-foreground/60 italic">
             Normalization & Institutional Deduplication
           </p>
         </div>
@@ -159,7 +159,7 @@ export function IndustriesTab() {
                 setMergeTarget([...selected][0]);
                 setMergeDialogOpen(true);
               }}
-              className="rounded-xl h-12 px-6 font-black uppercase text-[10px] tracking-widest gap-2 bg-primary shadow-xl"
+              className="rounded-xl h-12 px-6 font-semibold uppercase text-[10px] tracking-widest gap-2 bg-primary shadow-xl"
             >
               <Merge className="h-4 w-4" /> Normalize ({selected.size})
             </Button>
@@ -228,10 +228,10 @@ export function IndustriesTab() {
                       }
                     />
                   </th>
-                  <TableHead className="text-[10px] font-black uppercase py-6 pl-0">Sector Identity</TableHead>
-                  <TableHead className="text-center text-[10px] font-black uppercase">Employer Nodes</TableHead>
-                  <TableHead className="text-center text-[10px] font-black uppercase">Logic Nodes</TableHead>
-                  <TableHead className="text-right pr-8 text-[10px] font-black uppercase">Interrogate</TableHead>
+                  <TableHead className="text-[10px] font-semibold uppercase py-6 pl-0">Sector Identity</TableHead>
+                  <TableHead className="text-center text-[10px] font-semibold uppercase">Employer Nodes</TableHead>
+                  <TableHead className="text-center text-[10px] font-semibold uppercase">Logic Nodes</TableHead>
+                  <TableHead className="text-right pr-8 text-[10px] font-semibold uppercase">Interrogate</TableHead>
                 </TableRow>
               </TableHeader>
               <TableBody>
@@ -243,16 +243,16 @@ export function IndustriesTab() {
                         onCheckedChange={() => toggleSelect(row.industry)}
                       />
                     </TableCell>
-                    <TableCell className="py-6 font-black text-sm uppercase italic group-hover:text-primary transition-colors">
+                    <TableCell className="py-6 font-semibold text-sm uppercase italic group-hover:text-primary transition-colors">
                       {row.industry}
                     </TableCell>
                     <TableCell className="text-center">
-                      <Badge variant="outline" className="font-black text-[10px] border-2 bg-background/50">
+                      <Badge variant="outline" className="font-semibold text-[10px] border-2 bg-background/50">
                         {row.company_count}
                       </Badge>
                     </TableCell>
                     <TableCell className="text-center">
-                      <Badge variant="outline" className="font-black text-[10px] border-2 bg-background/50">
+                      <Badge variant="outline" className="font-semibold text-[10px] border-2 bg-background/50">
                         {row.job_count}
                       </Badge>
                     </TableCell>
@@ -287,7 +287,7 @@ export function IndustriesTab() {
           >
             <ChevronLeft />
           </Button>
-          <span className="text-[10px] font-black uppercase italic opacity-40">
+          <span className="text-[10px] font-semibold uppercase italic opacity-40">
             Registry Frame {page} / {totalPages || 1}
           </span>
           <Button
@@ -307,7 +307,7 @@ export function IndustriesTab() {
         <DialogContent className="max-w-md rounded-[32px] border-4 bg-background text-left">
           <div className="p-2 space-y-6">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black italic tracking-tighter uppercase flex items-center gap-2">
+              <DialogTitle className="text-2xl font-semibold tracking-tight uppercase flex items-center gap-2">
                 <Zap className="h-6 w-6 text-primary" /> Recalibrate Node
               </DialogTitle>
             </DialogHeader>
@@ -316,11 +316,11 @@ export function IndustriesTab() {
                 Renaming "{renameFrom}" will recursively update every employer node linked to this identifier.
               </p>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">New Sector Designation</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">New Sector Designation</Label>
                 <Input
                   value={renameTo}
                   onChange={(e) => setRenameTo(e.target.value)}
-                  className="rounded-xl border-2 font-black italic uppercase h-12"
+                  className="rounded-xl border-2 font-semibold uppercase h-12"
                 />
               </div>
             </div>
@@ -328,7 +328,7 @@ export function IndustriesTab() {
               <Button
                 onClick={executeRename}
                 disabled={isRenaming}
-                className="w-full h-14 rounded-2xl font-black uppercase text-[11px] tracking-widest gap-2 shadow-xl"
+                className="w-full h-14 rounded-2xl font-semibold uppercase text-[11px] tracking-widest gap-2 shadow-xl"
               >
                 {isRenaming ? <Loader2 className="animate-spin h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />} Commit
                 Change
@@ -343,7 +343,7 @@ export function IndustriesTab() {
         <DialogContent className="max-w-md rounded-[32px] border-4 bg-background text-left">
           <div className="p-2 space-y-6">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black italic tracking-tighter uppercase flex items-center gap-2">
+              <DialogTitle className="text-2xl font-semibold tracking-tight uppercase flex items-center gap-2">
                 <Merge className="h-6 w-6 text-primary" /> Sector Fusion
               </DialogTitle>
             </DialogHeader>
@@ -353,11 +353,11 @@ export function IndustriesTab() {
                 designation.
               </p>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Primary Sector Identifier</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Primary Sector Identifier</Label>
                 <Input
                   value={mergeTarget}
                   onChange={(e) => setMergeTarget(e.target.value)}
-                  className="rounded-xl border-2 font-black italic h-12 uppercase"
+                  className="rounded-xl border-2 font-semibold h-12 uppercase"
                 />
               </div>
             </div>
@@ -365,7 +365,7 @@ export function IndustriesTab() {
               <Button
                 onClick={executeMerge}
                 disabled={isMerging}
-                className="w-full h-14 rounded-2xl font-black uppercase text-[11px] tracking-widest gap-2 shadow-xl"
+                className="w-full h-14 rounded-2xl font-semibold uppercase text-[11px] tracking-widest gap-2 shadow-xl"
               >
                 {isMerging ? <Loader2 className="animate-spin h-4 w-4" /> : <Activity className="h-4 w-4" />} Execute
                 Fusion
@@ -395,10 +395,10 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div className="min-w-0 flex-1">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic mb-1 truncate">
+          <p className="text-[10px] font-semibold text-muted-foreground italic mb-1 truncate">
             {label}
           </p>
-          <p className="text-2xl font-black italic tracking-tighter text-foreground truncate">{value}</p>
+          <p className="text-2xl font-semibold tracking-tight text-foreground truncate">{value}</p>
         </div>
       </div>
     </Card>

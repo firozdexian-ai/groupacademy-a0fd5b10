@@ -98,7 +98,7 @@ export function JobsKanbanPipelineTab() {
                 >
                   <div className="flex items-center gap-2">
                     <StageIcon className={cn("h-5 w-5", stage.color)} />
-                    <h3 className={cn("font-black uppercase tracking-widest text-xs", stage.color)}>{stage.label}</h3>
+                    <h3 className={cn("font-black  text-xs", stage.color)}>{stage.label}</h3>
                   </div>
                   <Badge className={cn("font-mono font-black", stage.color, stage.bg, "border-none")}>
                     {columnApps.length}
@@ -109,7 +109,7 @@ export function JobsKanbanPipelineTab() {
                 <div className="flex flex-col gap-4 overflow-y-auto pr-2 pb-10">
                   {columnApps.length === 0 ? (
                     <div className="p-10 text-center border-2 border-dashed border-border/40 rounded-3xl">
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
+                      <p className="text-[10px] font-black text-muted-foreground/40 italic">
                         Empty Stage
                       </p>
                     </div>
@@ -123,16 +123,16 @@ export function JobsKanbanPipelineTab() {
                           <div className="flex justify-between items-start">
                             <Badge
                               variant="outline"
-                              className="font-mono text-[9px] uppercase tracking-widest bg-background/50"
+                              className="font-mono text-[9px] bg-background/50"
                             >
                               {app.job_id.substring(0, 8)}
                             </Badge>
-                            <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/50">
+                            <span className="text-[9px] font-black text-muted-foreground/50">
                               {new Date(app.created_at).toLocaleDateString()}
                             </span>
                           </div>
                           <div>
-                            <p className="text-xs font-black uppercase tracking-widest text-primary italic mb-1">
+                            <p className="text-xs font-black text-primary italic mb-1">
                               Talent ID
                             </p>
                             <p className="font-mono text-sm text-foreground/80">{app.talent_id.substring(0, 12)}...</p>

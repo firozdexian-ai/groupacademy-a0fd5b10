@@ -249,18 +249,18 @@ export function TalentCreditsTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-blue-500">
             <CircleDollarSign className="h-8 w-8 text-blue-500 fill-blue-500/20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Talent Credits
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             B2C Token Registry & Telemetry v2.6
           </p>
         </div>
         <Button
           variant="outline"
           onClick={loadData}
-          className="rounded-xl h-12 px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-2 text-blue-600 border-blue-500/20 bg-blue-500/10 hover:bg-blue-500 hover:text-white transition-all"
+          className="rounded-xl h-12 px-6 border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 text-blue-600 border-blue-500/20 bg-blue-500/10 hover:bg-blue-500 hover:text-white transition-all"
         >
           <RefreshCw className={cn("h-4 w-4", isLoading && "animate-spin")} /> Re-Sync Registry
         </Button>
@@ -275,10 +275,10 @@ export function TalentCreditsTab() {
                 <Coins className="h-7 w-7 text-blue-500" />
               </div>
               <div className="text-left">
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                <p className="text-[9px] font-semibold text-muted-foreground/40 mb-1">
                   Circulation
                 </p>
-                <p className="text-3xl font-black tracking-tighter italic leading-none">
+                <p className="text-3xl font-semibold tracking-tight italic leading-none">
                   {totalCirculation.toLocaleString()}
                 </p>
               </div>
@@ -289,12 +289,12 @@ export function TalentCreditsTab() {
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <TrendingDown className="h-4 w-4 text-destructive" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-destructive/60">Burn Rate (Total)</p>
+                <p className="text-[9px] font-semibold text-destructive/60">Burn Rate (Total)</p>
               </div>
-              <p className="text-3xl font-black tracking-tighter italic text-destructive leading-none">
+              <p className="text-3xl font-semibold tracking-tight italic text-destructive leading-none">
                 {consumptionStats.totalConsumed.toLocaleString()}
               </p>
-              <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 uppercase tracking-widest italic">
+              <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 italic">
                 Node Activity Verified
               </p>
             </CardContent>
@@ -304,14 +304,14 @@ export function TalentCreditsTab() {
             <CardContent className="p-6">
               <div className="flex items-center gap-2 mb-3">
                 <Calendar className="h-4 w-4 text-primary" />
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40">
+                <p className="text-[9px] font-semibold text-muted-foreground/40">
                   Current Cycle
                 </p>
               </div>
-              <p className="text-3xl font-black tracking-tighter italic leading-none">
+              <p className="text-3xl font-semibold tracking-tight italic leading-none">
                 {consumptionStats.monthlyConsumed.toLocaleString()}
               </p>
-              <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 uppercase tracking-widest italic">
+              <p className="text-[10px] font-bold text-muted-foreground/40 mt-2 italic">
                 Temporal Index: Active
               </p>
             </CardContent>
@@ -319,7 +319,7 @@ export function TalentCreditsTab() {
 
           <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-sm flex flex-col justify-center text-left">
             <CardContent className="p-6 space-y-3">
-              <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 border-b border-border/10 pb-2">
+              <p className="text-[9px] font-semibold text-muted-foreground/40 border-b border-border/10 pb-2">
                 Service breakout
               </p>
               <div className="space-y-2">
@@ -347,7 +347,7 @@ export function TalentCreditsTab() {
               <button
                 onClick={() => setSelectedTab("balances")}
                 className={cn(
-                  "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  "px-6 py-2 rounded-xl text-[10px] font-black  transition-all",
                   selectedTab === "balances"
                     ? "bg-blue-600 text-white shadow-lg"
                     : "hover:bg-muted/50 text-muted-foreground",
@@ -358,7 +358,7 @@ export function TalentCreditsTab() {
               <button
                 onClick={() => setSelectedTab("transactions")}
                 className={cn(
-                  "px-6 py-2 rounded-xl text-[10px] font-black uppercase tracking-widest transition-all",
+                  "px-6 py-2 rounded-xl text-[10px] font-black  transition-all",
                   selectedTab === "transactions"
                     ? "bg-blue-600 text-white shadow-lg"
                     : "hover:bg-muted/50 text-muted-foreground",
@@ -392,16 +392,16 @@ export function TalentCreditsTab() {
               <Table>
                 <TableHeader className="bg-muted/10 border-b-2 border-border/20">
                   <TableRow className="hover:bg-transparent">
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest py-6 pl-8">
+                    <TableHead className="text-[10px] font-semibold py-6 pl-8">
                       {selectedTab === "balances" ? "Talent Entity" : "Temporal Index"}
                     </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                    <TableHead className="text-[10px] font-semibold">
                       {selectedTab === "balances" ? "Logic Endpoint" : "Target Entity"}
                     </TableHead>
-                    <TableHead className="text-[10px] font-black uppercase tracking-widest">
+                    <TableHead className="text-[10px] font-semibold">
                       {selectedTab === "balances" ? "Current balance" : "Type"}
                     </TableHead>
-                    <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                    <TableHead className="text-right text-[10px] font-semibold pr-8">
                       Interrogate
                     </TableHead>
                   </TableRow>
@@ -410,7 +410,7 @@ export function TalentCreditsTab() {
                   {selectedTab === "balances"
                     ? credits.map((credit) => (
                         <TableRow key={credit.id} className="group transition-all hover:bg-blue-500/[0.02]">
-                          <TableCell className="px-8 py-6 font-black text-sm uppercase tracking-tight italic group-hover:text-blue-500 transition-colors text-left">
+                          <TableCell className="px-8 py-6 font-semibold text-sm uppercase tracking-tight italic group-hover:text-blue-500 transition-colors text-left">
                             {credit.talent?.full_name || "ANONYMOUS_NODE"}
                           </TableCell>
                           <TableCell className="text-left">
@@ -454,14 +454,14 @@ export function TalentCreditsTab() {
                             {format(new Date(tx.created_at), "MMM d, HH:mm:ss")}
                           </TableCell>
                           <TableCell className="text-left">
-                            <p className="font-black text-xs uppercase tracking-tight italic">
+                            <p className="font-semibold text-xs uppercase tracking-tight italic">
                               {tx.talent?.full_name || "NODE_AUTO"}
                             </p>
                           </TableCell>
                           <TableCell className="text-left">
                             <Badge
                               className={cn(
-                                "rounded-lg font-black text-[8px] uppercase tracking-widest px-3 py-1 border-none",
+                                "rounded-lg font-black text-[8px]  px-3 py-1 border-none",
                                 tx.amount > 0 ? "bg-emerald-500 text-white" : "bg-muted text-muted-foreground",
                               )}
                             >
@@ -488,10 +488,10 @@ export function TalentCreditsTab() {
           {totalPages > 1 && (
             <div className="flex items-center justify-between p-8 border-t border-border/10 bg-muted/5">
               <div className="space-y-1 text-left">
-                <p className="text-[10px] font-black uppercase tracking-[0.4em] text-muted-foreground/40 italic">
+                <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-muted-foreground/40 italic">
                   Registry Frame
                 </p>
-                <p className="text-xl font-black italic tracking-tighter">
+                <p className="text-xl font-semibold tracking-tight">
                   {page} <span className="text-xs opacity-20">of</span> {totalPages}
                 </p>
               </div>
@@ -538,10 +538,10 @@ export function TalentCreditsTab() {
                   className={cn("h-8 w-8", adjustDialog.type === "add" ? "text-emerald-500" : "text-destructive")}
                 />
                 <div className="text-left">
-                  <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+                  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
                     {adjustDialog.type === "add" ? "Executive Credit" : "Executive Debit"}
                   </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
                     Manual override of talent fiscal balance
                   </DialogDescription>
                 </div>
@@ -550,24 +550,24 @@ export function TalentCreditsTab() {
             <div className="space-y-8 py-4">
               <div className="p-6 rounded-[28px] border-2 bg-muted/20 border-border/10 flex items-center justify-between">
                 <div>
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                  <p className="text-[10px] font-semibold text-muted-foreground/40 mb-1">
                     Target Node
                   </p>
-                  <p className="text-lg font-black italic tracking-tight uppercase leading-none">
+                  <p className="text-lg font-semibold tracking-tight uppercase leading-none">
                     {adjustDialog.talent?.talent?.full_name}
                   </p>
                 </div>
                 <div className="text-right">
-                  <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                  <p className="text-[10px] font-semibold text-muted-foreground/40 mb-1">
                     Status Balance
                   </p>
-                  <p className="text-lg font-black italic tracking-tight leading-none text-blue-500">
+                  <p className="text-lg font-semibold tracking-tight leading-none text-blue-500">
                     {adjustDialog.talent?.balance} TKN
                   </p>
                 </div>
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-semibold text-primary ml-1">
                   Amount (credits)
                 </Label>
                 <Input
@@ -575,11 +575,11 @@ export function TalentCreditsTab() {
                   value={adjustAmount}
                   onChange={(e) => setAdjustAmount(e.target.value)}
                   placeholder="0000"
-                  className="h-14 rounded-2xl border-2 font-black italic text-xl"
+                  className="h-14 rounded-2xl border-2 font-semibold text-xl"
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-semibold text-primary ml-1">
                   Override Justification
                 </Label>
                 <Textarea
@@ -595,7 +595,7 @@ export function TalentCreditsTab() {
               <Button
                 variant="ghost"
                 onClick={() => setAdjustDialog({ open: false, type: "add" })}
-                className="h-14 px-8 font-black uppercase text-[10px] tracking-widest"
+                className="h-14 px-8 font-semibold uppercase text-[10px] tracking-widest"
               >
                 Abort
               </Button>
@@ -603,7 +603,7 @@ export function TalentCreditsTab() {
                 onClick={handleAdjustCredits}
                 disabled={isAdjusting || !adjustAmount}
                 className={cn(
-                  "h-14 px-12 rounded-2xl font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl flex items-center gap-3 text-white",
+                  "h-14 px-12 rounded-2xl font-black  text-[11px] shadow-2xl flex items-center gap-3 text-white",
                   adjustDialog.type === "add"
                     ? "bg-emerald-600 hover:bg-emerald-700 shadow-emerald-500/20"
                     : "bg-destructive hover:bg-destructive/90 shadow-destructive/20",

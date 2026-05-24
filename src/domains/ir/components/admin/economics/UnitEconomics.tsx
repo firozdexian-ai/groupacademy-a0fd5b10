@@ -15,7 +15,7 @@ import { cn } from "@/lib/utils";
 function DeltaBadge({ value, invert = false }: { value: number | null; invert?: boolean }) {
   if (value == null)
     return (
-      <Badge variant="outline" className="text-[9px] font-black border-2">
+      <Badge variant="outline" className="text-[9px] font-semibold border-2">
         <Minus className="h-2.5 w-2.5 mr-1" /> N/A
       </Badge>
     );
@@ -26,7 +26,7 @@ function DeltaBadge({ value, invert = false }: { value: number | null; invert?: 
   return (
     <Badge
       className={cn(
-        "font-black text-[9px] uppercase tracking-widest px-2 py-0.5 border-none gap-1 shadow-sm",
+        "font-black text-[9px]  px-2 py-0.5 border-none gap-1 shadow-sm",
         isGood ? "bg-emerald-500/10 text-emerald-600" : "bg-destructive/10 text-destructive",
       )}
     >
@@ -41,12 +41,12 @@ function MetricTile({ label, value, delta, suffix = "", invert = false }: any) {
     <Card className="rounded-[32px] border-2 border-border/40 bg-card/30 backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-colors">
       <CardContent className="p-6">
         <div className="flex justify-between items-start mb-4">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic w-2/3 leading-tight">
+          <p className="text-[10px] font-semibold text-muted-foreground italic w-2/3 leading-tight">
             {label}
           </p>
           <DeltaBadge value={delta} invert={invert} />
         </div>
-        <p className="text-3xl font-black italic tracking-tighter leading-none text-foreground/90">
+        <p className="text-3xl font-semibold tracking-tight leading-none text-foreground/90">
           {value == null || value === "" ? "—" : `${value}${suffix}`}
         </p>
       </CardContent>
@@ -65,17 +65,17 @@ export function UnitEconomics() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Cpu className="h-8 w-8 text-primary fill-primary/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">
               AI-Era Unit Economics
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Software 3.0 metrics: Retention, Human-in-Loop COGS, Capital Efficiency
           </p>
         </div>
         <Button
           onClick={() => setOpen(true)}
-          className="h-12 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+          className="h-12 px-8 rounded-2xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
         >
           <Plus className="h-4 w-4" /> Log Snapshot
         </Button>
@@ -116,10 +116,10 @@ export function UnitEconomics() {
             <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
               <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-purple-500" />
               <CardHeader className="p-8 pb-4">
-                <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
+                <CardTitle className="text-xl font-semibold uppercase italic tracking-tight">
                   Retention Velocity
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                   NRR / GRR / Usage Retention
                 </CardDescription>
               </CardHeader>
@@ -131,10 +131,10 @@ export function UnitEconomics() {
             <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
               <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-rose-500" />
               <CardHeader className="p-8 pb-4">
-                <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
+                <CardTitle className="text-xl font-semibold uppercase italic tracking-tight">
                   COGS Distribution
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                   AI Inference vs Human-in-the-Loop Labor
                 </CardDescription>
               </CardHeader>
@@ -147,14 +147,14 @@ export function UnitEconomics() {
               <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-teal-500" />
               <CardHeader className="p-8 pb-4 flex flex-row items-start justify-between">
                 <div className="space-y-1">
-                  <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
+                  <CardTitle className="text-xl font-semibold uppercase italic tracking-tight">
                     Capital Efficiency
                   </CardTitle>
-                  <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                  <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                     Revenue per Employee vs Target Benchmark
                   </CardDescription>
                 </div>
-                <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black italic px-4 py-1.5">
+                <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-semibold px-4 py-1.5">
                   THREE-PERSON UNICORN
                 </Badge>
               </CardHeader>
@@ -167,10 +167,10 @@ export function UnitEconomics() {
             <Card className="xl:col-span-2 rounded-[40px] border-2 border-border/40 bg-card/30 shadow-2xl overflow-hidden backdrop-blur-xl">
               <div className="h-1.5 w-full bg-gradient-to-r from-fuchsia-400 via-purple-500 to-indigo-500" />
               <CardHeader className="p-8 pb-4">
-                <CardTitle className="text-xl font-black uppercase italic tracking-tighter">
+                <CardTitle className="text-xl font-semibold uppercase italic tracking-tight">
                   Cohort Retention Triangle
                 </CardTitle>
-                <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+                <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
                   Monthly cohorts × periods · active_users / cohort_size
                 </CardDescription>
               </CardHeader>

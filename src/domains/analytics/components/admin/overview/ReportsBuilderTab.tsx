@@ -101,7 +101,7 @@ export function ReportsBuilderTab() {
         <CardContent className="p-6 space-y-4">
           <div className="flex items-center gap-2 mb-2">
             <Sparkles className="h-4 w-4 text-primary animate-pulse" />
-            <span className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+            <span className="text-[10px] font-semibold text-muted-foreground/60 italic">
               AI Canvas Engine
             </span>
           </div>
@@ -127,7 +127,7 @@ export function ReportsBuilderTab() {
           <Button
             onClick={() => generate(brief)}
             disabled={loading || !brief.trim()}
-            className="rounded-2xl h-12 px-8 font-black uppercase tracking-widest text-xs gap-2"
+            className="rounded-2xl h-12 px-8 font-semibold text-xs gap-2"
           >
             {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
             Compile Leadership Report
@@ -141,11 +141,11 @@ export function ReportsBuilderTab() {
           <CardHeader className="border-b border-border/20 p-8">
             <div className="flex items-center justify-between">
               <div>
-                <CardTitle className="text-2xl font-black tracking-tighter italic uppercase text-foreground">
+                <CardTitle className="text-2xl font-semibold tracking-tight italic uppercase text-foreground">
                   {spec.title}
                 </CardTitle>
                 {spec.period?.from && (
-                  <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic mt-1">
+                  <p className="text-[10px] font-semibold text-muted-foreground/60 italic mt-1">
                     Telemetry: {new Date(spec.period.from).toLocaleDateString()} —{" "}
                     {new Date(spec.period.to ?? "").toLocaleDateString()}
                   </p>
@@ -169,7 +169,7 @@ function SectionRender({ section, payload }: { section: Section; payload: any })
   if (section.kind === "note") {
     return (
       <div className="p-6 rounded-[24px] bg-muted/30 border border-border/30">
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic mb-2">
+        <p className="text-[10px] font-semibold text-muted-foreground/60 italic mb-2">
           {section.title}
         </p>
         <p className="text-sm text-foreground/80 leading-relaxed">{section.note}</p>
@@ -183,10 +183,10 @@ function SectionRender({ section, payload }: { section: Section; payload: any })
         <div className="absolute top-0 right-0 p-4 opacity-10 group-hover:scale-110 transition-transform">
           <FileBarChart className="h-12 w-12 text-primary" />
         </div>
-        <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic">
+        <p className="text-[10px] font-semibold text-muted-foreground/60 italic">
           {section.title}
         </p>
-        <p className="text-6xl font-black italic tracking-tighter text-primary mt-4 leading-none">
+        <p className="text-6xl font-semibold tracking-tight text-primary mt-4 leading-none">
           {Number(value).toLocaleString()}
         </p>
       </div>
@@ -200,7 +200,7 @@ function SectionRender({ section, payload }: { section: Section; payload: any })
 
   return (
     <div className="p-6 rounded-[32px] border-2 border-border/40 bg-card/50">
-      <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground/60 italic mb-6">
+      <p className="text-[10px] font-semibold text-muted-foreground/60 italic mb-6">
         {section.title}
       </p>
       <div className="h-80">

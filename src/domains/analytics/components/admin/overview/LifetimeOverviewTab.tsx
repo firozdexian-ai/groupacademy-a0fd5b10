@@ -155,7 +155,7 @@ export function LifetimeOverviewTab() {
           size="sm"
           onClick={() => load(true)}
           disabled={isRefreshing}
-          className="rounded-xl border-2 gap-2 h-10 px-4 font-black uppercase text-[10px] tracking-widest"
+          className="rounded-xl border-2 gap-2 h-10 px-4 font-semibold uppercase text-[10px] tracking-widest"
         >
           <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
           {isRefreshing ? "Syncing..." : "Refresh HUD"}
@@ -210,7 +210,7 @@ export function LifetimeOverviewTab() {
           <Card className="rounded-[40px] border-2 border-border/40 bg-card/30 backdrop-blur-xl shadow-2xl overflow-hidden">
             <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
             <CardHeader className="p-8 pb-2 border-b border-border/10 bg-muted/10">
-              <CardTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-3">
+              <CardTitle className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
                 <Activity className="h-5 w-5 text-primary" /> Performance Telemetry
               </CardTitle>
             </CardHeader>
@@ -222,11 +222,11 @@ export function LifetimeOverviewTab() {
                 { label: "AI Sessions", val: stats.aiAgents.totalSessions, icon: Zap },
               ].map((item, i) => (
                 <div key={i} className="space-y-2">
-                  <p className="text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest">
+                  <p className="text-[10px] font-semibold text-muted-foreground/40">
                     {item.label}
                   </p>
                   <div className="flex items-end gap-2">
-                    <p className="text-4xl font-black italic tracking-tighter leading-none">{item.val}</p>
+                    <p className="text-4xl font-semibold tracking-tight leading-none">{item.val}</p>
                     <item.icon className="h-4 w-4 text-primary/20" />
                   </div>
                 </div>
@@ -236,17 +236,17 @@ export function LifetimeOverviewTab() {
 
           <Card className="rounded-[40px] border-2 border-primary/20 bg-primary/5 shadow-xl">
             <CardHeader className="p-8 pb-2 border-b border-primary/10">
-              <CardTitle className="text-lg font-black uppercase tracking-tighter italic text-primary">
+              <CardTitle className="text-lg font-semibold uppercase tracking-tight italic text-primary">
                 LMS Pulse
               </CardTitle>
             </CardHeader>
             <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
               <div className="space-y-1">
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60 italic">
+                <p className="text-[9px] font-semibold text-muted-foreground/60 italic">
                   Active Nodes
                 </p>
                 <div className="flex items-center gap-4">
-                  <p className="text-6xl font-black italic tracking-tighter text-primary leading-none">
+                  <p className="text-6xl font-semibold tracking-tight text-primary leading-none">
                     {stats.activeEnrollments}
                   </p>
                   <TrendingUp className="h-10 w-10 text-primary/20" />
@@ -254,7 +254,7 @@ export function LifetimeOverviewTab() {
               </div>
               <Button
                 variant="default"
-                className="w-full h-14 rounded-2xl justify-between shadow-lg font-black uppercase text-[10px] tracking-[0.2em] px-6"
+                className="w-full h-14 rounded-2xl justify-between shadow-lg font-semibold uppercase text-[10px] tracking-[0.2em] px-6"
                 // F1: canonical learning-progress route
                 onClick={() => navigate("/dashboard?tab=learning-progress")}
               >

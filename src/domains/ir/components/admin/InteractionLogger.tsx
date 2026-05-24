@@ -123,10 +123,10 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
             <div className="flex items-center gap-4">
               <Zap className="h-8 w-8 text-primary fill-primary/20" />
               <div className="space-y-1 text-left">
-                <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic leading-none">
+                <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic leading-none">
                   Log Interaction
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+                <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
                   Log meeting details
                 </DialogDescription>
               </div>
@@ -137,7 +137,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
             <div className="space-y-8 pb-8">
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-semibold text-primary ml-1">
                     Interaction
                   </Label>
                   <Select
@@ -152,7 +152,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                         <SelectItem
                           key={type.value}
                           value={type.value}
-                          className="font-bold text-xs uppercase tracking-widest"
+                          className="font-bold text-xs"
                         >
                           {type.label}
                         </SelectItem>
@@ -162,7 +162,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                 </div>
 
                 <div className="space-y-2">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-semibold text-primary ml-1">
                     Investor Sentiment
                   </Label>
                   <Select value={formData.sentiment} onValueChange={(v) => setFormData({ ...formData, sentiment: v })}>
@@ -170,14 +170,14 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                       <SelectValue placeholder="NEUTRAL" />
                     </SelectTrigger>
                     <SelectContent className="rounded-xl border-2">
-                      <SelectItem value="" className="font-bold text-xs uppercase tracking-widest">
+                      <SelectItem value="" className="font-bold text-xs">
                         UNSPECIFIED
                       </SelectItem>
                       {IR_CONFIG.SENTIMENT_OPTIONS.map((opt) => (
                         <SelectItem
                           key={opt.value}
                           value={opt.value}
-                          className="font-bold text-xs uppercase tracking-widest"
+                          className="font-bold text-xs"
                         >
                           {opt.label}
                         </SelectItem>
@@ -188,19 +188,19 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-semibold text-primary ml-1">
                   Strategic Subject
                 </Label>
                 <Input
                   value={formData.subject}
                   onChange={(e) => setFormData({ ...formData, subject: e.target.value })}
                   placeholder="E.G. Q2 EQUITY ROUND INITIAL REVIEW..."
-                  className="h-14 rounded-2xl border-2 font-black uppercase italic text-sm tracking-widest bg-muted/10 focus-visible:border-primary/40 transition-colors"
+                  className="h-14 rounded-2xl border-2 font-semibold uppercase italic text-sm tracking-widest bg-muted/10 focus-visible:border-primary/40 transition-colors"
                 />
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-semibold text-primary ml-1">
                   {formData.interaction_type === "reply_received"
                     ? "Neural Payload (Reply Text)"
                     : "Core Artifact (Notes)"}
@@ -218,7 +218,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
               </div>
 
               <div className="space-y-3">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-semibold text-primary ml-1">
                   Key Pulse Points
                 </Label>
                 <div className="flex flex-col sm:flex-row gap-3">
@@ -234,7 +234,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                     variant="outline"
                     onClick={addKeyPoint}
                     disabled={!keyPointInput.trim()}
-                    className="h-12 px-6 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest shrink-0"
+                    className="h-12 px-6 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest shrink-0"
                   >
                     Inject
                   </Button>
@@ -244,7 +244,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                     {formData.key_points.map((point, i) => (
                       <Badge
                         key={i}
-                        className="bg-primary/10 text-primary border-2 border-primary/20 font-black italic text-[9px] px-3 py-1 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-colors group flex items-center gap-1"
+                        className="bg-primary/10 text-primary border-2 border-primary/20 font-semibold text-[9px] px-3 py-1 cursor-pointer hover:bg-destructive/10 hover:border-destructive/30 hover:text-destructive transition-colors group flex items-center gap-1"
                         onClick={() =>
                           setFormData((p) => ({ ...p, key_points: p.key_points.filter((_, idx) => idx !== i) }))
                         }
@@ -267,7 +267,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                   />
                   <Label
                     htmlFor="followup"
-                    className="text-[10px] font-black uppercase italic tracking-widest cursor-pointer"
+                    className="text-[10px] font-semibold uppercase italic tracking-widest cursor-pointer"
                   >
                     Follow-up required
                   </Label>
@@ -278,7 +278,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
                     type="date"
                     value={formData.follow_up_date}
                     onChange={(e) => setFormData({ ...formData, follow_up_date: e.target.value })}
-                    className="w-full sm:w-44 h-12 rounded-xl border-2 font-black text-xs uppercase"
+                    className="w-full sm:w-44 h-12 rounded-xl border-2 font-semibold text-xs uppercase"
                   />
                 )}
               </div>
@@ -290,14 +290,14 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
           <Button
             variant="outline"
             onClick={() => onOpenChange(false)}
-            className="h-14 px-8 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest italic text-muted-foreground hover:text-foreground transition-colors"
+            className="h-14 px-8 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest italic text-muted-foreground hover:text-foreground transition-colors"
           >
             Abort Log
           </Button>
           <Button
             onClick={() => saveMutation.mutate()}
             disabled={saveMutation.isPending}
-            className="h-14 px-10 rounded-[24px] font-black uppercase italic tracking-tighter text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
+            className="h-14 px-10 rounded-[24px] font-semibold uppercase italic tracking-tight text-lg gap-3 shadow-xl shadow-primary/20 transition-all hover:scale-[1.02] active:scale-95"
           >
             {saveMutation.isPending ? (
               <Loader2 className="h-5 w-5 animate-spin" />

@@ -21,11 +21,11 @@ export function JobsKpiTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-pink-500">
             <Activity className="h-8 w-8 text-pink-500 fill-pink-500/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Recruitment KPIs
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Global Hiring Analytics
           </p>
         </div>
@@ -89,9 +89,9 @@ function KpiCard({ title, value, subtitle, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div className="mt-auto">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic mb-2">{title}</p>
-          <p className="text-5xl font-black italic tracking-tighter leading-none text-foreground/90 mb-2">{value}</p>
-          <p className="text-xs font-bold text-muted-foreground/60 uppercase tracking-widest">{subtitle}</p>
+          <p className="text-[10px] font-semibold text-muted-foreground italic mb-2">{title}</p>
+          <p className="text-5xl font-semibold tracking-tight leading-none text-foreground/90 mb-2">{value}</p>
+          <p className="text-xs font-bold text-muted-foreground/60">{subtitle}</p>
         </div>
       </CardContent>
     </Card>

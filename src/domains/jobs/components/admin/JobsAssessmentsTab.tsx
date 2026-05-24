@@ -105,7 +105,7 @@ export function JobsAssessmentsTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "passed"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : row.status === "failed"
@@ -156,13 +156,13 @@ export function JobsAssessmentsTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
               <ClipboardList className="h-6 w-6" /> Grade Assessment
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Log evaluation results.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Talent ID</Label>
+              <Label className="text-[10px] font-black text-primary ml-1">Talent ID</Label>
               <Input
                 placeholder="UUID"
                 value={draft.talent_id || ""}
@@ -172,7 +172,7 @@ export function JobsAssessmentsTab() {
             </div>
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-violet-500 ml-1">
+                <Label className="text-[10px] font-black text-violet-500 ml-1">
                   Score (%)
                 </Label>
                 <Input
@@ -184,19 +184,19 @@ export function JobsAssessmentsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Verdict</Label>
+                <Label className="text-[10px] font-black text-primary ml-1">Verdict</Label>
                 <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
                   <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
                     <SelectValue />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="pending" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                    <SelectItem value="pending" className="font-bold text-xs text-amber-500">
                       Pending
                     </SelectItem>
-                    <SelectItem value="passed" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                    <SelectItem value="passed" className="font-bold text-xs text-emerald-500">
                       Passed
                     </SelectItem>
-                    <SelectItem value="failed" className="font-bold text-xs uppercase tracking-widest text-rose-500">
+                    <SelectItem value="failed" className="font-bold text-xs text-rose-500">
                       Failed
                     </SelectItem>
                   </SelectContent>

@@ -118,8 +118,8 @@ export function ProfessionsTab() {
       {/* Deduped Header Action Row (P2 Fix) */}
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter">Academic Governance</h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight">Academic Governance</h2>
+          <p className="text-[10px] font-semibold text-muted-foreground/60">
             Manage Academies, Schools & Programs
           </p>
         </div>
@@ -127,7 +127,7 @@ export function ProfessionsTab() {
           {activeTab === "academies" && (
             <Button
               size="sm"
-              className="rounded-xl font-black"
+              className="rounded-xl font-semibold"
               onClick={() => {
                 setEditingItem(null);
                 setAcademyDialog(true);
@@ -139,7 +139,7 @@ export function ProfessionsTab() {
           {activeTab === "schools" && (
             <Button
               size="sm"
-              className="rounded-xl font-black"
+              className="rounded-xl font-semibold"
               onClick={() => {
                 setEditingItem(null);
                 setSchoolDialog(true);
@@ -151,7 +151,7 @@ export function ProfessionsTab() {
           {activeTab === "professions" && (
             <Button
               size="sm"
-              className="rounded-xl font-black"
+              className="rounded-xl font-semibold"
               onClick={() => {
                 setEditingItem(null);
                 setProfessionDialog(true);
@@ -169,7 +169,7 @@ export function ProfessionsTab() {
             <TabsTrigger
               key={t}
               value={t}
-              className="rounded-xl font-black uppercase italic text-[10px] tracking-widest"
+              className="rounded-xl font-semibold uppercase italic text-[10px] tracking-widest"
             >
               {t}
             </TabsTrigger>
@@ -302,11 +302,11 @@ function StructuralDialog({ title, open, setOpen, onSave, children }: any) {
       <DialogContent className="max-w-md rounded-[32px] border-4">
         <form onSubmit={onSave}>
           <DialogHeader>
-            <DialogTitle className="text-2xl font-black italic tracking-tighter uppercase">{title}</DialogTitle>
+            <DialogTitle className="text-2xl font-semibold tracking-tight uppercase">{title}</DialogTitle>
           </DialogHeader>
           <div className="py-6 text-left">{children}</div>
           <DialogFooter>
-            <Button type="submit" className="w-full h-12 rounded-xl font-black uppercase text-xs">
+            <Button type="submit" className="w-full h-12 rounded-xl font-semibold uppercase text-xs">
               Commit Structure Change
             </Button>
           </DialogFooter>
@@ -325,7 +325,7 @@ function AcademyCard({ academy, onEdit }: any) {
           <Icon className="h-5 w-5 text-primary" />
         </div>
         <div className="text-left">
-          <h4 className="font-black uppercase italic text-sm">{academy.name}</h4>
+          <h4 className="font-semibold uppercase italic text-sm">{academy.name}</h4>
           <Badge variant="outline" className="text-[8px] uppercase">
             {academy.academy_type}
           </Badge>
@@ -346,7 +346,7 @@ function SchoolCard({ school, academyName, onEdit }: any) {
           <GraduationCap className="h-5 w-5 text-emerald-500" />
         </div>
         <div className="text-left">
-          <h4 className="font-black uppercase italic text-sm">{school.name}</h4>
+          <h4 className="font-semibold uppercase italic text-sm">{school.name}</h4>
           <p className="text-[8px] font-bold text-muted-foreground uppercase">{academyName}</p>
         </div>
       </div>
@@ -365,7 +365,7 @@ function ProfessionCard({ profession, schoolName, onEdit }: any) {
           <Briefcase className="h-5 w-5 text-orange-500" />
         </div>
         <div className="text-left">
-          <h4 className="font-black uppercase italic text-sm">{profession.name}</h4>
+          <h4 className="font-semibold uppercase italic text-sm">{profession.name}</h4>
           <p className="text-[8px] font-bold text-muted-foreground uppercase">{schoolName || "No School"}</p>
         </div>
       </div>

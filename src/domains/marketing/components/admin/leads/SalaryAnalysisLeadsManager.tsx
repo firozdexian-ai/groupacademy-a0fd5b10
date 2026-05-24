@@ -146,13 +146,13 @@ export const SalaryAnalysisLeadsManager = () => {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Activity className="h-8 w-8" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Salary Pulse</h2>
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Salary Pulse</h2>
           </div>
           <div className="flex items-center gap-4 mt-2">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+            <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
               AI Intelligence Lead Radar
             </p>
-            <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] px-3 py-1 italic rounded-full">
+            <Badge className="bg-primary/10 text-primary border-none font-semibold text-[9px] px-3 py-1 italic rounded-full">
               {completedCount} VERIFIED CONVERSIONS
             </Badge>
           </div>
@@ -161,7 +161,7 @@ export const SalaryAnalysisLeadsManager = () => {
           <Button
             onClick={exportToCSV}
             variant="outline"
-            className="h-14 px-8 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest gap-3"
+            className="h-14 px-8 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-3"
           >
             <Download className="h-4 w-4" /> Export Registry
           </Button>
@@ -184,7 +184,7 @@ export const SalaryAnalysisLeadsManager = () => {
               />
             </div>
             <Select value={statusFilter} onValueChange={setStatusFilter}>
-              <SelectTrigger className="w-[200px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest">
+              <SelectTrigger className="w-[200px] h-14 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest">
                 <SelectValue placeholder="STATUS FILTER" />
               </SelectTrigger>
               <SelectContent className="rounded-xl border-2">
@@ -204,11 +204,11 @@ export const SalaryAnalysisLeadsManager = () => {
           <Table>
             <TableHeader className="bg-muted/10">
               <TableRow className="hover:bg-transparent border-b-2">
-                <TableHead className="font-black uppercase text-[10px] tracking-widest py-6 pl-8">Lead Node</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Target Role</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Structural Class</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Status</TableHead>
-                <TableHead className="font-black uppercase text-[10px] tracking-widest">Deployment</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest py-6 pl-8">Lead Node</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Target Role</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Structural Class</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Status</TableHead>
+                <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Deployment</TableHead>
                 <TableHead className="text-right py-6 pr-8"></TableHead>
               </TableRow>
             </TableHeader>
@@ -226,28 +226,28 @@ export const SalaryAnalysisLeadsManager = () => {
                     className="group border-b border-border/5 hover:bg-muted/10 transition-colors"
                   >
                     <TableCell className="py-6 pl-8">
-                      <p className="font-black text-sm uppercase italic tracking-tight">{lead.full_name}</p>
-                      <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 italic flex items-center gap-1">
+                      <p className="font-semibold text-sm uppercase italic tracking-tight">{lead.full_name}</p>
+                      <p className="text-[9px] font-bold text-muted-foreground mt-0.5 italic flex items-center gap-1">
                         <Mail className="h-2 w-2" /> {lead.email}
                       </p>
                     </TableCell>
                     <TableCell>
-                      <p className="font-black uppercase italic text-xs leading-none">{lead.job_title || "-"}</p>
+                      <p className="font-semibold uppercase italic text-xs leading-none">{lead.job_title || "-"}</p>
                       {lead.company_name && (
-                        <p className="text-[8px] font-bold text-muted-foreground/50 uppercase tracking-widest mt-1">
+                        <p className="text-[8px] font-bold text-muted-foreground/50 mt-1">
                           at {lead.company_name}
                         </p>
                       )}
                     </TableCell>
                     <TableCell>
-                      <Badge variant="outline" className="font-black text-[9px] uppercase tracking-tighter border-2">
+                      <Badge variant="outline" className="font-semibold text-[9px] uppercase tracking-tight border-2">
                         {lead.profession_category?.name || "UNASSIGNED"}
                       </Badge>
                     </TableCell>
                     <TableCell>
                       <Badge
                         className={cn(
-                          "font-black text-[9px] uppercase tracking-widest italic rounded-full px-4",
+                          "font-black text-[9px]  italic rounded-full px-4",
                           statusColors[lead.status || "pending"],
                         )}
                       >
@@ -257,7 +257,7 @@ export const SalaryAnalysisLeadsManager = () => {
                     <TableCell>
                       <div className="flex items-center gap-2 text-muted-foreground">
                         <Calendar className="h-3 w-3" />
-                        <span className="text-[10px] font-black italic">
+                        <span className="text-[10px] font-semibold">
                           {lead.created_at ? format(new Date(lead.created_at), "MMM d, yyyy") : "N/A"}
                         </span>
                       </div>

@@ -162,9 +162,9 @@ export function JobsAssessmentLeadsTab() {
             <div className="h-12 w-12 rounded-[20px] bg-primary/10 flex items-center justify-center border border-primary/20">
               <Activity className="h-6 w-6 text-primary" />
             </div>
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Leads</h2>
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Leads</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic ml-16">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic ml-16">
             Neural Recruitment Telemetry v2.6
           </p>
         </div>
@@ -172,14 +172,14 @@ export function JobsAssessmentLeadsTab() {
         <div className="flex items-center gap-3">
           <Badge
             variant="outline"
-            className="rounded-lg border-primary/20 text-primary font-black uppercase text-[9px] px-3 py-1.5 tracking-widest italic bg-primary/5"
+            className="rounded-lg border-primary/20 text-primary font-semibold uppercase text-[9px] px-3 py-1.5 tracking-widest italic bg-primary/5"
           >
             {totalCount} Total Entities detected
           </Badge>
           <Button
             onClick={exportArtifactCSV}
             variant="outline"
-            className="rounded-xl h-11 px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-2 shadow-sm hover:bg-primary/5"
+            className="rounded-xl h-11 px-6 border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-sm hover:bg-primary/5"
           >
             <Download className="w-4 h-4 text-primary" /> Export Artifact
           </Button>
@@ -203,7 +203,7 @@ export function JobsAssessmentLeadsTab() {
               <div className="relative flex items-center">
                 <Filter className="absolute left-4 h-4 w-4 text-muted-foreground/40 pointer-events-none" />
                 <Select value={readinessFilter} onValueChange={setReadinessFilter}>
-                  <SelectTrigger className="w-[200px] h-14 pl-11 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest bg-card/50">
+                  <SelectTrigger className="w-[200px] h-14 pl-11 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-card/50">
                     <SelectValue placeholder="Logic Status" />
                   </SelectTrigger>
                   <SelectContent className="rounded-2xl border-2">
@@ -230,15 +230,15 @@ export function JobsAssessmentLeadsTab() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow className="hover:bg-transparent border-b-2">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8">
+                  <TableHead className="text-[10px] font-semibold py-8 px-8">
                     Entity Spec
                   </TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Uplink Telemetry</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Logic Class</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-center">Score</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Readiness</TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest">Sync Date</TableHead>
-                  <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                  <TableHead className="text-[10px] font-semibold">Uplink Telemetry</TableHead>
+                  <TableHead className="text-[10px] font-semibold">Logic Class</TableHead>
+                  <TableHead className="text-[10px] font-semibold text-center">Score</TableHead>
+                  <TableHead className="text-[10px] font-semibold">Readiness</TableHead>
+                  <TableHead className="text-[10px] font-semibold">Sync Date</TableHead>
+                  <TableHead className="text-right text-[10px] font-semibold pr-8">
                     Actions
                   </TableHead>
                 </TableRow>
@@ -248,7 +248,7 @@ export function JobsAssessmentLeadsTab() {
                   <TableRow>
                     <TableCell
                       colSpan={7}
-                      className="text-center py-32 text-muted-foreground/40 italic uppercase tracking-[0.2em] font-black"
+                      className="text-center py-32 text-muted-foreground/40 font-semibold"
                     >
                       No entities detected in current logic path.
                     </TableCell>
@@ -256,7 +256,7 @@ export function JobsAssessmentLeadsTab() {
                 ) : (
                   filteredLeads.map((lead) => (
                     <TableRow key={lead.id} className="group transition-all hover:bg-primary/[0.02]">
-                      <TableCell className="px-8 py-6 font-black uppercase tracking-tight text-sm italic group-hover:text-primary transition-colors">
+                      <TableCell className="px-8 py-6 font-semibold uppercase tracking-tight text-sm italic group-hover:text-primary transition-colors">
                         {lead.full_name}
                       </TableCell>
                       <TableCell>
@@ -274,18 +274,18 @@ export function JobsAssessmentLeadsTab() {
                       <TableCell>
                         <Badge
                           variant="outline"
-                          className="rounded-lg border-2 font-black text-[9px] uppercase tracking-widest bg-background"
+                          className="rounded-lg border-2 font-semibold text-[9px] bg-background"
                         >
                           {lead.profession_category?.name || "UNCLASSED"}
                         </Badge>
                       </TableCell>
-                      <TableCell className="text-center font-black text-lg italic tracking-tighter">
+                      <TableCell className="text-center font-semibold text-lg italic tracking-tight">
                         {lead.percentage}%
                       </TableCell>
                       <TableCell>
                         <Badge
                           className={cn(
-                            "rounded-lg font-black text-[8px] uppercase tracking-[0.2em] border-2 px-3 py-1 shadow-inner",
+                            "rounded-lg font-black text-[8px]  border-2 px-3 py-1 shadow-inner",
                             readinessColors[lead.readiness_level],
                           )}
                         >
@@ -293,7 +293,7 @@ export function JobsAssessmentLeadsTab() {
                         </Badge>
                       </TableCell>
                       <TableCell>
-                        <div className="flex items-center gap-2 text-[10px] font-black text-muted-foreground/40 uppercase tracking-widest italic">
+                        <div className="flex items-center gap-2 text-[10px] font-semibold text-muted-foreground/40 italic">
                           <Calendar className="h-3.5 w-3.5" />
                           {format(new Date(lead.created_at), "MMM d, yyyy")}
                         </div>
@@ -326,14 +326,14 @@ export function JobsAssessmentLeadsTab() {
       {/* Logic Pagination HUD */}
       {totalPages > 1 && (
         <div className="flex items-center justify-between p-6 bg-muted/20 rounded-[32px] border-2 border-border/40 backdrop-blur-md">
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Registry Frame: Cycle {page + 1} / {totalPages}
           </p>
           <div className="flex gap-4">
             <Button
               variant="outline"
               size="sm"
-              className="rounded-xl h-11 px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-2 disabled:opacity-20"
+              className="rounded-xl h-11 px-6 border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 disabled:opacity-20"
               onClick={() => setPage((p) => Math.max(0, p - 1))}
               disabled={page === 0}
             >
@@ -342,7 +342,7 @@ export function JobsAssessmentLeadsTab() {
             <Button
               variant="outline"
               size="sm"
-              className="rounded-xl h-11 px-6 border-2 font-black uppercase text-[10px] tracking-widest gap-2 disabled:opacity-20"
+              className="rounded-xl h-11 px-6 border-2 font-semibold uppercase text-[10px] tracking-widest gap-2 disabled:opacity-20"
               onClick={() => setPage((p) => Math.min(totalPages - 1, p + 1))}
               disabled={page >= totalPages - 1}
             >

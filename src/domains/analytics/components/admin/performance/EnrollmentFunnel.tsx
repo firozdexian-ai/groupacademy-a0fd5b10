@@ -12,7 +12,7 @@ export default function EnrollmentFunnel({ funnel }: Props) {
         return (
           <div key={f.label} className="space-y-1">
             <div className="flex items-center justify-between text-xs">
-              <span className="font-bold uppercase tracking-wider text-muted-foreground">{f.label}</span>
+              <span className="font-bold text-muted-foreground">{f.label}</span>
               <span className="font-black tabular-nums">
                 {f.value} <span className="text-muted-foreground font-normal">· {conv.toFixed(0)}%</span>
               </span>

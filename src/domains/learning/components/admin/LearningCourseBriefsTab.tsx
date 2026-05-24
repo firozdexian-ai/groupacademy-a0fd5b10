@@ -97,7 +97,7 @@ export function LearningCourseBriefsTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "approved"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : row.status === "in_review"
@@ -148,13 +148,13 @@ export function LearningCourseBriefsTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-orange-500 flex items-center gap-2">
               <Sparkles className="h-6 w-6" /> Inject Brief
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update B2B course specifications.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Brief Title</Label>
+              <Label className="text-[10px] font-black text-primary ml-1">Brief Title</Label>
               <Input
                 placeholder="Title"
                 value={draft.title || ""}
@@ -163,7 +163,7 @@ export function LearningCourseBriefsTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Instructor User ID (Optional)
               </Label>
               <Input
@@ -174,19 +174,19 @@ export function LearningCourseBriefsTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Brief Status</Label>
+              <Label className="text-[10px] font-black text-primary ml-1">Brief Status</Label>
               <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
                 <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                  <SelectItem value="draft" className="font-bold text-xs text-amber-500">
                     Draft
                   </SelectItem>
-                  <SelectItem value="in_review" className="font-bold text-xs uppercase tracking-widest text-blue-500">
+                  <SelectItem value="in_review" className="font-bold text-xs text-blue-500">
                     In Review
                   </SelectItem>
-                  <SelectItem value="approved" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                  <SelectItem value="approved" className="font-bold text-xs text-emerald-500">
                     Approved
                   </SelectItem>
                 </SelectContent>

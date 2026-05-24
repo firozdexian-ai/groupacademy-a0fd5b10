@@ -87,16 +87,16 @@ export function PendingJobSubmissions() {
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10">
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div className="space-y-1">
-            <CardTitle className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+            <CardTitle className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
               <ClipboardCheck className="h-7 w-7 text-primary" /> Verification queue
             </CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground italic">
+            <CardDescription className="text-[10px] font-bold text-muted-foreground italic">
               Review community-submitted jobs before publishing
             </CardDescription>
           </div>
           <Badge
             variant="outline"
-            className="h-10 px-5 rounded-xl border-2 font-black italic gap-2 bg-background/50 uppercase text-primary"
+            className="h-10 px-5 rounded-xl border-2 font-semibold gap-2 bg-background/50 uppercase text-primary"
           >
             <Zap className="h-3.5 w-3.5 fill-current" /> {data?.length || 0} pending
           </Badge>
@@ -107,10 +107,10 @@ export function PendingJobSubmissions() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3 opacity-50">
             <Loader2 className="h-8 w-8 animate-spin text-primary" />
-            <p className="text-[10px] font-black uppercase tracking-widest italic">Loading queue…</p>
+            <p className="text-[10px] font-semibold">Loading queue…</p>
           </div>
         ) : !data || data.length === 0 ? (
-          <div className="py-16 border-2 border-dashed rounded-[32px] text-center opacity-30 italic font-black uppercase text-xs tracking-widest">
+          <div className="py-16 border-2 border-dashed rounded-[32px] text-center opacity-30 font-semibold uppercase text-xs tracking-widest">
             Verification queue is currently empty
           </div>
         ) : (
@@ -127,14 +127,14 @@ export function PendingJobSubmissions() {
                 >
                   <div className="min-w-0 flex-1">
                     <div className="flex items-center gap-2 mb-1">
-                      <Badge className="bg-primary/10 text-primary text-[8px] font-black border-none uppercase px-2 py-0">
+                      <Badge className="bg-primary/10 text-primary text-[8px] font-semibold border-none uppercase px-2 py-0">
                         GIG_SYNC
                       </Badge>
-                      <p className="font-black text-sm uppercase italic tracking-tight truncate">
+                      <p className="font-semibold text-sm uppercase italic tracking-tight truncate">
                         {cd.title || ai.title || "NULL_ARTIFACT_TITLE"}
                       </p>
                     </div>
-                    <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground uppercase tracking-widest italic">
+                    <div className="flex items-center gap-2 text-[10px] font-bold text-muted-foreground italic">
                       <Users className="h-3 w-3" />
                       <span className="truncate">{cd.company || ai.company_name || "UNKNOWN_CORP"}</span>
                       <span className="opacity-30">|</span>
@@ -144,7 +144,7 @@ export function PendingJobSubmissions() {
                   <div className="flex items-center gap-2">
                     <Button
                       size="sm"
-                      className="h-11 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg active:scale-95 transition-transform"
+                      className="h-11 px-6 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg active:scale-95 transition-transform"
                       onClick={() => handleReview(sub)}
                     >
                       <Eye className="h-4 w-4" /> Review_Artifact

@@ -193,7 +193,7 @@ export function JobsApplicationsTab() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-[130px] h-10 rounded-xl border-2 font-black uppercase text-[10px] tracking-tighter">
+                <SelectTrigger className="w-[130px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-tight">
                   <SelectValue placeholder="SOURCE" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2">
@@ -216,7 +216,7 @@ export function JobsApplicationsTab() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-[150px] h-10 rounded-xl border-2 font-black uppercase text-[10px] tracking-tighter">
+                <SelectTrigger className="w-[150px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-tight">
                   <SelectValue placeholder="STATUS" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2">
@@ -238,7 +238,7 @@ export function JobsApplicationsTab() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-[140px] h-10 rounded-xl border-2 font-black uppercase text-[10px] tracking-tighter">
+                <SelectTrigger className="w-[140px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-tight">
                   <SelectValue placeholder="AI_SCORE" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2">
@@ -263,7 +263,7 @@ export function JobsApplicationsTab() {
               <Button
                 size="sm"
                 variant={sortByScore ? "default" : "outline"}
-                className="h-10 px-4 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest gap-2"
+                className="h-10 px-4 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
                 onClick={() => setSortByScore((v) => !v)}
               >
                 <Zap className={cn("h-3.5 w-3.5", sortByScore ? "fill-current" : "")} /> Sort by score
@@ -276,7 +276,7 @@ export function JobsApplicationsTab() {
                 variant="outline"
                 onClick={handleBulkScore}
                 disabled={bulkScoring}
-                className="flex-1 sm:flex-none h-10 px-4 rounded-xl border-2 font-black uppercase text-[10px] tracking-widest gap-2"
+                className="flex-1 sm:flex-none h-10 px-4 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-widest gap-2"
               >
                 {bulkScoring ? <Loader2 className="h-4 w-4 animate-spin" /> : <Sparkles className="h-4 w-4" />}
                 Bulk_Analyze
@@ -284,7 +284,7 @@ export function JobsApplicationsTab() {
               <Button
                 size="sm"
                 onClick={() => setExternalDialogOpen(true)}
-                className="flex-1 sm:flex-none h-10 px-5 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg"
+                className="flex-1 sm:flex-none h-10 px-5 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg"
               >
                 <UserPlus className="h-4 w-4" /> Bridge_External
               </Button>
@@ -302,16 +302,16 @@ export function JobsApplicationsTab() {
               <Table>
                 <TableHeader className="bg-muted/5">
                   <TableRow className="hover:bg-transparent border-b-2">
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest py-5 pl-8">
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest py-5 pl-8">
                       Candidate node
                     </TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest">
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest">
                       Target infrastructure
                     </TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest">Source</TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest">AI analysis</TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest">Pipeline status</TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest">Applied</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Source</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest">AI analysis</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Pipeline status</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Applied</TableHead>
                     <TableHead className="text-right py-5 pr-8"></TableHead>
                   </TableRow>
                 </TableHeader>
@@ -322,15 +322,15 @@ export function JobsApplicationsTab() {
                       className="group border-b border-border/5 hover:bg-muted/10 transition-colors"
                     >
                       <TableCell className="py-5 pl-8">
-                        <p className="font-black text-sm uppercase italic tracking-tight">
+                        <p className="font-semibold text-sm uppercase italic tracking-tight">
                           {app.talents?.full_name || "NULL_ENTITY"}
                         </p>
-                        <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5 italic">
+                        <p className="text-[9px] font-bold text-muted-foreground mt-0.5 italic">
                           {app.talents?.email}
                         </p>
                       </TableCell>
                       <TableCell>
-                        <p className="text-xs font-black uppercase tracking-tighter leading-tight">{app.jobs?.title}</p>
+                        <p className="text-xs font-semibold uppercase tracking-tight leading-tight">{app.jobs?.title}</p>
                         <p className="text-[9px] font-bold text-muted-foreground uppercase italic">
                           {app.jobs?.company_name}
                         </p>
@@ -338,7 +338,7 @@ export function JobsApplicationsTab() {
                       <TableCell>
                         <Badge
                           variant={app.source === "external" ? "default" : "secondary"}
-                          className="font-black text-[9px] uppercase italic border-2 rounded-full px-3"
+                          className="font-semibold text-[9px] uppercase italic border-2 rounded-full px-3"
                         >
                           {app.source || "platform"}
                         </Badge>
@@ -364,7 +364,7 @@ export function JobsApplicationsTab() {
                           value={app.application_status || "submitted"}
                           onValueChange={(v) => updateStatus(app.id, v)}
                         >
-                          <SelectTrigger className="h-8 w-[140px] rounded-lg border-2 font-black uppercase text-[9px] italic">
+                          <SelectTrigger className="h-8 w-[140px] rounded-lg border-2 font-semibold uppercase text-[9px] italic">
                             <SelectValue />
                           </SelectTrigger>
                           <SelectContent className="rounded-xl border-2">
@@ -376,7 +376,7 @@ export function JobsApplicationsTab() {
                           </SelectContent>
                         </Select>
                       </TableCell>
-                      <TableCell className="text-[10px] font-black italic text-muted-foreground/50 uppercase">
+                      <TableCell className="text-[10px] font-semibold text-muted-foreground/50 uppercase">
                         {app.created_at ? format(new Date(app.created_at), "MMM d") : ""}
                       </TableCell>
                       <TableCell className="text-right pr-8">
@@ -430,7 +430,7 @@ export function JobsApplicationsTab() {
                     <TableRow>
                       <TableCell
                         colSpan={7}
-                        className="text-center py-20 italic font-black uppercase text-xs tracking-[0.2em] opacity-30"
+                        className="text-center py-20 font-semibold uppercase text-xs tracking-[0.2em] opacity-30"
                       >
                         Zero nodes detected in current filter range
                       </TableCell>
@@ -442,14 +442,14 @@ export function JobsApplicationsTab() {
               {/* PAGINATION PROTOCOL */}
               {totalPages > 1 && (
                 <div className="flex items-center justify-between p-6 border-t border-border/10 bg-muted/5">
-                  <span className="text-[10px] font-black uppercase italic text-muted-foreground/60 tracking-widest">
+                  <span className="text-[10px] font-semibold uppercase italic text-muted-foreground/60 tracking-widest">
                     Page {page} of {totalPages}
                   </span>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-9 px-4 rounded-xl border-2 font-black uppercase text-[10px]"
+                      className="h-9 px-4 rounded-xl border-2 font-semibold uppercase text-[10px]"
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
                     >
@@ -458,7 +458,7 @@ export function JobsApplicationsTab() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-9 px-4 rounded-xl border-2 font-black uppercase text-[10px]"
+                      className="h-9 px-4 rounded-xl border-2 font-semibold uppercase text-[10px]"
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page >= totalPages}
                     >

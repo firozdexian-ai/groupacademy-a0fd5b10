@@ -199,7 +199,7 @@ export function JobsManageTab() {
                   setPage(1);
                 }}
               >
-                <SelectTrigger className="w-[180px] h-10 rounded-xl border-2 font-black uppercase text-[10px] tracking-tighter">
+                <SelectTrigger className="w-[180px] h-10 rounded-xl border-2 font-semibold uppercase text-[10px] tracking-tight">
                   <SelectValue placeholder="STATUS_PROTOCOL" />
                 </SelectTrigger>
                 <SelectContent className="rounded-xl border-2">
@@ -226,7 +226,7 @@ export function JobsManageTab() {
               </Select>
               <Badge
                 variant="outline"
-                className="h-10 px-4 rounded-xl border-2 font-black italic gap-2 bg-background/50 uppercase"
+                className="h-10 px-4 rounded-xl border-2 font-semibold gap-2 bg-background/50 uppercase"
               >
                 <Activity className="h-3.5 w-3.5" /> {totalCount} TOTAL_UNITS
               </Badge>
@@ -236,7 +236,7 @@ export function JobsManageTab() {
                 variant="outline"
                 onClick={purgeExpired}
                 disabled={purging}
-                className="h-10 px-5 rounded-xl border-2 border-amber-500/40 text-amber-600 hover:bg-amber-500/10 font-black uppercase text-[10px] tracking-widest gap-2"
+                className="h-10 px-5 rounded-xl border-2 border-amber-500/40 text-amber-600 hover:bg-amber-500/10 font-semibold uppercase text-[10px] tracking-widest gap-2"
                 title="Archive jobs past deadline or stale (>90d)"
               >
                 <Flame className="h-4 w-4" />
@@ -247,7 +247,7 @@ export function JobsManageTab() {
                   setEditingJobId(null);
                   setDialogOpen(true);
                 }}
-                className="h-10 px-6 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg"
+                className="h-10 px-6 rounded-xl font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-lg"
               >
                 <Plus className="h-4 w-4" /> Deploy Units
               </Button>
@@ -256,13 +256,13 @@ export function JobsManageTab() {
 
           {selected.size > 0 && (
             <div className="flex items-center gap-3 mt-4 p-4 bg-primary/5 rounded-[24px] border-2 border-primary/20 animate-in slide-in-from-top-2">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary italic mr-4">
+              <p className="text-[10px] font-semibold text-primary italic mr-4">
                 {selected.size} NODES_SELECTED
               </p>
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 rounded-lg border-2 font-black uppercase text-[9px]"
+                className="h-8 rounded-lg border-2 font-semibold uppercase text-[9px]"
                 onClick={() => bulkUpdate({ is_active: true })}
               >
                 Activate
@@ -270,7 +270,7 @@ export function JobsManageTab() {
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 rounded-lg border-2 font-black uppercase text-[9px]"
+                className="h-8 rounded-lg border-2 font-semibold uppercase text-[9px]"
                 onClick={() => bulkUpdate({ is_active: false })}
               >
                 Deactivate
@@ -278,7 +278,7 @@ export function JobsManageTab() {
               <Button
                 size="sm"
                 variant="outline"
-                className="h-8 rounded-lg border-2 font-black uppercase text-[9px]"
+                className="h-8 rounded-lg border-2 font-semibold uppercase text-[9px]"
                 onClick={() => bulkUpdate({ is_featured: true })}
               >
                 Feature
@@ -286,7 +286,7 @@ export function JobsManageTab() {
               <Button
                 size="sm"
                 variant="destructive"
-                className="h-8 rounded-lg font-black uppercase text-[9px]"
+                className="h-8 rounded-lg font-semibold uppercase text-[9px]"
                 onClick={bulkDelete}
               >
                 Terminate
@@ -319,15 +319,15 @@ export function JobsManageTab() {
                         onCheckedChange={(v) => setSelected(v ? new Set(jobs.map((j) => j.id)) : new Set())}
                       />
                     </TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest py-5">Job</TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest">Source</TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-center">
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest py-5">Job</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest">Source</TableHead>
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-center">
                       Active
                     </TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-center">
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-center">
                       Featured
                     </TableHead>
-                    <TableHead className="font-black uppercase text-[10px] tracking-widest text-center">
+                    <TableHead className="font-semibold uppercase text-[10px] tracking-widest text-center">
                       Engagement_Telemetry
                     </TableHead>
                     <TableHead className="text-right py-5 pr-8"></TableHead>
@@ -345,15 +345,15 @@ export function JobsManageTab() {
                           <Checkbox checked={selected.has(job.id)} onCheckedChange={() => toggleSelected(job.id)} />
                         </TableCell>
                         <TableCell className="py-5 text-left">
-                          <p className="font-black text-sm uppercase italic tracking-tight">{job.title}</p>
-                          <p className="text-[9px] font-bold text-muted-foreground uppercase tracking-widest mt-0.5">
+                          <p className="font-semibold text-sm uppercase italic tracking-tight">{job.title}</p>
+                          <p className="text-[9px] font-bold text-muted-foreground mt-0.5">
                             {job.company_name} · {job.location || "REMOTE_ACCESS"}
                           </p>
                         </TableCell>
                         <TableCell className="text-left">
                           <Badge
                             variant="outline"
-                            className="font-black text-[9px] uppercase italic border-2 bg-background"
+                            className="font-semibold text-[9px] uppercase italic border-2 bg-background"
                           >
                             {job.source_platform === "linkedin" && (
                               <Linkedin className="w-3 h-3 mr-1.5 text-blue-500" />
@@ -376,7 +376,7 @@ export function JobsManageTab() {
                           />
                         </TableCell>
                         <TableCell className="text-center">
-                          <div className="flex justify-center items-center gap-4 text-[10px] font-black italic text-muted-foreground/60">
+                          <div className="flex justify-center items-center gap-4 text-[10px] font-semibold text-muted-foreground/60">
                             <span
                               className="flex items-center gap-1 hover:text-primary transition-colors"
                               title="CLICKS"
@@ -433,14 +433,14 @@ export function JobsManageTab() {
 
               {totalPages > 1 && (
                 <div className="flex items-center justify-between p-6 border-t border-border/10 bg-muted/5">
-                  <span className="text-[10px] font-black uppercase italic text-muted-foreground/60 tracking-widest">
+                  <span className="text-[10px] font-semibold uppercase italic text-muted-foreground/60 tracking-widest">
                     Registry Page {page} of {totalPages}
                   </span>
                   <div className="flex gap-2">
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-9 px-4 rounded-xl border-2 font-black uppercase text-[10px]"
+                      className="h-9 px-4 rounded-xl border-2 font-semibold uppercase text-[10px]"
                       onClick={() => setPage((p) => Math.max(1, p - 1))}
                       disabled={page === 1}
                     >
@@ -449,7 +449,7 @@ export function JobsManageTab() {
                     <Button
                       size="sm"
                       variant="outline"
-                      className="h-9 px-4 rounded-xl border-2 font-black uppercase text-[10px]"
+                      className="h-9 px-4 rounded-xl border-2 font-semibold uppercase text-[10px]"
                       onClick={() => setPage((p) => Math.min(totalPages, p + 1))}
                       disabled={page >= totalPages}
                     >

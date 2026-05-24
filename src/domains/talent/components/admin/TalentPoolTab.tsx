@@ -111,10 +111,10 @@ export function TalentPoolTab() {
       {/* P2 Fix: Unified CRM Action Bar */}
       <div className="flex flex-col md:flex-row justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40 gap-4">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <Users className="h-6 w-6 text-primary" /> Talent Artifacts
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] font-semibold text-muted-foreground/60">
             {totalCount.toLocaleString()} Nodes Found in Sector
           </p>
         </div>
@@ -139,7 +139,7 @@ export function TalentPoolTab() {
               />
             </div>
             <Select value={countryFilter} onValueChange={setCountryFilter}>
-              <SelectTrigger className="w-full md:w-[240px] h-14 rounded-2xl border-2 font-black uppercase text-[9px] tracking-widest bg-muted/10">
+              <SelectTrigger className="w-full md:w-[240px] h-14 rounded-2xl border-2 font-semibold uppercase text-[9px] tracking-widest bg-muted/10">
                 <SelectValue placeholder="GLOBAL SECTOR" />
               </SelectTrigger>
               <SelectContent className="rounded-2xl border-2">
@@ -165,10 +165,10 @@ export function TalentPoolTab() {
             <Table>
               <TableHeader className="bg-muted/5">
                 <TableRow>
-                  <TableHead className="font-black uppercase text-[10px] py-6 pl-8">Talent Identity</TableHead>
-                  <TableHead className="font-black uppercase text-[10px]">Market</TableHead>
-                  <TableHead className="font-black uppercase text-[10px]">Registry</TableHead>
-                  <TableHead className="font-black uppercase text-[10px]">Engagement Pulse</TableHead>
+                  <TableHead className="font-semibold uppercase text-[10px] py-6 pl-8">Talent Identity</TableHead>
+                  <TableHead className="font-semibold uppercase text-[10px]">Market</TableHead>
+                  <TableHead className="font-semibold uppercase text-[10px]">Registry</TableHead>
+                  <TableHead className="font-semibold uppercase text-[10px]">Engagement Pulse</TableHead>
                   <TableHead className="text-right pr-8" />
                 </TableRow>
               </TableHeader>
@@ -178,7 +178,7 @@ export function TalentPoolTab() {
                   return (
                     <TableRow key={talent.id} className="group hover:bg-primary/[0.02]">
                       <TableCell className="py-6 pl-8">
-                        <p className="font-black text-sm uppercase italic tracking-tight">{talent.full_name}</p>
+                        <p className="font-semibold text-sm uppercase italic tracking-tight">{talent.full_name}</p>
                         <p className="text-[9px] font-bold text-muted-foreground uppercase">
                           {talent.email || "No handle"}
                         </p>
@@ -186,7 +186,7 @@ export function TalentPoolTab() {
                       <TableCell>
                         <div className="flex items-center gap-2">
                           <span className="text-lg">{getCountryFlag(talent.country)}</span>
-                          <span className="font-black text-[9px] uppercase text-muted-foreground">
+                          <span className="font-semibold text-[9px] uppercase text-muted-foreground">
                             {talent.country}
                           </span>
                         </div>
@@ -195,7 +195,7 @@ export function TalentPoolTab() {
                         <Badge
                           variant="outline"
                           className={cn(
-                            "text-[9px] font-black italic rounded-full border-none px-3",
+                            "text-[9px] font-semibold rounded-full border-none px-3",
                             talent.user_id ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600",
                           )}
                         >
@@ -209,7 +209,7 @@ export function TalentPoolTab() {
                           />
                           <span
                             className={cn(
-                              "font-black italic text-[9px] uppercase",
+                              "font-semibold text-[9px] uppercase",
                               txCount > 0 ? "text-foreground" : "text-muted-foreground/40",
                             )}
                           >
@@ -232,7 +232,7 @@ export function TalentPoolTab() {
           )}
 
           <div className="p-8 border-t flex justify-between items-center bg-muted/5">
-            <p className="text-[10px] font-black uppercase text-muted-foreground/50 italic ml-4">
+            <p className="text-[10px] font-semibold uppercase text-muted-foreground/50 italic ml-4">
               Sector <span className="text-foreground">{page}</span> of {Math.ceil(totalCount / ITEMS_PER_PAGE)}
             </p>
             <div className="flex gap-2">
@@ -291,12 +291,12 @@ function OutreachDropdown({ talent, onOutreach, onView }: any) {
       >
         <DropdownMenuItem
           onClick={onView}
-          className="rounded-xl font-black uppercase italic text-[10px] py-4 cursor-pointer"
+          className="rounded-xl font-semibold uppercase italic text-[10px] py-4 cursor-pointer"
         >
           <Eye className="h-4 w-4 mr-3" /> View Node Artifact
         </DropdownMenuItem>
         <DropdownMenuSeparator className="my-2" />
-        <p className="text-[9px] font-black text-muted-foreground/60 px-3 py-2 uppercase italic">Active Deployment</p>
+        <p className="text-[9px] font-semibold text-muted-foreground/60 px-3 py-2 uppercase italic">Active Deployment</p>
         <OutreachItem icon={Hand} label="Global Welcome" onClick={(c: any) => onOutreach(talent, "welcome", c)} />
         <OutreachItem icon={Bot} label="AI Expertise" onClick={(c: any) => onOutreach(talent, "ai_agent", c)} />
         <OutreachItem
@@ -311,7 +311,7 @@ function OutreachDropdown({ talent, onOutreach, onView }: any) {
 
 function OutreachItem({ icon: Icon, label, onClick }: any) {
   return (
-    <div className="flex items-center px-3 py-1.5 text-[10px] font-black uppercase italic rounded-xl hover:bg-muted/50 transition-colors">
+    <div className="flex items-center px-3 py-1.5 text-[10px] font-semibold uppercase italic rounded-xl hover:bg-muted/50 transition-colors">
       <Icon className="h-4 w-4 mr-3 text-muted-foreground/50" />
       <span className="flex-1">{label}</span>
       <div className="flex gap-1">

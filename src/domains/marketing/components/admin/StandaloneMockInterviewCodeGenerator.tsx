@@ -113,10 +113,10 @@ export function StandaloneMockInterviewCodeGenerator() {
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
         <div className="flex items-center justify-between">
           <div className="space-y-1">
-            <CardTitle className="text-xl font-black uppercase italic tracking-tighter flex items-center gap-3">
+            <CardTitle className="text-xl font-semibold uppercase italic tracking-tight flex items-center gap-3">
               <MessageSquare className="h-5 w-5 text-primary" /> Interview Pulse
             </CardTitle>
-            <CardDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+            <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
               Authorization keys for AI Behavioral retakes (50 Credits/Key)
             </CardDescription>
           </div>
@@ -127,7 +127,7 @@ export function StandaloneMockInterviewCodeGenerator() {
       <CardContent className="p-8 space-y-6">
         <div className="grid gap-6 sm:grid-cols-2">
           <div className="space-y-2 text-left">
-            <Label className="text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2 text-primary/80">
+            <Label className="text-[10px] font-semibold uppercase italic tracking-widest flex items-center gap-2 text-primary/80">
               <Mail className="h-3 w-3" /> Target Identifier
             </Label>
             <Input
@@ -139,7 +139,7 @@ export function StandaloneMockInterviewCodeGenerator() {
             />
           </div>
           <div className="space-y-2 text-left">
-            <Label className="text-[10px] font-black uppercase italic tracking-widest flex items-center gap-2 text-primary/80">
+            <Label className="text-[10px] font-semibold uppercase italic tracking-widest flex items-center gap-2 text-primary/80">
               <Hash className="h-3 w-3" /> Node Quantity
             </Label>
             <Input
@@ -148,7 +148,7 @@ export function StandaloneMockInterviewCodeGenerator() {
               max={20}
               value={quantity}
               onChange={(e) => setQuantity(parseInt(e.target.value) || 1)}
-              className="h-14 rounded-2xl border-2 font-black italic text-lg"
+              className="h-14 rounded-2xl border-2 font-semibold text-lg"
             />
           </div>
         </div>
@@ -156,7 +156,7 @@ export function StandaloneMockInterviewCodeGenerator() {
         <Button
           onClick={handleGenerate}
           disabled={isGenerating}
-          className="w-full h-16 rounded-[24px] font-black uppercase italic tracking-tighter text-xl gap-3 shadow-xl hover:scale-[1.01] active:scale-95 transition-transform"
+          className="w-full h-16 rounded-[24px] font-semibold uppercase italic tracking-tight text-xl gap-3 shadow-xl hover:scale-[1.01] active:scale-95 transition-transform"
         >
           {isGenerating ? (
             <>
@@ -174,12 +174,12 @@ export function StandaloneMockInterviewCodeGenerator() {
         {generatedCodes.length > 0 && (
           <div className="space-y-4 pt-6 border-t border-border/10 animate-in slide-in-from-bottom-4 duration-500">
             <div className="flex items-center justify-between">
-              <p className="text-[10px] font-black uppercase tracking-widest text-primary italic">Deployed Keys:</p>
+              <p className="text-[10px] font-semibold text-primary italic">Deployed Keys:</p>
               <Button
                 variant="outline"
                 size="sm"
                 onClick={downloadCodes}
-                className="h-10 rounded-xl border-2 font-black text-[9px] gap-2"
+                className="h-10 rounded-xl border-2 font-semibold text-[9px] gap-2"
               >
                 <Download className="h-3 w-3" /> EXPORT LOG
               </Button>
@@ -191,10 +191,10 @@ export function StandaloneMockInterviewCodeGenerator() {
                   className="flex items-center justify-between p-4 bg-muted/20 rounded-2xl border-2 border-border/5 group hover:border-primary/20 transition-all"
                 >
                   <div className="flex items-center gap-4">
-                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-black text-primary italic">
+                    <div className="h-8 w-8 rounded-lg bg-primary/10 flex items-center justify-center text-[10px] font-semibold text-primary italic">
                       #{index + 1}
                     </div>
-                    <span className="font-mono text-lg font-black tracking-[0.2em]">{code}</span>
+                    <span className="font-mono text-lg font-semibold tracking-[0.2em]">{code}</span>
                   </div>
                   <Button
                     variant="ghost"

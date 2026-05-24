@@ -82,7 +82,7 @@ export function HrOverviewTab() {
             <div className="lg:col-span-2 space-y-4">
               <div className="flex items-center gap-2">
                 <Network className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-black uppercase tracking-widest">
+                <h3 className="text-sm font-black">
                   Vertical Deployment Tree
                 </h3>
               </div>
@@ -90,7 +90,7 @@ export function HrOverviewTab() {
               {data.verticals.length === 0 ? (
                 <Card className="border-2 border-dashed">
                   <CardContent className="py-10 text-center">
-                    <p className="text-sm font-bold uppercase tracking-wider text-muted-foreground">
+                    <p className="text-sm font-bold text-muted-foreground">
                       Zero Verticals Detected.
                     </p>
                   </CardContent>
@@ -187,7 +187,7 @@ export function HrOverviewTab() {
             <div className="space-y-4">
               <div className="flex items-center gap-2">
                 <Layers className="h-4 w-4 text-primary" />
-                <h3 className="text-sm font-black uppercase tracking-widest">
+                <h3 className="text-sm font-black">
                   Grade Distribution
                 </h3>
               </div>
@@ -264,7 +264,7 @@ function MetricTile({
           <Icon className={cn("h-5 w-5", color)} />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] uppercase tracking-widest font-bold text-muted-foreground">
+          <p className="text-[10px] font-bold text-muted-foreground">
             {label}
           </p>
           <p className="text-2xl font-black tabular-nums">{value?.toLocaleString() || "0"}</p>

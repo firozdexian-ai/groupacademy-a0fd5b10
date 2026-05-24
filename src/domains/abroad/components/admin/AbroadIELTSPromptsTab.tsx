@@ -149,14 +149,14 @@ export function AbroadIELTSPromptsTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
               <Mic className="h-6 w-6" /> Evaluate Attempt
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update AI or manual band score.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="grid grid-cols-2 gap-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Prompt Node ID
                 </Label>
                 <Input
@@ -167,7 +167,7 @@ export function AbroadIELTSPromptsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                <Label className="text-[10px] font-black text-primary ml-1">
                   Talent User ID
                 </Label>
                 <Input
@@ -179,7 +179,7 @@ export function AbroadIELTSPromptsTab() {
               </div>
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-emerald-500 ml-1">
+              <Label className="text-[10px] font-black text-emerald-500 ml-1">
                 Band Score (0-9)
               </Label>
               <Input

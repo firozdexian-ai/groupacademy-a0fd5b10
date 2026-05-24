@@ -203,14 +203,14 @@ export function LeadHunterManager() {
             <ArrowLeft className="h-5 w-5" />
           </Button>
           <div className="space-y-1">
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">
+            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">
               {selectedSession.job_title}
             </h2>
             <div className="flex items-center gap-3">
-              <Badge className="bg-primary/10 text-primary border-none font-black text-[10px] uppercase px-3">
+              <Badge className="bg-primary/10 text-primary border-none font-semibold text-[10px] uppercase px-3">
                 {selectedSession.company_name}
               </Badge>
-              <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+              <p className="text-[10px] font-bold text-muted-foreground/40 italic">
                 Session ID: {selectedSession.id.slice(0, 8)}
               </p>
             </div>
@@ -222,13 +222,13 @@ export function LeadHunterManager() {
           <Table>
             <TableHeader className="bg-muted/30">
               <TableRow className="hover:bg-transparent border-b-2">
-                <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8 text-left w-1/3">
+                <TableHead className="text-[10px] font-semibold py-8 px-8 text-left w-1/3">
                   Candidate Artifact
                 </TableHead>
-                <TableHead className="text-[10px] font-black uppercase tracking-widest text-left w-1/3">
+                <TableHead className="text-[10px] font-semibold text-left w-1/3">
                   Logic Match Yield
                 </TableHead>
-                <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8 w-1/3">
+                <TableHead className="text-right text-[10px] font-semibold pr-8 w-1/3">
                   Outreach Hub
                 </TableHead>
               </TableRow>
@@ -244,7 +244,7 @@ export function LeadHunterManager() {
                 <TableRow>
                   <TableCell
                     colSpan={3}
-                    className="text-center py-20 text-muted-foreground/50 font-black uppercase tracking-widest italic text-sm"
+                    className="text-center py-20 text-muted-foreground/50 font-semibold text-sm"
                   >
                     No viable candidates extracted.
                   </TableCell>
@@ -257,10 +257,10 @@ export function LeadHunterManager() {
                   >
                     <TableCell className="px-8 py-6">
                       <div className="space-y-1 text-left">
-                        <p className="font-black text-base uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
+                        <p className="font-semibold text-base uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
                           {m.talent.full_name}
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                        <p className="text-[10px] font-bold text-muted-foreground/40 italic">
                           {m.talent.email}
                         </p>
                       </div>
@@ -283,13 +283,13 @@ export function LeadHunterManager() {
                           <div>
                             <p
                               className={cn(
-                                "text-xl font-black italic tracking-tighter leading-none",
+                                "text-xl font-semibold tracking-tighter leading-none",
                                 m.ai_match_score >= 80 ? "text-emerald-600" : "text-amber-600",
                               )}
                             >
                               {m.ai_match_score}%
                             </p>
-                            <p className="text-[9px] font-black uppercase opacity-30 tracking-widest">Match Strength</p>
+                            <p className="text-[9px] font-semibold uppercase opacity-30 tracking-widest">Match Strength</p>
                           </div>
                         </div>
 
@@ -298,7 +298,7 @@ export function LeadHunterManager() {
                           <div className="mt-2 w-full max-w-sm">
                             <button
                               onClick={() => setExpandedExplanationId(expandedExplanationId === m.id ? null : m.id)}
-                              className="flex items-center gap-1.5 text-[9px] font-black uppercase tracking-widest text-primary/70 hover:text-primary transition-colors py-1"
+                              className="flex items-center gap-1.5 text-[9px] font-semibold text-primary/70 hover:text-primary transition-colors py-1"
                             >
                               <BrainCircuit className="w-3 h-3" />
                               {expandedExplanationId === m.id ? "Hide Forensics" : "View Match Forensics"}
@@ -386,15 +386,15 @@ export function LeadHunterManager() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Target className="h-8 w-8" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Extraction Hub</h2>
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Extraction Hub</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Automated Talent Forensics & Lead Ingestion Terminal
           </p>
         </div>
         <Button
           onClick={() => setShowNewHunt(true)}
-          className="rounded-xl h-12 px-8 font-black uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
+          className="rounded-xl h-12 px-8 font-semibold uppercase text-[10px] tracking-widest shadow-xl shadow-primary/20 transition-all hover:scale-105 active:scale-95"
         >
           <Zap className="w-4 h-4 mr-2" /> Initialize Hunt
         </Button>
@@ -410,21 +410,21 @@ export function LeadHunterManager() {
             <div className="h-1 w-full bg-primary/20 group-hover:bg-primary transition-colors" />
             <CardContent className="p-6 space-y-6 text-left">
               <div className="space-y-1">
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 italic">
+                <p className="text-[9px] font-semibold text-muted-foreground/40 italic">
                   Inquiry Subject
                 </p>
-                <p className="font-black text-lg uppercase tracking-tight italic line-clamp-1 leading-none">
+                <p className="font-semibold text-lg uppercase tracking-tight italic line-clamp-1 leading-none">
                   {s.job_title}
                 </p>
               </div>
               <div className="flex justify-between items-end pt-4 border-t border-border/10">
                 <div className="space-y-1">
-                  <p className="text-[8px] font-black uppercase tracking-widest text-muted-foreground/40">Entity</p>
+                  <p className="text-[8px] font-semibold text-muted-foreground/40">Entity</p>
                   <p className="text-[11px] font-bold uppercase truncate max-w-[120px]">{s.company_name}</p>
                 </div>
                 <Badge
                   variant="outline"
-                  className="rounded-lg border-2 font-black text-[9px] tracking-widest uppercase py-1 px-3"
+                  className="rounded-lg border-2 font-semibold text-[9px] py-1 px-3"
                 >
                   {s.leads_requested} NODES
                 </Badge>
@@ -435,7 +435,7 @@ export function LeadHunterManager() {
         {sessions.length === 0 && !isLoading && (
           <div className="col-span-full text-center py-20 bg-muted/10 rounded-[40px] border-2 border-dashed border-border/40">
             <Database className="h-10 w-10 mx-auto text-muted-foreground/30 mb-4" />
-            <p className="text-sm font-black uppercase tracking-widest text-muted-foreground/50 italic">
+            <p className="text-sm font-semibold text-muted-foreground/50 italic">
               No Extraction Logs Found. Initialize a Hunt to begin.
             </p>
           </div>
@@ -450,10 +450,10 @@ export function LeadHunterManager() {
               <div className="flex items-center gap-5">
                 <Sparkles className="h-10 w-10 text-primary" />
                 <div className="space-y-1">
-                  <DialogTitle className="text-3xl font-black uppercase tracking-tighter italic">
+                  <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
                     Hunt Orchestration
                   </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60 italic">
+                  <DialogDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
                     Define logic parameters for AI Lead Extraction
                   </DialogDescription>
                 </div>
@@ -514,7 +514,7 @@ export function LeadHunterManager() {
                             )}
                           >
                             <div className="min-w-0 flex-1 text-left">
-                              <p className="font-black text-sm uppercase italic leading-none">{job.title}</p>
+                              <p className="font-semibold text-sm uppercase italic leading-none">{job.title}</p>
                               <p
                                 className={cn(
                                   "text-[9px] font-bold uppercase mt-2 tracking-widest",
@@ -533,7 +533,7 @@ export function LeadHunterManager() {
                 </div>
               ) : (
                 <div className="space-y-4 text-left">
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+                  <Label className="text-[10px] font-semibold text-primary ml-1">
                     Requirements Specification
                   </Label>
                   <Textarea
@@ -549,7 +549,7 @@ export function LeadHunterManager() {
                 <Button
                   variant="ghost"
                   onClick={() => setShowNewHunt(false)}
-                  className="h-14 px-8 font-black uppercase text-[10px] tracking-widest"
+                  className="h-14 px-8 font-semibold uppercase text-[10px] tracking-widest"
                 >
                   Abort
                 </Button>
@@ -558,7 +558,7 @@ export function LeadHunterManager() {
                   disabled={
                     isSearching || (huntMode === "select" && !selectedJobId) || (huntMode === "paste" && !rawJD)
                   }
-                  className="h-14 px-12 rounded-2xl bg-primary font-black uppercase tracking-[0.2em] text-[11px] shadow-2xl shadow-primary/30 gap-3 text-white"
+                  className="h-14 px-12 rounded-2xl bg-primary font-semibold text-[11px] shadow-2xl shadow-primary/30 gap-3 text-white"
                 >
                   {isSearching ? <Loader2 className="animate-spin h-5 w-5" /> : <Target className="h-5 w-5" />} Launch
                   Extract

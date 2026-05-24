@@ -95,14 +95,14 @@ export function LearningWebinarsTab() {
                         </div>
                       </TableCell>
                       <TableCell>
-                        <Badge variant="outline" className="font-mono text-[9px] uppercase tracking-widest border-2">
+                        <Badge variant="outline" className="font-mono text-[9px] border-2">
                           Live Event
                         </Badge>
                       </TableCell>
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "published"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : "bg-amber-500/10 text-amber-600",
@@ -163,13 +163,13 @@ export function LearningWebinarsTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-pink-500 flex items-center gap-2">
               <CalendarDays className="h-6 w-6" /> Inject Webinar
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update live event parameters.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Event Title</Label>
+              <Label className="text-[10px] font-black text-primary ml-1">Event Title</Label>
               <Input
                 placeholder="Title"
                 value={draft.title || ""}
@@ -178,7 +178,7 @@ export function LearningWebinarsTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Visibility Status
               </Label>
               <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
@@ -186,12 +186,12 @@ export function LearningWebinarsTab() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="draft" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                  <SelectItem value="draft" className="font-bold text-xs text-amber-500">
                     Draft / Scheduled
                   </SelectItem>
                   <SelectItem
                     value="published"
-                    className="font-bold text-xs uppercase tracking-widest text-emerald-500"
+                    className="font-bold text-xs text-emerald-500"
                   >
                     Published
                   </SelectItem>

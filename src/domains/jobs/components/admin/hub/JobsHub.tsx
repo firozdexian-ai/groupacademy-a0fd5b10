@@ -17,16 +17,16 @@ export function JobsHub() {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <Zap className="h-8 w-8 fill-current" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Jobs hub</h2>
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Jobs hub</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Manage jobs, applications, outreach & uploads
           </p>
         </div>
         <div className="flex gap-3">
           <Badge
             variant="outline"
-            className="h-12 px-6 rounded-2xl border-2 font-black italic gap-2 text-primary bg-background/50 uppercase"
+            className="h-12 px-6 rounded-2xl border-2 font-semibold gap-2 text-primary bg-background/50 uppercase"
           >
             <BarChart3 className="h-4 w-4" /> 2.5% conversion
           </Badge>
@@ -68,7 +68,7 @@ function TabNode({ value, icon: Icon, label }: { value: string; icon: any; label
   return (
     <TabsTrigger
       value={value}
-      className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-2xl px-6 py-3 transition-all font-black uppercase italic text-[10px] tracking-widest gap-3 border-2 border-transparent hover:border-primary/20"
+      className="data-[state=active]:bg-primary data-[state=active]:text-white data-[state=active]:shadow-lg rounded-2xl px-6 py-3 transition-all font-semibold uppercase italic text-[10px] tracking-widest gap-3 border-2 border-transparent hover:border-primary/20"
     >
       <Icon className="h-4 w-4" />
       {label}

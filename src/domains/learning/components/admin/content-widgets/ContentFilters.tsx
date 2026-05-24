@@ -83,7 +83,7 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
             type="button"
             onClick={() => updateLogic("typeSegment", s.value)}
             className={cn(
-              "px-3 py-1.5 rounded-lg text-[10px] font-black uppercase tracking-widest transition-colors",
+              "px-3 py-1.5 rounded-lg text-[10px] font-black  transition-colors",
               segment === s.value ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground",
             )}
           >
@@ -100,7 +100,7 @@ const ContentFilters = ({ values, onChange, className }: ContentFiltersProps) =>
               type="button"
               onClick={() => updateLogic("dateWindow", d.value)}
               className={cn(
-                "px-2.5 py-1 rounded-lg text-[9px] font-bold uppercase tracking-widest border transition-colors",
+                "px-2.5 py-1 rounded-lg text-[9px] font-bold  border transition-colors",
                 dateWindow === d.value ? "border-primary bg-primary/10 text-primary" : "border-border text-muted-foreground",
               )}
             >

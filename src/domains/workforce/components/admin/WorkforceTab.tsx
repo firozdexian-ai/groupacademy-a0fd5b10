@@ -168,9 +168,9 @@ export function WorkforceManager() {
         <div className="space-y-1">
           <div className="flex items-center gap-3 text-primary">
             <UserCog className="h-8 w-8" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Workforce Pulse</h2>
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Workforce Pulse</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Executive Hierarchy & Performance Cluster
           </p>
         </div>
@@ -180,7 +180,7 @@ export function WorkforceManager() {
           </Button>
           <Button
             onClick={() => setShowAddDialog(true)}
-            className="h-14 px-8 rounded-2xl font-black uppercase text-[10px] tracking-widest gap-3 shadow-lg bg-primary text-primary-foreground"
+            className="h-14 px-8 rounded-2xl font-semibold uppercase text-[10px] tracking-widest gap-3 shadow-lg bg-primary text-primary-foreground"
           >
             <Plus className="h-4 w-4" /> Deploy Member
           </Button>
@@ -206,7 +206,7 @@ export function WorkforceManager() {
             />
           </div>
           <Select value={roleFilter} onValueChange={setRoleFilter}>
-            <SelectTrigger className="w-full lg:w-[240px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] bg-background">
+            <SelectTrigger className="w-full lg:w-[240px] h-14 rounded-2xl border-2 font-semibold uppercase text-[10px] bg-background">
               <SelectValue placeholder="FILTER ROLE" />
             </SelectTrigger>
             <SelectContent>
@@ -227,7 +227,7 @@ export function WorkforceManager() {
             </div>
           ) : (
             <Table>
-              <TableHeader className="bg-muted/10 text-[10px] font-black uppercase tracking-widest">
+              <TableHeader className="bg-muted/10 text-[10px] font-semibold">
                 <TableRow className="border-b-2">
                   <TableHead className="py-6 pl-8">Executive Identity</TableHead>
                   <TableHead>Assignment / Grade</TableHead>
@@ -244,7 +244,7 @@ export function WorkforceManager() {
                   >
                     <TableCell className="py-6 pl-8">
                       <div className="text-left min-w-[200px]">
-                        <p className="font-black text-sm uppercase italic tracking-tight">{m.talent_name || "—"}</p>
+                        <p className="font-semibold text-sm uppercase italic tracking-tight">{m.talent_name || "—"}</p>
                         <p className="text-[9px] font-bold text-muted-foreground uppercase mt-0.5">{m.talent_email}</p>
                       </div>
                     </TableCell>
@@ -252,18 +252,18 @@ export function WorkforceManager() {
                       <div className="space-y-1">
                         <Badge
                           variant="outline"
-                          className="font-black text-[9px] uppercase italic border-2 bg-primary/5"
+                          className="font-semibold text-[9px] uppercase italic border-2 bg-primary/5"
                         >
                           {ROLE_LABELS[m.role_type] || m.role_type}
                         </Badge>
-                        <p className="text-[9px] font-black text-muted-foreground/60 flex items-center gap-1 uppercase">
+                        <p className="text-[9px] font-semibold text-muted-foreground/60 flex items-center gap-1 uppercase">
                           <Briefcase className="h-3 w-3" /> {m.city || "Remote"}
                         </p>
                       </div>
                     </TableCell>
-                    <TableCell className="text-center font-black italic">{m.assigned_count}</TableCell>
+                    <TableCell className="text-center font-semibold">{m.assigned_count}</TableCell>
                     <TableCell className="text-center">
-                      <span className="font-black text-emerald-600 italic">₵{m.commission_earned}</span>
+                      <span className="font-semibold text-emerald-600 italic">₵{m.commission_earned}</span>
                     </TableCell>
                     <TableCell className="text-right pr-8">
                       <Badge
@@ -289,10 +289,10 @@ export function WorkforceManager() {
           <div className="h-2 w-full bg-primary" />
           <div className="p-10 space-y-8 text-left">
             <DialogHeader>
-              <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter">
+              <DialogTitle className="text-3xl font-semibold uppercase italic tracking-tight">
                 Deploy Workforce Node
               </DialogTitle>
-              <DialogDescription className="text-[10px] font-bold uppercase tracking-widest text-muted-foreground/60">
+              <DialogDescription className="text-[10px] font-bold text-muted-foreground/60">
                 Initialize executive authority and team binding
               </DialogDescription>
             </DialogHeader>
@@ -300,7 +300,7 @@ export function WorkforceManager() {
             <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
               {/* Talent Lookup */}
               <div className="md:col-span-2 space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Search Talent Identity *</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Search Talent Identity *</Label>
                 <div className="relative">
                   <Input
                     placeholder="SEARCH NAME OR EMAIL..."
@@ -320,7 +320,7 @@ export function WorkforceManager() {
                           }}
                           className="p-3 hover:bg-primary/5 cursor-pointer border-b last:border-0"
                         >
-                          <p className="font-black text-xs uppercase italic">{t.full_name}</p>
+                          <p className="font-semibold text-xs uppercase italic">{t.full_name}</p>
                           <p className="text-[9px] text-muted-foreground">{t.email}</p>
                         </div>
                       ))}
@@ -331,7 +331,7 @@ export function WorkforceManager() {
 
               {/* Team Binding (W2 Fix) */}
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Team Assignment *</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Team Assignment *</Label>
                 <Select value={formData.team_id} onValueChange={(v) => setFormData({ ...formData, team_id: v })}>
                   <SelectTrigger className="h-12 border-2 rounded-xl">
                     <SelectValue placeholder="SELECT TEAM" />
@@ -348,7 +348,7 @@ export function WorkforceManager() {
 
               {/* Grade Binding (W2 Fix) */}
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Workforce Grade *</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Workforce Grade *</Label>
                 <Select value={formData.grade_id} onValueChange={(v) => setFormData({ ...formData, grade_id: v })}>
                   <SelectTrigger className="h-12 border-2 rounded-xl">
                     <SelectValue placeholder="SELECT GRADE" />
@@ -364,7 +364,7 @@ export function WorkforceManager() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Role Type</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Role Type</Label>
                 <Select value={formData.role_type} onValueChange={(v) => setFormData({ ...formData, role_type: v })}>
                   <SelectTrigger className="h-12 border-2 rounded-xl">
                     <SelectValue />
@@ -380,7 +380,7 @@ export function WorkforceManager() {
               </div>
 
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase ml-1">Location / City</Label>
+                <Label className="text-[10px] font-semibold uppercase ml-1">Location / City</Label>
                 <Input
                   value={formData.city}
                   onChange={(e) => setFormData({ ...formData, city: e.target.value })}
@@ -407,14 +407,14 @@ export function WorkforceManager() {
                     specialization_value: "",
                   });
                 }}
-                className="h-12 rounded-xl font-black uppercase text-[10px]"
+                className="h-12 rounded-xl font-semibold uppercase text-[10px]"
               >
                 Abort
               </Button>
               <Button
                 onClick={handleAdd}
                 disabled={saving || !selectedTalent}
-                className="h-12 px-10 rounded-2xl font-black uppercase italic text-[11px] gap-2 shadow-xl bg-primary text-primary-foreground"
+                className="h-12 px-10 rounded-2xl font-semibold uppercase italic text-[11px] gap-2 shadow-xl bg-primary text-primary-foreground"
               >
                 {saving ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />} Authorize
                 Deployment
@@ -446,8 +446,8 @@ function KPIStat({ icon: Icon, label, value, color }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div className="text-left">
-          <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground italic">{label}</p>
-          <p className="text-3xl font-black italic tracking-tighter leading-none">{value}</p>
+          <p className="text-[9px] font-semibold text-muted-foreground italic">{label}</p>
+          <p className="text-3xl font-semibold tracking-tight leading-none">{value}</p>
         </div>
       </CardContent>
     </Card>

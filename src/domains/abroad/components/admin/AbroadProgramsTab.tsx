@@ -96,7 +96,7 @@ export function AbroadProgramsTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "active"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : "bg-amber-500/10 text-amber-600",
@@ -145,13 +145,13 @@ export function AbroadProgramsTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
               <GraduationCap className="h-6 w-6" /> Inject Program
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Update academic catalog entry.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Program Title
               </Label>
               <Input
@@ -162,7 +162,7 @@ export function AbroadProgramsTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Institution Name
               </Label>
               <Input
@@ -173,7 +173,7 @@ export function AbroadProgramsTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">
+              <Label className="text-[10px] font-black text-primary ml-1">
                 Catalog Status
               </Label>
               <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
@@ -181,10 +181,10 @@ export function AbroadProgramsTab() {
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="active" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                  <SelectItem value="active" className="font-bold text-xs text-emerald-500">
                     Active
                   </SelectItem>
-                  <SelectItem value="inactive" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                  <SelectItem value="inactive" className="font-bold text-xs text-amber-500">
                     Inactive
                   </SelectItem>
                 </SelectContent>

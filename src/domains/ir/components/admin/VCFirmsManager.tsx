@@ -209,7 +209,7 @@ export function VCFirmsManager() {
                   <TableRow>
                     <TableCell
                       colSpan={5}
-                      className="text-center py-32 italic font-bold opacity-50 uppercase tracking-widest text-xs"
+                      className="text-center py-32 italic font-bold opacity-50 text-xs"
                     >
                       <div className="flex flex-col items-center gap-4">
                         <RefreshCw className="h-6 w-6 animate-spin text-primary" />
@@ -221,7 +221,7 @@ export function VCFirmsManager() {
                   <TableRow>
                     <TableCell
                       colSpan={5}
-                      className="text-center py-32 italic font-bold opacity-50 uppercase tracking-widest text-xs"
+                      className="text-center py-32 italic font-bold opacity-50 text-xs"
                     >
                       Zero active VC firms detected.
                     </TableCell>
@@ -248,12 +248,12 @@ export function VCFirmsManager() {
                                   href={firm.website}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-blue-500 transition-colors"
+                                  className="flex items-center gap-1 text-[9px] font-bold text-muted-foreground hover:text-blue-500 transition-colors"
                                 >
                                   <Globe className="h-3 w-3" /> SITE
                                 </a>
                               ) : (
-                                <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30">
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-muted-foreground/30">
                                   <Globe className="h-3 w-3" /> NONE
                                 </span>
                               )}
@@ -262,12 +262,12 @@ export function VCFirmsManager() {
                                   href={firm.linkedin_url}
                                   target="_blank"
                                   rel="noopener noreferrer"
-                                  className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-muted-foreground hover:text-blue-500 transition-colors"
+                                  className="flex items-center gap-1 text-[9px] font-bold text-muted-foreground hover:text-blue-500 transition-colors"
                                 >
                                   <ExternalLink className="h-3 w-3" /> LINKEDIN
                                 </a>
                               ) : (
-                                <span className="flex items-center gap-1 text-[9px] font-bold uppercase tracking-widest text-muted-foreground/30">
+                                <span className="flex items-center gap-1 text-[9px] font-bold text-muted-foreground/30">
                                   <ExternalLink className="h-3 w-3" /> NONE
                                 </span>
                               )}
@@ -365,7 +365,7 @@ export function VCFirmsManager() {
                   <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter flex items-center gap-3">
                     Identity Deployment
                   </DialogTitle>
-                  <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic text-muted-foreground/60">
+                  <DialogDescription className="text-[10px] font-bold italic text-muted-foreground/60">
                     Update firm details
                   </DialogDescription>
                 </div>
@@ -399,7 +399,7 @@ export function VCFirmsManager() {
                           <SelectItem
                             key={opt.value}
                             value={opt.value}
-                            className="font-bold text-xs uppercase tracking-widest"
+                            className="font-bold text-xs"
                           >
                             {opt.label}
                           </SelectItem>
@@ -536,7 +536,7 @@ export function VCFirmsManager() {
                 <DialogTitle className="text-3xl font-black uppercase italic tracking-tighter text-destructive leading-none">
                   Terminate Node
                 </DialogTitle>
-                <DialogDescription className="text-[10px] font-bold uppercase tracking-[0.2em] italic text-muted-foreground/80">
+                <DialogDescription className="text-[10px] font-bold italic text-muted-foreground/80">
                   This will permanently purge the institutional identity from the registry.
                 </DialogDescription>
               </div>

@@ -144,19 +144,19 @@ export function LearningProgressTab() {
     switch (status) {
       case "completed":
         return (
-          <Badge className="bg-emerald-500 text-white border-none font-black text-[9px] uppercase tracking-widest px-3 py-1">
+          <Badge className="bg-emerald-500 text-white border-none font-semibold text-[9px] px-3 py-1">
             PASSED_COMPLETE
           </Badge>
         );
       case "active":
         return (
-          <Badge className="bg-primary/10 text-primary border-none font-black text-[9px] uppercase tracking-widest px-3 py-1">
+          <Badge className="bg-primary/10 text-primary border-none font-semibold text-[9px] px-3 py-1">
             ACTIVE_DEPLOY
           </Badge>
         );
       default:
         return (
-          <Badge variant="outline" className="font-black text-[9px] uppercase tracking-widest px-3 py-1">
+          <Badge variant="outline" className="font-semibold text-[9px] px-3 py-1">
             {status}
           </Badge>
         );
@@ -172,14 +172,14 @@ export function LearningProgressTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-primary">
             <Activity className="h-8 w-8" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none">Progression HUD</h2>
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none">Progression HUD</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Real-time Learner Velocity & Curriculum Yield Registry
           </p>
         </div>
         <Select value={selectedCourse} onValueChange={setSelectedCourse}>
-          <SelectTrigger className="w-full md:w-[320px] h-14 rounded-2xl border-2 font-black uppercase text-[10px] tracking-widest bg-card/50 shadow-inner">
+          <SelectTrigger className="w-full md:w-[320px] h-14 rounded-2xl border-2 font-semibold uppercase text-[10px] tracking-widest bg-card/50 shadow-inner">
             <Layers className="w-4 h-4 mr-2 text-primary" />
             <SelectValue placeholder="Logic Context" />
           </SelectTrigger>
@@ -238,10 +238,10 @@ export function LearningProgressTab() {
                 <kpi.icon className={cn("h-6 w-6", kpi.color)} />
               </div>
               <div>
-                <p className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/40 mb-1">
+                <p className="text-[9px] font-semibold text-muted-foreground/40 mb-1">
                   {kpi.label}
                 </p>
-                <p className="text-3xl font-black tracking-tighter italic">{kpi.val}</p>
+                <p className="text-3xl font-semibold tracking-tight italic">{kpi.val}</p>
                 {kpi.progress && <Progress value={parseInt(String(kpi.val))} className="h-1 mt-3" />}
               </div>
             </CardContent>
@@ -254,7 +254,7 @@ export function LearningProgressTab() {
         <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl">
           <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
           <CardHeader className="p-8 border-b border-border/10 bg-muted/10">
-            <CardTitle className="text-xl font-black uppercase tracking-tighter italic flex items-center gap-3">
+            <CardTitle className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
               <ShieldCheck className="h-5 w-5 text-primary" /> Multi-Course Yield Analysis
             </CardTitle>
           </CardHeader>
@@ -262,15 +262,15 @@ export function LearningProgressTab() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow className="hover:bg-transparent border-b-2 border-border/10">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8 text-left">
+                  <TableHead className="text-[10px] font-semibold py-8 px-8 text-left">
                     Academic Node
                   </TableHead>
-                  <TableHead className="text-center text-[10px] font-black uppercase tracking-widest">Total</TableHead>
-                  <TableHead className="text-center text-[10px] font-black uppercase tracking-widest">Active</TableHead>
-                  <TableHead className="text-center text-[10px] font-black uppercase tracking-widest">
+                  <TableHead className="text-center text-[10px] font-semibold">Total</TableHead>
+                  <TableHead className="text-center text-[10px] font-semibold">Active</TableHead>
+                  <TableHead className="text-center text-[10px] font-semibold">
                     Yield %
                   </TableHead>
-                  <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                  <TableHead className="text-right text-[10px] font-semibold pr-8">
                     Intensity
                   </TableHead>
                 </TableRow>
@@ -282,18 +282,18 @@ export function LearningProgressTab() {
                     className="group transition-all hover:bg-primary/[0.02] border-b border-border/5 last:border-0"
                   >
                     <TableCell className="px-8 py-6 text-left">
-                      <p className="font-black text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
+                      <p className="font-semibold text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
                         {stats.title}
                       </p>
                     </TableCell>
-                    <TableCell className="text-center font-black text-xs opacity-60">
+                    <TableCell className="text-center font-semibold text-xs opacity-60">
                       {stats.totalEnrollments}
                     </TableCell>
-                    <TableCell className="text-center font-black text-xs text-primary">
+                    <TableCell className="text-center font-semibold text-xs text-primary">
                       {stats.activeEnrollments}
                     </TableCell>
                     <TableCell className="text-center">
-                      <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-black text-[10px] italic">
+                      <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-semibold text-[10px] italic">
                         {stats.averageProgress}%
                       </Badge>
                     </TableCell>
@@ -311,8 +311,8 @@ export function LearningProgressTab() {
       {/* Individual Learner Progression Registry */}
       <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30">
         <CardHeader className="p-8 border-b border-border/10">
-          <CardTitle className="text-xl font-black uppercase tracking-tighter italic">Learner Artifact Log</CardTitle>
-          <CardDescription className="text-[10px] font-bold uppercase tracking-widest">
+          <CardTitle className="text-xl font-semibold uppercase tracking-tight italic">Learner Artifact Log</CardTitle>
+          <CardDescription className="text-[10px] font-bold">
             Authorized audit trail for individual node progression
           </CardDescription>
         </CardHeader>
@@ -326,19 +326,19 @@ export function LearningProgressTab() {
             <Table>
               <TableHeader className="bg-muted/30">
                 <TableRow className="hover:bg-transparent border-b-2 border-border/10">
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest py-8 px-8 text-left">
+                  <TableHead className="text-[10px] font-semibold py-8 px-8 text-left">
                     Learner Artifact
                   </TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-left">
+                  <TableHead className="text-[10px] font-semibold text-left">
                     Status Protocol
                   </TableHead>
-                  <TableHead className="text-[10px] font-black uppercase tracking-widest text-left">
+                  <TableHead className="text-[10px] font-semibold text-left">
                     Temporal Log
                   </TableHead>
-                  <TableHead className="text-center text-[10px] font-black uppercase tracking-widest">
+                  <TableHead className="text-center text-[10px] font-semibold">
                     Progress Yield
                   </TableHead>
-                  <TableHead className="text-right text-[10px] font-black uppercase tracking-widest pr-8">
+                  <TableHead className="text-right text-[10px] font-semibold pr-8">
                     Resolution
                   </TableHead>
                 </TableRow>
@@ -351,10 +351,10 @@ export function LearningProgressTab() {
                   >
                     <TableCell className="px-8 py-6 text-left">
                       <div className="space-y-1">
-                        <p className="font-black text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
+                        <p className="font-semibold text-sm uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none">
                           {learner.talentName}
                         </p>
-                        <p className="text-[10px] font-bold text-muted-foreground/40 uppercase tracking-widest italic">
+                        <p className="text-[10px] font-bold text-muted-foreground/40 italic">
                           {learner.talentEmail}
                         </p>
                       </div>
@@ -372,7 +372,7 @@ export function LearningProgressTab() {
                             value={(learner.modulesCompleted / learner.totalModules) * 100}
                             className="w-16 h-1"
                           />
-                          <span className="text-[10px] font-black italic">
+                          <span className="text-[10px] font-semibold">
                             {learner.modulesCompleted}/{learner.totalModules}
                           </span>
                         </div>
@@ -380,7 +380,7 @@ export function LearningProgressTab() {
                         <span className="text-[10px] font-bold opacity-20 italic">NULL_MODULES</span>
                       )}
                     </TableCell>
-                    <TableCell className="text-right pr-8 font-black text-[11px] italic text-primary">
+                    <TableCell className="text-right pr-8 font-semibold text-[11px] italic text-primary">
                       <div className="flex items-center justify-end gap-2">
                         <Button
                           variant="ghost"
@@ -405,10 +405,10 @@ export function LearningProgressTab() {
       {/* Operational Trace Footer */}
       <footer className="mt-20 pt-10 border-t border-border/40 flex items-center justify-between opacity-30">
         <div className="space-y-1 text-left">
-          <p className="text-[9px] font-black uppercase tracking-[0.4em] italic leading-none">
+          <p className="text-[9px] font-semibold uppercase tracking-[0.4em] italic leading-none">
             Academic Progression Hub: Secured Access
           </p>
-          <p className="text-[8px] font-bold text-muted-foreground uppercase tracking-widest">
+          <p className="text-[8px] font-bold text-muted-foreground">
             Logic Cycle: Curriculum Telemetry v2.6.8
           </p>
         </div>
@@ -423,11 +423,11 @@ export function LearningProgressTab() {
       <Dialog open={!!selectedEnrollment} onOpenChange={(o) => !o && setSelectedEnrollment(null)}>
         <DialogContent className="max-w-6xl max-h-[90vh] overflow-y-auto rounded-[32px] p-6 border-2 border-border/40">
           <DialogHeader>
-            <DialogTitle className="text-xl font-black uppercase italic tracking-tighter text-violet-500 flex items-center gap-2">
+            <DialogTitle className="text-xl font-semibold uppercase italic tracking-tight text-violet-500 flex items-center gap-2">
               <ClipboardCheck className="h-5 w-5" /> Quiz Results
               {selectedEnrollment && <span className="text-xs text-muted-foreground"> — {selectedEnrollment.talentName}</span>}
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Per-learner quiz attempts and outcomes.
             </DialogDescription>
           </DialogHeader>

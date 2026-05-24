@@ -100,7 +100,7 @@ export function GigVerificationQueueTab() {
                       <TableCell>
                         <Badge
                           className={cn(
-                            "font-bold text-[9px] uppercase tracking-widest border-none px-3",
+                            "font-bold text-[9px]  border-none px-3",
                             row.status === "verified"
                               ? "bg-emerald-500/10 text-emerald-600"
                               : row.status === "rejected"
@@ -154,13 +154,13 @@ export function GigVerificationQueueTab() {
             <DialogTitle className="text-2xl font-black uppercase italic tracking-tighter text-emerald-500 flex items-center gap-2">
               <ShieldCheck className="h-6 w-6" /> Force Audit
             </DialogTitle>
-            <DialogDescription className="text-[10px] font-bold uppercase tracking-widest italic">
+            <DialogDescription className="text-[10px] font-bold italic">
               Manually update trust verification status.
             </DialogDescription>
           </DialogHeader>
           <div className="space-y-4 py-4">
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Talent ID</Label>
+              <Label className="text-[10px] font-black text-primary ml-1">Talent ID</Label>
               <Input
                 placeholder="UUID"
                 value={draft.talent_id || ""}
@@ -169,19 +169,19 @@ export function GigVerificationQueueTab() {
               />
             </div>
             <div className="space-y-2">
-              <Label className="text-[10px] font-black uppercase tracking-widest text-primary ml-1">Audit Status</Label>
+              <Label className="text-[10px] font-black text-primary ml-1">Audit Status</Label>
               <Select value={draft.status} onValueChange={(v) => setDraft({ ...draft, status: v })}>
                 <SelectTrigger className="h-14 rounded-xl border-2 font-bold text-xs uppercase">
                   <SelectValue />
                 </SelectTrigger>
                 <SelectContent>
-                  <SelectItem value="pending" className="font-bold text-xs uppercase tracking-widest text-amber-500">
+                  <SelectItem value="pending" className="font-bold text-xs text-amber-500">
                     Pending
                   </SelectItem>
-                  <SelectItem value="verified" className="font-bold text-xs uppercase tracking-widest text-emerald-500">
+                  <SelectItem value="verified" className="font-bold text-xs text-emerald-500">
                     Verified
                   </SelectItem>
-                  <SelectItem value="rejected" className="font-bold text-xs uppercase tracking-widest text-rose-500">
+                  <SelectItem value="rejected" className="font-bold text-xs text-rose-500">
                     Rejected
                   </SelectItem>
                 </SelectContent>

@@ -34,18 +34,18 @@ export function AbroadOverviewTab() {
         <div className="space-y-1 text-left">
           <div className="flex items-center gap-3 text-sky-500">
             <Globe className="h-8 w-8 text-sky-500 fill-sky-500/20" />
-            <h2 className="text-4xl font-black uppercase tracking-tighter italic leading-none text-foreground">
+            <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Abroad Command
             </h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
+          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
             Global Admissions & Language Telemetry
           </p>
         </div>
         {totalPendingActions > 0 && (
           <Badge
             variant="outline"
-            className="h-12 px-6 rounded-xl font-black uppercase text-xs tracking-widest gap-2 border-sky-500/50 text-sky-600 bg-sky-500/10 animate-pulse"
+            className="h-12 px-6 rounded-xl font-semibold uppercase text-xs tracking-widest gap-2 border-sky-500/50 text-sky-600 bg-sky-500/10 animate-pulse"
           >
             <AlertCircle className="h-4 w-4" /> {totalPendingActions} Pending Actions
           </Badge>
@@ -98,7 +98,7 @@ export function AbroadOverviewTab() {
             <div className="xl:col-span-2 space-y-6">
               <div className="flex items-center gap-2 mb-4 px-2">
                 <Clock className="h-4 w-4 text-sky-500" />
-                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground italic">
+                <h3 className="text-xs font-semibold text-muted-foreground italic">
                   Priority Admissions Queue
                 </h3>
               </div>
@@ -111,7 +111,7 @@ export function AbroadOverviewTab() {
                       <div className="h-16 w-16 rounded-full bg-emerald-500/10 flex items-center justify-center border-2 border-emerald-500/20">
                         <CheckCircle2 className="h-8 w-8 text-emerald-500" />
                       </div>
-                      <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/50 italic">
+                      <p className="text-[10px] font-semibold text-muted-foreground/50 italic">
                         Inbox Zero Achieved
                       </p>
                     </div>
@@ -128,10 +128,10 @@ export function AbroadOverviewTab() {
                               <ClipboardList className="h-5 w-5 text-sky-500" />
                             </div>
                             <div>
-                              <h4 className="font-black text-sm uppercase italic tracking-tight text-foreground/90">
+                              <h4 className="font-semibold text-sm uppercase italic tracking-tight text-foreground/90">
                                 Uni Application
                               </h4>
-                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                              <p className="text-[10px] font-bold text-muted-foreground mt-1">
                                 Program ID: <span className="text-sky-500">{app.program_id.substring(0, 8)}</span>
                               </p>
                             </div>
@@ -139,7 +139,7 @@ export function AbroadOverviewTab() {
                           <div className="flex items-center gap-3">
                             <Badge
                               variant="outline"
-                              className="font-mono text-[9px] uppercase tracking-widest border-2"
+                              className="font-mono text-[9px] border-2"
                             >
                               Talent ID: {app.talent_user_id.substring(0, 8)}
                             </Badge>
@@ -161,10 +161,10 @@ export function AbroadOverviewTab() {
                               <Map className="h-5 w-5 text-emerald-500" />
                             </div>
                             <div>
-                              <h4 className="font-black text-sm uppercase italic tracking-tight text-foreground/90">
+                              <h4 className="font-semibold text-sm uppercase italic tracking-tight text-foreground/90">
                                 Roadmap Lead
                               </h4>
-                              <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-widest mt-1">
+                              <p className="text-[10px] font-bold text-muted-foreground mt-1">
                                 Destination: {roadmap.destination}
                               </p>
                             </div>
@@ -172,7 +172,7 @@ export function AbroadOverviewTab() {
                           <div className="flex items-center gap-3">
                             <Badge
                               variant="outline"
-                              className="font-mono text-[9px] uppercase tracking-widest border-2"
+                              className="font-mono text-[9px] border-2"
                             >
                               Talent ID: {roadmap.talent_id.substring(0, 8)}
                             </Badge>
@@ -192,7 +192,7 @@ export function AbroadOverviewTab() {
             <div className="space-y-6">
               <div className="flex items-center gap-2 mb-4 px-2">
                 <Activity className="h-4 w-4 text-sky-500" />
-                <h3 className="text-xs font-black uppercase tracking-widest text-muted-foreground italic">
+                <h3 className="text-xs font-semibold text-muted-foreground italic">
                   Pipeline Distribution
                 </h3>
               </div>
@@ -234,10 +234,10 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div className="min-w-0">
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic mb-1 truncate">
+          <p className="text-[10px] font-semibold text-muted-foreground italic mb-1 truncate">
             {label}
           </p>
-          <p className="text-4xl font-black italic tracking-tighter leading-none text-foreground/90">
+          <p className="text-4xl font-semibold tracking-tight leading-none text-foreground/90">
             {value?.toLocaleString() || "0"}
           </p>
         </div>
@@ -251,7 +251,7 @@ function PulseBar({ label, value, max, color }: any) {
   return (
     <div className="space-y-2">
       <div className="flex items-center justify-between text-xs font-bold">
-        <span className="uppercase tracking-widest text-muted-foreground">{label}</span>
+        <span className="text-muted-foreground">{label}</span>
         <span className="font-mono text-[10px] text-foreground">{value} Nodes</span>
       </div>
       <div className="h-1.5 w-full bg-muted/30 rounded-full overflow-hidden">

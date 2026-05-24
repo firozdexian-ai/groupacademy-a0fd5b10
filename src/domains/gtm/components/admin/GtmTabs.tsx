@@ -88,7 +88,7 @@ function GtmRegistryShell({
         </div>
         <Button
           onClick={onAdd}
-          className={cn("h-11 rounded-xl px-5 font-black uppercase tracking-wider text-xs", btnAccent[accentColor])}
+          className={cn("h-11 rounded-xl px-5 font-black  text-xs", btnAccent[accentColor])}
         >
           <Plus className="h-4 w-4 mr-2" /> Deploy Node
         </Button>
@@ -104,7 +104,7 @@ function GtmRegistryShell({
                   <TableHead
                     key={i}
                     className={cn(
-                      "text-[10px] uppercase tracking-widest font-black",
+                      "text-[10px]  font-black",
                       i === columns.length - 1 && "text-right",
                     )}
                   >
@@ -128,7 +128,7 @@ function GtmRegistryShell({
                 <TableRow>
                   <TableCell
                     colSpan={columns.length}
-                    className="text-center text-xs uppercase tracking-widest font-bold text-muted-foreground py-10"
+                    className="text-center text-xs font-bold text-muted-foreground py-10"
                   >
                     Zero records detected.
                   </TableCell>
@@ -237,7 +237,7 @@ export function GtmCountriesTab() {
           <div className="space-y-4 py-2">
             <div className="grid grid-cols-4 gap-3">
               <div className="col-span-1 space-y-1.5">
-                <Label className="text-[10px] uppercase tracking-widest font-black">ISO2</Label>
+                <Label className="text-[10px] font-black">ISO2</Label>
                 <Input
                   value={draft.iso2 || ""}
                   onChange={(e) =>
@@ -248,7 +248,7 @@ export function GtmCountriesTab() {
                 />
               </div>
               <div className="col-span-3 space-y-1.5">
-                <Label className="text-[10px] uppercase tracking-widest font-black">Name</Label>
+                <Label className="text-[10px] font-black">Name</Label>
                 <Input
                   value={draft.name || ""}
                   onChange={(e) => setDraft({ ...draft, name: e.target.value })}
@@ -258,7 +258,7 @@ export function GtmCountriesTab() {
             </div>
             <div className="grid grid-cols-2 gap-3">
               <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase tracking-widest font-black">Tier</Label>
+                <Label className="text-[10px] font-black">Tier</Label>
                 <Select value={draft.tier || "Tier 3"} onValueChange={(v) => setDraft({ ...draft, tier: v })}>
                   <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
                     <SelectValue />
@@ -271,7 +271,7 @@ export function GtmCountriesTab() {
                 </Select>
               </div>
               <div className="space-y-1.5">
-                <Label className="text-[10px] uppercase tracking-widest font-black">Status</Label>
+                <Label className="text-[10px] font-black">Status</Label>
                 <Select
                   value={draft.is_active ? "true" : "false"}
                   onValueChange={(v) => setDraft({ ...draft, is_active: v === "true" })}
@@ -291,7 +291,7 @@ export function GtmCountriesTab() {
             <Button
               onClick={submit}
               disabled={!draft.iso2 || !draft.name}
-              className="h-12 rounded-xl font-black uppercase tracking-wider w-full"
+              className="h-12 rounded-xl font-black w-full"
             >
               Authorize
             </Button>
@@ -356,7 +356,7 @@ export function GtmStatesTab() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
-              <Label className="text-[10px] uppercase tracking-widest font-black">Name</Label>
+              <Label className="text-[10px] font-black">Name</Label>
               <Input
                 value={draft.name || ""}
                 onChange={(e) => setDraft({ ...draft, name: e.target.value })}
@@ -364,7 +364,7 @@ export function GtmStatesTab() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[10px] uppercase tracking-widest font-black">Code</Label>
+              <Label className="text-[10px] font-black">Code</Label>
               <Input
                 value={draft.code || ""}
                 onChange={(e) => setDraft({ ...draft, code: e.target.value })}
@@ -372,7 +372,7 @@ export function GtmStatesTab() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[10px] uppercase tracking-widest font-black">Parent Country</Label>
+              <Label className="text-[10px] font-black">Parent Country</Label>
               <Select value={draft.country_id || ""} onValueChange={(v) => setDraft({ ...draft, country_id: v })}>
                 <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
                   <SelectValue placeholder="Select country" />
@@ -391,7 +391,7 @@ export function GtmStatesTab() {
             <Button
               onClick={submit}
               disabled={!draft.name || !draft.country_id}
-              className="h-12 rounded-xl font-black uppercase tracking-wider w-full bg-emerald-600 hover:bg-emerald-700 text-white"
+              className="h-12 rounded-xl font-black w-full bg-emerald-600 hover:bg-emerald-700 text-white"
             >
               Authorize
             </Button>
@@ -466,7 +466,7 @@ export function GtmCitiesTab() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
-              <Label className="text-[10px] uppercase tracking-widest font-black">Name</Label>
+              <Label className="text-[10px] font-black">Name</Label>
               <Input
                 value={draft.name || ""}
                 onChange={(e) => setDraft({ ...draft, name: e.target.value })}
@@ -474,7 +474,7 @@ export function GtmCitiesTab() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[10px] uppercase tracking-widest font-black">Parent Region</Label>
+              <Label className="text-[10px] font-black">Parent Region</Label>
               <Select value={draft.region_id || ""} onValueChange={(v) => setDraft({ ...draft, region_id: v })}>
                 <SelectTrigger className="h-12 rounded-xl border-2 font-bold">
                   <SelectValue placeholder="Select region" />
@@ -489,7 +489,7 @@ export function GtmCitiesTab() {
               </Select>
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[10px] uppercase tracking-widest font-black">Status</Label>
+              <Label className="text-[10px] font-black">Status</Label>
               <Select
                 value={draft.is_active ? "true" : "false"}
                 onValueChange={(v) => setDraft({ ...draft, is_active: v === "true" })}
@@ -508,7 +508,7 @@ export function GtmCitiesTab() {
             <Button
               onClick={submit}
               disabled={!draft.name || !draft.region_id}
-              className="h-12 rounded-xl font-black uppercase tracking-wider w-full bg-blue-600 hover:bg-blue-700 text-white"
+              className="h-12 rounded-xl font-black w-full bg-blue-600 hover:bg-blue-700 text-white"
             >
               Authorize
             </Button>
@@ -582,7 +582,7 @@ export function GtmClustersTab() {
           </DialogHeader>
           <div className="space-y-4 py-2">
             <div className="space-y-1.5">
-              <Label className="text-[10px] uppercase tracking-widest font-black">Name</Label>
+              <Label className="text-[10px] font-black">Name</Label>
               <Input
                 value={draft.name || ""}
                 onChange={(e) => setDraft({ ...draft, name: e.target.value })}
@@ -590,7 +590,7 @@ export function GtmClustersTab() {
               />
             </div>
             <div className="space-y-1.5">
-              <Label className="text-[10px] uppercase tracking-widest font-black">Description</Label>
+              <Label className="text-[10px] font-black">Description</Label>
               <Input
                 value={draft.description || ""}
                 onChange={(e) => setDraft({ ...draft, description: e.target.value })}
@@ -634,7 +634,7 @@ export function GtmClustersTab() {
             <Button
               onClick={submit}
               disabled={!draft.name}
-              className="h-12 rounded-xl font-black uppercase tracking-wider w-full bg-amber-600 hover:bg-amber-700 text-white"
+              className="h-12 rounded-xl font-black w-full bg-amber-600 hover:bg-amber-700 text-white"
             >
               Authorize
             </Button>
@@ -664,7 +664,7 @@ function ClusterCountryPicker({
 
   return (
     <div className="space-y-2">
-      <Label className="text-[10px] uppercase tracking-widest font-black">
+      <Label className="text-[10px] font-black">
         Countries ({selected.length})
       </Label>
       {selected.length > 0 && (
@@ -742,7 +742,7 @@ function ClusterCityPicker({
 
   return (
     <div className="space-y-2">
-      <Label className="text-[10px] uppercase tracking-widest font-black">
+      <Label className="text-[10px] font-black">
         Cities ({selectedCities.length})
       </Label>
       {selectedCountries.length === 0 ? (

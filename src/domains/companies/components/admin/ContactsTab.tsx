@@ -104,10 +104,10 @@ export function ContactsTab() {
       {/* P2 Fix: Header Action Row */}
       <div className="flex justify-between items-center bg-muted/10 p-6 rounded-[32px] border-2 border-border/40">
         <div className="text-left">
-          <h2 className="text-2xl font-black uppercase italic tracking-tighter flex items-center gap-2">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
             <ShieldCheck className="h-6 w-6 text-primary" /> Authority Matrix
           </h2>
-          <p className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60">
+          <p className="text-[10px] font-semibold text-muted-foreground/60">
             Secure Registry of {totalCount} Stakeholder Nodes
           </p>
         </div>
@@ -120,7 +120,7 @@ export function ContactsTab() {
               setFormData({ full_name: "", is_primary: false });
               setIsDialogOpen(true);
             }}
-            className="rounded-xl h-12 px-6 font-black uppercase text-[10px] tracking-widest gap-2 shadow-xl shadow-primary/20"
+            className="rounded-xl h-12 px-6 font-semibold uppercase text-[10px] tracking-widest gap-2 shadow-xl shadow-primary/20"
           >
             <Plus className="h-4 w-4" /> Add Stakeholder
           </Button>
@@ -151,10 +151,10 @@ export function ContactsTab() {
         <Table>
           <TableHeader className="bg-muted/20">
             <TableRow>
-              <TableHead className="pl-8 text-[10px] font-black uppercase py-6">Stakeholder Spec</TableHead>
-              <TableHead className="text-[10px] font-black uppercase">Parent Node</TableHead>
-              <TableHead className="text-[10px] font-black uppercase">Logic Endpoints</TableHead>
-              <TableHead className="text-right pr-8 text-[10px] font-black uppercase">Interrogate</TableHead>
+              <TableHead className="pl-8 text-[10px] font-semibold uppercase py-6">Stakeholder Spec</TableHead>
+              <TableHead className="text-[10px] font-semibold uppercase">Parent Node</TableHead>
+              <TableHead className="text-[10px] font-semibold uppercase">Logic Endpoints</TableHead>
+              <TableHead className="text-right pr-8 text-[10px] font-semibold uppercase">Interrogate</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
@@ -168,7 +168,7 @@ export function ContactsTab() {
               contacts.map((contact) => (
                 <TableRow key={contact.id} className="group hover:bg-primary/[0.02]">
                   <TableCell className="pl-8 py-6">
-                    <p className="font-black text-sm uppercase italic group-hover:text-primary transition-colors flex items-center gap-2">
+                    <p className="font-semibold text-sm uppercase italic group-hover:text-primary transition-colors flex items-center gap-2">
                       {contact.full_name}
                       {contact.is_primary && <Star className="h-3 w-3 fill-amber-500 text-amber-500" />}
                     </p>
@@ -179,7 +179,7 @@ export function ContactsTab() {
                   <TableCell>
                     <div className="flex items-center gap-2">
                       <Building2 className="h-3.5 w-3.5 text-muted-foreground/40" />
-                      <span className="font-black text-[11px] uppercase">{contact.company?.name || "Independent"}</span>
+                      <span className="font-semibold text-[11px] uppercase">{contact.company?.name || "Independent"}</span>
                     </div>
                   </TableCell>
                   <TableCell>
@@ -247,13 +247,13 @@ export function ContactsTab() {
         <DialogContent className="max-w-md rounded-[32px] border-4">
           <div className="p-2 space-y-6 text-left">
             <DialogHeader>
-              <DialogTitle className="text-2xl font-black italic tracking-tighter uppercase">
+              <DialogTitle className="text-2xl font-semibold tracking-tight uppercase">
                 Recalibrate Stakeholder
               </DialogTitle>
             </DialogHeader>
             <div className="space-y-4">
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase">Identity</Label>
+                <Label className="text-[10px] font-semibold uppercase">Identity</Label>
                 <Input
                   value={formData.full_name}
                   onChange={(e) => setFormData({ ...formData, full_name: e.target.value })}
@@ -261,7 +261,7 @@ export function ContactsTab() {
                 />
               </div>
               <div className="space-y-2">
-                <Label className="text-[10px] font-black uppercase">Designation</Label>
+                <Label className="text-[10px] font-semibold uppercase">Designation</Label>
                 <Input
                   value={formData.designation}
                   onChange={(e) => setFormData({ ...formData, designation: e.target.value })}
@@ -273,7 +273,7 @@ export function ContactsTab() {
               <Button
                 onClick={handleSave}
                 disabled={saving}
-                className="w-full h-12 rounded-xl font-black uppercase text-[10px] gap-2"
+                className="w-full h-12 rounded-xl font-semibold uppercase text-[10px] gap-2"
               >
                 {saving ? <Loader2 className="animate-spin h-4 w-4" /> : <ShieldCheck className="h-4 w-4" />} Commit
                 Changes
@@ -300,8 +300,8 @@ function MetricTile({ label, value, icon: Icon, color, bg }: any) {
           <Icon className="h-6 w-6" />
         </div>
         <div>
-          <p className="text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground italic">{label}</p>
-          <p className="text-3xl font-black italic tracking-tighter text-foreground">{value}</p>
+          <p className="text-[10px] font-semibold text-muted-foreground italic">{label}</p>
+          <p className="text-3xl font-semibold tracking-tight text-foreground">{value}</p>
         </div>
       </div>
     </Card>

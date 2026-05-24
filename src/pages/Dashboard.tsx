@@ -43,7 +43,7 @@ const Dashboard = () => {
       const allowedByRole = role === "admin" || role === "talent_exec";
       const allowedByCompanyScope = adminScope === "company";
       if (!allowedByRole && !allowedByCompanyScope) {
-        toast.error("Shields Active: Restricted Access.");
+        toast.error("You don't have access to this area.");
         navigate("/app/feed");
       }
     }
@@ -75,7 +75,7 @@ const Dashboard = () => {
           <header className="h-16 flex items-center gap-4 border-b bg-background/80 backdrop-blur-md px-6 sticky top-0 z-50">
             <SidebarTrigger className="hover:bg-primary/5 rounded-xl transition-all" />
             <div className="h-4 w-px bg-border" />
-            <h1 className="text-sm font-black uppercase tracking-[0.2em] text-foreground/80 truncate">{pageTitle}</h1>
+            <h1 className="text-base font-semibold tracking-tight text-foreground truncate">{pageTitle}</h1>
           </header>
 
           <div className="p-8 max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-2 duration-500">
@@ -110,9 +110,13 @@ const Dashboard = () => {
                 })()
               ) : (
                 <div className="flex flex-col items-center justify-center h-[50vh] text-center space-y-4">
-                  <p className="text-xs font-black uppercase tracking-widest text-muted-foreground">
-                    Module Decryption Failed: "{activeTab}"
-                  </p>
+                  <p className="text-sm text-muted-foreground">Unknown tab: "{activeTab}"</p>
+                  <button
+                    onClick={() => handleTabChange(defaultTab)}
+                    className="text-sm font-medium text-primary hover:underline"
+                  >
+                    Back to overview
+                  </button>
                 </div>
               )}
             </Suspense>

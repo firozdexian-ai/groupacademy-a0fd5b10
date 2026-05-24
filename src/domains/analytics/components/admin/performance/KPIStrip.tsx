@@ -23,7 +23,7 @@ export default function KPIStrip({ totalEnrollments, activeLast7d, completionRat
             <t.icon className="h-5 w-5" />
           </div>
           <div className="min-w-0">
-            <div className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
+            <div className="text-[10px] font-black text-muted-foreground">
               {t.label}
             </div>
             <div className="text-xl font-black tracking-tight">{t.value}</div>
