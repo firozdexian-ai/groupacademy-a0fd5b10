@@ -154,10 +154,18 @@ serve(async (req) => {
       headers: { ...corsHeaders, "Content-Type": "application/json" },
     });
   } catch (err: any) {
-    console.error("[Sentinel] AUTH_AGENT_FAULT:", err.message);
-    return new Response(JSON.stringify({ error: "INTERNAL_AUTH_FAULT" }), {
-      status: 500,
-      headers: { ...corsHeaders, "Content-Type": "application/json" },
-    });
+    console.error("[Sentinel] AUTH_AGENT_FAULT:", err?.message, err?.stack);
+    // Return 200 with a friendly fallback so the auth chat UI keeps working
+    // even if the AI gateway or persona lookup throws unexpectedly.
+    return new Response(
+      JSON.stringify({
+        reply: "Sorry, I had trouble responding. Please try again.",
+        action: "noop",
+        quiz: null,
+        fallback: true,
+        error: err?.message || "INTERNAL_AUTH_FAULT",
+      }),
+      { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+    );
   }
 });
