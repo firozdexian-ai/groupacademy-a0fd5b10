@@ -2,7 +2,7 @@ import { useEffect, useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQuery } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
-import { Calendar, MapPin, Users, Trophy, Gift, Globe, ArrowRight, Loader2 } from "lucide-react";
+import { Calendar, MapPin, Users, Trophy, Gift, Globe, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -21,29 +21,28 @@ type EventFilter = "in_person" | "competitions" | "abroad";
 
 const filterOptions: { key: EventFilter; icon: any; label: string }[] = [
   { key: "in_person", icon: MapPin, label: "In-Person Seminars" },
-  { key: "competitions", icon: Trophy, label: "Competitions" },
+  { key: "competitions", icon: Competitions, label: "Challenges" },
   { key: "abroad", icon: Globe, label: "Study Abroad" },
 ];
 
 const STATUS_LABEL: Record<string, string> = {
   pending: "Upcoming",
   upcoming: "Upcoming",
-  active: "Live now",
-  judging: "Judging",
-  completed: "Archived",
+  active: "Live Now",
+  judging: "Reviewing Results",
+  completed: "Completed",
   cancelled: "Cancelled",
 };
 
 /**
- * GroUp Academy: Events & Interactive Match Matrix (EventsTab)
- * CTO Reference: Authoritative micro-ingress viewport segment directing user trajectories into experiential learning nodes.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * GroUp Academy: Events & Interactive Catalog Surface
+ * Main talent-facing entry viewport routing student pathways into experiential workshops.
  */
 export function EventsTab({ onOpenCompetition }: EventsTabProps) {
   const navigate = useNavigate();
   const [searchParams, setSearchParams] = useSearchParams();
 
-  // 1. Single Source of Truth URL State Strategy: Removes layout race vectors completely
+  // Single Source of Truth URL State Strategy to synchronize link parameters cleanly
   const eventType: EventFilter = useMemo(() => {
     const kindParam = searchParams.get("kind");
     if (kindParam === "abroad") return "abroad";
@@ -51,7 +50,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
     return "in_person";
   }, [searchParams]);
 
-  // Monitor campaign directory sub-tier item impressions safely via analytical telemetry
+  // Monitor current event view filtering path tracking signals
   useEffect(() => {
     trackEvent("academy_events_tab_viewed", { activeTrackSegment: eventType });
   }, [eventType]);
@@ -65,11 +64,12 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
     } else {
       nextParams.set("kind", key);
     }
+    // Safeguard routing loop states cleanly by maintaining baseline params without overhead
     nextParams.set("tab", "events");
     setSearchParams(nextParams, { replace: true });
   };
 
-  // 2. Structural Query Node A: In-Person Physical Seminars Ingress
+  // Structural Query Node A: Retrieve published physical off-line workshops data
   const {
     data: events = [],
     isLoading: eventsLoading,
@@ -98,7 +98,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
     },
   });
 
-  // 3. Structural Query Node B: Hackathons & Competitions Curation Hub
+  // Structural Query Node B: Retrieve active community tournament data records
   const {
     data: competitions = [],
     isLoading: competitionsLoading,
@@ -120,7 +120,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
     },
   });
 
-  // Instrument continuous analytical diagnostics tracking maps over internal query exceptions
+  // Pipe internal server query response exceptions to standard diagnostic log collectors
   useEffect(() => {
     const combinedFetchError = eventsQueryError || competitionsQueryError;
     if (combinedFetchError) {
@@ -153,7 +153,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
           {event.cover_image_url ? (
             <img
               src={event.cover_image_url}
-              alt={`${event.title} program thumbnail track`}
+              alt={event.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
               loading="lazy"
             />
@@ -164,7 +164,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
           )}
           <Badge className="absolute top-2.5 left-2.5 bg-background/95 text-foreground/90 border border-border/20 text-[9px] font-extrabold uppercase tracking-wide px-2 rounded shadow-sm gap-1 flex items-center">
             <MapPin className="w-3 h-3 text-rose-500 stroke-[2.5]" />
-            <span>Physical In-Person</span>
+            <span>In-Person Seminar</span>
           </Badge>
         </div>
 
@@ -214,7 +214,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
                   navigate(`/app/learning/courses/${event.slug}`);
                 }}
               >
-                Claim Entry Pass
+                Get Free Ticket
               </Button>
               {event.whatsapp_group_link && (
                 <Button
@@ -230,7 +230,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
                     rel="noopener noreferrer"
                     onClick={() => trackEvent("academy_event_whatsapp_sync_clicked", { slug: event.slug })}
                   >
-                    WhatsApp
+                    Join Chat
                   </a>
                 </Button>
               )}
@@ -243,8 +243,8 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
 
   return (
     <div className="space-y-4 w-full antialiased text-left select-none sm:select-text">
-      {/* Sub-Pills Selection Navigation Context Ribbon Wrapper */}
-      <nav className="flex p-1 h-11 bg-muted/30 border border-border/40 rounded-xl select-none w-full transform-gpu">
+      {/* Category Tab Selector Navigation Menu Layout */}
+      <nav className="flex p-1 h-11 bg-muted/30 border border-border/40 rounded-xl select-none w-full transform-gpu max-w-full overflow-x-auto no-scrollbar">
         {filterOptions.map(({ key, icon: Icon, label }) => {
           const isButtonActive = eventType === key;
           return (
@@ -253,15 +253,15 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
               type="button"
               onClick={() => handleSetType(key)}
               className={cn(
-                "flex-1 flex items-center justify-center gap-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all duration-200 outline-none focus-visible:ring-1 focus-visible:ring-ring shadow-none",
+                "flex-1 min-w-[75px] sm:min-w-0 flex items-center justify-center gap-1.5 rounded-lg text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all duration-200 outline-none focus-visible:ring-1 focus-visible:ring-ring shadow-none whitespace-nowrap px-2",
                 isButtonActive
                   ? "bg-background shadow-sm text-primary font-extrabold border border-border/10"
                   : "text-muted-foreground/80 hover:text-foreground",
               )}
             >
               <Icon className="h-3.5 w-3.5 stroke-[2.2] shrink-0" />
-              <span className="hidden sm:inline">{label}</span>
-              <span className="sm:hidden">{label.split(" ")[0]}</span>
+              <span className="hidden xs:inline">{label}</span>
+              <span className="xs:hidden">{label.split(" ")[0]}</span>
             </button>
           );
         })}
@@ -269,23 +269,23 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
 
       {eventType === "abroad" && <StudyAbroadSection />}
 
-      {/* VIEW COMPILATION TRACK A: PHYSICAL IN-PERSON SEMINAR SERIES */}
+      {/* VIEW GRID A: IN-PERSON WORKSHOPS */}
       {eventType === "in_person" && (
         <div className="space-y-5 w-full">
           {isLoading ? (
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 select-none w-full animate-pulse">
-              {[1, 2, 3, 4].map((skeletonIndex) => (
-                <Skeleton key={skeletonIndex} className="h-52 w-full rounded-2xl opacity-60" />
+              {[1, 2, 3, 4].map((index) => (
+                <Skeleton key={index} className="h-52 w-full rounded-2xl opacity-60" />
               ))}
             </div>
           ) : events.length === 0 ? (
             <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-full flex flex-col justify-center items-center animate-in fade-in duration-300">
               <Calendar className="h-6 w-6 text-primary/40 mb-2.5 animate-pulse stroke-[2.2]" />
-              <p className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wide">
-                No events yet
+              <p className="text-xs sm:text-sm font-bold text-foreground/90 tracking-tight leading-none uppercase tracking-wide">
+                No events found
               </p>
-              <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1 italic">
-                Nothing scheduled. Check back later.
+              <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1">
+                There are no live seminars scheduled at this time. Please check back later.
               </p>
             </div>
           ) : (
@@ -309,7 +309,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
               {upcomingEvents.length > 0 && (
                 <section className="space-y-2.5 w-full">
                   <h2 className="text-xs font-bold text-foreground/80 uppercase tracking-wider pl-0.5 select-none leading-none mb-1">
-                    Upcoming
+                    Upcoming Seminars
                   </h2>
                   <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 w-full">
                     {upcomingEvents.map((eventItem) => (
@@ -323,23 +323,23 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
         </div>
       )}
 
-      {/* VIEW COMPILATION TRACK B: CAMPAIGN HACKATHONS CHALLENGES LISTS */}
+      {/* VIEW GRID B: TOURNAMENTS & CHALLENGES */}
       {eventType === "competitions" && (
         <div className="space-y-3 w-full">
           {isLoading ? (
             <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 select-none w-full animate-pulse">
-              {[1, 2, 3, 4].map((skeletonIndex) => (
-                <Skeleton key={skeletonIndex} className="h-40 w-full rounded-2xl opacity-60" />
+              {[1, 2, 3, 4].map((index) => (
+                <Skeleton key={index} className="h-40 w-full rounded-2xl opacity-60" />
               ))}
             </div>
           ) : competitions.length === 0 ? (
             <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-full flex flex-col justify-center items-center animate-in fade-in duration-300">
               <Trophy className="h-6 w-6 text-primary/40 mb-2.5 animate-pulse stroke-[2.2]" />
-              <p className="text-xs sm:text-sm font-bold text-foreground/90 uppercase tracking-wide">
-                No competitions yet
+              <p className="text-xs sm:text-sm font-bold text-foreground/90 tracking-tight leading-none uppercase tracking-wide">
+                No active challenges
               </p>
-              <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1 italic">
-                Nothing active right now. Check back soon.
+              <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1">
+                There are no open challenges active right now. New hackathons launch soon.
               </p>
             </div>
           ) : (
@@ -358,7 +358,7 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
                     {compItem.featured_image && (
                       <img
                         src={compItem.featured_image}
-                        alt="Campaign presentation theme context banner illustration"
+                        alt={compItem.title}
                         className="w-full h-full object-cover opacity-80"
                         loading="lazy"
                       />
@@ -371,22 +371,22 @@ export function EventsTab({ onOpenCompetition }: EventsTabProps) {
                         {compItem.title}
                       </h3>
                       <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1 select-none leading-none">
-                        {compItem.category || "Competition"}
+                        {compItem.category || "Skill Challenge"}
                       </p>
                     </div>
                   </div>
 
-                  <CardContent className="p-3 px-3.5 flex items-center justify-between w-full select-none font-bold text-xs tracking-tight text-primary tabular-nums mt-auto">
+                  <CardContent className="p-3 px-3.5 flex items-center justify-between w-full select-none font-bold text-xs tracking-tight text-primary tabular-nums mt-auto border-t border-border/5">
                     <span className="flex items-center gap-1.5 bg-primary/5 px-2 py-0.5 border border-primary/10 rounded-full text-[11px]">
                       <Gift className="h-3.5 w-3.5 fill-primary/5 stroke-[2.2]" />
                       <span>
                         {Array.isArray(compItem.prizes)
-                          ? `${compItem.prizes.length} baseline awards`
-                          : "Prizes Enlisted"}
+                          ? `${compItem.prizes.length} Prizes Available`
+                          : "Rewards Pool staged"}
                       </span>
                     </span>
-                    <span className="flex items-center gap-0.5 text-[11px] font-bold group-hover:translate-x-0.5 transition-transform">
-                      <span>Audit Brief</span>
+                    <span className="flex items-center gap-0.5 text-[11px] font-bold group-hover:translate-x-0.5 transition-transform text-primary">
+                      <span>View Guidelines</span>
                       <ArrowRight className="h-3.5 w-3.5 stroke-[2.5]" />
                     </span>
                   </CardContent>
