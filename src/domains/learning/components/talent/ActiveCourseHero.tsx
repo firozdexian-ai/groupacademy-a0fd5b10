@@ -16,14 +16,13 @@ interface ActiveCourseHeroProps {
 }
 
 /**
- * GroUp Academy: Learning Continuity Terminal (ActiveCourseHero)
- * CTO Reference: Authoritative resume-node orchestrating talent trajectory development tracking.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * GroUp Academy: Learning Dashboard Hero Component
+ * Core user surface for resuming active learning modules and managing tracks.
  */
 export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveCourseHeroProps) {
   const navigate = useNavigate();
 
-  // Monitor curriculum continuity element impressions safely via telemetry logs
+  // Monitor course component impressions safely via telemetry logs
   useEffect(() => {
     if (enrollment?.id) {
       trackEvent("learning_hero_terminal_rendered", {
@@ -40,7 +39,7 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
 
   const { content, progress = 0, modules = [] } = enrollment;
 
-  // 1. Hardened Protocol: Defensive Indexing Guard tracking structural lookup omissions cleanly
+  // Defensive Indexing Guard tracking module structural changes cleanly
   const currentModuleIndex = useMemo(() => {
     if (!enrollment.current_module_id || !modules.length) return 0;
 
@@ -52,7 +51,7 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
         action: "calculate_current_module_index",
         enrollmentId: enrollment.id,
       });
-      return 0; // Fallback gracefully to seed state parameter block
+      return 0; // Fallback gracefully to stable initial index state
     }
 
     return Math.max(0, calculatedIndex);
@@ -81,7 +80,7 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
 
   return (
     <section className="space-y-5 antialiased text-left select-none sm:select-text max-w-full w-full">
-      {/* HUD HEADER: TELEMETRY INDICATOR LABEL */}
+      {/* Title Header Block */}
       <div className="flex items-center justify-between px-0.5 select-none w-full">
         <div className="flex items-center gap-2.5 min-w-0 flex-1">
           <div className="h-10 w-10 rounded-xl bg-primary/10 border border-primary/5 flex items-center justify-center shrink-0 shadow-sm">
@@ -99,15 +98,15 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
       </div>
 
       <div className="grid gap-5 lg:grid-cols-[1fr,300px] items-start w-full min-w-0">
-        {/* ARTIFACT LAYER: MAIN COMMAND CARD BOARD */}
+        {/* Main Active Course Workspace Element */}
         <Card className="group relative overflow-hidden border border-border/40 bg-card/60 backdrop-blur-md shadow-sm rounded-2xl transition-all duration-300 hover:border-primary/30 w-full min-w-0">
           <div className="grid md:grid-cols-[240px,1fr] h-full w-full min-w-0">
-            {/* SUB-COMPONENT A: VISUAL PROGRESS NODE DISPLAY */}
+            {/* Visual Thumbnail Segment */}
             <div className="relative overflow-hidden bg-muted aspect-video md:aspect-auto border-r border-border/10 select-none transform-gpu shrink-0">
               {content.thumbnail_url ? (
                 <img
                   src={content.thumbnail_url}
-                  alt={`${content.title} curriculum thumbnail snapshot track`}
+                  alt={`${content.title}`}
                   className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-700 border-none"
                   loading="eager"
                 />
@@ -120,9 +119,7 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
 
               <div className="absolute bottom-4 left-4 right-4 z-10">
                 <div className="flex items-center justify-between mb-2 font-bold tabular-nums tracking-tight">
-                  <span className="text-[9px] text-white/70 uppercase tracking-wider italic">
-                    Trajectory Sync Progression
-                  </span>
+                  <span className="text-[9px] text-white/70 uppercase tracking-wider italic">Your Course Progress</span>
                   <span className="text-xs text-primary bg-primary/5 border border-primary/10 rounded-md px-1.5 py-0.5 shadow-sm">
                     {Math.round(progress)}%
                   </span>
@@ -131,7 +128,7 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
               </div>
             </div>
 
-            {/* SUB-COMPONENT B: COMMAND CONTROL INTERFACE PANEL */}
+            {/* Core Metadata Display Area */}
             <CardContent className="p-5 sm:p-6 flex flex-col justify-between text-left relative min-w-0 flex-1">
               <div className="absolute top-0 right-0 p-4 opacity-5 pointer-events-none select-none">
                 <GraduationCap className="h-24 w-24 rotate-12 text-primary" />
@@ -143,39 +140,39 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
                     variant="outline"
                     className="bg-primary/5 border-primary/20 text-primary text-[9px] font-extrabold uppercase tracking-wide px-2 h-5 rounded-md shadow-sm"
                   >
-                    {content.content_type ? content.content_type.replace(/_/g, " ") : "Specialized Track"}
+                    {content.content_type ? content.content_type.replace(/_/g, " ") : "Learning Track"}
                   </Badge>
                   {progress > 50 && (
                     <Badge className="bg-emerald-500/10 border-none text-emerald-600 dark:text-emerald-400 text-[9px] font-extrabold uppercase tracking-wide px-2 h-5 rounded-md shadow-sm gap-1 flex items-center animate-pulse">
                       <Sparkles className="h-3 w-3 shrink-0 stroke-[2.5]" />
-                      <span>High Yield Potential</span>
+                      <span>High Career Yield</span>
                     </Badge>
                   )}
                 </div>
 
-                <h3 className="text-lg sm:text-xl font-bold leading-snug tracking-tight line-clamp-2 uppercase italic text-foreground/90 break-words w-full select-all selection:bg-primary/20">
+                <h3 className="text-lg sm:text-xl font-bold leading-snug tracking-tight line-clamp-2 text-foreground/90 break-words w-full select-all selection:bg-primary/20">
                   {content.title}
                 </h3>
 
                 {currentModule && (
                   <div className="space-y-1 p-3 rounded-xl border border-border/40 bg-muted/20 text-left w-full min-w-0 shadow-inner">
                     <p className="text-[9px] font-extrabold uppercase tracking-wider text-primary select-none block leading-none pl-0.5">
-                      Staged Core Module Target
+                      Current Lesson
                     </p>
-                    <p className="text-xs font-bold text-foreground/90 line-clamp-1 italic break-all w-full pr-1 select-text leading-tight mt-0.5">
+                    <p className="text-xs font-bold text-foreground/90 line-clamp-1 break-all w-full pr-1 select-text leading-tight mt-0.5">
                       {currentModule.title}
                     </p>
                     {currentModule.estimated_time_minutes && (
                       <div className="flex items-center gap-1 text-[10px] font-bold text-muted-foreground/70 uppercase tracking-wide leading-none pt-1 select-none tabular-nums">
                         <Clock className="h-3 w-3 text-primary stroke-[2.2] shrink-0" />
-                        <span>~{currentModule.estimated_time_minutes} minutes remaining bounds</span>
+                        <span>~{currentModule.estimated_time_minutes} minutes remaining</span>
                       </div>
                     )}
                   </div>
                 )}
               </div>
 
-              {/* Action Ribbon Intercept Control Trigger Strip */}
+              {/* Action Trigger Row */}
               <div className="flex flex-wrap items-center gap-3 mt-6 select-none w-full">
                 <Button
                   onClick={handleResumeProtocol}
@@ -183,14 +180,14 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
                   className="h-10 px-5 font-bold text-xs tracking-wide rounded-xl shadow-sm active:scale-[0.99] transition-transform gap-1.5 cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90"
                 >
                   <PlayCircle className="h-4 w-4 fill-primary-foreground/10 stroke-[2.5]" />
-                  <span>Resume Deployment</span>
+                  <span>Resume Learning</span>
                 </Button>
 
                 <Button
                   variant="ghost"
                   type="button"
-                  onClick={handleAuditCurriculum}
                   className="h-10 px-3.5 font-bold text-xs tracking-tight rounded-xl border border-border/60 text-muted-foreground/80 hover:text-foreground hover:bg-accent transition-all cursor-pointer shadow-sm shrink-0"
+                  onClick={handleAuditCurriculum}
                 >
                   <span>Syllabus</span>
                 </Button>
@@ -199,10 +196,10 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
           </div>
         </Card>
 
-        {/* COMPONENT MODULE C: ACTIVE UP-NEXT QUEUE STACK BLOCK */}
+        {/* Up Next Learning Queue Block */}
         <div className="flex flex-col text-left h-full w-full min-w-0 select-none">
           <h3 className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest mb-2.5 px-0.5 italic block select-none leading-none">
-            Subsequent Module Queue Stack
+            Up Next in this Course
           </h3>
 
           <div className="flex lg:flex-col gap-2.5 overflow-x-auto no-scrollbar lg:overflow-visible pb-2.5 lg:pb-0 snap-x w-full">
@@ -221,11 +218,11 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
                       </div>
 
                       <div className="min-w-0 flex-1 text-left space-y-0.5 flex flex-col justify-center leading-none">
-                        <p className="text-xs font-bold line-clamp-1 leading-tight uppercase italic text-foreground/80 group-hover/node:text-primary transition-colors pr-1">
+                        <p className="text-xs font-bold line-clamp-1 leading-tight text-foreground/80 group-hover/node:text-primary transition-colors pr-1">
                           {moduleItem.title}
                         </p>
                         <p className="text-[9px] font-bold text-muted-foreground/60 tracking-wider uppercase tabular-nums">
-                          Duration block: {moduleItem.estimated_time_minutes || 5}m
+                          Lesson Length: {moduleItem.estimated_time_minutes || 5}m
                         </p>
                       </div>
                       <ChevronRight className="ml-auto h-4 w-4 text-muted-foreground/30 group-hover/node:translate-x-0.5 group-hover/node:text-primary transition-all stroke-[2.5]" />
@@ -239,10 +236,10 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
                   <Sparkles className="h-5 w-5 text-primary stroke-[2.2] animate-pulse" />
                 </div>
                 <p className="text-[10px] font-extrabold text-primary uppercase tracking-wider italic leading-none">
-                  Graduation Core Locked
+                  Course Completed!
                 </p>
                 <p className="text-[9px] text-muted-foreground/80 font-bold mt-1.5 uppercase tracking-wide leading-normal">
-                  Terminal sequence threshold active. Complete task.
+                  You've reviewed all active lessons in this block.
                 </p>
               </Card>
             )}
@@ -250,11 +247,11 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
         </div>
       </div>
 
-      {/* REGISTRY FOOTER: PARALLEL CURRICULUM DEVELOPMENT TRACKS */}
+      {/* Workspace Footer: Parallel Educational Tracks */}
       {upNextEnrollments.length > 0 && (
         <div className="pt-6 border-t border-border/10 text-left select-none w-full">
           <h3 className="text-[9px] font-bold text-muted-foreground/50 uppercase tracking-widest mb-4 px-0.5 italic block select-none leading-none">
-            Parallel Workspace Learning Horizons
+            Your Other Active Courses
           </h3>
 
           <ScrollArea className="w-full whitespace-nowrap overflow-visible">
@@ -275,7 +272,7 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
                     <div className="aspect-video bg-muted relative overflow-hidden border-b border-border/10 select-none transform-gpu shrink-0">
                       <img
                         src={coursePayload.thumbnail_url || "/placeholder.jpg"}
-                        alt={`${coursePayload.title} track index image`}
+                        alt={coursePayload.title}
                         className="w-full h-full object-cover group-hover:scale-102 transition-transform duration-500 border-none"
                         loading="lazy"
                       />
@@ -285,7 +282,7 @@ export function ActiveCourseHero({ enrollment, upNextEnrollments = [] }: ActiveC
                     </div>
 
                     <CardContent className="p-3.5 space-y-2.5 w-full min-w-0 text-left flex flex-col justify-center">
-                      <p className="text-xs font-bold line-clamp-2 whitespace-normal leading-snug tracking-tight uppercase italic text-foreground/90 group-hover:text-primary transition-colors break-words select-text">
+                      <p className="text-xs font-bold line-clamp-2 whitespace-normal leading-snug tracking-tight text-foreground/90 group-hover:text-primary transition-colors break-words select-text">
                         {coursePayload.title}
                       </p>
 
