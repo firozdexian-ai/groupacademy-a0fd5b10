@@ -50,18 +50,18 @@ interface Course {
 const STATUS_LABEL: Record<string, string> = {
   pending: "Upcoming",
   upcoming: "Upcoming",
-  active: "Live now",
-  judging: "Judging",
-  completed: "Archived",
+  active: "Live Now",
+  judging: "Reviewing Results",
+  completed: "Completed",
   cancelled: "Cancelled",
 };
 
 const filterOptions: { key: FilterKey; icon: any; label: string }[] = [
   { key: "all", icon: Layers, label: "All Items" },
   { key: "courses", icon: BookOpen, label: "Courses" },
-  { key: "live", icon: Calendar, label: "Live Hub" },
+  { key: "live", icon: Calendar, label: "Live Classes" },
   { key: "events", icon: MapPin, label: "In-Person" },
-  { key: "compete", icon: Trophy, label: "Compete" },
+  { key: "compete", icon: Trophy, label: "Competitions" },
 ];
 
 interface CoursesTabProps {
@@ -77,14 +77,14 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
   const showEvents = selectedType === "all" || selectedType === "events";
   const showCompete = selectedType === "all" || selectedType === "compete";
 
-  // Monitor comprehensive multi-tier learning feed view updates via analytics paths
+  // Monitor dynamic academy catalog filter interactions
   useEffect(() => {
     trackEvent("academy_courses_tab_mounted", { activeFilterSegment: selectedType });
   }, [selectedType]);
 
   const PAGE_SIZE = 12;
 
-  // 1. Core Server State Hook Ingress Pipeline: Infinite query management segment
+  // Infinite query pipeline to fetch published academy contents
   const {
     data: coursesData,
     isLoading: coursesLoading,
@@ -122,7 +122,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
   const courses = useMemo(() => coursesData?.pages.flat() ?? [], [coursesData]);
   const sentinelRef = useRef<HTMLDivElement | null>(null);
 
-  // 2. High-Performance Defensive Intersection Sentinel Life Handshake Matrix
+  // High-Performance Infinite Scrolling Intersection Observer
   useEffect(() => {
     if (!showCourses || !hasNextPage) return;
     const currentSentinelNode = sentinelRef.current;
@@ -136,7 +136,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           fetchNextPage();
         }
       },
-      { rootMargin: "400px" }, // Proactive pre-fetching line boundary
+      { rootMargin: "400px" }, // Proactive content pre-fetching boundary margin
     );
 
     intersectionObserverInstance.observe(currentSentinelNode);
@@ -147,7 +147,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
     };
   }, [showCourses, hasNextPage, isFetchingNextPage, fetchNextPage]);
 
-  // 3. Consolidated Real-Time In-Person Seminar Event Query Node
+  // Query node to fetch active off-line seminars
   const {
     data: events = [],
     isLoading: eventsLoading,
@@ -176,7 +176,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
     },
   });
 
-  // 4. Consolidated Real-Time Competition Curation Query Node
+  // Query node to fetch active skill challenges
   const {
     data: competitions = [],
     isLoading: competitionsLoading,
@@ -198,7 +198,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
     },
   });
 
-  // Instrument continuous analytical diagnostics tracking maps over internal server query exceptions
+  // Dispatch exceptions directly to telemetry collectors safely
   useEffect(() => {
     const primaryFetchError = coursesFetchError || eventsFetchError || competeFetchError;
     if (primaryFetchError) {
@@ -248,7 +248,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
     const isWebinar = course.content_type === "live_webinar";
     const isBatch = course.content_type === "batch_class";
     const isLive = isWebinar || isBatch;
-    const typeLabel = isWebinar ? "Webinar Call" : isBatch ? "Cohort Batch" : "Professional Course";
+    const typeLabel = isWebinar ? "Live Webinar" : isBatch ? "Cohort Batch" : "Self-Paced Course";
     const eventDate = course.event_date ? new Date(course.event_date) : null;
     const spotsLeft = course.max_capacity ? course.max_capacity - (course.current_enrollment || 0) : null;
 
@@ -266,7 +266,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           {course.cover_image_url ? (
             <img
               src={course.cover_image_url}
-              alt={`${course.title} profile cover illustration track`}
+              alt={course.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
               loading="lazy"
             />
@@ -286,7 +286,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
               {course.title}
             </h3>
             <p className="text-[11px] font-medium text-muted-foreground/80 line-clamp-2 leading-normal break-words pr-1 select-text">
-              {course.description || "No strategic overview details attached."}
+              {course.description || "No summary description available."}
             </p>
           </div>
 
@@ -300,7 +300,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
                         <Calendar className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
                         <span>
                           {isBatch
-                            ? `Cohort starts ${formatEventTime(eventDate, course.event_timezone || DEFAULT_EVENT_TZ, "MMM d")}`
+                            ? `Starts ${formatEventTime(eventDate, course.event_timezone || DEFAULT_EVENT_TZ, "MMM d")}`
                             : formatEventTime(eventDate, course.event_timezone || DEFAULT_EVENT_TZ)}
                         </span>
                       </span>
@@ -323,7 +323,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
                     )}
                   >
                     <Users className="h-3.5 w-3.5 stroke-[2.2]" />
-                    <span>{spotsLeft > 0 ? `${spotsLeft} entries open` : "Full House"}</span>
+                    <span>{spotsLeft > 0 ? `${spotsLeft} seats available` : "Registration Full"}</span>
                   </span>
                 )}
               </div>
@@ -340,11 +340,11 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
               ) : (
                 <span className="flex items-center gap-1 text-primary font-extrabold bg-primary/5 px-2 py-0.5 border border-primary/10 rounded-full">
                   <Coins className="h-3.5 w-3.5 fill-primary/5 stroke-[2.2]" />
-                  <span>{getCourseCredits(course.price).toLocaleString()} cr value</span>
+                  <span>{getCourseCredits(course.price).toLocaleString()} Credits</span>
                 </span>
               )}
               <span className="flex items-center gap-0.5 text-[11px] font-bold text-primary group-hover:translate-x-0.5 transition-transform">
-                <span>View course</span>
+                <span>View Details</span>
                 <ArrowRight className="h-3.5 w-3.5 stroke-[2.5]" />
               </span>
             </div>
@@ -369,7 +369,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           {eventItem.cover_image_url ? (
             <img
               src={eventItem.cover_image_url}
-              alt="In-person visual evidence context"
+              alt={eventItem.title}
               className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-102"
               loading="lazy"
             />
@@ -380,7 +380,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           )}
           <Badge className="absolute top-2.5 left-2.5 bg-background/95 text-foreground/90 border border-border/20 text-[9px] font-extrabold uppercase tracking-wide rounded shadow-sm gap-1 flex items-center px-2">
             <MapPin className="w-3 h-3 text-rose-500 stroke-[2.5]" />
-            <span>Physical In-Person</span>
+            <span>In-Person Event</span>
           </Badge>
         </div>
 
@@ -415,7 +415,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
                   )}
                 >
                   <Users className="h-3.5 w-3.5 stroke-[2.2]" />
-                  <span>{spotsLeft > 0 ? `${spotsLeft} openings left` : "Registration Exhausted"}</span>
+                  <span>{spotsLeft > 0 ? `${spotsLeft} openings left` : "Registration Full"}</span>
                 </span>
               )}
             </div>
@@ -430,7 +430,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
                 }}
                 className="flex-1 h-8 rounded-xl text-[10px] font-extrabold uppercase tracking-wide shadow-sm cursor-pointer active:scale-95 transition-transform bg-primary text-primary-foreground hover:bg-primary/90"
               >
-                Claim Entry Seat
+                Book Ticket
               </Button>
               {eventItem.whatsapp_group_link && (
                 <Button
@@ -446,7 +446,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
                     rel="noopener noreferrer"
                     onClick={() => trackEvent("academy_event_whatsapp_clicked", { slug: eventItem.slug })}
                   >
-                    WhatsApp Sync
+                    Join Chat
                   </a>
                 </Button>
               )}
@@ -474,7 +474,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           {compItem.featured_image && (
             <img
               src={compItem.featured_image}
-              alt="Campaign presentation theme context banner"
+              alt={compItem.title}
               className="w-full h-full object-cover opacity-80"
               loading="lazy"
             />
@@ -487,7 +487,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
               {compItem.title}
             </h3>
             <p className="text-[10px] font-bold text-muted-foreground uppercase tracking-wider mt-1 select-none leading-none">
-              {compItem.category || "Competition"}
+              {compItem.category || "Skill Challenge"}
             </p>
           </div>
         </div>
@@ -496,11 +496,11 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           <span className="flex items-center gap-1.5 bg-primary/5 px-2 py-0.5 border border-primary/10 rounded-full text-[11px]">
             <Gift className="h-3.5 w-3.5 fill-primary/5 stroke-[2.2]" />
             <span>
-              {Array.isArray(compItem.prizes) ? `${compItem.prizes.length} prizes` : "Prizes announced soon"}
+              {Array.isArray(compItem.prizes) ? `${compItem.prizes.length} Rewards` : "Prizes Announced Soon"}
             </span>
           </span>
           <span className="flex items-center gap-0.5 text-[11px] font-bold group-hover:translate-x-0.5 transition-transform">
-            <span>Audit Brief</span>
+            <span>View Briefing</span>
             <ArrowRight className="h-3.5 w-3.5 stroke-[2.5]" />
           </span>
         </CardContent>
@@ -510,7 +510,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
 
   return (
     <div className="space-y-4 w-full antialiased text-left select-none sm:select-text">
-      {/* Dynamic Sub-Pills Selection Navigation Ribbons */}
+      {/* Category Navigation Bar */}
       <nav className="flex flex-wrap gap-1.5 p-1 bg-muted/30 border border-border/40 rounded-xl select-none w-full transform-gpu">
         {filterOptions.map(({ key, icon: Icon, label }) => {
           const isActive = selectedType === key;
@@ -533,16 +533,16 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         })}
       </nav>
 
-      {/* VIEW PANEL 1: LOADING SKELETON DISPLAY GRIDS */}
+      {/* Loading States */}
       {isTabLoading && (
         <div className="grid gap-4 grid-cols-1 sm:grid-cols-2 select-none w-full animate-pulse">
-          {[1, 2, 3, 4].map((skeletonIndex) => (
-            <Skeleton key={skeletonIndex} className="h-52 w-full rounded-2xl opacity-60" />
+          {[1, 2, 3, 4].map((index) => (
+            <Skeleton key={index} className="h-52 w-full rounded-2xl opacity-60" />
           ))}
         </div>
       )}
 
-      {/* VIEW PANEL 2: CURRICULUM DEVELOPMENT BLOCK COURSES LISTS */}
+      {/* Courses Display Grid */}
       {!isTabLoading && showCourses && filteredCourses.length > 0 && (
         <section className="space-y-2.5 w-full">
           {selectedType === "all" && (
@@ -557,11 +557,11 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
               {isFetchingNextPage ? (
                 <div className="flex items-center justify-center text-[10px] font-bold text-primary animate-pulse tracking-wide">
                   <Loader2 className="h-3.5 w-3.5 animate-spin mr-1.5 stroke-[2.5]" />
-                  <span>Loading more…</span>
+                  <span>Loading more content...</span>
                 </div>
               ) : (
-                <span className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/40 italic select-none animate-in fade-in duration-300">
-                  &mdash; Scroll for more &mdash;
+                <span className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/30 select-none animate-in fade-in duration-300">
+                  Scroll down to load more
                 </span>
               )}
             </div>
@@ -569,7 +569,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         </section>
       )}
 
-      {/* VIEW PANEL 3: SPATIAL IN-PERSON EVENT LOGS DISPLAY BLOCKS */}
+      {/* Events Display Grid */}
       {!isTabLoading && showEvents && events.length > 0 && (
         <section className="space-y-4 w-full">
           {selectedType === "all" && (
@@ -603,7 +603,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         </section>
       )}
 
-      {/* VIEW PANEL 4: CAMPAIGN COMPETITIONS STREAM SECTION */}
+      {/* Competitions Display Grid */}
       {!isTabLoading && showCompete && competitions.length > 0 && (
         <section className="space-y-2.5 w-full">
           {selectedType === "all" && (
@@ -615,7 +615,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
         </section>
       )}
 
-      {/* VIEW PANEL 5: GRACEFUL BLANK FALLBACK STATE GRID PANEL */}
+      {/* Graceful Blank Fallback Layout */}
       {!isTabLoading &&
         ((showCourses && filteredCourses.length === 0) || !showCourses) &&
         ((showEvents && events.length === 0) || !showEvents) &&
@@ -623,10 +623,10 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
           <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-full flex flex-col justify-center items-center animate-in fade-in duration-300">
             <Gift className="h-6 w-6 text-primary/40 mb-3 animate-pulse stroke-[2.2]" />
             <p className="text-xs sm:text-sm font-bold text-foreground/90 tracking-tight leading-none uppercase tracking-wide">
-              Nothing here yet
+              No programs here yet
             </p>
-            <p className="text-[11px] font-semibold text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5 italic">
-              No programs match this section right now. Check back later.
+            <p className="text-[11px] font-medium text-muted-foreground/70 max-w-xs mx-auto leading-normal mt-1.5">
+              There are no active listings matching this category right now. Please check back later.
             </p>
           </div>
         )}
