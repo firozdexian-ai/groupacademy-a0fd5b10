@@ -63,7 +63,7 @@ function Sparkline({ points = [] }: { points: Array<{ date: string; quiz: number
   const viewWidth = 140;
   const viewHeight = 28;
 
-  // 1. Core Mathematical Hardening Safeguard: Shield structural loop operations from single point division parameters
+  // Core Mathematical Hardening Safeguard: Shield structural loop operations from single point division parameters
   const stepHorizontalMultiplier = useMemo(() => {
     if (dataPointsBuffer.length <= 1) return 0;
     return viewWidth / (dataPointsBuffer.length - 1);
@@ -174,7 +174,7 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
   const totalTrackedTopicsCount = Number(data.totals?.tracked_topics || 0);
   const totalDueNowItemsCount = Number(data.totals?.due_now || 0);
 
-  // Cold-start Initial Interaction UI Frame Node
+  // Initial Onboarding Welcome Layout Frame
   if (totalTrackedTopicsCount === 0) {
     return (
       <Card
@@ -188,7 +188,7 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
             <Sparkles className="h-4.5 w-4.5 text-primary fill-primary/10 animate-pulse stroke-[2.2]" />
           </div>
           <p className="text-xs font-semibold text-muted-foreground/80 leading-normal flex-1 select-text">
-            Take a quiz or complete a scenario to start tracking your mastery.
+            Complete a course quiz or scenario activity to begin tracking your topic strengths.
           </p>
         </CardContent>
       </Card>
@@ -208,7 +208,7 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
       )}
     >
       <CardContent className="p-4 space-y-4 w-full min-w-0">
-        {/* Fixed Structural Summary Metric Header Strip */}
+        {/* Core Profile Metrics Summary Row */}
         <div className="flex items-center gap-3.5 w-full min-w-0">
           <MasteryRing value={Number(data.totals?.avg_mastery || 0)} />
 
@@ -220,7 +220,7 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
             <div className="text-[11px] font-bold text-muted-foreground/80 mt-1 leading-none truncate max-w-full tracking-tight flex items-center gap-1 flex-wrap w-full">
               {totalDueNowItemsCount > 0 ? (
                 <span className="text-primary font-extrabold bg-primary/5 border border-primary/10 rounded px-1.5 py-0.5 animate-pulse tabular-nums shrink-0 uppercase tracking-wider text-[9px]">
-                  {totalDueNowItemsCount} due
+                  {totalDueNowItemsCount} review due
                 </span>
               ) : (
                 <span className="text-emerald-600 dark:text-emerald-400 font-extrabold shrink-0 uppercase tracking-wider text-[9px]">
@@ -250,11 +250,11 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
           )}
         </div>
 
-        {/* Dynamic Critical Action Weakest Vectors Block */}
+        {/* Focus Areas List */}
         {Array.isArray(data.weakest) && data.weakest.length > 0 && (
           <div className="space-y-1.5 border-t border-border/10 pt-3 w-full min-w-0 text-left">
             <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 pl-0.5 block select-none leading-none">
-              Weakest topics
+              Recommended focus areas
             </span>
             <div className="space-y-1 w-full min-w-0">
               {data.weakest.map((weakNodeItem: any, index: number) => {
@@ -277,7 +277,7 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
                         </span>
                       )}
                     </span>
-                    <span className="font-extrabold font-mono text-[11px] tracking-wide text-rose-600 dark:text-rose-400 bg-rose-500/5 border border-rose-500/10 px-1.5 py-0.5 rounded shadow-sm tabular-nums shrink-0">
+                    <span className="font-bold text-[11px] tracking-wide text-rose-600 dark:text-rose-400 bg-rose-500/5 border border-rose-500/10 px-1.5 py-0.5 rounded shadow-sm tabular-nums shrink-0">
                       {Math.round(weakNodeItem.mastery * 100)}%
                     </span>
                   </Link>
@@ -287,19 +287,19 @@ export function AdaptiveSnapshotCard({ moduleId, contentId, compact = false, cla
           </div>
         )}
 
-        {/* Real-time Byte Stream Transformation Metrics Sparkline Section */}
+        {/* Performance Activity Graph Area */}
         {!compact && data.signal_split_30d && (
           <div className="border-t border-border/10 pt-3 space-y-2 select-none w-full animate-in fade-in duration-300">
             <div className="flex items-center justify-between text-[9px] font-bold text-muted-foreground/60 uppercase tracking-wider pl-0.5 leading-none w-full">
-              <span>Last 7 days</span>
+              <span>Activity over last 7 days</span>
               <div className="flex items-center gap-2.5 shrink-0 tabular-nums">
                 <span className="flex items-center gap-1 bg-muted/30 px-1.5 py-0.5 rounded border">
                   <Clock className="h-2.5 w-2.5 text-primary stroke-[2.2]" />
-                  <span>{data.signal_split_30d.quiz || 0} quizzes submitted</span>
+                  <span>{data.signal_split_30d.quiz || 0} quizzes completed</span>
                 </span>
                 <span className="flex items-center gap-1 bg-muted/30 px-1.5 py-0.5 rounded border">
                   <MessageSquare className="h-2.5 w-2.5 text-primary stroke-[2.2]" />
-                  <span>{data.signal_split_30d.scenario || 0} scenarios run</span>
+                  <span>{data.signal_split_30d.scenario || 0} exercises run</span>
                 </span>
               </div>
             </div>
