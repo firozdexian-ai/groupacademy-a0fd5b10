@@ -1,4 +1,4 @@
-import { useEffect, useMemo, useState, useRef } from "react";
+import { useEffect, useMemo, useState } from "react";
 import { useQueryClient } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetDescription, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { Button } from "@/components/ui/button";
@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trackError, trackEvent } from "@/lib/errorTracking";
-import { AlertTriangle, Sparkles, Check, Languages, ArrowLeft, ArrowRight, RefreshCw, Loader2 } from "lucide-react";
+import { AlertTriangle, Sparkles, Check, Languages, ArrowLeft, Loader2 } from "lucide-react";
 import { toast } from "sonner";
 import { useItemRewrite, type QuizSuggestion, type ScenarioSuggestion } from "@/domains/learning";
 import { useItemTranslate, SUPPORTED_TRANSLATION_LANGS } from "@/domains/learning";
@@ -27,9 +27,8 @@ interface Props {
 }
 
 /**
- * GroUp Academy: Psychometric Item Calibration Hub (ItemRewriteSheet)
- * CTO Reference: Authoritative slide-out controller for generative content rewrites and multi-lingual translation sidecars.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * GroUp Academy: Content Optimization & Rewrite Hub (ItemRewriteSheet)
+ * Generative content tuning controller and multi-lingual translation suite.
  */
 export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [], onApplied }: Props) {
   const queryClient = useQueryClient();
@@ -45,7 +44,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
     return Array.isArray(flags) ? flags.filter(Boolean).sort().join(",") : "";
   }, [flags]);
 
-  // Monitor psychometric alignment session initialization sequences via telemetry
+  // Monitor generative optimization session initialization sequences
   useEffect(() => {
     if (open && itemId) {
       trackEvent("ai_calibration_session_started", { itemId, kind, flagsCount: flags.length });
@@ -75,18 +74,18 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
     if (!itemId || !draft) return;
 
     setApplying(true);
-    const toastId = toast.loading("Applying changes…");
+    const toastId = toast.loading("Applying optimization changes...");
 
     trackEvent("ai_calibration_patch_requested", { itemId, kind });
 
     try {
       await apply({ kind, itemId, patch: draft, flagsAddressed: flags });
 
-      // Automated Efficiency: Synchronize cache streams immediately across workspace panels
+      // Synchronize cache streams immediately across relevant workspace panels
       queryClient.invalidateQueries({ queryKey: ["item-analytics"] });
       queryClient.invalidateQueries({ queryKey: ["module-analytics"] });
 
-      toast.success("Item updated. Stats reset.", { id: toastId });
+      toast.success("Content successfully optimized. Baseline parameters reset.", { id: toastId });
       trackEvent("ai_calibration_patch_success", { itemId });
 
       if (onApplied) onApplied();
@@ -122,18 +121,19 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
         className="w-full sm:max-w-2xl bg-background/98 backdrop-blur-xl border-l border-border/40 overflow-y-auto p-6 pt-safe pb-safe-bottom antialiased select-none sm:select-text transform-gpu shadow-2xl transition-all duration-300 flex flex-col h-full max-h-[100vh] max-h-[100svh]"
         style={{ contentVisibility: "auto" }}
       >
-        {/* HUD LEVEL 1: BRANDED UTILITY TITLE HEADER STRIP */}
+        {/* Branded Title Header Area */}
         <SheetHeader className="text-left select-none border-b border-border/10 pb-4 shrink-0 w-full">
-          <SheetTitle className="text-base font-bold tracking-tight text-foreground/90 uppercase tracking-wider flex items-center gap-2">
+          <SheetTitle className="text-base font-bold tracking-tight text-foreground/90 flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary fill-primary/10 animate-pulse stroke-[2.2]" />
-            <span>AI Rewrite & Translate</span>
+            <span>AI Content Optimizer</span>
           </SheetTitle>
           <SheetDescription className="text-xs text-muted-foreground/80 leading-normal mt-1">
-            Use AI to rewrite this item and reset its serve stats. Translations are stored separately and don't affect the original.
+            Improve item structure and performance metrics using contextual AI adjustments. Localized translation
+            variants are managed as isolated sidecar models.
           </SheetDescription>
         </SheetHeader>
 
-        {/* HUD LEVEL 2: FUNCTIONAL MULTI-TIER PROCESSING TABS */}
+        {/* Functional Selection Navigation Bars */}
         <Tabs
           defaultValue="rewrite"
           className="mt-3 flex-1 flex flex-col min-w-0 w-full"
@@ -144,19 +144,21 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
           <TabsList className="grid grid-cols-2 bg-muted/30 border border-border/40 rounded-xl select-none p-1 shrink-0 w-full">
             <TabsTrigger
               value="rewrite"
-              className="text-xs font-bold uppercase tracking-wider rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center gap-1.5 py-1.5"
+              className="text-xs font-bold uppercase tracking-wider rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-1.5 py-1.5"
             >
-              <Sparkles className="h-3.5 w-3.5 text-primary stroke-[2.2]" /> <span>Generative Rewrite</span>
+              <Sparkles className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
+              <span>AI Content Optimization</span>
             </TabsTrigger>
             <TabsTrigger
               value="translate"
-              className="text-xs font-bold uppercase tracking-wider rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center gap-1.5 py-1.5"
+              className="text-xs font-bold uppercase tracking-wider rounded-lg data-[state=active]:bg-background data-[state=active]:shadow-sm flex items-center justify-center gap-1.5 py-1.5"
             >
-              <Languages className="h-3.5 w-3.5 text-primary stroke-[2.2]" /> <span>Locale Translation</span>
+              <Languages className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
+              <span>Language Translation</span>
             </TabsTrigger>
           </TabsList>
 
-          {/* TAB SEGMENT A: GENERATIVE AI REWRITE PROTOCOLS */}
+          {/* Tab Content Area A: Generative Optimization */}
           <TabsContent value="rewrite" className="space-y-4 py-3 flex-1 flex flex-col min-w-0 overflow-y-auto pr-1">
             <div className="flex flex-wrap items-center gap-1.5 select-none w-full max-w-full">
               {flags.filter(Boolean).map((flagItem) => (
@@ -165,7 +167,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                   variant="destructive"
                   className="text-[9px] font-extrabold px-2 h-5 rounded bg-rose-500/10 text-rose-600 dark:text-rose-400 border border-rose-500/20 shadow-sm uppercase tracking-wide leading-none flex items-center shrink-0"
                 >
-                  Flag: {flagItem?.replace(/_/g, " ")}
+                  Review Trigger: {flagItem?.replace(/_/g, " ")}
                 </Badge>
               ))}
             </div>
@@ -173,14 +175,14 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
             {!picked && (
               <div className="space-y-2 p-3.5 rounded-xl border border-border/40 bg-card/30 text-left w-full select-none shadow-sm animate-in fade-in duration-200 shrink-0">
                 <Label className="text-[10px] font-extrabold uppercase tracking-wider text-muted-foreground block pl-0.5">
-                  Strategic Custom Context Directives
+                  Additional Rewrite Instructions
                 </Label>
                 <Textarea
-                  placeholder="E.g. Maintain initial commercial entity variables, add multi-currency parsing limits, or append strict edge case scenarios..."
+                  placeholder="Provide explicit instructions for the refinement model (e.g., expand on core concepts, clarify phrasing, or tweak specific parameters)..."
                   value={notes}
                   disabled={loading}
                   onChange={(e) => setNotes(e.target.value)}
-                  className="text-xs sm:text-sm font-medium border border-border/30 bg-background/50 focus-visible:ring-1 focus-visible:ring-ring focus-visible:border-primary/40 leading-relaxed min-h-[64px] resize-none select-text p-3 rounded-xl"
+                  className="text-xs sm:text-sm font-medium border border-border/30 bg-background/70 focus-visible:ring-1 focus-visible:ring-ring focus-visible:border-primary/40 leading-relaxed min-h-[64px] resize-none select-text p-3 rounded-xl"
                 />
                 <Button
                   size="sm"
@@ -191,10 +193,10 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                     trackEvent("ai_calibration_regeneration_requested", { itemId, notesLength: notes.length });
                     if (itemId) generate({ kind, itemId, flags, notes: notes.trim() });
                   }}
-                  className="h-8 rounded-xl font-bold uppercase text-[10px] tracking-wide border-border/60 hover:bg-accent mt-1.5 shadow-sm cursor-pointer"
+                  className="h-8 rounded-xl border-border/60 hover:bg-accent font-bold uppercase text-[10px] tracking-wide gap-1.5 shadow-sm cursor-pointer"
                 >
-                  <RefreshCw className={cn("h-3 w-3 mr-1 text-primary stroke-[2.2]", loading && "animate-spin")} />
-                  <span>Regenerate Suggestions Matrix</span>
+                  <RefreshCw className={cn("h-3 w-3 text-primary stroke-[2.2]", loading && "animate-spin")} />
+                  <span>Regenerate Suggestions</span>
                 </Button>
               </div>
             )}
@@ -223,7 +225,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                     }}
                     className="h-8 rounded-xl border-border/60 hover:bg-accent font-bold uppercase text-[10px] tracking-wide shrink-0 shadow-sm cursor-pointer"
                   >
-                    <span>Try again</span>
+                    <span>Retry Request</span>
                   </Button>
                 </CardContent>
               </Card>
@@ -241,8 +243,8 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                   >
                     <CardContent className="p-4 space-y-3 w-full min-w-0">
                       <div className="flex items-center justify-between gap-4 select-none border-b border-border/10 pb-2 w-full leading-none">
-                        <p className="text-xs font-extrabold text-foreground/90 uppercase tracking-wide truncate max-w-[70%]">
-                          {suggestionItem.label || `Variant #${index + 1}`}
+                        <p className="text-xs font-extrabold text-foreground/90 uppercase tracking-wide truncate max-w-[60%]">
+                          {suggestionItem.label || `Optimized Variant #${index + 1}`}
                         </p>
                         <Button
                           size="sm"
@@ -250,16 +252,16 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                           onClick={() => handlePickSuggestionNode(index)}
                           className="h-7 px-3 text-[10px] font-bold tracking-wide uppercase rounded-xl shadow-sm active:scale-95 transition-transform cursor-pointer shrink-0 bg-primary text-primary-foreground hover:bg-primary/90"
                         >
-                          <span>Select Option Model</span>
+                          <span>Review Adjustment</span>
                         </Button>
                       </div>
 
                       <div className="p-3 bg-muted/20 border border-border/20 rounded-xl select-text text-left">
                         <span className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-wider block mb-0.5 select-none leading-none pl-0.5">
-                          Generative Optimization Audit Summary
+                          Adjustment Summary Analysis
                         </span>
                         <p className="text-[11px] font-medium leading-relaxed italic text-muted-foreground/90 break-words pl-0.5 pr-2">
-                          {suggestionItem.change_summary || "Adjusting structure parameters safely."}
+                          {suggestionItem.change_summary || "Optimizing layout context safely."}
                         </p>
                       </div>
 
@@ -294,9 +296,9 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                         setPicked(null);
                         setDraft(null);
                       }}
-                      className="h-8 rounded-xl font-bold text-[10px] uppercase border border-border/40 text-muted-foreground hover:bg-accent tracking-tight flex items-center gap-1 cursor-pointer shadow-sm transition-transform active:scale-95"
+                      className="h-8 rounded-xl border border-border/40 text-muted-foreground hover:bg-accent font-bold uppercase text-[10px] tracking-wide shrink-0 shadow-sm cursor-pointer transition-all active:scale-95"
                     >
-                      <ArrowLeft className="h-3 w-3 stroke-[2.5]" />
+                      <ArrowLeft className="h-3 w-3 mr-1 stroke-[2.5]" />
                       <span>Back to Suggestions</span>
                     </Button>
 
@@ -310,13 +312,10 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
                       {applying ? (
                         <>
                           <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                          <span>Committing Alignment…</span>
+                          <span>Applying Optimization...</span>
                         </>
                       ) : (
-                        <>
-                          <Check className="h-3.5 w-3.5 stroke-[2.5]" />
-                          <span>Commit Revision Framework</span>
-                        </>
+                        <span>Save Changes</span>
                       )}
                     </Button>
                   </div>
@@ -325,7 +324,7 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
             )}
           </TabsContent>
 
-          {/* TAB SEGMENT B: DECOUPLED SIDE-CAR LOCALE TRANSLATION PIPELINE */}
+          {/* Tab Content Area B: Multilingual Localization */}
           <TabsContent value="translate" className="py-3 flex-1 flex flex-col min-w-0 overflow-y-auto pr-1">
             <TranslatePanel kind={kind} itemId={itemId} />
           </TabsContent>
@@ -338,16 +337,13 @@ export function ItemRewriteSheet({ open, onOpenChange, kind, itemId, flags = [],
 function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: string | null }) {
   const { loading, applying, draft, setDraft, generate, apply } = useItemTranslate();
   const [lang, setLang] = useState<string>("bn");
-
-  // 2. Safe Parsing Hardening Strategy: Decouple raw string values from real-time JSON validation locks
   const [rawJsonTextString, setRawJsonTextString] = useState("");
   const [isJsonTextStringValid, setIsJsonTextStringValid] = useState(true);
 
-  // Hydrate local string state records when model payload mutations resolve
+  // Update localized text container maps when model fields resolve
   useEffect(() => {
     if (draft?.translated) {
-      const stringifiedPayload = JSON.stringify(draft.translated, null, 2);
-      setRawJsonTextString(stringifiedPayload);
+      setRawJsonTextString(JSON.stringify(draft.translated, null, 2));
       setIsJsonTextStringValid(true);
     } else {
       setRawJsonTextString("");
@@ -367,12 +363,11 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
     if (!draft || !rawJsonTextString.trim()) return;
 
     try {
-      // Final confirmation validation boundary pass ahead of remote socket dispatch
       const validatedJsonPayloadNode = JSON.parse(rawJsonTextString.trim());
-
       trackEvent("ai_translation_save_requested", { itemId, langCode: draft.language_code });
+
       const toastId = toast.loading(
-        `Persisting localized sidecar dictionary [${draft.language_code}] into repository...`,
+        `Committing localized translation dictionary [${draft.language_code.toUpperCase()}]...`,
       );
 
       await apply({
@@ -383,12 +378,12 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
         source: "ai",
       });
 
-      toast.success(`Decoupled translation node [${draft.language_code.toUpperCase()}] committed successfully`, {
+      toast.success(`Translation variants module [${draft.language_code.toUpperCase()}] saved completely.`, {
         id: toastId,
       });
       trackEvent("ai_translation_save_success", { itemId, langCode: draft.language_code });
     } catch (parseValidationErr) {
-      toast.error("Lexical compilation lock: The mutation state buffer contains malformed structural syntax.");
+      toast.error("Format discrepancy rejected: Structural modification text contains invalid JSON syntax.");
       setIsJsonTextStringValid(false);
     }
   };
@@ -398,10 +393,11 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
       <div className="flex gap-3.5 items-end w-full select-none">
         <div className="flex-1 text-left space-y-1">
           <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5">
-            Target Destination Locale
+            Target Translation Language
           </Label>
           <Select value={lang} onValueChange={handleLanguageTriggerSelection} disabled={loading}>
             <SelectTrigger className="w-full h-9 rounded-xl border border-border/40 bg-card/40 focus:ring-1 focus:ring-ring text-xs font-bold tracking-tight cursor-pointer">
+              <SelectTrigger className="truncate" />
               <SelectValue placeholder="Select target dictionary locale" />
             </SelectTrigger>
             <SelectContent className="rounded-xl border border-border/40 shadow-xl bg-background/95 backdrop-blur-md font-semibold text-xs text-foreground/90 select-none">
@@ -427,10 +423,10 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
           {loading ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-              <span>Translating Node…</span>
+              <span>Translating...</span>
             </>
           ) : (
-            <span>Compile Language Sidecar</span>
+            <span>Translate Content</span>
           )}
         </Button>
       </div>
@@ -442,7 +438,7 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
           <Card className="border border-border/40 bg-muted/10 rounded-2xl shadow-sm overflow-hidden select-text text-left w-full min-w-0">
             <CardContent className="p-3.5 space-y-1.5 w-full min-w-0">
               <span className="text-[9px] font-bold text-muted-foreground/60 uppercase tracking-wider block select-none leading-none pl-0.5">
-                Original Source Document Reference
+                Original Content Source Reference
               </span>
               <pre className="text-xs font-mono font-medium whitespace-pre-wrap bg-muted/40 border p-3 rounded-xl max-h-40 overflow-y-auto selection:bg-primary/10 select-all leading-relaxed break-all w-full">
                 {JSON.stringify(draft.source, null, 2)}
@@ -458,30 +454,27 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
           >
             <CardContent className="p-4 space-y-3.5 w-full min-w-0">
               <div className="flex items-center justify-between gap-4 select-none leading-none border-b border-border/10 pb-2 w-full">
-                <p className="text-[10px] font-extrabold uppercase tracking-wider text-primary pl-0.5">
-                  Localized Manifest Modification Array ({draft.language_name || draft.language_code?.toUpperCase()})
+                <p className="text-[10px] font-extrabold uppercase tracking-wider text-primary pl-0.5 max-w-[60%] truncate">
+                  Localized Translation Manifest ({draft.language_name || draft.language_code?.toUpperCase()})
                 </p>
                 <Badge
                   variant={isJsonTextStringValid ? "outline" : "destructive"}
                   className="text-[9px] font-extrabold h-4.5 px-2 rounded tracking-wide uppercase select-none shadow-sm leading-none flex items-center shrink-0"
                 >
-                  {isJsonTextStringValid ? "Editable" : "Invalid JSON"}
+                  {isJsonTextStringValid ? "Valid Syntax" : "Invalid JSON"}
                 </Badge>
               </div>
 
-              {/* Textarea buffer updates live character arrays safely without triggering realtime parsing runtime exceptions */}
               <Textarea
                 value={rawJsonTextString}
                 onChange={(e) => {
                   const runningTextStringValue = e.target.value;
                   setRawJsonTextString(runningTextStringValue);
-
-                  // Proactive inline lint verification validation pass shortcut checklist
                   try {
                     JSON.parse(runningTextStringValue.trim());
                     setIsJsonTextStringValid(true);
                   } catch {
-                    setIsJsonTextStringValid(false); // Flag lexical syntax discrepancy visually
+                    setIsJsonTextStringValid(false);
                   }
                 }}
                 className={cn(
@@ -502,13 +495,10 @@ function TranslatePanel({ kind, itemId }: { kind: "quiz" | "scenario"; itemId: s
                   {applying ? (
                     <>
                       <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                      <span>Saving Dictionary…</span>
+                      <span>Saving Variant...</span>
                     </>
                   ) : (
-                    <>
-                      <Check className="h-3.5 w-3.5 stroke-[2.5]" />
-                      <span>Save Localized Sidecar</span>
-                    </>
+                    <span>Save Localized Variant</span>
                   )}
                 </Button>
               </div>
@@ -560,7 +550,7 @@ function QuizPreview({ s }: { s: QuizSuggestion }) {
           variant="outline"
           className="text-[9px] font-extrabold h-4.5 rounded uppercase tracking-wider bg-background/50 border-border/40 text-muted-foreground/80 shadow-sm px-2"
         >
-          Target Difficulty Complexity: {s.difficulty || "Standard"}
+          Target Item Difficulty: {s.difficulty || "Standard"}
         </Badge>
       </div>
     </div>
@@ -580,7 +570,7 @@ function ScenarioPreview({ s }: { s: ScenarioSuggestion }) {
 
       <div className="space-y-1.5 pt-1 w-full min-w-0 text-left">
         <span className="text-[9px] font-extrabold uppercase tracking-wider text-muted-foreground/60 block pl-0.5 select-none leading-none mb-1">
-          Target Psychometric Evaluation Criteria rubrics
+          Target Evaluation Criteria
         </span>
         <div className="space-y-2 w-full min-w-0 select-text">
           {rubricRowsCollectionBuffer.map((rubricRowItem, rowIdx) => {
@@ -622,7 +612,7 @@ function QuizEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) => voi
     <div className="space-y-3.5 text-xs font-bold text-foreground/90 tracking-tight text-left w-full min-w-0">
       <div className="space-y-1 w-full text-left">
         <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5 select-none">
-          Question Stem Formula
+          Question Description text
         </Label>
         <Textarea
           value={draft.question ?? ""}
@@ -633,7 +623,7 @@ function QuizEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) => voi
 
       <div className="space-y-1.5 w-full text-left">
         <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5 select-none">
-          Distractor Options Array Layout Matrix (Select correct parameter key)
+          Multiple Choice Options (Select correct choice model option)
         </Label>
         <div className="space-y-2 w-full select-none">
           {optionsCollectionBuffer.map((optionStrItem, index) => {
@@ -672,7 +662,7 @@ function QuizEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) => voi
 
       <div className="space-y-1.5 pt-1 border-t border-border/10 w-full text-left select-none">
         <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5">
-          Difficulty
+          Difficulty Tier
         </Label>
         <div className="flex flex-wrap items-center gap-1.5">
           {(["easy", "medium", "hard"] as const).map((diffTokenStr) => {
@@ -716,7 +706,7 @@ function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) =>
     <div className="space-y-3.5 text-xs font-bold text-foreground/90 tracking-tight text-left w-full min-w-0">
       <div className="space-y-1 w-full text-left">
         <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5 select-none">
-          Simulation Title Heading
+          Scenario Title
         </Label>
         <Input
           value={draft.title ?? ""}
@@ -738,7 +728,7 @@ function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) =>
 
       <div className="space-y-2 pt-2 border-t border-border/10 w-full text-left">
         <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block pl-0.5 select-none">
-          Evaluation Rubric Matrix Blocks
+          Evaluation Rubrics Mappings
         </Label>
         <div className="space-y-2.5 max-h-48 overflow-y-auto pr-1 w-full">
           {rubricsCollectionBuffer.map((rubricRowItem: any, index: number) => {
@@ -752,7 +742,7 @@ function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) =>
                   <Input
                     value={rubricRowItem.criterion ?? ""}
                     onChange={(e) => updRub(index, "criterion", e.target.value)}
-                    placeholder="Criterion key heading"
+                    placeholder="Criterion metric heading"
                     className="text-xs font-bold h-7 rounded-lg border border-border/40 bg-background/50 focus-visible:ring-1 focus-visible:ring-ring select-text shadow-sm w-full"
                   />
                   <Input
@@ -770,7 +760,7 @@ function ScenarioEditor({ draft, setDraft }: { draft: any; setDraft: (d: any) =>
                   value={rubricRowItem.description ?? ""}
                   onChange={(e) => updRub(index, "description", e.target.value)}
                   className="text-xs font-medium border border-border/30 bg-background/40 focus-visible:ring-1 focus-visible:ring-ring leading-normal min-h-[44px] resize-none select-text p-2 rounded-lg w-full"
-                  placeholder="Criterion performance execution threshold description..."
+                  placeholder="Provide a description for how this criterion will be evaluated."
                 />
               </div>
             );
