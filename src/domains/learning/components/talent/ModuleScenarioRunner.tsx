@@ -421,7 +421,7 @@ export function ModuleScenarioRunner({ moduleId, onComplete }: { moduleId: strin
             size="icon"
             type="button"
             className="h-10 w-10 rounded-xl shrink-0 cursor-pointer shadow-md active:scale-95 transition-transform bg-primary text-primary-foreground hover:bg-primary/90"
-            aria-label="Dispatch message payload turn"
+            aria-label="Send message"
           >
             <Send className="h-4 w-4 text-white stroke-[2.2]" />
           </Button>
