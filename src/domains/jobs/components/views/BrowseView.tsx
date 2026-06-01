@@ -1,8 +1,8 @@
 /**
  * Jobs Section Browse Layout Core — Phase INST-Z2 Hardened
  * CTO Version: June 2026
- * Fixes: Fixed GraduationCap import error, mobile horizontal slider compression, custom type grids
- * Enhancements: Integrated pre-calculated AI Job Recommendations & Mastery Matching Signals
+ * Fixes: Resolved missing GraduationCap icon reference, standardized component mapping paths
+ * Rules: Retains all structural fields, action mutations, and navigation hooks natively.
  */
 import { useNavigate } from "react-router-dom";
 import {
@@ -25,9 +25,10 @@ import { Badge } from "@/components/ui/badge";
 import { useSavedItems } from "@/hooks/useSavedItems";
 import { JobCard, type JobCardData } from "@/domains/jobs/components/JobCard";
 import { InfiniteJobsList } from "@/domains/jobs/components/InfiniteJobsList";
-import { ProfileCompletenessGate } from "@/components/jobs/ProfileCompletenessGate";
+import { ProfileCompletenessGate } from "@/domains/jobs/components/ProfileCompletenessGate";
 import { getJobTypeLabel } from "@/lib/constants/jobTypes";
-import { useRef, useState, useMemo } from "react";
+import { useRef, useState, useMemo, useEffect } from "react";
+import { trackError, trackEvent } from "@/lib/errorTracking";
 
 interface Props {
   dashboard?: {
@@ -38,6 +39,7 @@ interface Props {
   talent?: any;
 }
 
+// Maps static contextual icons cleanly to job type slugs
 const JOB_TYPE_ICONS: Record<string, React.ComponentType<any>> = {
   full_time: Clock,
   remote: Globe,
@@ -68,7 +70,7 @@ function ResponsiveJobStrip({
   if (!jobs || jobs.length === 0) {
     if (!emptyHint) return null;
     return (
-      <section className="space-y-3">
+      <section className="space-y-3 w-full text-left">
         <div className="flex items-center gap-2 border-b border-border/10 pb-2">
           <Icon className="h-4 w-4 text-primary" />
           <h2 className="text-sm font-semibold tracking-tight text-foreground">{title}</h2>
@@ -92,7 +94,7 @@ function ResponsiveJobStrip({
   };
 
   return (
-    <section className="space-y-3 relative group">
+    <section className="space-y-3 relative group w-full text-left">
       <div className="flex items-center justify-between border-b border-border/10 pb-2">
         <div className="flex items-center gap-2">
           <Icon className="h-4 w-4 text-primary" />
@@ -154,7 +156,7 @@ function ResponsiveJobStrip({
           <div className="absolute top-0 right-0 bottom-4 w-12 bg-gradient-to-l from-background/40 to-transparent pointer-events-none" />
         </div>
 
-        {/* Mobile Viewport: Enhanced Clean Vertical Stack Layout */}
+        {/* Mobile Viewport: Stacked Layout Model for High-Density Visibility */}
         <div className="block md:hidden space-y-3.5">
           {jobs.slice(0, 3).map((job) => (
             <JobCard
@@ -184,6 +186,7 @@ export function BrowseView({ dashboard, talent }: Props) {
   const onSaveToggle = (id: string) => toggleSave(id, "job");
   const onJobClick = (id: string) => navigate(`/app/jobs/${id}`);
 
+  // Sort and filter type configurations systematically
   const allTypeChips = useMemo(() => {
     return Object.entries(typeCounts)
       .filter(([, count]) => count > 0)
@@ -192,6 +195,17 @@ export function BrowseView({ dashboard, talent }: Props) {
 
   const visibleTypeChips = showAllTypes ? allTypeChips : allTypeChips.slice(0, 4);
   const hasHiddenTypes = allTypeChips.length > 4;
+
+  // Monitor metric events across analytical path components
+  useEffect(() => {
+    if (talent?.id) {
+      trackEvent("jobs_browse_tab_activated", {
+        talentId: talent.id,
+        hasTrendingData: trending.length > 0,
+        hasInFieldData: inField.length > 0,
+      });
+    }
+  }, [talent?.id, trending.length, inField.length]);
 
   if (!talent?.id) {
     return (
@@ -228,7 +242,7 @@ export function BrowseView({ dashboard, talent }: Props) {
     <div className="space-y-8 max-w-full overflow-hidden px-1">
       <ProfileCompletenessGate talent={talent} />
 
-      {/* AI Recommended / Trending Pipeline Strip */}
+      {/* AI Pre-Calculated Recommendations Strip */}
       <ResponsiveJobStrip
         title="AI Recommended & Trending"
         icon={TrendingUp}
@@ -238,7 +252,7 @@ export function BrowseView({ dashboard, talent }: Props) {
         onJobClick={onJobClick}
       />
 
-      {/* Profile Matched Sector Strip */}
+      {/* Profile Trajectory Matched Openings Strip */}
       <ResponsiveJobStrip
         title="Matched For Your Field"
         icon={Briefcase}
@@ -249,7 +263,7 @@ export function BrowseView({ dashboard, talent }: Props) {
         onJobClick={onJobClick}
       />
 
-      {/* Browse by Type: Clean Grid Layout */}
+      {/* Browse by Type Dynamic Grid Component Matrix */}
       {allTypeChips.length > 0 && (
         <section className="space-y-3 bg-muted/10 p-5 rounded-2xl border border-border/40 text-left w-full min-w-0">
           <div className="flex items-center justify-between border-b border-border/5 pb-1.5">
@@ -266,7 +280,7 @@ export function BrowseView({ dashboard, talent }: Props) {
             )}
           </div>
 
-          <div className="grid grid-cols-2 gap-2.5 pt-0.5">
+          <div className="grid grid-cols-2 gap-2.5 pt-0.5 select-none">
             {visibleTypeChips.map(([type, count]) => {
               const TypeIcon = JOB_TYPE_ICONS[type] || BriefcaseIcon;
               return (
@@ -294,7 +308,7 @@ export function BrowseView({ dashboard, talent }: Props) {
         </section>
       )}
 
-      {/* Infinite Ranked Capability Matches Section */}
+      {/* Infinite Core Match Aggregation Pipeline Node */}
       <section className="space-y-4 pt-1">
         <div className="flex items-center justify-between border-b border-border/10 pb-2">
           <div className="flex items-center gap-2">
