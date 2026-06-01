@@ -271,6 +271,10 @@ export function OnboardingWizard({
       const userId = authData.user.id;
 
       const isFreeform = institution.id.startsWith("freeform:");
+
+      // Pull invisible referral tags straight out of our funnel analytics container if present
+      const activeLinkRef = funnelParamsRef.current?.ref || null;
+
       await patchTalentByUser(userId, {
         country_id: country.id,
         country_code: country.iso2,
@@ -281,6 +285,8 @@ export function OnboardingWizard({
         school_id: school.id,
         onboarding_step: 4,
         onboarding_completed_at: new Date().toISOString(),
+        // Fortify relationship tracking metrics directly inside the mutation payload block
+        referral_code: activeLinkRef || undefined,
       });
 
       setSubmittingPhase(`Connecting you to ${institution.name}…`);
@@ -353,9 +359,7 @@ export function OnboardingWizard({
               <Zap className="h-5 w-5 fill-primary/10 text-primary stroke-[2.2] animate-pulse" />
             </div>
             <div className="min-w-0 flex flex-col justify-center leading-none">
-              <h1 className="text-sm font-bold text-foreground/90 tracking-wide leading-none">
-                Set up your profile
-              </h1>
+              <h1 className="text-sm font-bold text-foreground/90 tracking-wide leading-none">Set up your profile</h1>
               <span className="text-[11px] font-bold text-muted-foreground/60 block leading-none pt-1">
                 Step {step} of {STEPS.length} &bull; {STEPS[step - 1].label}
               </span>
@@ -435,16 +439,10 @@ export function OnboardingWizard({
               />
             )}
             {step === 2 && (
-              <SectionHeader
-                title="Where are you in your career?"
-                subtitle="Pick the stage that fits you best."
-              />
+              <SectionHeader title="Where are you in your career?" subtitle="Pick the stage that fits you best." />
             )}
             {step === 3 && (
-              <SectionHeader
-                title="Where did you study?"
-                subtitle="Connect with peers and your campus community."
-              />
+              <SectionHeader title="Where did you study?" subtitle="Connect with peers and your campus community." />
             )}
             {step === 4 && (
               <SectionHeader
@@ -519,6 +517,7 @@ export function OnboardingWizard({
                           placeholder="Type your university name…"
                           className="text-xs h-10 border-none font-bold outline-none"
                         />
+                        <CommandInput style={{ display: "none" }} />
                         <CommandList className="max-h-64 font-bold text-xs select-none">
                           {institutionsQ.isLoading ? (
                             <div className="p-2 space-y-1.5">
@@ -668,9 +667,7 @@ export function OnboardingWizard({
 function SectionHeader({ title, subtitle }: { title: string; subtitle: string }) {
   return (
     <div className="text-center select-none w-full leading-none mb-2">
-      <h2 className="text-base sm:text-lg font-bold tracking-tight text-foreground/90 leading-none">
-        {title}
-      </h2>
+      <h2 className="text-base sm:text-lg font-bold tracking-tight text-foreground/90 leading-none">{title}</h2>
       <p className="mt-2 text-[11px] font-semibold text-muted-foreground/70 leading-normal max-w-xl mx-auto">
         {subtitle}
       </p>
