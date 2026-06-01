@@ -1,11 +1,11 @@
 /**
  * GroUp Academy: Academy Hub Surface (AcademyView)
  * CTO Reference: Authoritative directory for academic tracks and school departments.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened · Patch 0.1
  * Enhancements: GPU performance grid, agentic Dean chat bindings, dynamic academy directory.
  */
 import { useNavigate } from "react-router-dom";
-import { BookOpen, Users, Rocket, BrainCircuit, ChevronRight, GraduationCap } from "lucide-react";
+import { BookOpen, Users, Rocket, Sparkles, ArrowRight, GraduationCap, Briefcase } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { trackEvent } from "@/lib/errorTracking";
