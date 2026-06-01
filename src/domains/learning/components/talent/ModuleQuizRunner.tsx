@@ -5,15 +5,25 @@ import { Button } from "@/components/ui/button";
 import { Progress } from "@/components/ui/progress";
 import { Badge } from "@/components/ui/badge";
 import { trackError, trackEvent } from "@/lib/errorTracking";
-import { Loader2, Brain, CheckCircle2, XCircle, RefreshCw, Zap, ArrowRight } from "lucide-react";
+import { Loader2, Brain, CheckCircle2, XCircle, RefreshCw, ArrowRight } from "lucide-react";
 
 import { learnerAdaptiveSample, learnerQuizPool } from "@/domains/learning/api/learningApi";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-interface Item { id: string; question: string; options: string[]; difficulty?: string }
-interface Result { id: string; correct: boolean; correct_index?: number; explanation?: string }
+interface Item {
+  id: string;
+  question: string;
+  options: string[];
+  difficulty?: string;
+}
+interface Result {
+  id: string;
+  correct: boolean;
+  correct_index?: number;
+  explanation?: string;
+}
 
 export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; onComplete?: (score: number) => void }) {
   const queryClient = useQueryClient();
@@ -22,9 +32,12 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
   const [loading, setLoading] = useState(true);
   const [submitting, setSubmitting] = useState(false);
   const [results, setResults] = useState<{ score: number; results: Result[] } | null>(null);
-  const [adaptiveMix, setAdaptiveMix] = useState<{ avg_mastery: number; mix: { easy: number; medium: number; hard: number } } | null>(null);
+  const [adaptiveMix, setAdaptiveMix] = useState<{
+    avg_mastery: number;
+    mix: { easy: number; medium: number; hard: number };
+  } | null>(null);
 
-  // Monitor psychometric test-taker workspace impressions via telemetry hooks
+  // Monitor quiz interface impressions via telemetry channels
   useEffect(() => {
     if (moduleId) {
       trackEvent("psychometric_quiz_runner_mounted", { moduleId });
@@ -33,21 +46,22 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
 
   const normalizeOptions = (raw: unknown): string[] => {
     if (Array.isArray(raw)) return raw.map((o) => String(o).trim());
-    if (raw && typeof raw === "object") return Object.values(raw as Record<string, unknown>).map((o) => String(o).trim());
+    if (raw && typeof raw === "object")
+      return Object.values(raw as Record<string, unknown>).map((o) => String(o).trim());
     return [];
   };
 
   const draw = async () => {
-    setLoading(true); 
-    setResults(null); 
-    setAnswers({}); 
+    setLoading(true);
+    setResults(null);
+    setAnswers({});
     setAdaptiveMix(null);
-    
+
     let isRequestAlive = true;
     trackEvent("psychometric_quiz_draw_requested", { moduleId });
 
     try {
-      // 1) Try adaptive sampler first (skill-aware cognitive engine profile)
+      // 1) Try adaptive sampler first (personalized skill-aware cognitive engine)
       try {
         const payloadData = await learnerAdaptiveSample({ module_id: moduleId, count: 10 });
         if ((payloadData as any)?.items?.length) {
@@ -58,7 +72,7 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
                 question: it.question,
                 options: normalizeOptions(it.options),
                 difficulty: it.difficulty ?? undefined,
-              }))
+              })),
             );
             setAdaptiveMix({ avg_mastery: (payloadData as any).avg_mastery, mix: (payloadData as any).mix });
             setLoading(false);
@@ -67,14 +81,14 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
           return;
         }
       } catch (adaptiveErr) {
-        // fall through to pool draw
+        // Fall back gracefully to public item bank draw
         trackEvent("psychometric_quiz_adaptive_sample_failed", {
           moduleId,
           error: adaptiveErr instanceof EdgeFunctionError ? adaptiveErr.message : String(adaptiveErr),
         });
       }
 
-      // 2) Fallback to legacy random pool draw when cognitive tracking tables cold-start
+      // 2) Standard backup question pool compilation
       trackEvent("psychometric_quiz_fallback_pool_triggered", { moduleId });
       const poolData = await learnerQuizPool({ mode: "draw", module_id: moduleId });
 
@@ -87,14 +101,14 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
       }
     } catch (err: any) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
-      
+
       trackError(parsedExceptionMsg, {
         component: "ModuleQuizRunner",
         action: "execute_quiz_draw_pipeline",
-        moduleId
+        moduleId,
       });
 
-      toast.error(`Couldn't load quiz: ${parsedExceptionMsg}`);
+      toast.error(`Unable to initialize quiz questions: ${parsedExceptionMsg}`);
       if (isRequestAlive) setLoading(false);
     }
   };
@@ -106,13 +120,13 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
   const submit = async () => {
     if (!items) return;
     if (items.some((i) => answers[i.id] === undefined)) {
-      toast.error("Please answer all questions before submitting.");
+      toast.error("Please answer all questions before submitting your quiz.");
       return;
     }
-    
+
     setSubmitting(true);
-    const toastId = toast.loading("Submitting your answers...");
-    
+    const toastId = toast.loading("Scoring your assessment...");
+
     const item_ids = items.map((i) => i.id);
     const ans = item_ids.map((id) => answers[id]);
 
@@ -126,26 +140,26 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
       }
 
       setResults({ score: (data as any).score, results: (data as any).results });
-      
-      // Automated Efficiency: Synchronize cache indices globally to cascade mastery metrics
+
+      // Synchronize data cache metrics across workspace modules completely
       queryClient.invalidateQueries({ queryKey: ["module-analytics", moduleId] });
       queryClient.invalidateQueries({ queryKey: ["item-analytics", moduleId] });
       queryClient.invalidateQueries({ queryKey: ["talent-stats"] });
 
-      toast.success("Quiz submitted. Your score is in.", { id: toastId });
+      toast.success("Quiz completed successfully.", { id: toastId });
       trackEvent("psychometric_quiz_submission_success", { moduleId, finalScore: (data as any).score });
-      
+
       if (onComplete) onComplete((data as any).score);
     } catch (err: any) {
       const parsedExceptionMsg = err instanceof Error ? err.message : String(err);
-      
+
       trackError(parsedExceptionMsg, {
         component: "ModuleQuizRunner",
         action: "submit_quiz_answers_pipeline",
-        moduleId
+        moduleId,
       });
 
-      toast.error(`Couldn't submit: ${parsedExceptionMsg}`, { id: toastId });
+      toast.error(`Couldn't submit answers: ${parsedExceptionMsg}`, { id: toastId });
     } finally {
       setSubmitting(false);
     }
@@ -156,7 +170,9 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
       <Card className="border border-border/40 bg-card/60 backdrop-blur-md rounded-2xl select-none w-full animate-in scale-in duration-200">
         <CardContent className="py-12 flex flex-col items-center justify-center gap-3.5 text-center w-full">
           <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
-          <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5 animate-pulse">Loading your quiz…</p>
+          <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5 animate-pulse">
+            Preparing your assessment...
+          </p>
         </CardContent>
       </Card>
     );
@@ -166,30 +182,35 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
 
   return (
     <div className="space-y-4 antialiased text-left select-none sm:select-text w-full max-w-full transform-gpu">
-      
-      {/* CARD LAYER STATE A: EVALUATION HISTORICAL METRICS RESULTS SCREEN */}
+      {/* Quiz Completion Results Screen Container */}
       {results ? (
         <Card className="border border-border/40 bg-card/60 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden w-full animate-in zoom-in-98 duration-300">
           <CardHeader className="p-4 px-5 border-b border-border/10 select-none bg-muted/20">
             <CardTitle className="text-sm font-bold text-foreground/90 uppercase tracking-wider flex items-center gap-2.5">
               <Brain className="h-4.5 w-4.5 text-primary stroke-[2.2]" />
-              <span>Your results</span>
-              <Badge variant="outline" className="ml-auto bg-primary/5 text-primary border-primary/20 text-xs font-extrabold px-2 py-0.5 rounded shadow-sm tabular-nums">
+              <span>Assessment Results</span>
+              <Badge
+                variant="outline"
+                className="ml-auto bg-primary/5 text-primary border-primary/20 text-xs font-extrabold px-2 py-0.5 rounded shadow-sm tabular-nums"
+              >
                 Score: {Math.round(results.score)}%
               </Badge>
             </CardTitle>
           </CardHeader>
           <CardContent className="p-4 sm:p-5 space-y-4 w-full min-w-0">
             <Progress value={results.score} className="h-2 rounded-full shadow-inner select-none" />
-            
+
             <div className="space-y-3 w-full min-w-0">
               {items.map((it, idx) => {
                 const r = results.results[idx] || { correct: false };
-                const selectedOptionValue = it.options[answers[it.id]] || "Unselected item marker link";
+                const selectedOptionValue = it.options[answers[it.id]] || "Not answered.";
                 const isCorrectNode = !!r.correct;
 
                 return (
-                  <div key={it.id} className="border border-border/40 bg-background/40 backdrop-blur-sm rounded-xl p-3.5 space-y-2.5 text-left w-full min-w-0 shadow-sm animate-in fade-in duration-200">
+                  <div
+                    key={it.id}
+                    className="border border-border/40 bg-background/40 backdrop-blur-sm rounded-xl p-3.5 space-y-2.5 text-left w-full min-w-0 shadow-sm animate-in fade-in duration-200"
+                  >
                     <div className="flex items-start gap-2.5 w-full min-w-0">
                       {isCorrectNode ? (
                         <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400 shrink-0 mt-0.5 stroke-[2.5]" />
@@ -200,23 +221,38 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
                         {idx + 1}. {it.question}
                       </p>
                     </div>
-                    
+
                     <div className="space-y-1.5 pl-7 text-[11px] sm:text-xs font-semibold leading-normal text-muted-foreground w-full break-words">
-                      <p className={cn("p-2 rounded-lg border leading-tight select-text select-none", isCorrectNode ? "bg-emerald-500/5 border-emerald-500/10 text-emerald-700" : "bg-rose-500/5 border-rose-500/10 text-rose-700")}>
-                        <span className="font-extrabold uppercase tracking-wide text-[9px] block mb-0.5 opacity-60">Submitted Variable Choice</span>
+                      <p
+                        className={cn(
+                          "p-2 rounded-lg border leading-tight select-text",
+                          isCorrectNode
+                            ? "bg-emerald-500/5 border-emerald-500/10 text-emerald-700"
+                            : "bg-rose-500/5 border-rose-500/10 text-rose-700",
+                        )}
+                      >
+                        <span className="font-extrabold uppercase tracking-wide text-[9px] block mb-0.5 opacity-60">
+                          Your Answer
+                        </span>
                         <span>{selectedOptionValue}</span>
                       </p>
-                      
-                      {!isCorrectNode && (r as any).correct_index !== undefined && it.options[(r as any).correct_index] && (
-                        <p className="p-2 rounded-lg border border-emerald-500/10 bg-emerald-500/5 text-emerald-700 font-bold leading-tight select-text">
-                          <span className="font-extrabold uppercase tracking-wide text-[9px] block mb-0.5 opacity-60">Reconciled Valid Lock Target</span>
-                          <span>{it.options[(r as any).correct_index]}</span>
-                        </p>
-                      )}
-                      
+
+                      {!isCorrectNode &&
+                        (r as any).correct_index !== undefined &&
+                        it.options[(r as any).correct_index] && (
+                          <p className="p-2 rounded-lg border border-emerald-500/10 bg-emerald-500/5 text-emerald-700 font-bold leading-tight select-text">
+                            <span className="font-extrabold uppercase tracking-wide text-[9px] block mb-0.5 opacity-60">
+                              Correct Answer
+                            </span>
+                            <span>{it.options[(r as any).correct_index]}</span>
+                          </p>
+                        )}
+
                       {(r as any).explanation && (
                         <div className="p-3 rounded-lg border border-border/20 bg-muted/20 select-text font-medium text-muted-foreground/90 italic leading-relaxed break-words shadow-inner">
-                          <span className="font-bold uppercase tracking-wider text-[9px] text-primary not-italic block mb-1 select-none leading-none pl-0.5">Ecosystem Synapse Rationale</span>
+                          <span className="font-bold uppercase tracking-wider text-[9px] text-primary not-italic block mb-1 select-none leading-none pl-0.5">
+                            Explanation
+                          </span>
                           <p className="pl-0.5">&ldquo;{String((r as any).explanation).trim()}&rdquo;</p>
                         </div>
                       )}
@@ -225,93 +261,106 @@ export function ModuleQuizRunner({ moduleId, onComplete }: { moduleId: string; o
                 );
               })}
             </div>
-            
-            <Button 
+
+            <Button
               type="button"
-              onClick={draw} 
-              variant="outline" 
+              onClick={draw}
+              variant="outline"
               className="w-full h-10 rounded-xl font-bold text-xs tracking-wide uppercase border-border/60 hover:bg-accent cursor-pointer transition-all active:scale-[0.99] gap-2 select-none mt-2"
             >
-              <RefreshCw className="h-3.5 w-3.5 text-primary stroke-[2.5]" /> 
-              <span>Initialize Alternating Evaluation Pool</span>
+              <RefreshCw className="h-3.5 w-3.5 text-primary stroke-[2.5]" />
+              <span>Take Another Quiz</span>
             </Button>
           </CardContent>
         </Card>
       ) : (
         <>
-        {/* CARD LAYER STATE B: INTERACTIVE RUNTIME ENTRY MATRIX QUESTIONNAIRE SCREEN */}
-        <Card className="border border-border/40 bg-card/60 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden w-full">
-          <CardHeader className="p-4 px-5 border-b border-border/10 select-none bg-muted/20">
-            <CardTitle className="text-sm font-bold text-foreground/90 uppercase tracking-wider flex items-center justify-between gap-4 w-full">
-              <div className="flex items-center gap-2">
-                <Brain className="h-4.5 w-4.5 text-primary stroke-[2.2]" />
-                <span>Personalized Competency Assessment</span>
+          {/* Active Questionnaire Workspace Card */}
+          <Card className="border border-border/40 bg-card/60 backdrop-blur-md rounded-2xl shadow-sm overflow-hidden w-full">
+            <CardHeader className="p-4 px-5 border-b border-border/10 select-none bg-muted/20">
+              <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 w-full">
+                <CardTitle className="text-sm font-bold text-foreground/90 uppercase tracking-wider flex items-center gap-2">
+                  <Brain className="h-4.5 w-4.5 text-primary stroke-[2.2]" />
+                  <span>Personalized Quiz Assessment</span>
+                </CardTitle>
+                {adaptiveMix && (
+                  <Badge
+                    variant="outline"
+                    className="w-fit bg-primary/5 text-primary border-primary/20 text-[9px] font-extrabold h-5 px-2 rounded-md tracking-wider uppercase shadow-sm select-none animate-pulse"
+                  >
+                    Adaptive Focus Track &bull; Current Mastery: {Math.round(adaptiveMix.avg_mastery * 100)}%
+                  </Badge>
+                )}
               </div>
-              {adaptiveMix && (
-                <Badge variant="outline" className="bg-primary/5 text-primary border-primary/20 text-[9px] font-extrabold h-5 px-2 rounded-md tracking-wider uppercase shadow-sm select-none animate-pulse">
-                  Synapse Adaptive Model &bull; Mastery Profile: {Math.round(adaptiveMix.avg_mastery * 100)}%
-                </Badge>
-              )}
-            </CardTitle>
-          </CardHeader>
-          
-          <CardContent className="p-4 sm:p-5 space-y-5 w-full min-w-0">
-            {items.map((it, idx) => {
-              const activeUserChoiceIndex = answers[it.id];
-              return (
-                <div key={it.id} className="space-y-2.5 w-full min-w-0 border-b border-border/10 pb-4 last:border-none last:pb-0">
-                  <p className="text-xs sm:text-sm font-bold text-foreground/90 leading-relaxed select-text break-words pr-1">
-                    {idx + 1}. {it.question}
-                  </p>
-                  
-                  <div className="grid gap-2 w-full select-none font-bold text-xs sm:text-sm">
-                    {it.options.map((optStringValue, optionIdx) => {
-                      const isOptionChecked = activeUserChoiceIndex === optionIdx;
-                      return (
-                        <button
-                          key={optionIdx}
-                          type="button"
-                          disabled={submitting}
-                          onClick={() => setAnswers((a) => ({ ...a, [it.id]: optionIdx }))}
-                          className={cn(
-                            "w-full text-left text-xs sm:text-sm rounded-xl border p-3 transition-all duration-200 cursor-pointer transform-gpu active:scale-[0.995] outline-none focus-visible:ring-1 focus-visible:ring-ring flex items-start gap-3 shadow-sm font-semibold",
-                            isOptionChecked
-                              ? "border-primary bg-primary/5 text-primary font-bold shadow-inner"
-                              : "border-border/40 hover:border-border/60 bg-background/40 hover:bg-background"
-                          )}
-                        >
-                          <span className={cn("h-5 w-5 rounded-md flex items-center justify-center border text-[10px] font-mono shrink-0 select-none", isOptionChecked ? "bg-primary/10 border-primary/20 text-primary font-bold" : "bg-muted border-border/40 text-muted-foreground")}>
-                            {String.fromCharCode(64 + optionIdx + 1)}
-                          </span>
-                          <span className="flex-1 min-w-0 pt-0.5 break-words leading-tight">{optStringValue}</span>
-                        </button>
-                      );
-                    })}
+            </CardHeader>
+
+            <CardContent className="p-4 sm:p-5 space-y-5 w-full min-w-0">
+              {items.map((it, idx) => {
+                const activeUserChoiceIndex = answers[it.id];
+                return (
+                  <div
+                    key={it.id}
+                    className="space-y-2.5 w-full min-w-0 border-b border-b-muted-foreground/5 pb-4 last:border-none last:pb-0"
+                  >
+                    <p className="text-xs sm:text-sm font-bold text-foreground/90 leading-relaxed select-text break-words pr-1">
+                      {idx + 1}. {it.question}
+                    </p>
+
+                    <div className="grid gap-2 w-full select-none font-bold text-xs sm:text-sm">
+                      {it.options.map((optStringValue, optionIdx) => {
+                        const isOptionChecked = activeUserChoiceIndex === optionIdx;
+                        return (
+                          <button
+                            key={optionIdx}
+                            type="button"
+                            disabled={submitting}
+                            onClick={() => setAnswers((a) => ({ ...a, [it.id]: optionIdx }))}
+                            className={cn(
+                              "w-full text-left text-xs sm:text-sm rounded-xl border p-3 transition-all duration-200 cursor-pointer transform-gpu active:scale-[0.995] outline-none focus-visible:ring-1 focus-visible:ring-ring flex items-start gap-3 shadow-sm font-semibold",
+                              isOptionChecked
+                                ? "border-primary bg-primary/5 text-primary font-bold shadow-inner"
+                                : "border-border/40 hover:border-border/60 bg-background/40 hover:bg-background",
+                            )}
+                          >
+                            <span
+                              className={cn(
+                                "h-5 w-5 rounded-md flex items-center justify-center border text-[10px] font-mono shrink-0 select-none",
+                                isOptionChecked
+                                  ? "bg-primary/10 border-primary/20 text-primary font-bold"
+                                  : "bg-muted border-border/40 text-muted-foreground",
+                              )}
+                            >
+                              {String.fromCharCode(64 + optionIdx + 1)}
+                            </span>
+                            <span className="flex-1 min-w-0 pt-0.5 break-words leading-tight">{optStringValue}</span>
+                          </button>
+                        );
+                      })}
+                    </div>
                   </div>
-                </div>
-              )
-            })}
-            
-            <Button 
-              onClick={submit} 
-              disabled={submitting || items.length === 0} 
-              type="button"
-              className="w-full h-11 rounded-xl font-bold text-xs tracking-wide shadow-md active:scale-[0.99] transition-transform select-none cursor-pointer gap-2 bg-primary text-primary-foreground hover:bg-primary/90 mt-2"
-            >
-              {submitting ? (
-                <>
-                  <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                  <span>Scoring your answers…</span>
-                </>
-              ) : (
-                <>
-                  <span>Submit quiz</span>
-                  <ArrowRight className="h-4 w-4 shrink-0 stroke-[2.5]" />
-                </>
-              )}
-            </Button>
-          </CardContent>
-        </Card>
+                );
+              })}
+
+              <Button
+                onClick={submit}
+                disabled={submitting || items.length === 0}
+                type="button"
+                className="w-full h-11 rounded-xl font-bold text-xs tracking-wide shadow-md active:scale-[0.99] transition-transform select-none cursor-pointer gap-2 bg-primary text-primary-foreground hover:bg-primary/90 mt-2"
+              >
+                {submitting ? (
+                  <>
+                    <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
+                    <span>Scoring your quiz answers...</span>
+                  </>
+                ) : (
+                  <>
+                    <span>Submit Assessment</span>
+                    <ArrowRight className="h-4 w-4 shrink-0 stroke-[2.5]" />
+                  </>
+                )}
+              </Button>
+            </CardContent>
+          </Card>
         </>
       )}
     </div>
