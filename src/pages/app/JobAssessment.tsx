@@ -132,31 +132,34 @@ export default function JobAssessment() {
     void loadAssessment();
   }, [loadAssessment]);
 
-  const uploadAudioAnswer = React.useCallback(async (blob: Blob) => {
-    if (!assessmentRef.current || !talent) return;
-    setUploading(true);
-    const a = assessmentRef.current;
-    const targetIdx = currentIndexRef.current;
-    const questionId = a.questions[targetIdx].id;
-    const path = `${a.id}/${talent.id}_${questionId}_${Date.now()}.webm`;
+  const uploadAudioAnswer = React.useCallback(
+    async (blob: Blob) => {
+      if (!assessmentRef.current || !talent) return;
+      setUploading(true);
+      const a = assessmentRef.current;
+      const targetIdx = currentIndexRef.current;
+      const questionId = a.questions[targetIdx].id;
+      const path = `${a.id}/${talent.id}_${questionId}_${Date.now()}.webm`;
 
-    try {
-      const { path: storedPath } = await uploadAssessmentAudio(path, blob, {
-        contentType: "audio/webm",
-        upsert: true,
-      });
+      try {
+        const { path: storedPath } = await uploadAssessmentAudio(path, blob, {
+          contentType: "audio/webm",
+          upsert: true,
+        });
 
-      const updated = { ...answersRef.current, [questionId]: { type: "voice", storagePath: storedPath } };
-      setAnswers(updated);
-      await updateJobAssessment(a.id, { answers: updated });
-      toast.success("Voice answer saved.");
-    } catch (e) {
-      console.error(e);
-      toast.error("Couldn't upload your voice answer. Please try again.");
-    } finaly {
-      setUploading(false);
-    }
-  }, [talent]);
+        const updated = { ...answersRef.current, [questionId]: { type: "voice", storagePath: storedPath } };
+        setAnswers(updated);
+        await updateJobAssessment(a.id, { answers: updated });
+        toast.success("Voice answer saved.");
+      } catch (e) {
+        console.error(e);
+        toast.error("Couldn't upload your voice answer. Please try again.");
+      } finally {
+        setUploading(false);
+      }
+    },
+    [talent],
+  );
 
   const stopRecording = React.useCallback(() => {
     if (mediaRecorderRef.current && mediaRecorderRef.current.state !== "inactive") {
@@ -190,7 +193,7 @@ export default function JobAssessment() {
       recorder.start();
       setRecording(true);
       setRecordSeconds(0);
-      
+
       timerRef.current = setInterval(() => {
         setRecordSeconds((prev) => {
           if (prev >= 120) {
@@ -221,7 +224,7 @@ export default function JobAssessment() {
     } catch (e) {
       console.error(e);
       toast.error("Couldn't submit your assessment. Please try again.");
-    } finaly {
+    } finally {
       setSubmitting(false);
     }
   };
