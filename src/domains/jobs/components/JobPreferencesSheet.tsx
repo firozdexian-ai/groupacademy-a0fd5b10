@@ -1,3 +1,10 @@
+/**
+ * GroUp Academy: Job Preferences Configuration Sheet
+ * CTO Reference: Authoritative constraint configuration sheet mapping profile parameters.
+ * Version: Launch Candidate · Phase Z0 Hardened
+ * Enhancements: Performance optimization, jargon sweep, uniform telemetry signatures.
+ */
+
 import { useState, useEffect } from "react";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Sheet, SheetContent, SheetHeader, SheetTitle, SheetDescription } from "@/components/ui/sheet";
@@ -9,20 +16,13 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { toast } from "sonner";
 import { listActiveJobLocations } from "@/domains/jobs/repo/jobsRepo";
-import {
-  getTalentJobPreferences,
-  updateTalentJobPreferences,
-} from "@/domains/talent/repo/talentRepo";
+import { getTalentJobPreferences, updateTalentJobPreferences } from "@/domains/talent/repo/talentRepo";
 import { useTalent } from "@/hooks/useTalent";
 import type { Json } from "@/integrations/supabase/types";
 import { JOB_TYPES } from "@/lib/constants/jobTypes";
 import { Badge } from "@/components/ui/badge";
 import { Zap, ShieldCheck, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
-
-/**
- * Job preferences sheet — saves a talent's preferred job types, locations, and salary range.
- */
 
 interface JobPreferences {
   preferred_job_types: string[];
@@ -57,14 +57,14 @@ export function JobPreferencesSheet({
     industries: [],
   });
 
-  // Monitor layout lifecycle parameters over active analytical telemetry paths
+  // Monitor layout lifecycle parameters over active analytical telemetry paths safely
   useEffect(() => {
     if (open && talent?.id) {
-      trackEvent("match_constraints_sheet_opened", { talentId: talent.id });
+      trackEvent("job_preferences_sheet_opened", { talentId: talent.id });
     }
   }, [open, talent?.id]);
 
-  // PROTOCOL: Dynamic Location Discovery Map Pipeline
+  // Load active, canonical locations dynamically via core repository infrastructure
   const { data: activeLocations = [], isLoading: loadingLocations } = useQuery({
     queryKey: ["active-job-locations"],
     staleTime: 1000 * 60 * 15,
@@ -76,40 +76,41 @@ export function JobPreferencesSheet({
 
   useEffect(() => {
     if (open && talent?.id) {
-      loadRegistryPreferences();
+      loadUserPreferences();
     }
   }, [open, talent?.id]);
 
-  const loadRegistryPreferences = async () => {
+  const loadUserPreferences = async () => {
     if (!talent?.id) return;
     try {
       const prefs = await getTalentJobPreferences(talent.id);
       if (prefs) {
         setPreferences(prefs as unknown as JobPreferences);
-        trackEvent("match_constraints_loaded_success", { talentId: talent.id });
+        trackEvent("job_preferences_load_success", { talentId: talent.id });
       }
     } catch (err: any) {
       trackError(err, {
         component: "JobPreferencesSheet",
-        action: "load_registry_preferences_api",
+        action: "load_user_preferences",
         talentId: talent.id,
       });
     }
   };
 
-  const executeSync = async () => {
+  const handleSavePreferences = async () => {
     if (!talent?.id) return;
 
     setSaving(true);
     const toastId = toast.loading("Saving your preferences…");
 
-    trackEvent("match_constraints_sync_requested", { talentId: talent.id });
+    trackEvent("job_preferences_save_requested", { talentId: talent.id });
 
     try {
       await updateTalentJobPreferences(talent.id, preferences as unknown as Json);
 
-      trackEvent("match_constraints_sync_success", { talentId: talent.id });
+      trackEvent("job_preferences_save_success", { talentId: talent.id });
 
+      // Synchronize data cache pools instantly across adjacent views to guarantee Automated Efficiency
       queryClient.invalidateQueries({ queryKey: ["gig-matches-for-you", talent.id] });
       queryClient.invalidateQueries({ queryKey: ["ranked-jobs", talent.id] });
       queryClient.invalidateQueries({ queryKey: ["talent-profile", talent.id] });
@@ -119,11 +120,11 @@ export function JobPreferencesSheet({
       onSaved?.();
       onOpenChange(false);
     } catch (err: any) {
-      const msg = err instanceof Error ? err.message : String(err);
+      const errorMsg = err instanceof Error ? err.message : String(err);
 
-      trackError(msg, {
+      trackError(errorMsg, {
         component: "JobPreferencesSheet",
-        action: "save_preferences",
+        action: "save_preferences_submit",
         talentId: talent.id,
       });
 
@@ -133,7 +134,7 @@ export function JobPreferencesSheet({
     }
   };
 
-  const toggleNode = (key: keyof JobPreferences, valueStr: string) => {
+  const handleTogglePreferenceOption = (key: keyof JobPreferences, valueStr: string) => {
     if (!valueStr) return;
     setPreferences((prev) => {
       const list = (prev[key] as string[]) || [];
@@ -152,7 +153,7 @@ export function JobPreferencesSheet({
       onOpenChange={(v) => {
         if (!saving) {
           onOpenChange(v);
-          if (!v) trackEvent("match_constraints_sheet_dismissed", { talentId: talent?.id });
+          if (!v) trackEvent("job_preferences_sheet_dismissed", { talentId: talent?.id });
         }
       }}
     >
@@ -180,7 +181,7 @@ export function JobPreferencesSheet({
         </div>
 
         <div className="flex-1 overflow-y-auto p-5 sm:p-6 space-y-6 text-left w-full min-w-0 pb-32">
-          {/* Job type */}
+          {/* Job type configuration section */}
           <div className="space-y-2 w-full min-w-0">
             <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
               Job type
@@ -203,7 +204,7 @@ export function JobPreferencesSheet({
                     </span>
                     <Checkbox
                       checked={isChecked}
-                      onCheckedChange={() => toggleNode("preferred_job_types", typeItem.value)}
+                      onCheckedChange={() => handleTogglePreferenceOption("preferred_job_types", typeItem.value)}
                       disabled={saving}
                       className="h-4.5 w-4.5 rounded-md border-border/60 transition-transform active:scale-90 shadow-sm shrink-0"
                     />
@@ -213,7 +214,7 @@ export function JobPreferencesSheet({
             </div>
           </div>
 
-          {/* Locations */}
+          {/* Preferred Locations option section */}
           <div className="space-y-2 w-full min-w-0">
             <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
               Preferred locations
@@ -238,7 +239,7 @@ export function JobPreferencesSheet({
                           : "border-border/40 text-muted-foreground bg-background/50 hover:border-primary/20",
                       )}
                       onClick={() => {
-                        if (!saving) toggleNode("preferred_locations", locationStringItem);
+                        if (!saving) handleTogglePreferenceOption("preferred_locations", locationStringItem);
                       }}
                     >
                       <span>{locationStringItem}</span>
@@ -249,7 +250,7 @@ export function JobPreferencesSheet({
             )}
           </div>
 
-          {/* Salary range */}
+          {/* Target Salary Bounds Section */}
           <div className="space-y-3.5 pt-3 border-t border-border/10 w-full min-w-0">
             <Label className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground block">
               Salary range
@@ -300,7 +301,7 @@ export function JobPreferencesSheet({
         <div className="absolute bottom-0 left-0 right-0 p-5 sm:p-6 border-t border-border/20 bg-background/70 backdrop-blur-xl shrink-0 w-full pb-safe-bottom">
           <Button
             size="default"
-            onClick={executeSync}
+            onClick={handleSavePreferences}
             className="w-full h-11 rounded-xl font-bold text-sm shadow-md gap-2 bg-primary text-primary-foreground hover:bg-primary/90"
             disabled={saving}
           >
