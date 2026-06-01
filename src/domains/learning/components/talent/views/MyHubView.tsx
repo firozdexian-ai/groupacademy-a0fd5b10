@@ -1,13 +1,14 @@
 /**
  * GroUp Academy: Personal Learning & Progress Cockpit (AppMyLearning)
- * CTO Reference: Corrected import paths and hardened structural layout.
- * Version: Launch Candidate · Phase Z0 Hardened · Build Fix Patch
+ * CTO Reference: Standardized domain-pathing imports to resolve build-time resolution drift.
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
+import * as React from "react";
 import { useNavigate } from "react-router-dom";
 import { BookOpen, ArrowLeft, Target, GraduationCap } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
-// Domain-driven imports verified for Z0 Contract Stability
+// Hardened explicit pathing to resolve build resolution drift
 import { MyCoursesTab } from "@/domains/learning/components/talent/MyCoursesTab";
 import { UpcomingSessionsRail } from "@/domains/learning/components/talent/UpcomingSessionsRail";
 import { cn } from "@/lib/utils";
