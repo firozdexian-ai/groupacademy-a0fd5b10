@@ -11,7 +11,7 @@ import { Label } from "@/components/ui/label";
 import { Tabs, TabsList, TabsTrigger, TabsContent } from "@/components/ui/tabs";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { trackError, trackEvent } from "@/lib/errorTracking";
-import { AlertTriangle, Sparkles, Check, Languages, ArrowLeft, Loader2, Trophy } from "lucide-react";
+import { AlertTriangle, Sparkles, Check, Languages, ArrowLeft, Loader2, Trophy, RefreshCw } from "lucide-react";
 import { toast } from "sonner";
 import { useItemRewrite, type QuizSuggestion, type ScenarioSuggestion } from "@/domains/learning";
 import { useItemTranslate, SUPPORTED_TRANSLATION_LANGS } from "@/domains/learning";
