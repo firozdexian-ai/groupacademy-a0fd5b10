@@ -1,11 +1,24 @@
 /**
  * Jobs Section Browse Layout Core — Phase INST-Z2 Hardened
  * CTO Version: June 2026
- * Fixes: Horizontal clipping bounds, native scrollbar injection, alignment consistency
+ * Fixes: Mobile horizontal slider compression, layout inconsistencies, dynamic taxonomy grids
  * Rules: Retains all structural fields, action mutations, and navigation hooks natively.
  */
 import { useNavigate } from "react-router-dom";
-import { Sparkles, TrendingUp, Briefcase, ArrowRight, ChevronLeft, ChevronRight } from "lucide-react";
+import {
+  Sparkles,
+  TrendingUp,
+  Briefcase,
+  ArrowRight,
+  ChevronLeft,
+  ChevronRight,
+  Clock,
+  BriefcaseIcon,
+  Globe,
+  Award,
+  ChevronDown,
+  ChevronUp,
+} from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { useSavedItems } from "@/hooks/useSavedItems";
@@ -13,7 +26,7 @@ import { JobCard, type JobCardData } from "@/domains/jobs/components/JobCard";
 import { InfiniteJobsList } from "@/domains/jobs/components/InfiniteJobsList";
 import { ProfileCompletenessGate } from "@/domains/jobs/components/ProfileCompletenessGate";
 import { getJobTypeLabel } from "@/lib/constants/jobTypes";
-import { useRef } from "react";
+import { useRef, useState, useMemo } from "react";
 
 interface Props {
   dashboard?: {
@@ -24,7 +37,16 @@ interface Props {
   talent?: any;
 }
 
-function HorizontalStrip({
+// Maps static contextual icons cleanly to job type slugs
+const JOB_TYPE_ICONS: Record<string, React.ComponentType<any>> = {
+  full_time: Clock,
+  remote: Globe,
+  internship: GraduationCap,
+  contract: Award,
+  part_time: BriefcaseIcon,
+};
+
+function ResponsiveJobStrip({
   title,
   icon: Icon,
   jobs,
@@ -76,7 +98,8 @@ function HorizontalStrip({
           <Icon className="h-4 w-4 text-primary" />
           <h2 className="text-sm font-semibold tracking-tight text-foreground">{title}</h2>
         </div>
-        {/* Desktop Carousel Indicators for Premium 2024 SaaS Feel */}
+
+        {/* Desktop Slider Indicators — Hidden on Mobile viewports */}
         <div className="hidden md:flex items-center gap-1.5 opacity-0 group-hover:opacity-100 transition-opacity duration-300">
           <Button
             variant="outline"
@@ -99,40 +122,52 @@ function HorizontalStrip({
         </div>
       </div>
 
-      {/* Styled Slider Container with Scrollbar Contamination Suppressed */}
-      <div className="relative w-full overflow-hidden rounded-xl">
-        <div
-          ref={scrollContainerRef}
-          className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scroll-smooth"
-          style={{
-            scrollbarWidth: "none",
-            msOverflowStyle: "none",
-            WebkitOverflowScrolling: "touch",
-          }}
-        >
-          {/* Custom style injection for WebKit engines within local component scope */}
-          <style>{`
-            div::-webkit-scrollbar {
-              display: none !important;
-            }
-          `}</style>
-          {jobs.slice(0, 6).map((job) => (
-            <div key={job.id} className="snap-start shrink-0 w-[290px] first:pl-0 last:pr-0">
-              <div className="transition-transform duration-200 hover:scale-[1.01] h-full">
-                <JobCard
-                  job={job}
-                  variant="compact"
-                  isSaved={!!isSaved(job.id, "job")}
-                  onSaveToggle={() => onSaveToggle(job.id)}
-                  onClick={() => onJobClick(job.id)}
-                />
+      {/* Responsive Shell Transformation Layout Boundary */}
+      <div className="w-full">
+        {/* Desktop Display Format: Optimized Carousel layout configuration */}
+        <div className="hidden md:block relative w-full overflow-hidden rounded-xl">
+          <div
+            ref={scrollContainerRef}
+            className="flex gap-4 overflow-x-auto snap-x snap-mandatory pb-4 scroll-smooth"
+            style={{
+              scrollbarWidth: "none",
+              msOverflowStyle: "none",
+              WebkitOverflowScrolling: "touch",
+            }}
+          >
+            <style>{`
+              div::-webkit-scrollbar { display: none !important; }
+            `}</style>
+            {jobs.slice(0, 6).map((job) => (
+              <div key={job.id} className="snap-start shrink-0 w-[290px]">
+                <div className="transition-transform duration-200 hover:scale-[1.01] h-full">
+                  <JobCard
+                    job={job}
+                    variant="compact"
+                    isSaved={!!isSaved(job.id, "job")}
+                    onSaveToggle={() => onSaveToggle(job.id)}
+                    onClick={() => onJobClick(job.id)}
+                  />
+                </div>
               </div>
-            </div>
-          ))}
+            ))}
+          </div>
+          <div className="absolute top-0 right-0 bottom-4 w-12 bg-gradient-to-l from-background/40 to-transparent pointer-events-none" />
         </div>
 
-        {/* Subtle right fade vector to signify further swipable elements implicitly */}
-        <div className="absolute top-0 right-0 bottom-4 w-12 bg-gradient-to-l from-background/40 to-transparent pointer-events-none hidden md:block" />
+        {/* Mobile Viewport Layout Transformation Format: Full-Density Vertical Stack */}
+        <div className="block md:hidden space-y-3">
+          {jobs.slice(0, 3).map((job) => (
+            <JobCard
+              key={job.id}
+              job={job}
+              variant="default" // Upgraded to default layout format to show metadata, locations, and match score metrics clearly
+              isSaved={!!isSaved(job.id, "job")}
+              onSaveToggle={() => onSaveToggle(job.id)}
+              onClick={() => onJobClick(job.id)}
+            />
+          ))}
+        </div>
       </div>
     </section>
   );
@@ -141,6 +176,7 @@ function HorizontalStrip({
 export function BrowseView({ dashboard, talent }: Props) {
   const navigate = useNavigate();
   const { isSaved, toggleSave } = useSavedItems();
+  const [showAllTypes, setShowAllTypes] = useState(false);
 
   const trending = dashboard?.trending ?? [];
   const inField = dashboard?.in_field ?? [];
@@ -149,11 +185,21 @@ export function BrowseView({ dashboard, talent }: Props) {
   const onSaveToggle = (id: string) => toggleSave(id, "job");
   const onJobClick = (id: string) => navigate(`/app/jobs/${id}`);
 
-  // Unauthenticated fallback view matrix layout configuration
+  // Sort and process category options cleanly
+  const allTypeChips = useMemo(() => {
+    return Object.entries(typeCounts)
+      .filter(([, count]) => count > 0)
+      .sort((a, b) => b[1] - a[1]);
+  }, [typeCounts]);
+
+  const visibleTypeChips = showAllTypes ? allTypeChips : allTypeChips.slice(0, 4);
+  const hasHiddenTypes = allTypeChips.length > 4;
+
+  // Unauthenticated fallback layout template configuration
   if (!talent?.id) {
     return (
       <div className="space-y-8 max-w-full overflow-hidden px-1">
-        <HorizontalStrip
+        <ResponsiveJobStrip
           title="Trending now"
           icon={TrendingUp}
           jobs={trending}
@@ -181,18 +227,13 @@ export function BrowseView({ dashboard, talent }: Props) {
     );
   }
 
-  const typeChips = Object.entries(typeCounts)
-    .filter(([, count]) => count > 0)
-    .sort((a, b) => b[1] - a[1])
-    .slice(0, 6);
-
   return (
     <div className="space-y-8 max-w-full overflow-hidden px-1">
-      {/* Profile completeness badge system (self-hides at >=60%) */}
+      {/* Profile completeness banner setup (self-hides at >=60%) */}
       <ProfileCompletenessGate talent={talent} />
 
-      {/* Trending Section Row */}
-      <HorizontalStrip
+      {/* Trending Block Container Layout */}
+      <ResponsiveJobStrip
         title="Trending now"
         icon={TrendingUp}
         jobs={trending}
@@ -201,8 +242,8 @@ export function BrowseView({ dashboard, talent }: Props) {
         onJobClick={onJobClick}
       />
 
-      {/* In your field Section Row */}
-      <HorizontalStrip
+      {/* In your field Block Container Layout */}
+      <ResponsiveJobStrip
         title="In your field"
         icon={Briefcase}
         jobs={inField}
@@ -212,28 +253,53 @@ export function BrowseView({ dashboard, talent }: Props) {
         onJobClick={onJobClick}
       />
 
-      {/* Type-count chip parameters section grid */}
-      {typeChips.length > 0 && (
-        <section className="space-y-3 bg-muted/10 p-5 rounded-2xl border border-border/40">
-          <h2 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Browse by type</h2>
-          <div className="flex flex-wrap gap-2.5">
-            {typeChips.map(([type, count]) => (
-              <Badge
-                key={type}
-                variant="secondary"
-                className="cursor-pointer hover:bg-secondary/80 px-3.5 py-2 text-xs rounded-xl font-medium border border-border/40 transition-colors shadow-sm"
-                onClick={() => navigate(`/app/jobs/all?type=${encodeURIComponent(type)}`)}
+      {/* Refactored "Browse by type" Taxonomy section: Structured grid layer with conditional unroll switches */}
+      {allTypeChips.length > 0 && (
+        <section className="space-y-3 bg-muted/10 p-5 rounded-2xl border border-border/40 text-left w-full min-w-0">
+          <div className="flex items-center justify-between border-b border-border/5 pb-1.5">
+            <h2 className="text-xs font-bold tracking-wider text-muted-foreground uppercase">Browse by type</h2>
+            {hasHiddenTypes && (
+              <button
+                type="button"
+                onClick={() => setShowAllTypes(!showAllTypes)}
+                className="text-[11px] font-bold text-primary hover:underline flex items-center gap-1 focus:outline-none"
               >
-                {getJobTypeLabel(type) || type}
-                <span className="ml-1.5 font-mono text-muted-foreground text-[11px]">({count})</span>
-              </Badge>
-            ))}
+                <span>{showAllTypes ? "Show less" : "View more"}</span>
+                {showAllTypes ? <ChevronUp className="h-3 w-3" /> : <ChevronDown className="h-3 w-3" />}
+              </button>
+            )}
+          </div>
+
+          <div className="grid grid-cols-2 gap-2.5 pt-0.5">
+            {visibleTypeChips.map(([type, count]) => {
+              const TypeIcon = JOB_TYPE_ICONS[type] || BriefcaseIcon;
+              return (
+                <button
+                  key={type}
+                  type="button"
+                  onClick={() => navigate(`/app/jobs/all?type=${encodeURIComponent(type)}`)}
+                  className="flex items-center gap-2.5 p-3 rounded-xl border border-border/40 bg-card hover:bg-muted/50 transition-all text-left shadow-sm active:scale-[0.99] group w-full min-w-0"
+                >
+                  <div className="h-7 w-7 rounded-lg bg-primary/5 flex items-center justify-center shrink-0 border border-primary/5 text-primary/70 group-hover:text-primary group-hover:bg-primary/10 transition-colors">
+                    <TypeIcon className="h-3.5 w-3.5 stroke-[2.2]" />
+                  </div>
+                  <div className="min-w-0 flex-1 leading-tight">
+                    <p className="text-[11px] font-bold text-foreground/90 uppercase tracking-tight truncate">
+                      {getJobTypeLabel(type) || type.replace(/_/g, " ")}
+                    </p>
+                    <p className="font-mono text-[10px] font-semibold text-muted-foreground mt-0.5">
+                      {count.toLocaleString()} roles
+                    </p>
+                  </div>
+                </button>
+              );
+            })}
           </div>
         </section>
       )}
 
-      {/* Recommended for you infinite framework section mapping */}
-      <section className="space-y-4 pt-2">
+      {/* Recommended for you infinite scrolling layout framework container mapping */}
+      <section className="space-y-4 pt-1">
         <div className="flex items-center justify-between border-b border-border/10 pb-2">
           <div className="flex items-center gap-2">
             <Sparkles className="h-4 w-4 text-primary" />
