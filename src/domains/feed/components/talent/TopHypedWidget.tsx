@@ -16,12 +16,11 @@ interface TopPost {
 }
 
 /**
- * Premium, performance-hardened Weekly Trending Content Widget.
- * Leverages structured TanStack Query state caching to join analytics view aggregates
- * dynamically without over-fetching raw data profiles over mobile PWA channels.
+ * Trending Content Widget.
+ * Displays the top performing community posts of the week based on cumulative hype interactions.
  */
 export function TopHypedWidget() {
-  // 1. Unified Server-State Sync Layer (staleTime 5 min configuration)
+  // Fetch weekly trending post updates with a structured cache lifetime layer
   const {
     data: posts = [],
     isLoading,
@@ -33,7 +32,7 @@ export function TopHypedWidget() {
     queryFn: async () => (await listTopHypedPostsWeek(5)) as TopPost[],
   });
 
-  // 2. Instrument Lifecycle Observability & Exception Metrics Tracking
+  // Log query tracking exceptions securely in the background
   useEffect(() => {
     if (error) {
       trackError(error instanceof Error ? error : String(error), {
@@ -43,6 +42,7 @@ export function TopHypedWidget() {
     }
   }, [error]);
 
+  // Record visibility metrics for engagement performance analysis
   useEffect(() => {
     if (posts.length > 0) {
       trackEvent("top_hyped_widget_viewed", {
@@ -70,7 +70,7 @@ export function TopHypedWidget() {
 
   return (
     <Card className="p-4 border border-border/40 bg-card/60 backdrop-blur-md shadow-sm transition-all duration-300 relative overflow-hidden select-none">
-      {/* Immersive Section Header */}
+      {/* Title Header */}
       <h3 className="text-xs font-bold flex items-center gap-2 mb-3.5 text-foreground/90 uppercase tracking-wider">
         <Flame className="h-4 w-4 text-orange-500 fill-orange-500/10 drop-shadow-[0_1px_4px_rgba(249,115,22,0.2)]" />
         <span>Trending This Week</span>
@@ -91,10 +91,12 @@ export function TopHypedWidget() {
                 onClick={() => trackEvent("top_hyped_item_click", { postId: postItem.post_id })}
                 className="block hover:bg-muted/40 rounded-xl p-2.5 -mx-1.5 transition-all duration-200 outline-none group focus-visible:ring-1 focus-visible:ring-ring"
               >
+                {/* Truncated post preview snippet */}
                 <div className="text-xs sm:text-sm font-medium text-foreground/90 line-clamp-2 leading-snug tracking-tight text-left select-text selection:bg-primary/20 break-words">
-                  {postItem.preview || "(Media interaction asset update)"}
+                  {postItem.preview || "(Media update)"}
                 </div>
 
+                {/* Author profile name and score badge metadata row */}
                 <div className="text-[11px] font-bold text-muted-foreground/80 mt-2 flex items-center justify-between gap-2 w-full select-none">
                   <span className="truncate max-w-[70%] text-left text-ellipsis tracking-tight">
                     {postItem.author_name}

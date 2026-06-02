@@ -3,12 +3,6 @@ import { cn } from "@/lib/utils";
 import { Zap } from "lucide-react";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 
-/**
- * GroUp Academy: Skill Artifact Node (SkillTagBadge)
- * CTO Reference: High-fidelity visualization for registered technical skill sets.
- * Version: Launch Candidate · Phase Z0 Hardened
- */
-
 interface SkillTagBadgeProps {
   skills: string[];
   maxVisible?: number;
@@ -19,12 +13,17 @@ interface SkillTagBadgeProps {
   };
 }
 
+/**
+ * Component to render a clean row of skill badges.
+ * Automatically slices arrays exceeding visibility thresholds and provides an overflow badge.
+ */
 export function SkillTagBadge({ skills = [], maxVisible = 3, className, contextData }: SkillTagBadgeProps) {
-  // Trace incoming payload sizes defensively to safeguard browser rendering threads
+  
+  // Guard against excessive array lengths and log visibility metrics
   useEffect(() => {
     if (skills && Array.isArray(skills)) {
       if (skills.length > 25) {
-        trackError(`Abnormally large skill array density detected inside UI artifact container: [${skills.length}]`, {
+        trackError(`Abnormally large skill array density detected inside UI container: [${skills.length}]`, {
           component: "SkillTagBadge",
           action: "payload_density_check",
           arrayLength: skills.length,
@@ -40,7 +39,6 @@ export function SkillTagBadge({ skills = [], maxVisible = 3, className, contextD
     }
   }, [skills, maxVisible, contextData]);
 
-  // PROTOCOL: Structural Data Guard Fallback
   if (!skills || !Array.isArray(skills) || skills.length === 0) return null;
 
   const visibleSkills = skills.slice(0, maxVisible);
@@ -74,7 +72,7 @@ export function SkillTagBadge({ skills = [], maxVisible = 3, className, contextD
         );
       })}
 
-      {/* Remaining Count Hidden Indicator Pill */}
+      {/* Overflow item count badge */}
       {remaining > 0 && (
         <span
           className={cn(
