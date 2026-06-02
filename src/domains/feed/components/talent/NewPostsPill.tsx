@@ -10,9 +10,8 @@ interface NewPostsPillProps {
 }
 
 /**
- * Premium, safe-area-aware realtime notification pill for feed updates.
- * Built according to GroUp Academy Phase Z0 highly professional SAAS UI specifications
- * and Digital Workforce automated telemetry monitoring protocols.
+ * Real-time notification pill for new feed posts.
+ * Positions safely below device notches and handles real-time cache updates on click.
  */
 export function NewPostsPill({ onTap }: NewPostsPillProps) {
   const { talent } = useTalent();
@@ -20,7 +19,6 @@ export function NewPostsPill({ onTap }: NewPostsPillProps) {
   const mountedAt = useRef<string>(new Date().toISOString());
 
   useEffect(() => {
-    // Standardize naming filters to prevent collision or dead event leak loops
     const channel = supabase
       .channel("feed_posts_realtime_pill")
       .on("postgres_changes", { event: "INSERT", schema: "public", table: "feed_posts" }, (payload) => {
@@ -28,13 +26,13 @@ export function NewPostsPill({ onTap }: NewPostsPillProps) {
           const row = payload.new as any;
           if (!row) return;
 
-          // 1. Bug Fix: Map the correct database schema identifier (talent_id instead of author_user_id)
+          // Do not show the notification pill if the post was authored by the current user
           if (talent?.id && row.talent_id === talent.id) return;
 
-          // Filter inactive drafts from popping on other user viewports
+          // Ignore updates for drafts or unreleased elements
           if (row.status && row.status !== "published") return;
 
-          // Guard against racing mutations rendering historic timelines
+          // Prevent race conditions from displaying historical data indexes
           if (row.created_at && row.created_at < mountedAt.current) return;
 
           setCount((prevCount) => {
@@ -76,13 +74,13 @@ export function NewPostsPill({ onTap }: NewPostsPillProps) {
     });
 
     try {
-      // Trigger the parent collection layout refresh hook
+      // Execute refresh update callback
       await onTap();
 
       setCount(0);
       mountedAt.current = new Date().toISOString();
 
-      // Execute smooth viewport resets over our mobile vertical container constraints
+      // Reset scroll position gracefully to let users view the latest post entries
       window.scrollTo({ top: 0, behavior: "smooth" });
     } catch (err) {
       trackError(err instanceof Error ? err : String(err), {
