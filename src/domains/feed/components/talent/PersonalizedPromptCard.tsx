@@ -25,9 +25,9 @@ interface Prompt {
 }
 
 /**
- * Premium, performance-optimized Personalized Prompt Card Engine.
- * Built according to GroUp Academy Phase Z0 highly professional SAAS UI specifications,
- * ensuring strict credit ledger alignment and realtime cache cohesion across viewports.
+ * Personalized Prompt Engine.
+ * Dynamically renders recommended actions for talent based on account completeness,
+ * career status, and verified skill profiles.
  */
 export function PersonalizedPromptCard() {
   const navigate = useNavigate();
@@ -36,10 +36,10 @@ export function PersonalizedPromptCard() {
   const { balance, deductCredits } = useCredits();
   const [loading, setLoading] = useState<string | null>(null);
 
-  // Monitor recommended prompt impressions for analytics evaluation pipelines
+  // Log automated evaluations for recommendation tracking loops
   useEffect(() => {
     if (talent?.id) {
-      trackEvent("PersonalizedPromptCard:prompts_evaluated", {
+      trackEvent("prompts_evaluated", {
         talentId: talent.id,
         currentBalance: balance,
         hasCv: !!talent.cvUrl,
@@ -52,7 +52,7 @@ export function PersonalizedPromptCard() {
     const prompts: Prompt[] = [];
     const servicesUsed = talent?.servicesUsed || [];
 
-    // 1. Core Onboarding Flow: CV Upload Verification Trigger
+    // Onboarding prompt: Triggered if no parsed CV is on file
     if (!talent?.cvUrl) {
       prompts.push({
         type: "cv",
@@ -65,7 +65,7 @@ export function PersonalizedPromptCard() {
       });
     }
 
-    // 2. Career Readiness Assessment: 50 Credits Gated Pipeline
+    // Assessment prompt: Triggered once CV is on file but gap tracking is incomplete
     const hasAssessment = servicesUsed.includes("career_assessment");
     if (talent?.cvUrl && !hasAssessment) {
       prompts.push({
@@ -76,11 +76,11 @@ export function PersonalizedPromptCard() {
         action: "Start",
         path: "/app/services/assessment",
         priority: 2,
-        cost: 50, // Standard Phase Z0 Ledger Cost Definition
+        cost: 50,
       });
     }
 
-    // 3. Pro Professional Portfolio Website Service: 100 Credits Gated Matrix
+    // Branding prompt: Unlocked dynamically if credit milestones allow
     const hasPortfolio = servicesUsed.includes("portfolio_request");
     if (!hasPortfolio && balance >= 100) {
       prompts.push({
@@ -91,11 +91,11 @@ export function PersonalizedPromptCard() {
         action: "Create",
         path: "/app/services/portfolio",
         priority: 3,
-        cost: 100, // Fixed cost token alignment mapping
+        cost: 100,
       });
     }
 
-    // 4. Recruitment Pipeline: Dynamic Match Sourcing Row
+    // Matching prompt: Active matching row targeting job-seeking talent
     if (talent?.currentStatus?.includes("job_seeking")) {
       prompts.push({
         type: "jobs",
@@ -118,7 +118,7 @@ export function PersonalizedPromptCard() {
       talentId: talent?.id,
     });
 
-    // Check transaction conditions for credit-gated ecosystem endpoints
+    // Enforce transaction conditions for gated features
     if (prompt.cost) {
       if (balance < prompt.cost) {
         toast.error(`Not enough credits — this needs ${prompt.cost} credits.`);
@@ -129,7 +129,6 @@ export function PersonalizedPromptCard() {
       const toastId = toast.loading(`Starting ${prompt.title}…`);
 
       try {
-        // Enforce upper-case billing mapping keys consistently across the transactional ledger
         const transactionServiceKey = prompt.type === "portfolio" ? "PORTFOLIO" : "CAREER_ASSESSMENT";
 
         const success = await deductCredits(
@@ -139,13 +138,13 @@ export function PersonalizedPromptCard() {
         );
 
         if (success) {
-          // Automated Efficiency: Invalidate target balance keys across system layouts dynamically
+          // Synchronize account balance across layout boundaries
           queryClient.invalidateQueries({ queryKey: ["credits-balance"] });
 
           toast.success(`${prompt.title} unlocked.`, { id: toastId });
           navigate(prompt.path);
         } else {
-          throw new Error("Ecosystem credits execution function declined the wallet mutation request.");
+          throw new Error("Transaction declined by credit validation handler.");
         }
       } catch (error: any) {
         const errorMessage = error instanceof Error ? error.message : String(error);
@@ -172,7 +171,7 @@ export function PersonalizedPromptCard() {
 
   return (
     <div className="space-y-3 animate-in fade-in duration-500 touch-manipulation select-none sm:select-text">
-      {/* Immersive Section Header */}
+      {/* Container Header */}
       <div className="flex items-center justify-between px-1">
         <div className="flex items-center gap-2">
           <Sparkles className="h-4 w-4 text-primary animate-pulse" />
@@ -183,7 +182,7 @@ export function PersonalizedPromptCard() {
         </Badge>
       </div>
 
-      {/* Grid Track Viewport Compilation */}
+      {/* Grid Stack List View */}
       <div className="space-y-3">
         {prompts.map((prompt) => (
           <Card
@@ -196,7 +195,7 @@ export function PersonalizedPromptCard() {
           >
             <CardContent className="p-4">
               <div className="flex items-start gap-3">
-                {/* Visual Accent Icon Wrapper Node */}
+                {/* Accent Icon Container */}
                 <div className="h-10 w-10 rounded-xl flex items-center justify-center shrink-0 bg-primary/10 text-primary border border-primary/20 shadow-inner transition-transform group-hover:scale-105 duration-200">
                   {prompt.icon}
                 </div>
@@ -207,11 +206,11 @@ export function PersonalizedPromptCard() {
                   </p>
                   <p className="text-xs text-muted-foreground leading-relaxed">{prompt.description}</p>
 
-                  {/* Operational Controls Footer Strip */}
+                  {/* Actions Toolbar Footer */}
                   <div className="flex items-center gap-2 mt-3.5 flex-wrap">
                     {prompt.cost && (
                       <div className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-lg bg-amber-500/10 border border-amber-500/20 text-amber-600 dark:text-amber-400 select-none shadow-sm animate-in slide-in-from-left-2 duration-200">
-                        <ShieldCheck className="h-3.5 w-3.5 stroke-[2.2]" />
+                        <div className="h-1.5 w-1.5 rounded-full bg-amber-500 animate-pulse" />
                         <span className="text-[10px] font-bold tabular-nums tracking-wide uppercase">
                           {prompt.cost} credits
                         </span>
@@ -227,7 +226,7 @@ export function PersonalizedPromptCard() {
                       disabled={loading === prompt.type}
                     >
                       {loading === prompt.type ? (
-                        <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
+                        <Loader2 className="h-3.5 w-3.5 animate-spin" />
                       ) : (
                         <>
                           <span>{prompt.action}</span>
