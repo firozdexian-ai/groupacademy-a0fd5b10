@@ -1,8 +1,8 @@
 /**
  * Group Academy — Agents Domain Export Engine (Barrel)
- * Version: Phase 10j.5 Hardened (Production Candidate)
- * Purpose: Single source of truth interface for all domain surfaces.
  */
+export { AGENT_REGISTRY, AGENT_BY_ID, getAgent, AgentChatScreen } from "./registry";
+export type { AgentScope, AgentRegistryEntry } from "./registry";
 
 // ─── STAGE 1: EDGE NETWORK LAYER WRAPPERS (API) ───────────────────────────
 export {
