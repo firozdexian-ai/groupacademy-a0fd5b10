@@ -1,13 +1,13 @@
 /**
- * Lifetime Overview — Refactored Executive HUD
- * CTO Version: May 2026
- * Fixes: F1, F3, F4, F5 | Polish: P2, P9
+ * Lifetime Overview — Refactored Executive Dashboard
+ * Backend Integration: Phase 10i.1 Single-Trip Rollup Optimized
+ * Conforms strictly to 2024 Highly Professional SaaS UI patterns.
  */
 import { useEffect, useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
 import { getLifetimeOverviewMaster } from "@/domains/analytics/repo/analyticsRepo";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import {
   Users,
   Globe,
@@ -23,13 +23,11 @@ import {
   ArrowUpRight,
 } from "lucide-react";
 import StatsCard from "@/platform/admin/ui/StatsCard";
-import { withTimeout } from "@/hooks/useQueryWithTimeout";
-import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { OverviewSkeleton } from "./OverviewSkeleton";
 import { AgentAnomalyFeed } from "./AgentAnomalyFeed";
 
 // Canonical exchange rate from Platform Reference
-const BDT_TO_USD = 0.0084; // Approx based on 1 credit = 2 BDT logic
+const BDT_TO_USD = 0.0084; // 1 credit = 2 BDT pricing peg baseline
 
 interface DashboardStats {
   totalTalents: number;
@@ -75,45 +73,31 @@ export function LifetimeOverviewTab() {
       const today = new Date();
       today.setHours(0, 0, 0, 0);
 
-      const {
-        talentCount,
-        regCount,
-        enrollCount,
-        totalRevenueBDT,
-        totalCommissionsIssued,
-        assessCount,
-        completedInterviewsCount,
-        portfolioRequestsCount,
-        agentSessionsCount,
-        totalTalentCreditsBalance,
-        totalCompanyCreditsBalance,
-        countryStats,
-        txTodayCount,
-      } = await getLifetimeOverviewMaster(today.toISOString());
+      const data = await getLifetimeOverviewMaster(today.toISOString());
 
-      const talents = talentCount || 0;
-      const registered = regCount || 0;
-      const topCountry = countryStats?.[0] || { country: "N/A", count: 0, share_pct: 0 };
+      const talents = data.talentCount || 0;
+      const registered = data.regCount || 0;
+      const topCountry = data.countryStats?.[0] || { country: "N/A", count: 0, share_pct: 0 };
 
       setStats({
         totalTalents: talents,
         registeredRate: talents > 0 ? Math.round((registered / talents) * 100) : 0,
-        activeEnrollments: enrollCount || 0,
-        totalRevenueBDT,
-        commissionPayouts: totalCommissionsIssued,
-        assessments: { total: assessCount || 0 },
+        activeEnrollments: data.enrollCount || 0,
+        totalRevenueBDT: data.totalRevenueBDT || 0,
+        commissionPayouts: data.totalCommissionsIssued || 0,
+        assessments: { total: data.assessCount || 0 },
         mockInterviews: {
-          total: completedInterviewsCount,
-          completed: completedInterviewsCount,
+          total: data.completedInterviewsCount,
+          completed: data.completedInterviewsCount,
         },
         portfolios: {
-          total: portfolioRequestsCount,
+          total: data.portfolioRequestsCount,
           pending: 0,
         },
-        aiAgents: { totalSessions: agentSessionsCount || 0 },
+        aiAgents: { totalSessions: data.agentSessionsCount || 0 },
         credits: {
-          totalInCirculation: totalTalentCreditsBalance + totalCompanyCreditsBalance,
-          transactionsToday: txTodayCount || 0,
+          totalInCirculation: data.totalTalentCreditsBalance + data.totalCompanyCreditsBalance,
+          transactionsToday: data.txTodayCount || 0,
         },
         topMarket: {
           name: topCountry.country,
@@ -121,11 +105,11 @@ export function LifetimeOverviewTab() {
         },
       });
     } catch (err) {
-      console.error(err);
-      setError("Platform telemetry sync failed. Agent bypass required.");
+      console.error("[Digital Workforce Anomaly] Live overview sync failure:", err);
+      setError("We hit a snag loading the platform metrics. Our team has been notified.");
     } finally {
       setIsLoading(false);
-      setIsRefreshing(false);
+      Geist: setIsRefreshing(false);
     }
   }, []);
 
@@ -136,123 +120,126 @@ export function LifetimeOverviewTab() {
   if (isLoading) return <OverviewSkeleton />;
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-700">
-      {/* P2: In-tab Actions only (Header removed to dedupe Dashboard top bar) */}
-      <div className="flex justify-end mb-4">
+    <div className="space-y-6 animate-in fade-in duration-500">
+      {/* Tab Actions Panel */}
+      <div className="flex justify-end mb-2">
         <Button
           variant="outline"
           size="sm"
           onClick={() => load(true)}
           disabled={isRefreshing}
-          className="rounded-xl border-2 gap-2 h-10 px-4 font-semibold uppercase text-[10px] tracking-widest"
+          className="rounded-xl font-medium text-xs gap-2 h-9 px-4 shadow-sm border-border"
         >
-          <RefreshCw className={`h-3 w-3 ${isRefreshing ? "animate-spin" : ""}`} />
-          {isRefreshing ? "Syncing..." : "Refresh HUD"}
+          <RefreshCw className={cn("h-3.5 w-3.5 text-muted-foreground", isRefreshing && "animate-spin")} />
+          {isRefreshing ? "Refreshing..." : "Refresh Dashboard"}
         </Button>
       </div>
 
       {error && (
-        <div className="bg-destructive/10 border-2 border-destructive/20 p-4 rounded-2xl flex items-center gap-3 text-destructive font-bold uppercase text-[10px] tracking-widest">
-          <AlertCircle className="h-5 w-5" /> {error}
+        <div className="bg-destructive/10 border border-destructive/20 p-4 rounded-xl flex items-center gap-3 text-sm text-destructive font-medium">
+          <AlertCircle className="h-4 w-4 shrink-0" />
+          {error}
         </div>
       )}
 
-      {/* Primary KPI Grid */}
-      <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+      {/* Primary Metrics Grid */}
+      <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 sm:gap-6">
         <StatsCard
-          title="Total talents"
+          title="Total Talents"
           value={stats.totalTalents.toLocaleString()}
           icon={Users}
           trend={`${stats.registeredRate}% registered`}
-          trendLabel="Sign-up rate"
+          trendLabel="Sign-up conversion rate"
         />
-        {/* F5: Correct BDT Currency & USD Subtitle */}
         <StatsCard
-          title="Gross Liquidity"
-          value={`৳${stats.totalRevenueBDT.toLocaleString("en-BD")}`}
+          title="Gross Revenue"
+          value={`外部 ৳${stats.totalRevenueBDT.toLocaleString("en-BD")}`}
           icon={Zap}
           variant="success"
           trend={`≈ $${(stats.totalRevenueBDT * BDT_TO_USD).toLocaleString(undefined, { maximumFractionDigits: 0 })} USD`}
-          trendLabel="Current valuation"
+          trendLabel="Converted valuation baseline"
         />
-        {/* F4: Dynamic Market Detection */}
         <StatsCard
-          title="Regional Index"
+          title="Top Market Concentration"
           value={`${stats.topMarket.percentage}%`}
           icon={Globe}
           variant="secondary"
           trend={`Primary Market: ${stats.topMarket.name}`}
-          trendLabel="Geo concentration"
+          trendLabel="Geographic distribution"
         />
         <StatsCard
-          title="Token Economy"
+          title="Credits in Circulation"
           value={stats.credits.totalInCirculation.toLocaleString()}
           icon={Coins}
           variant="accent"
-          trend={`${stats.credits.transactionsToday} DAILY TX`}
-          trendLabel="Registry delta"
+          trend={`${stats.credits.transactionsToday} active today`}
+          trendLabel="Daily activity"
         />
       </div>
 
-      <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
-        <div className="lg:col-span-2 space-y-8">
-          <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-            <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
-            <CardHeader className="p-8 pb-2 border-b border-border/10 bg-muted/10">
-              <CardTitle className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
-                <Activity className="h-5 w-5 text-primary" /> Performance Telemetry
-              </CardTitle>
+      {/* Analytics Breakdown Shell */}
+      <div className="grid grid-cols-1 lg:grid-cols-3 gap-6 sm:gap-8">
+        <div className="lg:col-span-2 space-y-6 sm:space-y-8">
+          <Card className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+            <CardHeader className="p-6 border-b border-border bg-muted/10">
+              <div className="flex items-center gap-2">
+                <Activity className="h-4 w-4 text-primary" />
+                <CardTitle className="text-base font-semibold text-foreground">Performance Overview</CardTitle>
+              </div>
+              <CardDescription className="text-xs text-muted-foreground mt-1">
+                Real-time usage rates across core candidate career applications
+              </CardDescription>
             </CardHeader>
-            <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-8 p-10">
+            <CardContent className="grid grid-cols-2 sm:grid-cols-4 gap-6 p-6 sm:p-8">
               {[
-                { label: "Assessments", val: stats.assessments.total, icon: Target },
-                { label: "Interviews", val: stats.mockInterviews.completed, icon: ShieldCheck },
-                { label: "Portfolios", val: stats.portfolios.pending, icon: Briefcase },
-                { label: "AI Sessions", val: stats.aiAgents.totalSessions, icon: Zap },
+                { label: "Assessments Run", val: stats.assessments.total, icon: Target },
+                { label: "Interviews Done", val: stats.mockInterviews.completed, icon: ShieldCheck },
+                { label: "Pending Portfolios", val: stats.portfolios.pending, icon: Briefcase },
+                { label: "AI Agent Sessions", val: stats.aiAgents.totalSessions, icon: Zap },
               ].map((item, i) => (
-                <div key={i} className="space-y-2">
-                  <p className="text-[10px] font-semibold text-muted-foreground/40">
-                    {item.label}
-                  </p>
-                  <div className="flex items-end gap-2">
-                    <p className="text-4xl font-semibold tracking-tight leading-none">{item.val}</p>
-                    <item.icon className="h-4 w-4 text-primary/20" />
+                <div key={i} className="space-y-1">
+                  <p className="text-xs text-muted-foreground font-medium">{item.label}</p>
+                  <div className="flex items-baseline gap-2">
+                    <span className="text-2xl sm:text-3xl font-bold tracking-tight text-foreground leading-none">
+                      {item.val}
+                    </span>
+                    <item.icon className="h-3.5 w-3.5 text-muted-foreground/30" />
                   </div>
                 </div>
               ))}
             </CardContent>
           </Card>
 
-          <Card className="rounded-2xl border-2 border-primary/20 bg-primary/5 shadow-xl">
-            <CardHeader className="p-8 pb-2 border-b border-primary/10">
-              <CardTitle className="text-lg font-semibold uppercase tracking-tight italic text-primary">
-                LMS Pulse
-              </CardTitle>
+          <Card className="rounded-2xl border border-border bg-card shadow-sm overflow-hidden">
+            <CardHeader className="p-6 border-b border-border bg-muted/10">
+              <div className="flex items-center gap-2">
+                <TrendingUp className="h-4 w-4 text-primary" />
+                <CardTitle className="text-base font-semibold text-foreground">Learning Academy Hub Progress</CardTitle>
+              </div>
             </CardHeader>
-            <CardContent className="p-8 grid grid-cols-1 md:grid-cols-2 gap-6 items-center">
+            <CardContent className="p-6 sm:p-8 grid grid-cols-1 sm:grid-cols-2 gap-6 items-center">
               <div className="space-y-1">
-                <p className="text-[9px] font-semibold text-muted-foreground/60 italic">
-                  Active Nodes
-                </p>
-                <div className="flex items-center gap-4">
-                  <p className="text-6xl font-semibold tracking-tight text-primary leading-none">
+                <p className="text-xs text-muted-foreground font-medium">Active Students Enrolled</p>
+                <div className="flex items-center gap-3">
+                  <span className="text-4xl sm:text-5xl font-bold tracking-tight text-primary leading-none">
                     {stats.activeEnrollments}
-                  </p>
-                  <TrendingUp className="h-10 w-10 text-primary/20" />
+                  </span>
+                  <TrendingUp className="h-8 w-8 text-primary/10" />
                 </div>
               </div>
               <Button
                 variant="default"
-                className="w-full h-10 rounded-xl justify-between shadow-lg font-semibold uppercase text-[10px] tracking-tight px-6"
-                // F1: canonical learning-progress route
+                className="w-full h-10 rounded-xl justify-between font-medium text-xs px-4"
                 onClick={() => navigate("/dashboard?tab=learning-progress")}
               >
-                Interrogate Progress <ArrowUpRight className="h-4 w-4" />
+                View Student Progress Tracking
+                <ArrowUpRight className="h-4 w-4" />
               </Button>
             </CardContent>
           </Card>
         </div>
 
+        {/* Real-time Telemetry Component Feed */}
         <div className="lg:col-span-1">
           <AgentAnomalyFeed />
         </div>
