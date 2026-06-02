@@ -4,7 +4,8 @@
  * The single sanctioned caller of `supabase.from(...)` for companies-owned
  * tables (companies, contacts, contact_outreach, company_agents,
  * company_agent_leads, ai_agents [admin views], talent_contact_unlocks,
- * followed_companies).
+ * followed_companies, company_members, company_post_drafts, company_leads,
+ * company_lead_activities, company_offerings, company_talent_shortlists).
  *
  * Rules:
  * - Named-export functions only; no React, no hooks here.
@@ -14,7 +15,37 @@
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeIlike } from "@/lib/supabaseQuery";
 
-// ---------- Companies ----------
+// ---------- Strong Operational Type Declarations ----------
+
+export interface CompanyRow {
+  id: string;
+  name: string;
+  slug: string;
+  tagline: string | null;
+  about: string | null;
+  logo_url: string | null;
+  banner_url: string | null;
+  website: string | null;
+  industry: string | null;
+  primary_email: string | null;
+  country: string | null;
+  profile_completion: number;
+  verification_tier: string;
+  goals: string[] | null;
+  created_at: string;
+}
+
+export interface ContactRow {
+  id: string;
+  company_id: string | null;
+  first_name: string | null;
+  last_name: string | null;
+  email: string | null;
+  phone: string | null;
+  title: string | null;
+  created_at: string;
+  company?: { name: string | null };
+}
 
 export interface ListCompaniesPagedParams {
   search?: string;
@@ -23,18 +54,45 @@ export interface ListCompaniesPagedParams {
   to: number;
 }
 
-export async function listCompaniesPaged(params: ListCompaniesPagedParams) {
+export interface ListContactsPagedParams {
+  from: number;
+  to: number;
+}
+
+export interface CompanyCreditTxnRow {
+  id: string;
+  amount: number;
+  balance_after: number;
+  transaction_type: string;
+  service_type: string | null;
+  description: string | null;
+  created_at: string;
+}
+
+export interface ContactUnlocksSummary {
+  total_unlocks: number;
+  total_credits: number;
+  last_7d: number;
+}
+
+// ---------- Companies Core Matrix ----------
+
+export async function listCompaniesPaged(params: ListCompaniesPagedParams): Promise<{ rows: CompanyRow[]; count: number }> {
   let query = supabase.from("companies").select("*", { count: "exact" }).order("name");
+  
   if (params.search) {
     const safe = sanitizeIlike(params.search);
     query = query.or(`name.ilike.%${safe}%,industry.ilike.%${safe}%,primary_email.ilike.%${safe}%`);
   }
+  
   if (params.industry && params.industry !== "all") {
     query = params.industry === "none" ? query.is("industry", null) : query.eq("industry", params.industry);
   }
+  
   const { data, error, count } = await query.range(params.from, params.to);
   if (error) throw error;
-  return { rows: (data ?? []) as any[], count: count ?? 0 };
+  
+  return { rows: (data ?? []) as CompanyRow[], count: count ?? 0 };
 }
 
 export async function listCompaniesNameSorted(): Promise<Array<{ id: string; name: string }>> {
@@ -43,18 +101,18 @@ export async function listCompaniesNameSorted(): Promise<Array<{ id: string; nam
   return (data ?? []) as Array<{ id: string; name: string }>;
 }
 
-export async function listCompaniesForAgentPicker(): Promise<any[]> {
+export async function listCompaniesForAgentPicker(): Promise<Array<{ id: string; name: string; logo_url: string | null; industry: string | null }>> {
   const { data, error } = await supabase.from("companies").select("id, name, logo_url, industry").order("name");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return (data ?? []) as Array<{ id: string; name: string; logo_url: string | null; industry: string | null }>;
 }
 
-export async function upsertCompany(payload: any): Promise<void> {
+export async function upsertCompany(payload: Partial<CompanyRow> & { name: string }): Promise<void> {
   const { error } = await supabase.from("companies").upsert(payload);
   if (error) throw error;
 }
 
-export async function insertCompany(payload: any): Promise<{ id: string }> {
+export async function insertCompany(payload: Omit<CompanyRow, "id" | "created_at">): Promise<{ id: string }> {
   const { data, error } = await supabase.from("companies").insert(payload).select("id").single();
   if (error) throw error;
   return data as { id: string };
@@ -92,29 +150,24 @@ export async function renameCompanyIndustry(fromName: string, toName: string): P
   if (error) throw error;
 }
 
-// ---------- Contacts ----------
+// ---------- Contacts Core Matrix ----------
 
-export interface ListContactsPagedParams {
-  from: number;
-  to: number;
-}
-
-export async function listContactsPaged(params: ListContactsPagedParams) {
+export async function listContactsPaged(params: ListContactsPagedParams): Promise<{ rows: ContactRow[]; count: number }> {
   const { data, error, count } = await supabase
     .from("contacts")
     .select("*, company:companies(name)", { count: "exact" })
     .order("created_at", { ascending: false })
     .range(params.from, params.to);
   if (error) throw error;
-  return { rows: (data ?? []) as any[], count: count ?? 0 };
+  return { rows: (data ?? []) as ContactRow[], count: count ?? 0 };
 }
 
-export async function upsertContact(payload: any): Promise<void> {
+export async function upsertContact(payload: Partial<ContactRow> & { email: string }): Promise<void> {
   const { error } = await supabase.from("contacts").upsert(payload);
   if (error) throw error;
 }
 
-export async function insertContact(payload: any): Promise<void> {
+export async function insertContact(payload: Omit<ContactRow, "id" | "created_at">): Promise<void> {
   const { error } = await supabase.from("contacts").insert(payload);
   if (error) throw error;
 }
@@ -122,12 +175,12 @@ export async function insertContact(payload: any): Promise<void> {
 export async function listAllContactIdentifiers(): Promise<Array<{ id: string; email: string | null; phone: string | null }>> {
   const { data, error } = await supabase.from("contacts").select("id, email, phone");
   if (error) throw error;
-  return (data ?? []) as any;
+  return (data ?? []) as Array<{ id: string; email: string | null; phone: string | null }>;
 }
 
-// ---------- Contact outreach ----------
+// ---------- Contact Outreach Tracking ----------
 
-export async function listLatestOutreachForCompanies(companyIds: string[]) {
+export async function listLatestOutreachForCompanies(companyIds: string[]): Promise<Array<{ company_id: string; sent_at: string; message_type: string }>> {
   if (!companyIds.length) return [];
   const { data, error } = await supabase
     .from("contact_outreach")
@@ -148,21 +201,19 @@ export async function logContactOutreach(payload: {
   if (error) throw error;
 }
 
-// ---------- AI agents (admin Company Agents view) ----------
+// ---------- AI Operational Agents Swarm View ----------
 
 export async function listCompanyAgentsFull(): Promise<any[]> {
   const { data, error } = await supabase
     .from("company_agents")
-    .select(
-      `
+    .select(`
       *,
       ai_agents (*),
       companies (id, name, logo_url, industry)
-    `,
-    )
+    `)
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return data ?? [];
 }
 
 export async function listCompanyAgentLeads(): Promise<any[]> {
@@ -171,7 +222,7 @@ export async function listCompanyAgentLeads(): Promise<any[]> {
     .select("*")
     .order("created_at", { ascending: false });
   if (error) throw error;
-  return (data ?? []) as any[];
+  return data ?? [];
 }
 
 export async function insertAiAgent(payload: any): Promise<{ id: string }> {
@@ -205,7 +256,7 @@ export async function deleteCompanyAgentById(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// ---------- Contact unlocks ----------
+// ---------- Talent Information Access Unlocks ----------
 
 export async function listRecentContactUnlocks(limit = 500): Promise<any[]> {
   const { data, error } = await supabase
@@ -214,17 +265,17 @@ export async function listRecentContactUnlocks(limit = 500): Promise<any[]> {
     .order("created_at", { ascending: false })
     .limit(limit);
   if (error) throw error;
-  return (data ?? []) as any[];
+  return data ?? [];
 }
 
-export async function listTalentEmailsByUserIds(userIds: string[]) {
+export async function listTalentEmailsByUserIds(userIds: string[]): Promise<Array<{ user_id: string; email: string | null }>> {
   if (!userIds.length) return [];
   const { data, error } = await supabase.from("talents").select("user_id, email").in("user_id", userIds);
   if (error) throw error;
   return (data ?? []) as Array<{ user_id: string; email: string | null }>;
 }
 
-// ---------- Followed companies ----------
+// ---------- Followed Companies Registry ----------
 
 export async function listFollowedCompanyNames(userId: string): Promise<string[]> {
   const { data, error } = await supabase
@@ -251,11 +302,10 @@ export async function unfollowCompany(userId: string, companyName: string): Prom
   if (error) throw error;
 }
 
-// ─── Phase 10j.2 — active company membership ──────────────────────────────
-export async function getActiveCompanyMembership(
-  userId: string,
-): Promise<{ company_id: string; role: string | null } | null> {
-  const { data } = await supabase
+// ---------- Active Workspace Memberships & Rules ----------
+
+export async function getActiveCompanyMembership(userId: string): Promise<{ company_id: string; role: string | null } | null> {
+  const { data, error } = await supabase
     .from("company_members")
     .select("company_id, role")
     .eq("user_id", userId)
@@ -263,12 +313,11 @@ export async function getActiveCompanyMembership(
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
-  return (data as any) ?? null;
+  if (error) throw error;
+  return data ?? null;
 }
 
-export async function getActiveAdminCompanyMembership(
-  userId: string,
-): Promise<{ company_id: string; role: string } | null> {
+export async function getActiveAdminCompanyMembership(userId: string): Promise<{ company_id: string; role: string } | null> {
   const { data, error } = await supabase
     .from("company_members")
     .select("company_id, role")
@@ -278,14 +327,11 @@ export async function getActiveAdminCompanyMembership(
     .limit(1)
     .maybeSingle();
   if (error) throw error;
-  return (data as any) ?? null;
+  return data as { company_id: string; role: string } | null;
 }
 
-// ─── Phase 10j.4: Gro10x feed/CRM/offerings ────────────────────────────────
-export async function getActiveCompanyMembershipWithName(
-  userId: string,
-): Promise<{ company_id: string; role: string; companies: { name: string | null } | null } | null> {
-  const { data } = await supabase
+export async function getActiveCompanyMembershipWithName(userId: string): Promise<{ company_id: string; role: string; companies: { name: string | null } | null } | null> {
+  const { data, error } = await supabase
     .from("company_members")
     .select("company_id, role, companies:company_id (name)")
     .eq("user_id", userId)
@@ -293,78 +339,80 @@ export async function getActiveCompanyMembershipWithName(
     .order("created_at", { ascending: true })
     .limit(1)
     .maybeSingle();
-  return (data as any) ?? null;
+  if (error) throw error;
+  return data as any;
 }
 
-export async function listPendingCompanyPostDrafts(companyId: string, limit = 10) {
-  const { data } = await supabase
+// ---------- Gro10x B2B Product Infrastructure Interfaces ----------
+
+export async function listPendingCompanyPostDrafts(companyId: string, limit = 10): Promise<any[]> {
+  const { data, error } = await supabase
     .from("company_post_drafts")
     .select("id, text_content, tags, agent_key, created_at")
     .eq("company_id", companyId)
     .eq("status", "pending")
     .order("created_at", { ascending: false })
     .limit(limit);
-  return (data ?? []) as any[];
+  if (error) throw error;
+  return data ?? [];
 }
 
-// CRM — leads
-export async function listCompanyLeads(companyId: string) {
-  const { data } = await supabase
+export async function listCompanyLeads(companyId: string): Promise<any[]> {
+  const { data, error } = await supabase
     .from("company_leads")
-    .select(
-      "id,name,email,phone,company_name,title,source,stage,value_usd,notes,next_step,offering_id,created_at",
-    )
+    .select("id, name, email, phone, company_name, title, source, stage, value_usd, notes, next_step, offering_id, created_at")
     .eq("company_id", companyId)
     .order("created_at", { ascending: false });
-  return (data ?? []) as any[];
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function insertCompanyLead(payload: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("company_leads").insert(payload as any);
+  const { error } = await supabase.from("company_leads").insert(payload);
   if (error) throw error;
 }
 
 export async function updateCompanyLead(id: string, patch: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("company_leads").update(patch as any).eq("id", id);
+  const { error } = await supabase.from("company_leads").update(patch).eq("id", id);
   if (error) throw error;
 }
 
-export async function listCompanyLeadActivities(leadId: string) {
-  const { data } = await supabase
+export async function listCompanyLeadActivities(leadId: string): Promise<any[]> {
+  const { data, error } = await supabase
     .from("company_lead_activities")
     .select("id, activity_type, body, created_at")
     .eq("lead_id", leadId)
     .order("created_at", { ascending: false });
-  return (data ?? []) as any[];
+  if (error) throw error;
+  return data ?? [];
 }
 
 export async function insertCompanyLeadActivity(payload: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("company_lead_activities").insert(payload as any);
+  const { error } = await supabase.from("company_lead_activities").insert(payload);
   if (error) throw error;
 }
 
-// Offerings
-export async function listCompanyOfferings(companyId: string, activeOnly = false) {
+export async function listCompanyOfferings(companyId: string, activeOnly = false): Promise<any[]> {
   let q = supabase
     .from("company_offerings")
     .select("*")
     .eq("company_id", companyId)
     .order("display_order", { ascending: true })
     .order("created_at", { ascending: false });
+    
   if (activeOnly) q = q.eq("is_active", true);
+  
   const { data, error } = await q;
   if (error) throw error;
-  return (data ?? []) as any[];
+  return data ?? [];
 }
 
-export async function upsertCompanyOffering(
-  payload: Record<string, any> & { id?: string },
-): Promise<void> {
+export async function upsertCompanyOffering(payload: Record<string, any> & { id?: string }): Promise<void> {
   if (payload.id) {
-    const { error } = await supabase.from("company_offerings").update(payload as any).eq("id", payload.id);
+    const { error } = await supabase.from("company_offerings").update(payload).eq("id", payload.id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from("company_offerings").insert(payload as any);
+    const { error } = await supabase.from("company_offerings").insert(payload);
     if (error) throw error;
   }
 }
@@ -374,71 +422,57 @@ export async function deleteCompanyOffering(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// ─── Phase 10j.5e: full id+name+slug list (WorkforceCommandCenter) ─────────
 export async function listAllCompaniesWithSlug(): Promise<Array<{ id: string; name: string; slug: string }>> {
-  const { data, error } = await supabase.from("companies").select("id,name,slug").order("name");
+  const { data, error } = await supabase.from("companies").select("id, name, slug").order("name");
   if (error) throw error;
   return (data ?? []) as Array<{ id: string; name: string; slug: string }>;
 }
 
-// ─── Phase 10j.5g: gro10x active-company helpers ──────────────────────────
-
 export async function getActiveCompanyIdForUser(userId: string): Promise<string | null> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("company_members")
     .select("company_id")
     .eq("user_id", userId)
     .eq("status", "active")
     .limit(1)
     .maybeSingle();
-  return (data?.company_id as string | null) ?? null;
+  if (error) throw error;
+  return data?.company_id ?? null;
 }
 
 export async function getCompanyGoals(companyId: string): Promise<string[]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("companies")
     .select("goals")
     .eq("id", companyId)
     .maybeSingle();
-  return ((data?.goals as string[] | null) ?? []) as string[];
+  if (error) throw error;
+  return (data?.goals as string[]) ?? [];
 }
 
-export async function getCompanyCreditPools(
-  companyId: string,
-): Promise<{ balance: number; earnedBalance: number }> {
-  const { data } = await supabase
+export async function getCompanyCreditPools(companyId: string): Promise<{ balance: number; earnedBalance: number }> {
+  const { data, error } = await supabase
     .from("company_credits")
     .select("balance, earned_balance")
     .eq("company_id", companyId)
     .maybeSingle();
+  if (error) throw error;
   return {
     balance: Number(data?.balance ?? 0),
     earnedBalance: Number(data?.earned_balance ?? 0),
   };
 }
 
-export interface CompanyCreditTxnRow {
-  id: string;
-  amount: number;
-  balance_after: number;
-  transaction_type: string;
-  service_type: string | null;
-  description: string | null;
-  created_at: string;
-}
-
-export async function listCompanyCreditTransactionsSince(
-  companyId: string,
-  sinceIso: string,
-  limit = 200,
-): Promise<CompanyCreditTxnRow[]> {
-  const { data } = await supabase
+export async function listCompanyCreditTransactionsSince(companyId: string, sinceIso: string, limit = 200): Promise<CompanyCreditTxnRow[]> {
+  const { data, error } = await supabase
     .from("company_credit_transactions")
     .select("id, amount, balance_after, transaction_type, service_type, description, created_at")
     .eq("company_id", companyId)
     .gte("created_at", sinceIso)
     .order("created_at", { ascending: false })
     .limit(limit);
+  if (error) throw error;
+  
   return (data ?? []).map((r: any) => ({
     ...r,
     amount: Number(r.amount),
@@ -446,124 +480,113 @@ export async function listCompanyCreditTransactionsSince(
   })) as CompanyCreditTxnRow[];
 }
 
-// ─── Phase 10j.5g2: Gro10xCompanyPage helpers ─────────────────────────────
-export async function getCompanyMemberRole(
-  userId: string,
-  companyId: string,
-): Promise<string | null> {
-  const { data } = await supabase
+export async function getCompanyMemberRole(userId: string, companyId: string): Promise<string | null> {
+  const { data, error } = await supabase
     .from("company_members")
     .select("role")
     .eq("user_id", userId)
     .eq("company_id", companyId)
     .eq("status", "active")
     .maybeSingle();
-  return (data?.role as string | null) ?? null;
+  if (error) throw error;
+  return data?.role ?? null;
 }
 
 export async function getCompanyPublicProfile(companyId: string): Promise<any | null> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("companies")
-    .select(
-      "id,name,tagline,about,logo_url,banner_url,website,country,slug,profile_completion,verification_tier",
-    )
+    .select("id, name, tagline, about, logo_url, banner_url, website, country, slug, profile_completion, verification_tier")
     .eq("id", companyId)
     .maybeSingle();
+  if (error) throw error;
   return data ?? null;
 }
 
 export async function listActiveCompanyMembers(companyId: string): Promise<any[]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("company_members")
     .select("user_id, role, status, invited_email")
     .eq("company_id", companyId)
     .eq("status", "active");
-  return (data ?? []) as any[];
+  if (error) throw error;
+  return data ?? [];
 }
 
-export async function updateCompanyField(
-  companyId: string,
-  patch: Record<string, any>,
-): Promise<{ error: any }> {
+export async function updateCompanyField(companyId: string, patch: Record<string, any>): Promise<{ error: any }> {
   const { error } = await supabase.from("companies").update(patch).eq("id", companyId);
   return { error };
 }
 
-// ─── Phase 10j.5g2: PublicCompanyPage (slug-based) ────────────────────────
 export async function getCompanyPublicProfileBySlug(slug: string): Promise<{ data: any; error: any }> {
   const { data, error } = await supabase
     .from("companies")
-    .select("id,name,tagline,about,logo_url,banner_url,website,country,slug")
+    .select("id, name, tagline, about, logo_url, banner_url, website, country, slug")
     .eq("slug", slug)
     .maybeSingle();
   return { data, error };
 }
 
 export async function listActiveCompanyMemberUserIds(companyId: string, limit = 12): Promise<string[]> {
-  const { data } = await supabase
+  const { data, error } = await supabase
     .from("company_members")
     .select("user_id")
     .eq("company_id", companyId)
     .eq("status", "active")
     .limit(limit);
+  if (error) throw error;
   return ((data ?? []) as any[]).map((r) => r.user_id).filter(Boolean);
 }
 
-// ─── Phase 10j.5g5 ─────────────────────────────────────────────────────────
-export async function listCompanyShortlistsRecent(companyId: string, limit = 200) {
-  const { data } = await supabase
+export async function listCompanyShortlistsRecent(companyId: string, limit = 200): Promise<Array<{ talent_id: string; created_at: string }>> {
+  const { data, error } = await supabase
     .from("company_talent_shortlists")
     .select("talent_id, created_at")
     .eq("company_id", companyId)
     .order("created_at", { ascending: false })
     .limit(limit);
+  if (error) throw error;
   return (data ?? []) as Array<{ talent_id: string; created_at: string }>;
 }
 
-// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
-export async function getCompanyNameAndLogo(companyId: string) {
-  const { data } = await supabase
+export async function getCompanyNameAndLogo(companyId: string): Promise<{ name: string | null; logo_url: string | null } | null> {
+  const { data, error } = await supabase
     .from("companies")
     .select("name, logo_url")
     .eq("id", companyId)
     .maybeSingle();
-  return (data as { name: string | null; logo_url: string | null } | null) ?? null;
+  if (error) throw error;
+  return data ?? null;
 }
 
-export async function getActiveMembershipWithCompanyName(userId: string) {
-  const { data } = await supabase
+export async function getActiveMembershipWithCompanyName(userId: string): Promise<{ role: string; companies: { name: string } | null } | null> {
+  const { data, error } = await supabase
     .from("company_members")
     .select("role, companies:company_id (name)")
     .eq("user_id", userId)
     .eq("status", "active")
     .limit(1)
     .maybeSingle();
-  return (data as { role: string; companies: { name: string } | null } | null) ?? null;
+  if (error) throw error;
+  return data as { role: string; companies: { name: string } | null } | null;
 }
 
-// ─── Phase 10j.5h1: RPC wrappers ──────────────────────────────────────────
-export async function getCompaniesOverview() {
+// ---------- High-Performance Stored Procedures (RPC) Wrappers ----------
+
+export async function getCompaniesOverview(): Promise<any> {
   const { data, error } = await supabase.rpc("get_companies_overview");
   if (error) throw error;
-  return data as any;
+  return data;
 }
 
-export async function getIndustryRollup() {
+export async function getIndustryRollup(): Promise<any[]> {
   const { data, error } = await supabase.rpc("get_industry_rollup");
   if (error) throw error;
-  return (data ?? []) as any[];
+  return data ?? [];
 }
 
 export async function mergeIndustries(sources: string[], target: string): Promise<void> {
   const { error } = await supabase.rpc("merge_industries", { p_sources: sources, p_target: target });
   if (error) throw error;
-}
-
-// ─── Phase 10j.5h4: contact-unlocks summary RPC wrapper ───────────────────
-export interface ContactUnlocksSummary {
-  total_unlocks: number;
-  total_credits: number;
-  last_7d: number;
 }
 
 export async function getContactUnlocksSummary(): Promise<ContactUnlocksSummary> {
@@ -572,7 +595,6 @@ export async function getContactUnlocksSummary(): Promise<ContactUnlocksSummary>
   return (data ?? { total_unlocks: 0, total_credits: 0, last_7d: 0 }) as unknown as ContactUnlocksSummary;
 }
 
-// ─── Phase 10j.5h9 ────────────────────────────────────────────────────────
 export async function getCompanyDetail<T = any>(companyName: string): Promise<T> {
   const { data, error } = await supabase.rpc("get_company_detail", { p_company_name: companyName });
   if (error) throw error;
