@@ -79,7 +79,7 @@ export {
   countPlatformEventsSince,
   listTalentAgentChatSessionKeys,
   listTopActiveAgentsForQuickActions,
-} from "./repo/agentsRepo";
+} from "../repo/agentsRepo";
 
 // ─── STAGE 3: BOUND INTEGRATION SCHEMA TYPE DEFINITIONS ───────────────────
 export type {
