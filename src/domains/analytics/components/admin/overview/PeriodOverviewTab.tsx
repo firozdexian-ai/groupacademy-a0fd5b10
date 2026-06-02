@@ -100,9 +100,9 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
         // Push error to the platform event table for tracking
         try {
           await supabase.from("platform_events").insert({
-            event_type: "period_metrics_fault",
-            severity: "warning",
-            payload: { message: err?.message, mode, token: cur.token },
+            event_kind: "period_metrics_fault",
+            subject_kind: "analytics",
+            payload: { severity: "warning", message: err?.message, mode, token: cur.token },
           });
         } catch (innerErr) {
           console.error("Critical: Telemetry loop disconnected:", innerErr);
