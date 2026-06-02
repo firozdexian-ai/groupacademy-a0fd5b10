@@ -5,12 +5,6 @@ import { Button } from "@/components/ui/button";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 
-/**
- * GroUp Academy: Sentiment Ingress Node (ReactionBar)
- * CTO Reference: Authoritative tactical module for community engagement telemetry.
- * Version: Launch Candidate · Phase Z0 Hardened
- */
-
 export type ReactionType = "like" | "insightful" | "celebrate" | "support";
 
 interface ReactionBarProps {
@@ -61,6 +55,10 @@ const REACTION_CONFIG: Record<
   },
 };
 
+/**
+ * Interactive social reaction panel supporting multiple feedback styles.
+ * Updates counter states dynamically and triggers background telemetry tracking metrics.
+ */
 export function ReactionBar({
   reactions,
   userReaction,
@@ -72,14 +70,14 @@ export function ReactionBar({
   const queryClient = useQueryClient();
   const [hoveredReaction, setHoveredReaction] = useState<ReactionType | null>(null);
 
-  // Monitor interaction impressions for analytical tracking
+  // Log reaction component visibility for activity tracking loops
   useEffect(() => {
     if (contextData?.postId) {
       trackEvent("reaction_bar_rendered", { postId: contextData.postId, userHasReacted: !!userReaction });
     }
   }, [contextData, userReaction]);
 
-  // Defensive Guard: Build a safe default structure to isolate layout math crashes completely
+  // Establish a safe default structure to prevent rendering faults
   const safeReactions =
     reactions && typeof reactions === "object" ? reactions : { like: 0, insightful: 0, celebrate: 0, support: 0 };
 
@@ -93,10 +91,10 @@ export function ReactionBar({
     });
 
     try {
-      // Trigger the parent collection layout update handler
+      // Execute the parent update handler callback
       await onReact(type);
 
-      // Automated Efficiency: Broadcast cache invalidation across shared feed pools
+      // Refresh target query keys to synchronize feed parameters instantly
       queryClient.invalidateQueries({ queryKey: ["feed-posts"] });
     } catch (err) {
       trackError(err instanceof Error ? err : String(err), {
@@ -152,7 +150,6 @@ export function ReactionBar({
     return <div className="flex items-center gap-1.5 w-full select-none">{reactionButtons}</div>;
   }
 
-  // STANDALONE TELEMETRY DATA CALCULATION MODE
   let totalReactions = 0;
   let topReactions: ReactionType[] = [];
 
@@ -175,7 +172,7 @@ export function ReactionBar({
     <div className="space-y-3.5 w-full animate-in fade-in duration-300 select-none">
       {totalReactions > 0 && (
         <div className="flex items-center gap-2 text-muted-foreground/70 px-1 select-text selection:bg-primary/10">
-          {/* Stacked Sentiment Face Icons Wrapper Track */}
+          {/* Stacked reaction badges summary row */}
           <div className="flex -space-x-1.5 items-center">
             {topReactions.map((type) => {
               const config = REACTION_CONFIG[type];
