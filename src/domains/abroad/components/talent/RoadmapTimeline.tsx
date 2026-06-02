@@ -1,11 +1,13 @@
 import { useMemo } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
-import { CheckCircle2, Calendar, Zap, ArrowRight } from "lucide-react";
+import { CheckCircle2, Calendar, Zap, ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Study Abroad roadmap timeline — month-by-month plan with completion + active states.
+ * Group Academy — Study Abroad Roadmap Timeline
+ * Version: Phase 10i.2 Hardened (Production Candidate)
+ * Purpose: Month-by-month plan showing completion, active tracking metrics, and dynamic action states.
  */
 
 export interface TimelineItem {
@@ -70,7 +72,7 @@ export function RoadmapTimeline({
                       isCompleted
                         ? "bg-emerald-500 text-white rotate-6"
                         : isCurrent
-                          ? "bg-primary text-white animate-pulse"
+                          ? "bg-primary text-white"
                           : "bg-muted text-muted-foreground border-2 border-border/10",
                     )}
                   >
@@ -98,7 +100,7 @@ export function RoadmapTimeline({
 
                       <div className="flex gap-2">
                         {isCurrent && (
-                          <Badge className="bg-primary text-white font-black italic text-[9px] uppercase tracking-widest px-3 h-6 rounded-lg">
+                          <Badge className="bg-primary text-white font-black italic text-[9px] uppercase tracking-widest px-3 h-6 rounded-lg animate-pulse">
                             Active
                           </Badge>
                         )}
@@ -126,11 +128,18 @@ export function RoadmapTimeline({
                             />
                             <span
                               className={cn(
-                                "text-xs font-medium italic leading-relaxed transition-colors",
+                                "text-xs font-medium leading-relaxed transition-colors",
                                 isCompleted
                                   ? "text-muted-foreground line-through opacity-50"
                                   : "text-foreground/80 group-hover:text-primary",
                               )}
+                            />
+                            <span
+                              className={
+                                isCompleted
+                                  ? "text-muted-foreground line-through opacity-50 text-xs font-medium leading-relaxed"
+                                  : "text-foreground/80 group-hover:text-primary text-xs font-medium leading-relaxed"
+                              }
                             >
                               {String(task)}
                             </span>
@@ -146,12 +155,18 @@ export function RoadmapTimeline({
                           disabled={isExecuting}
                           onClick={() => onExecutePhase(itemMonth)}
                           className={cn(
-                            "flex items-center gap-2 text-[9px] font-black uppercase italic tracking-widest text-primary hover:translate-x-1 transition-all cursor-pointer bg-transparent border-none p-0",
-                            isExecuting && "opacity-40 cursor-not-allowed translate-x-0",
+                            "flex items-center gap-2 text-[9px] font-black uppercase italic tracking-widest text-primary hover:translate-x-1 transition-all cursor-pointer bg-transparent border-none p-0 disabled:cursor-not-allowed disabled:opacity-40 disabled:translate-x-0",
                           )}
                         >
-                          {isExecuting ? "Working…" : "Start this month's tasks"}
-                          <ArrowRight className="h-3 w-3" />
+                          {isExecuting ? (
+                            <>
+                              Working… <Loader2 className="h-3 w-3 animate-spin" />
+                            </>
+                          ) : (
+                            <>
+                              Start this month's tasks <ArrowRight className="h-3 w-3" />
+                            </>
+                          )}
                         </button>
                       </div>
                     )}
