@@ -1,36 +1,37 @@
-/**
- * Agents domain registry — single declarative surface for every agent the
- * platform exposes (talent-facing, admin, and B2B/Gro10x). Adding a new agent
- * = one row here + (optionally) a lazy-loaded UI module.
- *
- * Migration note: this re-exports the existing legacy catalogs so behaviour
- * is byte-identical. As we move the catalogs into this folder, swap the
- * imports below — call sites are already pointing here.
- */
 import { lazy, type ComponentType, type LazyExoticComponent } from "react";
 import { AI_AGENTS, type AIAgent, getAgentById } from "@/lib/constants/agents";
 import { ADMIN_AGENTS, ADMIN_AGENTS_BY_KEY, type AdminAgent } from "@/lib/adminAgents";
-import { GRO10X_AGENTS, AGENT_BY_KEY as GRO10X_AGENT_BY_KEY, getAgentMeta as getGro10xAgentMeta, type Gro10xAgent } from "@/gro10x/lib/agents";
+import {
+  GRO10X_AGENTS,
+  AGENT_BY_KEY as GRO10X_AGENT_BY_KEY,
+  getAgentMeta as getGro10xAgentMeta,
+  type Gro10xAgent,
+} from "@/gro10x/lib/agents";
+
+/**
+ * Agents Domain Registry
+ * Description: A central declarative directory for matching application profiles
+ * across talent-facing, platform admin, and corporate business (Gro10x) workspaces.
+ */
 
 export type AgentScope = "talent" | "admin" | "gro10x";
 
 export interface AgentRegistryEntry {
-  /** Stable agent_key matching the `ai_agents` table. */
+  /** Stable agent identifier key matching the database backend matrix rows. */
   id: string;
-  /** Where this agent surfaces in the UI shells. */
+  /** Target UI route destination layout mapping context. */
   scope: AgentScope;
-  /** Display label. */
+  /** Human-readable display label text. */
   label: string;
-  /** Edge function that backs the chat runtime. */
+  /** Primary database runtime or background edge function handling execution. */
   edge: string;
-  /** Optional lazy UI module for the agent's dedicated screen. */
+  /** Optional lazy-loaded component block for handling custom dedicated screens. */
   ui?: LazyExoticComponent<ComponentType<any>>;
 }
 
 /**
- * AgentChat is the shared screen used by every shell when a user opens a
- * single-agent thread. Shells import it via `@/domains/agents` so we have a
- * single bundle entry point per shell.
+ * Shared screen viewport invoked natively whenever a user initializes
+ * or resumes an individual message interaction thread.
  */
 export const AgentChatScreen = lazy(() => import("@/pages/app/AgentChat"));
 
@@ -64,7 +65,7 @@ export function getAgent(scope: AgentScope, id: string): AgentRegistryEntry | un
   return AGENT_BY_ID[`${scope}:${id}`];
 }
 
-// Legacy re-exports so consumers can migrate gradually.
+// Historical workspace compatibility layer preserved for legacy component entry points.
 export {
   AI_AGENTS,
   getAgentById,
