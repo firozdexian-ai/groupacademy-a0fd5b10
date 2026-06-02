@@ -28,10 +28,6 @@ export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
   "companies-wa-channel": React.lazy(() =>
     import("@/domains/companies/components/admin/EmployerMessagingChannelTab").then((m: any) => ({ default: m.EmployerMessagingChannelTab })),
   ),
-  // Restored: Reconnected missing 8th tab assignment to fix Track C launch regression gap
-  "companies-outreach": React.lazy(() =>
-    import("@/domains/companies/components/admin/CompanyOutreachConsoleTab").then((m: any) => ({ default: m.CompanyOutreachConsoleTab ?? m.default })),
-  ),
 };
 
 export const TITLES: Record<string, string> = {
@@ -42,5 +38,5 @@ export const TITLES: Record<string, string> = {
   "companies-overview": "Companies Overview",
   "companies-unlocks": "Contact Unlocks",
   "companies-wa-channel": "Employer WhatsApp Line",
-  "companies-outreach": "B2B Outreach Console", // Added business-centric outreach title
+  
 };
