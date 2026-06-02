@@ -107,13 +107,13 @@ export async function listCompaniesForAgentPicker(): Promise<Array<{ id: string;
   return (data ?? []) as Array<{ id: string; name: string; logo_url: string | null; industry: string | null }>;
 }
 
-export async function upsertCompany(payload: Partial<CompanyRow> & { name: string }): Promise<void> {
-  const { error } = await supabase.from("companies").upsert(payload);
+export async function upsertCompany(payload: Record<string, any> & { name: string }): Promise<void> {
+  const { error } = await supabase.from("companies").upsert(payload as any);
   if (error) throw error;
 }
 
-export async function insertCompany(payload: Omit<CompanyRow, "id" | "created_at">): Promise<{ id: string }> {
-  const { data, error } = await supabase.from("companies").insert(payload).select("id").single();
+export async function insertCompany(payload: Record<string, any> & { name: string }): Promise<{ id: string }> {
+  const { data, error } = await supabase.from("companies").insert(payload as any).select("id").single();
   if (error) throw error;
   return data as { id: string };
 }
