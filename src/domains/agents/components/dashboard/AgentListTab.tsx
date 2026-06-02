@@ -6,7 +6,15 @@ import { listAiAgentsForListTab } from "@/domains/agents/repo/agentsRepo";
 import { Search, Activity, Cpu, Loader2 } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { trackError } from "@/lib/errorTracking";
 import type { LucideIcon } from "lucide-react";
+
+/**
+ * Group Academy — Career Guidance System: Agent Categorization Directory List Tab Component
+ * Version: Phase 10j.5 Hardened (Production Candidate)
+ * Surface: /dashboard/command-center?tab=fleet (Fleet Configuration Workspace Node View)
+ * Operations Mode: Automated Efficiency listing workspace filtering system agents across permissions boundaries.
+ */
 
 interface Props {
   title: string;
@@ -23,13 +31,30 @@ export function AgentListTab({ title, description, icon: Icon, agentTypeFilter, 
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
     setIsLoading(true);
+
     listAiAgentsForListTab({ agentTypeFilter, audienceFilter })
       .then((data) => {
-        setRows(data);
-        setIsLoading(false);
+        if (active) {
+          setRows(data);
+          setIsLoading(false);
+        }
       })
-      .catch(() => setIsLoading(false));
+      .catch((err: any) => {
+        trackError("agent-list-tab-fetch-failure", {
+          error: err?.message || String(err),
+          agentTypeFilter,
+          audienceFilter,
+        });
+        if (active) {
+          setIsLoading(false);
+        }
+      });
+
+    return () => {
+      active = false;
+    };
   }, [agentTypeFilter, audienceFilter]);
 
   const filtered = rows.filter(
@@ -37,84 +62,87 @@ export function AgentListTab({ title, description, icon: Icon, agentTypeFilter, 
   );
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-1000">
-      {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3 text-primary">
-            <Icon className="h-8 w-8" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">{title}</h2>
+    <div className="space-y-6 animate-in fade-in duration-300 text-left">
+      {/* Dynamic Structural Header Block */}
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-muted/40 p-6 rounded-2xl border border-border/40 backdrop-blur-sm">
+        <div className="space-y-1.5 flex-1 min-w-0">
+          <div className="flex items-center gap-2.5 text-primary">
+            <Icon className="h-6 w-6 shrink-0" />
+            <h2 className="text-xl font-bold tracking-tight text-foreground truncate">{title}</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            {description}
-          </p>
+          <p className="text-xs text-muted-foreground/90 font-medium leading-relaxed">{description}</p>
         </div>
       </header>
 
-      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl flex flex-col">
-        <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+      {/* Main Framework Filter Container */}
+      <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card flex flex-col">
+        <div className="h-1 w-full bg-primary" />
 
-        <CardHeader className="p-6 border-b border-border/10 bg-muted/5 flex flex-col sm:flex-row justify-between items-center gap-4">
-          <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] italic flex items-center gap-2 text-muted-foreground/70 shrink-0">
-            <Cpu className="h-4 w-4 text-primary" /> Agent Matrix
+        <CardHeader className="p-4 border-b border-border/40 bg-muted/20 flex flex-col sm:flex-row justify-between items-stretch sm:items-center gap-4">
+          <CardTitle className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-muted-foreground/80 shrink-0">
+            <Cpu className="h-4 w-4 text-primary" /> Assistant Profiles
           </CardTitle>
           <div className="relative w-full sm:max-w-md">
-            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
+            <Search className="absolute left-3.5 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
             <Input
-              placeholder="Query agents by identity or key..."
+              placeholder="Search assistants by name or key..."
               value={search}
               onChange={(e) => setSearch(e.target.value)}
-              className="pl-11 h-12 rounded-xl border-2 bg-background/50 font-medium text-xs"
+              className="pl-10 h-10 rounded-xl border border-border text-sm font-medium focus-visible:ring-1 focus-visible:ring-primary bg-background/80"
             />
           </div>
         </CardHeader>
 
-        <CardContent className="p-6 flex-1 bg-background/30">
+        <CardContent className="p-5 flex-1 bg-background/50">
           {isLoading ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[1, 2, 3, 4].map((i) => (
-                <Skeleton key={i} className="h-28 w-full rounded-[24px] border-2 border-border/20 bg-muted/20" />
+                <Skeleton key={i} className="h-24 w-full rounded-xl border border-border/40 bg-muted/30" />
               ))}
             </div>
           ) : filtered.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 bg-muted/5 border-2 border-dashed border-border/20 rounded-[32px]">
-              <Activity className="h-8 w-8 text-muted-foreground/30 mb-3" />
-              <div className="text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
-                {emptyHint ?? "No active agents match this filter."}
+            <div className="flex flex-col items-center justify-center py-16 bg-muted/10 border border-dashed border-border/60 rounded-xl space-y-3">
+              <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground/30">
+                <Activity className="h-5 w-5" />
               </div>
+              <p className="text-xs font-medium text-muted-foreground text-center">
+                {emptyHint ?? "No active agents found matching the selected parameters."}
+              </p>
             </div>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {filtered.map((a) => (
                 <div
                   key={a.id}
-                  className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 p-5 rounded-[24px] border-2 border-border/20 bg-background/50 hover:bg-primary/[0.02] hover:border-primary/20 transition-all group"
+                  className="flex flex-col xl:flex-row xl:items-center justify-between gap-4 p-4 rounded-xl border border-border bg-background hover:bg-primary/[0.01] hover:border-primary/30 transition-all group"
                 >
-                  <div className="space-y-2 min-w-0">
-                    <div className="flex items-center gap-3 flex-wrap">
-                      <h3 className="text-lg font-black uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none truncate">
+                  <div className="space-y-1.5 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors leading-none truncate">
                         {a.name}
                       </h3>
-                      <span className="font-mono text-[9px] font-bold bg-muted/50 px-2 py-0.5 rounded-md border border-border/50 text-muted-foreground shrink-0">
+                      <span className="font-mono text-[10px] font-semibold bg-muted px-2 py-0.5 rounded border border-border/50 text-muted-foreground shrink-0">
                         {a.agent_key}
                       </span>
                       {a.model && (
                         <Badge
-                          variant="outline"
-                          className="text-[8px] font-mono border-blue-500/30 text-blue-500 bg-blue-500/5"
+                          variant="secondary"
+                          className="text-[10px] font-mono font-medium bg-blue-500/10 hover:bg-blue-500/10 text-blue-700 border-none px-2 rounded"
                         >
                           {a.model}
                         </Badge>
                       )}
                     </div>
-                    <p className="text-xs font-medium text-muted-foreground italic line-clamp-2">{a.description}</p>
+                    <p className="text-xs text-muted-foreground/80 font-medium leading-relaxed line-clamp-2">
+                      {a.description}
+                    </p>
                   </div>
 
-                  <div className="flex items-center gap-2 flex-wrap shrink-0 xl:justify-end">
+                  <div className="flex items-center gap-1.5 flex-wrap shrink-0 xl:justify-end sm:self-start xl:self-center">
                     {a.audience && (
                       <Badge
                         variant="outline"
-                        className="rounded-lg border-2 font-black text-[8px] uppercase tracking-widest bg-background"
+                        className="rounded-full border-border font-semibold text-[10px] uppercase tracking-wide bg-background text-muted-foreground px-2.5"
                       >
                         {a.audience}
                       </Badge>
@@ -122,24 +150,24 @@ export function AgentListTab({ title, description, icon: Icon, agentTypeFilter, 
                     {a.visibility && (
                       <Badge
                         variant="outline"
-                        className="rounded-lg border-2 font-black text-[8px] uppercase tracking-widest bg-background"
+                        className="rounded-full border-border font-semibold text-[10px] uppercase tracking-wide bg-background text-muted-foreground px-2.5"
                       >
                         {a.visibility}
                       </Badge>
                     )}
                     <Badge
                       variant="outline"
-                      className="rounded-lg font-black text-[8px] uppercase tracking-widest px-3 py-1 border-2 border-amber-500/20 text-amber-500 bg-amber-500/5"
+                      className="rounded-full font-bold text-[10px] uppercase tracking-wide px-2.5 py-0.5 border-none bg-amber-500/10 text-amber-700"
                     >
-                      {(a.total_conversations ?? 0).toLocaleString()} RUNS
+                      {(a.total_conversations ?? 0).toLocaleString()} conversations
                     </Badge>
                     <Badge
                       className={cn(
-                        "rounded-lg font-black text-[8px] uppercase tracking-widest px-3 py-1 border-none",
-                        a.is_active ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground/60",
+                        "rounded-full font-bold text-[10px] uppercase tracking-wide px-2.5 py-0.5 border-none",
+                        a.is_active ? "bg-emerald-500/10 text-emerald-700" : "bg-muted text-muted-foreground/60",
                       )}
                     >
-                      {a.is_active ? "ACTIVE_NODE" : "OFFLINE"}
+                      {a.is_active ? "Active" : "Offline"}
                     </Badge>
                   </div>
                 </div>
@@ -148,18 +176,8 @@ export function AgentListTab({ title, description, icon: Icon, agentTypeFilter, 
           )}
         </CardContent>
       </Card>
-
-      {/* Operational Trace Footer */}
-      <footer className="mt-12 pt-8 border-t border-border/40 flex items-center justify-between opacity-30">
-        <div className="space-y-1">
-          <p className="text-[9px] font-black uppercase tracking-[0.4em] italic">Agent OS: Registry Filters</p>
-        </div>
-        <div className="flex gap-2">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-1 w-6 rounded-full bg-primary/20" />
-          ))}
-        </div>
-      </footer>
     </div>
   );
 }
+
+export default AgentListTab;
