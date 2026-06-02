@@ -9,7 +9,7 @@ export * from "./hooks/useFollowedCompanies";
 export * from "./components/admin/BatchCompanyUpload";
 export * from "./components/admin/CompaniesOverviewTab";
 export * from "./components/admin/CompaniesTab";
-export * from "./components/admin/CompanyAgentsTab";
+export { default as CompanyAgentsTab } from "./components/admin/CompanyAgentsTab";
 export * from "./components/admin/ContactUnlocksTab";
 export * from "./components/admin/ContactsTab";
 export * from "./components/admin/EmployerMessagingChannelTab";
