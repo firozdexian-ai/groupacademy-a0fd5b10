@@ -1,6 +1,6 @@
 /**
  * Feed Domain Repository Layer
- * Single source of truth for user feed, reactions, interactions, and analytics.
+ * Primary data access layer for user feed posts, reactions, comments, and analytics.
  */
 import { supabase } from "@/integrations/supabase/client";
 
@@ -40,7 +40,7 @@ export interface CommentInput {
 }
 
 /**
- * Removes a reaction from a feed post
+ * Removes a reaction from a post.
  */
 export async function deletePostReaction(input: PostReactionInput): Promise<{ error: any }> {
   const { error } = await supabase
@@ -52,7 +52,7 @@ export async function deletePostReaction(input: PostReactionInput): Promise<{ er
 }
 
 /**
- * Attaches a reaction (e.g., like, clap) to a feed post
+ * Adds a reaction to a post.
  */
 export async function insertPostReaction(input: InsertReactionInput): Promise<{ error: any }> {
   const { error } = await (supabase as any)
@@ -66,7 +66,7 @@ export async function insertPostReaction(input: InsertReactionInput): Promise<{ 
 }
 
 /**
- * Creates a new user-generated post in the feed index
+ * Creates a user-generated post in the feed.
  */
 export async function insertFeedPost(payload: Record<string, any>): Promise<{ error: any }> {
   const { error } = await (supabase as any).from("feed_posts").insert(payload);
@@ -74,10 +74,9 @@ export async function insertFeedPost(payload: Record<string, any>): Promise<{ er
 }
 
 /**
- * Fetches a personalized batch of recommendations (courses, articles, and posts)
+ * Retrieves a paginated batch of feed recommendations across all content types.
  */
 export async function fetchFeedRecommendationPage(opts: FeedRecommendationOptions) {
-  // Use core standardized tables for courses instead of generic placeholders
   let coursesQuery = (supabase as any)
     .from("courses")
     .select("id, title, slug, cover_image, description, created_at")
@@ -112,7 +111,7 @@ export async function fetchFeedRecommendationPage(opts: FeedRecommendationOption
 }
 
 /**
- * Calculates current ledger tracking milestones for Hype creator points
+ * Retrieves interaction credits earned by an instructor.
  */
 export async function getHypeEarnings(talentId: string, sinceIso: string) {
   const [allHypesQuery, recentHypesQuery] = await Promise.all([
@@ -137,7 +136,7 @@ export async function getHypeEarnings(talentId: string, sinceIso: string) {
 }
 
 /**
- * Resolves professional user metadata safely to construct public profile templates
+ * Gets author metadata for profile display.
  */
 export async function getTalentAuthorMeta(userIds: string[]) {
   if (!userIds.length) return [];
@@ -150,7 +149,7 @@ export async function getTalentAuthorMeta(userIds: string[]) {
 }
 
 /**
- * Logs a tracking interaction to shape discovery recommendations background loops
+ * Records a user interaction on a feed item.
  */
 export async function upsertFeedInteraction(input: FeedInteractionInput): Promise<void> {
   await supabase.from("feed_interactions").upsert({
@@ -162,7 +161,7 @@ export async function upsertFeedInteraction(input: FeedInteractionInput): Promis
 }
 
 /**
- * Returns posts scoped to specific workspaces or the general network audience
+ * Returns posts scoped to specific audience audiences.
  */
 export async function listAudienceFeedPosts(opts: AudienceFeedOptions) {
   let query = supabase
@@ -186,7 +185,7 @@ export async function listAudienceFeedPosts(opts: AudienceFeedOptions) {
 }
 
 /**
- * Fetches basic macro scorecard aggregations for creative dashboards
+ * Retrieves scorecard metrics for a creator.
  */
 export async function getCreatorScorecard(_talent_id: string, _days: number) {
   const { data, error } = await supabase.rpc("get_creator_scorecard", { _talent_id, _days });
@@ -195,7 +194,7 @@ export async function getCreatorScorecard(_talent_id: string, _days: number) {
 }
 
 /**
- * Returns top performing updates ordered by interaction and engagement weightings
+ * Retrieves top posts for a creator based on engagement.
  */
 export async function getCreatorTopPosts(_talent_id: string, _days: number, _limit: number) {
   const { data, error } = await supabase.rpc("get_creator_top_posts", { _talent_id, _days, _limit });
@@ -204,7 +203,7 @@ export async function getCreatorTopPosts(_talent_id: string, _days: number, _lim
 }
 
 /**
- * Retrieves aggregate interaction vectors for operational analysis panels
+ * Retrieves engagement metrics for a specific post.
  */
 export async function getPostInsights(_post_id: string) {
   const { data, error } = await supabase.rpc("get_post_insights", { _post_id });
@@ -213,14 +212,14 @@ export async function getPostInsights(_post_id: string) {
 }
 
 /**
- * Non-blocking utility to commit telemetry data rows down to feed tracking tables
+ * Tracks an impression on a post for engagement analytics.
  */
 export async function recordImpressionAsync(_post_id: string, _surface: string) {
   return supabase.rpc("record_impression", { _post_id, _surface });
 }
 
 /**
- * Increments share metrics across specific distribution channels
+ * Increments share count for a specific distribution channel.
  */
 export async function recordShare(_post_id: string, _channel: string): Promise<void> {
   const { error } = await supabase.rpc("record_share", { _post_id, _channel });
@@ -228,7 +227,7 @@ export async function recordShare(_post_id: string, _channel: string): Promise<v
 }
 
 /**
- * Hydrates multi-post metrics blocks cleanly including current session context locks
+ * Fetches batch engagement statistics for multiple posts.
  */
 export async function getFeedEngagement(args: { _post_ids: string[]; _talent_id: string | null }): Promise<any[]> {
   const { data, error } = await supabase.rpc("get_feed_engagement", args);
@@ -237,7 +236,7 @@ export async function getFeedEngagement(args: { _post_ids: string[]; _talent_id:
 }
 
 /**
- * Fires a 1-credit paid reaction split 80/20 between creator and the platform ledger
+ * Triggers a hype interaction on content.
  */
 export async function hypeContent(args: { _content_type: string; _content_id: string }): Promise<void> {
   const { error } = await supabase.rpc("hype_content", args);
@@ -245,7 +244,7 @@ export async function hypeContent(args: { _content_type: string; _content_id: st
 }
 
 /**
- * Handles micro credit tipping conversions natively targeting commentary responses
+ * Tipping functionality for content comments.
  */
 export async function tipComment(args: { _comment_id: string; _amount: number }): Promise<void> {
   const { error } = await supabase.rpc("tip_comment", args);
@@ -253,7 +252,7 @@ export async function tipComment(args: { _comment_id: string; _amount: number })
 }
 
 /**
- * Pulls available visual background skins for cards layout customization
+ * Retrieves active visual themes for profile card customization.
  */
 export async function listActiveProfileCardThemes() {
   const { data, error } = await supabase
@@ -270,7 +269,7 @@ export async function listActiveProfileCardThemes() {
 }
 
 /**
- * Resolves aggregate talent ranking charts based on transactional mastery points
+ * Retrieves aggregate weekly member leaderboard data.
  */
 export async function getWeeklyLeaderboard() {
   const { data, error } = await supabase
@@ -283,7 +282,7 @@ export async function getWeeklyLeaderboard() {
 }
 
 /**
- * Returns interactive prompt routing shortcuts wired directly to active AI agents
+ * Retrieves active AI agent quick-action configuration.
  */
 export async function listActiveQuickActionAgents() {
   const { data, error } = await supabase
@@ -297,7 +296,7 @@ export async function listActiveQuickActionAgents() {
 }
 
 /**
- * Commits a community vote parameter on context-bound polling elements
+ * Submits a vote for a feed poll.
  */
 export async function insertPollVote(input: {
   postId: string;
@@ -315,7 +314,7 @@ export async function insertPollVote(input: {
 }
 
 /**
- * Compiles list of current high-volume interactions to update side metrics panels
+ * Retrieves top hyped posts for the current weekly period.
  */
 export async function listTopHypedPostsWeek(limit = 5) {
   const { data: topRows, error: topError } = await supabase
@@ -348,7 +347,7 @@ export async function listTopHypedPostsWeek(limit = 5) {
 }
 
 /**
- * Fetches associated commentary records ordered chronologically for standard threads
+ * Retrieves commentary for a feed post.
  */
 export async function listPostComments(postId: string, limit = 50) {
   const { data, error } = await supabase
@@ -365,7 +364,7 @@ export async function listPostComments(postId: string, limit = 50) {
 }
 
 /**
- * Ingests a raw commentary submission parameter block into existing message tables
+ * Posts a new comment to a feed item.
  */
 export async function insertPostComment(input: CommentInput): Promise<{ error: any }> {
   const { error } = await supabase
