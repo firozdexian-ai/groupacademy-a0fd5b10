@@ -92,6 +92,9 @@ export type {
   ListContactsPagedParams,
   CompanyCreditTxnRow,
   ContactUnlocksSummary,
+} from "../repo/companiesRepo";
+
+export type {
   CompanyOutreachRequest,
-  CompanyAgentToolsRequest
+  CompanyAgentToolsRequest,
 } from "./companiesApi";
