@@ -17,9 +17,8 @@ interface FloatingWhatsAppButtonProps {
 }
 
 /**
- * Premium, performance-optimized Floating Support and Onboarding Bonus trigger button.
- * Built according to GroUp Academy Phase Z0 highly professional SAAS UI specifications
- * and Digital Workforce automated credit tracking guardrails.
+ * Premium floating support and account onboarding welcome bonus button.
+ * Encourages ecosystem engagement by rewarding users with platform credits upon connection.
  */
 export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppButtonProps) {
   const navigate = useNavigate();
@@ -40,7 +39,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
     const message = getWhatsAppConnectMessage(talent.fullName || "Academy Member");
     const whatsappUrl = getWhatsAppLink(message);
 
-    // If bonus has already been settled, immediately forward the user to support lanes
+    // Forward immediately to communication channel if the user has already claimed the reward
     if (hasClaimedBonus) {
       trackEvent("FloatingWhatsAppButton:support_channel_opened", { talentId: talent.id });
       window.open(whatsappUrl, "_blank");
@@ -56,35 +55,34 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
     });
 
     try {
-      // 1. Transaction Model: Allocate fractional bonus asset nodes to ledger
+      // Allocate the onboarding incentive credits to the user ledger
       const success = await addCredits(bonusAmount, "welcome_bonus", `WhatsApp Connect Bonus - ${bonusAmount} credits`);
 
       if (success) {
-        // 2. Database Synchronization: Commit timestamp status back to core identity tables
+        // Record timestamp completion on the talent profile record
         await markTalentWhatsappBonusClaimed(talent.id);
 
-        // 3. Cache Bridge Invalidation: Force client query clients to re-sync across viewports
+        // Invalidate state tags to update user balances dynamically across views
         queryClient.invalidateQueries({ queryKey: ["credits-balance"] });
         await refreshTalent();
 
         toast.success(`Welcome bonus secured! +${bonusAmount} credits added to your wallet`, { id: toastId });
         trackEvent("FloatingWhatsAppButton:bonus_claim_completed", { talentId: talent.id, amount: bonusAmount });
       } else {
-        throw new Error("Couldn't apply the welcome credit bonus. Please try again.");
+        throw new Error("Could not apply welcome credits. Please try again.");
       }
 
       window.open(whatsappUrl, "_blank");
     } catch (err: any) {
       const parsedErrorMessage = err instanceof Error ? err.message : String(err);
 
-      // 4. Digital Workforce Escalation: Forward credit processing failures to the admin swarm instantly
+      // Log transaction execution failures to diagnostic tools for support review
       trackError(parsedErrorMessage, {
         component: "FloatingWhatsAppButton",
         action: "handleConnect_bonus_fault",
         talentId: talent.id,
         attemptedAmount: bonusAmount,
       });
-
 
       toast.error("Couldn't apply the bonus right now — opening WhatsApp so you can reach support.", { id: toastId });
       window.open(whatsappUrl, "_blank");
@@ -95,7 +93,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
 
   return (
     <div className="fixed bottom-24 right-4 z-40 flex flex-col items-end gap-3 md:bottom-8 md:right-8 animate-in fade-in slide-in-from-bottom-4 duration-500 touch-manipulation">
-      {/* Immersive Glassmorphic Promotion Prompt Bubble */}
+      {/* Onboarding incentive notification popover layout */}
       {showPrompt && !isPromptDismissed && !hasClaimedBonus && (
         <div className="relative bg-background/95 dark:bg-background/90 backdrop-blur-xl border border-border/40 shadow-xl rounded-2xl p-3.5 max-w-[240px] animate-in fade-in zoom-in-95 duration-300">
           <button
@@ -104,7 +102,8 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
               setIsPromptDismissed(true);
               trackEvent("FloatingWhatsAppButton:prompt_dismissed", { talentId: talent.id });
             }}
-            aria-label="Dismiss promotional offer"
+            type="button"
+            aria-label="Dismiss offer"
             className="absolute -top-1.5 -right-1.5 bg-background border border-border shadow-sm rounded-full p-1 text-muted-foreground/80 hover:text-foreground hover:bg-muted active:scale-90 transition-all cursor-pointer"
           >
             <X className="h-3 w-3 stroke-[2.5]" />
@@ -123,6 +122,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
               </p>
               <button
                 onClick={handleConnect}
+                type="button"
                 className="inline-block text-xs font-bold text-primary hover:text-primary/80 transition-colors pt-1 cursor-pointer focus-visible:outline-none focus-visible:underline"
               >
                 Connect now &rarr;
@@ -132,7 +132,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
         </div>
       )}
 
-      {/* Main Interactive Floating Button Ring */}
+      {/* Floating support trigger layout button */}
       <div className="relative group">
         <Button
           onClick={handleConnect}
@@ -152,7 +152,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
           )}
         </Button>
 
-        {/* Dynamic Pulse Signal Indicator */}
+        {/* Pulse alert for unclaimed credits status */}
         {!hasClaimedBonus && (
           <span className="absolute -top-0.5 -right-0.5 flex h-3.5 w-3.5 pointer-events-none select-none">
             <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
