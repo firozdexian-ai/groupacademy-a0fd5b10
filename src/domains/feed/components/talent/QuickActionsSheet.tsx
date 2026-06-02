@@ -1,6 +1,6 @@
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { useQueryClient } from "@tanstack/react-query";
+import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { Bot, LucideIcon } from "lucide-react";
 import { Sheet, SheetContent, SheetHeader, SheetTitle } from "@/components/ui/sheet";
 import { listActiveQuickActionAgents } from "@/domains/feed/repo/feedRepo";
@@ -107,7 +107,7 @@ export function QuickActionsSheet({ open, onClose }: QuickActionsSheetProps) {
                 !!colorValue &&
                 (colorValue.startsWith("#") || colorValue.startsWith("rgb") || colorValue.startsWith("hsl"));
 
-              const bgStyle = isCssColor(agent.bg_color) ? { backgroundColor: item => agent.bg_color! } : undefined;
+              const bgStyle = isCssColor(agent.bg_color) ? { backgroundColor: agent.bg_color! } : undefined;
               const iconColor = isCssColor(agent.color) ? agent.color! : undefined;
 
               return (
