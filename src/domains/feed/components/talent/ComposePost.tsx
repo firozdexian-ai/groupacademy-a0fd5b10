@@ -20,9 +20,8 @@ const MAX_LENGTH = 1000;
 const MAX_TAGS = 5;
 
 /**
- * Premium, performance-optimized User Content Composition panel.
- * Built according to GroUp Academy Phase Z0 highly professional SAAS UI specifications
- * and Digital Workforce automated content telemetry guidelines.
+ * Premium, performance-optimized user content updates panel.
+ * Built according to standardized mobile-first interface specifications with background telemetry hooks.
  */
 export function ComposePost({ onPostCreated }: ComposePostProps) {
   const { talent } = useTalent();
@@ -54,6 +53,14 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
 
   const firstName = talent?.fullName?.split(" ")[0] || "there";
 
+  const handleReset = () => {
+    setText("");
+    setTags([]);
+    setTagInput("");
+    setShowTagInput(false);
+    setIsExpanded(false);
+  };
+
   const handleSubmit = async () => {
     const trimmed = text.trim();
     if (!trimmed || !talent?.id) return;
@@ -61,7 +68,6 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
     setIsSubmitting(true);
     const toastId = toast.loading("Publishing to community feed…");
 
-    // Telemetry: Multiplex transaction metadata securely to track layout trends
     trackEvent("feed_post_submission_attempt", {
       talentId: talent.id,
       contentLength: trimmed.length,
@@ -84,14 +90,11 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
       if (error) throw error;
 
       toast.success("Post published successfully", { id: toastId });
-
-      // Fire-and-forget success metrics hook to help track organic growth velocity
       trackEvent("feed_post_submission_success", { talentId: talent.id });
 
       handleReset();
       onPostCreated();
     } catch (err: any) {
-      // Digital Workforce Escalation: Route write errors directly to error utilities for admin diagnostics
       trackError(err instanceof Error ? err : String(err), {
         component: "ComposePost",
         action: "submit_database_mutation",
@@ -103,14 +106,6 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
     } finally {
       setIsSubmitting(false);
     }
-  };
-
-  const handleReset = () => {
-    setText("");
-    setTags([]);
-    setTagInput("");
-    setShowTagInput(false);
-    setIsExpanded(false);
   };
 
   const addTag = () => {
@@ -147,7 +142,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
         <CardContent className="p-4">
           <div className="flex gap-3 items-start">
             <Avatar className="h-9 w-9 shrink-0 border border-border/40 shadow-sm select-none">
-              <AvatarImage src={talent.profilePhotoUrl} alt={talent.fullName || "User Profile Photo"} />
+              <AvatarImage src={talent.profilePhotoUrl} alt={talent.fullName || "User profile picture"} />
               <AvatarFallback className="bg-primary/10 text-primary text-xs font-bold">{initials}</AvatarFallback>
             </Avatar>
 
@@ -156,15 +151,14 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
                 <div className="flex items-center gap-2">
                   <button
                     onClick={expand}
+                    type="button"
                     className="flex-1 text-left bg-muted/30 hover:bg-muted/50 rounded-full px-4 h-9 flex items-center transition-colors border border-border/10 cursor-pointer focus-visible:outline-none focus-visible:ring-1 focus-visible:ring-ring"
                   >
                     <span className="text-xs sm:text-sm text-muted-foreground/80 select-none">
                       What's on your mind, {firstName}?
                     </span>
                   </button>
-
                   <div className="flex items-center gap-0.5 shrink-0 select-none" />
-
                 </div>
               ) : (
                 <div className="space-y-3 transition-all duration-200">
@@ -176,7 +170,6 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
                     className="min-h-[110px] w-full resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0 placeholder:text-muted-foreground/60 text-foreground leading-relaxed selection:bg-primary/20"
                   />
 
-                  {/* Badges and Tags Layout Frame Matrix */}
                   {(tags.length > 0 || showTagInput) && (
                     <div className="flex flex-wrap gap-1.5 items-center pt-1">
                       {tags.map((tag) => (
@@ -188,6 +181,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
                           #{tag}
                           <button
                             onClick={() => setTags((p) => p.filter((t) => t !== tag))}
+                            type="button"
                             className="rounded-full hover:bg-foreground/10 p-0.5 transition-colors cursor-pointer"
                             aria-label={`Remove tag ${tag}`}
                           >
@@ -217,12 +211,12 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
                     </div>
                   )}
 
-                  {/* Toolbar & Submission Control Bar */}
                   <div className="flex flex-wrap items-center gap-y-2 gap-x-2 pt-2 border-t border-border/30 select-none">
                     <div className="flex items-center gap-1 min-w-0">
                       <button
                         onClick={() => tags.length < MAX_TAGS && setShowTagInput(true)}
                         disabled={tags.length >= MAX_TAGS}
+                        type="button"
                         className={cn(
                           "h-8 w-8 rounded-full flex items-center justify-center transition-all shrink-0 cursor-pointer",
                           tags.length >= MAX_TAGS
@@ -233,8 +227,6 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
                       >
                         <Hash className="h-4 w-4" />
                       </button>
-
-
 
                       <span
                         className={cn(
