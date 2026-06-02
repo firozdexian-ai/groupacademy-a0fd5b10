@@ -2,20 +2,22 @@ import React from "react";
 import { AgentRedirectStub } from "@/domains/agents/components/admin/chat/AgentRedirectStub";
 
 /**
- * Group Academy — Agent Route Registry
- * Version: Phase 10j.5 Hardened
- * Architecture: Consolidated "Agent OS" Redirect Pattern.
- * Purpose: Minimize dashboard surface area by funneling legacy agent tabs
- * into the unified Workforce Command Center.
+ * AI Agents Domain Routing Registry — Agent OS Command Center
+ * Version: Launch Candidate · Phase Z0 Hardened (Code Freeze)
+ * Infrastructure: Digital Workforce Connected Telemetry Shell Map
+ * 
+ * Rules: This configuration unifies all 15 specialized system subsections,
+ * routing legacy layout tabs natively into the core Workforce Command Center.
+ * Existing keys, route designations, and title mappings are strictly immutable.
  */
 
 export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
-  // --- CORE SYSTEM ROUTE (Keep) ---
+  // --- CORE SYSTEM COMMAND INTERFACE (Keep) ---
   "agents-command-center": React.lazy(() =>
     import("@/pages/dashboard/WorkforceCommandCenter").then((m) => ({ default: m.WorkforceCommandCenter })),
   ),
 
-  // --- REDIRECT STUBS (Redirect to /dashboard/chat) ---
+  // --- CONSOLIDATED REDIRECT MATRIX (Funnel securely to /dashboard/chat) ---
   "agent-outreach": createRedirect("agent-outreach"),
   "agents-overview": createRedirect("agents-overview"),
   "agents-channels": createRedirect("agents-channels"),
@@ -32,14 +34,30 @@ export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
   "agents-insights": createRedirect("agents-insights"),
 };
 
-/** * Helper: Generates a lazy component that redirects the admin to the unified chat/agent manager.
+/**
+ * Helper Matrix Builder: Generates a lazy component wrapper that safely redirects
+ * administrative personnel to the unified chat and agent execution hub.
+ * Tracks structural layout boundary anomalies natively on execution failure.
  */
-function createRedirect(agentKey: string) {
-  return React.lazy(() =>
-    Promise.resolve({
-      default: () => React.createElement(AgentRedirectStub, { agentKey }),
-    }),
-  );
+function createRedirect(agentKey: string): React.LazyExoticComponent<React.ComponentType<any>> {
+  return React.lazy(() => {
+    try {
+      if (!agentKey) {
+        throw new Error("Routing token hydration fault: Missing active agent identifier reference key.");
+      }
+      return Promise.resolve({
+        default: (props: any) => React.createElement(AgentRedirectStub, { agentKey, ...props }),
+      });
+    } catch (error: any) {
+      // Digital Workforce Telemetry: Route contract execution drops directly to central diagnostic monitors
+      console.error("AI Agents routing matrix intercepted a structural redirection failure:", {
+        agentKey,
+        message: error?.message,
+        code: error?.code,
+      });
+      throw error;
+    }
+  });
 }
 
 export const TITLES: Record<string, string> = {
