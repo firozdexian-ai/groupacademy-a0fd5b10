@@ -1,13 +1,4 @@
-// Phase 7 — Agent Brain panel.
-// Two tools:
-//  1) Blueprint: plain-language brief → AI proposes a full agent config.
-//     Admin reviews a diff and can Apply (writes to ai_agents).
-//  2) A/B prompt variants: store multiple system_prompt variants in
-//     ai_agents.prompt_variants (jsonb), pick the active one. The runtime
-//     already reads `active_prompt_variant` to select which to send.
-
 import { useMemo, useState } from "react";
-
 import { updateAiAgent } from "@/domains/agents/repo/agentsRepo";
 import { agentBlueprint } from "@/domains/agents/api/agentsApi";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
@@ -17,18 +8,16 @@ import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
-import {
-  Sparkles,
-  Loader2,
-  Wand2,
-  Plus,
-  Check,
-  Trash2,
-  BrainCircuit,
-  SplitSquareHorizontal,
-  ShieldCheck,
-} from "lucide-react";
+import { trackError } from "@/lib/errorTracking";
+import { Loader2, Wand2, Plus, Trash2, BrainCircuit, SplitSquareHorizontal, ShieldCheck } from "lucide-react";
 import { cn } from "@/lib/utils";
+
+/**
+ * Group Academy — Career Guidance System: Agent Instruction Panel Component
+ * Version: Phase 10j.5 Hardened (Production Candidate)
+ * Surface: /dashboard/studio?panel=brain (Agent Performance Tuning Surface)
+ * Operations Mode: Automated Efficiency plain-language instruction parser and multi-variant prompt engine.
+ */
 
 interface Proposal {
   name: string;
@@ -80,8 +69,8 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
   async function generate() {
     if (brief.trim().length < 10) {
       toast({
-        title: "Write a longer brief",
-        description: "Tell us what this agent should do, who it's for, and any tone notes.",
+        title: "Incomplete description",
+        description: "Please expand your requirements details before generating a configuration draft.",
       });
       return;
     }
@@ -89,10 +78,11 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
     setProposal(null);
     try {
       const data = await agentBlueprint({ brief, audience: agent.audience });
-      if (!data?.proposal) throw new Error("No proposal returned");
+      if (!data?.proposal) throw new Error("No optimization configuration models returned");
       setProposal(data.proposal as Proposal);
     } catch (e: any) {
-      toast({ title: "Generation failed", description: e.message || String(e), variant: "destructive" });
+      trackError("agent-brain-panel-generation-failure", { error: e.message, agentId: agent.id });
+      toast({ title: "Configuration generation failed", description: e.message, variant: "destructive" });
     } finally {
       setGenerating(false);
     }
@@ -112,182 +102,201 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
         message_credit_cost: proposal.message_credit_cost,
         category: proposal.category,
       });
+      toast({ title: "Configuration profile applied successfully" });
+      setProposal(null);
+      setBrief("");
+      onSaved?.();
     } catch (err: any) {
+      trackError("agent-brain-panel-apply-blueprint-failure", { error: err.message, agentId: agent.id });
+      toast({ title: "Application failed", description: err.message, variant: "destructive" });
+    } finally {
       setApplying(false);
-      toast({ title: "Apply failed", description: err?.message ?? String(err), variant: "destructive" });
-      return;
     }
-    setApplying(false);
-    toast({ title: "Blueprint applied" });
-    setProposal(null);
-    setBrief("");
-    onSaved?.();
   }
 
   async function setActive(key: string) {
     try {
       await updateAiAgent(agent.id, { active_prompt_variant: key });
+      setActiveVariant(key);
+      toast({ title: `Prompt variant ${key} is now live` });
+      onSaved?.();
     } catch (error: any) {
-      return toast({ title: "Update failed", description: error.message, variant: "destructive" });
+      trackError("agent-brain-panel-set-active-variant-failure", { error: error.message, agentId: agent.id, key });
+      toast({ title: "Activation failed", description: error.message, variant: "destructive" });
     }
-    setActiveVariant(key);
-    toast({ title: `Variant ${key} is now live` });
-    onSaved?.();
   }
 
   async function addVariant() {
     const key = newVariantKey.trim().toUpperCase();
     if (!key || !/^[A-Z0-9]{1,4}$/.test(key)) {
-      return toast({ title: "Invalid key", description: "Use 1-4 uppercase letters/digits (e.g. B, B2)." });
+      return toast({
+        title: "Invalid identifier",
+        description: "Use 1 to 4 alphanumeric uppercase characters (e.g., B, V2).",
+      });
     }
     if (key === "A" || variants[key]) {
-      return toast({ title: "Variant exists", description: "Pick a different key." });
+      return toast({ title: "Duplicate identifier", description: "This instruction option key already exists." });
     }
     if (newVariantPrompt.trim().length < 20) {
-      return toast({ title: "Prompt too short" });
+      return toast({ title: "Instructions description is too short" });
     }
     const next = { ...(agent.prompt_variants || {}), [key]: newVariantPrompt };
     try {
       await updateAiAgent(agent.id, { prompt_variants: next });
+      setNewVariantKey("");
+      setNewVariantPrompt("");
+      toast({ title: `Experimental variant ${key} successfully added` });
+      onSaved?.();
     } catch (error: any) {
-      return toast({ title: "Save failed", description: error.message, variant: "destructive" });
+      trackError("agent-brain-panel-add-variant-failure", { error: error.message, agentId: agent.id, key });
+      toast({ title: "Saving instructions variant failed", description: error.message, variant: "destructive" });
     }
-    setNewVariantKey("");
-    setNewVariantPrompt("");
-    toast({ title: `Variant ${key} added` });
-    onSaved?.();
   }
 
   async function deleteVariant(key: string) {
-    if (key === "A") return toast({ title: "Cannot delete A", description: "Variant A is the base system prompt." });
-    if (key === activeVariant)
-      return toast({ title: "Variant is live", description: "Switch to another variant first." });
+    if (key === "A")
+      return toast({ title: "Action prohibited", description: "Variant A is the base configuration prompt." });
+    if (key === activeVariant) {
+      return toast({
+        title: "Variant is currently live",
+        description: "Switch to an alternative instructions profile first.",
+      });
+    }
     const next = { ...(agent.prompt_variants || {}) };
     delete next[key];
     try {
       await updateAiAgent(agent.id, { prompt_variants: next });
+      toast({ title: `Variant ${key} removed` });
+      onSaved?.();
     } catch (error: any) {
-      return toast({ title: "Delete failed", description: error.message, variant: "destructive" });
+      trackError("agent-brain-panel-delete-variant-failure", { error: error.message, agentId: agent.id, key });
+      toast({ title: "Deletion failed", description: error.message, variant: "destructive" });
     }
-    onSaved?.();
   }
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-500">
-      {/* Blueprint Generation */}
-      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl flex flex-col">
-        <div className="h-1.5 w-full bg-gradient-to-r from-purple-500 via-primary to-blue-500" />
-        <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.2em] italic flex items-center gap-3 text-primary">
-            <BrainCircuit className="h-5 w-5" /> Blueprint Generator
+    <div className="space-y-6 animate-in fade-in duration-300 text-left">
+      {/* Strategy Blueprint Generation Block */}
+      <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card flex flex-col">
+        <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-cyan-500 to-indigo-600" />
+        <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
+          <CardTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-primary">
+            <BrainCircuit className="h-4 w-4" /> Configuration Strategy Assistant
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 space-y-6">
-          <div className="space-y-3">
-            <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-2">
-              Agent Brief
-            </Label>
+        <CardContent className="p-5 space-y-4">
+          <div className="space-y-1.5">
+            <Label className="text-xs font-semibold text-foreground">Instructional Parameters Brief</Label>
             <Textarea
               rows={4}
-              placeholder="Describe the agent in plain language. E.g. 'A friendly career coach for first-job seekers in tech. Should help with CV review, mock interview prep, and salary expectations. Keep tone warm but practical.'"
+              placeholder="Describe the target behavior parameters in plain English. Example: 'A technical guidance advisor for modern engineer professionals. Assist with resume reviews and structured curriculum path planning. Keep tone direct and operational.'"
               value={brief}
               onChange={(e) => setBrief(e.target.value)}
-              className="rounded-3xl border-2 bg-background/50 font-medium p-6 italic focus:border-primary/40 transition-all text-sm"
+              className="rounded-xl border border-border text-sm font-medium p-4 focus-visible:ring-1 focus-visible:ring-primary bg-background/50 leading-relaxed"
             />
-            <div className="flex justify-end">
+            <div className="flex justify-end pt-1">
               <Button
                 onClick={generate}
                 disabled={generating || brief.trim().length < 10}
-                className="h-12 px-8 rounded-2xl font-black uppercase tracking-widest text-[10px] shadow-lg shadow-primary/20 gap-2"
+                className="h-10 px-5 rounded-xl font-semibold text-xs tracking-wide gap-2 shadow-sm transition-all bg-primary hover:bg-primary/90 text-primary-foreground"
               >
                 {generating ? <Loader2 className="h-4 w-4 animate-spin" /> : <Wand2 className="h-4 w-4" />}
-                Generate Proposal
+                Generate System Proposal
               </Button>
             </div>
           </div>
 
           {proposal && (
-            <div className="rounded-[32px] border-2 border-primary/20 p-8 space-y-6 bg-primary/5 animate-in slide-in-from-top-4 duration-500">
-              <div className="flex items-center gap-3 flex-wrap">
-                <Badge className="bg-primary text-white font-black uppercase tracking-widest px-3 py-1">
+            <div className="rounded-xl border border-primary/20 p-5 space-y-4 bg-primary/[0.01] animate-in slide-in-from-top-3 duration-300">
+              <div className="flex items-center gap-2 flex-wrap">
+                <Badge className="bg-primary text-primary-foreground font-bold tracking-wide px-2.5 py-0.5 rounded-full border-none">
                   {proposal.name}
                 </Badge>
-                <Badge variant="outline" className="text-[10px] font-mono border-primary/30 text-primary bg-background">
+                <Badge
+                  variant="outline"
+                  className="text-[11px] font-mono border-border bg-background text-muted-foreground"
+                >
                   {proposal.agent_key}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="text-[10px] font-black uppercase tracking-widest bg-background border-border/50"
+                  className="text-[11px] font-semibold bg-background border-border text-muted-foreground"
                 >
-                  L{proposal.agent_level}
+                  Level {proposal.agent_level}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="text-[10px] font-black uppercase tracking-widest bg-background border-border/50"
+                  className="text-[11px] font-semibold bg-background border-border text-muted-foreground"
                 >
                   {proposal.category}
                 </Badge>
                 <Badge
                   variant="outline"
-                  className="text-[10px] font-black uppercase tracking-widest bg-emerald-500/10 text-emerald-600 border-emerald-500/20"
+                  className="text-[11px] font-bold bg-emerald-500/10 text-emerald-700 border-none rounded-full px-2.5"
                 >
-                  {proposal.connection_fee}c CONN / {proposal.message_credit_cost}c MSG
+                  {proposal.connection_fee} Credits Access / {proposal.message_credit_cost} Credits Msg
                 </Badge>
               </div>
 
-              <div className="space-y-4">
-                <p className="text-sm font-medium text-muted-foreground italic border-l-2 border-primary/40 pl-4 py-1">
+              <div className="space-y-3">
+                <p className="text-xs font-medium text-muted-foreground/90 italic border-l-2 border-primary/40 pl-3 py-0.5 leading-relaxed">
                   "{proposal.rationale}"
                 </p>
 
-                <div>
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2 block">
-                    Description
+                <div className="space-y-1">
+                  <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                    Functional Summary Description
                   </Label>
-                  <p className="text-sm font-medium">{proposal.description}</p>
+                  <p className="text-sm text-foreground leading-relaxed font-medium">{proposal.description}</p>
                 </div>
 
-                <div>
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2 block">
-                    System Prompt
+                <div className="space-y-1">
+                  <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                    System Instructions Code
                   </Label>
-                  <pre className="text-xs whitespace-pre-wrap font-mono bg-background p-6 rounded-3xl border-2 border-border/20 max-h-64 overflow-auto shadow-inner">
+                  <pre className="text-xs whitespace-pre-wrap font-mono bg-muted p-4 rounded-xl border border-border/40 max-h-48 overflow-y-auto leading-relaxed text-foreground/90">
                     {proposal.system_prompt}
                   </pre>
                 </div>
 
-                <div>
-                  <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground/60 mb-2 block">
-                    Authorized Tools
+                <div className="space-y-1">
+                  <Label className="text-[11px] font-bold uppercase tracking-wider text-muted-foreground/70">
+                    Authorized Integration Tools
                   </Label>
-                  <div className="flex flex-wrap gap-2">
+                  <div className="flex flex-wrap gap-1.5">
                     {proposal.allowed_tools.map((t) => (
-                      <Badge key={t} variant="secondary" className="font-mono text-[9px]">
+                      <Badge
+                        key={t}
+                        variant="secondary"
+                        className="font-mono text-[10px] bg-muted text-muted-foreground border-none px-2 py-0.5 rounded"
+                      >
                         {t}
                       </Badge>
                     ))}
                     {proposal.allowed_tools.length === 0 && (
-                      <span className="text-xs text-muted-foreground italic">None required</span>
+                      <span className="text-xs text-muted-foreground/60 italic">
+                        No tools required for this template package
+                      </span>
                     )}
                   </div>
                 </div>
               </div>
 
-              <div className="flex gap-4 pt-4 border-t border-border/20">
+              <div className="flex gap-3 pt-3 border-t border-border/40">
                 <Button
                   onClick={applyProposal}
                   disabled={applying}
-                  className="h-12 flex-1 rounded-xl font-black uppercase tracking-widest text-[10px] gap-2"
+                  className="h-10 flex-1 rounded-xl font-semibold text-xs tracking-wide gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm"
                 >
                   {applying ? <Loader2 className="h-4 w-4 animate-spin" /> : <ShieldCheck className="h-4 w-4" />}
-                  Apply Blueprint To Agent
+                  Apply Blueprint Framework Settings
                 </Button>
                 <Button
                   variant="outline"
                   onClick={() => setProposal(null)}
-                  className="h-12 px-8 rounded-xl font-black uppercase tracking-widest text-[10px] border-2"
+                  className="h-10 px-5 rounded-xl font-semibold text-xs text-muted-foreground border-border hover:bg-muted"
                 >
-                  Discard
+                  Discard Proposal
                 </Button>
               </div>
             </div>
@@ -295,119 +304,119 @@ export function AgentBrainPanel({ agent, onSaved }: AgentBrainPanelProps) {
         </CardContent>
       </Card>
 
-      {/* A/B Prompt Variants */}
-      <Card className="rounded-[40px] border-2 border-border/40 shadow-xl overflow-hidden bg-card/30 backdrop-blur-xl flex flex-col">
-        <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-emerald-600" />
-        <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
-          <CardTitle className="text-sm font-black uppercase tracking-[0.2em] italic flex items-center gap-3 text-emerald-600">
-            <SplitSquareHorizontal className="h-5 w-5" /> Prompt Variants (A/B Testing)
+      {/* Structured A/B Testing Profiles Framework */}
+      <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card flex flex-col">
+        <div className="h-1 w-full bg-gradient-to-r from-emerald-500 via-teal-500 to-emerald-600" />
+        <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
+          <CardTitle className="text-sm font-bold uppercase tracking-wider flex items-center gap-2 text-emerald-700">
+            <SplitSquareHorizontal className="h-4 w-4" /> Instructions Deployment Variants (A/B Routing)
           </CardTitle>
         </CardHeader>
-        <CardContent className="p-6 space-y-6">
-          <div className="space-y-4">
+        <CardContent className="p-5 space-y-4">
+          <div className="space-y-3">
             {Object.entries(variants).map(([key, prompt]) => (
               <div
                 key={key}
                 className={cn(
-                  "rounded-[24px] border-2 p-6 transition-all duration-300",
+                  "rounded-xl border p-4 transition-all duration-200 bg-background/40",
                   key === activeVariant
-                    ? "border-emerald-500/30 bg-emerald-500/5 shadow-sm"
-                    : "border-border/20 bg-background/30 hover:border-border/40",
+                    ? "border-emerald-500/30 bg-emerald-500/[0.01] shadow-inner"
+                    : "border-border hover:border-border/80",
                 )}
               >
-                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-4">
+                <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 mb-3">
                   <div className="flex items-center gap-3">
                     <Badge
                       variant={key === activeVariant ? "default" : "outline"}
                       className={cn(
-                        "font-black text-[10px] uppercase tracking-widest px-3 py-1",
-                        key === activeVariant && "bg-emerald-500 text-white",
+                        "font-bold text-[11px] px-2.5 py-0.5 rounded-full border-none",
+                        key === activeVariant
+                          ? "bg-emerald-600 text-white hover:bg-emerald-600"
+                          : "bg-muted text-muted-foreground",
                       )}
                     >
                       Variant {key}
                     </Badge>
                     {key === activeVariant && (
-                      <span className="text-[10px] font-black uppercase tracking-widest text-emerald-600 flex items-center gap-1">
-                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Live
+                      <span className="text-[11px] font-bold text-emerald-700 flex items-center gap-1.5">
+                        <span className="h-2 w-2 rounded-full bg-emerald-500 animate-pulse" /> Active Live Route
                       </span>
                     )}
                     {key === "A" && (
-                      <span className="text-[9px] font-black uppercase tracking-widest text-muted-foreground/60">
-                        (Base Prompt)
+                      <span className="text-xs text-muted-foreground/50 font-medium">
+                        (Baseline Instructions Framework)
                       </span>
                     )}
                   </div>
-                  <div className="flex items-center gap-2">
+                  <div className="flex items-center gap-1">
                     {key !== activeVariant && (
                       <Button
                         size="sm"
                         variant="secondary"
                         onClick={() => setActive(key)}
-                        className="h-8 rounded-lg font-black uppercase text-[9px] tracking-widest px-4"
+                        className="h-7 rounded-lg font-semibold text-[10px] tracking-wide px-3 bg-muted hover:bg-muted/80 text-foreground"
                       >
-                        Make Live
+                        Activate Variant
                       </Button>
                     )}
                     {key !== "A" && (
                       <Button
-                        size="icon" aria-label="Delete"
+                        size="icon"
                         variant="ghost"
+                        aria-label="Delete instruction variant"
                         onClick={() => deleteVariant(key)}
-                        className="h-8 w-8 rounded-lg text-destructive/60 hover:bg-destructive/10 hover:text-destructive transition-colors"
+                        className="h-7 w-7 rounded-lg text-rose-600 hover:bg-rose-500/10 hover:text-rose-700"
                       >
                         <Trash2 className="h-3.5 w-3.5" />
                       </Button>
                     )}
                   </div>
                 </div>
-                <pre className="text-xs whitespace-pre-wrap font-mono bg-background/50 p-4 rounded-2xl border border-border/10 max-h-48 overflow-auto shadow-inner text-foreground/80">
+                <pre className="text-xs whitespace-pre-wrap font-mono bg-muted/60 p-4 rounded-xl border border-border/40 max-h-40 overflow-y-auto text-muted-foreground leading-relaxed">
                   {prompt}
                 </pre>
               </div>
             ))}
           </div>
 
-          <div className="rounded-[32px] border-2 border-dashed border-border/40 p-6 space-y-6 bg-muted/5">
-            <div className="flex items-center gap-3 text-muted-foreground">
-              <Plus className="h-5 w-5" />
-              <span className="text-sm font-black uppercase tracking-widest italic">Add Experimental Variant</span>
+          {/* Interactive Variant Creator Framework */}
+          <div className="rounded-xl border border-dashed border-border p-4 space-y-4 bg-muted/10">
+            <div className="flex items-center gap-2 text-muted-foreground font-semibold text-xs uppercase tracking-wider">
+              <Plus className="h-4 w-4 text-primary" /> Create Experimental Variant
             </div>
             <div className="flex flex-col md:flex-row gap-4">
-              <div className="space-y-2 md:w-32 shrink-0">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                  Key
-                </Label>
+              <div className="space-y-1.5 md:w-24 shrink-0 text-left">
+                <Label className="text-xs font-semibold text-foreground">Option Key</Label>
                 <Input
-                  className="h-12 rounded-xl border-2 font-black text-center"
-                  placeholder="B"
+                  className="h-10 rounded-xl border font-bold text-center uppercase font-mono text-sm tracking-wide"
+                  placeholder="e.g. B"
                   value={newVariantKey}
                   onChange={(e) => setNewVariantKey(e.target.value)}
                   maxLength={4}
                 />
               </div>
-              <div className="space-y-2 flex-1">
-                <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground ml-1">
-                  System Prompt
-                </Label>
+              <div className="space-y-1.5 md:flex-1 text-left">
+                <Label className="text-xs font-semibold text-foreground">Instructions Code Prompt</Label>
                 <Textarea
                   rows={3}
-                  className="rounded-xl border-2 font-mono text-xs p-4 resize-none"
-                  placeholder="New system prompt to test against the live variant…"
+                  className="rounded-xl border text-sm font-medium p-3 resize-none leading-relaxed focus-visible:ring-1 focus-visible:ring-primary"
+                  placeholder="Insert the variant setup text guidelines to deployment test..."
                   value={newVariantPrompt}
                   onChange={(e) => setNewVariantPrompt(e.target.value)}
                 />
               </div>
             </div>
-            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-2">
-              <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 max-w-sm leading-relaxed">
-                Variants run 50/50 against live traffic. Compare session completion rates in Insights.
+            <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pt-1">
+              <p className="text-xs text-muted-foreground/60 max-w-sm leading-relaxed">
+                Instruction variants run split testing concurrently against production traffic allocations. Review
+                performance loops inside Insights dashboards.
               </p>
               <Button
                 onClick={addVariant}
                 disabled={!newVariantKey.trim() || newVariantPrompt.trim().length < 20}
-                className="h-12 px-10 rounded-xl font-black uppercase tracking-widest text-[10px] shadow-md"
+                className="h-10 px-5 rounded-xl font-semibold text-xs tracking-wide bg-primary hover:bg-primary/90 text-primary-foreground shadow-sm shrink-0"
               >
-                Inject Variant
+                Save Experimental Variant
               </Button>
             </div>
           </div>
