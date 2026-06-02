@@ -21,7 +21,7 @@ export { AbroadIELTSResourcesTab } from "./components/admin/AbroadIELTSResources
 export { AbroadLanguageLabTab } from "./components/admin/AbroadLanguageLabTab";
 
 // ─── Graph Query Hooks & Synchronizer Contexts ───────────────────────────
-export { useAbroadGraph } from "./hooks/useAbroadGraph";
+export { useAbroadGraph } from "./components/admin/hooks/useAbroadGraph";
 export type {
   AbroadApplication,
   AbroadProgram,
@@ -29,7 +29,7 @@ export type {
   DestinationAgent,
   IeltsAttempt,
   IeltsResource,
-} from "./hooks/useAbroadGraph";
+} from "./components/admin/hooks/useAbroadGraph";
 
 // ─── Typed Edge Network Invocation Engines (API) ─────────────────────────
 export {
