@@ -38,12 +38,11 @@ export interface CompanyRow {
 export interface ContactRow {
   id: string;
   company_id: string | null;
-  first_name: string | null;
-  last_name: string | null;
+  full_name: string | null;
   email: string | null;
   phone: string | null;
-  title: string | null;
   created_at: string;
+  [key: string]: any;
   company?: { name: string | null };
 }
 
