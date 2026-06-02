@@ -56,7 +56,7 @@ function InsightsBody({ postId }: { postId: string }) {
   // Catch server-state data faults and log parameters securely in the background
   useEffect(() => {
     if (error) {
-      trackError(error instanceof Error ? error : String(err), {
+      trackError(error instanceof Error ? error : String(error), {
         component: "PostInsightsAccordion",
         action: "fetch_post_insights_api",
         postId,
