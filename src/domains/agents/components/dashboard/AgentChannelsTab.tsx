@@ -2,96 +2,118 @@ import { useEffect, useState } from "react";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { listAgentChannels } from "@/domains/agents/repo/agentsRepo";
-import { Zap, Network, Activity, Loader2 } from "lucide-react";
+import { Zap, Network, Activity } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
+import { trackError } from "@/lib/errorTracking";
+
+/**
+ * Group Academy — Career Guidance System: Agent Integration Channels Sub-Panel
+ * Version: Phase 10j.5 Hardened (Production Candidate)
+ * Surface: /dashboard/command-center?tab=channels (System Infrastructure Dashboard View)
+ * Operations Mode: High-performance channel routing registry mapping webhooks, endpoints, and chat vectors.
+ */
 
 export function AgentChannelsTab() {
   const [rows, setRows] = useState<any[]>([]);
   const [isLoading, setIsLoading] = useState(true);
 
   useEffect(() => {
+    let active = true;
     listAgentChannels()
       .then((data) => {
-        setRows(data);
-        setIsLoading(false);
+        if (active) {
+          setRows(data);
+          setIsLoading(false);
+        }
       })
-      .catch(() => setIsLoading(false));
+      .catch((err: any) => {
+        trackError("agent-channels-tab-fetch-failure", { error: err?.message || String(err) });
+        if (active) {
+          setIsLoading(false);
+        }
+      });
+    return () => {
+      active = false;
+    };
   }, []);
 
   return (
-    <div className="space-y-8 animate-in fade-in duration-1000">
-      {/* Executive Header */}
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-[40px] border-2 border-border/40 backdrop-blur-md">
-        <div className="space-y-1">
-          <div className="flex items-center gap-3 text-primary">
-            <Zap className="h-8 w-8 text-amber-500 fill-amber-500/20" />
-            <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none">Channels & Triggers</h2>
+    <div className="space-y-6 animate-in fade-in duration-300 text-left">
+      {/* Executive Overview Header */}
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-4 bg-muted/40 p-6 rounded-2xl border border-border/40 backdrop-blur-sm">
+        <div className="space-y-1.5">
+          <div className="flex items-center gap-2.5 text-primary">
+            <Zap className="h-6 w-6 text-amber-500 fill-amber-500/10" />
+            <h2 className="text-xl font-bold tracking-tight text-foreground">Integration Channels</h2>
           </div>
-          <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            Where agents fire · Chat surfaces · Webhooks · Cron jobs
+          <p className="text-xs text-muted-foreground leading-relaxed">
+            Configure messaging protocols, webhooks, and automation triggers for conversational workers.
           </p>
         </div>
       </header>
 
-      <Card className="rounded-[40px] border-2 border-border/40 shadow-2xl overflow-hidden bg-card/30 backdrop-blur-xl flex flex-col">
-        <div className="h-1.5 w-full bg-gradient-to-r from-amber-400 via-orange-500 to-amber-400" />
+      {/* Integration Registry Node Display */}
+      <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card flex flex-col">
+        <div className="h-1 w-full bg-gradient-to-r from-amber-500 via-orange-500 to-amber-600" />
 
-        <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
-          <CardTitle className="text-[10px] font-black uppercase tracking-[0.3em] italic flex items-center gap-2 text-muted-foreground/70">
-            <Network className="h-4 w-4 text-amber-500" /> Authorized Execution Nodes
+        <CardHeader className="p-5 border-b border-border/40 bg-muted/20">
+          <CardTitle className="text-xs font-bold uppercase tracking-wider flex items-center gap-2 text-muted-foreground/80">
+            <Network className="h-4 w-4 text-amber-500" /> Authorized Integration Endpoints
           </CardTitle>
         </CardHeader>
 
-        <CardContent className="p-6 flex-1 bg-background/30">
+        <CardContent className="p-5 flex-1 bg-background/50">
           {isLoading ? (
-            <div className="space-y-4">
+            <div className="space-y-3">
               {[1, 2, 3].map((i) => (
-                <Skeleton key={i} className="h-24 w-full rounded-[24px] border-2 border-border/20 bg-muted/20" />
+                <Skeleton key={i} className="h-20 w-full rounded-xl border border-border/40 bg-muted/30" />
               ))}
             </div>
           ) : rows.length === 0 ? (
-            <div className="flex flex-col items-center justify-center py-20 bg-muted/5 border-2 border-dashed border-border/20 rounded-[32px]">
-              <Activity className="h-8 w-8 text-muted-foreground/30 mb-3" />
-              <div className="text-center text-[10px] font-black uppercase tracking-widest text-muted-foreground/50">
-                No active channels detected.
+            <div className="flex flex-col items-center justify-center py-12 bg-muted/10 border border-dashed border-border/60 rounded-xl space-y-3">
+              <div className="h-10 w-10 rounded-full bg-muted flex items-center justify-center text-muted-foreground/30">
+                <Activity className="h-5 w-5" />
               </div>
+              <p className="text-xs font-medium text-muted-foreground text-center">
+                No active configuration channels detected in this environment slot.
+              </p>
             </div>
           ) : (
-            <div className="grid gap-4">
+            <div className="grid gap-3">
               {rows.map((r) => (
                 <div
                   key={r.id}
-                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-5 rounded-[24px] border-2 border-border/20 bg-background/50 hover:bg-primary/[0.02] hover:border-primary/20 transition-all group"
+                  className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 p-4 rounded-xl border border-border bg-background hover:bg-primary/[0.01] hover:border-primary/30 transition-all group"
                 >
-                  <div className="space-y-2 min-w-0">
-                    <div className="flex items-center gap-3">
-                      <h3 className="text-lg font-black uppercase tracking-tight italic group-hover:text-primary transition-colors leading-none truncate">
+                  <div className="space-y-1 min-w-0 flex-1">
+                    <div className="flex items-center gap-2 flex-wrap">
+                      <h3 className="font-bold text-sm text-foreground group-hover:text-primary transition-colors leading-none truncate">
                         {r.label}
                       </h3>
-                      <span className="font-mono text-[9px] font-bold bg-muted/50 px-2 py-0.5 rounded-md border border-border/50 text-muted-foreground shrink-0">
+                      <span className="font-mono text-[10px] font-semibold bg-muted px-2 py-0.5 rounded border border-border/50 text-muted-foreground shrink-0">
                         {r.channel_key}
                       </span>
                     </div>
-                    <p className="text-xs font-medium text-muted-foreground italic truncate">{r.description}</p>
+                    <p className="text-xs text-muted-foreground/80 leading-relaxed font-medium">{r.description}</p>
                   </div>
 
-                  <div className="flex items-center gap-3 shrink-0">
+                  <div className="flex items-center gap-2 shrink-0 sm:self-center">
                     {r.direction && (
                       <Badge
                         variant="outline"
-                        className="rounded-lg border-2 font-black text-[8px] uppercase tracking-widest bg-background"
+                        className="rounded-full border-border font-semibold text-[10px] uppercase tracking-wide bg-background text-muted-foreground px-2.5"
                       >
                         {r.direction}
                       </Badge>
                     )}
                     <Badge
                       className={cn(
-                        "rounded-lg font-black text-[8px] uppercase tracking-widest px-3 py-1 border-none",
-                        r.is_active ? "bg-emerald-500/10 text-emerald-500" : "bg-muted text-muted-foreground/60",
+                        "rounded-full font-bold text-[10px] uppercase tracking-wide px-2.5 py-0.5 border-none",
+                        r.is_active ? "bg-emerald-500/10 text-emerald-700" : "bg-muted text-muted-foreground/60",
                       )}
                     >
-                      {r.is_active ? "ACTIVE_NODE" : "OFFLINE"}
+                      {r.is_active ? "Online" : "Offline"}
                     </Badge>
                   </div>
                 </div>
@@ -100,18 +122,8 @@ export function AgentChannelsTab() {
           )}
         </CardContent>
       </Card>
-
-      {/* Operational Trace Footer */}
-      <footer className="mt-12 pt-8 border-t border-border/40 flex items-center justify-between opacity-30">
-        <div className="space-y-1">
-          <p className="text-[9px] font-black uppercase tracking-[0.4em] italic">Agent OS: Channel Routing</p>
-        </div>
-        <div className="flex gap-2">
-          {[...Array(2)].map((_, i) => (
-            <div key={i} className="h-1 w-6 rounded-full bg-primary/20" />
-          ))}
-        </div>
-      </footer>
     </div>
   );
 }
+
+export default AgentChannelsTab;
