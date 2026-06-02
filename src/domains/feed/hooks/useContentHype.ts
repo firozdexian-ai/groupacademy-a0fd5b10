@@ -2,7 +2,10 @@ import { useHype } from "@/domains/feed/hooks/useHype";
 
 export type HypeContentType = "post" | "course" | "video" | "blog";
 
-/** Back-compat wrapper: old signature was useContentHype(type, id, initialCount). */
+/**
+ * Backward compatibility hook wrapping the updated useHype state engine.
+ * Maps legacy parameter positions cleanly to prevent broken interaction triggers.
+ */
 export function useContentHype(contentType: HypeContentType, contentId: string, initialCount: number = 0) {
   return useHype(contentId, contentType, initialCount);
 }
