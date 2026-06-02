@@ -337,7 +337,7 @@ export async function listTopHypedPostsWeek(limit = 5) {
   const buf = new Map((contentRows ?? []).map((r: any) => [r.user_id, r]));
 
   return (topRows ?? []).map((r: any) => {
-    const p = buf.get(r.talent_id);
+    const p: any = buf.get(r.talent_id);
     return {
       post_id: p?.id ?? r.talent_id,
       hypes_week: Number(r.hype_count || 0),
