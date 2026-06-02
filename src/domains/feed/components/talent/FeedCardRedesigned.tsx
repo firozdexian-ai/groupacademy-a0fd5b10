@@ -51,14 +51,18 @@ const typeConfigs: Record<string, { icon: any; style: string; label: string; cta
   },
 };
 
+/**
+ * Clean, redesigned Feed Card surface that presents multi-format content
+ * (Videos, Courses, Articles, Posts) with matching indicators and social interactions.
+ */
 export function FeedCardRedesigned({ item, onInterested, onNotInterested }: FeedCardRedesignedProps) {
   const { isSaved, toggleSave } = useSavedItems();
   const [showYoutube, setShowYoutube] = useState(false);
 
-  // Trace card impression metrics safely under Automated Efficiency guidelines
+  // Log non-blocking background metrics on card visibility updates
   useEffect(() => {
     if (item?.id) {
-      trackEvent("feed_card_impression_rendered", {
+      trackEvent("feed_card_viewed", {
         contentId: item.id,
         contentType: item.type,
         hasMatchScore: item.matchScore !== undefined,
@@ -67,7 +71,7 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
   }, [item]);
 
   if (!item) {
-    trackError("FeedCardRedesigned element mounted without active item property references.", {
+    trackError("Feed card mounted without active data object references", {
       component: "FeedCardRedesigned",
       action: "null_pointer_assertion",
     });
@@ -86,7 +90,11 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
     e.preventDefault();
     e.stopPropagation();
 
-    trackEvent("feed_card_bookmark_toggled", { contentId: item.id, targetType: itemType, nextState: !isBookmarked });
+    trackEvent("feed_card_bookmark_toggled", { 
+      contentId: item.id, 
+      targetType: itemType, 
+      nextState: !isBookmarked 
+    });
 
     try {
       await toggleSave(item.id, itemType);
@@ -101,7 +109,7 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
 
   const handleCtaClick = (e: React.MouseEvent) => {
     e.stopPropagation();
-    trackEvent("feed_card_cta_invoked", { contentId: item.id, contentType: item.type });
+    trackEvent("feed_card_cta_clicked", { contentId: item.id, contentType: item.type });
     onInterested();
   };
 
@@ -158,7 +166,7 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
             </div>
           ) : null}
 
-          {/* Absolute Top Control Layer Row */}
+          {/* Action overlay shortcuts panel */}
           <div className="absolute top-2.5 right-2.5 z-10 flex items-center gap-1.5 pointer-events-auto">
             <Button
               variant="ghost"
@@ -170,7 +178,7 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
                   : "bg-background/80 hover:bg-background border-border/40 text-foreground",
               )}
               onClick={handleToggleSave}
-              aria-label={isBookmarked ? "Remove bookmark" : "Archive item bookmark"}
+              aria-label={isBookmarked ? "Remove bookmark" : "Bookmark item"}
             >
               <Bookmark className={cn("h-4 w-4", isBookmarked && "fill-current")} />
             </Button>
@@ -195,7 +203,7 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
         </div>
       )}
 
-      {/* Primary Context Typography Layer */}
+      {/* Main text content layouts */}
       <CardContent className="p-4 flex flex-col gap-2.5 flex-1 min-w-0">
         {!hasMedia && (
           <div className="flex items-center justify-between gap-2 select-none">
@@ -210,13 +218,14 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
             </Badge>
             <button
               onClick={handleToggleSave}
+              type="button"
               className={cn(
                 "h-7 w-7 rounded-lg flex items-center justify-center border border-transparent hover:border-border/40 transition-all cursor-pointer active:scale-90",
                 isBookmarked
                   ? "bg-primary text-primary-foreground border-primary"
                   : "text-muted-foreground hover:bg-muted/40",
               )}
-              aria-label="Toggle textual bookmark mapping"
+              aria-label="Toggle bookmark"
             >
               <Bookmark className={cn("h-3.5 w-3.5", isBookmarked && "fill-current")} />
             </button>
@@ -235,7 +244,7 @@ export function FeedCardRedesigned({ item, onInterested, onNotInterested }: Feed
           )}
         </div>
 
-        {/* Operational Interactive Footer Strip Control Bar */}
+        {/* Action button strip container */}
         <div className="flex items-center gap-2 mt-1 pt-3 border-t border-border/30 w-full select-none">
           <Button
             onClick={handleCtaClick}
