@@ -34,7 +34,7 @@ export default function RecentActivityList({ recent }: Props) {
         const Icon = ACTIVITY_ICONS[activity.kind] ?? MessageSquare;
 
         return (
-          <li key={`${activity.talentId}-${activity.at}-${index}`} className="flex items-center gap-3 group">
+          <li key={`${activity.talentName}-${activity.at}-${index}`} className="flex items-center gap-3 group">
             <div className="h-9 w-9 rounded-xl bg-muted flex items-center justify-center text-muted-foreground group-hover:bg-primary/10 group-hover:text-primary transition-colors duration-200 shrink-0">
               <Icon className="h-4 w-4" />
             </div>
