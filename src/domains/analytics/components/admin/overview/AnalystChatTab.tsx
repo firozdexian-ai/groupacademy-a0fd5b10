@@ -1,52 +1,77 @@
 /**
  * Analyst Chat Tab — Consolidated Redirect
- * CTO Version: May 2026
- * Fixes: P5, P6 (Consolidated into Unified Agentic OS)
+ * Centralizes entry points for the Business Analyst (Nia) under the unified Agentic OS Messenger.
+ * Adheres to the 2024 Professional SaaS UI guidelines and records session telemetry events.
  */
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
-import { Loader2, MessageSquare } from "lucide-react";
+import { MessageSquare } from "lucide-react";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
+import { supabase } from "@/integrations/supabase/client";
 
 export function AnalystChatTab() {
   const navigate = useNavigate();
 
   useEffect(() => {
-    /**
-     * P6: Redirect to the unified Agentic Dashboard.
-     * Pre-seeding the query with agent=business-analyst (Nia).
-     * This ensures the user benefits from persistent thread history
-     * and standardized tools available in the main chat interface.
-     */
-    const timer = setTimeout(() => {
-      navigate("/dashboard/chat?agent=business-analyst", { replace: true });
-    }, 800);
+    let active = true;
 
-    return () => clearTimeout(timer);
+    const initializeTransfer = async () => {
+      try {
+        // Digital Workforce Telemetry: Log the administrative initialization sequence
+        await supabase.from("platform_events").insert({
+          event_type: "agent_session_transfer",
+          severity: "info",
+          payload: {
+            agent_key: "business-analyst",
+            source_surface: "admin_overview_analyst_tab",
+            timestamp: new Date().toISOString(),
+          },
+        });
+      } catch (err) {
+        // Non-blocking telemetry failure fallback
+        console.warn("[Digital Workforce] Failed to log transfer event:", err);
+      }
+
+      if (active) {
+        /**
+         * Redirect to the unified Agentic Dashboard messenger interface.
+         * Pre-seeding the route configuration matrix with agent=business-analyst (Nia).
+         * Maintains persistent thread context matching platform spec frameworks.
+         */
+        navigate("/dashboard/chat?agent=business-analyst", { replace: true });
+      }
+    };
+
+    const timer = setTimeout(() => {
+      initializeTransfer();
+    }, 600);
+
+    return () => {
+      active = false;
+      clearTimeout(timer);
+    };
   }, [navigate]);
 
   return (
-    <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-6 animate-in fade-in duration-700">
+    <div className="flex flex-col items-center justify-center min-h-[50vh] space-y-4 animate-in fade-in duration-500">
       <div className="relative">
-        <div className="h-24 w-24 rounded-2xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center">
-          <MessageSquare className="h-10 w-10 text-primary animate-pulse" />
+        <div className="h-16 w-16 rounded-xl bg-primary/10 border border-primary/20 flex items-center justify-center">
+          <MessageSquare className="h-6 w-6 text-primary animate-pulse" />
         </div>
-        <div className="absolute -bottom-2 -right-2">
-          <InlineSpinner size="lg" />
+        <div className="absolute -bottom-1 -right-1 bg-background rounded-full p-0.5">
+          <InlineSpinner size="md" />
         </div>
       </div>
 
-      <div className="text-center space-y-2">
-        <h2 className="text-xl font-black uppercase tracking-tighter italic text-primary">Initializing Nia</h2>
-        <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-          Redirecting to Agentic OS Messenger...
-        </p>
+      <div className="text-center space-y-1.5 max-w-sm">
+        <h2 className="text-base font-semibold text-foreground">Connecting to Nia</h2>
+        <p className="text-xs text-muted-foreground">Opening secure thread within Agentic OS Messenger...</p>
       </div>
 
-      <div className="max-w-md w-full bg-muted/10 border border-border/60 p-6 rounded-2xl backdrop-blur-sm">
-        <p className="text-xs text-muted-foreground leading-relaxed text-center">
-          We have unified all 27 admin agents into a single secure terminal. Your session with the{" "}
-          <strong>Business Analyst</strong> is being transferred to maintain thread persistence.
+      <div className="max-w-xs w-full bg-muted/40 border border-border p-4 rounded-xl text-center">
+        <p className="text-xs text-muted-foreground leading-normal">
+          We have consolidated our analytical endpoints into a single workspace panel. Your session with the{" "}
+          <strong>Business Analyst</strong> is loading to protect history persistence.
         </p>
       </div>
     </div>
