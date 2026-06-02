@@ -2,25 +2,24 @@ import { useEffect } from "react";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trackEvent } from "@/lib/errorTracking";
-import { cn } from "@/lib/utils";
 
 /**
- * GroUp Academy: Structural Loading Node (FeedSkeleton)
- * CTO Reference: High-fidelity ghost state for feed hydration cycles.
- * Version: Launch Candidate · Phase Z0 Hardened
+ * High-fidelity placeholder ghost state for the main feed loading viewports.
+ * Minimizes content layout shift (CLS) during initial recommendations loading hooks.
  */
 export function FeedSkeleton() {
-  // Asynchronously record rendering performance metrics via our telemetry client
+  
+  // Track placeholder mounting cycles to monitor app performance metrics
   useEffect(() => {
-    trackEvent("FeedSkeleton:hydration_cycle_mounted", {
+    trackEvent("feed_skeleton_rendered", {
       timestamp: new Date().toISOString(),
-      viewportConstraint: "mobile_vertical_only",
+      layout: "vertical_mobile_optimized",
     });
   }, []);
 
   return (
     <div className="max-w-4xl mx-auto space-y-6 sm:space-y-8 animate-in fade-in duration-500 touch-none select-none">
-      {/* INFRASTRUCTURE: Header Banner Node Container */}
+      {/* Feed Header Box Section Placeholder */}
       <div className="relative overflow-hidden rounded-2xl aspect-[3/1] bg-muted/20 border border-border/30 shadow-sm backdrop-blur-sm">
         <div className="absolute inset-0 flex items-center px-4 sm:px-6 gap-4">
           <Skeleton className="h-11 w-11 sm:h-12 sm:w-12 rounded-full ring-2 ring-border/20 shrink-0" />
@@ -31,7 +30,7 @@ export function FeedSkeleton() {
         </div>
       </div>
 
-      {/* INTELLIGENCE: Strategy Carousel Node Wrapper */}
+      {/* Recommended Content Strip Carousel Placeholder */}
       <div className="space-y-3">
         <div className="flex items-center justify-between px-1">
           <div className="flex items-center gap-3 w-full">
@@ -43,7 +42,7 @@ export function FeedSkeleton() {
           </div>
         </div>
 
-        {/* Horizontal Card Track Shell */}
+        {/* Horizontal Scroll List Carousel Shell */}
         <div className="flex gap-4 overflow-hidden -mx-4 px-4 scrollbar-none">
           {[1, 2].map((index) => (
             <div
@@ -64,7 +63,7 @@ export function FeedSkeleton() {
         </div>
       </div>
 
-      {/* SEGMENTATION: Tactical Filter Node Matrix (Strict 4-Slot Single Row Layout Alignment) */}
+      {/* Discovery Categories 4-Slot Filter Row Placeholder */}
       <div className="w-full overflow-hidden">
         <div className="flex gap-2 p-1.5 bg-muted/10 dark:bg-muted/5 rounded-2xl border border-border/40 shadow-sm">
           {[1, 2, 3, 4].map((slot) => (
@@ -76,14 +75,14 @@ export function FeedSkeleton() {
         </div>
       </div>
 
-      {/* ARTIFACTS: Feed Card Pipeline Frame */}
+      {/* Post Items Pipeline Feed List Placeholder */}
       <div className="space-y-6 sm:space-y-8">
         {[1, 2].map((cardOffset) => (
           <Card
             key={cardOffset}
             className="overflow-hidden border border-border/30 rounded-2xl bg-card/50 shadow-sm backdrop-blur-md"
           >
-            {/* Native 3:1 Promotional Canvas Placement Node */}
+            {/* 3:1 Media canvas allocation placement box */}
             <Skeleton className="aspect-[3/1] w-full rounded-none opacity-30 border-b border-border/20" />
 
             <CardContent className="p-4 sm:p-6 space-y-4">
@@ -92,14 +91,14 @@ export function FeedSkeleton() {
                 <Skeleton className="h-5 w-5/6 rounded-md opacity-60" />
               </div>
 
-              {/* Attributes Node Array */}
+              {/* Attributes badge rows */}
               <div className="flex gap-2.5 items-center select-none">
                 <Skeleton className="h-5 w-14 rounded-full" />
                 <Skeleton className="h-5 w-16 rounded-full" />
                 <Skeleton className="h-5 w-12 rounded-full" />
               </div>
 
-              {/* Match Reason Logic Node Box */}
+              {/* Match rationale context indicator block */}
               <div className="p-4 bg-primary/5 rounded-xl border border-primary/10 shadow-inner">
                 <div className="flex gap-3 items-start">
                   <Skeleton className="h-4 w-4 rounded-full mt-0.5 shrink-0 opacity-40" />
@@ -110,7 +109,7 @@ export function FeedSkeleton() {
                 </div>
               </div>
 
-              {/* Action Node Strip Control Bar */}
+              {/* Footer action trigger element row */}
               <div className="flex gap-3 pt-4 border-t border-border/20">
                 <Skeleton className="h-9 flex-1 rounded-xl" />
                 <Skeleton className="h-9 w-11 rounded-xl opacity-50 shrink-0" />
