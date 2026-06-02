@@ -1,10 +1,3 @@
-/**
- * useAdminAgents — DB-backed source of truth for the Agentic Dashboard
- * sidebar. Reads `ai_agents` where `agent_type = 'admin'`, then merges in
- * the legacy meta-map (icon component + accent + functionName) from
- * `src/lib/adminAgents.ts` so the in-flight chat pipeline keeps working
- * during the staged migration.
- */
 import { useQuery } from "@tanstack/react-query";
 import { Bot, type LucideIcon } from "lucide-react";
 import { listAdminAgentBasics } from "@/domains/agents/repo/agentsRepo";
@@ -23,6 +16,12 @@ import {
   School,
   Coins,
 } from "lucide-react";
+
+/**
+ * useAdminAgents — Reads database configurations for administrative profiles,
+ * and merges matching visual properties (icons, accents, suggest parameters)
+ * to support active chat instances across dashboard views.
+ */
 
 const ICON_BY_KEY: Record<string, LucideIcon> = {
   sparkles: Sparkles,
@@ -71,18 +70,12 @@ function rowToAgent(row: AiAgentRow): AdminAgent {
   const traits = row.personality_traits ?? {};
   const legacy = ADMIN_AGENTS_BY_KEY[row.agent_key];
   const icon = ICON_BY_KEY[row.icon ?? ""] ?? legacy?.icon ?? Bot;
-  const accent =
-    traits.accent ||
-    ACCENT_BY_COLOR[row.color ?? ""] ||
-    legacy?.accent ||
-    "bg-muted text-foreground";
+  const accent = traits.accent || ACCENT_BY_COLOR[row.color ?? ""] || legacy?.accent || "bg-muted text-foreground";
   const suggestions = Array.isArray(row.sample_conversations)
     ? row.sample_conversations.filter((s) => typeof s === "string")
-    : legacy?.suggestions ?? [];
+    : (legacy?.suggestions ?? []);
   return {
     key: row.agent_key,
-    // NOTE: All admin chat traffic now flows through `agent-runtime`.
-    // The `functionName` field is retained as a deprecated no-op for legacy types.
     functionName: "agent-runtime",
     name: row.name,
     tagline: traits.tagline || row.description || legacy?.tagline || "",
