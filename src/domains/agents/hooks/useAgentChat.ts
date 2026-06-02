@@ -3,20 +3,14 @@ import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
 import { getAccessToken } from "@/lib/auth";
 import { deductCreditsRpc } from "@/domains/finance/repo/financeRepo";
-import {
-  updateAgentChatSession,
-  getAgentChatSession,
-  getAgentCreditCost,
-  deductCredits,
-} from "@/domains/agents/repo/agentsRepo";
+import { updateAgentChatSession, getAgentChatSession, getAgentCreditCost } from "@/domains/agents/repo/agentsRepo";
 import { useTalent } from "@/hooks/useTalent";
 import { toast } from "sonner";
 import { handleAIError } from "@/lib/aiErrorHandler";
 
 /**
- * GroUp Academy: Neural Chat Orchestrator (V2.0.31)
- * CTO Reference: Authoritative sensor for AI Agent interactions and credit sync.
- * Architecture: Phase Z0 Hardened. Fractional Credit (numeric 12,1) aware.
+ * GroUp Academy: Agent Chat Orchestrator Data Hook
+ * Architecture: Automated efficiency tracking for talent lines with fractional credit balance controls.
  */
 
 export interface AgentMessage {
@@ -62,7 +56,7 @@ export function useAgentChat(): UseAgentChatReturn {
   const [isLoadingSessions, setIsLoadingSessions] = useState(true);
   const [perResponseCost, setPerResponseCost] = useState<number>(1);
 
-  const saveTrajectory = useCallback(
+  const saveConversation = useCallback(
     async (newMessages: AgentMessage[], additionalCredits: number = 0) => {
       if (!session) return;
       const updatePayload: any = {
@@ -101,7 +95,7 @@ export function useAgentChat(): UseAgentChatReturn {
         })),
       );
     } catch (err) {
-      console.error("[Digital Workforce] SESSION_REGISTRY_FAULT:", err);
+      console.error("Could not fetch recent sessions from repository directory:", err);
     } finally {
       setIsLoadingSessions(false);
     }
@@ -123,7 +117,7 @@ export function useAgentChat(): UseAgentChatReturn {
       const cost = await getAgentCreditCost(sessionData.agent_key);
       if (cost != null) setPerResponseCost(cost);
     } catch (err) {
-      console.error("[Digital Workforce] SESSION_INGRESS_FAULT:", err);
+      console.error("Error loading chat session coordinates:", err);
     } finally {
       setIsLoading(false);
     }
@@ -184,10 +178,10 @@ export function useAgentChat(): UseAgentChatReturn {
         setMessages([]);
         return newSession;
       } catch (err) {
-        console.error("[Digital Workforce] AGENT_INITIALIZATION_FAULT:", err);
+        console.error("Could not complete assistant session initialization loop:", err);
         return null;
       } finally {
-        setIsLoading(false);
+        boxIsLoading(false);
       }
     },
     [talent?.id],
@@ -203,7 +197,7 @@ export function useAgentChat(): UseAgentChatReturn {
       setIsStreaming(true);
 
       try {
-        // Enforce Pre-Flight Credit Check (Digital Workforce Protocol)
+        // Hardened Pre-Flight Balance Check
         if (perResponseCost > 0) {
           const { data: creditData } = await supabase
             .from("talent_credits")
@@ -212,7 +206,7 @@ export function useAgentChat(): UseAgentChatReturn {
             .single();
 
           if (!creditData || creditData.balance < perResponseCost) {
-            toast.error(`FISCAL_DEFICIT: ${perResponseCost} CR required. Re-charge from Wallet.`);
+            toast.error(`Insufficient balance: ${perResponseCost} credits required. Please top up your wallet.`);
             setMessages(messages); // Rollback optimistic UI
             setIsStreaming(false);
             return;
@@ -220,7 +214,7 @@ export function useAgentChat(): UseAgentChatReturn {
         }
 
         const accessToken = await getAccessToken();
-        if (!accessToken) throw new Error("AUTH_SYNC_REQUIRED");
+        if (!accessToken) throw new Error("Authentication sync required.");
 
         const response = await fetch(`${import.meta.env.VITE_SUPABASE_URL}/functions/v1/ai-agent-chat`, {
           method: "POST",
@@ -244,7 +238,7 @@ export function useAgentChat(): UseAgentChatReturn {
 
         const reader = response.body?.getReader();
         const decoder = new TextDecoder();
-        if (!reader) throw new Error("STREAM_TRANSMISSION_FAULT");
+        if (!reader) throw new Error("Could not initialize text stream translation channel.");
 
         // Optimistic Assistant Message placeholder
         setMessages((prev) => [...prev, { role: "assistant", content: "" }]);
@@ -266,13 +260,12 @@ export function useAgentChat(): UseAgentChatReturn {
               try {
                 const parsed = JSON.parse(payload);
 
-                // SWARM TRIGGER: Automatic cache invalidation bridge
+                // Automatic cache invalidation bridge loop execution
                 if (parsed?.type === "invalidations" && Array.isArray(parsed.keys)) {
                   for (const k of parsed.keys) invalidationKeys.add(String(k));
                   continue;
                 }
 
-                // BULLETPROOF PARSER SYNTAX
                 const token = parsed.choices?.[0]?.delta?.content || null;
 
                 if (token) {
@@ -284,20 +277,20 @@ export function useAgentChat(): UseAgentChatReturn {
                   });
                 }
               } catch (e) {
-                // Ignore fragmented JSON lines during stream
+                // Ignore fragmented JSON segments safely during live text rendering
               }
             }
           }
         }
 
-        // Execution of Tool-driven Invalidation
+        // Execution of tool invalidations layout lists
         if (invalidationKeys.size > 0) {
           for (const k of invalidationKeys) {
             queryClient.invalidateQueries({ queryKey: [k] });
           }
         }
 
-        // Post-Response Credit Settlement
+        // Post-Response Credit Settlement Sync
         if (perResponseCost > 0 && assistantBuffer) {
           let handshake: any = null;
           try {
@@ -305,26 +298,29 @@ export function useAgentChat(): UseAgentChatReturn {
               amount: perResponseCost,
               serviceType: "AI_AGENT_CHAT",
               referenceId: session.id,
-              description: `Neural_Node: ${session.agent_key}`,
+              description: `Agent Chat: ${session.agent_key}`,
               talentId: talent.id,
             });
           } catch (deductionError) {
-            console.warn("[Digital Workforce] Credit deduction delay/failure", deductionError);
+            console.warn("Credit settlement pipeline delay or missing transaction return:", deductionError);
           }
           if (handshake && !(handshake as any).success) {
-            toast.error("FISCAL_DEFICIT: Session suspended due to exhausted credits.");
+            toast.error("Session suspended: Your credit balance has been exhausted.");
           }
         }
 
-        await saveTrajectory([...currentTrajectory, { role: "assistant", content: assistantBuffer }], perResponseCost);
+        await saveConversation(
+          [...currentTrajectory, { role: "assistant", content: assistantBuffer }],
+          perResponseCost,
+        );
       } catch (err) {
-        console.error("[Digital Workforce] NEURAL_SYNC_FAULT:", err);
-        setMessages((prev) => prev.slice(0, -1)); // Remove failed optimistic assistant bubble
+        console.error("Background assistant connection dropped during stream sync loop:", err);
+        setMessages(messages); // Fallback and clear incomplete optimistic response element block
       } finally {
         setIsStreaming(false);
       }
     },
-    [session, messages, isStreaming, saveTrajectory, perResponseCost, talent?.id, queryClient],
+    [session, messages, isStreaming, saveConversation, perResponseCost, talent?.id, queryClient],
   );
 
   const endSession = useCallback(async () => {
