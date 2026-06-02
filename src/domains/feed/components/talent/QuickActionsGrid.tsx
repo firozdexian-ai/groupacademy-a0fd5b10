@@ -25,8 +25,8 @@ interface QuickAgent {
 const VISIBLE_LIMIT = 4;
 
 /**
- * Quick Actions Grid — personalized shortcuts to the user's most-used AI agents.
- * Shows the top active agents plus a "More" tile that opens the full agent sheet.
+ * Quick Actions Grid — Personalized navigation shortcuts to the user's most active AI assistants.
+ * Pulls recent chat engagement analytics to pin frequent companions, appending popular platform agents as fallbacks.
  */
 export function QuickActionsGrid() {
   const navigate = useNavigate();
@@ -34,14 +34,14 @@ export function QuickActionsGrid() {
   const { talent } = useTalent();
   const [sheetOpen, setSheetOpen] = useState(false);
 
-  // Track render impressions for personalization analytics
+  // Log component mounting for usage analytics tracking
   useEffect(() => {
     if (talent?.id) {
       trackEvent("QuickActionsGrid:mounted", { talentId: talent.id });
     }
   }, [talent]);
 
-  // TanStack Query Server State Synchronization (staleTime 10 min, retry false preserved)
+  // Synchronize server cache for top recommended interactive AI agents
   const {
     data: actions = [],
     isLoading,
@@ -56,7 +56,7 @@ export function QuickActionsGrid() {
 
       try {
         if (talent?.id) {
-          // Fetch historical user chat parameters to identify top personal affinity vectors
+          // Fetch historical user chat history to prioritize individual frequency metrics
           const sessions = await listTalentAgentChatSessionKeys(talent.id, 50);
 
           if (sessions && sessions.length > 0) {
@@ -76,7 +76,7 @@ export function QuickActionsGrid() {
           }
         }
 
-        // Aggregate core active ecosystem bots safely based on global traction metrics
+        // Fetch general trending active assistants from master repository layers
         const allAgents = await listTopActiveAgentsForQuickActions(15);
 
         if (!allAgents || allAgents.length === 0) return [];
@@ -101,7 +101,7 @@ export function QuickActionsGrid() {
 
         return result;
       } catch (queryErr: any) {
-        // Route background extraction exceptions securely back into central trackers
+        // Log query extraction failures safely to operational diagnostic panels
         trackError(queryErr instanceof Error ? queryErr : String(queryErr), {
           component: "QuickActionsGrid",
           action: "fetch_quick_actions_query_fn",
@@ -112,7 +112,7 @@ export function QuickActionsGrid() {
     },
   });
 
-  // Intercept data processing loop failures across query lifecycles
+  // Track state exceptions silently without obstructing layout presentation loops
   useEffect(() => {
     if (error) {
       trackEvent("QuickActionsGrid:load_failure_fallback_rendered", { errorMessage: error.message });
@@ -124,7 +124,7 @@ export function QuickActionsGrid() {
 
     trackEvent("quick_action_agent_session_invoked", { agentKey, talentId: talent?.id });
 
-    // Invalidate state keys asynchronously to force refresh patterns during session transitions
+    // Refresh active chat session tags simultaneously during layout routing transition
     queryClient.invalidateQueries({ queryKey: ["agent-chat-sessions", talent?.id] });
 
     navigate(`/app/agents/${agentKey}`);
@@ -176,7 +176,7 @@ export function QuickActionsGrid() {
                 onClick={() => handleAgentClick(item.agent_key)}
                 className="flex flex-col items-center gap-1.5 min-w-0 w-full active:scale-90 transition-all duration-200 cursor-pointer outline-none group focus-visible:ring-2 focus-visible:ring-ring rounded-xl py-0.5"
               >
-                {/* Immersive Glassmorphic Icon Wrapper Ring */}
+                {/* Profile icon presentation ring */}
                 <div
                   className="h-11 w-11 rounded-xl flex items-center justify-center border border-border/40 bg-card/60 backdrop-blur-md text-primary overflow-hidden shadow-sm group-hover:border-primary/40 group-hover:shadow-md transition-all duration-300 shrink-0"
                   style={bgStyle}
@@ -196,7 +196,7 @@ export function QuickActionsGrid() {
                   )}
                 </div>
 
-                {/* Safe layout typography configuration truncation */}
+                {/* Truncated label text name display */}
                 <span className="text-[10px] font-bold text-center text-muted-foreground/90 tracking-tight truncate leading-none w-full px-0.5 group-hover:text-foreground transition-colors">
                   {item.name?.split(" ")[0] || "Agent"}
                 </span>
@@ -204,7 +204,7 @@ export function QuickActionsGrid() {
             );
           })}
 
-          {/* 5th slot layout node — Open All Ecosystem Agents Sheet */}
+          {/* Overflow navigation action: opens the full list overlay sheet */}
           <button
             type="button"
             onClick={handleOpenSheetAction}
