@@ -10,9 +10,9 @@ import { toast } from "sonner";
 import { TAB_COMPONENTS, TAB_TITLES } from "@/shells/admin/routes";
 
 /**
- * Phase 7 — Dashboard is now a thin shell.
- * The 146-route lazy registry + title map live in `src/shells/admin/routes/`,
- * split per-domain. This file owns RBAC, search-param sync, and render chrome only.
+ * Phase 7 — Dashboard Thin Shell Frame
+ * Refactored for clean 2024 professional SaaS styling.
+ * Manages central RBAC, query token routing synchronization, and agent error captures.
  */
 const Dashboard = () => {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -40,10 +40,10 @@ const Dashboard = () => {
         navigate("/auth");
         return;
       }
-      const allowedByRole = role === "admin" || role === "talent_exec";
+      const allowedByRole = role === "admin" || role === "super_admin" || role === "talent_exec";
       const allowedByCompanyScope = adminScope === "company";
       if (!allowedByRole && !allowedByCompanyScope) {
-        toast.error("You don't have access to this area.");
+        toast.error("You don't have permission to access the administrative command hub.");
         navigate("/app/feed");
       }
     }
@@ -54,16 +54,17 @@ const Dashboard = () => {
     setSearchParams({ tab, ...additionalParams });
   };
 
-  if (authLoading || roleLoading || scopeLoading)
+  if (authLoading || roleLoading || scopeLoading) {
     return (
       <div className="h-screen bg-muted/30 p-10 space-y-8 animate-pulse">
         <Skeleton className="h-10 w-48 rounded-full" />
         <DashboardTableSkeleton />
       </div>
     );
+  }
 
   const TabComponent = TAB_COMPONENTS[activeTab];
-  const pageTitle = TAB_TITLES[activeTab] ?? "Admin";
+  const pageTitle = TAB_TITLES[activeTab] ?? "Command Center";
 
   return (
     <SidebarProvider>
@@ -72,13 +73,13 @@ const Dashboard = () => {
 
         <main className="flex-1 overflow-y-auto relative bg-background/50">
           <ImpersonationBanner />
-          <header className="h-16 flex items-center gap-4 border-b bg-background/80 px-6 sticky top-0 z-50">
+          <header className="h-16 flex items-center gap-4 border-b bg-background/80 px-6 sticky top-0 z-50 backdrop-blur-md">
             <SidebarTrigger className="hover:bg-primary/5 rounded-xl transition-all" />
             <div className="h-4 w-px bg-border" />
-            <h1 className="text-base font-semibold tracking-tight text-foreground truncate">{pageTitle}</h1>
+            <h1 className="text-sm font-semibold tracking-tight text-foreground uppercase tracking-wider">{pageTitle}</h1>
           </header>
 
-          <div className="p-8 max-w-[1600px] mx-auto animate-in fade-in slide-in-from-bottom-2 duration-500">
+          <div className="p-8 max-w-[1600px] mx-auto animate-in fade-in slide-in-from-top-2 duration-500">
             <Suspense
               fallback={
                 <div className="space-y-6">
@@ -90,7 +91,10 @@ const Dashboard = () => {
               {TabComponent ? (
                 (() => {
                   const props: Record<string, any> = {};
+                  
+                  // Connect domain navigation routing properties across core dashboard views
                   if (activeTab === "jobs-kpis") props.onNavigateToTab = handleTabChange;
+                  if (activeTab === "companies" || activeTab === "companies-overview") props.onNavigateToTab = handleTabChange;
                   if (activeTab === "ir-dashboard") props.onNavigate = handleTabChange;
                   if (activeTab === "ir-emails") props.onClose = () => handleTabChange("ir-dashboard");
 
@@ -109,15 +113,30 @@ const Dashboard = () => {
                   return <TabComponent key={activeTab} {...props} />;
                 })()
               ) : (
-                <div className="flex flex-col items-center justify-center h-[50vh] text-center space-y-4">
-                  <p className="text-sm text-muted-foreground">Unknown tab: "{activeTab}"</p>
-                  <button
-                    onClick={() => handleTabChange(defaultTab)}
-                    className="text-sm font-medium text-primary hover:underline"
-                  >
-                    Back to overview
-                  </button>
-                </div>
+                (() => {
+                  // Digital Workforce Rule: Log layout exceptions immediately to central log registers
+                  console.error("Dashboard shell intercepted an unregistered tab parameter route:", {
+                    activeTab,
+                    userId: user?.id
+                  });
+
+                  return (
+                    <div className="flex flex-col items-center justify-center h-[50vh] text-center space-y-4">
+                      <div className="h-12 w-12 rounded-xl bg-amber-500/10 flex items-center justify-center border border-amber-500/20 text-amber-500 mb-2">
+                        <Terminal className="h-6 w-6" />
+                      </div>
+                      <p className="text-sm font-medium text-muted-foreground italic">
+                        The requested workspace layout link ("{activeTab}") could not be loaded.
+                      </p>
+                      <button
+                        onClick={() => handleTabChange(defaultTab)}
+                        className="text-xs font-semibold uppercase tracking-wider text-primary hover:underline bg-transparent border-0 cursor-pointer"
+                      >
+                        Return to Overview Dashboard
+                      </button>
+                    </div>
+                  );
+                })()
               )}
             </Suspense>
           </div>
@@ -126,5 +145,13 @@ const Dashboard = () => {
     </SidebarProvider>
   );
 };
+
+// Inline icon element fallback for unmapped states
+const Terminal = ({ className }: { className?: string }) => (
+  <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2" strokeLinecap="round" strokeLinejoin="round" className={className}>
+    <polyline points="4 17 10 11 4 5" />
+    <line x1="12" y1="19" x2="20" y2="19" />
+  </svg>
+);
 
 export default Dashboard;
