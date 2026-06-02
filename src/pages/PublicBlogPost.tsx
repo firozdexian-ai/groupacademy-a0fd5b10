@@ -5,6 +5,7 @@ import { useTheme } from "next-themes";
 import { format } from "date-fns";
 import { useEffect } from "react";
 import { toast } from "sonner";
+import DOMPurify from "dompurify";
 import {
   FileText,
   Clock,
