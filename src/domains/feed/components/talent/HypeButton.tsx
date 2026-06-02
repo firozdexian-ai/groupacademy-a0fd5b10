@@ -7,7 +7,7 @@ import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 
 interface HypeButtonProps {
-  postId?: string; // Backwards compatibility legacy anchor mapping
+  postId?: string; // Legacy anchor mapping for backwards compatibility
   contentType?: HypeContentType;
   contentId?: string;
   initialCount?: number;
@@ -19,9 +19,8 @@ interface HypeButtonProps {
 }
 
 /**
- * Universal Hype interaction trigger node — 1 credit/tap split matrix.
- * Standardized across posts, courses, videos, and articles with explicit
- * Phase Z0 fractional-credit telemetry and automated workspace agent logging triggers.
+ * Universal interaction button to support content across the platform.
+ * Deducts 1 credit per click, distributing an 80/20 split to the creator's wallet.
  */
 export function HypeButton({
   postId,
@@ -35,13 +34,13 @@ export function HypeButton({
   const finalType: HypeContentType = contentType ?? "post";
   const finalId = contentId ?? postId ?? "";
 
-  // Authoritative content mutation server connection hook
+  // Establish connection with content metadata state
   const { count, hype, isHyping } = useContentHype(finalType, finalId, initialCount);
 
-  // Monitor interaction thresholds to notify the digital workforce of engagement spikes
+  // Monitor interaction milestones to log notable engagement patterns
   useEffect(() => {
     if (count > 0 && count % 50 === 0 && finalId) {
-      trackEvent("UGC:hype_milestone_reached", {
+      trackEvent("hype_milestone_reached", {
         contentId: finalId,
         contentType: finalType,
         totalHypes: count,
@@ -50,7 +49,7 @@ export function HypeButton({
   }, [count, finalId, finalType]);
 
   if (!finalId) {
-    trackError("HypeButton component dropped into rendering context without structural content definitions.", {
+    trackError("HypeButton component rendered without a valid content identifier.", {
       component: "HypeButton",
       action: "validation_assertion_failure",
     });
@@ -63,23 +62,21 @@ export function HypeButton({
 
     if (isHyping) return;
 
-    // Asynchronously log interaction logs to protect telemetry tracking integrity
-    trackEvent("hype_button_pressed", {
+    trackEvent("hype_button_clicked", {
       contentId: finalId,
       contentType: finalType,
       senderId: contextData?.senderTalentId,
     });
 
     try {
-      // Execute the native mutation hook layer
+      // Execute the database credit conversion transaction
       await hype();
 
-      // Automated Efficiency: Broadcast cache invalidation across shared balance viewports
+      // Synchronize client balance states instantly across available viewports
       queryClient.invalidateQueries({ queryKey: ["credits-balance"] });
     } catch (err: any) {
       const parsedMessage = err instanceof Error ? err.message : String(err);
 
-      // Log financial exception securely to evaluate platform transactional metrics safely
       trackError(parsedMessage, {
         component: "HypeButton",
         action: "execute_hype_deduction",
@@ -88,10 +85,10 @@ export function HypeButton({
         ...contextData,
       });
 
-      // Digital Workforce Monitoring: Route balance lookups cleanly to errorTracking parameters
+      // Catch credit shortages and forward cleanly to internal metrics logs
       if (parsedMessage.toLowerCase().includes("balance") || parsedMessage.toLowerCase().includes("credit")) {
-        trackEvent("insufficient_funds_hype_blocked", {
-          errorContext: parsedMessage,
+        trackEvent("insufficient_credits_encountered", {
+          context: parsedMessage,
           ...contextData,
         });
       }
@@ -109,7 +106,7 @@ export function HypeButton({
         "text-orange-600 dark:text-orange-500 hover:text-orange-700 hover:bg-orange-500/10 active:scale-95",
         variant === "compact" && "px-2",
       )}
-      title="Hype this asset content container (Costs 1 credit split)"
+      title="Support this content (Costs 1 credit)"
     >
       <Flame
         className={cn(
@@ -117,7 +114,9 @@ export function HypeButton({
           isHyping ? "animate-bounce fill-current text-orange-500" : "fill-none stroke-[2.2]",
         )}
       />
-      <span className="tabular-nums font-semibold">{count > 0 ? count.toLocaleString() : "Hype"}</span>
+      <span className="tabular-nums font-semibold">
+        {count > 0 ? count.toLocaleString() : "Hype"}
+      </span>
     </Button>
   );
 }
