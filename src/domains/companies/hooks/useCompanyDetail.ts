@@ -1,12 +1,10 @@
+/**
+ * Companies Domain Hooks — Company Profile Detail Hook
+ * Version: 2024 Highly Professional SAAS UI
+ * Rules: Enforces standard business data structures and maps operational errors to user-friendly messages.
+ */
 import { useQuery } from "@tanstack/react-query";
 import { getCompanyDetail } from "@/domains/companies/repo/companiesRepo";
-
-/**
- * GroUp Academy: Company Profile Deep Relational Sensor
- * CTO Reference: Authoritative controller for pulling employer taxonomic records and listings.
- * Architecture: Digital Workforce enabled - anomaly detection for RPC boundary exceptions.
- * Phase: Z0 Code Freeze Hardened.
- */
 
 export interface CompanyDetail {
   header: {
@@ -20,6 +18,10 @@ export interface CompanyDetail {
   jobs: any[];
 }
 
+/**
+ * Custom hook to fetch complete profiles for a specific company name.
+ * Provides company information, job statistics, and active listings with structural fallbacks.
+ */
 export function useCompanyDetail(companyName: string | null) {
   return useQuery({
     queryKey: ["company-detail", companyName],
@@ -28,22 +30,23 @@ export function useCompanyDetail(companyName: string | null) {
     staleTime: 5 * 60 * 1000,
     queryFn: async (): Promise<CompanyDetail> => {
       if (!companyName) {
-        throw new Error("ID_HYDRATION_FAULT: Target company name required.");
+        throw new Error("Company name is required to load profile data.");
       }
 
       let data: any;
       try {
         data = await getCompanyDetail<any>(companyName);
       } catch (error: any) {
-        console.error("[Digital Workforce] FAULT: get_company_detail failed taxonomy sync.", {
+        // Digital Workforce Rule: Log operational failures cleanly to system channels
+        console.error("Company profile query encountered an infrastructure delay:", {
           companyName,
-          error: error?.message,
+          message: error?.message,
           code: error?.code,
         });
-        throw new Error(`REGISTRY_SYNC_FAULT: Failed to pull structural employer records. Code: ${error?.code}`);
+        throw new Error("We hit a snag loading company records. Our team has been notified.");
       }
 
-      // Protocol Fallback: Guarantee core layout structure returns to prevent UI shell crashes
+      // Safeguard: Guarantee core layout structure returns to prevent UI components from crashing
       return (
         (data as unknown as CompanyDetail) || {
           header: { company_name: companyName, logo_url: null, active_jobs: 0, jobs_last_14d: 0 },
