@@ -6,12 +6,13 @@ import { formatDistanceToNow, isValid } from "date-fns";
 import { AgentSession } from "@/domains/agents/hooks/useAgentChat";
 import { cn } from "@/lib/utils";
 import { AgentAvatar } from "@/domains/agents/components/chat/AgentAvatar";
+import { trackError } from "@/lib/errorTracking";
 
 /**
- * GroUp Academy: Neural Session Ledger (V5.6.0)
- * CTO Reference: High-performance session tracker aggregating active chat workflows.
- * Architecture: Memoized parsing loops coupled with regex global formatting layout protections.
- * Phase: Z0 Code Freeze Hardened (May 2026 Launch Edition).
+ * Group Academy — Career Guidance System: Recent Conversations Ledger Component
+ * Version: Phase 10j.5 Hardened (Production Candidate)
+ * Surface: /dashboard/chat?tab=history (User Conversation Ledger viewport)
+ * Operations Mode: High-performance session tracker aggregating historical chat sequences.
  */
 
 interface RecentConversationsProps {
@@ -32,20 +33,18 @@ export function RecentConversations({
   isCompanyAgent,
   isCreatorAgent,
 }: RecentConversationsProps) {
-  // Guard the component view completely against empty session arrays
+  // Guard the component viewport completely against empty session logs arrays
   if (sessions.length === 0) {
     return (
-      <Card className="border-2 border-dashed border-border/40 bg-muted/5 rounded-[32px] overflow-hidden select-none animate-in fade-in duration-300">
-        <CardContent className="p-12 text-center flex flex-col items-center justify-center gap-4">
-          <div className="h-16 w-16 rounded-2xl bg-muted/20 flex items-center justify-center mb-2 border border-border/10">
-            <MessageCircle className="h-8 w-8 text-muted-foreground/30" />
+      <Card className="border border-dashed border-border bg-muted/5 rounded-2xl overflow-hidden select-none animate-in fade-in duration-300">
+        <CardContent className="p-10 text-center flex flex-col items-center justify-center gap-4">
+          <div className="h-12 w-12 rounded-xl bg-muted border border-border/40 flex items-center justify-center text-muted-foreground/40">
+            <MessageCircle className="h-5 w-5" />
           </div>
           <div className="space-y-1">
-            <p className="text-[10px] font-black uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-              Registry_Empty
-            </p>
-            <p className="text-xs font-medium text-muted-foreground/40 italic">
-              Initialize a neural dialogue to commence sync
+            <p className="text-xs font-bold uppercase tracking-wider text-muted-foreground/80">No Active Logs Found</p>
+            <p className="text-xs text-muted-foreground/60 max-w-xs mx-auto">
+              Start a conversation with an advisory assistant to see it listed here.
             </p>
           </div>
         </CardContent>
@@ -54,31 +53,27 @@ export function RecentConversations({
   }
 
   // --- PHASE: SESSION_ARRAY_NORMALIZATION_MATRIX ---
-  // Memoize data normalization transforms entirely to protect parent rendering streams
   const normalizedSessions = useMemo(() => {
     const currentUnixTimestamp = Date.now();
 
     return sessions.slice(0, 5).map((session) => {
       const messagesArray = session.messages || [];
       const lastMessage = messagesArray[messagesArray.length - 1] || null;
+      const rawAgentName = String(getAgentName(session.agent_key) || "Guidance Assistant");
 
-      const rawAgentName = String(getAgentName(session.agent_key) || "AGENT_ENTITY_NODE");
-
-      // Architecture Fix: Enforce unified string sanitization across all blank spaces globally
-      const standardizedAgentTitle = rawAgentName.trim().replace(/\s+/g, "_");
-
-      // Compute precise validation flags safely without runtime allocations inside loop elements
+      // Compute precise validation flags safely without runtime allocations inside loops
       const expirationTimestamp = session.session_expires_at ? new Date(session.session_expires_at).getTime() : 0;
       const isActive = Boolean(session.is_active && expirationTimestamp > currentUnixTimestamp);
 
-      // Defensively parse historical logs strings to ensure structural consistency
+      // Defensively parse historical timestamps to verify formatting consistency
       const timeAgoLabel = (() => {
         const creationDate = new Date(session.created_at);
-        if (!isValid(creationDate)) return "RECENT";
+        if (!isValid(creationDate)) return "Recent";
         try {
-          return `${formatDistanceToNow(creationDate, { addSuffix: false })}_AGO`;
-        } catch {
-          return "ACTIVE_NODE";
+          return formatDistanceToNow(creationDate, { addSuffix: true });
+        } catch (err: any) {
+          trackError("recent-conversations-temporal-sync-failure", { error: err.message, id: session.id });
+          return "Active";
         }
       })();
 
@@ -86,7 +81,6 @@ export function RecentConversations({
         ...session,
         lastMessage,
         isActive,
-        standardizedAgentTitle,
         timeAgoLabel,
         agentName: rawAgentName,
       };
@@ -94,22 +88,21 @@ export function RecentConversations({
   }, [sessions, getAgentName]);
 
   return (
-    <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-700 select-none text-left">
+    <div className="space-y-3 animate-in fade-in slide-in-from-bottom-2 duration-300 select-none text-left">
       {normalizedSessions.map((session) => {
         return (
           <Card
             key={session.id}
-            
             className={cn(
-              "group cursor-pointer transition-all duration-500 rounded-[24px] border-2 overflow-hidden outline-none focus:border-primary/40 focus:bg-card/40",
-              "bg-card/30 backdrop-blur-xl border-border/40 hover:border-primary/40 hover:shadow-2xl hover:-translate-y-0.5",
-              session.isActive && "border-emerald-500/20 bg-emerald-500/[0.02]",
+              "group cursor-pointer transition-all duration-200 rounded-2xl border overflow-hidden outline-none focus-visible:ring-1 focus-visible:ring-primary/50",
+              "bg-card border-border hover:border-primary/40 hover:shadow-sm",
+              session.isActive && "border-emerald-500/20 bg-emerald-500/[0.01]",
             )}
             onClick={() => onSelectSession(session.id)}
           >
-            <CardContent className="p-5">
+            <CardContent className="p-4">
               <div className="flex items-center gap-4">
-                {/* COMPONENT: EQUALIZED_IDENTITY_INGRESS_HOOK */}
+                {/* Component Avatar Node Wrapper */}
                 <div className="relative shrink-0">
                   <AgentAvatar
                     name={session.agentName}
@@ -117,60 +110,60 @@ export function RecentConversations({
                     isOnline={session.isActive}
                     isCompanyAgent={isCompanyAgent?.(session.agent_key)}
                     isCreatorAgent={isCreatorAgent?.(session.agent_key)}
-                    size="lg"
-                    className="transition-transform duration-500 group-hover:scale-110"
+                    size="md"
+                    className="transition-transform duration-200 group-hover:scale-102"
                   />
                 </div>
 
-                {/* MATRIX_CELL: LABELS_SUMMARY */}
+                {/* Profile Meta Frame Column Grid */}
                 <div className="flex-1 min-w-0 space-y-1">
                   <div className="flex items-center justify-between gap-2">
                     <div className="flex items-center gap-2 truncate">
-                      <span className="font-black text-sm uppercase italic tracking-tighter group-hover:text-primary transition-colors truncate">
-                        {session.standardizedAgentTitle}
+                      <span className="font-bold text-sm text-foreground truncate group-hover:text-primary transition-colors">
+                        {session.agentName}
                       </span>
                       {session.isActive && (
                         <Badge
-                          variant="outline"
-                          className="bg-emerald-500/10 text-emerald-600 border-emerald-500/20 text-[8px] font-black uppercase tracking-widest px-2 h-4 shrink-0 animate-pulse"
+                          variant="secondary"
+                          className="bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/10 border-none text-[9px] font-bold px-1.5 py-0 rounded-full shrink-0 animate-pulse"
                         >
-                          SYNC_LIVE
+                          Active
                         </Badge>
                       )}
                     </div>
-                    <span className="text-[9px] font-bold text-muted-foreground/40 tabular-nums uppercase whitespace-nowrap italic shrink-0 font-mono">
+                    <span className="text-xs text-muted-foreground/60 shrink-0 font-medium tracking-tight">
                       {session.timeAgoLabel}
                     </span>
                   </div>
 
-                  {/* HUD: CHAT_PREVIEW_SECTOR */}
-                  <div className="flex items-center gap-2 min-h-[14px]">
+                  {/* Chat Preview Transcript Sub-Block */}
+                  <div className="flex items-center gap-1 min-h-[16px]">
                     {session.lastMessage ? (
-                      <p className="text-[11px] font-medium text-muted-foreground/70 truncate italic leading-none flex-1 break-all pr-1">
+                      <p className="text-xs text-muted-foreground/80 truncate leading-normal flex-1 pr-1">
                         {session.lastMessage.role === "user" ? (
-                          <span className="text-primary/60 font-black not-italic mr-1 text-[9px]">YOU:</span>
+                          <span className="text-primary font-bold mr-1 text-[10px] uppercase tracking-wide">You:</span>
                         ) : null}
                         {session.lastMessage.content}
                       </p>
                     ) : (
-                      <p className="text-[11px] text-muted-foreground/30 truncate italic leading-none">
-                        Dialogue channel established.
+                      <p className="text-xs text-muted-foreground/40 italic leading-normal">
+                        Conversation channel established.
                       </p>
                     )}
                   </div>
 
-                  {/* CELL_METRICS: ACCUMULATED_INTERACTION_VELOCITIES */}
+                  {/* Operational Telemetry Metrics Footprint */}
                   <div className="flex items-center gap-3 pt-1">
-                    <div className="flex items-center gap-1.5 text-[8px] font-black text-muted-foreground/30 uppercase tracking-[0.2em] italic font-mono">
-                      <ShieldCheck className="h-2.5 w-2.5 text-muted-foreground/40" />
-                      <span>{session.messages?.length || 0}_INTERACTIONS</span>
+                    <div className="flex items-center gap-1 text-[10px] font-medium text-muted-foreground/50 tracking-tight">
+                      <ShieldCheck className="h-3.5 w-3.5 text-muted-foreground/40" />
+                      <span>{session.messages?.length || 0} interactions</span>
                     </div>
                   </div>
                 </div>
 
-                {/* INTERACTION_ARROW_DECK */}
-                <div className="flex items-center h-full pl-2 shrink-0">
-                  <ChevronRight className="h-5 w-5 text-muted-foreground/20 group-hover:text-primary group-hover:translate-x-1 transition-all duration-500 ease-out" />
+                {/* Right Action Chevron Affordance */}
+                <div className="flex items-center h-full pl-1 shrink-0">
+                  <ChevronRight className="h-5 w-5 text-muted-foreground/30 group-hover:text-primary group-hover:translate-x-0.5 transition-all duration-300 ease-out" />
                 </div>
               </div>
             </CardContent>
@@ -180,3 +173,5 @@ export function RecentConversations({
     </div>
   );
 }
+
+export default RecentConversations;
