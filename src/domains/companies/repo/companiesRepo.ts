@@ -411,7 +411,7 @@ export async function upsertCompanyOffering(payload: Record<string, any> & { id?
     const { error } = await supabase.from("company_offerings").update(payload).eq("id", payload.id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from("company_offerings").insert(payload);
+    const { error } = await supabase.from("company_offerings").insert(payload as any);
     if (error) throw error;
   }
 }
