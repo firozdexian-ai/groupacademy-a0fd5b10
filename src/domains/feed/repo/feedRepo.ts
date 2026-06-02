@@ -327,7 +327,7 @@ export async function listTopHypedPostsWeek(limit = 5) {
   const talentIds = (topRows ?? []).map((t) => t.talent_id).filter(Boolean);
   if (!talentIds.length) return [];
 
-  const { data: contentRows, error: contentError } = await supabase
+  const { data: contentRows, error: contentError } = await (supabase as any)
     .from("feed_posts")
     .select("id, text_content, user_id")
     .in("user_id", talentIds)
