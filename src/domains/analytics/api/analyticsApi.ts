@@ -83,3 +83,15 @@ export async function adminAnalystQuery(
     throw new Error("The analytics engine couldn't calculate these platform metrics right now.");
   }
 }
+
+// Re-export repo helpers for manifest consumers
+export {
+  getLifetimeOverviewMaster,
+  insertPlatformEvent,
+  trackServiceClick,
+  trackContentClick,
+  trackCourseReferralClick,
+  analystMetricsBulk,
+  type LifetimeOverviewPayload,
+  type AnalystMetricPeriod,
+} from "../repo/analyticsRepo";
