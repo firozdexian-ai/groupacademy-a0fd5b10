@@ -4,11 +4,18 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Languages, Activity, Mic, Users, Trophy } from "lucide-react";
 import { cn } from "@/lib/utils";
 
+/**
+ * Group Academy — Career Abroad Management Dashboard: Language Lab Overview Terminal
+ * Version: Phase 10i.2 Hardened (Production Candidate Edition)
+ * Surface: /dashboard?tab=language-lab (Admin Command Center View)[cite: 2, 4]
+ * Operations Mode: Automated Efficiency metric aggregator syncing real-time user ielts practice attempts[cite: 3].
+ */
+
 export function AbroadLanguageLabTab() {
   const { abroadGraphQuery } = useAbroadGraph();
   const { data, isLoading } = abroadGraphQuery;
 
-  // Telemetry calculations
+  // Telemetry loops calculations mapping out state structures natively
   const attempts = data?.ieltsAttempts || [];
   const scoredAttempts = attempts.filter((a) => a.score !== undefined && a.score !== null);
   const avgScore =
@@ -20,75 +27,76 @@ export function AbroadLanguageLabTab() {
   const activeUsers = new Set(attempts.map((a) => a.user_id)).size;
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
-      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
-        <div className="space-y-1 text-left">
-          <div className="flex items-center gap-3 text-fuchsia-500">
-            <Languages className="h-8 w-8 text-fuchsia-500 fill-fuchsia-500/20" />
-            <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
-              Language Lab
-            </h2>
+    <div className="space-y-6 p-4 md:p-6 animate-in fade-in duration-500 text-left">
+      <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-6 rounded-2xl border border-border/60">
+        <div className="space-y-1">
+          <div className="flex items-center gap-3 text-primary">
+            <Languages className="h-6 w-6 text-primary" />
+            <h2 className="text-2xl font-bold tracking-tight text-foreground">Language Lab Analytics</h2>
           </div>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            Acoustic & Written Telemetry
+          <p className="text-xs text-muted-foreground">
+            Real-Time Proficiency Tracking & IELTS Evaluation Telemetry[cite: 2, 4]
           </p>
         </div>
       </header>
 
       {isLoading ? (
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
+        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
           {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-32 rounded-2xl bg-muted/40" />
+            <Skeleton key={i} className="h-28 rounded-2xl bg-muted/40" />
           ))}
         </div>
       ) : (
-        <div className="space-y-8">
-          {/* Telemetry KPIs */}
+        <div className="space-y-6">
+          {/* Telemetry KPIs System Blocks */}
           <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
             <MetricTile
-              label="Avg Band Score"
+              label="Average Band Score"
               value={avgScore}
               icon={Trophy}
-              color="text-fuchsia-500"
-              bg="bg-fuchsia-500/10"
+              color="text-primary"
+              bg="bg-primary/10"
             />
             <MetricTile
-              label="Total Submissions"
+              label="Total Test Submissions"
               value={attempts.length}
               icon={Mic}
-              color="text-blue-500"
+              color="text-blue-600"
               bg="bg-blue-500/10"
             />
             <MetricTile
-              label="Active Learners"
+              label="Active Language Learners"
               value={activeUsers}
               icon={Users}
-              color="text-emerald-500"
+              color="text-emerald-600"
               bg="bg-emerald-500/10"
             />
             <MetricTile
-              label="Pending AI Scoring"
+              label="Pending AI Scoring Queue"
               value={pendingScoring}
               icon={Activity}
-              color="text-amber-500"
+              color="text-amber-600"
               bg="bg-amber-500/10"
             />
           </div>
 
-          {/* Telemetry Stream */}
+          {/* Telemetry Performance Output Stream Frame */}
           <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-            <div className="h-1.5 w-full bg-gradient-to-r from-fuchsia-400 via-pink-500 to-rose-600" />
-            <CardContent className="p-8 flex flex-col items-center justify-center min-h-[300px] text-center space-y-4">
-              <div className="h-20 w-20 rounded-full bg-fuchsia-500/10 flex items-center justify-center border-2 border-fuchsia-500/20">
-                <Activity className="h-10 w-10 text-fuchsia-500 animate-pulse" />
+            <div className="h-1 w-full bg-gradient-to-r from-blue-500 via-cyan-500 to-indigo-600" />
+            <CardContent className="p-8 flex flex-col items-center justify-center min-h-[260px] text-center space-y-4">
+              <div className="h-16 w-16 rounded-full bg-primary/10 flex items-center justify-center border border-primary/20 animate-pulse">
+                <Activity className="h-8 w-8 text-primary" />
               </div>
-              <h3 className="font-semibold text-xl uppercase italic tracking-tight text-foreground/90">
-                Signal Processing Active
-              </h3>
-              <p className="text-xs font-bold text-muted-foreground max-w-md">
-                The Language Lab is currently operating as a read-only telemetry node. Audio submissions and mock scores
-                are being aggregated from the IELTS Prompts module.
-              </p>
+              <div className="space-y-1">
+                <h3 className="font-bold text-lg tracking-tight text-foreground">
+                  Active Performance Monitoring Enabled
+                </h3>
+                <p className="text-xs text-muted-foreground max-w-md mx-auto leading-relaxed">
+                  The language metrics console is collecting student audio submission attempts and essay grades. Live
+                  telemetry metrics are compiled dynamically through the primary IELTS evaluation frameworks[cite: 2,
+                  4].
+                </p>
+              </div>
             </CardContent>
           </Card>
         </div>
@@ -97,24 +105,30 @@ export function AbroadLanguageLabTab() {
   );
 }
 
-function MetricTile({ label, value, icon: Icon, color, bg }: any) {
+interface MetricTileProps {
+  label: string;
+  value: string | number;
+  icon: React.ComponentType<{ className?: string }>;
+  color: string;
+  bg: string;
+}
+
+function MetricTile({ label, value, icon: Icon, color, bg }: MetricTileProps) {
   return (
-    <Card className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm shadow-xl overflow-hidden hover:border-primary/30 transition-all group">
-      <CardContent className="p-6 flex items-center gap-5">
+    <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden hover:border-primary/30 transition-all group">
+      <CardContent className="p-5 flex items-center gap-4">
         <div
           className={cn(
-            "h-14 w-14 rounded-2xl flex items-center justify-center border-2 border-white/5 transition-transform group-hover:rotate-6 shadow-inner shrink-0",
+            "h-12 w-12 rounded-xl flex items-center justify-center border border-white/5 transition-transform group-hover:scale-105 shrink-0",
             bg,
             color,
           )}
         >
-          <Icon className="h-6 w-6" />
+          <Icon className="h-5 w-5" />
         </div>
-        <div className="min-w-0">
-          <p className="text-[10px] font-semibold text-muted-foreground italic mb-1 truncate">
-            {label}
-          </p>
-          <p className="text-4xl font-semibold tracking-tight leading-none text-foreground/90">{value}</p>
+        <div className="min-w-0 text-left">
+          <p className="text-xs font-semibold text-muted-foreground mb-0.5 truncate">{label}</p>
+          <p className="text-3xl font-bold tracking-tight text-foreground">{value}</p>
         </div>
       </CardContent>
     </Card>
