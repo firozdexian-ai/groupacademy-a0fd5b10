@@ -36,6 +36,7 @@ import {
   ChevronLeft,
   ChevronRight,
   TrendingDown,
+  TrendingUp,
   Calendar,
   Activity,
   CircleDollarSign,
@@ -79,7 +80,7 @@ function useDebounce<T>(value: T, delay: number): T {
     const timer = setTimeout(() => setDebouncedValue(value), delay);
     return () => clearTimeout(timer);
   }, [value, delay]);
-  return debouncedSearch;
+  return debouncedValue;
 }
 
 /**
