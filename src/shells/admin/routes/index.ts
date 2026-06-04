@@ -17,9 +17,9 @@ import * as gtm from "./gtm";
 import * as misc from "./misc";
 
 /**
- * Phase 7 — per-domain admin route registry.
- * Dashboard.tsx merges these into a single map for lookup by `?tab=` key.
- * Last spread wins on duplicate keys; ordering kept stable for predictability.
+ * Group Academy — Administrative Core Tab Registry Matrix
+ * Merges domain-specific dashboards into a unified lookup map driven by URL tab parameters.
+ * Maintains chronological execution layers and configuration parameters safely.
  */
 export const TAB_COMPONENTS: Record<string, React.LazyExoticComponent<any>> = {
   ...overview.ROUTES,
