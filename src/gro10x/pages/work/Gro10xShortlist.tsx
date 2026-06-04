@@ -4,6 +4,7 @@ import { GRO10X_PANEL, GRO10X_MUTED } from "../../lib/tokens";
 import { Loader2, Bookmark, MapPin, MessageSquare } from "lucide-react";
 import { toast } from "sonner";
 import { companyAgentTools } from "@/domains/agents/api/agentsApi";
+import { useGro10xCompanyId } from "../../hooks/useGro10xCompanyId";
 
 interface ShortlistItem {
   id: string;
@@ -19,13 +20,19 @@ interface ShortlistItem {
 }
 
 export default function Gro10xShortlist() {
+  const { data: companyId, isLoading: cidLoading } = useGro10xCompanyId();
   const [items, setItems] = useState<ShortlistItem[]>([]);
   const [loading, setLoading] = useState(true);
 
   const load = useCallback(async () => {
+    if (!companyId) {
+      setItems([]);
+      setLoading(false);
+      return;
+    }
     setLoading(true);
     try {
-      const data = await companyAgentTools({ tool_key: "list_shortlist" });
+      const data = await companyAgentTools({ tool_key: "list_shortlist", company_id: companyId });
       if (!data?.ok) {
         toast.error(data?.error ?? "Could not load shortlist");
         setItems([]);
@@ -37,11 +44,12 @@ export default function Gro10xShortlist() {
       setItems([]);
     }
     setLoading(false);
-  }, []);
+  }, [companyId]);
 
   useEffect(() => {
-    void load();
-  }, [load]);
+    if (!cidLoading) void load();
+  }, [load, cidLoading]);
+
 
   if (loading) {
     return (
