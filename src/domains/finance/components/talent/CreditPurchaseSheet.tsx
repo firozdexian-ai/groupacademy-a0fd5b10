@@ -28,23 +28,28 @@ interface BundlePayload {
 }
 
 /**
- * GroUp Academy: Wallet & Credit Purchase Controller
- * Handles secure customer account top-ups and checkout session generation.
+ * GroUp Academy: Wallet Credit Top-Up sheet
+ * Handles programmatic checkout session generation, local bKash/WhatsApp invoicing,
+ * and automated BDT currency multiplier transformations.
  */
 export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: CreditPurchaseSheetProps) {
   const qc = useQueryClient();
-  const { showWhatsApp, showStripe, isStripeConfigured } = usePaymentConfig();
+  const { showWhatsApp, showStripe, isStripeConfigured, currency = "USD" } = usePaymentConfig();
   const [activeProcessingCredits, setActiveProcessingCredits] = useState<number | null>(null);
 
   const queryKeyBalanceContext = useMemo(() => ["user-credits-balance"], []);
 
-  // --- ACTION: WHATSAPP RECONCILIATION INVOICE MUTATION ---
+  // Programmatic regional scale rules: Evaluate if currency base uses BDT (৳) with a standard 1 cr = 2 BDT conversion peg
+  const isBdtCurrency = currency === "BDT";
+  const currencySymbol = isBdtCurrency ? "৳" : "$";
+
+  // --- ACTION: WHATSAPP/LOCAL RECONCILIATION INVOICE MUTATION ---
   const whatsappSyncMutation = useMutation({
     mutationKey: ["sync-whatsapp-invoice-ledger"],
     mutationFn: async (payload: BundlePayload): Promise<string | undefined> => {
       const result = await createCreditInvoice({
         credits: payload.credits,
-        priceUsd: payload.price,
+        priceUsd: isBdtCurrency ? payload.price / 2 : payload.price,
       });
       if (result?.success) {
         return result.invoice_number;
@@ -55,19 +60,24 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
       if (invoiceNumber) {
         toast.success(`Invoice ${invoiceNumber} created successfully.`);
       }
-      
-      const outboundMessageString = getCreditPurchaseMessage(payload.credits, payload.price, currentBalance, invoiceNumber);
+
+      const outboundMessageString = getCreditPurchaseMessage(
+        payload.credits,
+        payload.price,
+        currentBalance,
+        invoiceNumber,
+      );
       const secureWhatsAppLink = `${SUPPORT_CONFIG.WHATSAPP_LINK}?text=${encodeURIComponent(outboundMessageString)}`;
-      
+
       window.open(secureWhatsAppLink, "_blank", "noopener,noreferrer");
     },
-    onError: (err: any) => {
-      console.error("[Wallet Operations] Error creating WhatsApp invoice:", err);
-      toast.error("Invoice creation delayed. Connecting you directly with billing support.");
-      
-      const explicitMessageFallback = getCreditPurchaseMessage(500, 9, currentBalance, undefined);
+    onError: (error: any) => {
+      console.error("[Wallet Operations] Local voucher invoice tracking exception:", error);
+      toast.error("Invoice generation delayed. Connecting you directly with billing support.");
+
+      const explicitMessageFallback = getCreditPurchaseMessage(500, isBdtCurrency ? 18 : 9, currentBalance, undefined);
       window.open(`${SUPPORT_CONFIG.WHATSAPP_LINK}?text=${encodeURIComponent(explicitMessageFallback)}`, "_blank");
-    }
+    },
   });
 
   // --- ACTION: STRIPE CHECKOUT GATEWAY MUTATION ---
@@ -79,11 +89,13 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
         throw new Error("AUTH_REQUIRED");
       }
 
+      // Convert standard currency structures cleanly down to integer cents/poisha
+      const calculatedPriceUsd = isBdtCurrency ? payload.price / 2 : payload.price;
       let data: { url?: string };
       try {
         data = await createCheckout({
           credits: payload.credits,
-          priceInCents: Math.round(payload.price * 100),
+          priceInCents: Math.round(calculatedPriceUsd * 100),
           successUrl: `${window.location.origin}/app/feed?checkout=success`,
           cancelUrl: `${window.location.origin}/app/feed?checkout=cancelled`,
         });
@@ -100,20 +112,26 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
       window.location.href = checkoutRedirectUrl;
     },
     onError: (err: Error) => {
-      console.error("[Wallet Operations] Stripe checkout session generation failed:", err.message);
-      toast.error(err.message === "AUTH_REQUIRED" ? "Please sign in to continue." : "Payment gateway error. Please try again or contact support.");
+      console.error("[Wallet Operations] Stripe checkout session generation failure:", err.message);
+      toast.error(
+        err.message === "AUTH_REQUIRED"
+          ? "Please sign in to continue."
+          : "Payment gateway error. Please try again or contact support.",
+      );
     },
     onSettled: () => {
       setActiveProcessingCredits(null);
-    }
+    },
   });
 
   const isGlobalPendingState = whatsappSyncMutation.isPending || stripeCheckoutMutation.isPending;
 
   // --- HANDLER: BUNDLE SELECTION ROUTING ---
-  const handleBundleSelectionHandshake = (credits: number, price: number) => {
+  const handleBundleSelectionHandshake = (credits: number, rawPriceUsd: number) => {
     if (isGlobalPendingState) return;
 
+    // Apply currency peg conversions inline to ensure visual consistency
+    const price = isBdtCurrency ? rawPriceUsd * 2 : rawPriceUsd;
     const payload: BundlePayload = { credits, price };
 
     if (showStripe && isStripeConfigured) {
@@ -136,18 +154,20 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
       <SheetContent
         side="bottom"
         onPointerDownOutside={(e) => isGlobalPendingState && e.preventDefault()}
-        className="h-[90vh] sm:h-auto sm:max-h-[92vh] rounded-t-[40px] border-t-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden select-none text-left"
+        className="h-[90vh] sm:h-auto sm:max-h-[92vh] rounded-t-[40px] border-t-4 border-border/40 bg-background/95 backdrop-blur-2xl p-0 overflow-hidden select-none text-left animate-in slide-in-from-bottom duration-300"
       >
         <div className="p-8 pb-4 border-b border-border/10 bg-muted/5">
           <SheetHeader className="space-y-1">
             <div className="flex items-center gap-3">
-              <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shadow-lg">
+              <div className="h-10 w-10 rounded-xl bg-amber-500/10 border border-amber-500/20 flex items-center justify-center shadow-md">
                 <Coins className="h-6 w-6 text-amber-500 animate-pulse shrink-0" />
               </div>
               <SheetTitle className="text-2xl font-bold tracking-tight text-foreground">Add Wallet Credits</SheetTitle>
             </div>
             <SheetDescription className="text-xs font-semibold tracking-wider text-muted-foreground/80 pt-0.5">
-              {showStripe && isStripeConfigured ? "Secure payment processing via Stripe" : "Manual payment verification via support"}
+              {showStripe && isStripeConfigured
+                ? "Secure payment processing via Stripe"
+                : "Manual payment verification via mobile banking support"}
             </SheetDescription>
           </SheetHeader>
         </div>
@@ -157,9 +177,7 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
           <div className="flex items-center justify-between p-5 rounded-[28px] bg-card border border-border/60 shadow-inner relative overflow-hidden">
             <Zap className="absolute -top-4 -right-4 h-24 w-24 text-primary opacity-5 rotate-12 pointer-events-none" />
             <div className="flex flex-col">
-              <span className="text-xs font-semibold text-muted-foreground/80 mb-1">
-                Available Wallet Balance
-              </span>
+              <span className="text-xs font-semibold text-muted-foreground/80 mb-1">Available Wallet Balance</span>
               <div className="flex items-center gap-2">
                 <ShieldCheck className="h-4 w-4 text-emerald-500 shrink-0" />
                 <span className="text-xs font-bold text-emerald-600 uppercase tracking-wide">Verified Funds</span>
@@ -177,6 +195,10 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
               const isBestValue = index === 2;
               const isThisCardLoading = activeProcessingCredits === bundle.credits && stripeCheckoutMutation.isPending;
 
+              // Map localized credit cost limits dynamically based on active regional multipliers
+              const localizedPrice = isBdtCurrency ? bundle.price * 2 : bundle.price;
+              const localizedSavings = isBdtCurrency ? bundle.savings * 2 : bundle.savings;
+
               return (
                 <Card
                   key={bundle.credits}
@@ -185,7 +207,8 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
                     "group relative cursor-pointer transition-all duration-300 rounded-[24px] border-2 overflow-hidden outline-none focus:border-primary",
                     "bg-card/40 backdrop-blur-xl border-border/40 hover:border-primary hover:shadow-md active:scale-[0.99]",
                     isBestValue && "border-primary/40 bg-primary/5 shadow-md scale-[1.01] focus:border-primary",
-                    isGlobalPendingState && "opacity-60 cursor-not-allowed active:scale-100 focus:border-border/40 hover:border-border/40 hover:shadow-none"
+                    isGlobalPendingState &&
+                      "opacity-60 cursor-not-allowed active:scale-100 focus:border-border/40 hover:border-border/40 hover:shadow-none",
                   )}
                   onClick={() => handleBundleSelectionHandshake(bundle.credits, bundle.price)}
                   onKeyDown={(e) => e.key === "Enter" && handleBundleSelectionHandshake(bundle.credits, bundle.price)}
@@ -202,7 +225,7 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
                           className={cn(
                             "h-12 w-12 rounded-2xl flex items-center justify-center shadow-md transition-transform group-hover:scale-110 shrink-0",
                             isBestValue ? "bg-primary text-white" : "bg-muted text-muted-foreground",
-                            isThisCardLoading && "bg-primary/20 scale-100 group-hover:scale-100"
+                            isThisCardLoading && "bg-primary/20 scale-100 group-hover:scale-100",
                           )}
                         >
                           {isThisCardLoading ? (
@@ -220,22 +243,27 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
                           </span>
                         </div>
                       </div>
-                      {bundle.savings > 0 && (
+                      {localizedSavings > 0 && (
                         <Badge
                           variant="outline"
                           className="border-emerald-500/30 bg-emerald-500/5 text-emerald-600 font-bold text-[10px] px-2 h-6 tracking-wide shrink-0 rounded-md"
                         >
-                          Save ${bundle.savings}
+                          Save {currencySymbol}
+                          {localizedSavings}
                         </Badge>
                       )}
                     </div>
-                    
+
                     <div className="flex items-center justify-between pt-4 border-t border-border/10">
                       <span className="text-2xl font-bold text-foreground tracking-tight">
-                        ${bundle.price}
+                        {currencySymbol}
+                        {localizedPrice}
                       </span>
                       <div className="flex items-center gap-1.5 opacity-50 text-[10px] font-semibold tracking-wider">
-                        <span>${(bundle.price / bundle.credits).toFixed(3)} / credit</span>
+                        <span>
+                          {currencySymbol}
+                          {(localizedPrice / bundle.credits).toFixed(2)} / credit
+                        </span>
                       </div>
                     </div>
                   </CardContent>
@@ -248,12 +276,13 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
           <div className="flex items-start gap-4 p-5 bg-muted/20 border border-border/10 rounded-2xl">
             <ShieldCheck className="h-5 w-5 text-primary shrink-0 opacity-60 mt-0.5" />
             <p className="text-[11px] font-medium leading-relaxed text-muted-foreground/90">
-              Payments are protected with end-to-end security encryption protocols. Your account balance will update automatically upon successful transaction confirmation.
+              Payments are protected with industry-standard secure transaction protocols. Your digital wallet balance
+              updates instantly inside your profile dashboard upon automated invoice authorization.
             </p>
           </div>
         </div>
 
-        {/* WhatsApp Manual Top-up Action */}
+        {/* WhatsApp Manual Top-up Alternative Trigger */}
         {showWhatsApp && (
           <div className="p-8 pt-4 border-t border-border/10 bg-muted/5">
             <div className="flex flex-col gap-4">
@@ -269,7 +298,11 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
                 ) : (
                   <MessageCircle className="h-5 w-5 fill-current opacity-60" />
                 )}
-                {whatsappSyncMutation.isPending ? "Generating invoice..." : "Top up via WhatsApp"}
+                {whatsappSyncMutation.isPending
+                  ? "Generating invoice ref..."
+                  : isBdtCurrency
+                    ? "Top up via bKash / WhatsApp"
+                    : "Top up via WhatsApp Support"}
               </Button>
               <div className="flex items-center justify-center gap-3 opacity-30">
                 <div className="h-[1px] flex-1 bg-border" />
