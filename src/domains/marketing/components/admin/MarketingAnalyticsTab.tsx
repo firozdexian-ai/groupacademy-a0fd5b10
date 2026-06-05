@@ -59,7 +59,14 @@ interface AnalyticsData {
   totals: { jobClicks: number; jobShares: number; contentClicks: number; contentShares: number };
 }
 
-const CHART_COLORS = ["#0062ff", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4"];
+const CHART_COLORS = [
+  "hsl(var(--primary))",
+  "hsl(var(--success))",
+  "hsl(var(--warning))",
+  "hsl(var(--accent))",
+  "hsl(var(--destructive))",
+  "hsl(var(--muted-foreground))",
+];
 const DATE_RANGES = [
   { label: "Temporal Frame: 7D", value: "7" },
   { label: "Temporal Frame: 30D", value: "30" },
@@ -241,7 +248,7 @@ export function MarketingAnalyticsTab() {
           <TabsContent value="jobs" className="space-y-8 animate-in slide-in-from-bottom-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ChartCard title="Traffic Source" sub="Origin of job seeker engagement">
-                <SourceBarChart data={analyticsData?.jobClicks || []} color="#0062ff" />
+                <SourceBarChart data={analyticsData?.jobClicks || []} color="hsl(var(--primary))" />
               </ChartCard>
               <ChartCard title="Social Distribution" sub="Distribution by channel">
                 <SourcePieChart
@@ -290,7 +297,7 @@ export function MarketingAnalyticsTab() {
           <TabsContent value="content" className="space-y-8 animate-in slide-in-from-bottom-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ChartCard title="Course Discovery" sub="Content discovery sources">
-                <SourceBarChart data={analyticsData?.contentClicks || []} color="#10b981" />
+                <SourceBarChart data={analyticsData?.contentClicks || []} color="hsl(var(--success))" />
               </ChartCard>
               <ChartCard title="Social Vitality" sub="Academy content distribution">
                 <SourcePieChart
