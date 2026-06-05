@@ -155,7 +155,7 @@ export async function insertCompaniesBulk(
   if (error) throw error;
   return (data ?? []) as Array<{ id: string; name: string }>;
 }
-}
+
 
 export async function countCompaniesWithNullIndustry(): Promise<number> {
   const { count, error } = await supabase
