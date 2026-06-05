@@ -1,5 +1,5 @@
 import { useEffect, useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { listCareerAssessmentLeads } from "@/domains/jobs/repo/jobsRepo";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { DashboardTableSkeleton, DashboardErrorState } from "@/platform/admin/chrome/DashboardSkeleton";
