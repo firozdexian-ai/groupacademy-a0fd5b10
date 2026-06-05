@@ -31,7 +31,9 @@ export function Gro10xAppShell({ children, hideBottomNav }: Props) {
               : "pb-[env(safe-area-inset-bottom)]"
           }`}
         >
-          {children ?? <Outlet />}
+          <RouteErrorBoundary fallbackPath="/gro10x" fallbackLabel="Back to Gro10x">
+            {children ?? <Outlet />}
+          </RouteErrorBoundary>
         </main>
       </div>
 
