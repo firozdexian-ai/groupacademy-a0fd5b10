@@ -2339,3 +2339,30 @@ export async function listContentForModulePicker(limit = 200) {
   if (error) throw error;
   return (data ?? []) as any[];
 }
+
+export async function listQuizEnabledCourses() {
+  const { data, error } = await supabase
+    .from("content")
+    .select("id, title")
+    .eq("quiz_enabled", true)
+    .eq("is_published", true)
+    .order("title");
+  if (error) throw error;
+  return data ?? [];
+}
+
+export async function listQuizAttemptsAdmin(contentId: string | null, limit = 100) {
+  let query = supabase
+    .from("quiz_attempts")
+    .select(
+      `id, student_id, content_id, score, total_questions, passed, answers, created_at,
+       content:content_id (id, title),
+       students:student_id (id, full_name, email)`,
+    )
+    .order("created_at", { ascending: false })
+    .limit(limit);
+  if (contentId) query = query.eq("content_id", contentId);
+  const { data, error } = await query;
+  if (error) return [];
+  return data ?? [];
+}
