@@ -20,10 +20,8 @@ import {
   MessageSquare,
   Activity,
   Newspaper,
-  Bot,
   Users,
   Search as SearchIcon,
-  Package,
   CreditCard,
 } from "lucide-react";
 
