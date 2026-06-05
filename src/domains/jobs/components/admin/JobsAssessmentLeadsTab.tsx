@@ -76,38 +76,15 @@ export function JobsAssessmentLeadsTab() {
     setLoading(true);
     setError(null);
     try {
-      const {
-        data,
-        error: queryError,
-        count,
-      } = await withTimeout(
-        Promise.resolve(
-          supabase
-            .from("career_assessments")
-            .select(
-              `
-              id,
-              full_name,
-              email,
-              phone,
-              percentage,
-              readiness_level,
-              created_at,
-              profession_category:profession_categories(name)
-            `,
-              { count: "exact" },
-            )
-            .order("created_at", { ascending: false })
-            .range(page * PAGE_SIZE, (page + 1) * PAGE_SIZE - 1),
-        ),
+      const { rows, count } = await withTimeout(
+        listCareerAssessmentLeads({ page, pageSize: PAGE_SIZE }),
         TIMEOUTS.DEFAULT,
         "Registry Link Timeout",
       );
-
-      if (queryError) throw queryError;
-      setLeads(data || []);
-      setTotalCount(count || 0);
+      setLeads(rows);
+      setTotalCount(count);
     } catch (err: any) {
+
       console.error("Registry Sync Fault:", err);
       setError(err.message || "Failed to synchronize assessment leads");
     } finally {
