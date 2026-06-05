@@ -83,10 +83,9 @@ export function JobsManageTab() {
     if (!confirm("Archive all jobs past their deadline (and inactive-stale jobs >90d old)?")) return;
     setPurging(true);
     try {
-      const { data, error } = await (supabase as any).rpc("archive_expired_jobs");
-      if (error) throw error;
-      const archived = Number(data ?? 0);
+      const archived = await archiveExpiredJobs();
       toast.success(`Purged ${archived} expired job${archived === 1 ? "" : "s"}`);
+
       queryClient.invalidateQueries({ queryKey: ["admin-jobs"] });
       queryClient.invalidateQueries({ queryKey: ["jobs-hub-dashboard"] });
       loadJobs();
