@@ -93,7 +93,7 @@ export default function Gro10xLearn() {
         </div>
 
         {assignments.isLoading ? (
-          <p className="text-xs text-slate-500">Loading…</p>
+          <Gro10xLoading label="Loading assignments…" />
         ) : !assignments.data || assignments.data.length === 0 ? (
           <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4 text-center`}>
             <p className="text-xs text-slate-400">
@@ -146,7 +146,7 @@ export default function Gro10xLearn() {
         </h2>
 
         {catalog.isLoading ? (
-          <p className="text-xs text-slate-500">Loading…</p>
+          <Gro10xLoading label="Loading catalog…" />
         ) : !catalog.data || catalog.data.length === 0 ? (
           <div className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-4 text-center`}>
             <p className="text-xs text-slate-400">

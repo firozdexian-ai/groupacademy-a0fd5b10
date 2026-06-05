@@ -132,7 +132,11 @@ export default function Gro10xCompanyPage() {
   };
 
   if (loading) {
-    return <div className="max-w-md md:max-w-5xl mx-auto p-6 text-center text-slate-400 text-sm">Loading company…</div>;
+    return (
+      <div className="max-w-md md:max-w-5xl mx-auto">
+        <Gro10xLoading label="Loading company…" />
+      </div>
+    );
   }
   if (!company) {
     return (

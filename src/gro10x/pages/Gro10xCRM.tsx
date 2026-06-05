@@ -107,7 +107,7 @@ export default function Gro10xCRM() {
     );
   }
 
-  if (isLoading) return <div className="p-6 text-center text-sm text-slate-400">Loading…</div>;
+  if (isLoading) return <Gro10xLoading label="Loading CRM…" />;
   if (!companyId) {
     return (
       <div className="max-w-md md:max-w-5xl mx-auto p-6 text-center">
