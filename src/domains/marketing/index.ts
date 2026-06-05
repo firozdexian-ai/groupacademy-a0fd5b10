@@ -7,13 +7,13 @@
 
 // Admin tabs
 export { AccessCodesTab } from "./components/admin/AccessCodesTab";
-export { AdminsRepsTab } from "./components/admin/AdminsRepsTab";
+export { default as AdminsRepsTab } from "./components/admin/AdminsRepsTab";
 export { BannersTab } from "./components/admin/BannersTab";
 export { CommunityMessagingChannelTab } from "./components/admin/CommunityMessagingChannelTab";
 export { ContentOutreachTab } from "./components/admin/ContentOutreachTab";
 export { LeadsActivitiesTab } from "./components/admin/LeadsActivitiesTab";
 export { MarketingAnalyticsTab } from "./components/admin/MarketingAnalyticsTab";
-export { MktSimpleTabs } from "./components/admin/MktSimpleTabs";
+export { ChannelsTab, CommunityGroupsTab, CommunityTab } from "./components/admin/MktSimpleTabs";
 export { ServiceOutreachTab } from "./components/admin/ServiceOutreachTab";
 export { StandaloneMockInterviewCodeGenerator } from "./components/admin/StandaloneMockInterviewCodeGenerator";
 export { StandaloneSalaryCodeGenerator } from "./components/admin/StandaloneSalaryCodeGenerator";
@@ -31,5 +31,5 @@ export { SalaryAnalysisLeadsManager } from "./components/admin/leads/SalaryAnaly
 export { useMarketingGraph } from "./components/admin/hooks/useMarketingGraph";
 
 // API
-export { marketingApi } from "./api/manifest";
-export type { MarketingApi } from "./api/manifest";
+export { leadHuntMatch } from "./api/manifest";
+export type { LeadHuntMatchRequest, LeadHuntMatchResponse } from "./api/manifest";

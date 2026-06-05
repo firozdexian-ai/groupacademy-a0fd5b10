@@ -9,5 +9,5 @@ export { useDirectMessages } from "./hooks/useDirectMessages";
 export { ChatBubble } from "./components/talent/ChatBubble";
 export { ThreadListItem } from "./components/talent/ThreadListItem";
 export { MessagingChannelsTab } from "./components/admin/MessagingChannelsTab";
-export { messagingApi } from "./api/manifest";
-export type { MessagingApi } from "./api/manifest";
+export { unipileConnect } from "./api/manifest";
+export type { UnipileConnectRequest, UnipileConnectResponse, UnipileAction } from "./api/manifest";
