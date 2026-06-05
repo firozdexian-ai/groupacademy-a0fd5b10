@@ -219,7 +219,7 @@ export function LeadHunterManager() {
  </div>
 
  <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
- <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+ <div className="h-1.5 w-full bg-gradient-to-r from-primary via-primary to-primary" />
  <Table>
  <TableHeader className="bg-muted/30">
  <TableRow className="hover:bg-transparent border-b">
@@ -273,19 +273,19 @@ export function LeadHunterManager() {
  className={cn(
  "h-10 w-10 rounded-xl flex items-center justify-center border shadow-inner shrink-0",
  m.ai_match_score >= 80
- ? "bg-emerald-500/10 border-emerald-500/20"
- : "bg-amber-500/10 border-amber-500/20",
+ ? "bg-success/10 border-success/20"
+ : "bg-warning/10 border-warning/20",
  )}
  >
  <Sparkles
- className={cn("h-4 w-4", m.ai_match_score >= 80 ? "text-emerald-500" : "text-amber-500")}
+ className={cn("h-4 w-4", m.ai_match_score >= 80 ? "text-success" : "text-warning")}
  />
  </div>
  <div>
  <p
  className={cn(
  "text-xl font-semibold tracking-tighter leading-none",
- m.ai_match_score >= 80 ? "text-emerald-600" : "text-amber-600",
+ m.ai_match_score >= 80 ? "text-success" : "text-warning",
  )}
  >
  {m.ai_match_score}%
@@ -351,19 +351,19 @@ export function LeadHunterManager() {
  className="rounded-xl font-bold p-3 gap-3 cursor-pointer"
  onClick={() => handleInvite(m, "whatsapp")}
  >
- <MessageSquare className="w-4 h-4 text-emerald-500" /> WhatsApp Direct
+ <MessageSquare className="w-4 h-4 text-success" /> WhatsApp Direct
  </DropdownMenuItem>
  <DropdownMenuItem
  className="rounded-xl font-bold p-3 gap-3 cursor-pointer"
  onClick={() => handleInvite(m, "email")}
  >
- <Mail className="w-4 h-4 text-blue-500" /> Email Synthesis
+ <Mail className="w-4 h-4 text-primary" /> Email Synthesis
  </DropdownMenuItem>
  <DropdownMenuItem
  className="rounded-xl font-bold p-3 gap-3 cursor-pointer"
  onClick={() => handleInvite(m, "linkedin")}
  >
- <Linkedin className="w-4 h-4 text-indigo-500" /> LinkedIn Pitch
+ <Linkedin className="w-4 h-4 text-accent" /> LinkedIn Pitch
  </DropdownMenuItem>
  </DropdownMenuContent>
  </DropdownMenu>
@@ -445,7 +445,7 @@ export function LeadHunterManager() {
 
  <Dialog open={showNewHunt} onOpenChange={setShowNewHunt}>
  <DialogContent className="max-w-4xl rounded-2xl border-4 border-border/40 bg-background/95 p-0 overflow-hidden shadow-sm">
- <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+ <div className="h-2 w-full bg-gradient-to-r from-primary via-primary to-primary" />
  <div className="p-10 max-h-[85vh] overflow-y-auto no-scrollbar">
  <DialogHeader className="mb-10 text-left">
  <div className="flex items-center gap-5">

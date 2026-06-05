@@ -111,8 +111,8 @@ export function SupportAITab() {
       {/* Phase 6 Executive Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
-          <div className="flex items-center gap-3 text-cyan-500">
-            <Bot className="h-8 w-8 text-cyan-500 fill-cyan-500/20" />
+          <div className="flex items-center gap-3 text-accent">
+            <Bot className="h-8 w-8 text-accent fill-accent/20" />
             <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Support AI
             </h2>
@@ -123,7 +123,7 @@ export function SupportAITab() {
         </div>
         <Badge
           variant="outline"
-          className="h-12 px-6 rounded-xl font-semibold uppercase text-xs tracking-widest gap-2 border-cyan-500/50 text-cyan-600 bg-cyan-500/10 animate-pulse"
+          className="h-12 px-6 rounded-xl font-semibold uppercase text-xs tracking-widest gap-2 border-accent/50 text-accent bg-accent/10 animate-pulse"
         >
           <ShieldCheck className="h-4 w-4" /> AI_ASSIST_ENABLED
         </Badge>
@@ -133,10 +133,10 @@ export function SupportAITab() {
         {/* INPUT TERMINAL */}
         <div className="space-y-6">
           <Card className="rounded-2xl border border-border/60 shadow-sm overflow-hidden bg-card">
-            <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 to-blue-500" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-accent to-primary" />
             <CardContent className="p-8 space-y-8 text-left">
               {imagePreview ? (
-                <div className="relative group rounded-2xl overflow-hidden border-2 border-cyan-500/20 bg-black/40 shadow-inner">
+                <div className="relative group rounded-2xl overflow-hidden border-2 border-accent/20 bg-black/40 shadow-inner">
                   <img src={imagePreview} alt="Conversation" className="w-full max-h-[400px] object-contain" />
                   <Button
                     variant="destructive"
@@ -152,8 +152,8 @@ export function SupportAITab() {
                   className={cn(
                     "border-4 border-dashed rounded-2xl p-12 text-center cursor-pointer transition-all duration-500 min-h-[300px] flex flex-col items-center justify-center",
                     dragActive
-                      ? "border-cyan-500 bg-cyan-500/5 scale-[0.98]"
-                      : "border-border/40 hover:border-cyan-500/40 bg-muted/10 hover:bg-muted/20",
+                      ? "border-accent bg-accent/5 scale-[0.98]"
+                      : "border-border/40 hover:border-accent/40 bg-muted/10 hover:bg-muted/20",
                   )}
                   onDragEnter={handleDrag}
                   onDragLeave={handleDrag}
@@ -161,8 +161,8 @@ export function SupportAITab() {
                   onDrop={handleDrop}
                   onClick={() => document.getElementById("support-image-upload")?.click()}
                 >
-                  <div className="h-20 w-20 rounded-xl bg-cyan-500/10 flex items-center justify-center mb-6 shadow-lg border-2 border-cyan-500/20">
-                    <ImageIcon className="h-10 w-10 text-cyan-500" />
+                  <div className="h-20 w-20 rounded-xl bg-accent/10 flex items-center justify-center mb-6 shadow-lg border-2 border-accent/20">
+                    <ImageIcon className="h-10 w-10 text-accent" />
                   </div>
                   <p className="text-xl font-semibold uppercase italic tracking-tight text-foreground">
                     Drop Screenshot Here
@@ -181,7 +181,7 @@ export function SupportAITab() {
               )}
 
               <div className="space-y-3">
-                <Label className="text-[10px] font-semibold uppercase italic tracking-widest text-cyan-500 ml-1 flex items-center gap-2">
+                <Label className="text-[10px] font-semibold uppercase italic tracking-widest text-accent ml-1 flex items-center gap-2">
                   <User className="h-3 w-3" /> Additional Context Node
                 </Label>
                 <Textarea
@@ -195,7 +195,7 @@ export function SupportAITab() {
               <Button
                 onClick={analyze}
                 disabled={!imagePreview || loading}
-                className="w-full h-16 rounded-xl font-semibold uppercase italic tracking-tight text-sm gap-3 shadow-xl bg-cyan-600 hover:bg-cyan-700 text-white transition-all"
+                className="w-full h-16 rounded-xl font-semibold uppercase italic tracking-tight text-sm gap-3 shadow-xl bg-accent hover:bg-accent text-primary-foreground transition-all"
               >
                 {loading ? (
                   <>
@@ -216,8 +216,8 @@ export function SupportAITab() {
           {response ? (
             <div className="space-y-6 animate-in slide-in-from-bottom-10 duration-700">
               <div className="flex items-center gap-4 bg-muted/30 p-4 rounded-xl border border-border/60 text-left">
-                <div className="h-12 w-12 rounded-xl bg-cyan-500/10 flex items-center justify-center border-2 border-cyan-500/20">
-                  <Activity className="h-6 w-6 text-cyan-500" />
+                <div className="h-12 w-12 rounded-xl bg-accent/10 flex items-center justify-center border-2 border-accent/20">
+                  <Activity className="h-6 w-6 text-accent" />
                 </div>
                 <div>
                   <p className="text-[9px] font-semibold uppercase text-muted-foreground/60 italic tracking-widest">
@@ -227,17 +227,17 @@ export function SupportAITab() {
                     {response.tone}
                   </p>
                 </div>
-                <Badge className="ml-auto bg-emerald-500/10 text-emerald-500 border-none font-semibold text-[9px] px-3">
+                <Badge className="ml-auto bg-success/10 text-success border-none font-semibold text-[9px] px-3">
                   VERIFIED_LOGIC
                 </Badge>
               </div>
 
               <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden text-left">
-                <div className="h-1.5 w-full bg-gradient-to-r from-cyan-400 to-blue-500" />
+                <div className="h-1.5 w-full bg-gradient-to-r from-accent to-primary" />
                 <CardHeader className="p-8 border-b border-border/10 flex flex-row items-center justify-between">
                   <div>
                     <CardTitle className="text-xl font-semibold uppercase italic tracking-tight flex items-center gap-2">
-                      <MessageSquare className="h-5 w-5 text-cyan-500" /> Deployed Reply Node
+                      <MessageSquare className="h-5 w-5 text-accent" /> Deployed Reply Node
                     </CardTitle>
                     <CardDescription className="text-[9px] font-bold mt-1">
                       Optimized for high-fidelity conversion
@@ -249,8 +249,8 @@ export function SupportAITab() {
                     className={cn(
                       "h-12 px-6 rounded-xl border-2 text-xs font-medium italic shadow-md transition-all",
                       copied
-                        ? "bg-emerald-500/10 text-emerald-600 border-emerald-500/30"
-                        : "hover:bg-cyan-500/10 hover:text-cyan-600 hover:border-cyan-500/30",
+                        ? "bg-success/10 text-success border-success/30"
+                        : "hover:bg-accent/10 hover:text-accent hover:border-accent/30",
                     )}
                   >
                     {copied ? <Check className="h-4 w-4 mr-2" /> : <Copy className="h-4 w-4 mr-2" />}{" "}
@@ -267,7 +267,7 @@ export function SupportAITab() {
               <div className="grid gap-6">
                 <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden text-left">
                   <CardHeader className="p-6 pb-2 border-b border-border/5 bg-muted/5">
-                    <CardTitle className="text-xs font-semibold flex items-center gap-2 text-amber-500">
+                    <CardTitle className="text-xs font-semibold flex items-center gap-2 text-warning">
                       <Lightbulb className="h-4 w-4" /> Feature Mapping
                     </CardTitle>
                   </CardHeader>
@@ -278,7 +278,7 @@ export function SupportAITab() {
                           key={i}
                           className="flex items-center gap-4 p-4 bg-muted/20 rounded-2xl border border-border/10"
                         >
-                          <span className="h-8 w-8 rounded-xl bg-amber-500/10 text-amber-500 border border-amber-500/20 flex items-center justify-center text-[11px] font-semibold shrink-0">
+                          <span className="h-8 w-8 rounded-xl bg-warning/10 text-warning border border-warning/20 flex items-center justify-center text-[11px] font-semibold shrink-0">
                             {i + 1}
                           </span>
                           <span className="text-xs font-bold italic text-foreground/80">{s}</span>
@@ -290,7 +290,7 @@ export function SupportAITab() {
 
                 <Card className="rounded-2xl border border-border/60 bg-card shadow-xl overflow-hidden text-left">
                   <CardHeader className="p-6 pb-2 border-b border-border/5 bg-muted/5">
-                    <CardTitle className="text-xs font-semibold flex items-center gap-2 text-emerald-500">
+                    <CardTitle className="text-xs font-semibold flex items-center gap-2 text-success">
                       <ListChecks className="h-4 w-4" /> Strategic Follow-up
                     </CardTitle>
                   </CardHeader>
@@ -301,7 +301,7 @@ export function SupportAITab() {
                           key={i}
                           className="flex items-center gap-4 p-4 bg-muted/20 rounded-2xl border border-border/10"
                         >
-                          <CheckCircle2 className="h-5 w-5 text-emerald-500 shrink-0" />
+                          <CheckCircle2 className="h-5 w-5 text-success shrink-0" />
                           <span className="text-xs font-bold italic text-foreground/80">{a}</span>
                         </div>
                       ))}

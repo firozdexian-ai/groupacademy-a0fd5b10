@@ -170,7 +170,7 @@ export function MessagingChannelsTab({
 
       <div className="grid grid-cols-1 xl:grid-cols-2 gap-6">
         <Card className="rounded-2xl border border-border/60 bg-card shadow-lg overflow-hidden flex flex-col">
-          <div className="h-1.5 w-full bg-gradient-to-r from-primary to-blue-500" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-primary to-primary" />
           <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
             <CardTitle className="text-lg font-semibold tracking-tight flex items-center gap-2">
               <Plus className="h-5 w-5 text-primary" /> Connect a new channel
@@ -233,8 +233,8 @@ export function MessagingChannelsTab({
                 </Button>
               </div>
               {hasStarted && (
-                <div className="p-3 bg-blue-500/10 border border-blue-500/20 rounded-xl">
-                  <p className="text-xs text-blue-500 font-medium">
+                <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl">
+                  <p className="text-xs text-primary font-medium">
                     QR opened — complete the scan, then verify above if status doesn't flip automatically.
                   </p>
                 </div>
@@ -244,10 +244,10 @@ export function MessagingChannelsTab({
         </Card>
 
         <Card className="rounded-2xl border border-border/60 bg-card shadow-lg overflow-hidden flex flex-col">
-          <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-emerald-500" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-success to-success" />
           <CardHeader className="p-6 border-b border-border/10 bg-muted/5">
             <CardTitle className="text-lg font-semibold tracking-tight flex items-center gap-2">
-              <Network className="h-5 w-5 text-emerald-500" /> Connected channels
+              <Network className="h-5 w-5 text-success" /> Connected channels
             </CardTitle>
           </CardHeader>
           <CardContent className="p-6 flex-1 overflow-y-auto">
@@ -270,8 +270,8 @@ export function MessagingChannelsTab({
                         className={cn(
                           "h-10 w-10 rounded-full flex items-center justify-center shrink-0",
                           c.provider === "whatsapp"
-                            ? "bg-emerald-500/10 text-emerald-500"
-                            : "bg-blue-500/10 text-blue-500",
+                            ? "bg-success/10 text-success"
+                            : "bg-primary/10 text-primary",
                         )}
                       >
                         {c.provider === "whatsapp" ? (
@@ -294,8 +294,8 @@ export function MessagingChannelsTab({
                         className={cn(
                           "uppercase text-[9px] font-black tracking-widest border-2 px-2 py-0.5",
                           c.status === "connected"
-                            ? "border-emerald-500/30 text-emerald-500 bg-emerald-500/5"
-                            : "border-orange-500/30 text-orange-500 bg-orange-500/5",
+                            ? "border-success/30 text-success bg-success/5"
+                            : "border-warning/30 text-warning bg-warning/5",
                         )}
                       >
                         {c.status}

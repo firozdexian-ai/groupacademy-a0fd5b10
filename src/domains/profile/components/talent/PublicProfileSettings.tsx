@@ -195,12 +195,12 @@ export function PublicProfileSettings() {
 
             {/* LIVE VERIFIED TRANSMISSION RADAR ROW MODIFIER */}
             {publicUrl && (
-              <div className="rounded-xl border border-emerald-500/15 bg-emerald-500/[0.015] p-3.5 space-y-3 font-bold text-xs select-none w-full min-w-0 leading-none shadow-xs">
-                <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase text-emerald-600 dark:text-emerald-400 leading-none">
+              <div className="rounded-xl border border-success/15 bg-success/[0.015] p-3.5 space-y-3 font-bold text-xs select-none w-full min-w-0 leading-none shadow-xs">
+                <div className="flex items-center gap-1.5 text-[10px] font-extrabold uppercase text-success dark:text-success leading-none">
                   <CheckCircle2 className="h-3.5 w-3.5 stroke-[2.5] shrink-0" />
                   <span>Live at:</span>
                 </div>
-                <code className="text-xs select-all block break-all font-mono font-medium text-foreground/80 leading-normal pl-0.5 selection:bg-emerald-500/10">
+                <code className="text-xs select-all block break-all font-mono font-medium text-foreground/80 leading-normal pl-0.5 selection:bg-success/10">
                   {publicUrl}
                 </code>
                 <div className="flex items-center gap-2 select-none font-bold text-xs pt-0.5 shrink-0">
@@ -237,7 +237,7 @@ export function PublicProfileSettings() {
 
             {/* NO ALIAS HANDLE PENDING FAULT CHIP */}
             {!data.public_handle && (
-              <div className="rounded-xl border border-amber-500/15 bg-amber-500/[0.015] p-3 text-[11px] sm:text-xs text-amber-600 dark:text-amber-400 font-bold flex items-center gap-2 select-none leading-none animate-in pulse duration-1000 w-full shrink-0">
+              <div className="rounded-xl border border-warning/15 bg-warning/[0.015] p-3 text-[11px] sm:text-xs text-warning dark:text-warning font-bold flex items-center gap-2 select-none leading-none animate-in pulse duration-1000 w-full shrink-0">
                 <AlertCircle className="h-4 w-4 shrink-0 stroke-[2.2]" />
                 <span>
                   Specify and claim an identity handle node key above to authorize dynamic pipeline routing links.

@@ -118,19 +118,19 @@ export function CreatorEconomyTab() {
       {/* KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <StatCard
-          icon={<Flame className="text-orange-500" />}
+          icon={<Flame className="text-warning" />}
           label="Network Hype"
           value={stats?.hypes_total ?? 0}
           loading={loading}
         />
         <StatCard
-          icon={<Rocket className="text-purple-500" />}
+          icon={<Rocket className="text-accent" />}
           label="Active Boosts"
           value={stats?.active_boosts ?? 0}
           loading={loading}
         />
         <StatCard
-          icon={<TrendingUp className="text-emerald-500" />}
+          icon={<TrendingUp className="text-success" />}
           label="Platform Rev"
           value={stats?.platform_rev_estimate}
           suffix="CR"
@@ -157,10 +157,10 @@ export function CreatorEconomyTab() {
         <TabsContent value="leaders" className="grid lg:grid-cols-2 gap-8 mt-6">
           {/* Hype Leaderboard */}
           <Card className="rounded-2xl border-2 bg-card overflow-hidden text-left">
-            <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 to-orange-600" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-warning to-warning" />
             <CardHeader className="p-6 border-b border-border/10">
               <CardTitle className="text-xs font-semibold flex items-center gap-2">
-                <Flame className="h-4 w-4 text-orange-500" /> Top Hyped Creators
+                <Flame className="h-4 w-4 text-warning" /> Top Hyped Creators
               </CardTitle>
             </CardHeader>
             <CardContent className="p-6 space-y-4">
@@ -182,7 +182,7 @@ export function CreatorEconomyTab() {
 
           {/* Connections Leaderboard */}
           <Card className="rounded-2xl border-2 bg-card overflow-hidden text-left">
-            <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-blue-600" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-primary to-primary" />
             <CardHeader className="p-6 border-b border-border/10">
               <CardTitle className="text-xs font-semibold flex items-center gap-2">
                 <Sparkles className="h-4 w-4 text-primary" /> Top Connection Earners

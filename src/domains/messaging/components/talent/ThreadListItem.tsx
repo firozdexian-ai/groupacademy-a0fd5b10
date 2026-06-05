@@ -81,7 +81,7 @@ export function ThreadListItem({ thread, onClick }: Props) {
           <AvatarFallback
             className={cn(
               "rounded-full text-primary-foreground font-extrabold flex items-center justify-center w-full h-full shadow-inner",
-              isSystem ? "bg-blue-600 dark:bg-blue-500" : "bg-emerald-600 dark:bg-emerald-500",
+              isSystem ? "bg-primary dark:bg-primary" : "bg-success dark:bg-success",
             )}
           >
             {isSystem ? (

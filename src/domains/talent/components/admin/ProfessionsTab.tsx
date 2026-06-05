@@ -342,8 +342,8 @@ function SchoolCard({ school, academyName, onEdit }: any) {
  return (
  <Card className="rounded-2xl border bg-card/40 p-5 flex items-center justify-between group">
  <div className="flex items-center gap-4">
- <div className="h-12 w-12 rounded-xl bg-emerald-500/10 flex items-center justify-center border border-emerald-500/30">
- <GraduationCap className="h-5 w-5 text-emerald-500" />
+ <div className="h-12 w-12 rounded-xl bg-success/10 flex items-center justify-center border border-success/30">
+ <GraduationCap className="h-5 w-5 text-success" />
  </div>
  <div className="text-left">
  <h4 className="font-semibold uppercase italic text-sm">{school.name}</h4>
@@ -361,8 +361,8 @@ function ProfessionCard({ profession, schoolName, onEdit }: any) {
  return (
  <Card className="rounded-2xl border bg-card/40 p-5 flex items-center justify-between group">
  <div className="flex items-center gap-4">
- <div className="h-12 w-12 rounded-xl bg-orange-500/10 flex items-center justify-center border border-orange-500/20">
- <Briefcase className="h-5 w-5 text-orange-500" />
+ <div className="h-12 w-12 rounded-xl bg-warning/10 flex items-center justify-center border border-warning/20">
+ <Briefcase className="h-5 w-5 text-warning" />
  </div>
  <div className="text-left">
  <h4 className="font-semibold uppercase italic text-sm">{profession.name}</h4>

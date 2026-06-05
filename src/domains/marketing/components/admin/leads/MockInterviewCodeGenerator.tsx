@@ -155,7 +155,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
  onClick={handleCopy}
  className="h-16 w-16 rounded-2xl border hover:bg-primary hover:text-primary-foreground transition-all shadow-md"
  >
- {copied ? <Check className="h-6 w-6 text-green-500" /> : <Copy className="h-6 w-6" />}
+ {copied ? <Check className="h-6 w-6 text-success" /> : <Copy className="h-6 w-6" />}
  </Button>
  </div>
  <p className="text-[9px] font-bold text-muted-foreground text-center italic">

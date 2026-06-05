@@ -242,8 +242,8 @@ export function ContentOutreachTab() {
  {/* Phase 6 Executive Header */}
  <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
  <div className="space-y-1 text-left">
- <div className="flex items-center gap-3 text-orange-500">
- <BookOpen className="h-8 w-8 text-orange-500 fill-orange-500/20" />
+ <div className="flex items-center gap-3 text-warning">
+ <BookOpen className="h-8 w-8 text-warning fill-warning/20" />
  <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
  Content Outreach
  </h2>
@@ -264,7 +264,7 @@ export function ContentOutreachTab() {
 
  {/* Distribution Hub Selector */}
  <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
- <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600" />
+ <div className="h-1.5 w-full bg-gradient-to-r from-warning via-warning to-warning" />
  <CardContent className="p-10 space-y-8">
  <div className="grid gap-8 md:grid-cols-2">
  <div className="space-y-3">
@@ -332,7 +332,7 @@ export function ContentOutreachTab() {
  {/* Distribution Dialog */}
  <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
  <DialogContent className="max-w-3xl rounded-2xl border-4 border-border/40 bg-background/95 p-0 overflow-hidden shadow-sm">
- <div className="h-2 w-full bg-gradient-to-r from-orange-400 via-amber-500 to-orange-600" />
+ <div className="h-2 w-full bg-gradient-to-r from-warning via-warning to-warning" />
  <div className="p-12">
  <DialogHeader className="mb-10">
  <div className="flex items-center gap-5">
@@ -351,16 +351,16 @@ export function ContentOutreachTab() {
  <div className="flex flex-col md:flex-row gap-10">
  <div className="w-full md:w-1/3 space-y-3">
  {[
- { id: "linkedin", label: "LINKEDIN", icon: Linkedin, color: "text-blue-600", bg: "bg-blue-600/10" },
- { id: "facebook", label: "FACEBOOK", icon: Facebook, color: "text-blue-500", bg: "bg-blue-500/10" },
+ { id: "linkedin", label: "LINKEDIN", icon: Linkedin, color: "text-primary", bg: "bg-primary/10" },
+ { id: "facebook", label: "FACEBOOK", icon: Facebook, color: "text-primary", bg: "bg-primary/10" },
  {
  id: "whatsapp",
  label: "WHATSAPP",
  icon: MessageCircle,
- color: "text-green-500",
- bg: "bg-green-500/10",
+ color: "text-success",
+ bg: "bg-success/10",
  },
- { id: "telegram", label: "TELEGRAM", icon: Send, color: "text-sky-500", bg: "bg-sky-500/10" },
+ { id: "telegram", label: "TELEGRAM", icon: Send, color: "text-primary", bg: "bg-primary/10" },
  { id: "custom", label: "LOGIC LINK", icon: LinkIcon, color: "text-primary", bg: "bg-primary/10" },
  ].map((ch) => (
  <button
@@ -513,7 +513,7 @@ export function ContentOutreachTab() {
  <Badge
  className={cn(
  "rounded-lg font-black text-[9px] px-4 py-1.5 border-none shadow-sm",
- isPitched(talent.id) ? "bg-emerald-500 text-primary-foreground" : "bg-muted text-muted-foreground",
+ isPitched(talent.id) ? "bg-success text-primary-foreground" : "bg-muted text-muted-foreground",
  )}
  >
  {isPitched(talent.id) ? "PITCHED" : "PENDING"}

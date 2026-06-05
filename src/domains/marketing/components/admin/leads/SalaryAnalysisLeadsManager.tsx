@@ -50,10 +50,10 @@ interface SalaryAnalysisLead {
 }
 
 const statusColors: Record<string, string> = {
-  pending: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  processing: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  completed: "bg-green-500/10 text-green-600 border-green-500/20",
-  failed: "bg-red-500/10 text-red-600 border-red-500/20",
+  pending: "bg-warning/10 text-warning border-warning/20",
+  processing: "bg-primary/10 text-primary border-primary/20",
+  completed: "bg-success/10 text-success border-success/20",
+  failed: "bg-destructive/10 text-destructive border-destructive/20",
 };
 
 const statusLabels: Record<string, string> = {

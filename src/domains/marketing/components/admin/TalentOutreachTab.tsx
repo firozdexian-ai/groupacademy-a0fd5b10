@@ -68,8 +68,8 @@ export function TalentOutreachTab() {
       {/* Phase 6 Executive Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
-          <div className="flex items-center gap-3 text-blue-500">
-            <Send className="h-8 w-8 text-blue-500 fill-blue-500/20" />
+          <div className="flex items-center gap-3 text-primary">
+            <Send className="h-8 w-8 text-primary fill-primary/20" />
             <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
               Talent Outreach
             </h2>
@@ -80,7 +80,7 @@ export function TalentOutreachTab() {
         </div>
         <Button
           onClick={() => setActiveTab("generator")}
-          className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-primary-foreground"
+          className="h-12 px-8 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 shadow-lg shadow-primary/20 bg-primary hover:bg-primary text-primary-foreground"
         >
           <Bot className="h-4 w-4" /> Trigger Campaign
         </Button>
@@ -110,7 +110,7 @@ export function TalentOutreachTab() {
 
         <TabsContent value="ledger" className="mt-0">
           <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-            <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 via-indigo-500 to-blue-600" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-primary via-accent to-primary" />
             <CardContent className="p-0">
               <div className="overflow-x-auto">
                 <Table>
@@ -145,11 +145,11 @@ export function TalentOutreachTab() {
                       </TableRow>
                     ) : (
                       graphData?.talentOutreach?.map((row) => (
-                        <TableRow key={row.id} className="group hover:bg-blue-500/[0.02]">
+                        <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
                           <TableCell className="py-6 pl-8">
                             <div className="flex items-center gap-3">
                               <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
-                                <User className="h-3 w-3 text-blue-500" />
+                                <User className="h-3 w-3 text-primary" />
                               </div>
                               <span className="font-mono text-xs uppercase tracking-tight text-muted-foreground">
                                 {row.talent_id?.substring(0, 8)}
@@ -159,7 +159,7 @@ export function TalentOutreachTab() {
                           <TableCell>
                             <Badge
                               variant="outline"
-                              className="font-mono text-[9px] border-2 text-blue-500 border-blue-500/20 bg-blue-500/10"
+                              className="font-mono text-[9px] border-2 text-primary border-primary/20 bg-primary/10"
                             >
                               {row.channel}
                             </Badge>
@@ -179,7 +179,7 @@ export function TalentOutreachTab() {
 
         <TabsContent value="generator" className="mt-0 space-y-10">
           <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden text-left">
-            <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-primary via-primary to-primary" />
             <CardHeader className="p-10 border-b border-border/10 bg-muted/10">
               <div className="flex items-center gap-4">
                 <div className="h-12 w-12 rounded-2xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">

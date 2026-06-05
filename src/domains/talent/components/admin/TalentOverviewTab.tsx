@@ -82,38 +82,38 @@ export function TalentOverviewTab() {
     <div className="space-y-10 animate-in fade-in duration-1000">
       {/* KPI Grid */}
       <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-        <MetricTile label="Total Nodes" value={data.total} icon={Users} color="text-indigo-500" bg="bg-indigo-500/10" />
+        <MetricTile label="Total Nodes" value={data.total} icon={Users} color="text-accent" bg="bg-accent/10" />
         <MetricTile
           label="Verified Mastery"
           value={data.onboarded}
           icon={ShieldCheck}
-          color="text-emerald-500"
-          bg="bg-emerald-500/10"
+          color="text-success"
+          bg="bg-success/10"
         />
         <MetricTile
           label="Pipeline Scale"
           value={data.funnel.started}
           icon={Activity}
-          color="text-blue-500"
-          bg="bg-blue-500/10"
+          color="text-primary"
+          bg="bg-primary/10"
         />
         <MetricTile
           label="Global Reach"
           value={data.byCountry.length}
           icon={Globe}
-          color="text-fuchsia-500"
-          bg="bg-fuchsia-500/10"
+          color="text-accent"
+          bg="bg-accent/10"
         />
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
         {/* Restored: Welcome AI Funnel visualization */}
         <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden relative text-left">
-          <div className="h-1.5 w-full bg-gradient-to-r from-blue-500 to-indigo-600" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-primary to-accent" />
           <div className="p-8 space-y-8">
             <div className="flex items-center gap-3 border-b border-border/10 pb-4">
-              <div className="h-10 w-10 rounded-xl bg-blue-500/10 flex items-center justify-center border-2 border-blue-500/20">
-                <AlertCircle className="h-5 w-5 text-blue-500" />
+              <div className="h-10 w-10 rounded-xl bg-primary/10 flex items-center justify-center border-2 border-primary/20">
+                <AlertCircle className="h-5 w-5 text-primary" />
               </div>
               <div>
                 <h3 className="text-xl font-semibold uppercase tracking-tight italic text-foreground">
@@ -129,25 +129,25 @@ export function TalentOverviewTab() {
                 label="Interactions Started"
                 value={data.funnel.started}
                 max={data.funnel.started}
-                color="from-blue-400 to-blue-600"
+                color="from-primary to-primary"
               />
               <FunnelRow
                 label="Email Leads Captured"
                 value={data.funnel.emailCaptured}
                 max={data.funnel.started}
-                color="from-indigo-400 to-indigo-600"
+                color="from-accent to-accent"
               />
               <FunnelRow
                 label="Account Conversions"
                 value={data.funnel.completedSignup}
                 max={data.funnel.started}
-                color="from-violet-400 to-violet-600"
+                color="from-accent to-accent"
               />
               <FunnelRow
                 label="Mastery Profiles (CV)"
                 value={data.funnel.cvParsed}
                 max={data.funnel.started}
-                color="from-emerald-400 to-emerald-600"
+                color="from-success to-success"
               />
             </div>
           </div>
@@ -155,10 +155,10 @@ export function TalentOverviewTab() {
 
         {/* Restored: Recent Registrations with Badge Status */}
         <Card className="rounded-2xl border border-border/60 bg-card shadow-sm flex flex-col overflow-hidden text-left">
-          <div className="h-1.5 w-full bg-gradient-to-r from-emerald-400 to-teal-500" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-success to-accent" />
           <CardHeader className="p-8 border-b border-border/10">
             <h3 className="text-xl font-semibold uppercase tracking-tight italic flex items-center gap-3">
-              <Clock className="h-5 w-5 text-emerald-500" /> Recent Activations
+              <Clock className="h-5 w-5 text-success" /> Recent Activations
             </h3>
           </CardHeader>
           <div className="flex-1 overflow-y-auto p-4 max-h-[420px] space-y-2">
@@ -168,7 +168,7 @@ export function TalentOverviewTab() {
                 className="flex items-center justify-between p-4 rounded-2xl hover:bg-muted/40 transition-all border-2 border-transparent hover:border-border/40 group"
               >
                 <div className="min-w-0 flex-1">
-                  <div className="font-semibold text-sm uppercase italic truncate group-hover:text-emerald-500 transition-colors">
+                  <div className="font-semibold text-sm uppercase italic truncate group-hover:text-success transition-colors">
                     {r.full_name || "Anonymous User"}
                   </div>
                   <div className="text-[10px] font-bold text-muted-foreground truncate flex items-center gap-2 mt-1">
@@ -176,7 +176,7 @@ export function TalentOverviewTab() {
                     <span>·</span>
                     <Badge
                       variant="outline"
-                      className="px-2 py-0 h-4 text-[8px] font-semibold bg-emerald-500/10 text-emerald-600 border-none"
+                      className="px-2 py-0 h-4 text-[8px] font-semibold bg-success/10 text-success border-none"
                     >
                       ACTIVE
                     </Badge>
@@ -241,7 +241,7 @@ function FunnelRow({ label, value, max, color }: any) {
 
 function BarBreakdown({ title, icon: Icon, data, color }: any) {
   const max = Math.max(1, ...data.map((d: any) => d.value));
-  const gradient = color === "blue" ? "from-blue-400 to-indigo-600" : "from-fuchsia-400 to-pink-600";
+  const gradient = color === "blue" ? "from-primary to-accent" : "from-accent to-accent";
 
   return (
     <Card className="rounded-2xl border border-border/60 bg-card p-8 text-left">

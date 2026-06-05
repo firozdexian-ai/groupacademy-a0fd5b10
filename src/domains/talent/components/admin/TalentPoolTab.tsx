@@ -126,11 +126,11 @@ export function TalentPoolTab() {
       </div>
 
       <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-        <div className="h-1.5 w-full bg-gradient-to-r from-blue-400 to-indigo-500" />
+        <div className="h-1.5 w-full bg-gradient-to-r from-primary to-accent" />
         <CardHeader className="p-8 border-b border-border/10">
           <div className="flex flex-col md:flex-row gap-6">
             <div className="relative flex-1 group">
-              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-blue-500" />
+              <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-primary" />
               <Input
                 placeholder="Search node IDs, names, or handles..."
                 value={searchQuery}
@@ -196,7 +196,7 @@ export function TalentPoolTab() {
                           variant="outline"
                           className={cn(
                             "text-[9px] font-semibold rounded-full border-none px-3",
-                            talent.user_id ? "bg-emerald-500/10 text-emerald-600" : "bg-amber-500/10 text-amber-600",
+                            talent.user_id ? "bg-success/10 text-success" : "bg-warning/10 text-warning",
                           )}
                         >
                           {talent.user_id ? "REGISTERED" : "LEAD"}
@@ -318,13 +318,13 @@ function OutreachItem({ icon: Icon, label, onClick }: any) {
         <Button
           variant="ghost"
           size="icon" aria-label="Message"
-          className="h-8 w-8 hover:bg-emerald-500/10"
+          className="h-8 w-8 hover:bg-success/10"
           onClick={() => onClick("whatsapp")}
         >
-          <MessageSquare className="h-3.5 w-3.5 text-emerald-500" />
+          <MessageSquare className="h-3.5 w-3.5 text-success" />
         </Button>
-        <Button variant="ghost" size="icon" aria-label="Messages" className="h-8 w-8 hover:bg-blue-500/10" onClick={() => onClick("email")}>
-          <Mail className="h-3.5 w-3.5 text-blue-500" />
+        <Button variant="ghost" size="icon" aria-label="Messages" className="h-8 w-8 hover:bg-primary/10" onClick={() => onClick("email")}>
+          <Mail className="h-3.5 w-3.5 text-primary" />
         </Button>
       </div>
     </div>

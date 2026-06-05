@@ -15,8 +15,8 @@ export function LeadsActivitiesTab() {
       {/* Phase 6 Executive Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
-          <div className="flex items-center gap-3 text-indigo-500">
-            <ClipboardList className="h-8 w-8 text-indigo-500 fill-indigo-500/20" />
+          <div className="flex items-center gap-3 text-accent">
+            <ClipboardList className="h-8 w-8 text-accent fill-accent/20" />
             <h2 className="text-3xl font-black uppercase tracking-tighter italic leading-none text-foreground">
               Leads
             </h2>

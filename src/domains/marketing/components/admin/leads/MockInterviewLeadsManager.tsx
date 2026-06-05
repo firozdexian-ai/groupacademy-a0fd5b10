@@ -51,11 +51,11 @@ interface MockInterviewLead {
 }
 
 const performanceColors: Record<string, string> = {
-  needs_work: "bg-red-500/10 text-red-600 border-red-500/20",
-  developing: "bg-orange-500/10 text-orange-600 border-orange-500/20",
-  competent: "bg-yellow-500/10 text-yellow-600 border-yellow-500/20",
-  strong: "bg-blue-500/10 text-blue-600 border-blue-500/20",
-  excellent: "bg-green-500/10 text-green-600 border-green-500/20",
+  needs_work: "bg-destructive/10 text-destructive border-destructive/20",
+  developing: "bg-warning/10 text-warning border-warning/20",
+  competent: "bg-warning/10 text-warning border-warning/20",
+  strong: "bg-primary/10 text-primary border-primary/20",
+  excellent: "bg-success/10 text-success border-success/20",
 };
 
 const performanceLabels: Record<string, string> = {
@@ -308,7 +308,7 @@ export function MockInterviewLeadsManager() {
                         className={cn(
                           "font-black text-[9px]  italic rounded-full px-4",
                           lead.status === "completed"
-                            ? "bg-green-500/10 text-green-600"
+                            ? "bg-success/10 text-success"
                             : "bg-muted text-muted-foreground",
                         )}
                       >

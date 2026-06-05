@@ -263,7 +263,7 @@ export function CVUploadSection() {
           {hasCV && (
             <Badge
               variant="outline"
-              className="rounded px-2 h-5.5 text-[9px] font-extrabold tracking-wider uppercase border border-transparent bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 gap-1 flex items-center leading-none shadow-xs shrink-0 select-none"
+              className="rounded px-2 h-5.5 text-[9px] font-extrabold tracking-wider uppercase border border-transparent bg-success/10 text-success dark:text-success gap-1 flex items-center leading-none shadow-xs shrink-0 select-none"
             >
               <ShieldCheck className="h-3.5 w-3.5 stroke-[2.5]" />
               <span>CV on file</span>
@@ -308,10 +308,10 @@ export function CVUploadSection() {
         ) : error ? (
           /* CORE CRITICAL PROCESSSING FAULT DISPLAY ROW */
           <div className="space-y-4 animate-in slide-in-from-top-1 duration-200 w-full font-bold text-xs tracking-tight">
-            <div className="flex gap-3 items-start p-4 rounded-xl border border-rose-500/15 bg-rose-500/[0.015] leading-normal text-left w-full min-w-0">
-              <AlertCircle className="h-5 w-5 text-rose-500 shrink-0 stroke-[2.5] mt-0.5" />
+            <div className="flex gap-3 items-start p-4 rounded-xl border border-destructive/15 bg-destructive/[0.015] leading-normal text-left w-full min-w-0">
+              <AlertCircle className="h-5 w-5 text-destructive shrink-0 stroke-[2.5] mt-0.5" />
               <div className="space-y-1 flex-1 min-w-0">
-                <p className="text-xs font-bold uppercase tracking-wide text-rose-600 dark:text-rose-400 select-none leading-none">
+                <p className="text-xs font-bold uppercase tracking-wide text-destructive dark:text-destructive select-none leading-none">
                   CV upload failed
                 </p>
                 <p className="text-[11px] font-semibold text-muted-foreground/60 max-w-full break-words select-text pt-0.5">
@@ -331,12 +331,12 @@ export function CVUploadSection() {
         ) : hasCV ? (
           /* COGNITIVE ACTIVE FILE CONFIRMED TILES */
           <div className="space-y-4 animate-in zoom-in-99 duration-200 w-full font-bold text-xs tracking-tight">
-            <div className="flex gap-3.5 items-center p-4 rounded-xl border border-emerald-500/15 bg-emerald-500/[0.015] select-none leading-none w-full min-w-0">
-              <div className="h-9 w-9 rounded-xl bg-emerald-500/10 border border-emerald-500/5 flex items-center justify-center shrink-0 shadow-inner">
-                <CheckCircle2 className="h-4.5 w-4.5 text-emerald-600 dark:text-emerald-400 stroke-[2.5]" />
+            <div className="flex gap-3.5 items-center p-4 rounded-xl border border-success/15 bg-success/[0.015] select-none leading-none w-full min-w-0">
+              <div className="h-9 w-9 rounded-xl bg-success/10 border border-success/5 flex items-center justify-center shrink-0 shadow-inner">
+                <CheckCircle2 className="h-4.5 w-4.5 text-success dark:text-success stroke-[2.5]" />
               </div>
               <div className="space-y-1 flex-1 min-w-0 flex flex-col justify-center">
-                <p className="text-xs font-bold uppercase tracking-wide text-emerald-600 dark:text-emerald-400 leading-none">
+                <p className="text-xs font-bold uppercase tracking-wide text-success dark:text-success leading-none">
                   CV uploaded
                 </p>
                 <p className="text-[10px] font-extrabold text-muted-foreground/50 uppercase tracking-wider block pt-1.5 leading-none">
@@ -402,7 +402,7 @@ export function CVUploadSection() {
 
         {/* BOTTOM METRIC RIBBON OVERLAY LABEL */}
         <div className="mt-6 flex items-center justify-center gap-1.5 py-2.5 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full">
-          <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
+          <Zap className="h-3.5 w-3.5 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Powered by AI · CV parsing</span>
         </div>
       </CardContent>

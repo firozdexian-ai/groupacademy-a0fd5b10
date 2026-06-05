@@ -83,11 +83,11 @@ interface PortfolioRequest {
 }
 
 const statusColors: Record<PortfolioStatus, string> = {
- pending: "bg-yellow-500/10 text-yellow-600",
- contacted: "bg-blue-500/10 text-blue-600",
- in_progress: "bg-purple-500/10 text-purple-600",
- completed: "bg-green-500/10 text-green-600",
- cancelled: "bg-red-500/10 text-red-600",
+ pending: "bg-warning/10 text-warning",
+ contacted: "bg-primary/10 text-primary",
+ in_progress: "bg-accent/10 text-accent",
+ completed: "bg-success/10 text-success",
+ cancelled: "bg-destructive/10 text-destructive",
 };
 
 const statusLabels: Record<PortfolioStatus, string> = {
