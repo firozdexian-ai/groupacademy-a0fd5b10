@@ -104,20 +104,7 @@ export function CoursesTab({ onOpenCourse, onOpenCompetition }: CoursesTabProps)
     queryFn: async ({ pageParam = 0 }) => {
       const from = (pageParam as number) * PAGE_SIZE;
       const to = from + PAGE_SIZE - 1;
-
-      const { data, error } = await supabase
-        .from("content")
-        .select(
-          "id, title, slug, description, content_type, price, instructor_name, cover_image_url, event_date, event_timezone, event_duration_minutes, max_capacity, current_enrollment",
-        )
-        .eq("is_published", true)
-        .eq("is_private", false)
-        .eq("is_ready", true)
-        .in("content_type", ["recorded_course", "live_webinar", "batch_class"])
-        .order("display_order")
-        .range(from, to);
-
-      if (error) throw error;
+      const data = await listPublicCoursesPaged(from, to);
       return (data || []) as Course[];
     },
     getNextPageParam: (lastPage, allPages) => (lastPage.length < PAGE_SIZE ? undefined : allPages.length),
