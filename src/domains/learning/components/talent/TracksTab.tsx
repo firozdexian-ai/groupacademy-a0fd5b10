@@ -90,22 +90,9 @@ export function TracksTab() {
         let synchronizedEnrollments: any[] = [];
 
         if (authenticatedUserId) {
-          const { data: talentProfile, error: talentError } = await supabase
-            .from("talents")
-            .select("id")
-            .eq("user_id", authenticatedUserId)
-            .maybeSingle();
-
-          if (talentError) throw talentError;
-
-          if (talentProfile?.id) {
-            const { data: enrollmentRows, error: enrollmentError } = await supabase
-              .from("enrollments")
-              .select("id, progress, status, content:content_id(title)")
-              .eq("talent_id", talentProfile.id)
-              .order("created_at", { ascending: false });
-
-            if (enrollmentError) throw enrollmentError;
+          const talentId = await getTalentIdByUserId(authenticatedUserId);
+          if (talentId) {
+            const enrollmentRows = await listTalentEnrollmentsLite(talentId);
             synchronizedEnrollments = enrollmentRows || [];
           }
         }
