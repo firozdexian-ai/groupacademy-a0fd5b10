@@ -39,8 +39,8 @@ import { useTalent } from "@/hooks/useTalent";
 import { useCredits } from "@/domains/finance/hooks/useCredits";
 import { ExistingCVCard } from "@/components/cv/ExistingCVCard";
 import { ProfileCompletionPrompt } from "@/domains/profile/components/talent/ProfileCompletionPrompt";
-import { CreditGateModal } from "@/components/credits/CreditGateModal";
-import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
+import { CreditGateModal } from "@/domains/finance/components/talent/CreditGateModal";
+import { CreditPurchaseSheet } from "@/domains/finance/components/talent/CreditPurchaseSheet";
 import { cn } from "@/lib/utils";
 
 const SalaryAnalysisSetupContent = () => {

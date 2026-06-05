@@ -11,8 +11,8 @@ import { Card, CardContent, CardDescription, CardHeader, CardTitle } from "@/com
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { ProcessingCard } from "@/components/ui/processing-card";
-import { CreditGateModal } from "@/components/credits/CreditGateModal";
-import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
+import { CreditGateModal } from "@/domains/finance/components/talent/CreditGateModal";
+import { CreditPurchaseSheet } from "@/domains/finance/components/talent/CreditPurchaseSheet";
 import { ArrowRight, User, Loader2, ShieldCheck, MessageSquare, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import { analyzeMockInterview } from "@/domains/jobs/api/jobsApi";

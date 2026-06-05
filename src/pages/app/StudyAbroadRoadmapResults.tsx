@@ -22,7 +22,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
-import { RoadmapTimeline } from "@/components/abroad/RoadmapTimeline";
+import { RoadmapTimeline } from "@/domains/abroad/components/talent/RoadmapTimeline";
 import { PAGE_SHELL, PAGE_TITLE, PAGE_SUBTITLE, CARD, META_TEXT, SECTION_TITLE } from "@/lib/uiTokens";
 
 // Production Data Contracts[cite: 8]
