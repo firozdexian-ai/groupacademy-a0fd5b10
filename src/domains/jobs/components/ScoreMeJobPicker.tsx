@@ -8,7 +8,12 @@ import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { Search, Briefcase, ArrowRight, Loader2, Sparkles } from "lucide-react";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listSavedJobIdsForUser,
+  listJobsByIdsForPicker,
+  listRecentActiveJobsForPicker,
+} from "@/domains/jobs/repo/jobsRepo";
+
 import { getCurrentUserId } from "@/lib/auth";
 import { cn } from "@/lib/utils";
 import { toast } from "sonner";
