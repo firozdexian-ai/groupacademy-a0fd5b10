@@ -1,5 +1,6 @@
 import { useState, useEffect, lazy, Suspense } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { listActiveJobsForOutreach } from "@/domains/jobs/repo/jobsRepo";
+
 import { Card, CardContent, CardHeader, CardTitle, CardDescription } from "@/components/ui/card";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import { Skeleton } from "@/components/ui/skeleton";
