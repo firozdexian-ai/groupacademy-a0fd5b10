@@ -91,15 +91,8 @@ export function UnifiedDiscovery() {
     staleTime: 10 * 60 * 1000,
     refetchOnWindowFocus: false,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("blog_posts")
-        .select("id, title, slug, featured_image, excerpt, reading_time_mins")
-        .eq("status", "published")
-        .order("published_at", { ascending: false })
-        .limit(6);
-
-      if (error) throw error;
-      return (data || []).map((item) => ({
+      const data = await listPublishedBlogPostsLite(6);
+      return (data || []).map((item: any) => ({
         id: item.id,
         title: item.title,
         slug: item.slug,
