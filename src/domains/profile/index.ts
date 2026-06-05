@@ -41,7 +41,8 @@ export {
 } from "./hooks/useTalentSearch";
 
 // API
-export { profileApi, type ProfileApi } from "./api/manifest";
+export { claimPublicHandle } from "./api/manifest";
+export type { ClaimPublicHandleRequest, ClaimPublicHandleResponse } from "./api/manifest";
 
 // Talent UI
 export { ProfileCompletionMeter } from "./components/talent/ProfileCompletionMeter";
