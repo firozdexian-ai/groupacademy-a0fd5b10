@@ -1,13 +1,14 @@
 import { useEffect, useState, useCallback } from "react";
-import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/lib/auth";
 import { toast } from "sonner";
 import {
   listApplicationMessages,
   insertApplicationMessage,
   markApplicationMessagesRead,
+  subscribeToApplicationMessages,
   type ApplicationMessageRow,
 } from "@/domains/jobs/repo/jobsRepo";
+
 
 /**
  * GroUp Academy: Application Messaging Orchestrator (V2.2.0)
