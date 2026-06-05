@@ -17,9 +17,9 @@ export function UgcOverviewTab() {
   const tiles = dash
     ? [
         { label: "Free Videos", value: dash.free_videos, sub: `${dash.published_videos} published`, icon: Video, color: "text-primary", bg: "bg-primary/10" },
-        { label: "Blog Posts", value: dash.blogs, sub: `${dash.published_blogs} published`, icon: FileText, color: "text-emerald-600", bg: "bg-emerald-500/10" },
-        { label: "Feed Posts", value: dash.feed_posts, sub: "active", icon: MessageSquare, color: "text-blue-600", bg: "bg-blue-500/10" },
-        { label: "Competitions", value: dash.competitions, sub: `${dash.active_comps} active`, icon: Trophy, color: "text-amber-600", bg: "bg-amber-500/10" },
+        { label: "Blog Posts", value: dash.blogs, sub: `${dash.published_blogs} published`, icon: FileText, color: "text-success", bg: "bg-success/10" },
+        { label: "Feed Posts", value: dash.feed_posts, sub: "active", icon: MessageSquare, color: "text-primary", bg: "bg-primary/10" },
+        { label: "Competitions", value: dash.competitions, sub: `${dash.active_comps} active`, icon: Trophy, color: "text-warning", bg: "bg-warning/10" },
       ]
     : [];
 
@@ -75,8 +75,8 @@ export function UgcOverviewTab() {
               <CardContent>
                 {openReports.length === 0 ? (
                   <div className="flex flex-col items-center justify-center py-10 text-center">
-                    <div className="h-12 w-12 rounded-full bg-emerald-500/10 flex items-center justify-center mb-3">
-                      <ShieldAlert className="h-6 w-6 text-emerald-600" />
+                    <div className="h-12 w-12 rounded-full bg-success/10 flex items-center justify-center mb-3">
+                      <ShieldAlert className="h-6 w-6 text-success" />
                     </div>
                     <p className="text-sm font-bold text-muted-foreground uppercase">Zero Open Reports</p>
                   </div>
@@ -131,9 +131,9 @@ export function UgcOverviewTab() {
               <CardContent>
                 <div className="space-y-4">
                   <PulseBar label="Videos" value={dash.free_videos} max={maxPulse} color="bg-primary" />
-                  <PulseBar label="Blogs" value={dash.blogs} max={maxPulse} color="bg-emerald-500" />
-                  <PulseBar label="Feed" value={dash.feed_posts} max={maxPulse} color="bg-blue-500" />
-                  <PulseBar label="Competitions" value={dash.competitions} max={maxPulse} color="bg-amber-500" />
+                  <PulseBar label="Blogs" value={dash.blogs} max={maxPulse} color="bg-success" />
+                  <PulseBar label="Feed" value={dash.feed_posts} max={maxPulse} color="bg-primary" />
+                  <PulseBar label="Competitions" value={dash.competitions} max={maxPulse} color="bg-warning" />
                 </div>
               </CardContent>
             </Card>

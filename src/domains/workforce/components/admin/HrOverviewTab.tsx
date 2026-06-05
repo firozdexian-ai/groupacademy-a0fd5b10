@@ -57,22 +57,22 @@ export function HrOverviewTab() {
               label="Verticals"
               value={data.verticals.length}
               icon={Building2}
-              color="text-cyan-500"
-              bg="bg-cyan-500/10"
+              color="text-accent"
+              bg="bg-accent/10"
             />
             <MetricTile
               label="Functions"
               value={data.functions.length}
               icon={Briefcase}
-              color="text-emerald-500"
-              bg="bg-emerald-500/10"
+              color="text-success"
+              bg="bg-success/10"
             />
             <MetricTile
               label="Teams"
               value={data.teams.length}
               icon={Network}
-              color="text-amber-500"
-              bg="bg-amber-500/10"
+              color="text-warning"
+              bg="bg-warning/10"
             />
           </div>
 
@@ -141,7 +141,7 @@ export function HrOverviewTab() {
                                 >
                                   <div className="flex items-center justify-between gap-2">
                                     <div className="flex items-center gap-2">
-                                      <Briefcase className="h-3.5 w-3.5 text-cyan-500" />
+                                      <Briefcase className="h-3.5 w-3.5 text-accent" />
                                       <span className="font-bold text-sm">{func.name}</span>
                                     </div>
                                     <Badge variant="outline" className="font-mono text-[10px]">
@@ -224,7 +224,7 @@ export function HrOverviewTab() {
                             <div className="h-2 rounded-full bg-muted overflow-hidden">
                               <div
                                 className={cn(
-                                  "h-full bg-gradient-to-r from-primary to-cyan-500 transition-all",
+                                  "h-full bg-gradient-to-r from-primary to-accent transition-all",
                                 )}
                                 style={{ width: `${percentage}%` }}
                               />

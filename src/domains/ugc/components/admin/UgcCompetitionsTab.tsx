@@ -30,14 +30,14 @@ export function UgcCompetitionsTab() {
  <div className="flex items-center justify-between gap-4 flex-wrap">
  <div className="space-y-1">
  <div className="flex items-center gap-3">
- <Trophy className="h-7 w-7 text-amber-500" />
+ <Trophy className="h-7 w-7 text-warning" />
  <h2 className="text-3xl font-black tracking-tight">Tournaments</h2>
  </div>
  <p className="text-sm text-muted-foreground font-medium">Competitions &amp; Platform Challenges</p>
  </div>
  <Button
  onClick={() => { setDraft({ status: "draft" }); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-amber-500/20 bg-amber-500 hover:bg-amber-600 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-warning/20 bg-warning hover:bg-warning text-warning-foreground"
  >
  <Plus className="h-4 w-4" /> Deploy Tournament
  </Button>
@@ -62,11 +62,11 @@ export function UgcCompetitionsTab() {
  <TableRow><TableCell colSpan={5} className="text-center py-12 text-muted-foreground font-medium">Zero tournaments active.</TableCell></TableRow>
  ) : (
  data?.competitions.map((row: any) => (
- <TableRow key={row.id} className="hover:bg-amber-500/5">
+ <TableRow key={row.id} className="hover:bg-warning/5">
  <TableCell>
  <div className="flex items-center gap-3">
- <div className="h-8 w-8 rounded-lg bg-amber-500/10 flex items-center justify-center">
- <Trophy className="h-4 w-4 text-amber-500" />
+ <div className="h-8 w-8 rounded-lg bg-warning/10 flex items-center justify-center">
+ <Trophy className="h-4 w-4 text-warning" />
  </div>
  <span className="font-bold">{row.title}</span>
  </div>
@@ -77,9 +77,9 @@ export function UgcCompetitionsTab() {
  variant="outline"
  className={cn(
  "font-medium text-xs",
- row.status === "active" && "border-emerald-500/50 text-emerald-600 bg-emerald-500/10",
+ row.status === "active" && "border-success/50 text-success bg-success/10",
  row.status === "draft" && "border-muted-foreground/30 text-muted-foreground bg-muted/30",
- row.status === "completed" && "border-blue-500/50 text-blue-600 bg-blue-500/10",
+ row.status === "completed" && "border-primary/50 text-primary bg-primary/10",
  )}
  >
  {row.status}
@@ -90,7 +90,7 @@ export function UgcCompetitionsTab() {
  </TableCell>
  <TableCell className="text-right">
  <div className="flex items-center justify-end gap-1">
- <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => openEdit(row)} className="hover:bg-amber-500/10 hover:text-amber-600">
+ <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => openEdit(row)} className="hover:bg-warning/10 hover:text-warning">
  <Pencil className="h-4 w-4" />
  </Button>
  <ConfirmPurge title="Purge Tournament?" description="This permanently removes the competition." onConfirm={() => deleteCompetition.mutate(row.id)}>
@@ -112,7 +112,7 @@ export function UgcCompetitionsTab() {
  <DialogContent className="max-w-3xl rounded-2xl max-h-[90vh] overflow-y-auto">
  <DialogHeader>
  <DialogTitle className="text-2xl font-black flex items-center gap-2">
- <Trophy className="h-6 w-6 text-amber-500" /> {draft.id ? "Edit" : "Deploy"} Tournament
+ <Trophy className="h-6 w-6 text-warning" /> {draft.id ? "Edit" : "Deploy"} Tournament
  </DialogTitle>
  <DialogDescription>Competition parameters.</DialogDescription>
  </DialogHeader>
@@ -184,7 +184,7 @@ export function UgcCompetitionsTab() {
  <Button
  disabled={!draft.title || upsertCompetition.isPending}
  onClick={() => upsertCompetition.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-12 rounded-xl font-medium bg-amber-500 hover:bg-amber-600 text-white"
+ className="h-12 rounded-xl font-medium bg-warning hover:bg-warning text-warning-foreground"
  >
  <ShieldCheck className="mr-2 h-5 w-5" /> Authorize
  </Button>

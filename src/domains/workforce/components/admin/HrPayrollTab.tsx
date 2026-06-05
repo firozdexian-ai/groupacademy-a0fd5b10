@@ -134,11 +134,11 @@ export function HrPayrollTab() {
  const getStatusConfig = (status: string) => {
  switch (status) {
  case "paid":
- return { icon: CheckCircle2, color: "text-emerald-500", bg: "bg-emerald-500/10", label: "DISBURSED" };
+ return { icon: CheckCircle2, color: "text-success", bg: "bg-success/10", label: "DISBURSED" };
  case "pending":
- return { icon: Clock, color: "text-amber-500", bg: "bg-amber-500/10", label: "PENDING" };
+ return { icon: Clock, color: "text-warning", bg: "bg-warning/10", label: "PENDING" };
  default:
- return { icon: Wallet, color: "text-blue-500", bg: "bg-blue-500/10", label: "DRAFT" };
+ return { icon: Wallet, color: "text-primary", bg: "bg-primary/10", label: "DRAFT" };
  }
  };
 
@@ -147,7 +147,7 @@ export function HrPayrollTab() {
  {/* Executive Header */}
  <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/10 p-8 rounded-2xl border border-border/60">
  <div className="space-y-1">
- <div className="flex items-center gap-3 text-emerald-600">
+ <div className="flex items-center gap-3 text-success">
  <Banknote className="h-8 w-8" />
  <h2 className="text-3xl font-medium tracking-tighter italic leading-none">Payroll</h2>
  </div>
@@ -168,7 +168,7 @@ export function HrPayrollTab() {
  setDraft({ status: "draft", currency: "USD", base_amount: 0, incentive_amount: 0 });
  setOpen(true);
  }}
- className="h-12 px-8 rounded-xl text-xs font-medium gap-2 shadow-lg bg-emerald-600 hover:bg-emerald-700 text-white border-none"
+ className="h-12 px-8 rounded-xl text-xs font-medium gap-2 shadow-lg bg-success hover:bg-success text-success-foreground border-none"
  >
  <Plus className="h-4 w-4" /> New Entry
  </Button>
@@ -208,7 +208,7 @@ export function HrPayrollTab() {
  {runs.map((r: any) => {
  const sc = getStatusConfig(r.status);
  return (
- <TableRow key={r.id} className="group hover:bg-emerald-500/[0.03] transition-colors">
+ <TableRow key={r.id} className="group hover:bg-success/[0.03] transition-colors">
  <TableCell className="py-5 pl-8">
  <div className="flex items-center gap-3">
  <User className="h-4 w-4 text-muted-foreground/40" />
@@ -223,7 +223,7 @@ export function HrPayrollTab() {
  </TableCell>
  <TableCell>
  <div className="flex flex-col">
- <span className="font-black text-emerald-600 text-sm">
+ <span className="font-black text-success text-sm">
  {currencySymbol(r.currency)}
  {Number(r.total_amount || 0).toLocaleString()}
  </span>
@@ -284,7 +284,7 @@ export function HrPayrollTab() {
  {/* Deployment Dialog */}
  <Dialog open={open} onOpenChange={setOpen}>
  <DialogContent className="max-w-2xl rounded-2xl p-0 overflow-hidden border-4 shadow-sm">
- <div className="h-2 w-full bg-emerald-500" />
+ <div className="h-2 w-full bg-success" />
  <div className="p-10 space-y-6">
  <DialogHeader>
  <DialogTitle className="text-2xl font-medium italic">Financial Command</DialogTitle>
@@ -361,7 +361,7 @@ export function HrPayrollTab() {
  <Button
  disabled={!draft.user_id || upsertPayroll.isPending}
  onClick={() => upsertPayroll.mutate(draft)}
- className="h-12 px-10 rounded-2xl font-medium italic text-[11px] gap-2 shadow-sm bg-emerald-600 text-white flex-1"
+ className="h-12 px-10 rounded-2xl font-medium italic text-[11px] gap-2 shadow-sm bg-success text-success-foreground flex-1"
  >
  <ShieldCheck className="h-4 w-4" /> Commit Ledger
  </Button>
@@ -374,7 +374,7 @@ export function HrPayrollTab() {
 }
 
 function KpiTile({ icon: Icon, label, value, accent }: any) {
- const accentText = accent === "emerald" ? "text-emerald-600" : "text-amber-600";
+ const accentText = accent === "emerald" ? "text-success" : "text-warning";
  return (
  <Card className="rounded-2xl border border-border/60 bg-card p-6 flex items-center gap-5">
  <div

@@ -1,6 +1,11 @@
 import { useState } from "react";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { supabase } from "@/integrations/supabase/client";
+import {
+  listHrTargets,
+  listActiveWorkforceMembersWithName,
+  upsertHrTarget,
+  deleteHrTarget,
+} from "../../repo/workforceRepo";
 import { useHrGraph } from "./hooks/useHrGraph";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -33,8 +38,6 @@ import {
 import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
-const sb = supabase as any;
-
 export function HrTargetsTab() {
  const qc = useQueryClient();
  const { hrGraphQuery } = useHrGraph();
@@ -42,54 +45,32 @@ export function HrTargetsTab() {
  const [draft, setDraft] = useState<any>({ scope: "team" });
 
  const targetsQuery = useQuery({
- queryKey: ["hr_targets"],
- queryFn: async () => {
- const { data, error } = await sb.from("hr_targets").select("*").order("created_at", { ascending: false });
- if (error) throw error;
- return data as any[];
- },
+   queryKey: ["hr_targets"],
+   queryFn: listHrTargets,
  });
 
  const workforceQuery = useQuery({
- queryKey: ["workforce_min"],
- queryFn: async () => {
- const { data, error } = await sb
- .from("workforce_members")
- .select("id, talents(full_name)")
- .eq("status", "active");
- if (error) throw error;
- return data as any[];
- },
+   queryKey: ["workforce_min"],
+   queryFn: listActiveWorkforceMembersWithName,
  });
 
  const upsertTarget = useMutation({
- mutationFn: async (payload: any) => {
- if (payload.id) {
- const { error } = await sb.from("hr_targets").update(payload).eq("id", payload.id);
- if (error) throw error;
- } else {
- const { error } = await sb.from("hr_targets").insert(payload);
- if (error) throw error;
- }
- },
- onSuccess: () => {
- qc.invalidateQueries({ queryKey: ["hr_targets"] });
- toast.success("Targets saved");
- setOpen(false);
- },
- onError: (e: Error) => toast.error(`Sync Failed: ${e.message}`),
+   mutationFn: (payload: any) => upsertHrTarget(payload),
+   onSuccess: () => {
+     qc.invalidateQueries({ queryKey: ["hr_targets"] });
+     toast.success("Targets saved");
+     setOpen(false);
+   },
+   onError: (e: Error) => toast.error(`Sync Failed: ${e.message}`),
  });
 
  const deleteTarget = useMutation({
- mutationFn: async (id: string) => {
- const { error } = await sb.from("hr_targets").delete().eq("id", id);
- if (error) throw error;
- },
- onSuccess: () => {
- qc.invalidateQueries({ queryKey: ["hr_targets"] });
- toast.success("Target Purged");
- },
- onError: (e: Error) => toast.error(`Purge Failed: ${e.message}`),
+   mutationFn: (id: string) => deleteHrTarget(id),
+   onSuccess: () => {
+     qc.invalidateQueries({ queryKey: ["hr_targets"] });
+     toast.success("Target Purged");
+   },
+   onError: (e: Error) => toast.error(`Purge Failed: ${e.message}`),
  });
 
  const getScopeDetails = (scope: string, id: string) => {
@@ -98,19 +79,19 @@ export function HrTargetsTab() {
  return {
  name: hrGraphQuery.data?.verticals.find((v) => v.id === id)?.name || "Unknown",
  icon: Building2,
- color: "text-emerald-500",
+ color: "text-success",
  };
  case "function":
  return {
  name: hrGraphQuery.data?.functions.find((f) => f.id === id)?.name || "Unknown",
  icon: Briefcase,
- color: "text-blue-500",
+ color: "text-primary",
  };
  case "team":
  return {
  name: hrGraphQuery.data?.teams.find((t) => t.id === id)?.name || "Unknown",
  icon: Layers,
- color: "text-amber-500",
+ color: "text-warning",
  };
  case "user": {
  const user = workforceQuery.data?.find((u: any) => u.id === id);
@@ -182,7 +163,7 @@ export function HrTargetsTab() {
 
  {/* Targets Registry */}
  <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
- <div className="h-1.5 w-full bg-gradient-to-r from-primary/50 to-emerald-500/50" />
+ <div className="h-1.5 w-full bg-gradient-to-r from-primary/50 to-success/50" />
  <CardContent className="p-0">
  <div className="overflow-x-auto">
  <Table>
@@ -249,7 +230,7 @@ export function HrTargetsTab() {
  </TableCell>
  <TableCell>
  {t.incentive_amount ? (
- <span className="font-black text-emerald-600 text-sm">₵{t.incentive_amount}</span>
+ <span className="font-black text-success text-sm">₵{t.incentive_amount}</span>
  ) : (
  <span className="text-muted-foreground">—</span>
  )}
@@ -362,7 +343,7 @@ export function HrTargetsTab() {
  type="number"
  value={draft.incentive_amount ?? ""}
  onChange={(e) => setDraft({ ...draft, incentive_amount: Number(e.target.value) })}
- className="h-14 rounded-xl border border-emerald-500/30 font-black text-lg bg-emerald-500/5 text-emerald-600"
+ className="h-14 rounded-xl border border-success/30 font-black text-lg bg-success/5 text-success"
  />
  </div>
  </div>
