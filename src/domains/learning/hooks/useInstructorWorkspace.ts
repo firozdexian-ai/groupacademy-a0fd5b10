@@ -93,15 +93,7 @@ export function useInstructorCreditLedger(contentId?: string) {
     queryKey: ["instructor-credit-ledger", contentId],
     enabled: !!contentId,
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("instructor_credit_ledger")
-        .select("*")
-        .eq("content_id", contentId!)
-        .order("created_at", { ascending: false })
-        .limit(50);
-
-      if (error) throw error;
-      return data ?? [];
+      return await listInstructorCreditLedger(contentId!, 50);
     },
   });
 }
@@ -114,15 +106,7 @@ export function useSubmitForReview() {
   return useMutation({
     mutationFn: async (contentId: string) => {
       // HUD: ATOMIC_CONTENT_STATUS_TRANSITION
-      const { error } = await supabase
-        .from("content")
-        .update({
-          author_status: "submitted",
-          submitted_at: new Date().toISOString(),
-        } as any)
-        .eq("id", contentId);
-
-      if (error) throw error;
+      await submitContentForReview(contentId);
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["instructor-summary"] });
