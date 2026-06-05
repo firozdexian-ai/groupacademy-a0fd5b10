@@ -66,23 +66,10 @@ export function QuizResultsViewer() {
  const { data: quizAttempts, isLoading: attemptsLoading } = useQuery({
  queryKey: ["admin-quiz-attempts", selectedCourse],
  queryFn: async (): Promise<QuizAttempt[]> => {
- let query = supabase
- .from("quiz_attempts")
- .select(
- `
- id, student_id, content_id, score, total_questions,
- passed, answers, created_at,
- content:content_id (id, title),
- students:student_id (id, full_name, email)
- `,
- )
- .order("created_at", { ascending: false })
- .limit(100);
-
- if (selectedCourse !== "all") query = query.eq("content_id", selectedCourse);
-
- const { data, error } = await query;
- if (error) return [];
+ const data = await listQuizAttemptsAdmin(
+ selectedCourse !== "all" ? selectedCourse : null,
+ 100,
+ );
 
  return (data || []).map(
  (attempt: any): QuizAttempt => ({
