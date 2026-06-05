@@ -59,7 +59,7 @@ function HrRegistryShell({ title, description, icon: Icon, data, isLoading, colu
  </header>
 
  <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
- <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-500 to-indigo-600" />
+ <div className="h-1.5 w-full bg-gradient-to-r from-primary via-primary to-accent" />
  <CardContent className="p-0">
  <div className="overflow-x-auto">
  <Table>
@@ -541,7 +541,7 @@ function PurgeAlert({ targetId, onOpenChange, onConfirm }: any) {
  </AlertDialogCancel>
  <AlertDialogAction
  onClick={onConfirm}
- className="h-12 bg-destructive text-white rounded-xl font-semibold uppercase text-[10px] flex-1 shadow-lg shadow-destructive/20"
+ className="h-12 bg-destructive text-destructive-foreground rounded-xl font-semibold uppercase text-[10px] flex-1 shadow-lg shadow-destructive/20"
  >
  Confirm Purge
  </AlertDialogAction>

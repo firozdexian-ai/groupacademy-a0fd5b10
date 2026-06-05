@@ -158,7 +158,7 @@ export function HrOnboardingTab() {
  <div
  className={cn(
  "h-1.5 w-full bg-gradient-to-r",
- activeTab === "overdue" ? "from-rose-500 to-orange-500" : "from-primary to-blue-500",
+ activeTab === "overdue" ? "from-destructive to-warning" : "from-primary to-primary",
  )}
  />
  <CardContent className="p-0">
@@ -196,7 +196,7 @@ export function HrOnboardingTab() {
  <div
  className={cn(
  "h-2 w-2 rounded-full",
- t.status === "completed" ? "bg-emerald-500" : "bg-primary animate-pulse",
+ t.status === "completed" ? "bg-success" : "bg-primary animate-pulse",
  )}
  />
  <p className="font-black text-sm font-medium">{t.title}</p>
@@ -214,7 +214,7 @@ export function HrOnboardingTab() {
  {t.due_date ? format(new Date(t.due_date), "MMM dd, yyyy") : "OPEN"}
  </span>
  {activeTab === "overdue" && (
- <Badge className="w-fit text-[8px] bg-rose-500/10 text-rose-600 border-rose-500/20">
+ <Badge className="w-fit text-[8px] bg-destructive/10 text-destructive border-destructive/20">
  SYSTEM_ALERT_OVERDUE
  </Badge>
  )}
@@ -344,16 +344,16 @@ export function HrOnboardingTab() {
 
 function TabBtn({ label, count, active, onClick, color }: any) {
  const colors: any = {
- amber: "text-amber-600 bg-amber-500/10 border-amber-500/20",
- rose: "text-rose-600 bg-rose-500/10 border-rose-500/20",
- emerald: "text-emerald-600 bg-emerald-500/10 border-emerald-500/20",
+ amber: "text-warning bg-warning/10 border-warning/20",
+ rose: "text-destructive bg-destructive/10 border-destructive/20",
+ emerald: "text-success bg-success/10 border-success/20",
  };
  return (
  <button
  onClick={onClick}
  className={cn(
  "px-6 py-2.5 rounded-xl text-[10px] font-black transition-all flex items-center gap-3 border border-transparent",
- active ? "bg-primary text-white shadow-lg scale-[1.02]" : "text-muted-foreground hover:bg-muted/50",
+ active ? "bg-primary text-primary-foreground shadow-lg scale-[1.02]" : "text-muted-foreground hover:bg-muted/50",
  )}
  >
  {label}

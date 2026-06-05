@@ -58,8 +58,8 @@ const ROLE_LABELS: Record<string, string> = {
 };
 
 const STATUS_COLORS: Record<string, string> = {
- active: "bg-green-500/10 text-green-600 border-green-500/20",
- probation: "bg-amber-500/10 text-amber-600 border-amber-500/20",
+ active: "bg-success/10 text-success border-success/20",
+ probation: "bg-warning/10 text-warning border-warning/20",
  inactive: "bg-muted text-muted-foreground",
 };
 
@@ -264,7 +264,7 @@ export function WorkforceManager() {
  </TableCell>
  <TableCell className="text-center font-semibold">{m.assigned_count}</TableCell>
  <TableCell className="text-center">
- <span className="font-semibold text-emerald-600 italic">₵{m.commission_earned}</span>
+ <span className="font-semibold text-success italic">₵{m.commission_earned}</span>
  </TableCell>
  <TableCell className="text-right pr-8">
  <Badge
@@ -431,9 +431,9 @@ export function WorkforceManager() {
 function KPIStat({ icon: Icon, label, value, color }: any) {
  const colors: Record<string, string> = {
  primary: "bg-primary/10 border-primary/20 text-primary",
- emerald: "bg-emerald-500/10 border-emerald-500/20 text-emerald-600",
- amber: "bg-amber-500/10 border-amber-500/20 text-amber-600",
- blue: "bg-blue-500/10 border-blue-500/20 text-blue-600",
+ emerald: "bg-success/10 border-success/20 text-success",
+ amber: "bg-warning/10 border-warning/20 text-warning",
+ blue: "bg-primary/10 border-primary/20 text-primary",
  };
  return (
  <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden group">

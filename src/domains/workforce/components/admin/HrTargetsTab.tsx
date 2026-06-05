@@ -79,19 +79,19 @@ export function HrTargetsTab() {
  return {
  name: hrGraphQuery.data?.verticals.find((v) => v.id === id)?.name || "Unknown",
  icon: Building2,
- color: "text-emerald-500",
+ color: "text-success",
  };
  case "function":
  return {
  name: hrGraphQuery.data?.functions.find((f) => f.id === id)?.name || "Unknown",
  icon: Briefcase,
- color: "text-blue-500",
+ color: "text-primary",
  };
  case "team":
  return {
  name: hrGraphQuery.data?.teams.find((t) => t.id === id)?.name || "Unknown",
  icon: Layers,
- color: "text-amber-500",
+ color: "text-warning",
  };
  case "user": {
  const user = workforceQuery.data?.find((u: any) => u.id === id);
@@ -163,7 +163,7 @@ export function HrTargetsTab() {
 
  {/* Targets Registry */}
  <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
- <div className="h-1.5 w-full bg-gradient-to-r from-primary/50 to-emerald-500/50" />
+ <div className="h-1.5 w-full bg-gradient-to-r from-primary/50 to-success/50" />
  <CardContent className="p-0">
  <div className="overflow-x-auto">
  <Table>
@@ -230,7 +230,7 @@ export function HrTargetsTab() {
  </TableCell>
  <TableCell>
  {t.incentive_amount ? (
- <span className="font-black text-emerald-600 text-sm">₵{t.incentive_amount}</span>
+ <span className="font-black text-success text-sm">₵{t.incentive_amount}</span>
  ) : (
  <span className="text-muted-foreground">—</span>
  )}
@@ -343,7 +343,7 @@ export function HrTargetsTab() {
  type="number"
  value={draft.incentive_amount ?? ""}
  onChange={(e) => setDraft({ ...draft, incentive_amount: Number(e.target.value) })}
- className="h-14 rounded-xl border border-emerald-500/30 font-black text-lg bg-emerald-500/5 text-emerald-600"
+ className="h-14 rounded-xl border border-success/30 font-black text-lg bg-success/5 text-success"
  />
  </div>
  </div>

@@ -36,14 +36,14 @@ export function UgcBlogTab() {
  <div className="flex items-start justify-between gap-4 flex-wrap">
  <div>
  <div className="flex items-center gap-2">
- <FileText className="h-5 w-5 text-emerald-600" />
+ <FileText className="h-5 w-5 text-success" />
  <h2 className="text-2xl font-medium tracking-tight">Blog Publisher</h2>
  </div>
  <p className="text-sm text-muted-foreground mt-1">Platform Articles &amp; Written Media</p>
  </div>
  <Button
  onClick={() => { setDraft({ status: "draft" }); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-emerald-500/20 bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-success/20 bg-success hover:bg-success text-success-foreground"
  >
  <Plus className="h-4 w-4" /> Inject Article
  </Button>
@@ -67,7 +67,7 @@ export function UgcBlogTab() {
 
  <Card className="border">
  <CardHeader className="pb-2 flex flex-row items-center gap-2">
- <ShieldCheck className="h-4 w-4 text-emerald-600" />
+ <ShieldCheck className="h-4 w-4 text-success" />
  <h3 className="text-sm font-medium tracking-wide">Article Registry ({rows.length})</h3>
  </CardHeader>
  <CardContent className="p-0">
@@ -92,7 +92,7 @@ export function UgcBlogTab() {
  <TableRow key={row.id}>
  <TableCell>
  <div className="flex items-center gap-2 font-bold">
- <FileText className="h-4 w-4 text-emerald-600 shrink-0" />
+ <FileText className="h-4 w-4 text-success shrink-0" />
  <span className="truncate max-w-[280px]">{row.title}</span>
  </div>
  </TableCell>
@@ -105,7 +105,7 @@ export function UgcBlogTab() {
  variant="outline"
  className={cn(
  "uppercase text-sm font-medium",
- row.status === "published" && "border-emerald-500 text-emerald-600",
+ row.status === "published" && "border-success text-success",
  row.status === "draft" && "border-muted-foreground text-muted-foreground"
  )}
  >
@@ -117,7 +117,7 @@ export function UgcBlogTab() {
  </TableCell>
  <TableCell className="text-right">
  <div className="flex items-center justify-end gap-1">
- <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-emerald-500/10 hover:text-emerald-600">
+ <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-success/10 hover:text-success">
  <Pencil className="h-4 w-4" />
  </Button>
  <ConfirmPurge title="Purge Article?" description="This removes the article permanently." onConfirm={() => deleteBlog.mutate(row.id)}>
@@ -139,7 +139,7 @@ export function UgcBlogTab() {
  <DialogContent className="max-w-3xl max-h-[90vh] overflow-y-auto">
  <DialogHeader>
  <DialogTitle className="flex items-center gap-2 text-xl font-medium">
- <FileText className="h-5 w-5 text-emerald-600" /> {draft.id ? "Edit" : "Inject"} Article
+ <FileText className="h-5 w-5 text-success" /> {draft.id ? "Edit" : "Inject"} Article
  </DialogTitle>
  <DialogDescription>Long-form blog post.</DialogDescription>
  </DialogHeader>
@@ -205,7 +205,7 @@ export function UgcBlogTab() {
  <Button
  disabled={!draft.title || upsertBlog.isPending}
  onClick={() => upsertBlog.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-12 rounded-xl font-medium bg-emerald-600 hover:bg-emerald-700 text-white"
+ className="h-12 rounded-xl font-medium bg-success hover:bg-success text-success-foreground"
  >
  <ShieldCheck className="h-4 w-4 mr-2" /> Authorize
  </Button>

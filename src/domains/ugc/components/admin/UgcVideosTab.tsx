@@ -30,14 +30,14 @@ export function UgcVideosTab() {
  <div className="flex items-start justify-between gap-4 flex-wrap">
  <div>
  <div className="flex items-center gap-2">
- <Video className="h-5 w-5 text-blue-600" />
+ <Video className="h-5 w-5 text-primary" />
  <h2 className="text-2xl font-medium tracking-tight">Free Videos</h2>
  </div>
  <p className="text-sm text-muted-foreground mt-1">Open-Access Media Library</p>
  </div>
  <Button
  onClick={() => { setDraft({ is_published: false }); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-blue-500/20 bg-blue-600 hover:bg-blue-700 text-white"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-primary/20 bg-primary hover:bg-primary text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Deploy Video
  </Button>
@@ -55,7 +55,7 @@ export function UgcVideosTab() {
 
  <Card className="border">
  <CardHeader className="pb-2 flex flex-row items-center gap-2">
- <ShieldCheck className="h-4 w-4 text-blue-600" />
+ <ShieldCheck className="h-4 w-4 text-primary" />
  <h3 className="text-sm font-medium tracking-wide">Catalog Registry ({rows.length})</h3>
  </CardHeader>
  <CardContent className="p-0">
@@ -79,7 +79,7 @@ export function UgcVideosTab() {
  <TableRow key={row.id}>
  <TableCell>
  <div className="flex items-center gap-2 font-bold">
- <PlayCircle className="h-4 w-4 text-blue-600 shrink-0" />
+ <PlayCircle className="h-4 w-4 text-primary shrink-0" />
  {row.title}
  </div>
  </TableCell>
@@ -91,7 +91,7 @@ export function UgcVideosTab() {
  variant="outline"
  className={cn(
  "uppercase text-sm font-medium",
- row.is_published ? "border-emerald-500 text-emerald-600" : "border-muted-foreground text-muted-foreground"
+ row.is_published ? "border-success text-success" : "border-muted-foreground text-muted-foreground"
  )}
  >
  {row.is_published ? "Published" : "Draft"}
@@ -102,7 +102,7 @@ export function UgcVideosTab() {
  </TableCell>
  <TableCell className="text-right">
  <div className="flex items-center justify-end gap-1">
- <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-blue-500/10 hover:text-blue-600">
+ <Button size="icon" aria-label="Edit" variant="ghost" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-primary/10 hover:text-primary">
  <Pencil className="h-4 w-4" />
  </Button>
  <ConfirmPurge title="Purge Video?" description="This removes the free video from the catalog." onConfirm={() => deleteVideo.mutate(row.id)}>
@@ -124,7 +124,7 @@ export function UgcVideosTab() {
  <DialogContent className="max-w-xl">
  <DialogHeader>
  <DialogTitle className="flex items-center gap-2 text-xl font-medium">
- <Video className="h-5 w-5 text-blue-600" /> {draft.id ? "Edit" : "Deploy"} Video
+ <Video className="h-5 w-5 text-primary" /> {draft.id ? "Edit" : "Deploy"} Video
  </DialogTitle>
  <DialogDescription>Free video catalog entry.</DialogDescription>
  </DialogHeader>
@@ -160,7 +160,7 @@ export function UgcVideosTab() {
  <Button
  disabled={!draft.title || upsertVideo.isPending}
  onClick={() => upsertVideo.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-12 rounded-xl font-medium bg-blue-600 hover:bg-blue-700 text-white"
+ className="h-12 rounded-xl font-medium bg-primary hover:bg-primary text-primary-foreground"
  >
  <ShieldCheck className="h-4 w-4 mr-2" /> Authorize
  </Button>
