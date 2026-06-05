@@ -75,17 +75,12 @@ export function useInstructorEarnings() {
   return useQuery({
     queryKey: ["instructor-earnings"],
     queryFn: async () => {
-      const { data, error } = await supabase
-        .from("course_revenue_splits")
-        .select("*")
-        .order("created_at", { ascending: false })
-        .limit(100);
-
-      if (error) {
+      try {
+        return await listInstructorEarnings(100);
+      } catch (error) {
         console.error("[Digital Workforce] FAULT: course_revenue_splits registry sync failed.", error);
         throw error;
       }
-      return data ?? [];
     },
   });
 }
