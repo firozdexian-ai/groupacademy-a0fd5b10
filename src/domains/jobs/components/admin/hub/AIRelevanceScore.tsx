@@ -1,6 +1,7 @@
 import { useState } from "react";
-import { supabase } from "@/integrations/supabase/client";
+import { updateApplicationAIScore } from "@/domains/jobs/repo/jobsRepo";
 import { scoreJobMatch } from "@/domains/jobs/api/jobsApi";
+
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
 import { Brain, Loader2, Zap, Target, ShieldCheck, AlertCircle } from "lucide-react";
