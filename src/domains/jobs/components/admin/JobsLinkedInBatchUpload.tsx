@@ -255,12 +255,13 @@ export function JobsLinkedInBatchUpload({
  });
  setMappedJobs(mapped);
 
- const { data: existing } = await supabase
- .from("jobs")
- .select("source_url")
- .in("source_url", mapped.map((j) => j.source_url).filter(Boolean));
- const existingUrls = new Set(existing?.map((j) => j.source_url));
- const fresh = mapped.filter((j) => !existingUrls.has(j.source_url));
+ const existingUrls = new Set(
+ await listExistingJobSourceUrls(
+ mapped.map((j) => j.source_url).filter(Boolean) as string[],
+ ),
+ );
+ const fresh = mapped.filter((j) => !existingUrls.has(j.source_url as any));
+
 
  setNewJobs(fresh);
  setDuplicateCount(mapped.length - fresh.length);
