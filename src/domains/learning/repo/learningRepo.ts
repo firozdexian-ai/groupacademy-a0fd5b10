@@ -2104,16 +2104,8 @@ export async function insertCourseBrief(input: Record<string, any>): Promise<any
   return data;
 }
 
-export async function listModuleResourcesForModule(moduleId: string) {
-  const { data, error } = await supabase
-    .from("module_resources")
-    .select("*")
-    .eq("module_id", moduleId)
-    .order("stage_number", { ascending: true })
-    .order("display_order", { ascending: true });
-  if (error) throw error;
-  return data ?? [];
-}
+// (listModuleResourcesForModule already defined above)
+
 
 export async function listStudentResourceProgress(studentId: string, moduleId: string) {
   const { data, error } = await supabase
