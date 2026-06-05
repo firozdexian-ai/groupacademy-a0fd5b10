@@ -141,6 +141,7 @@ const Dashboard = () => {
                 })()
               )}
             </Suspense>
+            </RouteErrorBoundary>
           </div>
         </main>
       </div>
