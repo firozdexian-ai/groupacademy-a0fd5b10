@@ -3,6 +3,7 @@ import { Routes, Route, Navigate } from "react-router-dom";
 import { Gro10xAppShell } from "./components/Gro10xAppShell";
 import { PageLoadingSkeleton } from "@/components/ui/page-loading-skeleton";
 import { ProtectedRoute } from "@/components/ProtectedRoute";
+import { ComingSoonGate } from "@/components/launch/ComingSoonGate";
 
 const Gro10xLanding = lazy(() => import("./pages/Gro10xLanding"));
 const Gro10xAuth = lazy(() => import("./pages/Gro10xAuth"));
