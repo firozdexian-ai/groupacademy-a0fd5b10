@@ -63,28 +63,10 @@ export function ScoreMeJobPicker({ open, onOpenChange }: Props) {
         const seen = new Set<string>();
 
         if (uid) {
-          // Pull raw item ids cleanly from relational saved listings tables
-          const { data: savedData, error: savedError } = await (supabase
-            .from("saved_items") as any)
-            .select("item_id")
-            .eq("user_id", uid)
-            .eq("item_type", "job")
-            .order("created_at", { ascending: false })
-            .limit(20);
-
-          if (savedError) throw savedError;
-
-          const savedIds = (savedData || []).map((r: any) => r.item_id).filter(Boolean);
-
+          const savedIds = await listSavedJobIdsForUser(uid, 20);
           if (savedIds.length > 0) {
-            const { data: savedJobs, error: jobsError } = await supabase
-              .from("jobs")
-              .select("id, title, company_name")
-              .in("id", savedIds);
-
-            if (jobsError) throw jobsError;
-
-            (savedJobs || []).forEach((j: any) => {
+            const savedJobs = await listJobsByIdsForPicker(savedIds);
+            savedJobs.forEach((j) => {
               if (j?.id && !seen.has(j.id)) {
                 seen.add(j.id);
                 out.push({
@@ -98,17 +80,9 @@ export function ScoreMeJobPicker({ open, onOpenChange }: Props) {
           }
         }
 
-        // Fetch recent active positions concurrently to supplement fallback view stacks
-        const { data: recentJobs, error: recentError } = await supabase
-          .from("jobs")
-          .select("id, title, company_name")
-          .eq("is_active", true)
-          .order("created_at", { ascending: false })
-          .limit(20);
-
-        if (recentError) throw recentError;
-
-        (recentJobs || []).forEach((j: any) => {
+        // Recent active positions to supplement the picker
+        const recentJobs = await listRecentActiveJobsForPicker(20);
+        recentJobs.forEach((j) => {
           if (j?.id && !seen.has(j.id)) {
             seen.add(j.id);
             out.push({
@@ -119,6 +93,7 @@ export function ScoreMeJobPicker({ open, onOpenChange }: Props) {
             });
           }
         });
+
 
         if (alive) {
           setJobs(out);
