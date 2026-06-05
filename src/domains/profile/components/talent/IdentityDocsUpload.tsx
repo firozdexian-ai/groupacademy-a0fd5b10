@@ -28,17 +28,17 @@ const STATUS_CONFIG = {
   pending: {
     label: "Under review",
     icon: Clock,
-    cls: "bg-amber-500/10 text-amber-600 dark:text-amber-400 border-amber-500/15",
+    cls: "bg-warning/10 text-warning dark:text-warning border-warning/15",
   },
   verified: {
     label: "Verified",
     icon: CheckCircle2,
-    cls: "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 border-emerald-500/15",
+    cls: "bg-success/10 text-success dark:text-success border-success/15",
   },
   rejected: {
     label: "Rejected",
     icon: XCircle,
-    cls: "bg-rose-500/10 text-rose-600 dark:text-rose-400 border-rose-500/15",
+    cls: "bg-destructive/10 text-destructive dark:text-destructive border-destructive/15",
   },
 } as const;
 
@@ -198,7 +198,7 @@ export function IdentityDocsUpload() {
                 Submitted on {new Date(doc.created_at).toLocaleDateString()}
               </p>
               {doc.review_notes && doc.status === "rejected" && (
-                <p className="text-[11px] font-bold text-rose-600 dark:text-rose-400 select-text bg-rose-500/5 border border-rose-500/10 p-2 rounded-lg leading-normal mt-1 w-full pr-1">
+                <p className="text-[11px] font-bold text-destructive dark:text-destructive select-text bg-destructive/5 border border-destructive/10 p-2 rounded-lg leading-normal mt-1 w-full pr-1">
                   Reason: {doc.review_notes.trim()}
                 </p>
               )}
@@ -300,7 +300,7 @@ export function IdentityDocsUpload() {
 
         {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
         <div className="mt-4 flex items-center justify-center gap-1.5 py-2.5 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full">
-          <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
+          <Zap className="h-3.5 w-3.5 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Identity core cryptographic compliance verification tracking indices v1.0 complete</span>
         </div>
       </CardContent>

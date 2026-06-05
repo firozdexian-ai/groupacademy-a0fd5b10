@@ -182,7 +182,7 @@ export function NotificationsTab() {
 
  <Dialog open={sendDialog} onOpenChange={setSendDialog}>
  <DialogContent className="max-w-md rounded-2xl border-4 bg-background/95 p-0 overflow-hidden shadow-sm text-left">
- <div className="h-2 w-full bg-gradient-to-r from-primary to-fuchsia-600" />
+ <div className="h-2 w-full bg-gradient-to-r from-primary to-accent" />
  <div className="p-8 space-y-6">
  <DialogHeader>
  <DialogTitle className="text-2xl font-semibold tracking-tight uppercase flex items-center gap-2">

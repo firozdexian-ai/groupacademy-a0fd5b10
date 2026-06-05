@@ -19,13 +19,13 @@ const STATUS_CONFIG: Record<
     label: "SUBMITTED",
     variant: "secondary",
     icon: Send,
-    color: "text-blue-600 dark:text-blue-400 border-blue-500/20 bg-blue-500/5",
+    color: "text-primary dark:text-primary border-primary/20 bg-primary/5",
   },
   under_review: {
     label: "REVIEWING",
     variant: "outline",
     icon: Clock,
-    color: "text-amber-600 dark:text-amber-400 border-amber-500/20 bg-amber-500/5",
+    color: "text-warning dark:text-warning border-warning/20 bg-warning/5",
   },
   shortlisted: {
     label: "MATCHED",
@@ -37,7 +37,7 @@ const STATUS_CONFIG: Record<
     label: "INTERVIEWING",
     variant: "default",
     icon: Zap,
-    color: "text-indigo-600 dark:text-indigo-400 border-indigo-500/20 bg-indigo-500/5",
+    color: "text-accent dark:text-accent border-accent/20 bg-accent/5",
   },
   rejected: {
     label: "ARCHIVED",
@@ -49,7 +49,7 @@ const STATUS_CONFIG: Record<
     label: "PLACED",
     variant: "default",
     icon: CheckCircle,
-    color: "text-emerald-600 dark:text-emerald-400 border-emerald-500/20 bg-emerald-500/5",
+    color: "text-success dark:text-success border-success/20 bg-success/5",
   },
 };
 
@@ -181,8 +181,8 @@ export function ApplicationHistoryCard() {
         {/* HUD LEVEL 2: INGRESS ERROR CAPTURE VIEW LANE */}
         {initialQueryHistoryError ? (
           <div className="py-6 text-center select-all w-full leading-none flex flex-col justify-center items-center gap-2 font-bold text-xs">
-            <XCircle className="h-5 w-5 text-rose-500 stroke-[2.5]" />
-            <p className="text-[10px] font-mono font-black uppercase text-rose-600 dark:text-rose-400 break-words max-w-xs">
+            <XCircle className="h-5 w-5 text-destructive stroke-[2.5]" />
+            <p className="text-[10px] font-mono font-black uppercase text-destructive dark:text-destructive break-words max-w-xs">
               {initialQueryHistoryError.message}
             </p>
           </div>

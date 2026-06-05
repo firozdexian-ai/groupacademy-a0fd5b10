@@ -35,8 +35,8 @@ export function ThemesTab() {
  <div className="space-y-6 animate-in fade-in duration-700">
  <div className="flex items-center justify-between">
  <div className="flex items-center gap-4">
- <div className="h-12 w-12 rounded-2xl bg-fuchsia-500/10 flex items-center justify-center border border-fuchsia-500/20">
- <Palette className="h-6 w-6 text-fuchsia-600" />
+ <div className="h-12 w-12 rounded-2xl bg-accent/10 flex items-center justify-center border border-accent/20">
+ <Palette className="h-6 w-6 text-accent" />
  </div>
  <div>
  <h2 className="text-xl font-semibold">Themes</h2>
@@ -47,7 +47,7 @@ export function ThemesTab() {
  </div>
  <Button
  onClick={() => { setDraft(defaultDraft); setOpen(true); }}
- className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-fuchsia-500/20 bg-fuchsia-600 hover:bg-fuchsia-700 text-primary-foreground"
+ className="h-12 px-8 rounded-xl font-medium text-xs gap-2 shadow-lg shadow-accent/20 bg-accent hover:bg-accent text-primary-foreground"
  >
  <Plus className="h-4 w-4" /> Inject Theme
  </Button>
@@ -96,17 +96,17 @@ export function ThemesTab() {
  <Switch
  checked={!!row.is_active}
  onCheckedChange={(checked) => upsertTheme.mutate({ id: row.id, is_active: checked })}
- className="data-[state=checked]:bg-emerald-500"
+ className="data-[state=checked]:bg-success"
  />
  <span className="text-[10px] font-black">{row.is_active ? "LIVE" : "IDLE"}</span>
  </div>
  </TableCell>
  <TableCell className="text-right">
  <div className="flex justify-end gap-1">
- <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-fuchsia-500/10 hover:text-fuchsia-600">
+ <Button variant="ghost" size="icon" aria-label="Edit" onClick={() => { setDraft(row); setOpen(true); }} className="hover:bg-accent/10 hover:text-accent">
  <Pencil className="h-4 w-4" />
  </Button>
- <Button variant="ghost" size="icon" aria-label="Delete" className="hover:bg-rose-500/10 hover:text-rose-600" onClick={() => { if (confirm("Purge Theme?")) deleteTheme.mutate(row.id); }}>
+ <Button variant="ghost" size="icon" aria-label="Delete" className="hover:bg-destructive/10 hover:text-destructive" onClick={() => { if (confirm("Purge Theme?")) deleteTheme.mutate(row.id); }}>
  <Trash2 className="h-4 w-4" />
  </Button>
  </div>
@@ -220,7 +220,7 @@ export function ThemesTab() {
  </div>
  <Button
  onClick={() => upsertTheme.mutate(draft, { onSuccess: () => setOpen(false) })}
- className="h-14 rounded-xl font-medium bg-fuchsia-600 hover:bg-fuchsia-700 text-primary-foreground w-full"
+ className="h-14 rounded-xl font-medium bg-accent hover:bg-accent text-primary-foreground w-full"
  >
  Enforce Theme
  </Button>

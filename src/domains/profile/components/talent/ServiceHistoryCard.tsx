@@ -31,8 +31,8 @@ const SERVICE_CONFIG: Record<
 > = {
   career_assessment: {
     icon: Target,
-    color: "text-indigo-600 dark:text-indigo-400",
-    bgColor: "bg-indigo-500/10 border-indigo-500/10",
+    color: "text-accent dark:text-accent",
+    bgColor: "bg-accent/10 border-accent/10",
     label: "NEURAL_ASSESSMENT",
   },
   mock_interview: {
@@ -43,14 +43,14 @@ const SERVICE_CONFIG: Record<
   },
   salary_analysis: {
     icon: DollarSign,
-    color: "text-emerald-600 dark:text-emerald-400",
-    bgColor: "bg-emerald-500/10 border-emerald-500/10",
+    color: "text-success dark:text-success",
+    bgColor: "bg-success/10 border-success/10",
     label: "CAPITAL_BENCHMARK",
   },
   portfolio: {
     icon: Briefcase,
-    color: "text-amber-600 dark:text-amber-400",
-    bgColor: "bg-amber-500/10 border-amber-500/10",
+    color: "text-warning dark:text-warning",
+    bgColor: "bg-warning/10 border-warning/10",
     label: "BRAND_PROVISIONING",
   },
 };
@@ -135,11 +135,11 @@ export function ServiceHistoryCard() {
 
   if (queryHistoryError) {
     return (
-      <Card className="w-full text-left rounded-xl border border-rose-500/15 bg-rose-500/[0.015] shadow-sm antialiased font-bold text-xs">
+      <Card className="w-full text-left rounded-xl border border-destructive/15 bg-destructive/[0.015] shadow-sm antialiased font-bold text-xs">
         <CardContent className="p-4 flex gap-3 items-start leading-none select-text">
-          <AlertCircle className="h-5 w-5 text-rose-500 shrink-0 stroke-[2.5] mt-0.5" />
+          <AlertCircle className="h-5 w-5 text-destructive shrink-0 stroke-[2.5] mt-0.5" />
           <div className="space-y-1.5 flex-1 min-w-0">
-            <p className="text-xs font-bold uppercase tracking-wide text-rose-600 dark:text-rose-400 select-none leading-none">
+            <p className="text-xs font-bold uppercase tracking-wide text-destructive dark:text-destructive select-none leading-none">
               Couldn't load history
             </p>
             <p className="text-[11px] font-semibold text-muted-foreground/60 max-w-full break-words leading-normal font-mono pr-1">
@@ -212,8 +212,8 @@ export function ServiceHistoryCard() {
                       className={cn(
                         "rounded px-1.5 h-4 text-[8px] font-black tracking-wide border border-transparent uppercase select-none shadow-xs shrink-0 leading-none pt-0.5",
                         isItemStatusComplete
-                          ? "bg-emerald-500/10 text-emerald-600 dark:text-emerald-400"
-                          : "bg-amber-500/10 text-amber-600 dark:text-amber-400",
+                          ? "bg-success/10 text-success dark:text-success"
+                          : "bg-warning/10 text-warning dark:text-warning",
                       )}
                     >
                       {historyItem.status || "Pending"}

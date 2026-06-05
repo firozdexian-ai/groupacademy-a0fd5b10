@@ -80,7 +80,7 @@ export const TalentDetailDialog = ({
  return (
  <Dialog open={open} onOpenChange={onOpenChange}>
  <DialogContent className="max-w-4xl max-h-[90vh] overflow-hidden flex flex-col p-0 border-4 border-border/40 bg-background/95 shadow-sm rounded-2xl">
- <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+ <div className="h-2 w-full bg-gradient-to-r from-primary via-primary to-primary" />
 
  <DialogHeader className="p-8 bg-muted/20 border-b border-border/10 text-left">
  <div className="flex justify-between items-start">
@@ -90,11 +90,11 @@ export const TalentDetailDialog = ({
  {displayTalent.full_name || "Unidentified Node"}
  </DialogTitle>
  {displayTalent.user_id ? (
- <Badge className="bg-green-500/10 text-green-600 border border-green-500/20 font-semibold px-4">
+ <Badge className="bg-success/10 text-success border border-success/20 font-semibold px-4">
  REGISTERED_NODE
  </Badge>
  ) : (
- <Badge className="bg-amber-500/10 text-amber-600 border border-amber-200 font-semibold px-4 animate-pulse">
+ <Badge className="bg-warning/10 text-warning border border-warning font-semibold px-4 animate-pulse">
  PIPELINE_LEAD
  </Badge>
  )}
@@ -113,7 +113,7 @@ export const TalentDetailDialog = ({
  <Button
  size="sm"
  variant="outline"
- className="rounded-xl border font-semibold uppercase text-xs h-10 px-4 hover:bg-primary hover:text-white transition-all"
+ className="rounded-xl border font-semibold uppercase text-xs h-10 px-4 hover:bg-primary hover:text-primary-foreground transition-all"
  onClick={handleAwardCredits}
  >
  <Coins className="h-4 w-4 mr-2" /> Adjust Credits
@@ -126,7 +126,7 @@ export const TalentDetailDialog = ({
  <Button
  onClick={handlePlatformInvite}
  disabled={!displayTalent.id || !!displayTalent.user_id}
- className="bg-primary hover:bg-primary/90 text-white font-semibold uppercase italic tracking-widest h-10 px-4 rounded-xl shadow-sm gap-3"
+ className="bg-primary hover:bg-primary/90 text-primary-foreground font-semibold uppercase italic tracking-widest h-10 px-4 rounded-xl shadow-sm gap-3"
  >
  <UserPlus className="h-5 w-5" />
  {displayTalent.user_id ? "Activation Verified" : "Deploy Invite"}
@@ -143,7 +143,7 @@ export const TalentDetailDialog = ({
  {displayTalent.phone && (
  <Button
  variant="outline"
- className="h-10 px-4 rounded-xl border border-green-500/30 text-green-600 font-semibold uppercase text-xs hover:bg-green-50 gap-3"
+ className="h-10 px-4 rounded-xl border border-success/30 text-success font-semibold uppercase text-xs hover:bg-success gap-3"
  onClick={() => window.open(`https://wa.me/${displayTalent.phone.replace(/\D/g, "")}`, "_blank")}
  >
  <Phone className="h-5 w-5" /> WhatsApp Direct
@@ -224,7 +224,7 @@ export const TalentDetailDialog = ({
  )}
  {displayTalent.linkedin_url && (
  <Badge
- className="cursor-pointer gap-2 bg-blue-600/10 text-blue-600 border border-blue-600/20 py-2 px-4 font-semibold text-[10px]"
+ className="cursor-pointer gap-2 bg-primary/10 text-primary border border-primary/20 py-2 px-4 font-semibold text-[10px]"
  onClick={() => window.open(displayTalent.linkedin_url)}
  >
  <ExternalLink className="h-4 w-4" /> LINKEDIN_NODE
@@ -244,7 +244,7 @@ export const TalentDetailDialog = ({
  AI_PARSED_TELEMETRY
  </h3>
  {displayTalent.cv_text && (
- <Badge className="bg-primary text-white font-semibold rounded-lg">VERIFIED_READ</Badge>
+ <Badge className="bg-primary text-primary-foreground font-semibold rounded-lg">VERIFIED_READ</Badge>
  )}
  </div>
  <div className="bg-muted/30 border-4 border-muted rounded-2xl p-8 min-h-[400px] max-h-[500px] overflow-y-auto no-scrollbar shadow-inner">

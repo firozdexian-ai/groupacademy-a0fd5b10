@@ -170,12 +170,12 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
               className={cn(
                 "h-5 w-5 rounded-full flex items-center justify-center border transition-colors duration-300",
                 previewUrl
-                  ? "bg-emerald-500 border-emerald-600/10 text-white"
+                  ? "bg-success border-success/10 text-primary-foreground"
                   : "bg-muted border-border/40 text-muted-foreground/30",
               )}
             >
               <ShieldCheck
-                className={cn("h-3.5 w-3.5 stroke-[2.5]", previewUrl ? "text-white" : "text-muted-foreground/40")}
+                className={cn("h-3.5 w-3.5 stroke-[2.5]", previewUrl ? "text-primary-foreground" : "text-muted-foreground/40")}
               />
             </div>
           </div>
@@ -221,7 +221,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
             variant="ghost"
             disabled={isUploading}
             onClick={handleTermination}
-            className="h-9 w-9 rounded-xl text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 cursor-pointer shrink-0 transition-colors flex items-center justify-center p-0 border-none shadow-none"
+            className="h-9 w-9 rounded-xl text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 cursor-pointer shrink-0 transition-colors flex items-center justify-center p-0 border-none shadow-none"
             title="Expunge visual identity element properties from ledger indices"
           >
             <Trash2 className="h-4 w-4 stroke-[2.2]" />
@@ -231,7 +231,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
 
       {/* METRIC INFORMATION FOOTER COMPONENT */}
       <div className="flex items-center gap-1.5 px-3.5 h-6 rounded-full bg-muted/40 border border-border/10 text-[9px] font-mono font-extrabold uppercase text-muted-foreground/70 tracking-wide select-none shadow-inner leading-none shrink-0 pointer-events-none">
-        <Zap className="h-3 w-3 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
+        <Zap className="h-3 w-3 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
         <span>Optimized Extensions Mapped: JPG | PNG | GIF &bull; Max 5MB Payload Bounds</span>
       </div>
     </div>

@@ -167,7 +167,7 @@ export function TalentOutreachConsoleTab() {
                   onClick={() => setSelectedTalent(t)}
                   className={cn(
                     "w-full text-left p-3 rounded-xl mb-1 transition-all",
-                    selectedTalent?.id === t.id ? "bg-primary text-white" : "hover:bg-muted",
+                    selectedTalent?.id === t.id ? "bg-primary text-primary-foreground" : "hover:bg-muted",
                   )}
                 >
                   <p className="text-xs font-black uppercase truncate">{t.full_name}</p>

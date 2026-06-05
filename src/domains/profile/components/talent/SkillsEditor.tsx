@@ -163,7 +163,7 @@ export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
                 <button
                   type="button"
                   onClick={() => removeSkillNode(skillToken)}
-                  className="h-5 w-5 rounded-md bg-muted border border-border/40 text-muted-foreground hover:bg-rose-500 hover:text-white hover:border-transparent transition-colors cursor-pointer select-none flex items-center justify-center p-0 shrink-0"
+                  className="h-5 w-5 rounded-md bg-muted border border-border/40 text-muted-foreground hover:bg-destructive hover:text-primary-foreground hover:border-transparent transition-colors cursor-pointer select-none flex items-center justify-center p-0 shrink-0"
                   title={`Expunge ${skillToken} parameter from secure profile lookup registry`}
                 >
                   <X className="h-3 w-3 stroke-[2.5]" />

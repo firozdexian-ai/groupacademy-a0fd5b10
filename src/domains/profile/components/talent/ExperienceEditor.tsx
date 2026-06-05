@@ -205,7 +205,7 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
                       variant="ghost"
                       size="icon" aria-label="Expunge this specific operational record row from "
                       onClick={() => removeExperienceNode(index)}
-                      className="h-7 w-7 text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 rounded-lg cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none"
+                      className="h-7 w-7 text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 rounded-lg cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none"
                       title="Expunge this specific operational record row from user database parameters"
                     >
                       <Trash2 className="h-4 w-4 stroke-[2.2]" />
@@ -335,7 +335,7 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
 
       {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
       <div className="mt-6 flex items-center justify-center gap-1.5 py-2.5 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full">
-        <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
+        <Zap className="h-3.5 w-3.5 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
         <span>Experience parameters synchronized for real-time market placement calibrations</span>
       </div>
     </div>

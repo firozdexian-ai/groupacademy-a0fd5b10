@@ -419,7 +419,7 @@ export const BannerManager = () => {
                 <span className="relative z-10 flex items-center gap-3">
                   <ShieldCheck className="h-5 w-5" /> Register Artifact
                 </span>
-                <div className="absolute inset-0 bg-gradient-to-r from-primary via-blue-600 to-primary opacity-50 group-hover:opacity-100 transition-opacity" />
+                <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-primary opacity-50 group-hover:opacity-100 transition-opacity" />
               </Button>
             </div>
           </form>
@@ -477,7 +477,7 @@ export const BannerManager = () => {
                             banner.placement === "hero"
                               ? "bg-primary text-primary-foreground"
                               : banner.placement === "learning"
-                                ? "bg-amber-500 text-primary-foreground"
+                                ? "bg-warning text-primary-foreground"
                                 : "bg-muted text-muted-foreground",
                           )}
                         >
@@ -495,12 +495,12 @@ export const BannerManager = () => {
                       <Switch
                         checked={banner.is_active}
                         onCheckedChange={() => handleToggleState(banner.id, banner.is_active)}
-                        className="data-[state=checked]:bg-emerald-500"
+                        className="data-[state=checked]:bg-success"
                       />
                       <span
                         className={cn(
                           "text-[9px] font-black ",
-                          banner.is_active ? "text-emerald-500" : "text-muted-foreground/40",
+                          banner.is_active ? "text-success" : "text-muted-foreground/40",
                         )}
                       >
                         {banner.is_active ? "LIVE" : "IDLE"}

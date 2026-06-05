@@ -110,7 +110,7 @@ export function StandaloneMockInterviewCodeGenerator() {
 
   return (
     <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden animate-in fade-in duration-700">
-      <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+      <div className="h-1.5 w-full bg-gradient-to-r from-primary via-primary to-primary" />
       <CardHeader className="p-8 border-b border-border/10 bg-muted/10 text-left">
         <div className="flex items-center justify-between">
           <div className="space-y-1">

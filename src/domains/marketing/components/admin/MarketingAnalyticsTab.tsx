@@ -59,7 +59,14 @@ interface AnalyticsData {
   totals: { jobClicks: number; jobShares: number; contentClicks: number; contentShares: number };
 }
 
-const CHART_COLORS = ["#0062ff", "#10b981", "#f59e0b", "#8b5cf6", "#ef4444", "#06b6d4"];
+const CHART_COLORS = [
+  "hsl(var(--primary))",
+  "hsl(var(--success))",
+  "hsl(var(--warning))",
+  "hsl(var(--accent))",
+  "hsl(var(--destructive))",
+  "hsl(var(--muted-foreground))",
+];
 const DATE_RANGES = [
   { label: "Temporal Frame: 7D", value: "7" },
   { label: "Temporal Frame: 30D", value: "30" },
@@ -154,8 +161,8 @@ export function MarketingAnalyticsTab() {
       {/* Phase 6 Executive Header */}
       <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
         <div className="space-y-1 text-left">
-          <div className="flex items-center gap-3 text-orange-500">
-            <Megaphone className="h-8 w-8 text-orange-500 fill-orange-500/20" />
+          <div className="flex items-center gap-3 text-warning">
+            <Megaphone className="h-8 w-8 text-warning fill-warning/20" />
             <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
               Marketing Command
             </h2>
@@ -166,7 +173,7 @@ export function MarketingAnalyticsTab() {
         </div>
         <div className="flex items-center gap-3">
           <Select value={dateRange} onValueChange={setDateRange}>
-            <SelectTrigger className="w-56 h-12 rounded-xl border-2 border-orange-500/20 font-semibold uppercase text-[10px] tracking-widest bg-orange-500/5 text-orange-600 shadow-inner">
+            <SelectTrigger className="w-56 h-12 rounded-xl border-2 border-warning/20 font-semibold uppercase text-[10px] tracking-widest bg-warning/5 text-warning shadow-inner">
               <SelectValue />
             </SelectTrigger>
             <SelectContent className="rounded-2xl border-2 shadow-sm">
@@ -181,7 +188,7 @@ export function MarketingAnalyticsTab() {
             variant="outline"
             size="icon" aria-label="Refresh"
             onClick={loadExecutiveTelemetry}
-            className="h-12 w-12 rounded-xl border-2 hover:bg-orange-500 hover:text-primary-foreground transition-all text-orange-500 border-orange-500/20 bg-orange-500/5"
+            className="h-12 w-12 rounded-xl border-2 hover:bg-warning hover:text-primary-foreground transition-all text-warning border-warning/20 bg-warning/5"
           >
             <RefreshCw className="h-4 w-4" />
           </Button>
@@ -194,29 +201,29 @@ export function MarketingAnalyticsTab() {
           label="Active Channels"
           value={activeChannels}
           icon={Share2}
-          color="text-orange-500"
-          bg="bg-orange-500/10"
+          color="text-warning"
+          bg="bg-warning/10"
         />
         <MetricTile
           label="Community Groups"
           value={totalGroups}
           icon={Users}
-          color="text-fuchsia-500"
-          bg="bg-fuchsia-500/10"
+          color="text-accent"
+          bg="bg-accent/10"
         />
         <MetricTile
           label="Talent Pings"
           value={totalTalentOutreach}
           icon={Send}
-          color="text-blue-500"
-          bg="bg-blue-500/10"
+          color="text-primary"
+          bg="bg-primary/10"
         />
         <MetricTile
           label="Company Pings"
           value={totalCompanyOutreach}
           icon={Building2}
-          color="text-emerald-500"
-          bg="bg-emerald-500/10"
+          color="text-success"
+          bg="bg-success/10"
         />
       </div>
 
@@ -241,7 +248,7 @@ export function MarketingAnalyticsTab() {
           <TabsContent value="jobs" className="space-y-8 animate-in slide-in-from-bottom-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ChartCard title="Traffic Source" sub="Origin of job seeker engagement">
-                <SourceBarChart data={analyticsData?.jobClicks || []} color="#0062ff" />
+                <SourceBarChart data={analyticsData?.jobClicks || []} color="hsl(var(--primary))" />
               </ChartCard>
               <ChartCard title="Social Distribution" sub="Distribution by channel">
                 <SourcePieChart
@@ -290,7 +297,7 @@ export function MarketingAnalyticsTab() {
           <TabsContent value="content" className="space-y-8 animate-in slide-in-from-bottom-2">
             <div className="grid grid-cols-1 lg:grid-cols-2 gap-8">
               <ChartCard title="Course Discovery" sub="Content discovery sources">
-                <SourceBarChart data={analyticsData?.contentClicks || []} color="#10b981" />
+                <SourceBarChart data={analyticsData?.contentClicks || []} color="hsl(var(--success))" />
               </ChartCard>
               <ChartCard title="Social Vitality" sub="Academy content distribution">
                 <SourcePieChart
@@ -311,13 +318,13 @@ export function MarketingAnalyticsTab() {
         {/* Live Outreach Feed */}
         <div className="xl:col-span-2 space-y-6">
           <div className="flex items-center gap-2 mb-4 px-2">
-            <Clock className="h-4 w-4 text-orange-500" />
+            <Clock className="h-4 w-4 text-warning" />
             <h3 className="text-xs font-semibold text-muted-foreground italic">
               Live Outbound Telemetry
             </h3>
           </div>
           <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-            <div className="h-1.5 w-full bg-gradient-to-r from-orange-400 via-rose-500 to-fuchsia-500" />
+            <div className="h-1.5 w-full bg-gradient-to-r from-warning via-destructive to-accent" />
             <CardContent className="p-0">
               {latestTalentOutreach.length === 0 && latestCompanyOutreach.length === 0 ? (
                 <div className="p-20 text-center flex flex-col items-center justify-center space-y-3">
@@ -333,18 +340,18 @@ export function MarketingAnalyticsTab() {
                   {latestTalentOutreach.map((log) => (
                     <div
                       key={log.id}
-                      className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-blue-500/[0.02] transition-colors group"
+                      className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-primary/[0.02] transition-colors group"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-xl bg-blue-500/10 border-2 border-blue-500/20 flex items-center justify-center shadow-sm">
-                          <Send className="h-5 w-5 text-blue-500" />
+                        <div className="h-12 w-12 rounded-xl bg-primary/10 border-2 border-primary/20 flex items-center justify-center shadow-sm">
+                          <Send className="h-5 w-5 text-primary" />
                         </div>
                         <div>
                           <h4 className="font-semibold text-sm uppercase italic tracking-tight text-foreground/90">
                             Talent Ping
                           </h4>
                           <p className="text-[10px] font-bold text-muted-foreground mt-1">
-                            Channel: <span className="text-blue-500">{log.channel}</span>
+                            Channel: <span className="text-primary">{log.channel}</span>
                           </p>
                         </div>
                       </div>
@@ -361,18 +368,18 @@ export function MarketingAnalyticsTab() {
                   {latestCompanyOutreach.map((log) => (
                     <div
                       key={log.id}
-                      className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-emerald-500/[0.02] transition-colors group"
+                      className="p-6 flex flex-col md:flex-row md:items-center justify-between gap-4 hover:bg-success/[0.02] transition-colors group"
                     >
                       <div className="flex items-center gap-4">
-                        <div className="h-12 w-12 rounded-xl bg-emerald-500/10 border-2 border-emerald-500/20 flex items-center justify-center shadow-sm">
-                          <Building2 className="h-5 w-5 text-emerald-500" />
+                        <div className="h-12 w-12 rounded-xl bg-success/10 border-2 border-success/20 flex items-center justify-center shadow-sm">
+                          <Building2 className="h-5 w-5 text-success" />
                         </div>
                         <div>
                           <h4 className="font-semibold text-sm uppercase italic tracking-tight text-foreground/90">
                             Company Ping
                           </h4>
                           <p className="text-[10px] font-bold text-muted-foreground mt-1">
-                            Channel: <span className="text-emerald-500">{log.channel}</span>
+                            Channel: <span className="text-success">{log.channel}</span>
                           </p>
                         </div>
                       </div>
@@ -395,7 +402,7 @@ export function MarketingAnalyticsTab() {
         {/* Platform Pulse */}
         <div className="space-y-6">
           <div className="flex items-center gap-2 mb-4 px-2">
-            <Activity className="h-4 w-4 text-orange-500" />
+            <Activity className="h-4 w-4 text-warning" />
             <h3 className="text-xs font-semibold text-muted-foreground italic">
               Marketing Graph Pulse
             </h3>
@@ -407,21 +414,21 @@ export function MarketingAnalyticsTab() {
                   label="Display Banners"
                   value={graphData?.banners.length || 0}
                   max={50}
-                  color="bg-orange-500"
+                  color="bg-warning"
                 />
                 <PulseBar
                   label="Profile Themes"
                   value={graphData?.themes.length || 0}
                   max={20}
-                  color="bg-fuchsia-500"
+                  color="bg-accent"
                 />
                 <PulseBar
                   label="Access Codes"
                   value={graphData?.accessCodes.length || 0}
                   max={100}
-                  color="bg-indigo-500"
+                  color="bg-accent"
                 />
-                <PulseBar label="Community Groups" value={totalGroups} max={50} color="bg-violet-500" />
+                <PulseBar label="Community Groups" value={totalGroups} max={50} color="bg-accent" />
               </div>
             </CardContent>
           </Card>
@@ -437,7 +444,7 @@ function SummaryBadgeRow({ totalClicks, totalShares }: { totalClicks: number; to
       <Badge className="bg-primary/10 text-primary border-none font-semibold text-xs px-6 py-3 italic gap-2 rounded-full">
         <MousePointerClick className="h-4 w-4" /> {totalClicks} PULSE CLICKS
       </Badge>
-      <Badge className="bg-green-500/10 text-green-600 border-none font-semibold text-xs px-6 py-3 italic gap-2 rounded-full">
+      <Badge className="bg-success/10 text-success border-none font-semibold text-xs px-6 py-3 italic gap-2 rounded-full">
         <Share2 className="h-4 w-4" /> {totalShares} SOCIAL SHARES
       </Badge>
     </div>

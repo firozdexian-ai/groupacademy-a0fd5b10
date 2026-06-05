@@ -59,8 +59,8 @@ const SERVICES: ServiceConfig[] = [
  title: "Career Scorecard",
  description: "Evaluate readiness & technical gaps",
  icon: ClipboardCheck,
- color: "text-blue-500",
- bg: "bg-blue-500/10",
+ color: "text-primary",
+ bg: "bg-primary/10",
  },
  {
  id: "MOCK_INTERVIEW",
@@ -77,8 +77,8 @@ const SERVICES: ServiceConfig[] = [
  title: "Salary Intelligence",
  description: "Precise market worth calibration",
  icon: DollarSign,
- color: "text-amber-500",
- bg: "bg-amber-500/10",
+ color: "text-warning",
+ bg: "bg-warning/10",
  },
  {
  id: "PORTFOLIO",
@@ -86,8 +86,8 @@ const SERVICES: ServiceConfig[] = [
  title: "Portfolio Node",
  description: "Showcase verified professional artifacts",
  icon: Palette,
- color: "text-emerald-500",
- bg: "bg-emerald-500/10",
+ color: "text-success",
+ bg: "bg-success/10",
  },
 ];
 
@@ -191,8 +191,8 @@ export function ServiceOutreachTab() {
  {/* Phase 6 Executive Header */}
  <header className="flex flex-col md:flex-row justify-between items-start md:items-end gap-6 bg-muted/20 p-8 rounded-2xl border border-border/60">
  <div className="space-y-1 text-left">
- <div className="flex items-center gap-3 text-emerald-500">
- <Sparkles className="h-8 w-8 text-emerald-500 fill-emerald-500/20" />
+ <div className="flex items-center gap-3 text-success">
+ <Sparkles className="h-8 w-8 text-success fill-success/20" />
  <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
  Service Outreach
  </h2>
@@ -204,7 +204,7 @@ export function ServiceOutreachTab() {
  <div className="flex items-center gap-3">
  <Badge
  variant="outline"
- className="h-14 px-6 rounded-2xl border font-semibold gap-2 text-emerald-500 bg-emerald-500/10 border-emerald-500/20"
+ className="h-14 px-6 rounded-2xl border font-semibold gap-2 text-success bg-success/10 border-success/20"
  >
  <Activity className="h-4 w-4" /> {shareLogs.length} TOTAL TRANSMISSIONS
  </Badge>
@@ -219,7 +219,7 @@ export function ServiceOutreachTab() {
  return (
  <Card
  key={service.id}
- className="group cursor-pointer rounded-2xl border border-border/60 bg-card hover:border-emerald-500/40 transition-all duration-500 overflow-hidden shadow-sm"
+ className="group cursor-pointer rounded-2xl border border-border/60 bg-card hover:border-success/40 transition-all duration-500 overflow-hidden shadow-sm"
  onClick={() => {
  setSelectedService(service);
  setIsShareOpen(true);
@@ -246,12 +246,12 @@ export function ServiceOutreachTab() {
  </div>
  <div className="flex flex-col items-end gap-2">
  {sharedCount > 0 && (
- <Badge className="bg-emerald-500/10 text-emerald-600 border-none font-semibold text-[9px] italic px-3">
+ <Badge className="bg-success/10 text-success border-none font-semibold text-[9px] italic px-3">
  {sharedCount} NODES ACTIVE
  </Badge>
  )}
- <Button variant="ghost" size="icon" aria-label="Open link" className="rounded-xl h-12 w-12 hover:bg-emerald-500/10">
- <ExternalLink className="h-5 w-5 text-emerald-500" />
+ <Button variant="ghost" size="icon" aria-label="Open link" className="rounded-xl h-12 w-12 hover:bg-success/10">
+ <ExternalLink className="h-5 w-5 text-success" />
  </Button>
  </div>
  </CardContent>
@@ -263,7 +263,7 @@ export function ServiceOutreachTab() {
  {/* Distribution Dialog */}
  <Dialog open={isShareOpen} onOpenChange={setIsShareOpen}>
  <DialogContent className="max-w-3xl rounded-2xl border-4 border-border/40 p-0 overflow-hidden bg-background/95 shadow-sm">
- <div className="h-2 w-full bg-gradient-to-r from-emerald-400 via-teal-500 to-emerald-600" />
+ <div className="h-2 w-full bg-gradient-to-r from-success via-accent to-success" />
  <div className="p-10">
  <DialogHeader className="mb-8 text-left">
  <div className="flex items-center gap-5">
@@ -289,24 +289,24 @@ export function ServiceOutreachTab() {
  id: "linkedin",
  label: "LINKEDIN OPS",
  icon: Linkedin,
- color: "text-blue-600",
- bg: "bg-blue-600/5",
+ color: "text-primary",
+ bg: "bg-primary/5",
  },
  {
  id: "facebook",
  label: "FACEBOOK FEED",
  icon: Facebook,
- color: "text-blue-500",
- bg: "bg-blue-500/5",
+ color: "text-primary",
+ bg: "bg-primary/5",
  },
  {
  id: "whatsapp",
  label: "WHATSAPP DIRECT",
  icon: MessageCircle,
- color: "text-green-500",
- bg: "bg-green-500/5",
+ color: "text-success",
+ bg: "bg-success/5",
  },
- { id: "telegram", label: "TELEGRAM CHANNEL", icon: Send, color: "text-sky-500", bg: "bg-sky-500/5" },
+ { id: "telegram", label: "TELEGRAM CHANNEL", icon: Send, color: "text-primary", bg: "bg-primary/5" },
  {
  id: "custom",
  label: "CUSTOM TRACKING",
@@ -321,8 +321,8 @@ export function ServiceOutreachTab() {
  className={cn(
  "w-full flex items-center justify-between p-4 rounded-2xl border transition-all duration-300",
  activeTab === ch.id
- ? "border-emerald-500 bg-emerald-500/5 shadow-inner scale-105"
- : "border-border/40 hover:border-emerald-500/20 bg-muted/20",
+ ? "border-success bg-success/5 shadow-inner scale-105"
+ : "border-border/40 hover:border-success/20 bg-muted/20",
  )}
  >
  <div className="flex items-center gap-4">
@@ -330,7 +330,7 @@ export function ServiceOutreachTab() {
  <span className="font-semibold uppercase italic text-xs">{ch.label}</span>
  </div>
  {selectedService && isShared(selectedService, ch.id) && (
- <CheckCircle2 className="w-4 h-4 text-emerald-500" />
+ <CheckCircle2 className="w-4 h-4 text-success" />
  )}
  </button>
  ))}
@@ -340,8 +340,8 @@ export function ServiceOutreachTab() {
  <div className="flex-1 space-y-6 text-left">
  {activeTab !== "custom" ? (
  <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
- <div className="p-6 bg-emerald-500/5 rounded-2xl border border-emerald-500/30">
- <p className="text-[10px] font-semibold uppercase text-emerald-500 italic mb-3 flex items-center gap-2">
+ <div className="p-6 bg-success/5 rounded-2xl border border-success/30">
+ <p className="text-[10px] font-semibold uppercase text-success italic mb-3 flex items-center gap-2">
  <Globe className="h-3 w-3" /> Regional Template
  </p>
  <Textarea
@@ -366,7 +366,7 @@ export function ServiceOutreachTab() {
  </div>
  <div className="grid grid-cols-2 gap-4">
  <Button
- className="h-16 rounded-2xl font-semibold uppercase italic text-sm gap-3 shadow-lg bg-emerald-600 hover:bg-emerald-700 text-primary-foreground"
+ className="h-16 rounded-2xl font-semibold uppercase italic text-sm gap-3 shadow-lg bg-success hover:bg-success text-primary-foreground"
  onClick={() => handleSocialShare(activeTab)}
  >
  <ExternalLink className="h-5 w-5" /> Launch {activeTab.toUpperCase()}
@@ -385,7 +385,7 @@ export function ServiceOutreachTab() {
  ) : (
  <div className="space-y-6 animate-in slide-in-from-right-4 duration-500">
  <div className="space-y-3">
- <Label className="text-[10px] font-semibold uppercase text-emerald-500 italic ml-2">
+ <Label className="text-[10px] font-semibold uppercase text-success italic ml-2">
  Channel Identifier
  </Label>
  <Input
@@ -396,7 +396,7 @@ export function ServiceOutreachTab() {
  />
  </div>
  <div className="space-y-3">
- <Label className="text-[10px] font-semibold uppercase text-emerald-500 italic ml-2">
+ <Label className="text-[10px] font-semibold uppercase text-success italic ml-2">
  Generated Telemetry URL
  </Label>
  <div className="flex gap-2">
@@ -420,7 +420,7 @@ export function ServiceOutreachTab() {
  </div>
  </div>
  <Button
- className="w-full h-16 rounded-2xl font-semibold uppercase italic text-sm bg-emerald-600 hover:bg-emerald-700 text-primary-foreground"
+ className="w-full h-16 rounded-2xl font-semibold uppercase italic text-sm bg-success hover:bg-success text-primary-foreground"
  onClick={() => {
  if (customChannel) recordShare(customChannel);
  }}

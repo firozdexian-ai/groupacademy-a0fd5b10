@@ -272,7 +272,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
                       size="icon" aria-label="Close"
                       type="button"
                       disabled={saving}
-                      className="h-7 w-7 rounded-lg text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 transition-colors absolute top-3 right-3 p-0 border-none shadow-none z-10"
+                      className="h-7 w-7 rounded-lg text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 transition-colors absolute top-3 right-3 p-0 border-none shadow-none z-10"
                       onClick={() => setAchievements((p) => p.filter((_, idx) => idx !== i))}
                     >
                       <X className="h-4 w-4 stroke-[2.5]" />
@@ -374,7 +374,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
                       size="icon" aria-label="Close"
                       type="button"
                       disabled={saving}
-                      className="h-9 w-9 rounded-xl text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none flex items-center justify-center"
+                      className="h-9 w-9 rounded-xl text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none flex items-center justify-center"
                       onClick={() => setLanguages((p) => p.filter((_, idx) => idx !== i))}
                     >
                       <X className="h-4 w-4 stroke-[2.5]" />

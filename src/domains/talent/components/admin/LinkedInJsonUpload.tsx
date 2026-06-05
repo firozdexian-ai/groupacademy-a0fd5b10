@@ -204,7 +204,7 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
 
       {parsed.length > 0 && !importResult && (
         <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-          <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-primary via-primary to-primary" />
           <CardHeader className="p-8 border-b border-border/10 bg-muted/10">
             <div className="flex items-center justify-between">
               <div className="flex items-center gap-4">
@@ -304,21 +304,21 @@ export function LinkedInJsonUpload({ mode, onComplete }: LinkedInJsonUploadProps
       )}
 
       {importResult && (
-        <Card className="rounded-2xl border-4 border-emerald-500/20 bg-emerald-500/5 shadow-sm overflow-hidden animate-in zoom-in-95">
+        <Card className="rounded-2xl border-4 border-success/20 bg-success/5 shadow-sm overflow-hidden animate-in zoom-in-95">
           <CardContent className="p-12 text-center space-y-8">
-            <div className="h-20 w-20 rounded-xl bg-emerald-500 flex items-center justify-center mx-auto shadow-xl shadow-emerald-500/20">
-              <ShieldCheck className="w-10 h-10 text-white" />
+            <div className="h-20 w-20 rounded-xl bg-success flex items-center justify-center mx-auto shadow-xl shadow-success/20">
+              <ShieldCheck className="w-10 h-10 text-primary-foreground" />
             </div>
             <div className="space-y-2">
               <h3 className="text-3xl font-semibold uppercase tracking-tight italic">Import complete</h3>
-              <p className="text-xs font-bold text-emerald-600/60">
+              <p className="text-xs font-bold text-success/60">
                 Imported: {fileName}
               </p>
             </div>
             <div className="grid grid-cols-3 gap-4">
               {[
-                { label: "Nodes Ingested", val: importResult.imported, color: "text-emerald-600" },
-                { label: "Duplicates Recalibrated", val: importResult.duplicates, color: "text-amber-600" },
+                { label: "Nodes Ingested", val: importResult.imported, color: "text-success" },
+                { label: "Duplicates Recalibrated", val: importResult.duplicates, color: "text-warning" },
                 { label: "Logic Faults", val: importResult.failed, color: "text-destructive" },
               ].map((s, i) => (
                 <div key={i} className="p-6 bg-background rounded-3xl border border-border/40">

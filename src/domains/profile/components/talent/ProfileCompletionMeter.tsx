@@ -132,8 +132,8 @@ export function ProfileCompletionMeter({ talent, variant = "full", showActions =
 
   const adaptiveStrokeColorClass = useMemo(() => {
     const currentPct = profileComplianceMetrics.percentage;
-    if (currentPct >= 80) return "text-emerald-500";
-    if (currentPct >= 50) return "text-amber-500";
+    if (currentPct >= 80) return "text-success";
+    if (currentPct >= 50) return "text-warning";
     return "text-primary";
   }, [profileComplianceMetrics.percentage]);
 
@@ -290,7 +290,7 @@ export function ProfileCompletionMeter({ talent, variant = "full", showActions =
               {profileComplianceMetrics.percentage >= 100 && (
                 <Badge
                   variant="outline"
-                  className="rounded px-1.5 h-4.5 text-[8px] font-extrabold tracking-wider uppercase border border-transparent bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 font-mono shadow-xs shrink-0"
+                  className="rounded px-1.5 h-4.5 text-[8px] font-extrabold tracking-wider uppercase border border-transparent bg-success/10 text-success dark:text-success font-mono shadow-xs shrink-0"
                 >
                   Verified Node
                 </Badge>
@@ -317,7 +317,7 @@ export function ProfileCompletionMeter({ talent, variant = "full", showActions =
               className={cn(
                 "flex items-center justify-between gap-3.5 p-3.5 rounded-xl border transition-all duration-300 font-semibold text-xs leading-none select-none",
                 checkItem.isComplete
-                  ? "bg-emerald-500/[0.01] border-emerald-500/10 opacity-60 text-foreground"
+                  ? "bg-success/[0.01] border-success/10 opacity-60 text-foreground"
                   : "bg-muted/20 border-border/40 text-foreground",
               )}
             >
@@ -325,7 +325,7 @@ export function ProfileCompletionMeter({ talent, variant = "full", showActions =
                 className={cn(
                   "h-9 w-9 rounded-xl flex items-center justify-center shrink-0 border border-transparent shadow-xs transition-colors",
                   checkItem.isComplete
-                    ? "bg-emerald-500/10 border-emerald-500/5 text-emerald-600 dark:text-emerald-400"
+                    ? "bg-success/10 border-success/5 text-success dark:text-success"
                     : "bg-muted/50 border-border/20 text-muted-foreground/60",
                 )}
               >
@@ -336,7 +336,7 @@ export function ProfileCompletionMeter({ talent, variant = "full", showActions =
                 <span
                   className={cn(
                     "text-xs font-bold uppercase tracking-wide truncate text-ellipsis block leading-none select-text",
-                    checkItem.isComplete ? "text-emerald-600 dark:text-emerald-400" : "text-foreground/90",
+                    checkItem.isComplete ? "text-success dark:text-success" : "text-foreground/90",
                   )}
                 >
                   {checkItem.label}
@@ -347,7 +347,7 @@ export function ProfileCompletionMeter({ talent, variant = "full", showActions =
               </div>
 
               {checkItem.isComplete ? (
-                <CheckCircle2 className="h-4.5 w-4.5 text-emerald-500 shrink-0 stroke-[2.5]" />
+                <CheckCircle2 className="h-4.5 w-4.5 text-success shrink-0 stroke-[2.5]" />
               ) : (
                 <Circle className="h-4.5 w-4.5 text-muted-foreground/20 shrink-0 stroke-[2.2] animate-pulse" />
               )}

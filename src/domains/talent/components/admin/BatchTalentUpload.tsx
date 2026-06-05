@@ -428,7 +428,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  {isUploading ? <InlineSpinner size="md" /> : <Upload className="h-5 w-5" />}
  Authorize URL Ingestion
  </span>
- <div className="absolute inset-0 bg-gradient-to-r from-primary via-blue-600 to-primary opacity-50 group-hover:opacity-100 transition-opacity" />
+ <div className="absolute inset-0 bg-gradient-to-r from-primary via-primary to-primary opacity-50 group-hover:opacity-100 transition-opacity" />
  </Button>
  </TabsContent>
 
@@ -510,7 +510,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  disabled={isUploading}
  />
  <div className="space-y-6">
- <div className="h-20 w-20 rounded-xl bg-muted/50 flex items-center justify-center mx-auto border border-border/60 group-hover:rotate-6 transition-transform text-blue-500">
+ <div className="h-20 w-20 rounded-xl bg-muted/50 flex items-center justify-center mx-auto border border-border/60 group-hover:rotate-6 transition-transform text-primary">
  <FileSpreadsheet className="h-10 w-10" />
  </div>
  <div>
@@ -525,7 +525,7 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  <Button
  onClick={processCsvDatabase}
  disabled={isUploading || !csvFile}
- className="w-full h-16 rounded-[20px] font-semibold uppercase tracking-[0.3em] text-[11px] shadow-sm shadow-blue-500/30 bg-blue-600 hover:bg-blue-700 text-white group"
+ className="w-full h-16 rounded-[20px] font-semibold uppercase tracking-[0.3em] text-[11px] shadow-sm shadow-primary/30 bg-primary hover:bg-primary text-primary-foreground group"
  >
  {isUploading ? <InlineSpinner size="md" className="mr-3" /> : <Database className="mr-3 h-5 w-5" />}
  Execute CSV Agent Sync
@@ -541,17 +541,17 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  <div className="p-8 rounded-2xl border bg-muted/10 space-y-6 shadow-inner animate-in zoom-in-95 duration-700">
  <div className="flex items-center justify-between">
  <div className="flex items-center gap-4">
- <Zap className="h-5 w-5 text-amber-500 fill-current animate-pulse" />
+ <Zap className="h-5 w-5 text-warning fill-current animate-pulse" />
  <span className="text-xl font-semibold uppercase tracking-tight italic">Process Telemetry</span>
  </div>
  <Badge
  className={cn(
  "rounded-lg font-medium text-[8px] tracking-widest px-4 py-1.5 border-none shadow-sm",
  currentBatch.status === "completed"
- ? "bg-emerald-500 text-white"
+ ? "bg-success text-primary-foreground"
  : currentBatch.status === "failed"
- ? "bg-destructive text-white"
- : "bg-primary text-white",
+ ? "bg-destructive text-primary-foreground"
+ : "bg-primary text-primary-foreground",
  )}
  >
  {currentBatch.status}_NODE
@@ -563,8 +563,8 @@ export function BatchTalentUpload({ onComplete, singleMode }: BatchTalentUploadP
  <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
  {[
  { icon: Database, label: "Total Rows", val: currentBatch.file_count, color: "text-muted-foreground" },
- { icon: CheckCircle, label: "Synced", val: currentBatch.processed_count, color: "text-emerald-500" },
- { icon: AlertCircle, label: "Skipped", val: currentBatch.skipped_count, color: "text-amber-500" },
+ { icon: CheckCircle, label: "Synced", val: currentBatch.processed_count, color: "text-success" },
+ { icon: AlertCircle, label: "Skipped", val: currentBatch.skipped_count, color: "text-warning" },
  { icon: XCircle, label: "Faults", val: currentBatch.failed_count, color: "text-destructive" },
  ].map((stat, i) => (
  <div key={i} className="bg-background/50 p-4 rounded-2xl border border-border/10 text-center space-y-1">

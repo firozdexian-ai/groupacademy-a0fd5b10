@@ -232,7 +232,7 @@ export function ProfileCompletionPrompt({
               size="icon" aria-label="Close"
               type="button"
               onClick={handleDismissProtocolTrigger}
-              className="h-8 w-8 rounded-xl text-muted-foreground/40 hover:bg-rose-500/10 hover:text-rose-500 cursor-pointer transition-colors"
+              className="h-8 w-8 rounded-xl text-muted-foreground/40 hover:bg-destructive/10 hover:text-destructive cursor-pointer transition-colors"
             >
               <X className="h-4 w-4 stroke-[2.5]" />
             </Button>
@@ -305,7 +305,7 @@ export function ProfileCompletionPrompt({
               size="icon" aria-label="Close"
               type="button"
               onClick={handleDismissProtocolTrigger}
-              className="h-8 w-8 rounded-xl text-muted-foreground/40 hover:bg-rose-500/10 hover:text-rose-500 cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none"
+              className="h-8 w-8 rounded-xl text-muted-foreground/40 hover:bg-destructive/10 hover:text-destructive cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none"
             >
               <X className="h-4 w-4 stroke-[2.5]" />
             </Button>

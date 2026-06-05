@@ -33,7 +33,7 @@ export function TalentUploadTab() {
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_320px] gap-8">
         {/* Main Ingestion Engine - Standardized for Phase Z0 [cite: 948, 1001] */}
         <Card className="rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
-          <div className="h-1.5 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+          <div className="h-1.5 w-full bg-gradient-to-r from-primary via-primary to-primary" />
           <CardContent className="p-8">
             <div className="mb-6">
               <h3 className="text-lg font-black uppercase italic tracking-tight">Bulk upload</h3>
@@ -80,7 +80,7 @@ export function TalentUploadTab() {
                 {/* Badge component now correctly imported */}
                 <Badge
                   variant="outline"
-                  className="text-[8px] bg-emerald-500/10 text-emerald-500 border-emerald-500/20"
+                  className="text-[8px] bg-success/10 text-success border-success/20"
                 >
                   v2.5 Flash
                 </Badge>

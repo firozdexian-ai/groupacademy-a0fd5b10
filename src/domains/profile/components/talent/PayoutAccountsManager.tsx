@@ -270,7 +270,7 @@ export function PayoutAccountsManager() {
                     {rowItem.is_primary && (
                       <Badge
                         variant="outline"
-                        className="rounded px-1.5 h-4.5 text-[8px] font-extrabold tracking-wider uppercase border border-transparent bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 gap-0.5 flex items-center leading-none shadow-xs shrink-0"
+                        className="rounded px-1.5 h-4.5 text-[8px] font-extrabold tracking-wider uppercase border border-transparent bg-success/10 text-success dark:text-success gap-0.5 flex items-center leading-none shadow-xs shrink-0"
                       >
                         <Star className="h-2.5 w-2.5 fill-current stroke-[2.5]" />
                         <span className="pt-0.5">Primary</span>
@@ -302,7 +302,7 @@ export function PayoutAccountsManager() {
                     variant="ghost"
                     onClick={() => handleAccountNodeExpunge(rowItem.id)}
                     disabled={busy}
-                    className="h-7 w-7 rounded-lg text-muted-foreground/40 hover:text-rose-500 hover:bg-rose-500/10 cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none"
+                    className="h-7 w-7 rounded-lg text-muted-foreground/40 hover:text-destructive hover:bg-destructive/10 cursor-pointer transition-colors shrink-0 p-0 border-none shadow-none"
                   >
                     <Trash2 className="h-4 w-4 stroke-[2.2]" />
                   </Button>
@@ -434,7 +434,7 @@ export function PayoutAccountsManager() {
 
         {/* HUD LEVEL 3: RECTILINEAR OVERLAY BOTTOM METRIC LOG OMNIPRESENCE SHIELD */}
         <div className="mt-4 flex items-center justify-center gap-1.5 py-2.5 border-t border-border/10 select-none shadow-none pointer-events-none tracking-normal font-bold text-[9px] text-muted-foreground/40 font-mono leading-none shrink-0 uppercase w-full">
-          <Zap className="h-3.5 w-3.5 text-amber-500 fill-amber-500/10 stroke-[2.2] shrink-0 animate-pulse" />
+          <Zap className="h-3.5 w-3.5 text-warning fill-warning/10 stroke-[2.2] shrink-0 animate-pulse" />
           <span>Compensation payout routing ledger synchronization indexes complete</span>
         </div>
       </CardContent>
