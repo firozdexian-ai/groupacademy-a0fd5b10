@@ -63,52 +63,56 @@ export default function Gro10xCompanyPage() {
 
   const load = useCallback(async () => {
     setLoading(true);
-    let companyId = paramId;
-    let editor = false;
-    if (!companyId && user?.id) {
-      const m = await getActiveCompanyMembership(user.id);
-      companyId = m?.company_id;
-      // Owner only — admins can manage hiring/CRM but not the public face.
-      editor = m?.role === "owner";
-    } else if (companyId && user?.id) {
-      const role = await getCompanyMemberRole(user.id, companyId);
-      editor = role === "owner";
-    }
-    setCanEdit(editor);
+    try {
+      let companyId = paramId;
+      let editor = false;
+      if (!companyId && user?.id) {
+        const m = await getActiveCompanyMembership(user.id);
+        companyId = m?.company_id;
+        // Owner only — admins can manage hiring/CRM but not the public face.
+        editor = m?.role === "owner";
+      } else if (companyId && user?.id) {
+        const role = await getCompanyMemberRole(user.id, companyId);
+        editor = role === "owner";
+      }
+      setCanEdit(editor);
 
-    if (!companyId) {
-      // Bail early so the empty state renders instead of a perpetual spinner.
-      setCompany(null);
-      setMembers([]);
-      setJobs([]);
+      if (!companyId) {
+        // Bail early so the empty state renders instead of a perpetual spinner.
+        setCompany(null);
+        setMembers([]);
+        setJobs([]);
+        return;
+      }
+
+      const c = await getCompanyPublicProfile(companyId);
+      setCompany(c as Company | null);
+
+      // Team — fetch members then enrich with talents
+      const rawMembers = await listActiveCompanyMembers(companyId);
+      const userIds = rawMembers.map((m: any) => m.user_id).filter(Boolean) as string[];
+      const talentRows = await listTalentMiniProfilesByUserIds(userIds);
+      const talents: Record<string, any> = Object.fromEntries(
+        talentRows.map((row: any) => [row.user_id, row]),
+      );
+      setMembers(
+        rawMembers.map((m: any) => ({
+          ...m,
+          full_name: talents[m.user_id]?.full_name ?? null,
+          profile_photo_url: talents[m.user_id]?.profile_photo_url ?? null,
+          custom_profession: talents[m.user_id]?.custom_profession ?? null,
+        })),
+      );
+
+      // Open jobs
+      const jobRows = await listActiveJobsByCompanyId(companyId, 10);
+      setJobs(jobRows as Job[]);
+    } catch (err: any) {
+      console.error("[Gro10xCompanyPage] load failed", err);
+      toast.error(err?.message ?? "Could not load company page");
+    } finally {
       setLoading(false);
-      return;
     }
-
-    const c = await getCompanyPublicProfile(companyId);
-    setCompany(c as Company | null);
-
-    // Team — fetch members then enrich with talents
-    const rawMembers = await listActiveCompanyMembers(companyId);
-    const userIds = rawMembers.map((m: any) => m.user_id).filter(Boolean) as string[];
-    const talentRows = await listTalentMiniProfilesByUserIds(userIds);
-    const talents: Record<string, any> = Object.fromEntries(
-      talentRows.map((row: any) => [row.user_id, row]),
-    );
-    setMembers(
-      rawMembers.map((m: any) => ({
-        ...m,
-        full_name: talents[m.user_id]?.full_name ?? null,
-        profile_photo_url: talents[m.user_id]?.profile_photo_url ?? null,
-        custom_profession: talents[m.user_id]?.custom_profession ?? null,
-      })),
-    );
-
-    // Open jobs
-    const jobRows = await listActiveJobsByCompanyId(companyId, 10);
-    setJobs(jobRows as Job[]);
-
-    setLoading(false);
   }, [paramId, user?.id]);
 
   useEffect(() => {
