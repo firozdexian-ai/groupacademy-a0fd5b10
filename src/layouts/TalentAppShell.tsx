@@ -55,7 +55,7 @@ import { getWhatsAppLink } from "@/lib/constants/support";
 import { downloadFile } from "@/lib/downloadFile";
 import { toast } from "sonner";
 import logoIcon from "@/assets/logo-icon.png";
-import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
+import { CreditPurchaseSheet } from "@/domains/finance/components/talent/CreditPurchaseSheet";
 import { useCreditPurchase } from "@/domains/finance/hooks/useCreditPurchase";
 import { GlobalAIBubble } from "@/components/ai/GlobalAIBubble";
 

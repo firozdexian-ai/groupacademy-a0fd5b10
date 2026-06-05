@@ -15,7 +15,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Send, Map, Loader2, Sparkles } from "lucide-react";
 import { toast } from "sonner";
 import ReactMarkdown from "react-markdown";
-import { RoadmapBuilderSheet } from "@/components/abroad/RoadmapBuilderSheet";
+import { RoadmapBuilderSheet } from "@/domains/abroad/components/talent/RoadmapBuilderSheet";
 import { cn } from "@/lib/utils";
 
 // =========================================================================

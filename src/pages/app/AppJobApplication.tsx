@@ -31,7 +31,7 @@ import {
  Inbox,
 } from "lucide-react";
 import { toast } from "sonner";
-import { CreditPurchaseSheet } from "@/components/credits/CreditPurchaseSheet";
+import { CreditPurchaseSheet } from "@/domains/finance/components/talent/CreditPurchaseSheet";
 import { cn } from "@/lib/utils";
 import { enhanceCoverLetter, sendJobApplication, generateJobAssessment } from "@/domains/jobs/api/jobsApi";
 
