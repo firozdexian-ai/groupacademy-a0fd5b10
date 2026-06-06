@@ -39,6 +39,47 @@ serve(async (req) => {
     const LOVABLE_API_KEY = Deno.env.get("LOVABLE_API_KEY");
     const SUPA_URL = Deno.env.get("SUPABASE_URL");
     const SERVICE_KEY = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY");
+    const admin = SUPA_URL && SERVICE_KEY ? createClient(SUPA_URL, SERVICE_KEY) : null;
+    const sessionId = context?.session_id || context?.sessionId;
+
+    // Server-side CAPTCHA verification path. Client sends the user's answer in
+    // context.user_quiz_answer; we compare against the stored expected answer
+    // (never sent to the client) and return a verdict without going through AI.
+    if (admin && sessionId && typeof context?.user_quiz_answer === "string") {
+      const submitted = String(context.user_quiz_answer).toLowerCase().replace(/[^a-z0-9]/g, "");
+      const { data: row } = await admin
+        .from("aisha_conversations")
+        .select("pending_quiz_answer")
+        .eq("session_id", String(sessionId))
+        .maybeSingle();
+      const expected = (row?.pending_quiz_answer || "").toLowerCase().replace(/[^a-z0-9]/g, "");
+      const passed = expected.length > 0 && submitted === expected;
+      if (passed) {
+        await admin
+          .from("aisha_conversations")
+          .update({ pending_quiz_answer: null, last_step: "quiz_passed", updated_at: new Date().toISOString() })
+          .eq("session_id", String(sessionId));
+        return new Response(
+          JSON.stringify({
+            reply: "Great. Now create a password (at least 8 characters).",
+            action: "set_password",
+            quiz: null,
+            quiz_passed: true,
+          }),
+          { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+        );
+      }
+      return new Response(
+        JSON.stringify({
+          reply: "Not quite — please try the human-check question again.",
+          action: "verify_human",
+          quiz: null,
+          quiz_passed: false,
+        }),
+        { headers: { ...corsHeaders, "Content-Type": "application/json" } },
+      );
+    }
+
 
     // Persona resolution: pulled from the WaaS instance bound to this auth-page
     // visitor (mkt-seo-01 country-specific Marketing & SEO agent). Legacy
