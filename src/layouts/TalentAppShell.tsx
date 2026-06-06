@@ -275,19 +275,18 @@ export function TalentAppShell() {
                           icon: Download,
                           label: "Download CV",
                           action: () => {
-                            if (talent?.cvUrl) downloadFile(talent.cvUrl, `${talent.fullName || "cv"}-resume.pdf`);
-                            else toast.info("No CV uploaded yet. Add one from your profile.");
+                            if (talent?.cvUrl) {
+                              downloadFile(talent.cvUrl, `${talent.fullName || "cv"}-resume.pdf`);
+                            } else {
+                              navigate("/app/profile/edit");
+                              toast.info("Upload your CV here to download or apply for jobs.");
+                            }
                           },
                         },
                         {
                           icon: ShieldCheck,
                           label: "Verify your profile",
                           action: () => navigate("/app/profile/verify"),
-                        },
-                        {
-                          icon: HelpCircle,
-                          label: "Help Center",
-                          action: () => window.open(getWhatsAppLink("Hi! I need help with the app"), "_blank"),
                         },
                         { icon: Info, label: "About GroUp Academy", action: () => window.open("/", "_blank") },
                         {
@@ -400,9 +399,9 @@ export function TalentAppShell() {
               <button
                 key={item.path}
                 onClick={() => navigate(item.path)}
-                className={`flex flex-col items-center justify-center w-16 lg:w-20 h-full border-b-2 transition-all group ${isActive(item.path) ? "border-black dark:border-white text-black dark:text-white" : "border-transparent text-muted-foreground"}`}
+                className={`flex flex-col items-center justify-center w-16 lg:w-20 h-full border-b-2 transition-all active:scale-95 duration-200 group ${isActive(item.path) ? "border-black dark:border-white text-black dark:text-white scale-105" : "border-transparent text-muted-foreground hover:text-foreground"}`}
               >
-                <item.icon className={`h-6 w-6 mb-0.5 ${isActive(item.path) ? "fill-current" : ""}`} />
+                <item.icon className={`h-6 w-6 mb-0.5 transition-transform duration-200 ${isActive(item.path) ? "fill-current" : ""}`} />
                 <span className="text-[10px] lg:text-xs font-medium">{item.label}</span>
               </button>
             ))}
@@ -488,8 +487,12 @@ export function TalentAppShell() {
                 </DropdownMenuItem>
                 <DropdownMenuItem
                   onClick={() => {
-                    if (talent?.cvUrl) downloadFile(talent.cvUrl, `${talent.fullName || "cv"}-resume.pdf`);
-                    else toast.info("No CV uploaded yet. Add one from your profile.");
+                    if (talent?.cvUrl) {
+                      downloadFile(talent.cvUrl, `${talent.fullName || "cv"}-resume.pdf`);
+                    } else {
+                      navigate("/app/profile/edit");
+                      toast.info("Upload your CV here to download or apply for jobs.");
+                    }
                   }}
                   className="cursor-pointer"
                 >
@@ -567,7 +570,9 @@ export function TalentAppShell() {
       {/* --- HUD: MAIN_CONTENT_NODES --- */}
       <main className="max-w-7xl mx-auto py-2 md:py-6 px-0 md:px-4 pb-24 md:pb-6">
         <RouteErrorBoundary fallbackPath="/app/feed" fallbackLabel="Back to home">
-          <Outlet />
+          <div key={location.pathname} className="animate-in fade-in slide-in-from-bottom-2 duration-300 transform-gpu">
+            <Outlet />
+          </div>
         </RouteErrorBoundary>
       </main>
 
@@ -593,11 +598,11 @@ export function TalentAppShell() {
           <button
             key={item.path}
             onClick={() => navigate(item.path)}
-            className={`flex flex-col items-center justify-center w-full h-full transition-colors ${isActive(item.path) ? "text-primary" : "text-gray-500"}`}
+            className={`flex flex-col items-center justify-center w-full h-full transition-all active:scale-95 duration-200 ${isActive(item.path) ? "text-primary scale-105" : "text-gray-500 hover:text-foreground"}`}
           >
-            <item.icon className={`h-5 w-5 mb-0.5 ${isActive(item.path) ? "fill-current" : ""}`} />
+            <item.icon className={`h-5 w-5 mb-0.5 transition-transform duration-200 ${isActive(item.path) ? "fill-current" : ""}`} />
             <span className="text-[10px] font-medium">{item.label}</span>
-            {isActive(item.path) && <span className="w-1 h-1 rounded-full bg-primary mt-0.5" />}
+            {isActive(item.path) && <span className="w-1 h-1 rounded-full bg-primary mt-0.5 animate-in zoom-in duration-200" />}
           </button>
         ))}
       </nav>

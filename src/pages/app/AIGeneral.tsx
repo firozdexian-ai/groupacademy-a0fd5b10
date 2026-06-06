@@ -31,12 +31,21 @@ export default function AIGeneral() {
  isStreaming,
  isLoading,
  sendMessage,
+ sessionId,
  } = useAIGeneralChat(extractedQueryParameterStr);
  const [textConsoleInput, setTextConsoleInput] = React.useState<string>("");
  const viewportScrollAnchorRef = React.useRef<HTMLDivElement>(null);
 
  // Cast background datasets to explicit type structures ahead of rendering blocks
  const typedMessagesRoster = rawMessagesPayload as unknown as ChatMessage[];
+
+ // Consume new search parameter from URL dynamically and clear it to clean navigation state
+ React.useEffect(() => {
+   if (extractedQueryParameterStr && !isLoading && !isStreaming && sessionId) {
+     sendMessage(extractedQueryParameterStr);
+     executeNavigationHook("/app/ai-general", { replace: true });
+   }
+ }, [extractedQueryParameterStr, isLoading, isStreaming, sessionId, sendMessage, executeNavigationHook]);
 
  // =========================================================================
  // LIFECYCLE SECTOR 1: HARDWARE-ACCELERATED ANIMATION SCROLL ANCHORING

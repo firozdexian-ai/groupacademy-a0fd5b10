@@ -129,7 +129,7 @@ export default function Withdrawals() {
  return (
  <div className={PAGE_SHELL_WIDE}>
  <header className="flex items-center gap-5">
- <Button variant="ghost" size="icon" aria-label="Go back" className="rounded-xl h-11 w-11" onClick={() => navigate(-1)}>
+ <Button variant="ghost" size="icon" aria-label="Go back" className="rounded-xl h-11 w-11" onClick={() => navigate("/app/feed")}>
  <ArrowLeft className="h-5 w-5 text-primary" />
  </Button>
  <div>

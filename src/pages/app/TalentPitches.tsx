@@ -23,7 +23,7 @@ export default function TalentPitches() {
  <header className="sticky top-0 z-10 bg-[#0B1220]/95 border-b border-white/5 px-4 py-2.5">
  <div className="max-w-2xl mx-auto flex items-center gap-2">
  <button
- onClick={() => navigate(-1)}
+ onClick={() => navigate("/app/profile")}
  className="h-8 w-8 grid place-items-center rounded-lg text-slate-300 hover:bg-white/5"
  >
  <ArrowLeft className="h-4 w-4" />
