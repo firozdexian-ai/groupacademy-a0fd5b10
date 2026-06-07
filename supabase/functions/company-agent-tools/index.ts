@@ -36,7 +36,8 @@ const ToolSchemas: Record<string, z.ZodTypeAny> = {
   get_job_applicants: z.object({ job_id: idLike }).passthrough(),
   move_application_stage: z.object({
     application_id: idLike,
-    stage: z.string().min(1),
+    to_status: z.string().min(1).optional(),
+    stage: z.string().min(1).optional(),
   }).passthrough(),
   accept_gig_bid: z.object({ bid_id: idLike }).passthrough(),
   search_talent: z.object({}).passthrough(),
@@ -515,7 +516,7 @@ const PIPELINE_STATUSES = new Set([
 
 async function move_application_stage(ctx: Ctx, a: any) {
   const appId = String(a.application_id ?? "").trim();
-  const to = String(a.to_status ?? "").trim();
+  const to = String(a.to_status ?? a.stage ?? "").trim();
   if (!appId) return { ok: false, error: "application_id required" };
   if (!PIPELINE_STATUSES.has(to)) return { ok: false, error: `Invalid stage: ${to}` };
 
