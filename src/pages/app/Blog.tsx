@@ -254,12 +254,12 @@ export default function Blog() {
  </div>
  ) : (
  <div className="block w-full">
- <EmptyState
- icon={FileText}
- title="Registry Filter Cleared"
- description="No brief analysis descriptions found matching the requested filter query conditions matrix."
- action={{ label: "Reset Filtering Coordinates", onClick: handlePurgeFiltersAction }}
- />
+  <EmptyState
+  icon={FileText}
+  title="Filters Cleared"
+  description="No articles found matching the requested category or search query."
+  action={{ label: "Reset Filters", onClick: handlePurgeFiltersAction }}
+  />
  </div>
  )}
  </div>

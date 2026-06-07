@@ -279,6 +279,7 @@ export default function ProfileEdit() {
  )}
  <p className="text-sm font-medium">Upload your CV</p>
  <p className="text-xs text-muted-foreground mt-1">PDF or Word — we'll auto-fill your profile</p>
+ <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 mt-1">Cost: 0 credits (Free)</p>
  </label>
  )}
  </CardContent>

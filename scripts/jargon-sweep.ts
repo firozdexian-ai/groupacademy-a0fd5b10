@@ -8,7 +8,8 @@
  * Operational Scope: Talent-facing app routes only.
  * System Protection: B2B, Admin dashboard, and staff views are safely bypassed.
  */
-import { readFileSync, writeFileSync, mkdirSync } from "fs";
+import { readFileSync, writeFileSync, mkdirSync, readdirSync, statSync } from "fs";
+import { join } from "path";
 import { execSync } from "child_process";
 
 // Target operational paths to check
@@ -69,22 +70,49 @@ interface ProductionCopyHit {
 }
 
 /**
- * Executes a fast text search query through project files using ripgrep.
+ * Executes a fast text search query through project files.
  * Gracefully defaults to an empty layout if the folder structure changes.
  */
 function fetchProjectFiles(): string[] {
-  const queryCommand = `rg -l -g '*.{ts,tsx,js,jsx}' -e '${REPLACEMENT_LOOKUP_KEYWORDS.join("|")}' ${PRODUCTION_SCAN_TARGETS.join(" ")}`;
-  try {
-    const rawOutput = execSync(queryCommand, { encoding: "utf8", maxBuffer: 50 * 1024 * 1024 });
-    return rawOutput
-      .trim()
-      .split("\n")
-      .filter(Boolean)
-      .filter((file) => !ADMINISTRATIVE_BYPASS_PATTERNS.some((pattern) => pattern.test(file)));
-  } catch (error) {
-    // Graceful check degradation for missing folders or zero hits to prevent terminal failure
-    return [];
+  const files: string[] = [];
+
+  function walk(dir: string) {
+    let list;
+    try {
+      list = readdirSync(dir);
+    } catch (e) {
+      return;
+    }
+    for (const file of list) {
+      const fullPath = join(dir, file).replace(/\\/g, "/");
+      let stat;
+      try {
+        stat = statSync(fullPath);
+      } catch (e) {
+        continue;
+      }
+      if (stat.isDirectory()) {
+        walk(fullPath);
+      } else if (stat.isFile() && /\.(tsx|ts|jsx|js)$/.test(file)) {
+        try {
+          const content = readFileSync(fullPath, "utf8");
+          if (JARGON_DETECTION_ENGINE.test(content) || capitalizedWordChainPattern.test(content)) {
+            if (!ADMINISTRATIVE_BYPASS_PATTERNS.some((pattern) => pattern.test(fullPath))) {
+              files.push(fullPath);
+            }
+          }
+        } catch (e) {
+          // ignore read errors
+        }
+      }
+    }
   }
+
+  for (const target of PRODUCTION_SCAN_TARGETS) {
+    walk(target);
+  }
+
+  return files;
 }
 
 /**

@@ -91,7 +91,7 @@ export default function BlogPost() {
  if (navigator.share) {
  await navigator.share({
  title: activeArticleRecord.title,
- text: activeArticleRecord.excerpt || "GroUp Academy Knowledge Briefings Spec Node.",
+ text: activeArticleRecord.excerpt || "GroUp Academy article content.",
  url: finalizedShareTargetUrlStr,
  });
  } else {
@@ -100,9 +100,9 @@ export default function BlogPost() {
  } catch (suppressedShareException) {
  try {
  await navigator.clipboard.writeText(finalizedShareTargetUrlStr);
- toast.success("Secure brief parameter routing link copied to clipboard buffer.");
- } catch (fallbackClipboardError) {
- toast.error("Clipboard authorization refused by candidate hardware container.");
+ toast.success("Article link copied to clipboard.");
+ } catch (suppressedShareException) {
+ toast.error("Failed to copy link to clipboard.");
  }
  }
  }, [activeArticleRecord]);
@@ -147,8 +147,8 @@ export default function BlogPost() {
  <div className={cn(PAGE_SHELL, "w-full text-left block antialiased")}>
  <EmptyState
  icon={ShieldAlert}
- title="Brief Record De-Indexed"
- description="The requested insight analysis pipeline data mapping parameters have been restricted or pruned from active catalog tracks."
+ title="Article Not Found"
+ description="The requested article could not be found or has been removed from the catalog."
  action={{ label: "Return to Insights Board", onClick: handleReturnToInsightsCatalog }}
  />
  </div>
@@ -215,11 +215,11 @@ export default function BlogPost() {
  )}
  <span className="flex items-center gap-1 shrink-0">
  <Clock className="h-3.5 w-3.5 stroke-[2.2]" />
- <span>SPEED WEIGHT: {(activeArticleRecord.reading_time_mins || 5).toString()} MIN READ</span>
+ <span>READ TIME: {(activeArticleRecord.reading_time_mins || 5).toString()} MIN READ</span>
  </span>
  <span className="flex items-center gap-1 shrink-0">
  <Eye className="h-3.5 w-3.5 stroke-[2.2]" />
- <span>AUDIT READS: {(activeArticleRecord.views || 0).toLocaleString()}</span>
+ <span>VIEWS: {(activeArticleRecord.views || 0).toLocaleString()}</span>
  </span>
  </div>
  </div>
@@ -273,7 +273,7 @@ export default function BlogPost() {
  className="h-8.5 px-4 rounded-lg font-mono text-[10px] font-extrabold uppercase tracking-wider cursor-pointer shadow-2xs gap-1.5 transform-gpu active:scale-[0.985]"
  onClick={handleLaunchExternalArticleFrame}
  >
- <span>Initialize External Link Container</span>
+ <span>Open External Article</span>
  <ExternalLink className="h-3.5 w-3.5 stroke-[2.5] shrink-0" />
  </Button>
  </CardContent>
@@ -307,7 +307,7 @@ export default function BlogPost() {
  className="h-8.5 px-3.5 rounded-lg border border-border/60 bg-background/50 font-mono text-[10px] font-extrabold uppercase tracking-wider gap-1.5 cursor-pointer shadow-2xs"
  >
  <Share2 className="h-3.5 w-3.5 stroke-[2.2] text-muted-foreground/60 shrink-0" />
- <span>Broadcast Coordinates</span>
+ <span>Share Article</span>
  </Button>
  <Button
  type="button"
@@ -316,7 +316,7 @@ export default function BlogPost() {
  onClick={handleTransitionToAIAgentsWorkspace}
  >
  <Sparkles className="h-3.5 w-3.5 stroke-[2.2] fill-current text-primary-foreground shrink-0" />
- <span>Consult Copilot Core</span>
+ <span>Ask AI Coach</span>
  </Button>
  </div>
  </div>

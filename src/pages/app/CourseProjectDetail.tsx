@@ -89,17 +89,114 @@ interface CompetitionDetailProps {
 }
 
 const SUBTASK_KIND_LABELS: Record<string, string> = {
- cover: "Cover Image Specs",
- intro_video: "Introductory Video",
- module_slides: "Module Lecture Slides",
- module_quiz: "Module Quiz Matrix",
- module_video: "Module Production Video",
- reading: "Reading Reference Core",
- caption: "Timed Subtitles / Captions",
- translation: "Localization Translation",
- exercise: "Applied Practice Exercise",
- flashcards: "Active Recall Flashcards",
- other: "Custom Specified Asset",
+  cover: "Cover Image",
+  intro_video: "Intro Video",
+  module_slides: "Lecture Slides",
+  module_quiz: "Quiz Questions",
+  module_video: "Recorded Video",
+  reading: "Reading Material",
+  caption: "Subtitles & Captions",
+  translation: "Translation",
+  exercise: "Practice Exercise",
+  flashcards: "Flashcards",
+  module_audio: "Audio Narration",
+  case_study: "Case Study",
+  downloadable_template: "Resource Template",
+  instructor_bio: "Instructor Bio",
+  course_description_seo: "SEO & Description",
+  thumbnail_set: "Thumbnail Set",
+  assessment_final: "Final Assessment",
+  certificate_metadata: "Certificate Metadata",
+  promo_clip: "Promo Clip",
+  resource_links: "Resource Links",
+  other: "Other Resources",
+};
+
+const SUBTASK_KIND_GUIDES: Record<string, { instructions: string; formatTips: string }> = {
+  cover: {
+    instructions: "Design a high-impact course cover image. It should be visually engaging, match the course branding, and be readable at various sizes.",
+    formatTips: "Recommended: PNG or JPG, 16:9 aspect ratio (e.g., 1920x1080px), under 5MB."
+  },
+  intro_video: {
+    instructions: "Record or edit a compelling course introduction/trailer video. Introduce the course objectives, target audience, and key value propositions.",
+    formatTips: "Recommended: MP4 or MOV, 1080p resolution, under 100MB, duration 60-90 seconds."
+  },
+  module_slides: {
+    instructions: "Create professional presentation slide decks for the course modules following the brand's layout and font guidelines.",
+    formatTips: "Recommended: PDF, PPTX, or Google Slides link, structured with clear module headers."
+  },
+  module_quiz: {
+    instructions: "Draft comprehensive quiz questions with multiple choice answers, correct answer keys, and clear explanations for each option.",
+    formatTips: "Recommended: CSV, XLSX, or DOCX template listing questions, options A/B/C/D, key, and rationale."
+  },
+  module_video: {
+    instructions: "Upload the main recorded lecture video for this module. Ensure audio is clear and visual demonstrations are easy to follow.",
+    formatTips: "Recommended: MP4, 1080p, well-lit video, high-quality audio narration."
+  },
+  reading: {
+    instructions: "Provide supplementary reading materials, textbooks chapters, or written transcripts that elaborate on module concepts.",
+    formatTips: "Recommended: PDF or Markdown formatting, with clean headings and reference links."
+  },
+  caption: {
+    instructions: "Create synchronized subtitles and captions for the module video to ensure accessibility and better learning outcomes.",
+    formatTips: "Recommended: SRT or VTT subtitle format, matching the video timestamp exactly."
+  },
+  translation: {
+    instructions: "Translate course titles, lecture outlines, slides, or scripts into the target language with high accuracy and local tone.",
+    formatTips: "Recommended: DOCX, PDF, or JSON mapping source phrases to target translations."
+  },
+  exercise: {
+    instructions: "Design hands-on practice exercises, homework assignments, or coding challenges that learners can execute to practice.",
+    formatTips: "Recommended: ZIP file containing exercise instructions, starter files, and solution guides."
+  },
+  flashcards: {
+    instructions: "Build a set of quick-review flashcards covering core definitions, terms, and key formulas from the module.",
+    formatTips: "Recommended: CSV or Excel sheet with 'Front' and 'Back' columns for easy importing."
+  },
+  module_audio: {
+    instructions: "Produce a high-quality audio narration or podcast version of the module content for learners who prefer listening on the go.",
+    formatTips: "Recommended: MP3 or WAV format, clear voice narration, minimal background noise, 128kbps+."
+  },
+  case_study: {
+    instructions: "Write a detailed real-world case study analyzing a problem, the strategy used to address it, and the measured outcomes.",
+    formatTips: "Recommended: PDF or DOCX file, structured with Summary, Challenge, Implementation, and Key Takeaways."
+  },
+  downloadable_template: {
+    instructions: "Develop ready-to-use worksheets, planning templates, checklists, or calculator spreadsheets that help students implement learning.",
+    formatTips: "Recommended: XLSX, PDF checklist, or DOCX worksheet template."
+  },
+  instructor_bio: {
+    instructions: "Write a professional instructor profile bio detailing expertise, credentials, and achievements, accompanied by a clean headshot.",
+    formatTips: "Recommended: ZIP or folder with bio text in a TXT/DOCX file and high-res portrait image (square aspect ratio)."
+  },
+  course_description_seo: {
+    instructions: "Craft SEO-optimized course landing page copy including meta titles, meta descriptions, target keywords, and persuasive copy.",
+    formatTips: "Recommended: DOCX or Markdown format, clearly indicating H1/H2 structure, keywords, and description lengths."
+  },
+  thumbnail_set: {
+    instructions: "Generate custom, cohesive video thumbnail designs for each lesson/module to make the curriculum outline look polished and unified.",
+    formatTips: "Recommended: ZIP file containing individual PNG/JPG images, named sequentially (e.g., module1.png)."
+  },
+  assessment_final: {
+    instructions: "Create a final capstone project brief, exam questions pool, or final comprehensive assessment evaluating overall competency.",
+    formatTips: "Recommended: PDF instructions or markdown file with grading rubrics and sample answers."
+  },
+  certificate_metadata: {
+    instructions: "Configure the metadata, title, badge graphic, and custom text options to be displayed on the student completion certificates.",
+    formatTips: "Recommended: JSON configuration or PDF blueprint layout showing text placeholders."
+  },
+  promo_clip: {
+    instructions: "Produce a short, high-energy teaser clip (30-60 seconds) suitable for social media promotion and marketing campaigns.",
+    formatTips: "Recommended: MP4 format, 9:16 portrait (e.g., 1080x1920px for reels) or 16:9 landscape, under 50MB."
+  },
+  resource_links: {
+    instructions: "Curate a list of high-quality external resources, documentation links, books, tools, and community links for further learning.",
+    formatTips: "Recommended: Markdown or PDF document with clean categories, titles, URLs, and descriptions."
+  },
+  other: {
+    instructions: "Upload any other learning resources, files, or reference materials designated by the course designer.",
+    formatTips: "Format specified by course coordinator."
+  }
 };
 
 /**
@@ -261,11 +358,11 @@ export default function CourseProjectDetail() {
  variant="outline"
  className="font-mono text-[8px] font-black uppercase px-1.5 h-4.5 rounded-xs border-primary/20 bg-primary/5 text-primary tracking-wide pt-0 leading-none shrink-0"
  >
- Authoritative Course Production Project
+ Course Project
  </Badge>
  </div>
  <h1 className="text-sm sm:text-base font-bold uppercase tracking-wide text-foreground truncate block pt-0.5 select-text">
- {associatedCourseMetadata?.title || "Untitled Production Blueprint Record"}
+ {associatedCourseMetadata?.title || "Untitled Course Project"}
  </h1>
  {associatedCourseMetadata?.description && (
  <p className="text-[11px] sm:text-xs font-medium text-muted-foreground/70 leading-normal line-clamp-2 select-text block pr-2">
@@ -284,12 +381,12 @@ export default function CourseProjectDetail() {
  />
  <StatRow
  icon={Coins}
- labelText="Net Payout Bounty"
+ labelText="Project Reward"
  valueText={`${calculatedTotalRewardCreditsInt.toLocaleString()} Credits`}
  />
  <StatRow
  icon={Clock}
- labelText={activeProjectNode.deadline ? "Constraint Horizon" : "Ingress Pipeline Status"}
+ labelText={activeProjectNode.deadline ? "Deadline" : "Status"}
  valueText={
  activeProjectNode.deadline
  ? formatDistanceToNow(new Date(activeProjectNode.deadline), { addSuffix: true }).toUpperCase()
@@ -321,7 +418,7 @@ export default function CourseProjectDetail() {
  {claimProjectMutation.isPending && (
  <Loader2 className="h-3.5 w-3.5 animate-spin shrink-0 inline-block align-middle" />
  )}
- <span className="inline-block align-middle pt-0.5">Claim Production Blueprint Space</span>
+ <span className="inline-block align-middle pt-0.5">Claim Project</span>
  </Button>
  ) : isCandidateOwnerFlag && !["submitted", "approved", "paid"].includes(activeProjectNode.status) ? (
  <Button
@@ -335,12 +432,12 @@ export default function CourseProjectDetail() {
  ) : (
  <Send className="h-3.5 w-3.5 stroke-[2.2] inline-block shrink-0 align-middle" />
  )}
- <span className="inline-block align-middle pt-0.5">Authorize Entire Assignment Submission</span>
+ <span className="inline-block align-middle pt-0.5">Submit Entire Project</span>
  </Button>
  ) : !isCandidateOwnerFlag && activeProjectNode.claimed_by ? (
  <div className="rounded-lg border border-amber-500/20 bg-amber-500/[0.01] p-3 font-mono text-[10px] font-black uppercase tracking-wide text-amber-700 flex items-center gap-2 select-none pointer-events-none leading-none block w-full mt-1 animate-pulse">
  <Lock className="h-4 w-4 stroke-[2.2] shrink-0" />
- <span>Project Target Mapped and Locked Under Alternative Identity Node</span>
+ <span>Project is claimed by another user</span>
  </div>
  ) : null}
  </CardContent>
@@ -356,8 +453,8 @@ export default function CourseProjectDetail() {
  <div className="w-full block select-none pointer-events-none text-left">
  <EmptyState
  icon={ShieldAlert}
- title="Operational Subtasks Empty"
- description="Syllabus chapter demands and asset build parameter instructions are clear under this project coordinate."
+ title="No Tasks Found"
+ description="No subtasks have been defined for this course project."
  />
  </div>
  ) : (
@@ -519,19 +616,27 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
  {/* COMPACT INTERACTION ACCORDION VIEWPORT CONTAINER CORES */}
  {expanded && (
  <CardContent className="p-3.5 pt-0 space-y-3.5 border-t border-border/5 bg-muted/[0.01] block w-full leading-none animate-in fade-in duration-150">
- {subtask.brief && (
- <p className="text-xs text-muted-foreground/80 font-medium leading-relaxed block select-text pr-2 pt-2.5">
- {subtask.brief}
- </p>
- )}
- {subtask.expected_format && (
- <div className="font-mono text-sm font-medium text-muted-foreground/40 uppercase tracking-tight block select-none pointer-events-none leading-none pb-2 border-b border-border/5">
- <span>Target Standard Format Matrix Constraint: </span>
- <span className="text-foreground font-sans text-xs sm:text-sm font-semibold lowercase tracking-normal select-text pl-0.5">
- {subtask.expected_format}
- </span>
- </div>
- )}
+ <div className="space-y-3.5 pt-2.5 block w-full">
+    {/* Subtask Brief/Instructions */}
+    <div className="space-y-1 block w-full">
+      <h4 className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide select-none pointer-events-none block leading-none">
+        Instructions & Scope
+      </h4>
+      <p className="text-xs text-muted-foreground/80 font-medium leading-relaxed block select-text pr-2 pt-0.5">
+        {subtask.brief || SUBTASK_KIND_GUIDES[subtask.kind]?.instructions || "Follow instructions provided by the course supervisor."}
+      </p>
+    </div>
+
+    {/* Subtask Format Guide */}
+    <div className="space-y-1 block w-full border-b border-border/5 pb-2.5">
+      <h4 className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide select-none pointer-events-none block leading-none">
+        Target standard format matrix constraint
+      </h4>
+      <p className="text-[11px] font-mono font-semibold text-foreground/80 lowercase tracking-normal select-text pt-0.5">
+        {subtask.expected_format || SUBTASK_KIND_GUIDES[subtask.kind]?.formatTips || "Format specified by course coordinator."}
+      </p>
+    </div>
+  </div>
 
  {isRowContentEditable ? (
  <div className="space-y-3 block w-full leading-none mt-1">
@@ -557,14 +662,14 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
  {isDataMutationPending ? (
  <Loader2 className="h-3.5 w-3.5 animate-spin mx-auto block shrink-0" />
  ) : (
- <span>Commit Subtask Workspace Modifications</span>
+ <span>Save Subtask Changes</span>
  )}
  </Button>
  </div>
  ) : uploadedFilesCollection.length > 0 ? (
  <div className="space-y-2 block w-full pt-1 leading-none border-b border-border/5 pb-2.5">
  <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide select-none pointer-events-none block leading-none">
- Committed File Attachments Manifest
+ Uploaded Files
  </p>
  <ul className="text-xs font-semibold font-mono text-primary leading-none space-y-1.5 block select-text">
  {uploadedFilesCollection.map((fileItem) => (
@@ -577,8 +682,8 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
  ) : (
  <p className="text-[11px] font-medium text-muted-foreground/40 italic select-none pointer-events-none block py-1">
  {isOwner
- ? "This production workspace container must be actively claimed and unlocked to upload credentials targets."
- : "Claim this course construction blueprint to activate work on this subtask parameter."}
+ ? "You must claim this project to upload files."
+ : "Claim this course project to start working on this subtask."}
  </p>
  )}
 

@@ -160,12 +160,12 @@ export default function CreatorAnalytics() {
  }, [currentMetricsMap]);
 
  const funnelDatasetRows = React.useMemo<FunnelRowItem[]>(() => {
- return [
- { label: "Hype Conversion Factor", value: calculatedEngagementFunnel.hype, color: "bg-orange-500" },
- { label: "Comment Generation Density", value: calculatedEngagementFunnel.comment, color: "bg-blue-500" },
- { label: "Bookmark Preservation Index", value: calculatedEngagementFunnel.save, color: "bg-purple-500" },
- { label: "Broadcast Redistribution Ratio", value: calculatedEngagementFunnel.share, color: "bg-cyan-500" },
- ];
+  return [
+    { label: "Hype Rate", value: calculatedEngagementFunnel.hype, color: "bg-orange-500" },
+    { label: "Comment Rate", value: calculatedEngagementFunnel.comment, color: "bg-blue-500" },
+    { label: "Save Rate", value: calculatedEngagementFunnel.save, color: "bg-purple-500" },
+    { label: "Share Rate", value: calculatedEngagementFunnel.share, color: "bg-cyan-500" },
+  ];
  }, [calculatedEngagementFunnel]);
 
  const handleIntervalRangeToggleAction = React.useCallback((extractedValue: string) => {
@@ -237,9 +237,9 @@ export default function CreatorAnalytics() {
  <BarChart3 className="h-4 w-4 stroke-[2.2]" />
  </div>
  <div className="space-y-1 block max-w-xs mx-auto">
- <p className="text-xs font-bold text-foreground uppercase tracking-wide">Creative Footprint Absent</p>
+ <p className="text-xs font-bold text-foreground uppercase tracking-wide">No Posts Created</p>
  <p className="text-[11px] font-semibold text-muted-foreground/50 leading-normal">
- No active publishing record was tracked inside this candidate identity ledger block sequence.
+ You haven't published any posts yet.
  </p>
  </div>
  <Button
@@ -248,7 +248,7 @@ export default function CreatorAnalytics() {
  size="sm"
  className="h-8.5 rounded-lg font-mono text-[10px] font-extrabold uppercase tracking-wider px-4 cursor-pointer shadow-2xs transform-gpu active:scale-[0.985]"
  >
- <Link to="/app/feed">Initialize Blueprint Post</Link>
+ <Link to="/app/feed">Create a Post</Link>
  </Button>
  </CardContent>
  </Card>
@@ -257,7 +257,7 @@ export default function CreatorAnalytics() {
  {/* HUD LEVEL 4: SYSTEM DATA TILES PLACEMENT CONTAINER */}
  <div className="grid grid-cols-2 gap-2 w-full block align-top">
  <Tile
- label="System Impressions"
+ label="Impressions"
  value={(currentMetricsMap.impressions || 0).toLocaleString()}
  delta={calculatePercentageDeltaInt(
  currentMetricsMap.impressions || 0,
@@ -266,14 +266,14 @@ export default function CreatorAnalytics() {
  icon={<Eye className="h-4 w-4 stroke-[2.2]" />}
  />
  <Tile
- label="Hype Factor Units"
+ label="Total Hype"
  value={(currentMetricsMap.hypes || 0).toLocaleString()}
  delta={calculatePercentageDeltaInt(currentMetricsMap.hypes || 0, previousMetricsMap.hypes || 0)}
  icon={<Flame className="h-4 w-4 stroke-[2.2]" />}
  accent="text-orange-600"
  />
  <Tile
- label="Bounty Credits Settled"
+ label="Credits Earned"
  value={Number(currentMetricsMap.credits_earned || 0).toFixed(1)}
  delta={calculatePercentageDeltaInt(
  Math.round(Number(currentMetricsMap.credits_earned || 0)),
@@ -283,21 +283,21 @@ export default function CreatorAnalytics() {
  accent="text-emerald-600"
  />
  <Tile
- label="Response Comments"
+ label="Comments"
  value={(currentMetricsMap.comments || 0).toLocaleString()}
  delta={calculatePercentageDeltaInt(currentMetricsMap.comments || 0, previousMetricsMap.comments || 0)}
  icon={<MessageCircle className="h-4 w-4 stroke-[2.2]" />}
  accent="text-blue-600"
  />
  <Tile
- label="Ledger Preservations"
+ label="Saves"
  value={(currentMetricsMap.saves || 0).toLocaleString()}
  delta={calculatePercentageDeltaInt(currentMetricsMap.saves || 0, previousMetricsMap.saves || 0)}
  icon={<Bookmark className="h-4 w-4 stroke-[2.2]" />}
  accent="text-purple-600"
  />
  <Tile
- label="Redistribution Shares"
+ label="Shares"
  value={(currentMetricsMap.shares || 0).toLocaleString()}
  delta={calculatePercentageDeltaInt(currentMetricsMap.shares || 0, previousMetricsMap.shares || 0)}
  icon={<Share2 className="h-4 w-4 stroke-[2.2]" />}
@@ -309,7 +309,7 @@ export default function CreatorAnalytics() {
  <Card className="rounded-lg border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardContent className="p-4 space-y-4 block w-full leading-none">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5">
- Algorithmic Conversion Funnel Telemetry
+ Conversion Funnel
  </h2>
 
  <div className="space-y-3.5 block w-full leading-none pt-0.5">
@@ -341,7 +341,7 @@ export default function CreatorAnalytics() {
  <Card className="rounded-lg border border-border/60 bg-card/40 shadow-none overflow-hidden block w-full">
  <CardContent className="p-3.5 space-y-3 block w-full leading-none">
  <h2 className="text-xs font-mono font-extrabold uppercase tracking-wide text-muted-foreground/50 select-none block leading-none pb-2 border-b border-border/5 px-0.5">
- Highest-Yield Publication Registry
+ Top Performing Posts
  </h2>
 
  <div className="space-y-2 block w-full pt-0.5">
@@ -352,7 +352,7 @@ export default function CreatorAnalytics() {
  className="block p-3 rounded-lg border border-border/50 bg-background/50 hover:border-border-foreground/10 transition-colors block w-full leading-none"
  >
  <p className="text-xs font-semibold text-foreground/80 leading-normal mb-2 select-text whitespace-normal break-words tracking-normal line-clamp-2 pr-1">
- {postRecordNode.snippet || "— Empty Abstract Parameters Specification —"}
+ {postRecordNode.snippet || "— No description provided —"}
  </p>
 
  {/* Analytical Sub-Metrics Label Rows */}

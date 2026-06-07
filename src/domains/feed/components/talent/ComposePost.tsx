@@ -81,6 +81,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
         author_avatar: talent.profilePhotoUrl || null,
         author_title: talent.customProfession || "Academy member",
         talent_id: talent.id,
+        author_user_id: talent.userId,
         content_type: "text",
         tags: tags.length > 0 ? tags : null,
         status: "published",

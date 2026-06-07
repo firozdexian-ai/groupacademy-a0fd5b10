@@ -404,7 +404,7 @@ export function TalentAppShell() {
               <Sparkles className="absolute left-2.5 top-1/2 -translate-y-1/2 h-4 w-4 text-blue-500 animate-pulse" />
               <Input
                 placeholder="Ask AI General anything..."
-                className="h-9 pl-9 bg-[#EEF3F8] dark:bg-muted/50 border-none transition-all w-64 focus:w-80"
+                className="h-9 pl-9 bg-[#EEF3F8] dark:bg-muted/50 border-none transition-all w-36 focus:w-48 lg:w-60 lg:focus:w-80"
                 value={searchQuery}
                 onChange={(e) => setSearchQuery(e.target.value)}
               />
@@ -581,12 +581,12 @@ export function TalentAppShell() {
             </DropdownMenu>
             <button
               onClick={() => credits.open()}
-              className="group"
+              className="group shrink-0"
               aria-label="Buy credits"
             >
               <Badge
                 variant="secondary"
-                className="gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800 cursor-pointer group-hover:bg-amber-200 dark:group-hover:bg-amber-900/50 transition-colors"
+                className="gap-1 bg-amber-100 dark:bg-amber-900/30 text-amber-800 dark:text-amber-200 border-amber-200 dark:border-amber-800 cursor-pointer group-hover:bg-amber-200 dark:group-hover:bg-amber-900/50 transition-colors whitespace-nowrap shrink-0"
               >
                 <Coins className="h-3 w-3 fill-amber-500" />
                 <span className="font-bold">{balance}</span>

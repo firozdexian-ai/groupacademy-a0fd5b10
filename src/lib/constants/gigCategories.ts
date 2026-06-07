@@ -23,13 +23,13 @@ export const GIG_CATEGORY_MAP = Object.fromEntries(
 // Map a content_gigs.resource_type to a category for legacy rows that haven't been backfilled.
 export function categoryFromResourceType(rt?: string | null): GigCategory {
   const v = (rt || "").toLowerCase();
-  if (["cover","banner","thumbnail","image","poster"].includes(v)) return "creative";
-  if (["video","intro_video","lecture","screencast"].includes(v))  return "video";
+  if (["cover","banner","thumbnail","image","poster","thumbnail_set","certificate_metadata"].includes(v)) return "creative";
+  if (["video","intro_video","lecture","screencast","promo_clip"].includes(v))  return "video";
   if (["slides","deck","presentation"].includes(v))                return "slides";
-  if (["quiz","flashcard","flashcards","assessment"].includes(v))  return "quizzes";
-  if (["exercise","worksheet","practice","lab"].includes(v))       return "practice";
+  if (["quiz","flashcard","flashcards","assessment","assessment_final"].includes(v))  return "quizzes";
+  if (["exercise","worksheet","practice","lab","downloadable_template"].includes(v))       return "practice";
   if (["embed","code","widget"].includes(v))                       return "web_tech";
-  if (["audio","podcast"].includes(v))                             return "audio";
+  if (["audio","podcast","module_audio"].includes(v))                             return "audio";
   if (["translation","localization"].includes(v))                  return "translation";
   return "writing";
 }

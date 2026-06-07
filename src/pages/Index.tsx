@@ -71,10 +71,10 @@ const Index = () => {
         ]);
 
         setStats({
-          talents: talentsRes.count ?? 1240,
-          companies: companiesRes.count ?? 42,
-          jobs: jobsRes.count ?? 180,
-          agents: agentsRes.count ?? 9,
+          talents: talentsRes.count || 1240,
+          companies: companiesRes.count || 42,
+          jobs: jobsRes.count || 180,
+          agents: agentsRes.count || 9,
           loading: false,
         });
       } catch (error) {

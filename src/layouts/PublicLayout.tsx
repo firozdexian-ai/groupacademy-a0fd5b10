@@ -47,6 +47,9 @@ export function PublicLayout({ children }: PublicLayoutProps) {
               <button onClick={() => navigate("/blog")} className="hover:text-primary transition-colors">
                 Blog
               </button>
+              <button onClick={() => navigate("/gro10x")} className="bg-primary/15 text-primary hover:bg-primary/20 transition-colors px-2.5 py-1 rounded-md text-[9px]">
+                For Companies
+              </button>
             </nav>
             <Button
               variant="ghost"
@@ -88,14 +91,17 @@ export function PublicLayout({ children }: PublicLayoutProps) {
                 </p>
               </div>
             </div>
-            <nav className="flex flex-wrap justify-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
-              {["courses", "career-services", "pricing", "agents", "blog"].map((path) => (
+            <nav className="flex flex-wrap justify-center items-center gap-8 text-[10px] font-black uppercase tracking-[0.2em] text-muted-foreground">
+              {["courses", "career-services", "pricing", "agents", "blog", "gro10x"].map((path) => (
                 <button
                   key={path}
-                  onClick={() => navigate(`/${path}`)}
-                  className="hover:text-primary transition-colors"
+                  onClick={() => navigate(path === "gro10x" ? "/gro10x" : `/${path}`)}
+                  className={cn(
+                    "hover:text-primary transition-colors",
+                    path === "gro10x" && "text-primary font-black"
+                  )}
                 >
-                  {path.replace("-", " ")}
+                  {path === "gro10x" ? "For Companies" : path.replace("-", " ")}
                 </button>
               ))}
             </nav>

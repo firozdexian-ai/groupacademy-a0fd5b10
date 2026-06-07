@@ -65,7 +65,7 @@ export function useTalentLists(companyId?: string | null) {
       return data.map((row: any) => ({
         id: String(row.id),
         company_id: String(row.company_id),
-        name: String(row.name ?? "Untitled Procurement List"),
+        name: String(row.name ?? "Untitled List"),
         description: row.description ?? null,
         created_by: String(row.created_by),
         created_at: String(row.created_at),

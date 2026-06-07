@@ -9,6 +9,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { Badge } from "@/components/ui/badge";
 import { useToast } from "@/hooks/use-toast";
 import { usePublicProfileSettings } from "@/domains/profile/hooks/usePublicProfileSettings";
+import { useTalent } from "@/hooks/useTalent";
 import { Globe, Copy, ExternalLink, CheckCircle2, AlertCircle, Loader2 } from "lucide-react";
 import { trackError, trackEvent } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
@@ -24,6 +25,22 @@ export function PublicProfileSettings() {
   const isMountedRef = useRef<boolean>(true);
 
   const { data, isLoading, update, claimHandle } = usePublicProfileSettings();
+  const { talent, isTalentLoading } = useTalent();
+
+  const missingRequirements = useMemo(() => {
+    if (isTalentLoading || !talent) return [];
+    const missing: string[] = [];
+    if (!talent.fullName?.trim()) {
+      missing.push("Full Name");
+    }
+    if (!(talent.email?.trim() || talent.phone?.trim())) {
+      missing.push("Contact Info (Email or Phone)");
+    }
+    if (!Array.isArray(talent.skills) || talent.skills.length === 0) {
+      missing.push("At least 1 Skill");
+    }
+    return missing;
+  }, [talent, isTalentLoading]);
 
   const [handleInput, setHandleInput] = useState("");
   const [bio, setBio] = useState("");
@@ -139,7 +156,7 @@ export function PublicProfileSettings() {
           </div>
           <Switch
             checked={!!data.public_profile_enabled}
-            disabled={update.isPending}
+            disabled={update.isPending || missingRequirements.length > 0}
             onCheckedChange={async (visibilityStateBool) => {
               trackEvent("public_profile_enabled_toggled", { nextState: visibilityStateBool });
               try {
@@ -152,6 +169,24 @@ export function PublicProfileSettings() {
             className="shrink-0 cursor-pointer"
           />
         </div>
+
+        {/* ELIGIBILITY WARNING */}
+        {!isTalentLoading && missingRequirements.length > 0 && (
+          <div className="p-3.5 rounded-xl border border-destructive/20 bg-destructive/5 text-destructive font-semibold text-[11px] leading-relaxed flex flex-col gap-1.5 animate-in slide-in-from-top-1 duration-200">
+            <div className="flex items-center gap-1.5 uppercase tracking-wide text-xs">
+              <AlertCircle className="h-4 w-4 shrink-0 text-destructive" />
+              <span>Ineligible for Public Profile</span>
+            </div>
+            <p className="text-muted-foreground font-normal">
+              To make your profile public, you must complete the following requirements:
+            </p>
+            <ul className="list-disc list-inside pl-1 space-y-0.5 text-foreground font-medium">
+              {missingRequirements.map((req) => (
+                <li key={req}>{req}</li>
+              ))}
+            </ul>
+          </div>
+        )}
 
         {/* CONDITIONAL SUB DIAGNOSTIC INPUT SECTION EXPANSION PANEL */}
         {data.public_profile_enabled && (

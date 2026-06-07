@@ -94,7 +94,7 @@ export function GoogleSignInButton({ className, label = "Continue with Google" }
           loading ? "text-muted-foreground" : "text-foreground",
         )}
       >
-        {loading ? "Establishing Secure Link..." : label}
+        {loading ? "Connecting to Google..." : label}
       </span>
     </Button>
   );

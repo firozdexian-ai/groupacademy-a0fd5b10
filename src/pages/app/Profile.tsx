@@ -243,8 +243,8 @@ export default function Profile() {
  )}
  </div>
  <div className="relative -mt-12 px-3">
- <Card>
- <CardContent className="p-5 pt-0">
+ <Card className="overflow-visible">
+ <CardContent className="p-5 pt-0 overflow-visible">
  <div className="flex items-end justify-between -mt-10 mb-4">
  <Avatar className="h-20 w-20 ring-4 ring-background rounded-2xl">
  <AvatarImage src={t.profilePhotoUrl} />
@@ -543,9 +543,9 @@ export default function Profile() {
  <DialogContent>
  <DialogHeader>
  <DialogTitle>Rewrite with AI</DialogTitle>
- <DialogDescription>
- We'll tighten your work-experience descriptions so they read well to employers. You can always undo by
- editing manually.
+ <DialogDescription className="space-y-2">
+ <span>We'll tighten your work-experience descriptions so they read well to employers. You can always undo by editing manually.</span>
+ <span className="block font-medium text-emerald-600 dark:text-emerald-400">Cost: 0 credits (Free)</span>
  </DialogDescription>
  </DialogHeader>
  <DialogFooter className="gap-2">
