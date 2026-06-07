@@ -291,9 +291,13 @@ export default function DestinationAgentPage() {
  : "bg-muted border border-border/20 text-foreground/90 rounded-bl-none",
  )}
  >
- <div className="prose prose-sm max-w-none dark:prose-invert text-inherit leading-relaxed font-sans block">
- <ReactMarkdown>{messageNodeItem.content}</ReactMarkdown>
- </div>
+  {isUserSenderFlag ? (
+    <div className="prose prose-sm max-w-none dark:prose-invert text-inherit leading-relaxed font-sans block">
+      {messageNodeItem.content}
+    </div>
+  ) : (
+    <CtaMessageRenderer content={messageNodeItem.content} defaultCountry={validatedCountryCodeStr} />
+  )}
  </div>
  </div>
  );
@@ -332,5 +336,80 @@ export default function DestinationAgentPage() {
  </Button>
  </div>
  </div>
- );
+  );
+}
+
+function CtaMessageRenderer({ content, defaultCountry = "US" }: { content: string; defaultCountry?: string }) {
+  const ctaRegex = /\[ROADMAP_CTA(?:\s+country=([A-Z]{2}))?(?:\s+label="([^"]+)")?\]/g;
+  
+  if (!content) return <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed font-sans block">...</div>;
+  
+  const parts = [];
+  let lastIndex = 0;
+  let match;
+  
+  while ((match = ctaRegex.exec(content)) !== null) {
+    const startIndex = match.index;
+    const country = match[1] || defaultCountry;
+    const label = match[2] || "Build my study roadmap";
+    
+    if (startIndex > lastIndex) {
+      parts.push({
+        type: "text",
+        value: content.substring(lastIndex, startIndex)
+      });
+    }
+    
+    parts.push({
+      type: "cta",
+      country,
+      label
+    });
+    
+    lastIndex = ctaRegex.lastIndex;
+  }
+  
+  if (lastIndex < content.length) {
+    parts.push({
+      type: "text",
+      value: content.substring(lastIndex)
+    });
+  }
+  
+  if (parts.length === 0) {
+    return (
+      <div className="prose prose-sm dark:prose-invert max-w-none leading-relaxed font-sans block">
+        <ReactMarkdown>{content}</ReactMarkdown>
+      </div>
+    );
+  }
+  
+  return (
+    <div className="space-y-3 font-sans">
+      {parts.map((p, idx) => {
+        if (p.type === "text") {
+          return (
+            <div key={idx} className="prose prose-sm dark:prose-invert max-w-none leading-relaxed block">
+              <ReactMarkdown>{p.value || ""}</ReactMarkdown>
+            </div>
+          );
+        } else {
+          return (
+            <div key={idx} className="my-2 block">
+              <RoadmapBuilderSheet countryCode={p.country || defaultCountry}>
+                <Button
+                  type="button"
+                  size="sm"
+                  className="h-8 rounded-lg font-bold text-xs uppercase tracking-wide cursor-pointer shadow-sm gap-2 mt-1"
+                >
+                  <Map className="h-4 w-4 shrink-0" />
+                  <span>{p.label}</span>
+                </Button>
+              </RoadmapBuilderSheet>
+            </div>
+          );
+        }
+      })}
+    </div>
+  );
 }
