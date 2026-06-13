@@ -1,54 +1,57 @@
-# Phase 3 — Admin Shell Hardening (incl. Dashboard Chat fix)
+# Blank screen after sign-up — diagnosis & fix plan
 
-Goal: make `/dashboard` and `/dashboard/chat` production-grade for super-admins. No silent failures, no blank tabs, no "Syncing thread history…" dead-ends. Mirrors the Talent (Phase 1) and Gro10x (Phase 2) cuts.
+## What I found in the data
 
-The trace sub-agent confirmed three concrete bugs behind the user's "I cannot access admin chat" report. We start with those, then walk the rest of the admin shell.
+Your colleague's account exists and is healthy at the DB layer:
 
----
+- **Email:** `tamzidazad1@gmail.com` (not "therategmail" — that was the verbal "at" reading)
+- **User created:** 2026-06-13 04:18 UTC, email auto-confirmed via Google OAuth
+- **Last sign-in:** 04:20 UTC, ~2 min after signup
+- **`talents` row:** created by the `handle_new_user` trigger — `full_name="Tamzid Azad"`, country defaulted to `Bangladesh` / `+880` (Google sign-in didn't carry his Canada signup metadata), **phone = NULL**, `onboarding_step=0`, `onboarding_completed_at=NULL`
+- No company membership, no admin role → routes to `/app/feed`
 
-## A. Fix `/dashboard/chat` (highest priority)
+So the auth + trigger + routing pipeline succeeded. The blank screen happens **after** he lands on `/app/feed`.
 
-Three compounding root causes identified by the trace:
+## Most likely root causes (in priority order)
 
-1. **Critical — silent `send()` no-op.** `src/domains/agents/components/admin/chat/hooks/useAgentRuntimeThread.ts:175` looks up the agent by `a.agent_key`, but `useAdminAgents` returns objects whose property is `key`. Lookup is always `undefined`, so every send returns early with no toast and no network call. → 1-line fix: `a.key === agentKey`.
-2. **Missing DB rows.** `ai_agents` has zero rows for the 10 admin agents (`business-analyst`, `nia-analyst`, `talent-ops`, etc.). `useAdminAgents` falls back to `ADMIN_AGENTS` for display, but `agent_threads` insert / agent-runtime resolution rely on a real `ai_agents.agent_key`. → Seed the 10 admin agent rows from `src/lib/adminAgents.ts` via migration, keyed by the same `key` strings the UI already uses.
-3. **Auth gate stalls.** `ProtectedRoute` shows "Verifying Core Clearance Tokens…" while it races `getSession()` against a 4–5s timeout, then redirects non-admins to `/app/learning` with a toast. → Add a clearer fault state ("You need an admin role to use the agentic dashboard") and a single retry CTA. No change to the role rules.
+1. **`/app` layout has no route-level error boundary visible to the user.** A runtime throw in `Feed`, `useFeedRecommendations`, `useTalent`, or the mandatory `PhoneCaptureModal` (he has no phone) blanks the whole shell with no fallback UI.
+2. **`PhoneCaptureModal` gating misfires for Google OAuth users.** Memory rule: phone is mandatory globally. If the modal opens with bad state (e.g., missing country default for Canada, or a render loop), it can blank the page.
+3. **Country/phone defaults are wrong for non-Bangladesh Google signups.** Trigger writes `Bangladesh / +880` for any Google user with no metadata. Anything downstream that geo-validates phone for Canada could throw.
+4. **A repository call inside Feed throws synchronously** before any visible UI mounts (e.g., a `.select(...).single()` returning a Supabase error for a brand-new user with empty related rows).
 
-Verification: open `/dashboard/chat?agent=business-analyst` as a super-admin, send "ping", confirm a thread row is created, the message round-trips through `agent-runtime`, and `useAdminAgentThreads.reload()` refreshes the rail.
+The `platform_events` 401 in console logs is unrelated noise (anon role can't insert telemetry) — not the cause.
 
-## B. Triage every admin tab
+## Phased plan
 
-`src/shells/admin/routes/index.ts` aggregates 16 group route files (`overview`, `talent`, `companies`, `jobs`, …, `misc`). For each `TAB_COMPONENTS` entry, classify as **Live**, **Gate**, or **Hide-from-nav**:
+### Phase 1 — Stop the bleeding (guaranteed user-visible fix)
+- Wrap `/app/*` shell (and `/gro10x/*` for parity) in a `RouteErrorBoundary` with a branded fallback ("Something went wrong — Reload / Go to dashboard / Sign out"). Even if a child crashes, the user sees actionable UI instead of white.
+- Wrap `Feed`, `PhoneCaptureModal`, and `FeedHeader` in local error boundaries that degrade gracefully (skip the broken section, render the rest).
+- Add a one-time `console.error` capture that POSTs to `platform_events` via an edge function (service role) so future crashes are recoverable from server logs, not just the user's browser.
 
-- **Live (expected):** overview, talent, companies, jobs, marketing, learning, finance, gigs, abroad, agents, institutions, ugc, gtm — these have seeded data and shipped UIs.
-- **Likely gate:** ir (no investor seed), hr (workforce ops still early), misc tabs whose components were stubbed.
-- Anything that renders a naked spinner, throws on empty `supabase.from(...)`, or shows a blank card gets a `DashboardErrorState` / empty-state card or a `ComingSoonGate` keyed `admin-<tab>`.
+### Phase 2 — Reproduce & pinpoint
+- Impersonate `tamzidazad1@gmail.com` in the preview, open `/app/feed`, capture the exact stack from console logs.
+- Audit `useFeedRecommendations`, `useTalent`, and `PhoneCaptureModal` for: `.single()` calls that throw on empty results, unguarded `null` access on `talent.country_code` / `talent.phone`, render loops when `onboarding_step=0`.
 
-## C. Admin chrome resilience
+### Phase 3 — Fix the actual bug
+- Patch whichever component is the source (likely the phone-capture or feed-recommendations path for a brand-new, phone-less talent).
+- Make the `handle_new_user` trigger smarter: don't hard-default `country=Bangladesh / +880` when the OAuth metadata has no country — leave NULL so the onboarding modal can ask, and pre-fill from browser locale on the client.
+- Backfill Tamzid's row: clear the wrong `country/country_code` so his next sign-in prompts him for the real values.
 
-- Wrap `<Outlet />` in `Dashboard.tsx` (or `AdminSidebar` shell) with the same `RouteErrorBoundary` used in Talent + Gro10x so a thrown lazy import never blanks the whole admin app.
-- Confirm `useAdminScope` failure mode renders a branded "You don't have admin access" card on `/dashboard/*`, not a redirect loop.
-- Audit `DashboardCardSkeleton` / `DashboardErrorState` usage across the 16 group tabs; replace bare `Loading…` / `null` with the shared primitives (same pattern we just applied in Gro10x Part C).
-- Hide-from-nav: drop `AdminSidebar` entries for any tab gated in B; deep links still resolve to the gate card.
+### Phase 4 — Prevent regressions
+- Add a Playwright/Vitest smoke test: "new Google user with no phone lands on `/app/feed` without a runtime error."
+- Add a synthetic check: every 6 h, simulate a fresh signup and assert the feed renders.
 
-## D. Verification walk
+## Technical notes (for me)
 
-1. Super-admin desktop (1440px): walk every group in `AdminSidebar`, open `/dashboard/chat`, send a message to each of the 10 admin agents, switch threads from the rail.
-2. Internal admin (no super_admin): confirm restricted tabs render the gate, chat still works for permitted agents.
-3. Non-admin: confirm redirect to `/app/learning` with toast (no white screen).
-4. Mobile (390px): `/dashboard/chat` rail collapses, thread view is reachable, back button works.
+- Route file to wire boundaries: `src/App.tsx` (the `/app` route tree) and `src/pages/app/Feed.tsx`.
+- Trigger lives in a prior migration touching `handle_new_user`; needs a new migration to drop the `Bangladesh/+880` fallback.
+- Error boundary already exists: `src/components/RouteErrorBoundary.tsx` — just needs to wrap the `/app` `<Outlet/>` (currently only `Gro10xAppShell` uses it).
+- Telemetry pipe: add a tiny `log-client-error` edge function bypassing the anon RLS block on `platform_events`.
 
-## Technical notes
+## What I need from you to start Phase 2
 
-- A-1 is a 1-line change in `useAgentRuntimeThread.ts`. Worth a quick grep for the same `a.agent_key` mistake elsewhere (`ChatThread.tsx` already uses `a.key`).
-- A-2 is a single migration inserting the 10 rows from `ADMIN_AGENTS` (`key`, `name`, `description`, `scope='admin'` via whatever column exists — current schema doesn't have `scope`, so just keep `agent_key` + `name` and any required NOT NULLs). Idempotent `ON CONFLICT (agent_key) DO NOTHING`.
-- B/C are presentation-only; no schema work.
-- No changes to `ProtectedRoute` role rules — just the fault-screen copy and a CTA back to `/app`.
+Either:
+- **(a)** Permission to impersonate his account in the preview to reproduce the crash, or
+- **(b)** Ask him to reload the blank screen with the browser console open and paste the first red error.
 
-## Out of scope
-
-- Phase 4 (B2B Learning Ops, Offerings UI) stays gated.
-- Re-theming `/dashboard` or migrating off the 16-group tab matrix.
-- Admin Business Analyst's tool-calling repertoire (separate workstream).
-
-Approve and I'll execute A → B → C in that order, then run the D walk and hand off to Phase 4.
+Phase 1 (the boundary + telemetry safety net) I can ship right away regardless — that alone means no future user ever sees a true white screen again.
