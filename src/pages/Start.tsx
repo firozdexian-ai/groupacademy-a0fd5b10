@@ -60,7 +60,23 @@ export default function Start() {
     );
   }
 
-  if (user) return null;
+  // Already-onboarded signed-in users are mid-redirect (handled by the first
+  // effect above) — render nothing briefly to avoid a wizard flash.
+  if (user && talent?.onboardingStep === 4) return null;
+
+  // Brand-new signed-in users (e.g. fresh Google sign-up) land here from
+  // OnboardingGuard. Render the wizard in post-auth mode so they can finish
+  // setup instead of staring at a blank screen.
+  if (user) {
+    return (
+      <OnboardingWizard
+        onComplete={() => {
+          const target = resolvePostAuthRoute(accountType, null) ?? "/app/feed";
+          navigate(target, { replace: true });
+        }}
+      />
+    );
+  }
 
   return <OnboardingWizard preAuth onComplete={() => setDone(true)} />;
 }
