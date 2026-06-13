@@ -438,9 +438,11 @@ export default function App() {
                     path="/app/*"
                     element={
                       <ProtectedRoute>
-                        <OnboardingGuard>
-                          <TalentAppShell />
-                        </OnboardingGuard>
+                        <RouteErrorBoundary fallbackPath="/app/feed" fallbackLabel="Back to home">
+                          <OnboardingGuard>
+                            <TalentAppShell />
+                          </OnboardingGuard>
+                        </RouteErrorBoundary>
                       </ProtectedRoute>
                     }
                   >
