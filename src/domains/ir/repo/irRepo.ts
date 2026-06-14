@@ -12,12 +12,13 @@ import { getCurrentUser } from "@/lib/auth";
 
 // ─── Generic helpers ───────────────────────────────────────────────────────
 export async function upsertGraphRow(table: string, payload: any): Promise<void> {
-  if (payload?.id) {
-    const { id, ...patch } = payload;
+  const { created_at, updated_at, ...cleanPayload } = payload;
+  if (cleanPayload?.id) {
+    const { id, ...patch } = cleanPayload;
     const { error } = await supabase.from(table as any).update(patch).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert(payload);
+    const { error } = await supabase.from(table as any).insert([cleanPayload]);
     if (error) throw error;
   }
 }
@@ -106,12 +107,15 @@ export async function logInvestorInteraction(input: {
   payload: Record<string, any>;
   updatePayload: Record<string, any>;
 }): Promise<void> {
+  const { created_at: c1, updated_at: u1, ...cleanPayload } = input.payload;
+  const { created_at: c2, updated_at: u2, ...cleanUpdatePayload } = input.updatePayload;
+
   const { error: insertError } = await (supabase.from("ir_investor_interactions") as any)
-    .insert({ investor_id: input.investorId, ...input.payload });
+    .insert({ investor_id: input.investorId, ...cleanPayload });
   if (insertError) throw insertError;
   const { error: updateError } = await supabase
     .from("ir_investors")
-    .update(input.updatePayload)
+    .update(cleanUpdatePayload)
     .eq("id", input.investorId);
   if (updateError) throw updateError;
 }
@@ -268,7 +272,8 @@ export async function listIrMetricsSnapshots(limit = 12) {
 }
 
 export async function upsertIrMetricsSnapshot(input: Record<string, any> & { snapshot_date: string }): Promise<void> {
-  const { error } = await supabase.from("ir_metrics_snapshots").upsert(input, { onConflict: "snapshot_date" });
+  const { created_at, updated_at, ...cleanInput } = input;
+  const { error } = await supabase.from("ir_metrics_snapshots").upsert(cleanInput, { onConflict: "snapshot_date" });
   if (error) throw error;
 }
 
@@ -326,9 +331,10 @@ export async function updateIrInvestor(
   investorId: string,
   patch: Record<string, unknown>,
 ): Promise<void> {
+  const { created_at, updated_at, ...cleanPatch } = patch;
   const { error } = await (supabase as any)
     .from("ir_investors")
-    .update(patch)
+    .update(cleanPatch)
     .eq("id", investorId);
   if (error) throw error;
 }
