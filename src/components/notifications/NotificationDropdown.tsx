@@ -12,7 +12,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Realtime Telemetry Notification Dispatcher (NotificationDropdown)
  * An authoritative operational dropdown node handling candidate alert indexing and state cleanups.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function NotificationDropdown() {
   const queryClient = useQueryClient();
@@ -132,7 +132,7 @@ export function NotificationDropdown() {
             <div className="p-12 text-center flex flex-col items-center justify-center gap-3 w-full select-none">
               <Loader2 className="h-5 w-5 border-none animate-spin text-primary stroke-[2.5]" />
               <p className="text-[10px] font-bold uppercase tracking-wider text-muted-foreground/60 animate-pulse leading-none">
-                Synchronizing Ledger Channelsâ€¦
+                Synchronizing Ledger Channels…
               </p>
             </div>
           ) : primaryIngress.length === 0 ? (

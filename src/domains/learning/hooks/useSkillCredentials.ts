@@ -116,7 +116,7 @@ export function useIssueSkillCredentials(talentId?: string | null) {
       if (res.newly_issued.length > 0) {
         toast.success(`Issued ${res.newly_issued.length} new skill credentials.`);
       } else {
-        toast.info(`Review complete â€” your mastery is up to date across ${res.evaluated} topics.`);
+        toast.info(`Review complete — your mastery is up to date across ${res.evaluated} topics.`);
       }
     },
     onError: (err: unknown) => {

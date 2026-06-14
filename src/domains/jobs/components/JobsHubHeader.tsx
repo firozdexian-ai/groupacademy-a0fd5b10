@@ -39,7 +39,7 @@ export function JobsHubHeader() {
           <Input
             value={query}
             onChange={(e) => setQuery(e.target.value)}
-            placeholder="Search jobs, companies, skillsâ€¦"
+            placeholder="Search jobs, companies, skills…"
             className="pl-9 h-10"
           />
         </div>

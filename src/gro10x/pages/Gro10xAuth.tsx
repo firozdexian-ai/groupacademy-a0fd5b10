@@ -70,7 +70,7 @@ export default function Gro10xAuth() {
       collect_phone: `Mobile number (${data.countryCode})`,
       verify_human: "Type your answer",
       set_password: "Min 8 characters",
-    } as Record<string, string>)[a] || "Type a messageâ€¦";
+    } as Record<string, string>)[a] || "Type a message…";
 
   const isPasswordStep = currentAction === "set_password";
   const isCVStep = currentAction === "collect_cv";
@@ -234,7 +234,7 @@ export default function Gro10xAuth() {
         <div ref={endRef} />
       </main>
 
-      {/* Input bar â€” hidden during chip-only steps */}
+      {/* Input bar — hidden during chip-only steps */}
       {!isComplete && !isCVStep && !isGoalsStep && !existingAccount && (
         <form
           onSubmit={onSubmit}

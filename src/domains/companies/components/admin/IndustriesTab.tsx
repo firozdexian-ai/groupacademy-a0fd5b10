@@ -1,5 +1,5 @@
 /**
- * Industry Sectors Management Terminal â€” Phase Z0 Hardened
+ * Industry Sectors Management Terminal — Phase Z0 Hardened
  * Version: 2024 Highly Professional SAAS UI
  * Fixes: A3 (Scaling Aggregates), A4 (Atomic Fusion), S1 (Rename Restoration)
  * Features: Restored Rename Protocol & Unassigned KPI
@@ -98,7 +98,7 @@ export function IndustriesTab() {
     setIsRenaming(true);
     try {
       await renameCompanyIndustry(renameFrom, renameTo.trim());
-      toast.success(`Industry successfully renamed: "${renameFrom}" â†’ "${renameTo}"`);
+      toast.success(`Industry successfully renamed: "${renameFrom}" → "${renameTo}"`);
       setRenameDialogOpen(false);
       loadRegistry();
     } catch (err: unknown) {

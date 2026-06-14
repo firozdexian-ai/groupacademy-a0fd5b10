@@ -63,9 +63,9 @@ export async function markApplicationMessagesRead(input: {
   if (error) throw error;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Job sharing helpers (used by gigs/JobSharing flow)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getActiveJobsForSharing() {
   const { data, error } = await supabase
@@ -95,9 +95,9 @@ export async function getJobShareClickCounts(
   return counts;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Access codes (assessment + job application)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function insertAssessmentAccessCode(payload: {
   code: string;
@@ -118,9 +118,9 @@ export async function insertJobApplicationAccessCode(payload: {
   return { error };
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Jobs CRUD (admin)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export type AdminJobsStatusFilter =
   | "all"
@@ -254,9 +254,9 @@ export async function getJobEngagementCounts(
   return stats;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Applications (admin)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function listActiveJobsLite(
   limit = 500,
@@ -372,9 +372,9 @@ export async function insertExternalJobApplication(payload: {
   if (error) throw error;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Channel promotion
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function listJobChannelPosts(jobId: string): Promise<Array<{ channel: string }>> {
   const { data, error } = await supabase
@@ -396,9 +396,9 @@ export async function insertJobChannelPost(payload: {
   if (error) throw error;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Active job locations (talent JobPreferencesSheet)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function listActiveJobLocations(limit = 300): Promise<string[]> {
   const { data, error } = await supabase
@@ -414,9 +414,9 @@ export async function listActiveJobLocations(limit = 300): Promise<string[]> {
   return Array.from(locSet).slice(0, 15);
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Jobs ATS graph (used by useJobsGraph)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getJobsGraphMaster() {
   const [jobsRes, appsRes, crmRes, assessRes, inviteRes] = await Promise.all([
@@ -486,7 +486,7 @@ export async function updateJobApplication(id: string, patch: Record<string, unk
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.2 â€” tool_runs / offers / interviews â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.2 — tool_runs / offers / interviews ────────────────────────
 export async function listToolRunsForUser(userId: string, limit = 5) {
   const { data, error } = await supabase
     .from("tool_runs")
@@ -547,7 +547,7 @@ export async function insertInterviewSlots(rows: Array<Record<string, unknown>>)
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5d additions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5d additions ────────────────────────────────────────────────
 export async function getInterviewById(id: string) {
   const { data, error } = await supabase
     .from("interviews")
@@ -578,14 +578,14 @@ export async function listJobsByIdsBasic(ids: string[]) {
   return (data as unknown[]) ?? [];
 }
 
-// â”€â”€â”€ Phase 10j.5e: job assessment answers update â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5e: job assessment answers update ──────────────────────────
 export async function updateJobAssessment(id: string, patch: Record<string, unknown>): Promise<void> {
   const { created_at, updated_at, ...cleanPatch } = patch;
   const { error } = await supabase.from("job_assessments").update(cleanPatch).eq("id", id);
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.6a: jobs/offers/interview RPC helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.6a: jobs/offers/interview RPC helpers ───────────────────────
 export async function getRemoteFriendlySummary() {
   const { data, error } = await supabase.rpc("get_remote_friendly_summary");
   if (error) throw error;
@@ -631,7 +631,7 @@ export async function getEmployerJobsDashboard(p_company_id: string) {
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5g2: active jobs for a company â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g2: active jobs for a company ─────────────────────────────
 export async function listActiveJobsByCompanyId(companyId: string, limit = 10): Promise<unknown[]> {
   const { data } = await supabase
     .from("jobs")
@@ -654,7 +654,7 @@ export async function listActiveJobsByCompanyIdShort(companyId: string, limit = 
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5k2: active jobs by status (for invite-to-apply dialogs) â”€â”€â”€
+// ─── Phase 10j.5k2: active jobs by status (for invite-to-apply dialogs) ───
 export async function listJobsByCompanyAndStatus(
   companyId: string,
   status: string,
@@ -670,7 +670,7 @@ export async function listJobsByCompanyAndStatus(
   return (data ?? []) as Array<{ id: string; title: string }>;
 }
 
-// â”€â”€â”€ Phase 10j.5g2: AppJobApplication helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g2: AppJobApplication helpers ─────────────────────────────
 export async function getJobForApplication(jobId: string): Promise<{ data: unknown; error: unknown }> {
   const { data, error } = await supabase
     .from("jobs")
@@ -709,7 +709,7 @@ export async function insertTalentJobApplication(payload: {
   return { data, error };
 }
 
-// â”€â”€â”€ Phase 10j.5g3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g3 ─────────────────────────────────────────────────────────
 export async function listTalentApplicationsWithJob(talentId: string) {
   const { data, error } = await supabase
     .from("job_applications")
@@ -780,7 +780,7 @@ export async function searchPublicActiveJobs(
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5g5 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g5 ─────────────────────────────────────────────────────────
 export async function getJobTitleById(jobId: string): Promise<string | null> {
   const { data } = await supabase
     .from("jobs")
@@ -809,7 +809,7 @@ export async function getApplicationOfferContext(applicationId: string) {
   return data as unknown | null;
 }
 
-// â”€â”€â”€ Phase 10j.5g6 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
 export async function insertJobReturningId(payload: unknown): Promise<string> {
   const { created_at, updated_at, ...cleanPayload } = payload;
   const { data, error } = await supabase
@@ -821,7 +821,7 @@ export async function insertJobReturningId(payload: unknown): Promise<string> {
   return (data as { id: string } | null)?.id ?? "";
 }
 
-// â”€â”€â”€ Phase 10j.5h5: ranked/hub/pipeline RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h5: ranked/hub/pipeline RPC wrappers ──────────────────────
 export async function getRankedJobsForTalent(args: {
   talentId: string;
   cursor: number | null;
@@ -858,7 +858,7 @@ export async function getEmployerPipelineFull(args: {
   return (data ?? {}) as unknown;
 }
 
-// â”€â”€â”€ Phase 10j.5h8: discovery + admin RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h8: discovery + admin RPC wrappers ────────────────────────
 export async function getTrendingJobs(limit: number) {
   const { data, error } = await supabase.rpc("get_trending_jobs", { limit_n: limit });
   if (error) throw error;
@@ -917,7 +917,7 @@ export async function awardGigCredits(args: { submissionId: string; adminNotes: 
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers (Phase 10j.5i) â€” job-assets (public), talent-cvs (signed)
+// Storage helpers (Phase 10j.5i) — job-assets (public), talent-cvs (signed)
 // -----------------------------------------------------------------------------
 
 export async function uploadJobAsset(
@@ -942,7 +942,7 @@ export async function uploadTalentCv(
   file: File,
   options?: { upsert?: boolean; contentType?: string },
 ): Promise<{ path: string }> {
-  // talent-cvs is private per security memory â€” no public URL exposure
+  // talent-cvs is private per security memory — no public URL exposure
   const { error } = await supabase.storage
     .from("talent-cvs")
     .upload(path, file, { upsert: options?.upsert ?? false, contentType: options?.contentType });
@@ -958,7 +958,7 @@ export async function createTalentCvSignedUrl(path: string, expiresInSeconds = 3
   return data.signedUrl;
 }
 
-// â”€â”€â”€ Phase 10j.5k5: job_applications / job_invitations hook-backing â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k5: job_applications / job_invitations hook-backing ──────
 export interface CachedJobMatchRow {
   ai_match_score: number | null;
   ai_match_rationale: string | null;
@@ -1013,7 +1013,7 @@ export async function insertJobInvitation(args: {
   return data as { id: string };
 }
 
-// â”€â”€â”€ Phase 10j.5k9: pending submissions + related jobs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k9: pending submissions + related jobs ────────────────────
 export async function listPendingJobSubmissions() {
   const { data, error } = await supabase
     .from("gig_submissions")

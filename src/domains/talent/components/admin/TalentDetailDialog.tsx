@@ -180,8 +180,8 @@ export const TalentDetailDialog = ({
  <Globe className="h-4 w-4" /> Contact info
  </h3>
  <div className="grid gap-4">
- <InfoCard label="Email" value={displayTalent.email || "â€”"} />
- <InfoCard label="Phone" value={displayTalent.phone || "â€”"} />
+ <InfoCard label="Email" value={displayTalent.email || "—"} />
+ <InfoCard label="Phone" value={displayTalent.phone || "—"} />
  <div className="bg-muted/20 p-5 rounded-xl border border-border/40">
  <p className="text-[9px] text-muted-foreground/40 uppercase font-semibold tracking-widest">
  Location

@@ -160,7 +160,7 @@ export function StandaloneAssessmentCodeGenerator() {
           {isGenerating ? (
             <>
               <InlineSpinner size="md" />
-              Savingâ€¦
+              Saving…
             </>
           ) : (
             <>

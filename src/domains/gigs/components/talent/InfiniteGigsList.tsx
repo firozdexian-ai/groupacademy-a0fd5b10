@@ -192,7 +192,7 @@ export function InfiniteGigsList({ talentId, search }: Props) {
         {isFetchingNextPage ? (
           <div className="flex items-center justify-center text-[11px] font-bold text-muted-foreground/70 tracking-wide animate-pulse">
             <Loader2 className="h-3.5 w-3.5 animate-spin mr-2 text-primary stroke-[2.5]" />
-            <span>Compiling subsequent timeline updatesâ€¦</span>
+            <span>Compiling subsequent timeline updates…</span>
           </div>
         ) : (
           !hasNextPage &&

@@ -1,5 +1,5 @@
 ﻿/**
- * Shared UI tokens â€” keep every talent-facing page on the same compact,
+ * Shared UI tokens — keep every talent-facing page on the same compact,
  * mobile-first design system. Import these instead of re-inventing class strings.
  */
 export const PAGE_SHELL = "max-w-2xl mx-auto px-3 py-3 pb-28 space-y-4";

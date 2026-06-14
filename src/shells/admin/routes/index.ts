@@ -17,7 +17,7 @@ import * as gtm from "./gtm";
 import * as misc from "./misc";
 
 /**
- * Group Academy â€” Administrative Core Tab Registry Matrix
+ * Group Academy — Administrative Core Tab Registry Matrix
  * Merges domain-specific dashboards into a unified lookup map driven by URL tab parameters.
  * Maintains chronological execution layers and configuration parameters safely.
  */

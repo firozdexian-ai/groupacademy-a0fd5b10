@@ -65,7 +65,7 @@ serve(async (req) => {
       await sendTelegramEdit(
         chatId,
         messageId,
-        `âœ… *APPROVED*\n\nà§³${request.amount_bdt || "N/A"} verified.\n${request.requested_credits} credits added.\nTrxID: \`${request.trx_id}\`\n\n${verification}`,
+        `✅ *APPROVED*\n\n৳${request.amount_bdt || "N/A"} verified.\n${request.requested_credits} credits added.\nTrxID: \`${request.trx_id}\`\n\n${verification}`,
       );
     } else if (action === "reject") {
       // Mark as Rejected
@@ -77,7 +77,7 @@ serve(async (req) => {
       await sendTelegramEdit(
         chatId,
         messageId,
-        `âŒ *REJECTED*\n\nPayment request for TrxID \`${request.trx_id}\` was rejected. No credits were issued.`,
+        `❌ *REJECTED*\n\nPayment request for TrxID \`${request.trx_id}\` was rejected. No credits were issued.`,
       );
     }
 
@@ -145,14 +145,14 @@ async function runApprovalVerification(
     const txOk = lastTx && Number(lastTx.amount) === Number(expectedDelta);
 
     const lines = [
-      `ðŸ” *Auto-Verification*`,
-      `â€¢ Balance: *${balance}* (updated ${credits?.updated_at?.slice(11, 19) || "?"} UTC)`,
-      `â€¢ Audit log: ${auditOk ? "âœ… row recorded" : "âŒ no row"}`,
-      `â€¢ Ledger: ${txOk ? `âœ… +${lastTx.amount} (after=${lastTx.balance_after})` : "âŒ ledger mismatch"}`,
+      `🔍 *Auto-Verification*`,
+      `• Balance: *${balance}* (updated ${credits?.updated_at?.slice(11, 19) || "?"} UTC)`,
+      `• Audit log: ${auditOk ? "✅ row recorded" : "❌ no row"}`,
+      `• Ledger: ${txOk ? `✅ +${lastTx.amount} (after=${lastTx.balance_after})` : "❌ ledger mismatch"}`,
     ];
     return lines.join("\n");
   } catch (e: unknown) {
-    return `ðŸ” *Auto-Verification* failed: ${e.message}`;
+    return `🔍 *Auto-Verification* failed: ${e.message}`;
   }
 }
 

@@ -69,7 +69,7 @@ const ResetPassword = () => {
         }, 800);
         return;
       } else {
-        // No recovery indicator at all â†’ reject (do NOT silently log in)
+        // No recovery indicator at all → reject (do NOT silently log in)
         setSessionValid(false);
       }
       setIsVerifying(false);
@@ -127,7 +127,7 @@ const ResetPassword = () => {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-background p-6" role="main">
         <Loader2 className="h-10 w-10 animate-spin text-primary" />
-        <p className="text-sm text-muted-foreground mt-4">Verifying your reset linkâ€¦</p>
+        <p className="text-sm text-muted-foreground mt-4">Verifying your reset link…</p>
       </div>
     );
 
@@ -252,7 +252,7 @@ const ResetPassword = () => {
                 {isLoading ? (
                   <>
                     <Loader2 className="mr-2 h-4 w-4 animate-spin" />
-                    Updatingâ€¦
+                    Updating…
                   </>
                 ) : (
                   <>

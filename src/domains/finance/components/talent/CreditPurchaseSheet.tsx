@@ -39,9 +39,9 @@ export function CreditPurchaseSheet({ isOpen, onClose, currentBalance = 0 }: Cre
 
   const queryKeyBalanceContext = useMemo(() => ["user-credits-balance"], []);
 
-  // Programmatic regional scale rules: Evaluate if currency base uses BDT (à§³) with a standard 1 cr = 2 BDT conversion peg
+  // Programmatic regional scale rules: Evaluate if currency base uses BDT (৳) with a standard 1 cr = 2 BDT conversion peg
   const isBdtCurrency = currency === "BDT";
-  const currencySymbol = isBdtCurrency ? "à§³" : "$";
+  const currencySymbol = isBdtCurrency ? "৳" : "$";
 
   // --- ACTION: WHATSAPP/LOCAL RECONCILIATION INVOICE MUTATION ---
   const whatsappSyncMutation = useMutation({

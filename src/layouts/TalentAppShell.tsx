@@ -221,7 +221,7 @@ export function TalentAppShell() {
                             <span>Worldwide</span>
                           </span>
                         )}
-                        {talent?.phone && <span className="opacity-40">Â·</span>}
+                        {talent?.phone && <span className="opacity-40">·</span>}
                         {talent?.phone && <span>{talent.phone}</span>}
                       </p>
                       <p className="text-xs text-muted-foreground truncate mt-0.5">{talent?.email || ""}</p>
@@ -245,7 +245,7 @@ export function TalentAppShell() {
                         { icon: Coins, label: "Buy Credits", action: () => credits.open() },
                         { icon: Receipt, label: "Transactions", action: () => navigate("/app/transactions") },
                         { icon: Wallet, label: "Withdraw earnings", action: () => navigate("/app/withdrawals") },
-                        // B6: Creator Analytics hidden from nav â€” deep link /app/creator/analytics still resolves.
+                        // B6: Creator Analytics hidden from nav — deep link /app/creator/analytics still resolves.
                         { icon: Bookmark, label: "Saved Jobs", action: () => navigate("/app/saved") },
                         { icon: BookOpen, label: "My Learning", action: () => navigate("/app/learning/my-courses") },
                         { icon: Globe, label: "Study & Work Abroad", action: () => navigate("/app/abroad"), suffix: "New" },
@@ -410,7 +410,7 @@ export function TalentAppShell() {
                     <AvatarImage src={talent?.profilePhotoUrl || ""} />
                     <AvatarFallback className="text-[10px]">ME</AvatarFallback>
                   </Avatar>
-                  <span className="text-[10px] font-medium mt-0.5">Me â–¼</span>
+                  <span className="text-[10px] font-medium mt-0.5">Me ▼</span>
                 </button>
               </DropdownMenuTrigger>
               <DropdownMenuContent align="end" className="w-72 p-2">
@@ -578,7 +578,7 @@ export function TalentAppShell() {
         currentBalance={balance}
       />
 
-      {/* GLOBAL: WhatsApp Floating Button â€” Restoring lost WhatsApp support action */}
+      {/* GLOBAL: WhatsApp Floating Button — Restoring lost WhatsApp support action */}
       <FloatingWhatsAppButton />
 
       {/* --- dashboard: MOBILE BOTTOM TAB BAR --- */}

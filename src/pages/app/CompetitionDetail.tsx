@@ -93,7 +93,7 @@ interface CompetitionDetailProps {
 /**
  * GroUp Academy: Authoritative Arena Challenge Dashboard (CompetitionDetail)
  * Hardened responsive environment processing portfolio entry updates and locking temporal interval calculations defensively.
- * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate · Phase Z1 Integration Stability Locked
  */
 export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDetailProps) {
  const { slug: urlSlugStr } = useParams<{ slug: string }>();
@@ -183,7 +183,7 @@ export default function CompetitionDetail({ inlineSlug, onBack }: CompetitionDet
  const targetDeadlineDate = new Date(activeChallengeItem.submission_deadline);
  const currentSystemDate = new Date();
 
- const rangeStr = `${format(onsetDate, "MMM d")} â€“ ${format(ceilingDate, "MMM d")}`;
+ const rangeStr = `${format(onsetDate, "MMM d")} – ${format(ceilingDate, "MMM d")}`;
  const deadlineStr = format(targetDeadlineDate, "MMM d");
  const deltaDays = differenceInDays(targetDeadlineDate, currentSystemDate);
 

@@ -1,4 +1,4 @@
-﻿// Admin Institutions Outreach â€” drafts mailto B2B messages to universities,
+﻿// Admin Institutions Outreach — drafts mailto B2B messages to universities,
 // colleges, training partners and partner organizations. No emails are sent
 // from the platform; the operator opens mailto: links in their own client.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -47,7 +47,7 @@ partners, and partner organizations.
 - Always CALL TOOLS to look up current data; never invent contacts.
 - For each suggested message, output a markdown mailto: link the operator can
   click. Format: [Email NAME](mailto:EMAIL?subject=...&body=...).
-- Subjects must be short and specific. Bodies should be 4â€“8 short lines.
+- Subjects must be short and specific. Bodies should be 4–8 short lines.
 - Never claim that the platform sent anything. The operator sends from their
   own email client.
 Today: ${new Date().toISOString().slice(0, 10)}.`;

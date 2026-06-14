@@ -17,7 +17,7 @@ interface SkillsEditorProps {
 /**
  * GroUp Academy: Technical Skill Matrix Ingress Control Terminal (SkillsEditor)
  * An authoritative operational sandbox managing technical skills, micro-credentials, and match vectors.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
   const queryClient = useQueryClient();
@@ -116,7 +116,7 @@ export function SkillsEditor({ skills = [], onChange }: SkillsEditorProps) {
           <Input
             value={inputValue}
             onKeyDown={handleTerminalInputKeyDown}
-            placeholder="Add a skill (e.g. React, Python, DevOps)â€¦"
+            placeholder="Add a skill (e.g. React, Python, DevOps)…"
             onChange={(e) => setInputValue(e.target.value)}
             className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground pl-9 pr-3 shadow-inner w-full block focus-visible:ring-1 focus-visible:ring-ring select-text uppercase placeholder:normal-case placeholder:tracking-normal placeholder:font-medium placeholder:text-muted-foreground/30"
           />

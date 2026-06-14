@@ -94,7 +94,7 @@ function formatSalaryRange(
  if (!min && !max) return null;
  const code = currency || "BDT";
  const fmt = (n: number) => (n >= 1000 ? `${(n / 1000).toFixed(0)}K` : `${n}`);
- if (min && max) return `${code} ${fmt(min)}â€“${fmt(max)}`;
+ if (min && max) return `${code} ${fmt(min)}–${fmt(max)}`;
  return `${code} ${fmt((min || max) as number)}+`;
 }
 
@@ -426,7 +426,7 @@ export default function AppJobDetail() {
  <>
  <p className="text-sm font-semibold text-foreground">See why you match</p>
  <p className="text-xs text-muted-foreground">
- 10 credits Â· gap analysis + tailored learning suggestions.
+ 10 credits · gap analysis + tailored learning suggestions.
  </p>
  </>
  )}
@@ -626,7 +626,7 @@ export default function AppJobDetail() {
  </p>
  {existingApplication && (
  <p className="text-[11px] text-muted-foreground truncate">
- Applied Â· {existingApplication.application_status}
+ Applied · {existingApplication.application_status}
  </p>
  )}
  </div>

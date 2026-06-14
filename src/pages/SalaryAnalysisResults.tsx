@@ -136,7 +136,7 @@ const SalaryAnalysisResults = () => {
             </h1>
             <div className="flex items-center gap-3 text-sm font-bold text-muted-foreground uppercase tracking-tight">
               <Briefcase className="h-4 w-4 text-primary" /> {analysis.job_title || "Professional Role"}
-              <span className="opacity-20">â€¢</span>
+              <span className="opacity-20">•</span>
               <Globe className="h-4 w-4" /> Global Market Node
             </div>
           </div>

@@ -24,7 +24,7 @@ export function getWhatsAppLink(message?: string): string {
  * Generate expedite application message for WhatsApp
  */
 export function getExpediteMessage(jobTitle: string, companyName: string): string {
-  return `Hi! I just applied for the ${jobTitle} position at ${companyName}. Can you help expedite my application? ðŸ™`;
+  return `Hi! I just applied for the ${jobTitle} position at ${companyName}. Can you help expedite my application? 🙏`;
 }
 
 /**
@@ -44,6 +44,6 @@ export function getCreditPurchaseMessage(
  * Generate WhatsApp connect message for first-time users
  */
 export function getWhatsAppConnectMessage(userName: string): string {
-  return `Hi! I'm ${userName} from GroUp Academy app. I'd like to connect for career support! ðŸŽ¯`;
+  return `Hi! I'm ${userName} from GroUp Academy app. I'd like to connect for career support! 🎯`;
 }
 

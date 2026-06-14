@@ -374,7 +374,7 @@ export function ReviewQueueRunner() {
         <CardContent className="py-12 flex flex-col items-center justify-center gap-3.5 text-center w-full">
           <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5 animate-pulse">
-            Loading your review queueâ€¦
+            Loading your review queue…
           </p>
         </CardContent>
       </Card>

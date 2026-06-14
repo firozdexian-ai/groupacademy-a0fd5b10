@@ -50,7 +50,7 @@ export function useCertificate() {
    */
   const issueMutation = useMutation({
     mutationFn: async (params: IssueCertificateParams) => {
-      // dashboard: REGISTRY_AUDIT â€” prevent redundant artifact creation
+      // dashboard: REGISTRY_AUDIT — prevent redundant artifact creation
       const existing = await getCertificateMinimalByEnrollment(params.enrollment_id);
       if (existing) {
         return existing;
@@ -76,7 +76,7 @@ export function useCertificate() {
       queryClient.invalidateQueries({
         queryKey: ["certificate", variables.enrollment_id],
       });
-      toast.success("CREDENTIAL_SYNC_COMPLETE: Certificate issued! ðŸŽ“");
+      toast.success("CREDENTIAL_SYNC_COMPLETE: Certificate issued! 🎓");
     },
     onError: (err: unknown, variables) => {
       // Digital Workforce Architecture: Stream explicitly signed operational errors

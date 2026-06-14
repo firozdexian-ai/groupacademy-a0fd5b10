@@ -1,4 +1,4 @@
-﻿// AI gig verifier â€” pulls submission + acceptance criteria, scores via Lovable AI, applies verdict.
+﻿// AI gig verifier — pulls submission + acceptance criteria, scores via Lovable AI, applies verdict.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

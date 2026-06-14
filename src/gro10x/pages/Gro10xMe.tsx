@@ -1,5 +1,5 @@
 ﻿/**
- * Gro10x "Me" tab â€” same identity as the Talent app's Profile, since every
+ * Gro10x "Me" tab — same identity as the Talent app's Profile, since every
  * Gro10x contact is also a Talent. We render the talent Profile component
  * inside the Gro10x shell with a thin workspace strip on top.
  */
@@ -54,8 +54,8 @@ export default function Gro10xMe() {
           <div className="min-w-0">
             <p className="text-[10px] uppercase tracking-wider text-slate-500">Workspace</p>
             <p className="text-sm text-slate-100 truncate">
-              {company?.name || "â€”"}
-              {role && <span className={`${GRO10X_MUTED} ml-1 capitalize`}>Â· {role}</span>}
+              {company?.name || "—"}
+              {role && <span className={`${GRO10X_MUTED} ml-1 capitalize`}>· {role}</span>}
             </p>
           </div>
         </div>

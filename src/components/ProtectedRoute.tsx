@@ -25,7 +25,7 @@ interface ProtectedRouteProps {
 /**
  * GroUp Academy: Authoritative Role-Based Access Control Ingress Firewall (ProtectedRoute)
  * High-performance route isolation gateway auditing network security clearance vectors and identity persistence tokens.
- * Version: Launch Candidate Â· Phase Z0 Hardened Routing Guard Lock
+ * Version: Launch Candidate · Phase Z0 Hardened Routing Guard Lock
  */
 export function ProtectedRoute({
   children,
@@ -46,7 +46,7 @@ export function ProtectedRoute({
   // protected route. Previously, `location` in deps recreated callbacks on
   // every URL change, re-running the audit and flashing the loader, which
   // unmounted child pages mid-render (e.g. /dashboard/chat got stuck in a
-  // "Verifying Core Clearance Tokensâ€¦" / "Syncing thread historyâ€¦" loop).
+  // "Verifying Core Clearance Tokens…" / "Syncing thread history…" loop).
   const locationRef = useRef(location);
   locationRef.current = location;
   const authTypeRef = useRef(authType);
@@ -192,7 +192,7 @@ export function ProtectedRoute({
 
   // Audit runs once on mount and only re-runs on real auth lifecycle changes.
   // Route or search-param changes inside a protected page MUST NOT retrigger
-  // it â€” that previously flashed the verification loader and unmounted the
+  // it — that previously flashed the verification loader and unmounted the
   // page below on every URL update.
   useEffect(() => {
     executeFirewallAudit();
@@ -235,7 +235,7 @@ export function ProtectedRoute({
           <div className="w-2 h-2 bg-primary rounded-full animate-bounce" />
         </div>
         <p className="mt-4 text-[9px] font-mono font-extrabold uppercase tracking-widest text-muted-foreground/40 italic leading-none block">
-          Verifying Core Clearance Tokensâ€¦
+          Verifying Core Clearance Tokens…
         </p>
       </div>
     );

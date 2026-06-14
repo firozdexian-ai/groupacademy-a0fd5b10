@@ -8,7 +8,7 @@ import { Badge } from "@/components/ui/badge";
 import { useJobsGraph } from "@/domains/jobs/components/admin/hooks/useJobsGraph";
 
 /**
- * Jobs Hub â€” unified admin command center for jobs, applications, outreach, and uploads.
+ * Jobs Hub — unified admin command center for jobs, applications, outreach, and uploads.
  */
 export function JobsHub() {
   const { jobsGraphQuery } = useJobsGraph();

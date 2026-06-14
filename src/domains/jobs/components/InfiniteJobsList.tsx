@@ -1,5 +1,5 @@
 ﻿/**
- * Infinite Jobs List Component â€” Phase INST-Z2 Hardened
+ * Infinite Jobs List Component — Phase INST-Z2 Hardened
  * CTO Version: June 2026
  * Refactored for absolute layout alignment, plain-language parsing, and optimized cache invalidation loops.
  * Rules: All original event pipelines and properties remain fully immutable.
@@ -172,13 +172,13 @@ export function InfiniteJobsList({ talentId }: Props) {
         {isFetchingNextPage ? (
           <div className="flex items-center justify-center text-[11px] font-bold text-muted-foreground/70 tracking-wide animate-pulse">
             <Loader2 className="h-3.5 w-3.5 animate-spin mr-2 text-primary stroke-[2.5]" />
-            <span>Loading more jobsâ€¦</span>
+            <span>Loading more jobs…</span>
           </div>
         ) : (
           !hasNextPage &&
           items.length > 4 && (
             <p className="text-[10px] font-extrabold uppercase tracking-widest text-muted-foreground/40 select-none animate-in fade-in duration-300">
-              â€” You're all caught up â€”
+              — You're all caught up —
             </p>
           )
         )}

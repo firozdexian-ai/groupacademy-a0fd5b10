@@ -10,7 +10,7 @@ interface Props {
 }
 
 const SHORTCUTS: { keys: string; label: string }[] = [
-  { keys: "â† / â†’", label: "Previous / next stage" },
+  { keys: "← / →", label: "Previous / next stage" },
   { keys: "[ / ]", label: "Previous / next module" },
   { keys: "Enter", label: "Complete stage" },
   { keys: "?", label: "Toggle shortcuts help" },
@@ -19,7 +19,7 @@ const SHORTCUTS: { keys: string; label: string }[] = [
 /**
  * GroUp Academy: Keyboard Shortcuts Accessibility Overlay (ShortcutsDialog)
  * An authoritative operational modal visualizing platform macro control bindings and hotkey definitions.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export default function ShortcutsDialog({ open, onOpenChange }: Props) {
   const isMountedRef = useRef<boolean>(true);

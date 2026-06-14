@@ -30,7 +30,7 @@ const LEVEL_META: Record<string, { icon: React.ComponentType<{ className?: strin
 /**
  * Group Academy: Authoritative Public Talent Profile Mirror Node (PublicTalentProfile)
  * Hardened responsive identity page isolating OpenGraph context scripts and securing DOM nodes against side-effect memory leaks.
- * Version: Launch Candidate Â· Phase Z0 Geometric Balance Locked
+ * Version: Launch Candidate · Phase Z0 Geometric Balance Locked
  */
 export default function PublicTalentProfile() {
   const { handle: unverifiedRouteHandleStr } = useParams<{ handle: string }>();
@@ -79,10 +79,10 @@ export default function PublicTalentProfile() {
     if (!profileDataPayload) return;
 
     const isolatedProfileNode = profileDataPayload;
-    const computedPageTitleStr = `${isolatedProfileNode.full_name} â€” Group Academy Profile Portfolio`;
+    const computedPageTitleStr = `${isolatedProfileNode.full_name} — Group Academy Profile Portfolio`;
     const computedDescriptionStr =
       isolatedProfileNode.bio ??
-      `${isolatedProfileNode.full_name} profile on Group Academy â€” verified development skills and curriculum mastery.`;
+      `${isolatedProfileNode.full_name} profile on Group Academy — verified development skills and curriculum mastery.`;
 
     // Step A: Stabilize standard window landmarks safely
     document.title = computedPageTitleStr;
@@ -396,7 +396,7 @@ export default function PublicTalentProfile() {
                           {skillNodeItem.topic_tag.replace(/_/g, " ")}
                         </p>
                         <p className="text-[10px] sm:text-[11px] font-medium opacity-70 truncate block select-text max-w-xs leading-none">
-                          {targetLevelMetaMapObj.label} Â· {skillNodeItem.course_title ?? "Cross-Course Framework"} Â·{" "}
+                          {targetLevelMetaMapObj.label} · {skillNodeItem.course_title ?? "Cross-Course Framework"} ·{" "}
                           <span className="font-mono font-bold tabular-nums">
                             {Math.round(Number(skillNodeItem.mastery_at_issue) * 100)}% Mastery
                           </span>
@@ -457,7 +457,7 @@ export default function PublicTalentProfile() {
                         key={`strength-vector-pill-${strengthNodeItem.topic_tag}`}
                         className="inline-flex items-center gap-1.5 px-2 py-0.5 rounded font-mono text-[9px] font-extrabold uppercase tracking-wide bg-emerald-500/10 text-emerald-600 border border-emerald-500/20 h-4.5 pt-1 leading-none shrink-0 select-text tabular-nums"
                       >
-                        {strengthNodeItem.topic_tag.replace(/_/g, " ")} Â·{" "}
+                        {strengthNodeItem.topic_tag.replace(/_/g, " ")} ·{" "}
                         {Math.round(Number(strengthNodeItem.mastery) * 100)}%
                       </span>
                     ))}

@@ -1,5 +1,5 @@
 ﻿/**
- * Gro10x (B2B) shell â€” Agents entry points.
+ * Gro10x (B2B) shell — Agents entry points.
  */
 import { lazy } from "react";
 

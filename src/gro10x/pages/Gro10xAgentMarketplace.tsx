@@ -46,7 +46,7 @@ export default function Gro10xAgentMarketplace() {
     <div className="max-w-md md:max-w-5xl mx-auto">
       <header className="sticky top-0 z-10 bg-[#0B1220]/95 backdrop-blur-md border-b border-white/5 px-4 py-3">
         <h1 className="text-xl font-semibold tracking-tight">Agent Network</h1>
-        <p className={`text-xs ${GRO10X_MUTED}`}>Pin agents to your inbox â€” chat to get things done</p>
+        <p className={`text-xs ${GRO10X_MUTED}`}>Pin agents to your inbox — chat to get things done</p>
       </header>
 
       <p className={`px-4 pt-4 pb-2 text-[11px] uppercase tracking-wider ${GRO10X_MUTED}`}>
@@ -104,7 +104,7 @@ export default function Gro10xAgentMarketplace() {
                     onClick={() => handlePin(a.key)}
                     className="text-[#06121A] text-xs px-3 py-1.5 rounded-full bg-[#33E1E4] font-semibold hover:opacity-90 disabled:opacity-50"
                   >
-                    {busy === a.key ? "Pinningâ€¦" : "+ Pin"}
+                    {busy === a.key ? "Pinning…" : "+ Pin"}
                   </button>
                 )}
               </div>

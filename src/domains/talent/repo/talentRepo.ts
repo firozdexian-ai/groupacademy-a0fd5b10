@@ -1,7 +1,7 @@
 ﻿/**
  * Talent domain repository.
  * All raw `supabase.from(...)` access for talent admin surfaces flows through here.
- * Phase 10d â€” see .lovable/plan.md.
+ * Phase 10d — see .lovable/plan.md.
  */
 import { supabase } from "@/integrations/supabase/client";
 import { sanitizeIlike } from "@/lib/supabaseQuery";
@@ -234,9 +234,9 @@ export const talentRepo = {
     ((supabase as unknown).from(table)).insert(insertData),
 };
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Standalone helpers (Phase 10h.3)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function findTalentIdsBySearch(search: string, limit = 200): Promise<string[]> {
   const safe = sanitizeIlike(search);
@@ -281,7 +281,7 @@ export async function updateTalentJobPreferences(
 }
 
 // -----------------------------------------------------------------------------
-// Phase 10j.1 â€” shared infra helpers
+// Phase 10j.1 — shared infra helpers
 // -----------------------------------------------------------------------------
 
 /** Lightweight registry ping used to warm up the PostgREST connection. */
@@ -328,7 +328,7 @@ export async function patchTalentByUser(userId: string, patch: Record<string, un
 }
 
 
-// â”€â”€â”€ Phase 10j.2 â€” notifications + onboarding state â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.2 — notifications + onboarding state ────────────────────────
 export async function listNotifications(talentId: string, limit = 50) {
   const { data, error } = await supabase
     .from("notifications")
@@ -574,7 +574,7 @@ export async function listTalentNamesByIds(ids: string[]): Promise<Array<{ id: s
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.4: mini profile for composer â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.4: mini profile for composer ────────────────────────────────
 export async function getTalentMiniProfileByUser(userId: string) {
   const { data } = await supabase
     .from("talents")
@@ -584,7 +584,7 @@ export async function getTalentMiniProfileByUser(userId: string) {
   return (data as unknown) ?? null;
 }
 
-// â”€â”€â”€ Phase 10j.5d additions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5d additions ────────────────────────────────────────────────
 export async function listActiveLanguages() {
   const { data, error } = await supabase
     .from("languages")
@@ -630,7 +630,7 @@ export async function listPayoutAccountPrimaryFlags(talentId: string): Promise<A
   return (data as unknown[]) ?? [];
 }
 
-// â”€â”€â”€ Phase 10j.5e: public profile + directory helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5e: public profile + directory helpers ──────────────────────
 export async function findTalentByPhone(phone: string): Promise<{ id: string } | null> {
   const { data } = await supabase
     .from("talents")
@@ -709,7 +709,7 @@ export async function listPostHypeRecipientsByIds(ids: string[]) {
   return (data as unknown[]) ?? [];
 }
 
-// â”€â”€â”€ Phase 10j.6a: talent contact unlocks + coach assignment â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.6a: talent contact unlocks + coach assignment ───────────────
 export async function getTalentContactUnlockCost(): Promise<number> {
   const { data, error } = await (supabase as unknown).rpc("get_talent_contact_unlock_cost");
   if (error) throw error;
@@ -788,7 +788,7 @@ export async function getTalentCountryByUserId(user_id: string): Promise<string 
   return (data?.country as string | null) ?? null;
 }
 
-// â”€â”€â”€ Phase 10j.5g: talent credit pools (gro10x contact view) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g: talent credit pools (gro10x contact view) ──────────────
 export async function getTalentCreditPoolsByUserId(
   userId: string,
 ): Promise<{ balance: number; earned: number; bonus: number }> {
@@ -810,7 +810,7 @@ export async function getTalentCreditPoolsByUserId(
   };
 }
 
-// â”€â”€â”€ Phase 10j.5g2: talent mini-profiles for company team list â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g2: talent mini-profiles for company team list ────────────
 export async function listTalentMiniProfilesByUserIds(userIds: string[]): Promise<unknown[]> {
   if (!userIds.length) return [];
   const { data } = await supabase
@@ -843,7 +843,7 @@ export async function markTalentWhatsappBonusClaimed(talentId: string): Promise<
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5g3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g3 ─────────────────────────────────────────────────────────
 export async function listTalentSystemFeedNotifications(talentId: string, limit = 200) {
   const { data, error } = await supabase
     .from("notifications")
@@ -855,7 +855,7 @@ export async function listTalentSystemFeedNotifications(talentId: string, limit 
   return (data ?? []) as Array<{ id: string; title: string; message: string | null; link: string | null; created_at: string }>;
 }
 
-// â”€â”€â”€ Phase 10j.5g5 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g5 ─────────────────────────────────────────────────────────
 export async function listTalentsBasicByIds(ids: string[]) {
   if (!ids.length) return [] as unknown[];
   const { data } = await supabase
@@ -865,7 +865,7 @@ export async function listTalentsBasicByIds(ids: string[]) {
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5g6 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
 export async function getTalentPhotoByUserId(userId: string) {
   const { data } = await supabase
     .from("talents")
@@ -875,7 +875,7 @@ export async function getTalentPhotoByUserId(userId: string) {
   return (data as { full_name: string | null; profile_photo_url: string | null } | null) ?? null;
 }
 
-// â”€â”€â”€ Phase 10j.5h1: RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h1: RPC wrappers ──────────────────────────────────────────
 export async function boostProfile(): Promise<void> {
   const { error } = await supabase.rpc("boost_profile");
   if (error) throw error;
@@ -896,7 +896,7 @@ export async function getTalentBoostUntil(talentId: string): Promise<string | nu
   return ((data as unknown)?.boost_until as string | null) ?? null;
 }
 
-// â”€â”€â”€ Phase 10j.5h4: admin RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h4: admin RPC wrappers ────────────────────────────────────
 export interface GlobalCrmOverview {
   total_talents?: number;
   onboarded_count?: number;
@@ -940,13 +940,13 @@ export async function broadcastNotifications(args: {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5h6: talent connection RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h6: talent connection RPC wrappers ────────────────────────
 export async function requestTalentConnection(recipientId: string): Promise<void> {
   const { error } = await supabase.rpc("talent_connection_request", { _recipient: recipientId });
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5k2: talent connection price â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k2: talent connection price ───────────────────────────────
 export async function getTalentConnectionPrice(recipientId: string): Promise<number> {
   const { data, error } = await supabase.rpc("get_talent_connection_price", { _recipient: recipientId });
   if (error) throw error;
@@ -970,7 +970,7 @@ export async function acceptConnectionAndOpenThread(connectionId: string): Promi
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers (Phase 10j.5i) â€” legacy `cvs` bucket (Gro10x onboarding)
+// Storage helpers (Phase 10j.5i) — legacy `cvs` bucket (Gro10x onboarding)
 // -----------------------------------------------------------------------------
 
 export async function uploadLegacyCv(
@@ -987,7 +987,7 @@ export async function uploadLegacyCv(
 }
 
 // -----------------------------------------------------------------------------
-// Realtime helpers (Phase 10j.5k1) â€” notifications CDC subscription
+// Realtime helpers (Phase 10j.5k1) — notifications CDC subscription
 // -----------------------------------------------------------------------------
 
 export interface NotificationsRealtimeHandlers {

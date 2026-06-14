@@ -1,5 +1,5 @@
-﻿// Instructor item-bank analytics â€” aggregates per-module quiz/scenario telemetry
-// Phase 2.7.a â€” admin-gated read aggregation, no schema changes.
+﻿// Instructor item-bank analytics — aggregates per-module quiz/scenario telemetry
+// Phase 2.7.a — admin-gated read aggregation, no schema changes.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

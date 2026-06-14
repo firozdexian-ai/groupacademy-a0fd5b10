@@ -204,7 +204,7 @@ export default function ProfileEdit() {
       }
     } catch (error) {
       trackError(error, { area: "ProfileEdit.handleCVUpload" });
-      toast.error("Couldn't read that CV â€” try a different file.");
+      toast.error("Couldn't read that CV — try a different file.");
     } finally {
       setUploadingCV(false);
       setParsingCV(false);
@@ -232,7 +232,7 @@ export default function ProfileEdit() {
  navigate("/app/profile");
  } catch (error) {
  trackError(error, { area: "ProfileEdit.handleSubmit" });
- toast.error("Couldn't save â€” please try again.");
+ toast.error("Couldn't save — please try again.");
  } finally {
  setSaving(false);
  }
@@ -303,7 +303,7 @@ export default function ProfileEdit() {
  <div>
  <p className="font-medium text-sm">CV uploaded</p>
  <p className="text-xs text-muted-foreground">
- {parsingCV ? "Reading your CVâ€¦" : "We'll use this for applications."}
+ {parsingCV ? "Reading your CV…" : "We'll use this for applications."}
  </p>
  </div>
  </div>
@@ -340,7 +340,7 @@ export default function ProfileEdit() {
  <Upload className="h-6 w-6 mx-auto text-muted-foreground mb-2" />
  )}
  <p className="text-sm font-medium">Upload your CV</p>
- <p className="text-xs text-muted-foreground mt-1">PDF or Word â€” we'll auto-fill your profile</p>
+ <p className="text-xs text-muted-foreground mt-1">PDF or Word — we'll auto-fill your profile</p>
  <p className="text-[10px] font-medium text-emerald-600 dark:text-emerald-400 mt-1">Cost: 0 credits (Free)</p>
  </label>
  )}
@@ -432,7 +432,7 @@ export default function ProfileEdit() {
  <Label htmlFor="linkedinUrl">LinkedIn URL</Label>
  <Input
  id="linkedinUrl"
- placeholder="https://linkedin.com/in/â€¦"
+ placeholder="https://linkedin.com/in/…"
  value={formData.linkedinUrl}
  onChange={(e) => handleChange("linkedinUrl", e.target.value)}
  />
@@ -441,7 +441,7 @@ export default function ProfileEdit() {
  <Label htmlFor="portfolioUrl">Portfolio / website</Label>
  <Input
  id="portfolioUrl"
- placeholder="https://â€¦"
+ placeholder="https://…"
  value={formData.portfolioUrl}
  onChange={(e) => handleChange("portfolioUrl", e.target.value)}
  />
@@ -622,7 +622,7 @@ export default function ProfileEdit() {
  <Button type="submit" className="flex-1" disabled={saving}>
  {saving ? (
  <>
- <InlineSpinner size="sm" className="mr-2" /> Savingâ€¦
+ <InlineSpinner size="sm" className="mr-2" /> Saving…
  </>
  ) : (
  <>

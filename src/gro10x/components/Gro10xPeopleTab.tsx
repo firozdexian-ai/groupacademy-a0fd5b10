@@ -1,5 +1,5 @@
 ﻿/**
- * Gro10x B2B Shell â€” People Tab (W-7)
+ * Gro10x B2B Shell — People Tab (W-7)
  * Shows active workforce members placed or linked to the authenticated company.
  */
 import { useQuery } from "@tanstack/react-query";
@@ -68,7 +68,7 @@ export function Gro10xPeopleTab({ companyId }: { companyId: string }) {
         const email = m.talents?.email;
         const role = ROLE_LABELS[m.role_type] || m.role_type;
         const team = m.hr_teams?.name;
-        const grade = m.hr_grades ? `L${m.hr_grades.level} Â· ${m.hr_grades.name}` : null;
+        const grade = m.hr_grades ? `L${m.hr_grades.level} · ${m.hr_grades.name}` : null;
         const status = m.status || "active";
 
         return (

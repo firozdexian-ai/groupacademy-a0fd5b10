@@ -1,4 +1,4 @@
-﻿//  â€” Track event notifier
+﻿//  — Track event notifier
 // kinds: assigned, step_completed, track_completed, due_soon, overdue
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -42,7 +42,7 @@ Deno.serve(async (req) => {
     const titleMap: Record<string, string> = {
       assigned: `Assigned: ${trackTitle}`,
       step_completed: `Step completed in ${trackTitle}`,
-      track_completed: `ðŸŽ‰ Track completed: ${trackTitle}`,
+      track_completed: `🎉 Track completed: ${trackTitle}`,
       due_soon: `Due soon: ${trackTitle}`,
       overdue: `Overdue: ${trackTitle}`,
     };

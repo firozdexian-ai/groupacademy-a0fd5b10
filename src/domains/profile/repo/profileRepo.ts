@@ -1,5 +1,5 @@
 ﻿/**
- * GroUp Academy â€” Profile Domain Repository (Phase 10e)
+ * GroUp Academy — Profile Domain Repository (Phase 10e)
  * Sole owner of `supabase.from(...)` table I/O for the profile domain.
  * Storage (`supabase.storage.from(...)`) and RPC paths intentionally remain in their callers.
  */
@@ -256,7 +256,7 @@ export async function deletePayoutAccount(accountId: string) {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.2 â€” RBAC lookups â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.2 — RBAC lookups ───────────────────────────────────────────
 export async function listUserRoles(userId: string): Promise<Array<{ role: string }>> {
   const { data, error } = await supabase.from("user_roles").select("role").eq("user_id", userId);
   if (error) throw error;
@@ -269,7 +269,7 @@ export async function listUserRolesSafe(userId: string): Promise<Array<{ role: s
 }
 
 // -----------------------------------------------------------------------------
-// Phase 10j.3b additions â€” onboarding & RBAC lookups
+// Phase 10j.3b additions — onboarding & RBAC lookups
 // -----------------------------------------------------------------------------
 
 import { supabase as _supabaseProfile } from "@/integrations/supabase/client";
@@ -361,7 +361,7 @@ export async function listActiveSchools(academyId?: string | null) {
   return (data ?? []) as Array<{ id: string; name: string; slug: string; description: string | null; icon: string | null; academy_id: string | null }>;
 }
 
-// â”€â”€â”€ Phase 10j.5h6: public discovery & profile RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h6: public discovery & profile RPC wrappers ───────────────
 export async function getPublicTalentProfile<T = unknown>(handle: string): Promise<T | null> {
   const { data, error } = await supabase.rpc("get_public_talent_profile", { _handle: handle });
   if (error) throw error;
@@ -388,7 +388,7 @@ export async function getTalentOutcomeSignal<T = unknown>(talentId: string): Pro
   return (data ?? {}) as T;
 }
 
-// â”€â”€â”€ Phase 10j.5h9 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h9 ────────────────────────────────────────────────────────
 export async function checkCvDuplicate<T = unknown>(args: { fingerprint: string; selfUserId: string }): Promise<T> {
   const { data, error } = await supabase.rpc("check_cv_duplicate", {
     _fingerprint: args.fingerprint,

@@ -1,7 +1,7 @@
 ﻿/**
  * GroUp Academy: AI Tools Hub Surface (ToolsView)
  * CTO Reference: Authoritative hub container displaying talent career optimization assets.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  * Enhancements: Performance layout tracking, system anomaly filters, and telemetry synchronization.
  */
 import { useState } from "react";
@@ -94,11 +94,11 @@ const TOOL_META: Record<
 };
 
 const REASON_COPY: Record<string, string> = {
-  no_cv: "Start with a clean CV â€” it boosts every match.",
+  no_cv: "Start with a clean CV — it boosts every match.",
   low_completeness: "Build a stronger profile to unlock better matches.",
-  saved_recent: "You saved a job recently â€” let's draft your answers.",
+  saved_recent: "You saved a job recently — let's draft your answers.",
   saved_unscored: "You have unscored saved jobs. See your fit.",
-  no_assessment_recent: "It's been a while â€” get a fresh readiness score.",
+  no_assessment_recent: "It's been a while — get a fresh readiness score.",
   no_salary_recent: "Check your market salary range.",
   default: "Try a mock interview to sharpen your delivery.",
 };
@@ -145,7 +145,7 @@ export function ToolsView() {
           </div>
           {loadingNext ? (
             <div className="flex items-center gap-2 text-xs font-semibold text-muted-foreground animate-pulse py-1">
-              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Finding your best next stepâ€¦
+              <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Finding your best next step…
             </div>
           ) : nextBest ? (
             <NextBestCard
@@ -155,7 +155,7 @@ export function ToolsView() {
             />
           ) : (
             <p className="text-xs sm:text-sm font-medium text-muted-foreground leading-normal py-0.5">
-              Pick unknown tool below to get started â€” we'll personalize this recommendation as you use them.
+              Pick unknown tool below to get started — we'll personalize this recommendation as you use them.
             </p>
           )}
         </CardContent>
@@ -210,7 +210,7 @@ export function ToolsView() {
           <CardContent className="p-2 w-full">
             {loadingRuns ? (
               <div className="flex items-center gap-2 p-4 text-xs font-semibold text-muted-foreground animate-pulse">
-                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Loading activity ledgerâ€¦
+                <Loader2 className="h-3.5 w-3.5 animate-spin text-primary" /> Loading activity ledger…
               </div>
             ) : !recent || recent.length === 0 ? (
               <p className="text-xs sm:text-sm font-medium text-muted-foreground/60 p-6 text-center italic">
@@ -236,7 +236,7 @@ export function ToolsView() {
                             {meta?.title || r.tool_key}
                           </p>
                           <p className="text-[11px] font-medium text-muted-foreground/70 mt-0.5 tabular-nums">
-                            {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })} Â· {r.cost_credits} cr
+                            {formatDistanceToNow(new Date(r.created_at), { addSuffix: true })} · {r.cost_credits} cr
                           </p>
                         </div>
                         <ArrowRight className="h-4 w-4 text-muted-foreground/30 group-hover:text-primary/70 group-hover:translate-x-0.5 transition-all shrink-0" />

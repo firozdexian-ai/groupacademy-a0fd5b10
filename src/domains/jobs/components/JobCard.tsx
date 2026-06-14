@@ -1,7 +1,7 @@
 ﻿/**
  * GroUp Academy: Professional Opportunities Node (JobCard)
  * CTO Reference: Authoritative component for job lead visualization and AI matching.
- * Version: Launch Candidate Â· Phase Z0 Hardened (Refactored for Clean 2024 SaaS UI)
+ * Version: Launch Candidate · Phase Z0 Hardened (Refactored for Clean 2024 SaaS UI)
  * Fixes: Scrollbar track contamination, placeholder initial logic, visual token alignment
  */
 
@@ -140,7 +140,7 @@ export function JobCard({
   const formatSalarySync = () => {
     if (!job.salary_range_min && !job.salary_range_max) return null;
     const currency = job.salary_currency || "BDT";
-    const symbol = currency === "USD" ? "$" : currency === "BDT" ? "à§³" : currency;
+    const symbol = currency === "USD" ? "$" : currency === "BDT" ? "৳" : currency;
     const isPrefix = currency === "USD";
 
     const formatProtocol = (num: number | null | undefined) => {

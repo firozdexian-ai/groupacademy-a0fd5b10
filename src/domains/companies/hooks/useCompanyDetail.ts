@@ -1,5 +1,5 @@
 ﻿/**
- * Companies Domain Hooks â€” Company Profile Detail Hook
+ * Companies Domain Hooks — Company Profile Detail Hook
  * Version: 2024 Highly Professional SAAS UI
  * Rules: Enforces standard business data structures and maps operational errors to user-friendly messages.
  */

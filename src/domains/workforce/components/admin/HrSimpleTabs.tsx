@@ -1,5 +1,5 @@
 ﻿/**
- * HR Taxonomy Registry â€” Phase HR-Z1 Hardened
+ * HR Taxonomy Registry — Phase HR-Z1 Hardened
  * CTO Version: May 2026
  * Fixes: W6 (AlertDialog Integration), Institutional UI Parity
  */
@@ -133,7 +133,7 @@ export function HrVerticalsTab() {
  renderRow={(row: unknown) => (
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
  <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
- <TableCell className="text-xs text-muted-foreground">{row.description || "â€”"}</TableCell>
+ <TableCell className="text-xs text-muted-foreground">{row.description || "—"}</TableCell>
  <TableCell className="text-right pr-8">
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
  <Button
@@ -232,7 +232,7 @@ export function HrFunctionsTab() {
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
  <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
  <TableCell className="text-xs font-bold uppercase text-muted-foreground">
- {hrGraphQuery.data?.verticals.find((v) => v.id === row.vertical_id)?.name || "â€”"}
+ {hrGraphQuery.data?.verticals.find((v) => v.id === row.vertical_id)?.name || "—"}
  </TableCell>
  <TableCell className="text-right pr-8">
  <div className="flex justify-end gap-2 opacity-20 group-hover:opacity-100 transition-opacity">
@@ -334,7 +334,7 @@ export function HrTeamsTab() {
  <TableRow key={row.id} className="group hover:bg-primary/[0.02]">
  <TableCell className="py-5 pl-8 font-semibold text-sm font-medium">{row.name}</TableCell>
  <TableCell className="text-xs font-bold uppercase text-muted-foreground">
- {hrGraphQuery.data?.functions.find((f) => f.id === row.function_id)?.name || "â€”"}
+ {hrGraphQuery.data?.functions.find((f) => f.id === row.function_id)?.name || "—"}
  </TableCell>
  <TableCell>
  <span className="font-mono text-[10px] bg-primary/10 text-primary px-2 py-1 rounded-md">

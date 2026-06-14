@@ -92,7 +92,7 @@ interface RequestPayoutSheetProps {
 /**
  * GroUp Academy: Authoritative Instructor Earnings & Ledger Cockpit (InstructorEarnings)
  * Hardened operational module isolating telemetry execution loops and anchoring hydration-safe date paths.
- * Version: Launch Candidate Â· Phase Z0 Financial Control Locked
+ * Version: Launch Candidate · Phase Z0 Financial Control Locked
  */
 export default function InstructorEarnings() {
  const queryClientInstance = useQueryClient();
@@ -131,7 +131,7 @@ export default function InstructorEarnings() {
         className="w-full flex items-center justify-center py-12 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground/50 select-none pointer-events-none gap-2.5"
       >
         <InlineSpinner size="sm" />
-        <span>Loading earningsâ€¦</span>
+        <span>Loading earnings…</span>
       </div>
     );
   }
@@ -162,11 +162,11 @@ export default function InstructorEarnings() {
                 Payout in review
               </p>
               <p className="text-[11px] font-semibold text-muted-foreground/70 leading-normal block select-text">
-                {openPayouts.length.toString()} payout{openPayouts.length === 1 ? "" : "s"} Â·{" "}
+                {openPayouts.length.toString()} payout{openPayouts.length === 1 ? "" : "s"} ·{" "}
                 <span className="font-mono font-bold text-foreground tabular-nums">
                   {totalPending.toFixed(1)} credits
                 </span>{" "}
-                (â‰ˆ BDT {Math.round(totalPending * 2).toLocaleString()}) waiting for approval.
+                (≈ BDT {Math.round(totalPending * 2).toLocaleString()}) waiting for approval.
               </p>
 
  <div className="pt-2.5 space-y-2 block border-t border-border/5 mt-2 w-full">
@@ -176,7 +176,7 @@ export default function InstructorEarnings() {
  className="flex items-center justify-between gap-4 font-mono text-xs font-medium tracking-tight text-muted-foreground/60 w-full block leading-none"
  >
  <span className="truncate block select-text max-w-[160px] sm:max-w-xs pt-0.5">
- {payoutItem.payout_method} Â·{" "}
+ {payoutItem.payout_method} ·{" "}
  {new Date(payoutItem.created_at).toLocaleDateString("en-US", { timeZone: "UTC" })}
  </span>
  <Badge
@@ -316,7 +316,7 @@ export default function InstructorEarnings() {
                     {rowItem.source_kind.replace(/_/g, " ")}
                   </p>
                   <p className="font-mono text-sm font-medium text-muted-foreground/40 leading-none select-text uppercase tracking-tight">
-                    {new Date(rowItem.created_at).toLocaleDateString("en-US", { timeZone: "UTC" })} Â· Month:{" "}
+                    {new Date(rowItem.created_at).toLocaleDateString("en-US", { timeZone: "UTC" })} · Month:{" "}
                     {rowItem.period_month.slice(0, 7)}
                   </p>
                 </div>
@@ -347,7 +347,7 @@ export default function InstructorEarnings() {
       {/* Footnote */}
       <footer className="px-1 select-none pointer-events-none block leading-none w-full shrink-0">
         <p className="font-mono text-[9px] font-bold uppercase tracking-wide text-muted-foreground/30 leading-normal">
-          1 credit â‰ˆ 2 BDT Â· Minimum payout: 500 credits Â· Statements are issued on the 1st of each month.
+          1 credit ≈ 2 BDT · Minimum payout: 500 credits · Statements are issued on the 1st of each month.
         </p>
       </footer>
     </div>
@@ -374,7 +374,7 @@ function Stat({ label, credits, icon, highlight }: StatProps) {
  {Number(credits || 0).toFixed(1)}
  </p>
  <p className="font-sans text-sm font-medium text-muted-foreground/50 tracking-wide block leading-none tabular-nums">
- â‰ˆ à§³{Math.round(Number(credits || 0) * 2).toLocaleString()}
+ ≈ ৳{Math.round(Number(credits || 0) * 2).toLocaleString()}
  </p>
  </div>
  </Card>
@@ -500,7 +500,7 @@ function RequestPayoutSheet({ available, onDone }: RequestPayoutSheetProps) {
               className="h-9 text-xs sm:text-sm bg-background/50 border border-border/40 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none font-mono tabular-nums"
             />
             <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase block leading-none pt-0.5 tabular-nums">
-              â‰ˆ BDT {Math.round(Number(amountInputStr || 0) * 2).toLocaleString()} Â· Available:{" "}
+              ≈ BDT {Math.round(Number(amountInputStr || 0) * 2).toLocaleString()} · Available:{" "}
               {Math.floor(available).toLocaleString()}
             </p>
           </div>
@@ -546,7 +546,7 @@ function RequestPayoutSheet({ available, onDone }: RequestPayoutSheetProps) {
               disabled={isMutationProcessing}
               value={accountDetailsStr}
               onChange={(e) => setAccountDetailsStr(e.target.value)}
-              placeholder={methodSelectionStr === "bkash" ? "01XXXXXXXXX" : "Enter your detailsâ€¦"}
+              placeholder={methodSelectionStr === "bkash" ? "01XXXXXXXXX" : "Enter your details…"}
               className="h-9 text-xs sm:text-sm bg-background/50 border border-border/40 focus-visible:ring-1 focus-visible:ring-ring rounded-lg shadow-none font-mono"
             />
           </div>

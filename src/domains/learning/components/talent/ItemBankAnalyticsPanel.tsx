@@ -18,7 +18,7 @@ const FLAG_LABEL: Record<string, string> = {
   low_rubric: "Low Rubric Alignment",
 };
 
-const pct = (v: number | null | undefined) => (v === null || v === undefined ? "â€”" : `${Math.round(v * 100)}%`);
+const pct = (v: number | null | undefined) => (v === null || v === undefined ? "—" : `${Math.round(v * 100)}%`);
 
 const masteryTone = (v: number | null) => {
   if (v === null) return "text-muted-foreground";

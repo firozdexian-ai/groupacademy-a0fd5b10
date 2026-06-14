@@ -47,7 +47,7 @@ function MetricTile({ label, value, delta, suffix = "", invert = false }: unknow
           <DeltaBadge value={delta} invert={invert} />
         </div>
         <p className="text-3xl font-semibold tracking-tight leading-none text-foreground/90">
-          {value == null || value === "" ? "â€”" : `${value}${suffix}`}
+          {value == null || value === "" ? "—" : `${value}${suffix}`}
         </p>
       </CardContent>
     </Card>
@@ -163,7 +163,7 @@ export function UnitEconomics() {
               </CardContent>
             </Card>
 
-            {/* Cohort Retention Triangle â€” wired from ir_retention_cohorts */}
+            {/* Cohort Retention Triangle — wired from ir_retention_cohorts */}
             <Card className="xl:col-span-2 rounded-2xl border border-border/60 bg-card shadow-sm overflow-hidden">
               <div className="h-1.5 w-full bg-gradient-to-r from-fuchsia-400 via-purple-500 to-indigo-500" />
               <CardHeader className="p-8 pb-4">
@@ -171,7 +171,7 @@ export function UnitEconomics() {
                   Cohort Retention Triangle
                 </CardTitle>
                 <CardDescription className="text-[10px] font-bold text-muted-foreground/60">
-                  Monthly cohorts Ã— periods Â· active_users / cohort_size
+                  Monthly cohorts × periods · active_users / cohort_size
                 </CardDescription>
               </CardHeader>
               <CardContent className="p-8 pt-0">

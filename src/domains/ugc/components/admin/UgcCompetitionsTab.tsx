@@ -71,7 +71,7 @@ export function UgcCompetitionsTab() {
  <span className="font-bold">{row.title}</span>
  </div>
  </TableCell>
- <TableCell className="text-xs uppercase text-muted-foreground">{row.category || "â€”"}</TableCell>
+ <TableCell className="text-xs uppercase text-muted-foreground">{row.category || "—"}</TableCell>
  <TableCell>
  <Badge
  variant="outline"
@@ -86,7 +86,7 @@ export function UgcCompetitionsTab() {
  </Badge>
  </TableCell>
  <TableCell className="text-xs text-muted-foreground tabular-nums">
- {row.start_date || "?"} â†’ {row.end_date || "?"}
+ {row.start_date || "?"} → {row.end_date || "?"}
  </TableCell>
  <TableCell className="text-right">
  <div className="flex items-center justify-end gap-1">

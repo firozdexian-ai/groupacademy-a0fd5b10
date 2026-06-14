@@ -311,7 +311,7 @@ export function BatchContentGenerator() {
         });
 
         if (response.status === 429) {
-          addLog("âš ï¸ Throttle Active â€” cooling down 30s...");
+          addLog("⚠️ Throttle Active — cooling down 30s...");
           await new Promise((r) => setTimeout(r, 30000));
           continue;
         }
@@ -327,15 +327,15 @@ export function BatchContentGenerator() {
         if (result.total) setTotalItems(result.total);
 
         if (batchCount === 0) {
-          addLog(`âœ… summary Complete: All nodes sync'd.`);
+          addLog(`✅ summary Complete: All nodes sync'd.`);
           break;
         }
 
-        addLog(`âœ“ Artifacts Generated: ${batchCount} ${generator.countLabel} (${currentRemaining} in queue)`);
+        addLog(`✓ Artifacts Generated: ${batchCount} ${generator.countLabel} (${currentRemaining} in queue)`);
         if (!generator.needsSchool) break;
         await new Promise((r) => setTimeout(r, 3000));
       } catch (err: unknown) {
-        addLog(`âŒ Error: ${err.message}`);
+        addLog(`❌ Error: ${err.message}`);
         await new Promise((r) => setTimeout(r, 5000));
       }
     }

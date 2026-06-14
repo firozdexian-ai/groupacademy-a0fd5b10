@@ -1,5 +1,5 @@
 ﻿/**
- * Talent Shell â€” Workforce Assignment Card (W-8)
+ * Talent Shell — Workforce Assignment Card (W-8)
  * Displays the logged-in talent's HR placement: team, grade, role, vertical, status.
  */
 import { useQuery } from "@tanstack/react-query";
@@ -40,7 +40,7 @@ export function WorkforceAssignmentCard({ talentId }: { talentId: string }) {
   const func_     = assignment.hr_teams?.hr_functions?.name;
   const vertical  = assignment.hr_teams?.hr_functions?.hr_verticals?.name;
   const grade     = assignment.hr_grades
-    ? `L${assignment.hr_grades.level} Â· ${assignment.hr_grades.name}`
+    ? `L${assignment.hr_grades.level} · ${assignment.hr_grades.name}`
     : null;
   const role      = ROLE_LABELS[assignment.role_type] || assignment.role_type;
 

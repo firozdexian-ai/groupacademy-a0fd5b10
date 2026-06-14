@@ -1,4 +1,4 @@
-﻿// AI Language Partner â€” chat at chosen CEFR level with inline corrections
+﻿// AI Language Partner — chat at chosen CEFR level with inline corrections
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

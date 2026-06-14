@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Abroad Group Tab: Academic Programs Catalog
+ * Group Academy — Abroad Group Tab: Academic Programs Catalog
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=programs (Admin Command Center Surface)
  * Operations Mode: Human-in-the-loop program placement manager mapping university slots.

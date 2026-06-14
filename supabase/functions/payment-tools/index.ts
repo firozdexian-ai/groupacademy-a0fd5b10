@@ -76,12 +76,12 @@ serve(async (req) => {
     const adminChatId = Deno.env.get("TELEGRAM_ADMIN_CHAT_ID");
 
     if (botToken && adminChatId) {
-      const message = `ðŸš¨ *New Payment Request*\n\n*Amount:* à§³${amount_bdt || "N/A"}\n*Credits Requested:* ${requested_credits}\n*TrxID:* \`${trx_id}\`\n\nApprove this transaction to fund the user's wallet?`;
+      const message = `🚨 *New Payment Request*\n\n*Amount:* ৳${amount_bdt || "N/A"}\n*Credits Requested:* ${requested_credits}\n*TrxID:* \`${trx_id}\`\n\nApprove this transaction to fund the user's wallet?`;
       const keyboard = {
         inline_keyboard: [
           [
-            { text: "âœ… Approve", callback_data: `approve_${request.id}` },
-            { text: "âŒ Reject", callback_data: `reject_${request.id}` },
+            { text: "✅ Approve", callback_data: `approve_${request.id}` },
+            { text: "❌ Reject", callback_data: `reject_${request.id}` },
           ],
         ],
       };

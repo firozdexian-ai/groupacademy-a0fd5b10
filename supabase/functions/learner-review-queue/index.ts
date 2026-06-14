@@ -175,7 +175,7 @@ Deno.serve(async (req) => {
     }
 
     // 4. For each due topic, sample items biased toward the topic_tag.
-    //    Scenario-sourced topics skip quiz sampling â€” the UI re-runs the scenario.
+    //    Scenario-sourced topics skip quiz sampling — the UI re-runs the scenario.
     const topics: ReviewTopic[] = due.map((d) => {
       const source: "quiz" | "scenario" = d.last_source === "scenario" ? "scenario" : "quiz";
       let items: Omit<PoolItem, "module_id">[] = [];

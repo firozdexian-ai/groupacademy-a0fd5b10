@@ -28,7 +28,7 @@ const AuthCallback = () => {
     }
 
     // Brand-new OAuth users: the talents row is created by a trigger and
-    // may not be visible yet. Poll up to 3Ã— (â‰ˆ1.8s total) before falling
+    // may not be visible yet. Poll up to 3× (≈1.8s total) before falling
     // back to the talent default.
     if (accountType === "unknown" && retryCountRef.current < MAX_ACCOUNT_TYPE_RETRIES) {
       retryCountRef.current += 1;
@@ -53,7 +53,7 @@ const AuthCallback = () => {
     }
 
     // Apply unknown pre-auth onboarding selections stashed at /start before
-    // routing. Fire-and-forget â€” failure shouldn't block sign-in.
+    // routing. Fire-and-forget — failure shouldn't block sign-in.
     void finalizePendingOnboarding();
 
     const dest =
@@ -64,7 +64,7 @@ const AuthCallback = () => {
   return (
     <div className="min-h-screen flex flex-col items-center justify-center bg-background gap-3">
       <Loader2 className="w-8 h-8 animate-spin text-primary" />
-      <p className="text-sm font-medium text-muted-foreground">Signing you inâ€¦</p>
+      <p className="text-sm font-medium text-muted-foreground">Signing you in…</p>
     </div>
   );
 };

@@ -146,7 +146,7 @@ export function CommentList({ postId }: CommentListProps) {
         <Textarea
           value={body}
           onChange={(e) => setBody(e.target.value)}
-          placeholder="Write a commentâ€¦"
+          placeholder="Write a comment…"
           className="min-h-[44px] max-h-[120px] text-xs leading-relaxed border-none focus-visible:ring-0 focus-visible:ring-offset-0 bg-transparent resize-none p-2 w-full text-foreground placeholder:text-muted-foreground/70"
           onKeyDown={(e) => {
             if (e.key === "Enter" && !e.shiftKey) {
@@ -175,7 +175,7 @@ export function CommentList({ postId }: CommentListProps) {
       {/* Dynamic Thread Feed View */}
       {loading ? (
         <div className="flex items-center justify-center py-8 text-xs text-muted-foreground/80 font-medium tracking-wide">
-          <InlineSpinner size="sm" className="mr-2.5" /> Loading commentsâ€¦
+          <InlineSpinner size="sm" className="mr-2.5" /> Loading comments…
         </div>
       ) : comments.length === 0 ? (
         <div className="text-center py-10 px-4 rounded-xl border border-dashed border-border/40 bg-muted/5 select-none">
@@ -212,11 +212,11 @@ export function CommentList({ postId }: CommentListProps) {
 
                 {c.tip_count > 0 && (
                   <div className="inline-flex items-center gap-1.5 text-[10px] font-semibold text-primary bg-primary/5 border border-primary/10 px-2 py-0.5 rounded-full mt-1.5 select-none tabular-nums animate-in slide-in-from-left-2 duration-300">
-                    <span>ðŸŽ</span>
+                    <span>🎁</span>
                     <span>
                       {c.tip_count} tip{c.tip_count === 1 ? "" : "s"}
                     </span>
-                    <span className="text-muted-foreground/60 font-normal">â€¢</span>
+                    <span className="text-muted-foreground/60 font-normal">•</span>
                     <span>{c.tip_credits} cr</span>
                   </div>
                 )}

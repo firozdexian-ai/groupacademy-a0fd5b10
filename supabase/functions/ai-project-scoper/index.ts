@@ -1,4 +1,4 @@
-﻿// AI Project Scoper â€” turn a brief into a milestone breakdown.
+﻿// AI Project Scoper — turn a brief into a milestone breakdown.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

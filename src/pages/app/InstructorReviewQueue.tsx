@@ -43,7 +43,7 @@ interface ModuleDigest {
 /**
  * GroUp Academy: Authoritative Author Review Queue (InstructorReviewQueue)
  * Hardened responsive queue orchestrating parallel digestion of module flags and analytics.
- * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
+ * Version: Launch Candidate · Phase Z1 Production Contract Locked
  */
 export default function InstructorReviewQueue() {
  const [digests, setDigests] = React.useState<ModuleDigest[]>([]);
@@ -107,7 +107,7 @@ export default function InstructorReviewQueue() {
   React.useEffect(() => { void load(); }, [load]);
 
   const handleWeeklyDispatch = async () => {
-    toast.loading("Sending weekly digest to instructorsâ€¦", { id: "wd" });
+    toast.loading("Sending weekly digest to instructors…", { id: "wd" });
     try {
       await authoringReviewDigest({ mode: "weekly", days: 7 });
       toast.dismiss("wd");
@@ -140,7 +140,7 @@ export default function InstructorReviewQueue() {
  )}
 
  {!loading && !error && digests.length === 0 && (
- <Card className="p-8 text-center text-sm text-muted-foreground">Everything is humming. No flags identified. ðŸŽ‰</Card>
+ <Card className="p-8 text-center text-sm text-muted-foreground">Everything is humming. No flags identified. 🎉</Card>
  )}
 
  {digests.map((d) => (

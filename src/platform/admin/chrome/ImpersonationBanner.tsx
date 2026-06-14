@@ -13,7 +13,7 @@ export function ImpersonationBanner() {
     <div className="sticky top-0 z-50 bg-amber-500/15 border-b border-amber-500/40 text-amber-900 dark:text-amber-200 px-3 py-1.5 text-xs flex items-center gap-2">
       <Building2 className="h-3.5 w-3.5 shrink-0" />
       <span className="truncate">
-        Acting as <strong>{actingCompanyName ?? "company"}</strong> â€” all changes affect their workspace.
+        Acting as <strong>{actingCompanyName ?? "company"}</strong> — all changes affect their workspace.
       </span>
       <button
         type="button"

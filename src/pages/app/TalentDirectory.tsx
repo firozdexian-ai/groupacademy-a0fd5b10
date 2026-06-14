@@ -123,7 +123,7 @@ export default function TalentDirectory() {
     </div>
     {me?.id && (
       <Button onClick={boost} disabled={boosting} className="rounded-xl">
-        <Rocket className="h-4 w-4 mr-2" /> Pin Profile Â· 100 credits
+        <Rocket className="h-4 w-4 mr-2" /> Pin Profile · 100 credits
       </Button>
     )}
  </header>
@@ -132,7 +132,7 @@ export default function TalentDirectory() {
     <div className="relative">
       <Search className="absolute left-3 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground" />
       <Input
-        placeholder="Search membersâ€¦"
+        placeholder="Search members…"
         value={q}
         onChange={(e) => setQ(e.target.value)}
         className="pl-9 rounded-xl"

@@ -99,7 +99,7 @@ export function useCoursePerformance(contentId: string | undefined) {
         const funnel = [
           { label: "Enrolled", value: totalEnrollments },
           { label: "Started", value: started },
-          { label: "Mid (â‰¥50%)", value: mid },
+          { label: "Mid (≥50%)", value: mid },
           { label: "Completed", value: completed },
         ];
 
@@ -154,7 +154,7 @@ export function useCoursePerformance(contentId: string | undefined) {
           };
         });
 
-        // Recent activity (last 10) â€” fetch talent names lazily
+        // Recent activity (last 10) — fetch talent names lazily
         type RecentRaw = { kind: "enroll" | "quiz" | "scenario"; at: string; talent_id: string; detail: string };
         const recentRaw: RecentRaw[] = [
           ...enrollments
@@ -169,7 +169,7 @@ export function useCoursePerformance(contentId: string | undefined) {
             kind: "quiz" as const,
             at: q.created_at,
             talent_id: q.talent_id,
-            detail: `Quiz Â· ${q.score ?? 0}%`,
+            detail: `Quiz · ${q.score ?? 0}%`,
           })),
           ...scenarioRuns.map((s) => ({
             kind: "scenario" as const,

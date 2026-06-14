@@ -4,7 +4,7 @@ import { Loader2 } from "lucide-react";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
 
 /**
- * Legacy /app/abroad redirect â†’ Learning Hub abroad events tab.
+ * Legacy /app/abroad redirect → Learning Hub abroad events tab.
  * Preserves existing query params so analytics/filters carry through.
  */
 export default function CareerAbroad() {
@@ -29,7 +29,7 @@ export default function CareerAbroad() {
  >
  <div className="flex items-center gap-2">
  <InlineSpinner size="sm" />
- <span>Taking you to Study Abroadâ€¦</span>
+ <span>Taking you to Study Abroad…</span>
  </div>
  </div>
  );

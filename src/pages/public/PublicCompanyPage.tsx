@@ -71,7 +71,7 @@ function setJsonLd(id: string, data: unknown) {
 /**
  * GroUp Academy: Authoritative Public Workspace Mirror Node (PublicCompanyPage)
  * Hardened responsive showcase page resolving parallel relational handshakes and isolating SEO injections.
- * Version: Launch Candidate Â· Phase Z0 Lifecycle Insulation Locked
+ * Version: Launch Candidate · Phase Z0 Lifecycle Insulation Locked
  */
 export default function PublicCompanyPage() {
   const { slug: unverifiedRouteSlugStr } = useParams<{ slug: string }>();
@@ -151,7 +151,7 @@ export default function PublicCompanyPage() {
 
     const targetCompanyNodeItem = companyRecordState;
     const stableTitleString =
-      `${targetCompanyNodeItem.name} â€” ${targetCompanyNodeItem.tagline ?? "Corporate Profile"}`.slice(0, 60);
+      `${targetCompanyNodeItem.name} — ${targetCompanyNodeItem.tagline ?? "Corporate Profile"}`.slice(0, 60);
     const stableDescriptionString = (
       targetCompanyNodeItem.about ??
       targetCompanyNodeItem.tagline ??
@@ -223,7 +223,7 @@ export default function PublicCompanyPage() {
             to="/"
             className="h-8 px-4 rounded-lg inline-flex items-center justify-center text-sm font-medium tracking-wider bg-accent text-accent-foreground border border-border/40 transition-colors hover:bg-muted"
           >
-            â† Back to Home
+            ← Back to Home
           </Link>
         </div>
       </div>
@@ -352,12 +352,12 @@ export default function PublicCompanyPage() {
                       {jobCapsuleItem.title}
                     </p>
                     <p className="text-[11px] font-mono font-bold text-muted-foreground/50 truncate block leading-none">
-                      {jobCapsuleItem.location ?? "Remote"} Â·{" "}
+                      {jobCapsuleItem.location ?? "Remote"} ·{" "}
                       {jobCapsuleItem.job_type.replace(/_/g, " ").toUpperCase()}
                     </p>
                   </div>
                   <span className="text-[10px] font-bold text-primary group-hover:translate-x-0.5 transition-transform shrink-0 uppercase tracking-wider hidden sm:inline-block">
-                    View Job â†’
+                    View Job →
                   </span>
                 </Link>
               ))}

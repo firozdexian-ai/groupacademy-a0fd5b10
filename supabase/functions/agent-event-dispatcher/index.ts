@@ -1,9 +1,9 @@
-﻿// Phase E â€” Proactive Engine dispatcher.
+﻿// Phase E — Proactive Engine dispatcher.
 // Runs every minute. Pulls unprocessed platform_events, matches to
 // agent_triggers, dedupes per (agent, recipient, event_kind, 24h),
 // generates the message via Lovable AI, then delivers via either:
-//   - in_app  â†’ notifications (cost 0.5)
-//   - whatsapp â†’ messaging-send via Unipile (cost 2.0), with cold-start
+//   - in_app  → notifications (cost 0.5)
+//   - whatsapp → messaging-send via Unipile (cost 2.0), with cold-start
 //                fail-soft to in_app when phone or channel is missing.
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
@@ -180,7 +180,7 @@ async function runTrigger(admin: unknown, evt: PlatformEvent, trig: AgentTrigger
     // in_app: mirror to notifications
     await admin.from("notifications").insert({
       talent_id: recipient.id, type: "agent_outreach",
-      title: agent.name, message: body.length > 220 ? body.slice(0, 217) + "â€¦" : body,
+      title: agent.name, message: body.length > 220 ? body.slice(0, 217) + "…" : body,
       icon: "sparkles",
     });
   }
@@ -224,7 +224,7 @@ async function resolveRecipientPhone(admin: unknown, recipient: { kind: string; 
     const { data } = await admin.from("talents").select("phone, full_name").eq("id", recipient.id).maybeSingle();
     return { phone: normalizePhone(data?.phone), name: data?.full_name ?? null };
   }
-  // companies have no phone field today â†’ fail-soft
+  // companies have no phone field today → fail-soft
   return { phone: null, name: null };
 }
 

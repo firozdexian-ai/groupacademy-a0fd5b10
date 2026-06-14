@@ -29,7 +29,7 @@ type UploadStatus = "idle" | "uploading" | "success" | "error";
 /**
  * GroUp Academy: Institutional Multi-Artifact Data Ingress System (MultiFileUpload)
  * An authoritative operational sandbox managing dynamic binary stream chunk storage commits and bucket token mapping.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export default function MultiFileUpload({
   bucket,
@@ -136,7 +136,7 @@ export default function MultiFileUpload({
         if (currentPassAbortSignal.aborted) throw new Error("SYNC_ABORTED");
 
         const targetActiveFile = targetedIngressQueue[indexPosition];
-        setStatusMessage(`Syncing byte layer artifact [${targetActiveFile.name.toUpperCase()}]â€¦`);
+        setStatusMessage(`Syncing byte layer artifact [${targetActiveFile.name.toUpperCase()}]…`);
 
         // 120,000ms Hardwired Network Latency Timeout Guard
         const structuralTimeoutGuardPromise = new Promise<never>((_, reject) => {

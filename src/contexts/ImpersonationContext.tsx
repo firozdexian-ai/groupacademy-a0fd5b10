@@ -1,5 +1,5 @@
 ﻿/**
- * Impersonation context â€” lets super_admin / internal staff "act as" a company
+ * Impersonation context — lets super_admin / internal staff "act as" a company
  * inside `/admin`. The chosen company id is mirrored to localStorage so it
  * survives reloads. Edge functions read `x-acting-company` header (set by the
  * supabase client wrapper) before falling back to the user's own membership.

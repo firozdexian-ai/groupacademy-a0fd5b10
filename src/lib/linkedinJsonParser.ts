@@ -1,4 +1,4 @@
-﻿// LinkedIn Profile Scraper / Leads-Finder JSON â†’ Talent / Contact / Investor parser
+﻿// LinkedIn Profile Scraper / Leads-Finder JSON → Talent / Contact / Investor parser
 // Supports two formats: camelCase (old scraper) and snake_case (new leads-finder)
 
 export interface LinkedInProfile {
@@ -84,13 +84,13 @@ export interface ParseResult<T = Record<string, unknown>> {
   skipped: SkippedRecord[];
 }
 
-// â”€â”€â”€ FORMAT DETECTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── FORMAT DETECTION ───────────────────────────────────────
 
 function isLeadsFinderFormat(p: LinkedInProfile): boolean {
   return 'first_name' in p || 'job_title' in p || ('linkedin' in p && !('linkedinUrl' in p));
 }
 
-// â”€â”€â”€ FIELD EXTRACTORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── FIELD EXTRACTORS ───────────────────────────────────────
 
 function getName(p: LinkedInProfile): string {
   return (
@@ -190,7 +190,7 @@ function mapSkills(skills: unknown[]): unknown[] | null {
   return skills.map((s) => (typeof s === "string" ? s : s.name || s.skill || String(s)));
 }
 
-// â”€â”€â”€ PROFESSION EXTRACTION â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── PROFESSION EXTRACTION ─────────────────────────────────
 
 const SENIORITY_PREFIXES = [
   'sr\\.?', 'senior', 'jr\\.?', 'junior', 'lead', 'principal', 'chief',
@@ -198,24 +198,24 @@ const SENIORITY_PREFIXES = [
   'associate', 'assistant', 'staff', 'executive', 'managing',
 ];
 const SENIORITY_REGEX = new RegExp(`^(${SENIORITY_PREFIXES.join('|')})\\s+`, 'i');
-const COMPANY_SPLIT_REGEX = /\s+(?:at|@|[-â€“â€”]|,)\s+/i;
+const COMPANY_SPLIT_REGEX = /\s+(?:at|@|[-–—]|,)\s+/i;
 
 /**
  * Extracts a clean profession from a raw headline / job_title.
- * "Sr. Software Engineer at Google" â†’ "Software Engineer"
- * "Managing Director - Acme Corp" â†’ "Director"
+ * "Sr. Software Engineer at Google" → "Software Engineer"
+ * "Managing Director - Acme Corp" → "Director"
  */
 export function extractProfession(raw: string | null): string | null {
   if (!raw) return null;
   // Strip company context
   let profession = raw.split(COMPANY_SPLIT_REGEX)[0].trim();
-  // Strip seniority prefixes (up to 2 passes for "Senior Lead â€¦")
+  // Strip seniority prefixes (up to 2 passes for "Senior Lead …")
   profession = profession.replace(SENIORITY_REGEX, '').trim();
   profession = profession.replace(SENIORITY_REGEX, '').trim();
   return profession || raw;
 }
 
-// â”€â”€â”€ TALENTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── TALENTS ────────────────────────────────────────────────
 
 export function parseLinkedInForTalents(profiles: LinkedInProfile[]): ParseResult {
   const valid: ParsedRecord[] = [];
@@ -270,7 +270,7 @@ export function parseLinkedInForTalents(profiles: LinkedInProfile[]): ParseResul
   return { valid, skipped };
 }
 
-// â”€â”€â”€ CONTACTS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── CONTACTS ───────────────────────────────────────────────
 
 export function parseLinkedInForContacts(profiles: LinkedInProfile[]): ParseResult {
   const valid: ParsedRecord[] = [];
@@ -305,7 +305,7 @@ export function parseLinkedInForContacts(profiles: LinkedInProfile[]): ParseResu
   return { valid, skipped };
 }
 
-// â”€â”€â”€ INVESTORS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── INVESTORS ──────────────────────────────────────────────
 
 export function parseLinkedInForInvestors(profiles: LinkedInProfile[]): ParseResult {
   const valid: ParsedRecord[] = [];

@@ -1,5 +1,5 @@
-﻿// Talent Mirror â€” cross-course mastery rollup for the authenticated learner.
-// Phase 2.8 â€” read-only aggregation over talent_skill_profile + content + course_modules.
+﻿// Talent Mirror — cross-course mastery rollup for the authenticated learner.
+// Phase 2.8 — read-only aggregation over talent_skill_profile + content + course_modules.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

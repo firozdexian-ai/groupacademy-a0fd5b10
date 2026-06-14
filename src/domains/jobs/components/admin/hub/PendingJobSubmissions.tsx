@@ -108,7 +108,7 @@ export function PendingJobSubmissions() {
         {isLoading ? (
           <div className="flex flex-col items-center justify-center py-12 gap-3 opacity-50">
             <InlineSpinner size="lg" />
-            <p className="text-[10px] font-semibold">Loading queueâ€¦</p>
+            <p className="text-[10px] font-semibold">Loading queue…</p>
           </div>
         ) : !data || data.length === 0 ? (
           <div className="py-16 border-2 border-dashed rounded-2xl text-center opacity-30 font-semibold uppercase text-xs tracking-widest">

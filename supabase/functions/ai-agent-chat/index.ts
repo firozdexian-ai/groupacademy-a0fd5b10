@@ -2,7 +2,7 @@
 import { createClient } from "npm:@supabase/supabase-js@2";
 
 /**
- * GroUp Academy: Neural Agent Orchestrator (V3.0 â€” Toolified)
+ * GroUp Academy: Neural Agent Orchestrator (V3.0 — Toolified)
  * Phase T1: Dynamic tool resolution + max-4-hop tool loop + context injection.
  * Streams final assistant reply (SSE) after all tool hops resolve.
  */
@@ -115,7 +115,7 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
       }
     }
 
-    // PHASE 5: Tool-calling loop (max 4 hops, non-stream) â†’ final stream
+    // PHASE 5: Tool-calling loop (max 4 hops, non-stream) → final stream
     const convo: unknown[] = [{ role: "system", content: systemPrompt }, ...incomingMessages];
     let hops = 0;
     const invalidations = new Set<string>();
@@ -128,7 +128,7 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
       enroll_course: ["learning-hub", "my-courses", "courses"],
       follow_company: ["companies-with-signal", "followed-companies"],
       submit_pitch: ["talent-pitches"],
-      // Phase C2 â€” Instructor (Maestro) tools
+      // Phase C2 — Instructor (Maestro) tools
       request_payout: ["instructor-dashboard", "instructor-summary", "instructor-earnings"],
       submit_course_for_review: ["instructor-dashboard", "instructor-review-queue", "instructor-summary"],
       draft_module_outline: ["instructor-dashboard", "course-modules"],
@@ -157,7 +157,7 @@ CRITICAL RULE: Use this context to personalize advice. Do not re-ask known facts
       const toolCalls = msg?.tool_calls;
 
       if (!toolCalls || toolCalls.length === 0) {
-        // No tool calls â€” break and stream final response (replay convo)
+        // No tool calls — break and stream final response (replay convo)
         break;
       }
 

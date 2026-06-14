@@ -38,7 +38,7 @@ interface AccessCodeDialogProps {
 /**
  * GroUp Academy: Authoritative Curriculum Ingress Enrollment Gateway (AccessCodeDialog)
  * An operational sandbox orchestrating multi-phase code token registry checks, temporal volume audits, and profile verification tasks.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export const AccessCodeDialog = ({ open, onOpenChange, contentId, contentTitle, onSuccess }: AccessCodeDialogProps) => {
   const queryClient = useQueryClient();
@@ -296,7 +296,7 @@ export const AccessCodeDialog = ({ open, onOpenChange, contentId, contentTitle, 
                 {isValidating ? (
                   <>
                     <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                    <span>Verifyingâ€¦</span>
+                    <span>Verifying…</span>
                   </>
                 ) : (
                   <>

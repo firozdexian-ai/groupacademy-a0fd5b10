@@ -1,6 +1,6 @@
 ﻿/**
- * /gro10x/crm â€” Lightweight Kanban-style CRM.
- * Stages: new â†’ contacted â†’ qualified â†’ proposal â†’ won/lost.
+ * /gro10x/crm — Lightweight Kanban-style CRM.
+ * Stages: new → contacted → qualified → proposal → won/lost.
  * Uses `company_leads` + `company_lead_activities` (member-scoped RLS).
  */
 import { useState } from "react";
@@ -108,7 +108,7 @@ export default function Gro10xCRM() {
     );
   }
 
-  if (isLoading) return <Gro10xLoading label="Loading CRMâ€¦" />;
+  if (isLoading) return <Gro10xLoading label="Loading CRM…" />;
   if (!companyId) {
     return (
       <div className="max-w-md md:max-w-5xl mx-auto p-6 text-center">
@@ -205,7 +205,7 @@ export default function Gro10xCRM() {
               <div className="min-w-0">
                 <p className="text-sm font-medium text-slate-100 truncate">{l.name}</p>
                 <p className="text-xs text-slate-400 truncate">
-                  {l.company_name || l.title || l.email || "â€”"}
+                  {l.company_name || l.title || l.email || "—"}
                 </p>
               </div>
               <ChevronRight className="h-4 w-4 text-slate-500 shrink-0" />
@@ -280,7 +280,7 @@ function NewLeadSheet({
           onClick={() => onSubmit({ name, email, company_name: company, source, value_usd: Number(value) || 0 })}
           className="w-full rounded-full bg-[#33E1E4] text-[#06121A] py-2.5 text-sm font-semibold disabled:opacity-50"
         >
-          {submitting ? "Savingâ€¦" : "Add lead"}
+          {submitting ? "Saving…" : "Add lead"}
         </button>
       </div>
     </div>
@@ -364,7 +364,7 @@ function LeadDetail({
         <div className="sticky top-0 bg-[#0B1220] border-b border-white/5 px-4 py-3 flex items-center justify-between">
           <div className="min-w-0">
             <h2 className="text-base font-semibold truncate">{lead.name}</h2>
-            <p className="text-xs text-slate-400 truncate">{lead.company_name || lead.email || "â€”"}</p>
+            <p className="text-xs text-slate-400 truncate">{lead.company_name || lead.email || "—"}</p>
           </div>
           <button onClick={onClose}><X className="h-4 w-4 text-slate-400" /></button>
         </div>
@@ -410,7 +410,7 @@ function LeadDetail({
               }}
               className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-slate-100 focus:border-[#33E1E4] outline-none"
             >
-              <option value="">â€” None â€”</option>
+              <option value="">— None —</option>
               {(offerings.data ?? []).map((o) => (
                 <option key={o.id} value={o.id}>
                   {o.name} ({o.kind})
@@ -441,7 +441,7 @@ function LeadDetail({
               value={note}
               onChange={(e) => setNote(e.target.value)}
               rows={2}
-              placeholder="Quick note about this leadâ€¦"
+              placeholder="Quick note about this lead…"
               className="w-full rounded-lg bg-white/5 border border-white/10 px-3 py-2 text-sm text-slate-100 placeholder:text-slate-500 focus:border-[#33E1E4] outline-none"
             />
             <button

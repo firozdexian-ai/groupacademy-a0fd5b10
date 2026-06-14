@@ -53,7 +53,7 @@ export default function TalentHome() {
  setBoostUntil(new Date(Date.now() + 86400000).toISOString());
  } catch (e) {
  trackError(e, { area: "TalentHome", event: "boost_action" });
- toast.error("Couldn't boost your profile â€” please try again.");
+ toast.error("Couldn't boost your profile — please try again.");
  } finally {
  setBoosting(false);
  }
@@ -64,7 +64,7 @@ export default function TalentHome() {
  <div className="max-w-2xl mx-auto px-4 pt-4 space-y-3">
  <header className="px-1">
  <p className={`text-[11px] uppercase tracking-wider ${GRO10X_MUTED}`}>Welcome back</p>
- <h1 className="text-xl font-semibold mt-0.5">Hi {talent?.fullName?.split(" ")[0] || "there"} ðŸ‘‹</h1>
+ <h1 className="text-xl font-semibold mt-0.5">Hi {talent?.fullName?.split(" ")[0] || "there"} 👋</h1>
  </header>
 
  {/* Readiness Card */}
@@ -116,13 +116,13 @@ export default function TalentHome() {
  </div>
  )}
 
- {/* Quick actions â€” personalized AI agent shortcuts */}
+ {/* Quick actions — personalized AI agent shortcuts */}
  <QuickActionsGrid />
 
- {/* Workforce Assignment â€” shown only when talent is a GRO10X staff member */}
+ {/* Workforce Assignment — shown only when talent is a GRO10X staff member */}
  {talent?.id && <WorkforceAssignmentCard talentId={talent.id} />}
 
-                {/* B6: Employer pitches surface hidden â€” route /app/pitches still resolves via deep link. */}
+                {/* B6: Employer pitches surface hidden — route /app/pitches still resolves via deep link. */}
 
 
  {/* Credentials */}
@@ -137,7 +137,7 @@ export default function TalentHome() {
  <p className="text-sm font-semibold">Verified skills</p>
  <p className={`text-[11px] ${GRO10X_MUTED}`}>
  {credsLoading
- ? "Loadingâ€¦"
+ ? "Loading…"
  : `${credentials.length} ${credentials.length === 1 ? "skill" : "skills"} verified`}
  </p>
  </div>

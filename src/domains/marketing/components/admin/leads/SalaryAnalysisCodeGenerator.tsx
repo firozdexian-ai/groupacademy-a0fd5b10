@@ -179,7 +179,7 @@ export const SalaryAnalysisCodeGenerator = ({ leadEmail, leadName }: SalaryAnaly
  {isGenerating ? (
  <>
  <InlineSpinner size="md" className="mr-2" />
- Savingâ€¦
+ Saving…
  </>
  ) : (
  <>

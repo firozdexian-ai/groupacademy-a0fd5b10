@@ -54,7 +54,7 @@ const PARSING_STAGES = [
 /**
  * GroUp Academy: Psychometric CV Artifact Ingress Terminal (CVUploadSection)
  * An authoritative operational sandbox managing dynamic PDF/Word storage commits and automated AI parsing steps.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function CVUploadSection() {
   const queryClient = useQueryClient();
@@ -330,7 +330,7 @@ export function CVUploadSection() {
               className="h-2 rounded-full border-none bg-primary/10 shadow-inner w-full block"
             />
             <p className="text-[9px] text-primary/40 uppercase font-bold text-center tracking-widest leading-none pt-1 animate-pulse select-none">
-              Extracting your detailsâ€¦
+              Extracting your details…
             </p>
           </div>
         ) : error ? (

@@ -424,7 +424,7 @@ export function TalentCreditsTab() {
                           </TableCell>
                           <TableCell className="text-left">
                             <span className="text-xs font-medium text-muted-foreground/70">
-                              {credit.talent?.email || "â€”"}
+                              {credit.talent?.email || "—"}
                             </span>
                           </TableCell>
                           <TableCell className="text-left">

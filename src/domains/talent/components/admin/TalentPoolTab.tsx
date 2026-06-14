@@ -1,5 +1,5 @@
 ﻿/**
- * Talent Pool â€” Refactored for Phase Z0
+ * Talent Pool — Refactored for Phase Z0
  * CTO Version: May 2026
  * Fixes: P3 (Accurate Outreach Count), P2 (Layout Deduplication)
  */
@@ -144,7 +144,7 @@ export function TalentPoolTab() {
               </SelectTrigger>
               <SelectContent className="rounded-2xl border-2">
                 <SelectItem value="all" className="font-bold text-[10px]">
-                  ðŸŒ ALL MARKETS
+                  🌍 ALL MARKETS
                 </SelectItem>
                 {COUNTRIES_WITH_PHONE.map((c) => (
                   <SelectItem key={c.code} value={c.name} className="font-bold text-[10px]">

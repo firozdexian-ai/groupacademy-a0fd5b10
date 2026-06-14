@@ -13,7 +13,7 @@ import { Gro10xPeopleTab } from "../components/Gro10xPeopleTab";
 type Tab = "hiring" | "talents" | "sourcing" | "crm" | "people";
 
 /**
- * Gro10x Activities hub â€” three tabs covering hiring, talents the company
+ * Gro10x Activities hub — three tabs covering hiring, talents the company
  * has interacted with, and the lightweight B2B CRM.
  */
 export default function Gro10xWork() {

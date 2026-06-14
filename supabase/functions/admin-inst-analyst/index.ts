@@ -1,4 +1,4 @@
-﻿// Admin Organizations Analyst â€” read-only insights across institutions, partner
+﻿// Admin Organizations Analyst — read-only insights across institutions, partner
 // orgs, clubs, representatives, and events.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 

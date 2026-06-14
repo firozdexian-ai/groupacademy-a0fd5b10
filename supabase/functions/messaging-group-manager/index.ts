@@ -1,9 +1,9 @@
-﻿// WhatsApp group manager (admin-only) â€” channel-aware via agent_key
+﻿// WhatsApp group manager (admin-only) — channel-aware via agent_key
 // Actions: create / add / remove / rename / list / exit
 // Channels (agent_key):
-//   community-engine   â†’ default for 'community' and 'course_cohort' groups
-//   employer-outreach  â†’ 'whiteglove' option for 'client_success' groups
-//   talent-outreach    â†’ not used for managed groups (returns 400 if requested)
+//   community-engine   → default for 'community' and 'course_cohort' groups
+//   employer-outreach  → 'whiteglove' option for 'client_success' groups
+//   talent-outreach    → not used for managed groups (returns 400 if requested)
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -81,9 +81,9 @@ Deno.serve(async (req) => {
     }
     /**
      * channel_preference:
-     *   'community'  â†’ community-engine line (default for community + course_cohort)
-     *   'whiteglove' â†’ employer-outreach line (only if metadata.allow_whiteglove_groups=true)
-     *   'auto'       â†’ community-engine
+     *   'community'  → community-engine line (default for community + course_cohort)
+     *   'whiteglove' → employer-outreach line (only if metadata.allow_whiteglove_groups=true)
+     *   'auto'       → community-engine
      * If channel_id is explicitly provided, it wins (with a safety check).
      */
     async function resolveChannel({ channel_id, channel_preference, group_kind }: { channel_id?: string; channel_preference?: string; group_kind: string; }) {
@@ -99,7 +99,7 @@ Deno.serve(async (req) => {
         if (group_kind !== "client_success") throw new Error("White-glove only valid for client_success groups");
         return ch;
       }
-      // 'community' OR 'auto' OR anything else â†’ community-engine
+      // 'community' OR 'auto' OR anything else → community-engine
       return await loadChannelByAgentKey("community-engine");
     }
 
@@ -167,11 +167,11 @@ Deno.serve(async (req) => {
       if (!defaultName) {
         if (group_kind === "client_success" && company_id) {
           const { data: company } = await admin.from("companies").select("name").eq("id", company_id).single();
-          defaultName = `GroUp Academy â¨¯ ${company?.name ?? "Client"}`;
+          defaultName = `GroUp Academy ⨯ ${company?.name ?? "Client"}`;
         } else if (group_kind === "community") {
-          defaultName = `GroUp Academy Â· ${extraMeta.community_key}`;
+          defaultName = `GroUp Academy · ${extraMeta.community_key}`;
         } else if (group_kind === "course_cohort") {
-          defaultName = `Course Cohort Â· ${extraMeta.course_id}`;
+          defaultName = `Course Cohort · ${extraMeta.course_id}`;
         } else {
           defaultName = "GroUp Academy Internal";
         }

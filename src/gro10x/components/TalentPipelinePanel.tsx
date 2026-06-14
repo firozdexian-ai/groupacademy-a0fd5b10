@@ -61,7 +61,7 @@ export function TalentPipelinePanel({ companyId }: Props) {
           <Users className="h-6 w-6 mx-auto text-slate-600" />
           <p>No talents in {activeStage}.</p>
           <Link to="/gro10x/sourcing" className="text-[#33E1E4] underline">
-            Go source talent â†’
+            Go source talent →
           </Link>
         </div>
       )}

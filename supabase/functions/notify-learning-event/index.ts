@@ -1,4 +1,4 @@
-﻿// notify-learning-event â€” fanout in-app + email for cohort/session events.
+﻿// notify-learning-event — fanout in-app + email for cohort/session events.
 // Kinds: session_reminder_t24 | session_reminder_t1 | session_reminder_t5 | session_live | recording_ready | cohort_started | cohort_completed
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -37,7 +37,7 @@ Deno.serve(async (req) => {
         const { data: ce } = await sb.from("cohort_enrollments").select("user_id").eq("cohort_id", s.cohort_id ?? "00000000-0000-0000-0000-000000000000");
         recipients = (ce ?? []).map((r: unknown) => r.user_id);
         if (recipients.length === 0) {
-          // fallback: enrollments â†’ students.user_id
+          // fallback: enrollments → students.user_id
           const { data: en } = await sb.from("enrollments").select("student_id, students(user_id)").eq("content_id", s.content_id);
           recipients = (en ?? []).map((r: unknown) => r.students?.user_id).filter(Boolean);
         }
@@ -55,10 +55,10 @@ Deno.serve(async (req) => {
       session_reminder_t24: `Session tomorrow: ${session?.title ?? "your live class"}`,
       session_reminder_t1: `Starts in 1 hour: ${session?.title ?? "your live class"}`,
       session_reminder_t5: `Live in 5 minutes: ${session?.title ?? "your live class"}`,
-      session_live: `ðŸ”´ Live now: ${session?.title ?? "your live class"}`,
+      session_live: `🔴 Live now: ${session?.title ?? "your live class"}`,
       recording_ready: `Recording ready: ${session?.title ?? "your session"}`,
       cohort_started: `Your cohort just started`,
-      cohort_completed: `Cohort completed â€” see you on the next one`,
+      cohort_completed: `Cohort completed — see you on the next one`,
     };
 
     const bodyText = course?.title ? `Course: ${course.title}` : "";

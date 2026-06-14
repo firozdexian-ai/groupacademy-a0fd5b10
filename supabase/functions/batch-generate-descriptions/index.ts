@@ -41,7 +41,7 @@ async function generateAndSave(
           role: "system",
           content: `You are a curriculum designer for an online career academy. For each module, generate a rich content guide consisting of 5-7 bullet points. Each bullet point should be a detailed sentence or two that describes a specific concept, framework, technique, or skill the learner will master in this module. 
 
-Format each description as bullet points starting with "â€¢ " (bullet character + space). Each bullet should:
+Format each description as bullet points starting with "• " (bullet character + space). Each bullet should:
 - Start with an action verb or topic focus
 - Be specific and practical (not generic filler)
 - Cover a distinct aspect of the module topic
@@ -50,11 +50,11 @@ Format each description as bullet points starting with "â€¢ " (bullet charac
 The total description should be 500-1500 characters. Focus on what the learner will understand, analyze, apply, or create.
 
 Example format:
-â€¢ Explain the psychology of visual perception in finance, focusing on how the human brain processes imagery faster than numerical data to establish an immediate emotional connection.
-â€¢ Identify the core elements of a visual narrativeâ€”including setting, protagonist, conflict, and resolutionâ€”and how to apply these roles to financial subjects like retirement planning or market volatility.
-â€¢ Detail the use of composition techniques, such as the Rule of Thirds and leading lines, to direct a viewer's eye toward the most critical data points or calls to action within an image.
-â€¢ Analyze the symbolic power of metaphors in banking imagery, illustrating how concepts like "liquidity," "growth," and "security" can be represented without relying on literal or clichÃ© stock photos.
-â€¢ Demonstrate how to select and pair high-quality photography with financial typography to ensure the visual message reinforces the brand's credibility and professionalism.`,
+• Explain the psychology of visual perception in finance, focusing on how the human brain processes imagery faster than numerical data to establish an immediate emotional connection.
+• Identify the core elements of a visual narrative—including setting, protagonist, conflict, and resolution—and how to apply these roles to financial subjects like retirement planning or market volatility.
+• Detail the use of composition techniques, such as the Rule of Thirds and leading lines, to direct a viewer's eye toward the most critical data points or calls to action within an image.
+• Analyze the symbolic power of metaphors in banking imagery, illustrating how concepts like "liquidity," "growth," and "security" can be represented without relying on literal or cliché stock photos.
+• Demonstrate how to select and pair high-quality photography with financial typography to ensure the visual message reinforces the brand's credibility and professionalism.`,
         },
         {
           role: "user",

@@ -87,7 +87,7 @@ export default function ContentReadinessChecklist({
   };
 
   const statusLabel = sum.blockers > 0
-    ? `Inactive â€” ${sum.blockers} blocker${sum.blockers === 1 ? "" : "s"}`
+    ? `Inactive — ${sum.blockers} blocker${sum.blockers === 1 ? "" : "s"}`
     : sum.warnings > 0
     ? `Active with ${sum.warnings} warning${sum.warnings === 1 ? "" : "s"}`
     : "Ready to go live";
@@ -146,7 +146,7 @@ export default function ContentReadinessChecklist({
             <p className="text-[9px] font-black text-warning">Modules blocking</p>
             {moduleAudit.slice(0, 5).map((m) => (
               <p key={m.id} className="text-[10px] text-muted-foreground">
-                <span className="font-semibold text-foreground">{m.title}</span> â€” {m.reason}
+                <span className="font-semibold text-foreground">{m.title}</span> — {m.reason}
               </p>
             ))}
             {moduleAudit.length > 5 && (

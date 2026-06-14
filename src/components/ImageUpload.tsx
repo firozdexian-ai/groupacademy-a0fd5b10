@@ -17,7 +17,7 @@ interface ImageUploadProps {
 /**
  * GroUp Academy: Object Storage Visual Asset Ingress Node (ImageUpload)
  * Authoritative system interface validating file signatures, processing cloud uploads, and syncing media links.
- * Version: Launch Candidate Â· Phase Z0 Hardened Asset Ingress
+ * Version: Launch Candidate · Phase Z0 Hardened Asset Ingress
  */
 export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers", className }: ImageUploadProps) {
   const { toast } = useToast();
@@ -143,7 +143,7 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
     trackEvent("storage_asset_prune_initiated", { bucket });
     const dynamicToastTrackerId = toast({
       title: "PRUNING_REGISTRY",
-      description: "Purging media tracking rows from secure file blocksâ€¦",
+      description: "Purging media tracking rows from secure file blocks…",
     });
 
     try {
@@ -248,7 +248,7 @@ export function ImageUpload({ value, onUpload, onRemove, bucket = "course-covers
                 <Zap className="absolute h-3 w-3 text-primary animate-pulse fill-primary/10 stroke-[2.2]" />
               </div>
               <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider text-primary italic animate-pulse block leading-none pt-1">
-                Synchronizing Ledger Storage Registryâ€¦
+                Synchronizing Ledger Storage Registry…
               </span>
             </div>
           ) : (

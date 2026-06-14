@@ -59,16 +59,16 @@ export function useProgressiveLoadingMessage(active: boolean, options?: Progress
     }
 
     if (seconds < connectingThreshold) {
-      return "Initializing trajectoryâ€¦";
+      return "Initializing trajectory…";
     }
     if (seconds < longThreshold) {
-      return "Connecting to neural serverâ€¦";
+      return "Connecting to neural server…";
     }
     if (seconds < veryLongThreshold) {
-      return "Optimizing connection (this may take a moment)â€¦";
+      return "Optimizing connection (this may take a moment)…";
     }
 
-    return "Finalizing handshakeâ€¦ almost there.";
+    return "Finalizing handshake… almost there.";
   }, [seconds, connectingThreshold, longThreshold, veryLongThreshold]);
 
   return { seconds, message };

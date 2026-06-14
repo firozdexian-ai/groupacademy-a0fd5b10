@@ -1,5 +1,5 @@
 ﻿/**
- * Companies Overview â€” B2B Operational Intelligence Dashboard
+ * Companies Overview — B2B Operational Intelligence Dashboard
  * CTO Version: May 2026 (Hardened & Feature Restored)
  * Fixes: A1 (Query Storm), A2 (Funnel Logic), R2 (Missing Imports)
  * Features: Restored Detailed Aisha Funnel & Market Breakdowns

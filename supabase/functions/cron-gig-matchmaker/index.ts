@@ -1,4 +1,4 @@
-﻿// Cron-gig-matchmaker â€” Phase G1 rebuild.
+﻿// Cron-gig-matchmaker — Phase G1 rebuild.
 // - Drops the 24h filter for active gigs that have ZERO matches (cold-start backfill).
 // - Parallelizes refresh_gig_matches calls in batches of 10.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";

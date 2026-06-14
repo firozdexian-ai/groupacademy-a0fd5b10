@@ -1,9 +1,9 @@
 ﻿/**
- * Group Academy â€” Abroad Domain API Layer
+ * Group Academy — Abroad Domain API Layer
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Security Profile: Strictly typed edge wrappers utilizing runtime response mapping.
  * Convention (Locked in Phase 9b):
- *    - One async function per edge function â€” import by name[cite: 10].
+ *    - One async function per edge function — import by name[cite: 10].
  *    - No `*Api` const, no `<DOMAIN>_EDGE_FUNCTIONS` array[cite: 10].
  *    - Responses validated at runtime via `parseEdgeResponse`[cite: 10].
  *    - Failures throw `EdgeFunctionError`[cite: 10].

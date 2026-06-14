@@ -243,9 +243,9 @@ export function HrTargetsTab() {
  </TableCell>
  <TableCell>
  {t.incentive_amount ? (
- <span className="font-black text-success text-sm">â‚µ{t.incentive_amount}</span>
+ <span className="font-black text-success text-sm">₵{t.incentive_amount}</span>
  ) : (
- <span className="text-muted-foreground">â€”</span>
+ <span className="text-muted-foreground">—</span>
  )}
  </TableCell>
  <TableCell className="text-right pr-8">
@@ -364,7 +364,7 @@ export function HrTargetsTab() {
 
  <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
  <div className="space-y-2">
- <Label className="text-[10px] font-black">Incentive Yield (â‚µ)</Label>
+ <Label className="text-[10px] font-black">Incentive Yield (₵)</Label>
  <Input
  type="number"
  value={draft.incentive_amount ?? ""}

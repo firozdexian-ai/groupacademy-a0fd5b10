@@ -16,7 +16,7 @@ interface CoverImageUploadProps {
 /**
  * GroUp Academy: Visual Portfolio Cover Artifact Ingress Node (CoverImageUpload)
  * An authoritative operational sandbox managing image validation metrics and remote object storage chunk commits.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUploadProps) {
   const queryClient = useQueryClient();
@@ -63,7 +63,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
 
     setIsUploading(true);
     trackEvent("cover_image_upload_initiated", { fileType: targetFileItem.type });
-    const dynamicToastTrackerId = toast.loading("Uploading cover imageâ€¦");
+    const dynamicToastTrackerId = toast.loading("Uploading cover image…");
 
     try {
       const fileExtensionString = targetFileItem.name.split(".").pop();
@@ -110,7 +110,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
 
   const handleTermination = async () => {
     trackEvent("cover_image_purge_requested");
-    const dynamicToastTrackerId = toast.loading("Removing cover imageâ€¦");
+    const dynamicToastTrackerId = toast.loading("Removing cover image…");
 
     try {
       // Invalidate dashboard queries to reflect changes in real time
@@ -169,7 +169,7 @@ export function CoverImageUpload({ currentUrl, onImageChange }: CoverImageUpload
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-md z-20 animate-in fade-in duration-200">
             <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
             <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary mt-2 animate-pulse leading-none">
-              Uploadingâ€¦
+              Uploading…
             </p>
           </div>
         )}

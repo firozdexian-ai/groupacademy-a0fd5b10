@@ -83,7 +83,7 @@ export function JobsOutreachTab() {
               <SelectContent className="rounded-xl border-2">
                 {jobs.map((j) => (
                   <SelectItem key={j.id} value={j.id} className="font-bold text-[10px] uppercase">
-                    {j.title} â€” {j.company_name}
+                    {j.title} — {j.company_name}
                   </SelectItem>
                 ))}
               </SelectContent>

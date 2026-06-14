@@ -22,7 +22,7 @@ interface PoolItem {
 type Difficulty = "easy" | "medium" | "hard";
 
 function difficultyMix(avgMastery: number): Record<Difficulty, number> {
-  // Map avg mastery â†’ target proportions
+  // Map avg mastery → target proportions
   if (avgMastery < 0.4) return { easy: 0.6, medium: 0.3, hard: 0.1 };
   if (avgMastery < 0.7) return { easy: 0.3, medium: 0.5, hard: 0.2 };
   return { easy: 0.1, medium: 0.4, hard: 0.5 };
@@ -41,7 +41,7 @@ function scoreItem(
 ): number {
   const tags = item.topic_tags ?? [];
   if (tags.length === 0) return 0.5; // neutral
-  // Lower avg mastery â†’ higher score (prioritize weak topics).
+  // Lower avg mastery → higher score (prioritize weak topics).
   let sum = 0;
   let count = 0;
   for (const t of tags) {
@@ -50,7 +50,7 @@ function scoreItem(
       sum += m;
       count += 1;
     } else {
-      sum += 0.5; // unknown topic â†’ neutral
+      sum += 0.5; // unknown topic → neutral
       count += 1;
     }
   }

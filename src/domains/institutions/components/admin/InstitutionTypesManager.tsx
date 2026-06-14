@@ -132,7 +132,7 @@ export function InstitutionTypesManager() {
  <TableCell colSpan={4}>
  <div className="flex items-center gap-2 text-sm text-muted-foreground py-4">
  <Skeleton className="h-4 w-4 rounded-full" />
- Syncing Databaseâ€¦
+ Syncing Database…
  </div>
  </TableCell>
  </TableRow>

@@ -76,7 +76,7 @@ export function ApplicationKanbanCard({ app, onClick, className }: ApplicationKa
               variant="secondary"
               className="font-black bg-primary/10 text-primary text-[10px] h-5 px-1.5 rounded-md"
             >
-              ðŸ”¥ {app.ai_match_score}%
+              🔥 {app.ai_match_score}%
             </Badge>
           )}
           {app.sourced && (

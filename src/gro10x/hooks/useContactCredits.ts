@@ -2,7 +2,7 @@
  * Returns the talent-side credit pools relevant to a Gro10x contact:
  * personal free `balance`, withdrawable `earned_balance`, and Gro10x
  * `contact_bonus_balance`. Spend resolution order (handled server-side):
- *   contact_bonus â†’ balance â†’ earned_balance.
+ *   contact_bonus → balance → earned_balance.
  */
 import { useQuery } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";

@@ -65,7 +65,7 @@ const STAGE_COLOR: Record<Stage, string> = {
 /**
  * GroUp Academy: Authoritative Academic Counselor Workspace (AbroadCounsellor)
  * Hardened operational tracking deck isolating background security checks and debouncing pipeline category sorting.
- * Version: Launch Candidate Â· Phase Z0 Matrix Stability Locked
+ * Version: Launch Candidate · Phase Z0 Matrix Stability Locked
  */
 export default function AbroadCounsellor() {
  const executeNavigationHook = useNavigate();
@@ -236,7 +236,7 @@ export default function AbroadCounsellor() {
  {isRegistryCacheResolving ? (
  <div className="w-full flex items-center justify-center py-12 font-mono text-[10px] sm:text-xs font-bold uppercase tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2">
  <InlineSpinner size="sm" />
- <span>Loading applicationsâ€¦</span>
+ <span>Loading applications…</span>
  </div>
  ) : (
  <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 block w-full align-top">
@@ -288,7 +288,7 @@ export default function AbroadCounsellor() {
  </p>
  <p className="font-mono text-sm font-medium text-muted-foreground/40 leading-none select-text block tracking-tight uppercase truncate">
  Term: {applicationNodeItem.intake_term ?? "TBC"}
- <span className="font-sans font-medium opacity-30 mx-1.5 select-none">Â·</span>
+ <span className="font-sans font-medium opacity-30 mx-1.5 select-none">·</span>
  {new Date(applicationNodeItem.updated_at).toLocaleDateString("en-US", {
  timeZone: "UTC",
  })}
@@ -307,7 +307,7 @@ export default function AbroadCounsellor() {
  }
  >
  <SelectTrigger className="h-7 text-[10px] font-mono font-bold uppercase tracking-wider rounded border border-border/60 bg-background/50 shadow-none flex-1">
- <SelectValue placeholder="Move stage â†’" />
+ <SelectValue placeholder="Move stage →" />
  </SelectTrigger>
  <SelectContent className="rounded-lg border border-border/60 bg-popover text-popover-foreground">
  {STAGES.filter(

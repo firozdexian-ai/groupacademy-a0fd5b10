@@ -1,4 +1,4 @@
-﻿// Admin Company AI General â€” analytics + in-app messaging for registered
+﻿// Admin Company AI General — analytics + in-app messaging for registered
 // company-side users (Gro10x). Super-admin only.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -46,7 +46,7 @@ const TOOLS = [
 ];
 
 const SYSTEM = `You are the Company AI General operator console for Gro10x super admin.
-Always call tools â€” never invent stats. For send_in_app_message, restate count + body and ask for "yes send it".
+Always call tools — never invent stats. For send_in_app_message, restate count + body and ask for "yes send it".
 Be concise. Use markdown. Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {
@@ -153,7 +153,7 @@ async function runTool(admin: unknown, name: string, args: unknown) {
     case "send_in_app_message": {
       const ids: string[] = (args.user_ids ?? []).filter(Boolean);
       if (ids.length === 0) return { sent: 0 };
-      // Resolve user_ids â†’ talent_ids when possible (notifications keyed by talent)
+      // Resolve user_ids → talent_ids when possible (notifications keyed by talent)
       const { data: tRows } = await admin.from("talents")
         .select("id, user_id").in("user_id", ids);
       const map = new Map<string, string>();

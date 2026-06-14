@@ -13,7 +13,7 @@ interface RecentLearnerChipProps {
 /**
  * GroUp Academy: Recent Activity Learner Verification Chip (RecentLearnerChip)
  * An authoritative operational badge tracking candidate engagement thresholds and psychometric recency metrics.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function RecentLearnerChip({ recencyScore, threshold = 0.7, className }: RecentLearnerChipProps) {
   const isMountedRef = useRef<boolean>(true);
@@ -49,7 +49,7 @@ export function RecentLearnerChip({ recencyScore, threshold = 0.7, className }: 
         "inline-flex items-center gap-1 px-2 h-5.5 rounded text-[10px] font-extrabold tracking-wide uppercase border border-transparent bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 select-none leading-none shadow-xs shrink-0 animate-in fade-in duration-200 cursor-help",
         className,
       )}
-      title="Active learner node alignment â€” verified learning activity executed inside the last 30-day index segment"
+      title="Active learner node alignment — verified learning activity executed inside the last 30-day index segment"
     >
       <Activity className="h-3 w-3 stroke-[2.5] shrink-0" />
       <span className="pt-0.5 block">Active Learner</span>

@@ -35,7 +35,7 @@ export default function ProfileVerify() {
  const [verificationStatus, setVerificationStatus] = useState<string>("unverified");
  const [isLoading, setIsLoading] = useState(true);
 
- // Digital Workforce Anomaly Protocol â€” telemetry no-op.
+ // Digital Workforce Anomaly Protocol — telemetry no-op.
  // The legacy `ai-support-assistant` invoke here always failed server-side
  // because the body shape doesn't match the edge function (`{ image, context }`).
  // Logged in `.lovable/known-edge-contract-drift.md`. Replace with real
@@ -75,7 +75,7 @@ export default function ProfileVerify() {
  {
  key: "photo",
  label: "Profile photo",
- description: "Add a clear headshot â€” verified profiles get 3Ã— more views.",
+ description: "Add a clear headshot — verified profiles get 3× more views.",
  done: !!talent?.profilePhotoUrl,
  cta: "Upload photo",
  action: () => navigate("/app/profile/edit"),

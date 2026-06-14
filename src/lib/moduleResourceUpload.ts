@@ -47,7 +47,7 @@ export function detectResourceType(file: File): ResourceType {
   ) {
     return "slides";
   }
-  // Catch-all for docs / other formats â€” slides is the most permissive bucket.
+  // Catch-all for docs / other formats — slides is the most permissive bucket.
   return "slides";
 }
 

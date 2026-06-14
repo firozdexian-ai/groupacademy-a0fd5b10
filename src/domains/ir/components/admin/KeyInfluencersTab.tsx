@@ -195,7 +195,7 @@ export default function KeyInfluencersTab() {
  <div className="flex items-center gap-1.5 text-sm font-medium text-muted-foreground/60">
  <Briefcase className="h-3 w-3" />
  <span className="truncate">
- {r.role || "STAKEHOLDER"} {r.organization ? `Â· ${r.organization}` : ""}
+ {r.role || "STAKEHOLDER"} {r.organization ? `· ${r.organization}` : ""}
  </span>
  </div>
  </div>
@@ -221,7 +221,7 @@ export default function KeyInfluencersTab() {
 
  <div className="flex items-center justify-between border-t border-border/10 pt-4">
  <div className="flex items-center gap-2 text-[10px] font-mono font-medium text-foreground/70">
- <Mail className="h-3 w-3 opacity-40" /> {r.email || "â€”"}
+ <Mail className="h-3 w-3 opacity-40" /> {r.email || "—"}
  </div>
  <Badge
  className={cn(

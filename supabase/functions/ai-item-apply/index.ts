@@ -1,4 +1,4 @@
-﻿// Apply an AI item rewrite â€” phase 3.7
+﻿// Apply an AI item rewrite — phase 3.7
 // Validates patch, updates the pool row, resets serve counters, logs revision.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 

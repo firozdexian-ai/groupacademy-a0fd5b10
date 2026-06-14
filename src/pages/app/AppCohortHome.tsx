@@ -48,7 +48,7 @@ interface SessionCardProps {
 /**
  * GroUp Academy: Student Cohort Environment Dashboard (AppCohortHome)
  * Hardened candidate-facing console filtering scheduling streams and insulating date boundaries against client timezone drift.
- * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
+ * Version: Launch Candidate · Phase Z1 Production Contract Locked
  */
 export default function AppCohortHome() {
  const { cohortId: unverifiedCohortParamStr } = useParams<{ cohortId: string }>();
@@ -160,7 +160,7 @@ export default function AppCohortHome() {
  <Calendar className="h-3 w-3 mr-1 text-primary stroke-[2.2] shrink-0" />
  <span>
  STARTS: {resolvedCohortNode.starts_on ?? "SELF-PACED"}
- {resolvedCohortNode.ends_on ? ` â†’ ${resolvedCohortNode.ends_on}` : ""}
+ {resolvedCohortNode.ends_on ? ` → ${resolvedCohortNode.ends_on}` : ""}
  </span>
  </Badge>
 
@@ -238,7 +238,7 @@ function SessionCard({ session, past = false }: SessionCardProps) {
  {session.title}
  </p>
  <p className="font-mono text-[10px] sm:text-[11px] font-bold text-muted-foreground/50 leading-none select-text block tracking-tight">
- {formatEventTime(session.scheduled_date, session.event_timezone || DEFAULT_EVENT_TZ)} â€¢{" "}
+ {formatEventTime(session.scheduled_date, session.event_timezone || DEFAULT_EVENT_TZ)} •{" "}
  {session.duration_minutes ?? 60} MIN
  </p>
  <Badge

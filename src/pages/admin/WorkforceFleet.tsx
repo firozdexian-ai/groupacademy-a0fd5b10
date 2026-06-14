@@ -236,10 +236,10 @@ export default function WorkforceFleet() {
                         </TableCell>
                         <TableCell>
                           <Badge variant="secondary" className="font-mono text-xs">
-                            {inst.workforce_master_templates?.template_key ?? "â€”"}
+                            {inst.workforce_master_templates?.template_key ?? "—"}
                           </Badge>
                         </TableCell>
-                        <TableCell>{inst.companies?.name ?? "â€”"}</TableCell>
+                        <TableCell>{inst.companies?.name ?? "—"}</TableCell>
                         <TableCell className="text-muted-foreground">
                           {inst.cluster_geo_id || "Global"}
                         </TableCell>
@@ -394,7 +394,7 @@ function DeployDialog({
             <Label>Tenant / Company</Label>
             <Select value={tenantId} onValueChange={setTenantId}>
               <SelectTrigger>
-                <SelectValue placeholder="Select a companyâ€¦" />
+                <SelectValue placeholder="Select a company…" />
               </SelectTrigger>
               <SelectContent>
                 {(companies ?? []).map((c) => (
@@ -546,7 +546,7 @@ function ChannelDialog({
               type="password"
               value={botToken}
               onChange={(e) => setBotToken(e.target.value)}
-              placeholder="â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"
+              placeholder="••••••••••••••••"
               autoComplete="off"
             />
             <p className="text-xs text-muted-foreground">

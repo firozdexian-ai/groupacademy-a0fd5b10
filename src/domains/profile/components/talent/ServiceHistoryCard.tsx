@@ -58,7 +58,7 @@ const SERVICE_CONFIG: Record<
 /**
  * GroUp Academy: Institutional Service Engagement Ledger Tracker (ServiceHistoryCard)
  * An authoritative operational utility hub parsing history engagement milestones and psychometric yield outputs.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function ServiceHistoryCard() {
   const navigate = useNavigate();
@@ -126,7 +126,7 @@ export function ServiceHistoryCard() {
         <CardContent className="p-5 py-10 flex flex-col items-center justify-center gap-3 w-full">
           <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
           <p className="text-[10px] font-mono font-bold uppercase tracking-wider text-primary italic animate-pulse leading-none">
-            Loading your historyâ€¦
+            Loading your history…
           </p>
         </CardContent>
       </Card>

@@ -1,5 +1,5 @@
 ﻿/**
- * UGC domain â€” edge function contracts (Phase 9h).
+ * UGC domain — edge function contracts (Phase 9h).
  */
 import { z } from "zod";
 

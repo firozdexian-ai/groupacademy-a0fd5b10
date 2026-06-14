@@ -81,7 +81,7 @@ export default function Gro10xInbox() {
         </div>
       </header>
 
-      {loading && <Gro10xLoading label="Loading your inboxâ€¦" />}
+      {loading && <Gro10xLoading label="Loading your inbox…" />}
 
       {!loading && !companyId && (
         <div className="px-4 py-10 text-center">
@@ -102,7 +102,7 @@ export default function Gro10xInbox() {
         <div className="px-4 py-8 text-center text-sm text-slate-400">
           No agents pinned yet.{" "}
           <Link to="/gro10x/agents" className="text-[#33E1E4] hover:underline">
-            Browse Agent Network â†’
+            Browse Agent Network →
           </Link>
         </div>
       )}
@@ -156,7 +156,7 @@ export default function Gro10xInbox() {
             to="/gro10x/agents"
             className="block text-center text-sm text-[#33E1E4] hover:underline"
           >
-            Browse Agent Network â†’
+            Browse Agent Network →
           </Link>
         </div>
       )}

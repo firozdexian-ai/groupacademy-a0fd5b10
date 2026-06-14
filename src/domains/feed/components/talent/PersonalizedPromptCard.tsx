@@ -121,12 +121,12 @@ export function PersonalizedPromptCard() {
     // Enforce transaction conditions for gated features
     if (prompt.cost) {
       if (balance < prompt.cost) {
-        toast.error(`Not enough credits â€” this needs ${prompt.cost} credits.`);
+        toast.error(`Not enough credits — this needs ${prompt.cost} credits.`);
         return;
       }
 
       setLoading(prompt.type);
-      const toastId = toast.loading(`Starting ${prompt.title}â€¦`);
+      const toastId = toast.loading(`Starting ${prompt.title}…`);
 
       try {
         const transactionServiceKey = prompt.type === "portfolio" ? "PORTFOLIO" : "CAREER_ASSESSMENT";
@@ -157,7 +157,7 @@ export function PersonalizedPromptCard() {
           talentId: talent?.id,
         });
 
-        toast.error("Couldn't process that â€” please check your balance and try again.", { id: toastId });
+        toast.error("Couldn't process that — please check your balance and try again.", { id: toastId });
       } finally {
         setLoading(null);
       }

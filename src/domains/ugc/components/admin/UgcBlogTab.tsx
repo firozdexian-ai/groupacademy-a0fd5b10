@@ -99,7 +99,7 @@ export function UgcBlogTab() {
  <TableCell className="text-xs text-muted-foreground">
  {row.author_name || (row.author_id ? row.author_id.substring(0, 8) : "System")}
  </TableCell>
- <TableCell className="text-xs text-muted-foreground uppercase">{row.category || "â€”"}</TableCell>
+ <TableCell className="text-xs text-muted-foreground uppercase">{row.category || "—"}</TableCell>
  <TableCell>
  <Badge
  variant="outline"

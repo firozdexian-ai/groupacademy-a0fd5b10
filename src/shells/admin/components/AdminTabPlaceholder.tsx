@@ -3,11 +3,11 @@ import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 
 /**
- * AdminTabPlaceholder â€” internal-only stub for admin tabs that are
+ * AdminTabPlaceholder — internal-only stub for admin tabs that are
  * registered in the navigation matrix but not yet wired to real UI.
  *
  * Renders a calm, branded panel so the admin shell never shows a blank screen
- * or a broken loader. Unlike `ComingSoonGate`, this is not a public waitlist â€”
+ * or a broken loader. Unlike `ComingSoonGate`, this is not a public waitlist —
  * admins don't sign up to use their own tooling.
  */
 export function AdminTabPlaceholder({

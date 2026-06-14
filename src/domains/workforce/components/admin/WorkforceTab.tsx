@@ -1,5 +1,5 @@
 ﻿/**
- * Workforce Pulse Terminal â€” Phase HR-Z1 Hardened
+ * Workforce Pulse Terminal — Phase HR-Z1 Hardened
  * CTO Version: May 2026
  * Fixes: W1 (Restored Dialogs), W2 (Team/Grade Wiring), W3 (RPC Adoption), W5 (Purged Fragments)
  */
@@ -209,7 +209,7 @@ export function WorkforceManager() {
  <div className="grid grid-cols-2 lg:grid-cols-4 gap-6">
  <KPIStat icon={Users} label="Total Members" value={kpis.total} color="primary" />
  <KPIStat icon={ShieldCheck} label="Active Assets" value={kpis.active} color="emerald" />
- <KPIStat icon={Coins} label="Total Commission" value={`â‚µ${kpis.totalCommission}`} color="amber" />
+ <KPIStat icon={Coins} label="Total Commission" value={`₵${kpis.totalCommission}`} color="amber" />
  <KPIStat icon={TrendingUp} label="Yield Count" value={kpis.totalAssigned} color="blue" />
  </div>
 
@@ -264,7 +264,7 @@ export function WorkforceManager() {
  >
  <TableCell className="py-6 pl-8">
  <div className="text-left min-w-[200px]">
- <p className="font-semibold text-sm font-medium">{m.talent_name || "â€”"}</p>
+ <p className="font-semibold text-sm font-medium">{m.talent_name || "—"}</p>
  <p className="text-[9px] font-bold text-muted-foreground uppercase mt-0.5">{m.talent_email}</p>
  </div>
  </TableCell>
@@ -283,7 +283,7 @@ export function WorkforceManager() {
  </TableCell>
  <TableCell className="text-center font-semibold">{m.assigned_count}</TableCell>
  <TableCell className="text-center">
- <span className="font-semibold text-success italic">â‚µ{m.commission_earned}</span>
+ <span className="font-semibold text-success italic">₵{m.commission_earned}</span>
  </TableCell>
  <TableCell className="text-center">
  <Badge
@@ -395,7 +395,7 @@ export function WorkforceManager() {
  <SelectContent>
  {gradesQuery.data?.map((g: unknown) => (
  <SelectItem key={g.id} value={g.id} className="font-bold text-xs uppercase">
- L{g.level} Â· {g.name}
+ L{g.level} · {g.name}
  </SelectItem>
  ))}
  </SelectContent>

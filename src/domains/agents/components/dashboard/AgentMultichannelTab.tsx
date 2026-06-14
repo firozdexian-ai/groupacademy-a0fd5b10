@@ -16,7 +16,7 @@ import { trackError } from "@/lib/errorTracking";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Career Guidance System: Agent Multichannel Messaging & Notification Router Component
+ * Group Academy — Career Guidance System: Agent Multichannel Messaging & Notification Router Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=multichannel (Operator Notification Canvas Viewport)
  * Operations Mode: Automated Efficiency mapping system hooks to Telegram communication webhooks.
@@ -50,9 +50,9 @@ const agentLabel = (key: string | null | undefined) => {
   return AI_AGENTS.find((a) => a.id === key)?.name ?? key;
 };
 
-const maskToken = (t: string) => (!t ? "â€”" : t.length <= 8 ? "â€¢â€¢â€¢â€¢" : `â€¢â€¢â€¢â€¢${t.slice(-4)}`);
+const maskToken = (t: string) => (!t ? "—" : t.length <= 8 ? "••••" : `••••${t.slice(-4)}`);
 
-// â”€â”€â”€ BOT INTEGRATIONS CREDENTIALS SUB-PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── BOT INTEGRATIONS CREDENTIALS SUB-PANEL ───────────────────────────
 
 function BotCredentialsPanel() {
   const qc = useQueryClient();
@@ -303,7 +303,7 @@ function BotCredentialsPanel() {
   );
 }
 
-// â”€â”€â”€ EVENT ROUTING CRITERIA RULES SUB-PANEL â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── EVENT ROUTING CRITERIA RULES SUB-PANEL ─────────────────────────
 
 type RuleDraft = {
   id?: string;
@@ -692,7 +692,7 @@ function RoutingRulesPanel() {
   );
 }
 
-// â”€â”€â”€ CENTRAL CONTROLLER DOMAIN CONTAINER WRAPPER â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── CENTRAL CONTROLLER DOMAIN CONTAINER WRAPPER ───────────────────
 
 export function AgentMultichannelTab() {
   return (

@@ -163,7 +163,7 @@ export function StandaloneSalaryCodeGenerator() {
           {isGenerating ? (
             <>
               <InlineSpinner size="md" />
-              Savingâ€¦
+              Saving…
             </>
           ) : (
             <>

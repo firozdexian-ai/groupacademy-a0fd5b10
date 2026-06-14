@@ -45,7 +45,7 @@ const STATUS_CONFIG = {
 /**
  * GroUp Academy: Identity Verification Document Ingress Terminal (IdentityDocsUpload)
  * An authoritative operational sandbox managing identity document storage commits, encryption locks, and validation states.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function IdentityDocsUpload() {
   const queryClient = useQueryClient();
@@ -184,7 +184,7 @@ export function IdentityDocsUpload() {
           <div className="flex items-center gap-2 py-4 text-muted-foreground select-none leading-none w-full">
             <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider pl-0.5 animate-pulse">
-              Loading verification statusâ€¦
+              Loading verification status…
             </span>
           </div>
         ) : doc ? (
@@ -286,7 +286,7 @@ export function IdentityDocsUpload() {
               {busy ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                  <span>Uploadingâ€¦</span>
+                  <span>Uploading…</span>
                 </>
               ) : (
                 <>

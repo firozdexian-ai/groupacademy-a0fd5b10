@@ -1,5 +1,5 @@
 ﻿/**
- * Phase C2 â€” draft_module_outline tool handler.
+ * Phase C2 — draft_module_outline tool handler.
  * Generates 4-6 module titles + objectives via Lovable AI for a given course
  * (content_id), and optionally inserts them as empty course_modules rows
  * (only when no modules exist yet, so we never clobber the instructor's work).

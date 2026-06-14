@@ -1,6 +1,6 @@
 ﻿/**
  * Pure readiness computation for a content/course in admin.
- * Mirrors (but doesn't replace) the DB trigger â€” used for live UI feedback.
+ * Mirrors (but doesn't replace) the DB trigger — used for live UI feedback.
  */
 import type { ModuleStats } from "@/domains/learning/components/admin/content-widgets/ContentReadinessBadge";
 
@@ -69,7 +69,7 @@ export function computeChecks(
   const desc = (f.description || "").trim();
   out.push({
     id: "desc",
-    label: "Description â‰¥ 200 characters",
+    label: "Description ≥ 200 characters",
     detail: `${desc.length} chars`,
     severity: desc.length >= 200 ? "pass" : desc.length >= 80 ? "warn" : "fail",
     field: "description",

@@ -78,7 +78,7 @@ Deno.serve(async (req) => {
     // 2) Find or create the company (dedups against the 6,076 seeded rows)
     let companyId: string;
     if (data.company_id) {
-      // User explicitly picked from the live-search dropdown â€” enrich + verify
+      // User explicitly picked from the live-search dropdown — enrich + verify
       const { data: existing } = await admin
         .from("companies")
         .select("id")
@@ -126,7 +126,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // 4) Grant 250 welcome credits (idempotent â€” only first signup per company)
+    // 4) Grant 250 welcome credits (idempotent — only first signup per company)
     const { data: granted } = await admin.rpc("grant_company_welcome_credits", {
       p_company_id: companyId,
       p_amount: 250,

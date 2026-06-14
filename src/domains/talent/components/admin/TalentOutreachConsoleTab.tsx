@@ -1,5 +1,5 @@
 ﻿/**
- * Talent Outreach Console â€” Refactored for Phase Z0
+ * Talent Outreach Console — Refactored for Phase Z0
  * CTO Version: May 2026
  * Fixes: B3 (Column Selects), B4 (Standardized Logging)
  */

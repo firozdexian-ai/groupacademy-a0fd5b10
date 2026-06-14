@@ -37,7 +37,7 @@ function masteryLabel(m: number) {
 /**
  * GroUp Academy: Psychometric Skill Vector Mastery Display (MasteryBars)
  * An authoritative engine visualizing granular candidate competency tiers and tracking attempt thresholds.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function MasteryBars({ moduleId, topN = 5 }: MasteryBarsProps) {
   // Monitor psychometric competency bar views via analytics telemetry indicators
@@ -114,7 +114,7 @@ export function MasteryBars({ moduleId, topN = 5 }: MasteryBarsProps) {
           <div className="flex items-center gap-2 py-4 text-muted-foreground select-none leading-none w-full">
             <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider pl-0.5 animate-pulse">
-              Hydrating Psychometric Competency Ledgerâ€¦
+              Hydrating Psychometric Competency Ledger…
             </span>
           </div>
         ) : topCalculatedRows.length === 0 ? (

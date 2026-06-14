@@ -20,7 +20,7 @@ interface AuthGateProps {
 /**
  * GroUp Academy: Authoritative Session Access Control Gate (AuthGate)
  * Architectural security boundary intercepting untrusted path navigation and evaluating profile credentials.
- * Version: Launch Candidate Â· Phase Z0 Hardened Routing Guard Lock
+ * Version: Launch Candidate · Phase Z0 Hardened Routing Guard Lock
  */
 export function AuthGate({ children, redirectTo, message, authType = "ai" }: AuthGateProps) {
   const navigate = useNavigate();
@@ -172,7 +172,7 @@ export function AuthGate({ children, redirectTo, message, authType = "ai" }: Aut
               Auditing Session Vector
             </span>
             <p className="text-xs font-semibold text-muted-foreground/60 block leading-none pt-1 tabular-nums italic">
-              {syncSeconds > 6 ? "Network congestion detected â€” processing recordsâ€¦" : "Verifying tracking parametersâ€¦"}
+              {syncSeconds > 6 ? "Network congestion detected — processing records…" : "Verifying tracking parameters…"}
             </p>
           </div>
         </div>

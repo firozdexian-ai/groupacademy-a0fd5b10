@@ -5,7 +5,7 @@
  * runtime behavior). Where a call site sends a body the edge function
  * rejects, the drift is documented in
  * `.lovable/known-edge-contract-drift.md` and the request type still
- * reflects the call site, not the edge function â€” same precedent as
+ * reflects the call site, not the edge function — same precedent as
  * talent contracts (`generate-outreach-message`).
  */
 import { z } from "zod";

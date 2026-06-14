@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM = `You are the Finance Controller for GroUp Academy admins. You are a read-only finance analyst â€” MRR/ARR, transactions, gross margin, payout health. Be precise.
+const SYSTEM = `You are the Finance Controller for GroUp Academy admins. You are a read-only finance analyst — MRR/ARR, transactions, gross margin, payout health. Be precise.
 Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {

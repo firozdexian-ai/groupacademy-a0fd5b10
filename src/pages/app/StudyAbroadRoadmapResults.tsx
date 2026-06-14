@@ -231,19 +231,19 @@ export default function StudyAbroadRoadmapResults() {
       <Card className={cn(CARD, "bg-muted/10")}>
         <CardContent className="p-6 space-y-1">
           <span className="font-mono text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Tuition Range</span>
-          <p className="text-xl font-black text-foreground font-mono italic uppercase">{res.budget?.tuitionRange || "â€”"}</p>
+          <p className="text-xl font-black text-foreground font-mono italic uppercase">{res.budget?.tuitionRange || "—"}</p>
         </CardContent>
       </Card>
       <Card className={cn(CARD, "bg-muted/10")}>
         <CardContent className="p-6 space-y-1">
           <span className="font-mono text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Living Expenses</span>
-          <p className="text-xl font-black text-foreground font-mono italic uppercase">{res.budget?.livingExpenses || "â€”"}</p>
+          <p className="text-xl font-black text-foreground font-mono italic uppercase">{res.budget?.livingExpenses || "—"}</p>
         </CardContent>
       </Card>
       <Card className={cn(CARD, "bg-primary/5 border-primary/20")}>
         <CardContent className="p-6 space-y-1">
           <span className="font-mono text-[9px] font-bold text-primary uppercase tracking-widest">Total Estimate</span>
-          <p className="text-xl font-black text-primary font-mono italic uppercase">{res.budget?.totalEstimate || "â€”"}</p>
+          <p className="text-xl font-black text-primary font-mono italic uppercase">{res.budget?.totalEstimate || "—"}</p>
         </CardContent>
       </Card>
     </div>

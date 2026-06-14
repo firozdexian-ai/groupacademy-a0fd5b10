@@ -40,7 +40,7 @@ const COPY: Record<
   },
   offer_sent: {
     audience: "talent",
-    title: "ðŸŽ‰ You received an offer",
+    title: "🎉 You received an offer",
     message: "{company} sent you an offer for {role}.",
     emailSubject: "Your offer from {company}",
     icon: "file-text",

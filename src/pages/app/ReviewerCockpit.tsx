@@ -99,7 +99,7 @@ export default function ReviewerCockpit() {
  const a = assignments.find((x) => x.id === id);
  if (!a) return;
  setActive(a);
- setBrief("Loading briefâ€¦");
+ setBrief("Loading brief…");
  try {
  const data = await aiReviewerBrief({ assignment_id: id });
  setBrief((data as unknown)?.brief || "No brief available.");

@@ -41,7 +41,7 @@ interface ProgressStageProps {
 /**
  * GroUp Academy: End-Of-Module Milestone Synchronization Controller (ProgressStage)
  * An authoritative operational pipeline auditing progression telemetry, updating wallets, and launching curriculum node routing shifts.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function ProgressStage({
   moduleId,
@@ -210,7 +210,7 @@ export function ProgressStage({
             </div>
 
             <p className="text-[9px] font-extrabold text-muted-foreground/50 uppercase tracking-wider select-none leading-none pt-5 relative z-10">
-              Saving your progressâ€¦
+              Saving your progress…
             </p>
           </Card>
 

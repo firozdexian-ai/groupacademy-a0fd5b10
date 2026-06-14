@@ -1,6 +1,6 @@
-﻿// 3.2.b â€” Issue skill credentials
+﻿// 3.2.b — Issue skill credentials
 // Walks the caller's talent_skill_profile and mints/upgrades credentials
-// via public.issue_skill_credential(). Idempotent â€” safe to call after
+// via public.issue_skill_credential(). Idempotent — safe to call after
 // every quiz submit or scenario evaluation.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";

@@ -63,7 +63,7 @@ Deno.serve(async (req) => {
       });
     }
 
-    // *** Credits are NOT deducted here anymore â€” moved AFTER successful processing ***
+    // *** Credits are NOT deducted here anymore — moved AFTER successful processing ***
 
     // Check credit balance upfront (without deducting) so we can fail fast
     const { data: talentRow } = await supabaseAdmin
@@ -184,7 +184,7 @@ Deno.serve(async (req) => {
     let generalSummary = "";
 
     if (extractionMethod === "scrape_failed") {
-      // Only generate general summary â€” NO credit charge for fallback
+      // Only generate general summary — NO credit charge for fallback
       generalSummary = await generateGeneralSummary(LOVABLE_API_KEY, profileSummary, jobSummary);
       return new Response(
         JSON.stringify({
@@ -220,7 +220,7 @@ Deno.serve(async (req) => {
 
     if (creditError || !creditResult?.success) {
       console.error("Credit deduction failed after processing:", creditError, creditResult);
-      // Still return results â€” user already got value, log the issue
+      // Still return results — user already got value, log the issue
     }
 
     // Track service usage (non-critical)

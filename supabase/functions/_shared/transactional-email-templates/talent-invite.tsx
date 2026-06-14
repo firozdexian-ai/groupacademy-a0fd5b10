@@ -18,12 +18,12 @@ const TalentInviteEmail = ({ name, personal_note }: TalentInviteProps) => (
     <Preview>You've been invited to join {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>You're Invited! ðŸš€</Heading>
+        <Heading style={h1}>You're Invited! 🚀</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
         <Text style={text}>
-          You've been identified as a top candidate and personally invited to join <strong>{SITE_NAME}</strong> â€” 
+          You've been identified as a top candidate and personally invited to join <strong>{SITE_NAME}</strong> — 
           a platform where ambitious professionals access AI-powered career tools, curated job opportunities, and industry-aligned training.
         </Text>
         {personal_note ? (

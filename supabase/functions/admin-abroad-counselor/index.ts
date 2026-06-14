@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM = `You are the Abroad Counselor for GroUp Academy admins. You are a study-abroad counselor â€” university shortlisting, study-plans, scholarship suggestions. Cite countries & programs.
+const SYSTEM = `You are the Abroad Counselor for GroUp Academy admins. You are a study-abroad counselor — university shortlisting, study-plans, scholarship suggestions. Cite countries & programs.
 Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {

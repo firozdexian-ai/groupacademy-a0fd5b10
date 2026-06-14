@@ -69,7 +69,7 @@ const Auth = () => {
   const [showSignupPassword, setShowSignupPassword] = useState(false);
   const [showForgotPassword, setShowForgotPassword] = useState(false);
 
-  // REDIRECT GUARD â€” wait until we know account type to route correctly
+  // REDIRECT GUARD — wait until we know account type to route correctly
   useEffect(() => {
     if (authLoading || !user || accountTypeLoading) return;
     supabase.auth.getSession().then(async ({ data: { session } }) => {
@@ -418,7 +418,7 @@ const Auth = () => {
               onClick={() => navigate("/gro10x/auth")}
               className="text-xs font-medium text-muted-foreground hover:text-primary transition-colors"
             >
-              Hiring? Apply for company access â†’
+              Hiring? Apply for company access →
             </button>
           </div>
         </div>

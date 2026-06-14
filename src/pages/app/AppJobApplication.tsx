@@ -518,7 +518,7 @@ export default function AppJobApplication() {
  Upload CV Target Artifact
  </h3>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wider block">
- Isolated Sandbox Payload Endpoint â€¢ Upper Constraint Threshold Boundary Limit: 5.0 MB
+ Isolated Sandbox Payload Endpoint • Upper Constraint Threshold Boundary Limit: 5.0 MB
  </p>
  </div>
 

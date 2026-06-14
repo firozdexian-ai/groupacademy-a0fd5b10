@@ -19,7 +19,7 @@ const CHANNELS = [
 /**
  * GroUp Academy: Agentic Alert Delivery Preferences Node (NotificationChannels)
  * An authoritative operational settings hub routing algorithmic communication preference filters.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function NotificationChannels() {
   const queryClient = useQueryClient();
@@ -113,7 +113,7 @@ export function NotificationChannels() {
         <CardContent className="p-4 flex items-center justify-center gap-2.5 text-center py-8 w-full">
           <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5">
-            Assembling Delivery Filter Mapsâ€¦
+            Assembling Delivery Filter Maps…
           </p>
         </CardContent>
       </Card>

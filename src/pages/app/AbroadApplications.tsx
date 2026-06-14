@@ -28,7 +28,7 @@ const STAGE_COLORS: Record<string, string> = {
 };
 
 /**
- * My Study Abroad applications â€” read-only timeline of the talent's active applications.
+ * My Study Abroad applications — read-only timeline of the talent's active applications.
  */
 export default function AbroadApplications() {
  const { data: applications = [], isLoading } = useQuery<AbroadApplication[]>({
@@ -76,7 +76,7 @@ export default function AbroadApplications() {
  <div className="min-w-0 flex-1 leading-none space-y-1 block">
  <p className="text-xs sm:text-sm font-bold text-foreground truncate block uppercase tracking-wide pt-0.5 select-text">
  {app.target_country}
- <span className="font-mono font-medium opacity-40 mx-2 select-none">Â·</span>
+ <span className="font-mono font-medium opacity-40 mx-2 select-none">·</span>
  <span className="text-muted-foreground/80 lowercase font-medium font-sans">
  {app.intake_term ?? "Intake TBC"}
  </span>

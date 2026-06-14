@@ -1,4 +1,4 @@
-﻿// admin-agent-tools â€” Phase D1 unified handler for the four admin AI tools:
+﻿// admin-agent-tools — Phase D1 unified handler for the four admin AI tools:
 //   approve_payout, reject_payout, force_run_matchmaker, award_credits
 //
 // Strict RBAC: requires authenticated user with `admin` or `super_admin` role.
@@ -21,7 +21,7 @@ const SERVICE_ROLE = Deno.env.get("SUPABASE_SERVICE_ROLE_KEY") ?? "";
 
 // ---------- Per-tool schemas (Phase Z0 hardening) ----------
 // Loose-by-default: only enforce types the downstream RPCs absolutely need.
-// Relying on uuid() at the wrapper layer was over-strict â€” RPCs already
+// Relying on uuid() at the wrapper layer was over-strict — RPCs already
 // validate ids and return clean errors that the LLM can self-correct on.
 const idLike = z.string().min(1);
 const AdminSchemas: Record<string, z.ZodTypeAny> = {
@@ -111,7 +111,7 @@ serve(async (req) => {
     // wrapped { tool_key, ...input } shape for direct invocation.
     const toolKey: string = String(body.tool_key ?? body._tool_key ?? "").trim();
 
-    // The dispatcher does NOT pass tool_key â€” infer from URL header instead.
+    // The dispatcher does NOT pass tool_key — infer from URL header instead.
     // Fallback: dispatch by which keys are present in the body.
     const dispatch = toolKey || inferTool(body);
     if (!dispatch) return j({ ok: false, error: "unknown_admin_tool" }, 400);
@@ -128,7 +128,7 @@ serve(async (req) => {
       case "approve_payout": {
         const requestId = body.request_id;
         if (!requestId) return j({ ok: false, error: "request_id_required" }, 400);
-        // RPC enforces admin again â€” defense in depth.
+        // RPC enforces admin again — defense in depth.
         const { data, error } = await userClient.rpc("process_instructor_payout", {
           _request_id: requestId,
           _action: "approve",

@@ -64,7 +64,7 @@ export function UploadDocumentDialog({ open, onOpenChange }: { open: boolean; on
  <DialogFooter>
  <Button variant="outline" onClick={() => onOpenChange(false)}>Cancel</Button>
  <Button onClick={submit} disabled={!file || !title || uploadDocument.isPending}>
- {uploadDocument.isPending ? "Uploadingâ€¦" : "Upload"}
+ {uploadDocument.isPending ? "Uploading…" : "Upload"}
  </Button>
  </DialogFooter>
  </DialogContent>

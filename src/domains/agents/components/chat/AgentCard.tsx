@@ -6,7 +6,7 @@ import { cn } from "@/lib/utils";
 import { AgentAvatar } from "@/domains/agents/components/chat/AgentAvatar";
 
 /**
- * Group Academy â€” Marketplace Agent Card Node
+ * Group Academy — Marketplace Agent Card Node
  * Version: Phase 10j.5 Hardened
  * Purpose: Interactive profile node for corporate and creator agents.
  */

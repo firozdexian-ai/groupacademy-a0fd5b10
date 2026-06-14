@@ -1,4 +1,4 @@
-﻿// Telegram inbound webhook â†’ AI agent router (multi-bot, agent_key-scoped).
+﻿// Telegram inbound webhook → AI agent router (multi-bot, agent_key-scoped).
 // URL contract: POST /telegram-agent-webhook?agent_key=<agent_key>
 // Telegram delivers updates here; we look up the per-agent bot_token from
 // workforce_channel_connections, generate a reply via the Lovable AI gateway,
@@ -93,7 +93,7 @@ Deno.serve(async (req) => {
     return ok({ skipped: "connection paused" });
   }
 
-  // 2) Friendly greeting on /start (and /help) â€” no AI call needed.
+  // 2) Friendly greeting on /start (and /help) — no AI call needed.
   if (/^\/(start|help)\b/i.test(text)) {
     const { data: agentMeta } = await admin
       .from("ai_agents")
@@ -103,7 +103,7 @@ Deno.serve(async (req) => {
     const name = agentMeta?.name ?? "your AI assistant";
     await tg(botToken, "sendMessage", {
       chat_id: chatId,
-      text: `ðŸ‘‹ Hi! I'm *${name}*. Ask me anything and I'll do my best to help.`,
+      text: `👋 Hi! I'm *${name}*. Ask me anything and I'll do my best to help.`,
       parse_mode: "Markdown",
     });
     return ok({ greeted: true });
@@ -121,18 +121,18 @@ Deno.serve(async (req) => {
   if (!agent || agent.is_active === false || agent.kill_switch) {
     await tg(botToken, "sendMessage", {
       chat_id: chatId,
-      text: "âš ï¸ This assistant is currently offline. Please try again later.",
+      text: "⚠️ This assistant is currently offline. Please try again later.",
     });
     return ok({ skipped: "agent offline" });
   }
 
-  // 4) Show "typingâ€¦" while the AI thinks.
+  // 4) Show "typing…" while the AI thinks.
   await tg(botToken, "sendChatAction", { chat_id: chatId, action: "typing" });
 
   // 5) Generate reply via the Lovable AI gateway (same pattern as messaging-autoreply).
   const systemPrompt =
     `${agent.system_prompt ?? ""}\n\n---\nCHANNEL CONTEXT: You are replying over Telegram. ` +
-    `Keep replies concise (1â€“4 short paragraphs), match the user's language, and offer a clear next step. ` +
+    `Keep replies concise (1–4 short paragraphs), match the user's language, and offer a clear next step. ` +
     `If you can't help, suggest contacting a human teammate.`;
 
   let reply = "";
@@ -154,14 +154,14 @@ Deno.serve(async (req) => {
     if (!aiRes.ok) {
       const err = await aiRes.text();
       console.error("[telegram-agent-webhook] AI error", aiRes.status, err);
-      reply = "Sorry â€” I hit a temporary error. Please try again in a moment.";
+      reply = "Sorry — I hit a temporary error. Please try again in a moment.";
     } else {
       const aiData = await aiRes.json();
       reply = aiData?.choices?.[0]?.message?.content?.trim() ?? "";
     }
   } catch (e) {
     console.error("[telegram-agent-webhook] AI threw", (e as Error).message);
-    reply = "Sorry â€” I hit a temporary error. Please try again in a moment.";
+    reply = "Sorry — I hit a temporary error. Please try again in a moment.";
   }
 
   if (!reply) reply = "I'm here, but didn't catch that. Could you rephrase?";

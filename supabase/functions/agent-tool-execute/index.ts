@@ -96,7 +96,7 @@ serve(async (req) => {
       return json({ ok: false, error: `unsupported_handler:${tool.handler_kind}` }, 400);
     }
 
-    // Telemetry â€” fire and forget
+    // Telemetry — fire and forget
     admin.from("agent_credit_events").insert({
       agent_id: agent.id,
       subject_kind: "talent",
@@ -121,14 +121,14 @@ function json(b: unknown, status: number) {
   });
 }
 
-// Map sanitized JSON input â†’ RPC argument names (p_<key>) used by our SECURITY DEFINER fns.
+// Map sanitized JSON input → RPC argument names (p_<key>) used by our SECURITY DEFINER fns.
 function mapInputToRpcArgs(_fn: string, input: Record<string, unknown>) {
   const out: Record<string, unknown> = {};
   for (const [k, v] of Object.entries(input)) out[`p_${k}`] = v;
   return out;
 }
 
-// Minimal JSON-schema validator â€” covers what we register: required, type, enum, minimum, minItems.
+// Minimal JSON-schema validator — covers what we register: required, type, enum, minimum, minItems.
 function validate(input: unknown, schema: unknown): { ok: true } | { ok: false; error: string } {
   if (!schema || typeof schema !== "object") return { ok: true };
   if (schema.type === "object") {

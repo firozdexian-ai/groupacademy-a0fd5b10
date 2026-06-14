@@ -26,7 +26,7 @@ interface ConnectionRequestDialogProps {
 /**
  * GroUp Academy: Escrowed Token Connection Request Terminal (ConnectionRequestDialog)
  * An authoritative operational sandbox managing connection requests, dynamic credit cost pricing queries, and escrow locks.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function ConnectionRequestDialog({
   open,
@@ -164,7 +164,7 @@ export function ConnectionRequestDialog({
           <p className="text-[11px] font-semibold text-muted-foreground/70 leading-normal block select-text pr-0.5">
             Connecting with {recipientName} requires{" "}
             <strong className="text-foreground font-mono bg-muted/40 px-1 py-0.5 rounded shadow-xs">
-              {price !== null ? `${price} credits` : "â€¦ calculating"}
+              {price !== null ? `${price} credits` : "… calculating"}
             </strong>.
             {" "}When they accept, 70% of the credits will go directly to {safeRecipientFirstNameStr}, and 30% goes to the platform. If the request is declined or expires after 14 days, your credits will be fully refunded to your balance.
           </p>
@@ -199,12 +199,12 @@ export function ConnectionRequestDialog({
             {sending ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Sendingâ€¦</span>
+                <span>Sending…</span>
               </>
             ) : (
               <>
                 <ShieldCheck className="h-4 w-4 stroke-[2.5]" />
-                <span>Send ({price ?? "â€¦"} credits)</span>
+                <span>Send ({price ?? "…"} credits)</span>
               </>
             )}
           </Button>

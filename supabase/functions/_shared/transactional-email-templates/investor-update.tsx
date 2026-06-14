@@ -15,10 +15,10 @@ interface InvestorUpdateProps {
 const InvestorUpdateEmail = ({ name, content }: InvestorUpdateProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>{SITE_NAME} â€” Investor Update</Preview>
+    <Preview>{SITE_NAME} — Investor Update</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>{SITE_NAME} â€” Investor Update</Heading>
+        <Heading style={h1}>{SITE_NAME} — Investor Update</Heading>
         <Text style={text}>
           {name ? `Dear ${name},` : 'Dear Investor,'}
         </Text>

@@ -7,7 +7,7 @@ import { Badge } from "@/components/ui/badge";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy â€” Career Guidance System: Agent Messaging Ledger Row
+ * Group Academy — Career Guidance System: Agent Messaging Ledger Row
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/chat (Sidebar Agent List Panel Surface)
  * Operations Mode: Automated Efficiency high-performance row tracking active interactions.

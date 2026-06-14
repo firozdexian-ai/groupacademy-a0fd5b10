@@ -1,5 +1,5 @@
 ﻿/**
- * Agent Anomaly Feed â€” Executive Dashboard Component.
+ * Agent Anomaly Feed — Executive Dashboard Component.
  * Monitors platform_events in real-time, providing the core alerting interface
  * for the Digital Workforce operations center.
  */
@@ -144,7 +144,7 @@ export function AgentAnomalyFeed() {
           ) : (
             <div className="p-12 flex flex-col items-center justify-center gap-3 text-muted-foreground">
               <CheckCircle2 className="h-6 w-6 text-emerald-500/50" />
-              <p className="text-xs">All systems operational â€” No alerts in the last 24h</p>
+              <p className="text-xs">All systems operational — No alerts in the last 24h</p>
             </div>
           )}
         </div>

@@ -1,4 +1,4 @@
-﻿// 3.3.b â€” Claim a public handle for the caller's talent profile.
+﻿// 3.3.b — Claim a public handle for the caller's talent profile.
 // JWT-required. Validates format and uniqueness, writes to talents.public_handle.
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.57.4";

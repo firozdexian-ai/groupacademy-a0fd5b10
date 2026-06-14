@@ -1,4 +1,4 @@
-﻿// trigger-agent-pitch â€” AI-generated WhatsApp outreach from a Gro10x employer to an unlocked talent.
+﻿// trigger-agent-pitch — AI-generated WhatsApp outreach from a Gro10x employer to an unlocked talent.
 // Requires: caller must be a member of company_id, AND company must have a row in talent_contact_unlocks for talent_id.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -21,7 +21,7 @@ const AISHA_SYSTEM_PROMPT = `You are Aisha, the friendly AI talent concierge at 
 Write ONE short WhatsApp message (<=400 characters, 2-4 sentences).
 The company will be named in your brief; you must speak AS Aisha, not as the company.
 Be warm, excited, and specific. Reference 1 concrete skill from the talent.
-No emojis-spam, no markdown, no links. Sign off as Aisha â€” Gro10x Talent Concierge.`;
+No emojis-spam, no markdown, no links. Sign off as Aisha — Gro10x Talent Concierge.`;
 
 Deno.serve(async (req) => {
   if (req.method === "OPTIONS") return new Response(null, { headers: cors });
@@ -79,11 +79,11 @@ Deno.serve(async (req) => {
       : AISHA_SYSTEM_PROMPT;
 
     const userBrief = [
-      `COMPANY: ${company.name}${company.industry ? ` (${company.industry})` : ""}${company.country ? ` Â· ${company.country}` : ""}`,
+      `COMPANY: ${company.name}${company.industry ? ` (${company.industry})` : ""}${company.country ? ` · ${company.country}` : ""}`,
       company.tagline ? `Tagline: ${company.tagline}` : "",
       company.about ? `About: ${String(company.about).slice(0, 600)}` : "",
       "",
-      `TALENT: ${talent.full_name}${talent.custom_profession ? ` â€” ${talent.custom_profession}` : ""}${talent.country ? ` Â· ${talent.country}` : ""}`,
+      `TALENT: ${talent.full_name}${talent.custom_profession ? ` — ${talent.custom_profession}` : ""}${talent.country ? ` · ${talent.country}` : ""}`,
       `Skills: ${Array.isArray(talent.skills) ? talent.skills.slice(0, 8).join(", ") : ""}`,
       "",
       "Write the WhatsApp message now. Output ONLY the message text.",

@@ -17,7 +17,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Career Guidance System: Agent Creator Financial Payout Management Panel
+ * Group Academy — Career Guidance System: Agent Creator Financial Payout Management Panel
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=payouts (Operator Financial Administration Area)
  * Operations Mode: Automated Efficiency ledger processing system disbursements across status boundaries.
@@ -211,9 +211,9 @@ export function AgentPayoutsManager() {
                           </TableCell>
                           <TableCell
                             className="text-xs text-muted-foreground/90 max-w-[200px] truncate font-medium"
-                            title={(r.payout_details as { note?: string })?.note ?? "â€”"}
+                            title={(r.payout_details as { note?: string })?.note ?? "—"}
                           >
-                            {(r.payout_details as { note?: string })?.note ?? "â€”"}
+                            {(r.payout_details as { note?: string })?.note ?? "—"}
                           </TableCell>
                           <TableCell className="text-xs text-muted-foreground/70 font-medium whitespace-nowrap">
                             {new Date(r.created_at).toLocaleDateString(undefined, { dateStyle: "medium" })}

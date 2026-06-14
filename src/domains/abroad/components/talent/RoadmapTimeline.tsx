@@ -5,7 +5,7 @@ import { CheckCircle2, Calendar, Zap, ArrowRight, Loader2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Study Abroad Roadmap Timeline
+ * Group Academy — Study Abroad Roadmap Timeline
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Purpose: Month-by-month plan showing completion, active tracking metrics, and dynamic action states.
  */
@@ -160,7 +160,7 @@ export function RoadmapTimeline({
                         >
                           {isExecuting ? (
                             <>
-                              Workingâ€¦ <Loader2 className="h-3 w-3 animate-spin" />
+                              Working… <Loader2 className="h-3 w-3 animate-spin" />
                             </>
                           ) : (
                             <>

@@ -67,7 +67,7 @@ function InsightsBody({ postId }: { postId: string }) {
   if (isLoading) {
     return (
       <div className="flex items-center justify-center py-4 px-3 text-[11px] font-medium text-muted-foreground tracking-wide animate-pulse select-none">
-        <LoaderSpinner className="h-3 w-3 animate-spin mr-2 text-primary" /> Loading insightsâ€¦
+        <LoaderSpinner className="h-3 w-3 animate-spin mr-2 text-primary" /> Loading insights…
       </div>
     );
   }

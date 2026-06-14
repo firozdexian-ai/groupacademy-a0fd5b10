@@ -202,8 +202,8 @@ export function ContentOutreachTab() {
 
  const templates = selectedContent
  ? {
- english: `ðŸš€ Career Uplink: ${selectedContent.title}\nðŸ“š Logic: ${contentTypeLabel(selectedContent.content_type)}\nðŸ”¥ Sync here: ${getShareLink(activeTab)}\n\n#intel #growth`,
- bangla: `ðŸ“¢ à¦¨à¦¤à§à¦¨ à¦¸à§à¦¯à§‹à¦—: ${selectedContent.title}\nðŸ“š à¦§à¦°à¦£: ${contentTypeLabel(selectedContent.content_type)}\nðŸ”— à¦²à¦¿à¦‚à¦•: ${getShareLink(activeTab)}\n\n#bdjobs #learning`,
+ english: `🚀 Career Uplink: ${selectedContent.title}\n📚 Logic: ${contentTypeLabel(selectedContent.content_type)}\n🔥 Sync here: ${getShareLink(activeTab)}\n\n#intel #growth`,
+ bangla: `📢 নতুন সুযোগ: ${selectedContent.title}\n📚 ধরণ: ${contentTypeLabel(selectedContent.content_type)}\n🔗 লিংক: ${getShareLink(activeTab)}\n\n#bdjobs #learning`,
  }
  : { english: "", bangla: "" };
 

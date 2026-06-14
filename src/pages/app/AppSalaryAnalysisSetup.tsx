@@ -36,7 +36,7 @@ const SALARY_ANALYSIS_COST = 50;
 /**
  * GroUp Academy: AI Salary summary & Market Telemetry Setup (AppSalaryAnalysisSetup)
  * Hardened responsive entry cockpit processing dynamic resume uploads and checking credit gate parameters defensively.
- * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
  */
 export default function AppSalaryAnalysisSetup() {
  const navigateHook = useNavigate();
@@ -470,7 +470,7 @@ export default function AppSalaryAnalysisSetup() {
  {cvFileState ? cvFileState.name : "Select Resume Specification File"}
  </p>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/30 uppercase tracking-wide block leading-none">
- Isolated PDF, DOC or DOCX Allocation â€¢ Cap Limit Constraint: 10.0 MB
+ Isolated PDF, DOC or DOCX Allocation • Cap Limit Constraint: 10.0 MB
  </p>
  </div>
  </div>

@@ -1,7 +1,7 @@
 ﻿import React from "react";
 
 /**
- * Companies Domain Routing Registry â€” Phase Z0 Hardened
+ * Companies Domain Routing Registry — Phase Z0 Hardened
  * Centralized lazy-load mapping configurations for Group 2 tabs.
  * Standardized for professional 2024 SAAS UI performance targets.
  */

@@ -19,7 +19,7 @@ const ServiceCompleteEmail = ({ name, service_name, summary }: ServiceCompletePr
     <Preview>Your {service_name || 'service'} results are ready!</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Your Results Are Ready âœ…</Heading>
+        <Heading style={h1}>Your Results Are Ready ✅</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
@@ -35,7 +35,7 @@ const ServiceCompleteEmail = ({ name, service_name, summary }: ServiceCompletePr
           View Your Results
         </Button>
         <Text style={footer}>
-          Keep building your career â€” The {SITE_NAME} Team
+          Keep building your career — The {SITE_NAME} Team
         </Text>
       </Container>
     </Body>
@@ -44,9 +44,9 @@ const ServiceCompleteEmail = ({ name, service_name, summary }: ServiceCompletePr
 
 export const template = {
   component: ServiceCompleteEmail,
-  subject: (data: Record<string, unknown>) => `Your ${data.service_name || 'service'} results are ready âœ…`,
+  subject: (data: Record<string, unknown>) => `Your ${data.service_name || 'service'} results are ready ✅`,
   displayName: 'Service complete notification',
-  previewData: { name: 'Ahmed', service_name: 'Career Assessment', summary: 'Overall score: 78% â€” Market Ready' },
+  previewData: { name: 'Ahmed', service_name: 'Career Assessment', summary: 'Overall score: 78% — Market Ready' },
 } satisfies TemplateEntry
 
 const main = { backgroundColor: '#ffffff', fontFamily: "'Segoe UI', Roboto, Helvetica, Arial, sans-serif" }

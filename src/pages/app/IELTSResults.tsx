@@ -34,7 +34,7 @@ interface MockAttemptRecord {
 /**
  * GroUp Academy: IELTS Mock Examination Result Dossier (IELTSResults)
  * Hardened responsive viewer isolating AI band scoring metrics, criteria feedback, and structural progress indicators.
- * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
+ * Version: Launch Candidate · Phase Z1 Production Contract Locked
  */
 export default function IELTSResults() {
  const { id: unverifiedAttemptIdStr } = useParams<{ id: string }>();
@@ -90,7 +90,7 @@ export default function IELTSResults() {
  </h1>
  </div>
  <Badge className="font-mono text-base font-black uppercase px-3 h-9 rounded-lg border border-primary/20 bg-primary/5 text-primary shadow-3xs tracking-tighter shrink-0 select-none pointer-events-none">
- BAND {activeAttemptNode.ai_band_score !== null ? Number(activeAttemptNode.ai_band_score).toFixed(1) : "â€”"}
+ BAND {activeAttemptNode.ai_band_score !== null ? Number(activeAttemptNode.ai_band_score).toFixed(1) : "—"}
  </Badge>
  </header>
 

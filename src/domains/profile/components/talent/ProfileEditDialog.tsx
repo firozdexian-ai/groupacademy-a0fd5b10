@@ -33,7 +33,7 @@ interface ProfileEditDialogProps {
 /**
  * GroUp Academy: Authoritative Professional Identity Gateway Master Editor (ProfileEditDialog)
  * An operational sandbox orchestrating academic records, career histories, skill matrices, and profile hydration tasks.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDialogProps) {
   const queryClient = useQueryClient();
@@ -115,7 +115,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
 
     setIsSaving(true);
     trackEvent("profile_editor_save_requested");
-    const dynamicToastTrackerId = toast.loading("Saving profileâ€¦");
+    const dynamicToastTrackerId = toast.loading("Saving profile…");
 
     try {
       // Pack parameters defensively with explicit cast schema configurations
@@ -354,7 +354,7 @@ export function ProfileEditDialog({ open, onOpenChange, talent }: ProfileEditDia
             {isSaving ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Savingâ€¦</span>
+                <span>Saving…</span>
               </>
             ) : (
               <>

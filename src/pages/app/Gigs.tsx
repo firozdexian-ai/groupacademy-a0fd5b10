@@ -104,7 +104,7 @@ type TabVariant = "for-you" | "tasks" | "course" | "client" | "work";
 const SKELETON_ROWS_ROSTER = [1, 2, 3, 4];
 
 /**
- * Gigs hub â€” talent landing page for finding and submitting gig work.
+ * Gigs hub — talent landing page for finding and submitting gig work.
  */
 export default function Gigs() {
  const navigateHook = useNavigate();
@@ -359,7 +359,7 @@ export default function Gigs() {
  />
  </div>
  <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
- Fast, one-tap tasks Â· Auto-reviewed Â· Instant credit payout
+ Fast, one-tap tasks · Auto-reviewed · Instant credit payout
  </p>
 
  <div className="grid gap-2 grid-cols-1 sm:grid-cols-2 block w-full align-top">
@@ -400,7 +400,7 @@ export default function Gigs() {
  />
  </div>
  <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
- Full courses to build Â· Multi-step subtasks Â· Higher payouts
+ Full courses to build · Multi-step subtasks · Higher payouts
  </p>
 
  <div className="space-y-2.5 block w-full align-top">
@@ -466,7 +466,7 @@ export default function Gigs() {
  <Coins className="h-3.5 w-3.5 stroke-[2] text-amber-500" />{" "}
  {projectItem.totalReward.toLocaleString()} total credits
  </span>
- <span className="opacity-30 block select-none shrink-0">â€¢</span>
+ <span className="opacity-30 block select-none shrink-0">•</span>
  <span className="text-primary tracking-normal font-semibold">
  Open to claim subtasks
  </span>
@@ -503,7 +503,7 @@ export default function Gigs() {
  />
  </div>
  <p className="font-mono text-[9px] font-bold uppercase tracking-tight text-muted-foreground/40 leading-none select-none pointer-events-none pl-0.5">
- Submit proposals Â· Negotiate scope Â· Set milestones and budgets
+ Submit proposals · Negotiate scope · Set milestones and budgets
  </p>
 
  <div className="space-y-2.5 block w-full align-top">
@@ -549,7 +549,7 @@ export default function Gigs() {
  <Coins className="h-3.5 w-3.5 stroke-[2] text-amber-500" />{" "}
  {marketItemNode.budget_amount.toLocaleString()} credits budget
  </span>
- <span className="opacity-30 block select-none shrink-0">â€¢</span>
+ <span className="opacity-30 block select-none shrink-0">•</span>
  <span className="flex items-center gap-1 shrink-0">
  <Send className="h-3.5 w-3.5 stroke-[2.2]" /> {marketItemNode.total_bids || 0} bids
  </span>

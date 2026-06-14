@@ -33,7 +33,7 @@ interface Props {
 /**
  * GroUp Academy: Cohort Stream Ingress Reservation Controller (WebinarEnrollPanel)
  * An authoritative inline panel handling user registrations, capacity validations, and real-time ledger debit confirmations.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function WebinarEnrollPanel({ course }: Props) {
   const navigate = useNavigate();
@@ -200,7 +200,7 @@ export function WebinarEnrollPanel({ course }: Props) {
             {isEnrolling ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Processing Verification Frameworkâ€¦</span>
+                <span>Processing Verification Framework…</span>
               </>
             ) : (
               <>

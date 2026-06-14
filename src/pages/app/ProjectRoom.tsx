@@ -124,7 +124,7 @@ export default function ProjectRoom() {
  {project.status}
  </Badge>
  <span>Budget: {project.budget_credits} credits</span>
- {escrow && <span className="flex gap-2">Â· Escrow: {escrow.held_credits} credits</span>}
+ {escrow && <span className="flex gap-2">· Escrow: {escrow.held_credits} credits</span>}
  </div>
  </header>
 
@@ -152,14 +152,14 @@ export default function ProjectRoom() {
  </div>
  <p className="text-xs text-muted-foreground italic">{m.summary}</p>
  <div className="text-xs font-medium tracking-widest text-muted-foreground/60">
- {m.budget_credits} credits {m.due_at && `Â· due ${new Date(m.due_at).toLocaleDateString()}`}
+ {m.budget_credits} credits {m.due_at && `· due ${new Date(m.due_at).toLocaleDateString()}`}
  </div>
  {(m.status === "in_progress" || m.status === "revising") && (
  <div className="space-y-3 pt-2 border-t border-border/10">
  <Textarea
  value={submitNote}
  onChange={(e) => setSubmitNote(e.target.value)}
- placeholder="Attach deliverable notes or linksâ€¦"
+ placeholder="Attach deliverable notes or links…"
  className="rounded-xl bg-background/50"
  />
  <Button

@@ -8,7 +8,7 @@ export const ROUTES: Record<string, React.LazyExoticComponent<unknown>> = {
         React.createElement(m.AdminTabPlaceholder, {
           tabKey: "gigs-scoper",
           title: "AI scoper queue",
-          note: "Auto-scoped gig briefs awaiting admin review. The dedicated scoper queue is reserved â€” for now check Marketplace and Quick Actions.",
+          note: "Auto-scoped gig briefs awaiting admin review. The dedicated scoper queue is reserved — for now check Marketplace and Quick Actions.",
         }),
     })),
   ),

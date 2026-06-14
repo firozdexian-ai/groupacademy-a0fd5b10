@@ -41,7 +41,7 @@ const SCHEMA_TEMPLATES = {
 /**
  * GroUp Academy: Professional Profile Identity Configuration Architect (ProfileBuilderForm)
  * An authoritative operational workflow node managing structural portfolio data ingestion and resume block indexing.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFormProps) {
   const queryClient = useQueryClient();
@@ -305,7 +305,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
                         onChange={(e) => updateRegistryNode("experience", idx, "description", e.target.value)}
                         rows={3}
                         className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed italic resize-none shadow-inner"
-                        placeholder="Outline core baseline system engineering deliverables, scale achievements, and tool configurations implementedâ€¦"
+                        placeholder="Outline core baseline system engineering deliverables, scale achievements, and tool configurations implemented…"
                       />
                     </div>
                   </div>
@@ -386,7 +386,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
                         onChange={(e) => updateRegistryNode("projects", idx, "description", e.target.value)}
                         rows={2}
                         className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed resize-none shadow-inner"
-                        placeholder="Detail system architectural stacks, parallel processes initialized, and product outcomes managedâ€¦"
+                        placeholder="Detail system architectural stacks, parallel processes initialized, and product outcomes managed…"
                       />
                     </div>
                   </div>
@@ -428,7 +428,7 @@ export default function ProfileBuilderForm({ value, onChange }: ProfileBuilderFo
                         onChange={(e) => updateRegistryNode("achievements", idx, "description", e.target.value)}
                         rows={2}
                         className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed resize-none shadow-inner"
-                        placeholder="Detail the scope of evaluation, competitive filters passed, and awarding institutions involvedâ€¦"
+                        placeholder="Detail the scope of evaluation, competitive filters passed, and awarding institutions involved…"
                       />
                     </div>
                   </div>

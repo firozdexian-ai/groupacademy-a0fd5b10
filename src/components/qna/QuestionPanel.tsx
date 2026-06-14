@@ -25,7 +25,7 @@ interface QuestionPanelProps {
 /**
  * GroUp Academy: Psychometric Lesson-Level Q&A Discussion Terminal (QuestionPanel)
  * An authoritative operational sandbox managing asynchronous user queries, solutions auditing, and forum tracking rows.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, cohortId }: QuestionPanelProps) {
   const queryClient = useQueryClient();
@@ -72,7 +72,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
     trackEvent("question_panel_submission_initiated");
     const dynamicToastTrackerId = toast({
       title: "COMMITTING_QUERY",
-      description: "Registering inquiry down discussion ledger nodesâ€¦",
+      description: "Registering inquiry down discussion ledger nodes…",
     });
 
     try {
@@ -196,7 +196,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
             rows={2}
             value={questionBody}
             disabled={askQuestionMutation.isPending}
-            placeholder="Broadcast a specialized technical inquiry over this operational node baselineâ€¦"
+            placeholder="Broadcast a specialized technical inquiry over this operational node baseline…"
             onChange={(e) => setQuestionBody(e.target.value)}
             className="rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed resize-none shadow-inner flex-1 focus-visible:ring-1 focus-visible:ring-ring"
           />
@@ -223,7 +223,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
               <div className="flex items-center justify-center gap-2 py-8 text-muted-foreground select-none leading-none w-full">
                 <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
                 <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider animate-pulse">
-                  Hydrating discussion registry logsâ€¦
+                  Hydrating discussion registry logs…
                 </span>
               </div>
             ) : safeQuestionsCollection.length === 0 ? (
@@ -316,7 +316,7 @@ export function QuestionPanel({ open, onClose, contentId, itemId, moduleId, coho
                               rows={1}
                               disabled={answerQuestionMutation.isPending}
                               value={individualAnswerBodyMap[queryNodeItem.id] || ""}
-                              placeholder="Inject targeted response segment variables hereâ€¦"
+                              placeholder="Inject targeted response segment variables here…"
                               onChange={(e) =>
                                 setIndividualAnswerBodyMap((prev) => ({ ...prev, [queryNodeItem.id]: e.target.value }))
                               }

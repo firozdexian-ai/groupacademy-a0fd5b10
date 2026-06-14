@@ -66,7 +66,7 @@ const FUNNEL_KEYS = ["job_id", "ref", "utm_source", "utm_medium", "utm_campaign"
 type ProvisionResult = { instance_id: string; created: boolean };
 
 /**
- * Talent onboarding wizard: 4 steps (country â†’ career stage â†’ university â†’ field).
+ * Talent onboarding wizard: 4 steps (country → career stage → university → field).
  * Writes selections to the talents row, or stashes them to sessionStorage in
  * `preAuth` mode for finalization after sign-in.
  */
@@ -145,7 +145,7 @@ export function OnboardingWizard({
     },
   });
 
-  // Step 3: institution search. Country is a soft filter â€” we re-query
+  // Step 3: institution search. Country is a soft filter — we re-query
   // globally when there are no matches inside the user's country.
   const institutionsQ = useQuery({
     queryKey: ["onboarding-institutions", country?.name ?? "", debouncedInstQuery],
@@ -253,7 +253,7 @@ export function OnboardingWizard({
           }),
         );
       } catch {
-        /* sessionStorage may be unavailable in privacy mode â€” ignore. */
+        /* sessionStorage may be unavailable in privacy mode — ignore. */
       }
       trackEvent("onboarding_preauth_stashed");
       onComplete();
@@ -265,7 +265,7 @@ export function OnboardingWizard({
     trackEvent("onboarding_wizard_submission_started");
 
     try {
-      setSubmittingPhase("Savingâ€¦");
+      setSubmittingPhase("Saving…");
       const { data: authData, error: authErr } = await supabase.auth.getUser();
       if (authErr || !authData?.user?.id) throw new Error("You're signed out. Please sign in again.");
       const userId = authData.user.id;
@@ -288,11 +288,11 @@ export function OnboardingWizard({
         referral_code: activeLinkRef || undefined,
       });
 
-      setSubmittingPhase(`Connecting you to ${institution.name}â€¦`);
+      setSubmittingPhase(`Connecting you to ${institution.name}…`);
       const provisioned = await provisionOrGetInstance(institution.name);
 
       if (provisioned?.instance_id) {
-        setSubmittingPhase("Almost doneâ€¦");
+        setSubmittingPhase("Almost done…");
         try {
           await agentRuntime({
             instance_id: provisioned.instance_id,
@@ -338,7 +338,7 @@ export function OnboardingWizard({
       });
 
       toast.error("Something went wrong setting up your profile.", {
-        description: "Please try again â€” your choices are saved.",
+        description: "Please try again — your choices are saved.",
       });
     } finally {
       if (isMountedRef.current) {
@@ -500,7 +500,7 @@ export function OnboardingWizard({
                         className="h-14 w-full justify-between rounded-xl border border-border/40 bg-background px-4 text-left text-sm font-bold tracking-tight shadow-sm hover:bg-muted/10 outline-none focus:ring-1 focus:ring-ring select-none"
                       >
                         <span className={cn("truncate text-ellipsis", !institution && "text-muted-foreground/50")}>
-                          {institution?.name ?? "Search your universityâ€¦"}
+                          {institution?.name ?? "Search your university…"}
                         </span>
                         <ChevronsUpDown className="ml-2 h-4 w-4 shrink-0 text-muted-foreground/50 stroke-[2.2]" />
                       </Button>
@@ -513,7 +513,7 @@ export function OnboardingWizard({
                         <CommandInput
                           value={instQuery}
                           onValueChange={setInstQuery}
-                          placeholder="Type your university nameâ€¦"
+                          placeholder="Type your university name…"
                           className="text-xs h-10 border-none font-bold outline-none"
                         />
                         <CommandInput style={{ display: "none" }} />
@@ -642,7 +642,7 @@ export function OnboardingWizard({
               <div className="flex items-center gap-2.5 text-xs font-bold text-muted-foreground/80 tabular-nums animate-pulse pl-1 flex-1 justify-end truncate">
                 <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5] shrink-0" />
                 <span className="truncate text-ellipsis block">
-                  {submittingPhase || `Connecting you to ${institution?.name || "your campus"}â€¦`}
+                  {submittingPhase || `Connecting you to ${institution?.name || "your campus"}…`}
                 </span>
               </div>
             ) : (
@@ -748,7 +748,7 @@ function EmptyState({ message }: { message: string }) {
 }
 
 function isoToEmoji(iso2?: string) {
-  if (!iso2 || iso2.length !== 2) return "ðŸŒ";
+  if (!iso2 || iso2.length !== 2) return "🌍";
   const BASE_UNICODE_OFFSET = 0x1f1e6;
   return String.fromCodePoint(
     ...iso2

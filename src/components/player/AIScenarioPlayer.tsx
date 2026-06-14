@@ -43,7 +43,7 @@ const DIFFICULTY_CONFIG = {
 /**
  * GroUp Academy: AI Scenario Simulation Node (AIScenarioPlayer)
  * An authoritative operational sandbox layer parsing open-ended responses against automated cognitive model guidelines.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function AIScenarioPlayer({ scenario, professionLineId, onComplete, className }: AIScenarioPlayerProps) {
   const queryClient = useQueryClient();
@@ -302,7 +302,7 @@ Response Protocol: ONLY JSON object matching this schema. Do not prefix or appen
               {isSubmitting ? (
                 <>
                   <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                  <span>Processing Cognitive Evaluation Manifestâ€¦</span>
+                  <span>Processing Cognitive Evaluation Manifest…</span>
                 </>
               ) : (
                 <>

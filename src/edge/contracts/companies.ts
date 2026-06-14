@@ -1,5 +1,5 @@
 ﻿/**
- * Companies domain â€” edge function contracts (Phase 9h).
+ * Companies domain — edge function contracts (Phase 9h).
  */
 import { z } from "zod";
 

@@ -100,7 +100,7 @@ export function CourseSharingGigForm({ gig, talentId, onSubmitted }: Props) {
   const launch = (channelKey: string) => {
     if (!selected) return;
     const computedTargetUrl = linkFor(selected);
-    const standardPromoText = `${selected.title} â€” ${computedTargetUrl}`;
+    const standardPromoText = `${selected.title} — ${computedTargetUrl}`;
 
     trackEvent("course_sharing_channel_launched", { channel: channelKey, courseId: selected.id });
 

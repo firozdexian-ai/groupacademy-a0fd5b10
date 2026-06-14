@@ -1,9 +1,9 @@
 ﻿/**
- * Currency formatting helpers â€” USD is the base unit across the platform.
+ * Currency formatting helpers — USD is the base unit across the platform.
  *
  * Founder/admin views call `formatUSD()` (USD only).
  * Talent + company views call `formatMoney()` which appends a localized equivalent
- *   like "$5.00 (â‰ˆ à§³550)" based on the user's country.
+ *   like "$5.00 (≈ ৳550)" based on the user's country.
  *
  * Rates are loaded once from `public.currency_rates` via `useCurrencyRates()`.
  */
@@ -46,18 +46,18 @@ export function formatLocal(usdAmount: number, rate: CurrencyRate): string {
 }
 
 /**
- * Returns "$5.00 (â‰ˆ à§³550)" for talent/company users.
+ * Returns "$5.00 (≈ ৳550)" for talent/company users.
  * If country has no matching rate (or is USD), returns just the USD form.
  */
 export function formatMoney(usdAmount: number, country: string | null | undefined, rates: CurrencyRate[]): string {
   const usd = formatUSD(usdAmount);
   const rate = rateForCountry(country, rates);
   if (!rate || rate.code === "USD") return usd;
-  return `${usd} (â‰ˆ ${formatLocal(usdAmount, rate)})`;
+  return `${usd} (≈ ${formatLocal(usdAmount, rate)})`;
 }
 
 /**
- * Credit â†” USD conversion. Standardized at $1 = 1 credit (founder economy)
+ * Credit ↔ USD conversion. Standardized at $1 = 1 credit (founder economy)
  * for the new USD-base era. Legacy memory mentions 1 credit = 2 BDT (~ $0.018);
  * that older rule applied only to the talent-side BDT pricing surface and is
  * superseded for new B2B/admin surfaces. Keep one constant so future repricing

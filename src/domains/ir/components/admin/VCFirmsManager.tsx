@@ -214,7 +214,7 @@ export function VCFirmsManager() {
  >
  <div className="flex flex-col items-center gap-4">
  <RefreshCw className="h-6 w-6 animate-spin text-primary" />
- Loadingâ€¦
+ Loading…
  </div>
  </TableCell>
  </TableRow>
@@ -517,7 +517,7 @@ export function VCFirmsManager() {
  ) : (
  <ShieldCheck className="h-5 w-5 fill-current" />
  )}
- {saveMutation.isPending ? "Savingâ€¦" : "Authorize Deployment"}
+ {saveMutation.isPending ? "Saving…" : "Authorize Deployment"}
  </Button>
  </DialogFooter>
  </div>

@@ -118,7 +118,7 @@ export function ChannelPromotionCard({ job }: Props) {
               {job.title}
             </CardTitle>
             <CardDescription className="text-[10px] font-bold mt-1">
-              Syndication Node â€” {job.company_name}
+              Syndication Node — {job.company_name}
             </CardDescription>
           </div>
           <Badge

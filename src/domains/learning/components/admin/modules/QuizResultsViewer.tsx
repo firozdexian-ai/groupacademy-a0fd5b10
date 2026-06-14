@@ -315,7 +315,7 @@ export function QuizResultsViewer() {
  Attempt Forensics
  </DialogTitle>
  <DialogDescription className="text-sm font-medium text-muted-foreground/60 italic">
- {selectedAttempt?.studentName} â€¢{" "}
+ {selectedAttempt?.studentName} •{" "}
  {selectedAttempt && format(new Date(selectedAttempt.attemptedAt), "MMM d, yyyy HH:mm")}
  </DialogDescription>
  </div>

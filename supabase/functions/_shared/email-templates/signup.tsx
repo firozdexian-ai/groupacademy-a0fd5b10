@@ -29,10 +29,10 @@ export const SignupEmail = ({
 }: SignupEmailProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Welcome aboard â€” confirm your email for GroUp Academy</Preview>
+    <Preview>Welcome aboard — confirm your email for GroUp Academy</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Welcome to GroUp Academy! ðŸŽ‰</Heading>
+        <Heading style={h1}>Welcome to GroUp Academy! 🎉</Heading>
         <Text style={text}>
           Thanks for joining{' '}
           <Link href={siteUrl} style={link}>

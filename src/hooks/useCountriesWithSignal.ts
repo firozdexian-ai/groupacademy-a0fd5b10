@@ -2,7 +2,7 @@
 import { getCountriesWithSignal } from "@/domains/jobs/repo/jobsRepo";
 
 /**
- * Geographic job market signal â€” country-level counts, top cities, and top employers.
+ * Geographic job market signal — country-level counts, top cities, and top employers.
  */
 
 export interface CountryWithSignal {

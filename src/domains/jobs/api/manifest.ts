@@ -1,5 +1,5 @@
 ﻿/**
- * Jobs domain â€” typed edge-function surface.
+ * Jobs domain — typed edge-function surface.
  *
  * Phase 9d reduced this to a re-export barrel. Import named wrappers
  * directly from `./jobsApi` or via the domain barrel `@/domains/jobs`.

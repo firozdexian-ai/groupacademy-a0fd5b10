@@ -258,7 +258,7 @@ serve(async (req) => {
     const isImageMode = !!imageUrl && !text;
     console.log(`Parsing job post for user ${user.id}, mode: ${isImageMode ? 'image' : 'text'}, ${isImageMode ? 'imageUrl: ' + imageUrl : 'text length: ' + text?.length}`);
 
-    const systemPrompt = `You are an expert job post parser. Extract structured information from job postings copied from social media (Facebook, LinkedIn, etc.) or websites.${isImageMode ? ' The job posting is provided as a screenshot image â€” read all visible text and extract the data.' : ''}
+    const systemPrompt = `You are an expert job post parser. Extract structured information from job postings copied from social media (Facebook, LinkedIn, etc.) or websites.${isImageMode ? ' The job posting is provided as a screenshot image — read all visible text and extract the data.' : ''}
 
 Important parsing rules:
 - Extract ALL responsibilities and put them in the description
@@ -269,7 +269,7 @@ Important parsing rules:
 - Extract application email/URL if provided
 - Extract company website if mentioned in the post`;
 
-    // Build user message content â€” multimodal if image, text-only otherwise
+    // Build user message content — multimodal if image, text-only otherwise
     let userContent: unknown;
     if (isImageMode) {
       userContent = [

@@ -1,8 +1,8 @@
-﻿// Unipile webhook receiver â€” 3-tier resolver (Triple-Number Architecture)
+﻿// Unipile webhook receiver — 3-tier resolver (Triple-Number Architecture)
 // Channels are differentiated via messaging_channels.agent_key:
-//   talent-outreach    â†’ may auto-create talents (existing behavior preserved)
-//   employer-outreach  â†’ never auto-creates talents; employer-aware auto-reply
-//   community-engine   â†’ default home for incoming groups
+//   talent-outreach    → may auto-create talents (existing behavior preserved)
+//   employer-outreach  → never auto-creates talents; employer-aware auto-reply
+//   community-engine   → default home for incoming groups
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -109,7 +109,7 @@ Deno.serve(async (req) => {
     } else {
       // ============ 1-ON-1 PATH (3-tier resolver) ============
 
-      // Tier 1 â€” Employer match by WhatsApp number on contacts (unknown channel)
+      // Tier 1 — Employer match by WhatsApp number on contacts (unknown channel)
       if (phone) {
         const { data: contactMatch } = await admin
           .from("contacts")
@@ -122,7 +122,7 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Tier 2 â€” Talent match (only the talent-outreach line may auto-create talents)
+      // Tier 2 — Talent match (only the talent-outreach line may auto-create talents)
       if (!resolvedContactId && agentKey === "talent-outreach" && phone) {
         const { data: talentMatch } = await admin
           .from("talents")
@@ -133,7 +133,7 @@ Deno.serve(async (req) => {
         resolvedTalentId = talentMatch?.id ?? null;
 
         if (!resolvedTalentId && !isFromMe) {
-          // EXISTING auto-create behavior â€” preserved exactly
+          // EXISTING auto-create behavior — preserved exactly
           const { data: newT } = await admin.from("talents").insert({
             full_name: senderName || `WhatsApp ${phone.slice(-4)}`,
             email: `wa_${phone}@inbound.placeholder`,
@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
         }
       }
 
-      // Tier 3 â€” Unknown peer on employer-outreach or community-engine:
+      // Tier 3 — Unknown peer on employer-outreach or community-engine:
       // SAVE the message but do NOT auto-create talents and do NOT auto-reply.
       // Privacy: Outreach Console filters require contact_id IS NOT NULL OR is_group=true,
       // so personal chats on these lines never surface in admin UI.

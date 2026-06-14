@@ -7,7 +7,7 @@ import { Skeleton } from "@/components/ui/skeleton";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Career Guidance System: Platform Assistants Summary Telemetry Panel Component
+ * Group Academy — Career Guidance System: Platform Assistants Summary Telemetry Panel Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=overview (System Telemetry Hub View)
  * Operations Mode: Automated Efficiency engine aggregating metrics across communication and tools pipelines.

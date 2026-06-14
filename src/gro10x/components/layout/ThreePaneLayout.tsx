@@ -15,7 +15,7 @@ interface Props {
 /**
  * Desktop: list | detail | context (3 columns).
  * Tablet: list | detail (context as collapsible drawer-like column).
- * Mobile: stacked â€” show list OR detail based on `showDetailOnMobile`.
+ * Mobile: stacked — show list OR detail based on `showDetailOnMobile`.
  */
 export function ThreePaneLayout({
   list,

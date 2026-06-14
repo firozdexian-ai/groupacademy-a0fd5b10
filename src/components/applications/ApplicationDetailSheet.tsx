@@ -220,7 +220,7 @@ export function ApplicationDetailSheet({
               </Badge>
               {typeof application.ai_match_score === "number" && (
                 <Badge variant="secondary" className="h-6 px-2.5 font-black bg-primary/10 text-primary text-[10px]">
-                  ðŸ”¥ {application.ai_match_score}% Match Score
+                  🔥 {application.ai_match_score}% Match Score
                 </Badge>
               )}
             </div>

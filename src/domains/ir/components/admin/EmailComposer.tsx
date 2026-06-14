@@ -96,11 +96,11 @@ function CommunicationHistory({ investorId }: { investorId?: string }) {
             </div>
             <div className="flex justify-between items-center text-[9px] font-bold text-muted-foreground/60">
               <span>
-                {row.email_type} Â· {format(new Date(row.sent_at || row.created_at), "dd MMM yyyy HH:mm")}
+                {row.email_type} · {format(new Date(row.sent_at || row.created_at), "dd MMM yyyy HH:mm")}
               </span>
               {(row.open_count || row.click_count) ? (
                 <span className="tabular-nums">
-                  {row.open_count ?? 0} open Â· {row.click_count ?? 0} clk
+                  {row.open_count ?? 0} open · {row.click_count ?? 0} clk
                 </span>
               ) : null}
             </div>
@@ -183,7 +183,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
 
       qc.invalidateQueries({ queryKey: ["ir-email-communications"] });
 
-      toast.success("Opening mail clientâ€¦", { id: toastId });
+      toast.success("Opening mail client…", { id: toastId });
       setSubject("");
       setBody("");
     } catch (error: unknown) {
@@ -202,7 +202,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
               <ShieldCheck className="h-6 w-6 text-primary" /> Investor Pulse
             </h3>
             <p className="text-xs font-medium tracking-[0.3em] text-muted-foreground/60 italic">
-              Phase IR-Z1.1 Â· dual-logged to outreach & comms history
+              Phase IR-Z1.1 · dual-logged to outreach & comms history
             </p>
           </div>
           <Button
@@ -321,7 +321,7 @@ export const EmailComposer = ({ selectedInvestor, onClose }: EmailComposerProps)
           <div>
             <h4 className="text-sm font-semibold uppercase italic tracking-tight">Communication History</h4>
             <p className="text-[9px] font-bold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-              {resolvedInvestor?.id ? "this investor Â· last 10" : "global Â· last 10"}
+              {resolvedInvestor?.id ? "this investor · last 10" : "global · last 10"}
             </p>
           </div>
         </div>

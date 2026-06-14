@@ -72,7 +72,7 @@ const STATUS_PILL: Record<string, { label: string; className: string; icon: Reac
 /**
  * GroUp Academy: Candidate Application Ledger (MyApplications)
  * Hardened responsive viewer for application lifecycle tracking and assessment management.
- * Version: Launch Candidate Â· Phase Z1 Production Contract Sealed
+ * Version: Launch Candidate · Phase Z1 Production Contract Sealed
  */
 export default function MyApplications() {
  const navigate = useNavigate();
@@ -179,7 +179,7 @@ export default function MyApplications() {
  <div className="flex-1 min-w-0 space-y-1">
  <p className="font-bold text-sm truncate">{app.job?.title}</p>
  <p className="text-[11px] text-muted-foreground truncate italic">
- {app.job?.company_name} â€¢{" "}
+ {app.job?.company_name} •{" "}
  {formatDistanceToNow(new Date(app.last_status_at || app.created_at), { addSuffix: true })}
  </p>
 

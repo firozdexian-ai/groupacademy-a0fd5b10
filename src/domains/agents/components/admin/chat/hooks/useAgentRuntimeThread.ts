@@ -1,5 +1,5 @@
 ﻿/**
- * Group Academy â€” Agent Runtime Thread Hook
+ * Group Academy — Agent Runtime Thread Hook
  * Version: Phase 10j.3 Hardened
  * Purpose: DB-backed conversational hook for administrative chat surfaces.
  * Constraints: Enforces strict subject-kind 'admin' filtering for RBAC security.

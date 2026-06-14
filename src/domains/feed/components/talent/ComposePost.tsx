@@ -66,7 +66,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
     if (!trimmed || !talent?.id) return;
 
     setIsSubmitting(true);
-    const toastId = toast.loading("Publishing to community feedâ€¦");
+    const toastId = toast.loading("Publishing to community feed…");
 
     trackEvent("feed_post_submission_attempt", {
       talentId: talent.id,
@@ -167,7 +167,7 @@ export function ComposePost({ onPostCreated }: ComposePostProps) {
                     ref={textareaRef}
                     value={text}
                     onChange={(e) => setText(e.target.value.slice(0, MAX_LENGTH))}
-                    placeholder="Share an update with your communityâ€¦"
+                    placeholder="Share an update with your community…"
                     className="min-h-[110px] w-full resize-none border-0 bg-transparent p-0 text-sm focus-visible:ring-0 placeholder:text-muted-foreground/60 text-foreground leading-relaxed selection:bg-primary/20"
                   />
 

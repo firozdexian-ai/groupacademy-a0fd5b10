@@ -72,7 +72,7 @@ export default function InstructorInsights() {
  </CardHeader>
  <CardContent className="h-64">
  {flagPie.length === 0 ? (
- <p className="text-sm text-muted-foreground text-center mt-12">No flagged items ðŸŽ‰</p>
+ <p className="text-sm text-muted-foreground text-center mt-12">No flagged items 🎉</p>
  ) : (
  <ResponsiveContainer width="100%" height="100%">
  <PieChart>

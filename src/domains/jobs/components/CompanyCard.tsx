@@ -26,7 +26,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 /**
- * CompanyCard â€” directory card for an employer with active jobs + follow toggle.
+ * CompanyCard — directory card for an employer with active jobs + follow toggle.
  */
 export function CompanyCard({ company, isFollowing, onToggleFollow, onClick }: Props) {
   const queryClient = useQueryClient();

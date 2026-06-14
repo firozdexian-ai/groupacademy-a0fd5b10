@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Abroad Group Tab: Destination Agents Management
+ * Group Academy — Abroad Group Tab: Destination Agents Management
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=destinations (Admin Command Center Surface)[cite: 2, 4]
  * Operations Mode: Human-in-the-loop overview governing registered global destination paths[cite: 2, 4].

@@ -28,7 +28,7 @@ interface StructuralTalentListNode {
 /**
  * GroUp Academy: Talent Pipeline Curation Sheet Orchestrator (SaveToListSheet)
  * An authoritative operational sandbox managing target profile saving actions, dynamic pipeline generation, and list metrics tracking.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function SaveToListSheet({ companyId, talentId, talentName, onClose }: SaveToListSheetProps) {
   const queryClient = useQueryClient();
@@ -64,7 +64,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
 
     setInternalActionBusy(true);
     trackEvent("save_to_list_execution_initiated", { targetListIdStr });
-    const dynamicToastTrackerId = toast.loading("Committing curation properties down pipeline tracking rowsâ€¦");
+    const dynamicToastTrackerId = toast.loading("Committing curation properties down pipeline tracking rows…");
 
     try {
       await addToListMutation.mutateAsync({
@@ -112,7 +112,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
 
     setInternalActionBusy(true);
     trackEvent("save_to_list_workspace_creation_initiated");
-    const dynamicToastTrackerId = toast.loading("Initializing fresh candidate roster sector parametersâ€¦");
+    const dynamicToastTrackerId = toast.loading("Initializing fresh candidate roster sector parameters…");
 
     try {
       const newlyCreatedListObjectNode = await createListMutation.mutateAsync({
@@ -185,7 +185,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
               rows={2}
               value={curationNoteInput}
               disabled={internalActionBusy}
-              placeholder="Inject precise contextual sourcing context notes (e.g. key psychometric parity yields, performance vectors observed)â€¦"
+              placeholder="Inject precise contextual sourcing context notes (e.g. key psychometric parity yields, performance vectors observed)…"
               onChange={(e) => setCurationNoteInput(e.target.value)}
               className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 leading-relaxed resize-none shadow-inner min-h-[60px] focus-visible:ring-1 focus-visible:ring-ring"
               maxLength={300}
@@ -199,7 +199,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
                 <div className="flex items-center justify-center gap-2 py-12 text-muted-foreground leading-none w-full">
                   <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
                   <span className="text-[10px] font-mono font-extrabold uppercase tracking-wider animate-pulse">
-                    Hydrating organizational lists matrixâ€¦
+                    Hydrating organizational lists matrix…
                   </span>
                 </div>
               ) : safeTalentListsCollection.length === 0 ? (
@@ -239,7 +239,7 @@ export function SaveToListSheet({ companyId, talentId, talentName, onClose }: Sa
                   <Input
                     value={newListNameInput}
                     disabled={internalActionBusy}
-                    placeholder="Enter precise configuration name for replacement pipeline rosterâ€¦"
+                    placeholder="Enter precise configuration name for replacement pipeline roster…"
                     onChange={(e) => setNewListNameInput(e.target.value)}
                     className="h-10 rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3 shadow-inner w-full block focus-visible:ring-1 focus-visible:ring-ring uppercase select-text"
                     maxLength={50}

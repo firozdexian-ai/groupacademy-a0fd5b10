@@ -15,7 +15,7 @@ import { TopHypedWidget } from "@/domains/feed/components/talent/TopHypedWidget"
 import { useTalent } from "@/hooks/useTalent";
 
 /**
- * /app/feed â€” Talent social feed.
+ * /app/feed — Talent social feed.
  * Hardened to support responsive desktop grid layouts with sticky side panels
  * and realtime insert notifications.
  */
@@ -115,7 +115,7 @@ export default function Feed() {
 
           {isFetchingNextPage && (
             <div className="flex items-center justify-center gap-2 py-4 text-xs text-muted-foreground">
-              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading moreâ€¦
+              <Loader2 className="h-3.5 w-3.5 animate-spin" /> Loading more…
             </div>
           )}
         </div>

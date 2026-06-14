@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
 
     const systemPrompt = `You are a career coach drafting application answers.
 Use ONLY facts from the candidate's profile. If a fact is not in the profile, write a generic but professional answer.
-Keep answers 80-180 words, first person, specific, and free of clichÃ©s.
+Keep answers 80-180 words, first person, specific, and free of clichés.
 Return STRICT JSON: {"answers":[{"question":"...","answer":"..."}]}`;
 
     const userPrompt = `Candidate profile:\n${profileSummary}\n\nJob context: ${body.jobContext || "(none)"}\n\nQuestions (one per line):\n${body.questions}`;

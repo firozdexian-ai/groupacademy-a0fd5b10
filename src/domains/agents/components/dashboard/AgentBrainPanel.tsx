@@ -13,7 +13,7 @@ import { Loader2, Wand2, Plus, Trash2, BrainCircuit, SplitSquareHorizontal, Shie
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Career Guidance System: Agent Instruction Panel Component
+ * Group Academy — Career Guidance System: Agent Instruction Panel Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/studio?panel=brain (Agent Performance Tuning Surface)
  * Operations Mode: Automated Efficiency plain-language instruction parser and multi-variant prompt engine.

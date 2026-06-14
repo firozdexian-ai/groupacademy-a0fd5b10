@@ -1,5 +1,5 @@
 ﻿/**
- * Jobs Section Browse Layout Core â€” Phase INST-Z2 Hardened
+ * Jobs Section Browse Layout Core — Phase INST-Z2 Hardened
  * CTO Version: June 2026
  * Fixes: Resolved missing GraduationCap icon reference, standardized component mapping paths
  * Rules: Retains all structural fields, action mutations, and navigation hooks natively.

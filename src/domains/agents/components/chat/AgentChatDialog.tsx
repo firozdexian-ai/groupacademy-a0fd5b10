@@ -12,7 +12,7 @@ import { adminSupportAssistant } from "@/domains/agents/api/agentsApi";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy â€” Career Guidance System: Agent Chat Dialog Terminal
+ * Group Academy — Career Guidance System: Agent Chat Dialog Terminal
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/guidance (Student Chat Interface Viewport)
  * Operations Mode: Automated Efficiency student assistant backed by system anomaly forwarding.

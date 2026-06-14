@@ -12,7 +12,7 @@ interface TrackCompletionBadgeProps {
 /**
  * GroUp Academy: Syllabus Track Completion Badge Counter (TrackCompletionBadge)
  * An authoritative operational badge tracking verified aggregate completed training paths down user rows.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function TrackCompletionBadge({ count, className }: TrackCompletionBadgeProps) {
   const isMountedRef = useRef<boolean>(true);
@@ -54,7 +54,7 @@ export function TrackCompletionBadge({ count, className }: TrackCompletionBadgeP
         "inline-flex items-center gap-1 px-2 h-5.5 rounded text-[10px] font-extrabold tracking-wide uppercase border border-transparent bg-cyan-500/10 text-cyan-600 dark:text-cyan-400 select-none leading-none shadow-xs shrink-0 cursor-help transform-gpu antialiased font-mono",
         className,
       )}
-      title={`${badgingMetricsModel.label} â€” verified completion on your profile.`}
+      title={`${badgingMetricsModel.label} — verified completion on your profile.`}
     >
       <Layers className="h-3 w-3 stroke-[2.5] shrink-0" />
       <span className="pt-0.5 block">{badgingMetricsModel.label}</span>

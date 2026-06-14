@@ -1,5 +1,5 @@
 ﻿/**
- * Talents tab â€” every talent who has ever interacted with the active company:
+ * Talents tab — every talent who has ever interacted with the active company:
  * job applicants + revealed/shortlisted candidates. Lightweight aggregate view.
  */
 import { useEffect, useState } from "react";
@@ -106,7 +106,7 @@ export default function Gro10xTalents() {
   if (loading) {
     return (
       <div className="px-4 py-12 text-center text-sm text-slate-400">
-        <Loader2 className="h-5 w-5 mx-auto animate-spin mb-2" /> Loading talentsâ€¦
+        <Loader2 className="h-5 w-5 mx-auto animate-spin mb-2" /> Loading talents…
       </div>
     );
   }
@@ -148,7 +148,7 @@ export default function Gro10xTalents() {
             )}
             <p className={`text-[11px] ${GRO10X_MUTED} truncate`}>
               {r.profession || "Talent"}
-              {r.job_title ? ` Â· applied to ${r.job_title}` : r.source === "shortlist" ? " Â· shortlisted" : ""}
+              {r.job_title ? ` · applied to ${r.job_title}` : r.source === "shortlist" ? " · shortlisted" : ""}
             </p>
           </div>
           <Link

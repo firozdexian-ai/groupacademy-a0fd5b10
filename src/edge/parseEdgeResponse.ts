@@ -3,7 +3,7 @@ import { EdgeFunctionError } from "./EdgeFunctionError";
 
 /**
  * Validate an edge-function response payload against a zod schema.
- * Throws `EdgeFunctionError` if the wire shape drifts â€” turning silent
+ * Throws `EdgeFunctionError` if the wire shape drifts — turning silent
  * casts into loud, typed failures at the call site.
  */
 export function parseEdgeResponse<T>(

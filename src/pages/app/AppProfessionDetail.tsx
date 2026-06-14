@@ -71,7 +71,7 @@ interface Course {
 /**
  * GroUp Academy: Specialist Profession Career Track Cockpit (AppProfessionDetail)
  * Hardened track hub managing concurrent instructor chats, compiling segmented course arrays, and anchoring credit allocation dashboard metrics.
- * Version: Launch Candidate Â· Phase Z1 Architecture Matrix Sealed
+ * Version: Launch Candidate · Phase Z1 Architecture Matrix Sealed
  */
 export default function AppProfessionDetail() {
  const { slug: unverifiedTrackSlugStr } = useParams<{ slug: string }>();
@@ -464,7 +464,7 @@ export default function AppProfessionDetail() {
  <Clock className="h-3 w-3 stroke-[2.2]" />{" "}
  <span>{courseRecordNode.estimated_hours.toString()} Hours</span>
  </span>
- <span className="opacity-30 block shrink-0 select-none">â€¢</span>
+ <span className="opacity-30 block shrink-0 select-none">•</span>
  <span className="flex items-center gap-1 shrink-0">
  <Coins className="h-3 w-3 stroke-[2.2]" />{" "}
  <span>{(courseRecordNode.credit_cost || 0).toLocaleString()} Unit Cost</span>

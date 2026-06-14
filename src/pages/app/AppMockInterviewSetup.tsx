@@ -68,7 +68,7 @@ const DRAFT_STORAGE_KEY = "mock_interview_draft";
 /**
  * GroUp Academy: AI Mock Interview Pre-Flight Orchestrator (AppMockInterviewSetup)
  * Hardened setup cockpit mapping candidate telemetry profile contexts and protecting credit transactions from generation drops.
- * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
  */
 export default function AppMockInterviewSetup() {
  const navigateHook = useNavigate();
@@ -651,7 +651,7 @@ export default function AppMockInterviewSetup() {
  </p>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/30 uppercase tracking-widest pt-2 flex items-center justify-center gap-1 leading-none tabular-nums">
  <Sparkles className="h-3 w-3 stroke-[2]" />{" "}
- <span>Estimated time: 20â€“30s</span>
+ <span>Estimated time: 20–30s</span>
  </p>
  </div>
  </CardContent>

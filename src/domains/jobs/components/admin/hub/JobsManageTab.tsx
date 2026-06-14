@@ -240,7 +240,7 @@ export function JobsManageTab() {
                 title="Archive jobs past deadline or stale (>90d)"
               >
                 <Flame className="h-4 w-4" />
-                {purging ? "Purgingâ€¦" : "Purge Expired"}
+                {purging ? "Purging…" : "Purge Expired"}
               </Button>
               <Button
                 onClick={() => {
@@ -347,7 +347,7 @@ export function JobsManageTab() {
                         <TableCell className="py-5 text-left">
                           <p className="font-semibold text-sm uppercase italic tracking-tight">{job.title}</p>
                           <p className="text-[9px] font-bold text-muted-foreground mt-0.5">
-                            {job.company_name} Â· {job.location || "REMOTE_ACCESS"}
+                            {job.company_name} · {job.location || "REMOTE_ACCESS"}
                           </p>
                         </TableCell>
                         <TableCell className="text-left">

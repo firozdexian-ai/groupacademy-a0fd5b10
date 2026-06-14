@@ -10,9 +10,9 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 
 /**
- * GigUploader â€” universal in-app file uploader for gig submissions.
+ * GigUploader — universal in-app file uploader for gig submissions.
  * Uploads to the private `gig-submissions` bucket under the user's own folder.
- * Returns the storage path (not a public URL) â€” admins generate signed URLs at review time.
+ * Returns the storage path (not a public URL) — admins generate signed URLs at review time.
  * Hardened for Phase Z0 Code Freeze specifications with true byte-stream progress tracking.
  */
 
@@ -67,7 +67,7 @@ export function GigUploader({
   maxFiles = 5,
   accept = ACCEPT_DEFAULT,
   label = "Drop files or tap to upload",
-  helper = "Images, video, audio, PDF, slides, docs, ZIP â€” up to 200 MB each",
+  helper = "Images, video, audio, PDF, slides, docs, ZIP — up to 200 MB each",
 }: GigUploaderProps) {
   const inputRef = useRef<HTMLInputElement>(null);
   const [uploading, setUploading] = useState(false);
@@ -224,7 +224,7 @@ export function GigUploader({
           <div className="space-y-3 max-w-xs mx-auto animate-in fade-in duration-200">
             <Loader2 className="h-5 w-5 text-primary mx-auto animate-spin stroke-[2.5]" />
             <div className="space-y-1.5 text-center">
-              <p className="text-xs font-bold text-foreground/90 uppercase tracking-wider">Streaming Binary Chunksâ€¦</p>
+              <p className="text-xs font-bold text-foreground/90 uppercase tracking-wider">Streaming Binary Chunks…</p>
               <p className="text-[10px] font-semibold text-muted-foreground tabular-nums tracking-wide">
                 {progress}% transmitted
               </p>

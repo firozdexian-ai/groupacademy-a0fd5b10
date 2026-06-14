@@ -10,7 +10,7 @@ import { trackError } from "@/lib/errorTracking";
 import type { LucideIcon } from "lucide-react";
 
 /**
- * Group Academy â€” Career Guidance System: Agent Categorization Directory List Tab Component
+ * Group Academy — Career Guidance System: Agent Categorization Directory List Tab Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=fleet (Fleet Configuration Workspace Node View)
  * Operations Mode: Automated Efficiency listing workspace filtering system agents across permissions boundaries.

@@ -41,12 +41,12 @@ const AuthoringReviewDigestEmail = ({
         <Section style={listBox}>
           {modules.map((m, i) => (
             <Text key={i} style={item}>
-              <strong>{m.title}</strong> â€” {m.flaggedQuiz} quiz Â· {m.flaggedScenarios} scenario
+              <strong>{m.title}</strong> — {m.flaggedQuiz} quiz · {m.flaggedScenarios} scenario
             </Text>
           ))}
         </Section>
         <Text style={text}>
-          Open the Module Manager â†’ Analytics on each module to see exactly which items need editing.
+          Open the Module Manager → Analytics on each module to see exactly which items need editing.
         </Text>
         <Text style={footer}>The {SITE_NAME} team</Text>
       </Container>
@@ -65,8 +65,8 @@ export const template = {
     totalFlagged: 7,
     modulesCount: 3,
     modules: [
-      { title: 'Module 1 â€” Listening', flaggedQuiz: 2, flaggedScenarios: 1 },
-      { title: 'Module 2 â€” Empathy', flaggedQuiz: 3, flaggedScenarios: 0 },
+      { title: 'Module 1 — Listening', flaggedQuiz: 2, flaggedScenarios: 1 },
+      { title: 'Module 2 — Empathy', flaggedQuiz: 3, flaggedScenarios: 0 },
     ],
   },
 } satisfies TemplateEntry

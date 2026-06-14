@@ -1,5 +1,5 @@
 /**
- * Institutional HR Graph Hook â€” Phase HR-Z1 Hardened, repo-backed in 10i.2
+ * Institutional HR Graph Hook — Phase HR-Z1 Hardened, repo-backed in 10i.2
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

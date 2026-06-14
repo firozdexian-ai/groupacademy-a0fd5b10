@@ -1,5 +1,5 @@
 ﻿/**
- * Companies Domain Hooks â€” B2B Activity Signals Tracker
+ * Companies Domain Hooks — B2B Activity Signals Tracker
  * Version: 2024 Highly Professional SAAS UI
  * Rules: Enforces Digital Workforce error-reporting pipelines on query failures.
  */

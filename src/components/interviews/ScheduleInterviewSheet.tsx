@@ -23,7 +23,7 @@ interface Props {
 /**
  * GroUp Academy: Recruitment Evaluation Node (ScheduleInterviewSheet)
  * CTO Reference: Authoritative orchestration drawer dispatching multi-slot availability options.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function ScheduleInterviewSheet({ open, onOpenChange, applicationId, companyId, talentId, onCreated }: Props) {
   const createInterview = useCreateInterview();
@@ -327,7 +327,7 @@ export function ScheduleInterviewSheet({ open, onOpenChange, applicationId, comp
             {isMutationProcessing ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Transmitting Matrix Parametersâ€¦</span>
+                <span>Transmitting Matrix Parameters…</span>
               </>
             ) : (
               <span>Dispatch Evaluation Windows to Candidate</span>

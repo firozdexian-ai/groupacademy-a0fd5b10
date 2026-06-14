@@ -1,5 +1,5 @@
 ﻿/**
- * Platform layer â€” shared admin chrome and UI primitives.
+ * Platform layer — shared admin chrome and UI primitives.
  *
  * Consumers should import from `@/platform/admin` going forward.
  * (Phase 8 retired the legacy @/components/dashboard barrels.)

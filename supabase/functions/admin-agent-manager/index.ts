@@ -1,4 +1,4 @@
-﻿// Admin Agent Manager â€” chat with the entire AI Agent OS.
+﻿// Admin Agent Manager — chat with the entire AI Agent OS.
 // Admin/super_admin only. Reports on agents, tools, channels, sessions, credits.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -83,8 +83,8 @@ const TOOLS = [
   },
 ];
 
-const SYSTEM = `You are the Agent Manager â€” operator console for the entire AI Agent OS at GroUp Academy.
-Answer the admin's questions about all agents (B2C, B2B, platform tools, user-generated, marketplace) by CALLING TOOLS â€” never invent numbers.
+const SYSTEM = `You are the Agent Manager — operator console for the entire AI Agent OS at GroUp Academy.
+Answer the admin's questions about all agents (B2C, B2B, platform tools, user-generated, marketplace) by CALLING TOOLS — never invent numbers.
 Be concise. Use markdown. Bold the key numbers. Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {

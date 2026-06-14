@@ -1,4 +1,4 @@
-﻿// Phase 4.7 â€” Monthly instructor statement generator (cron, 1st of month)
+﻿// Phase 4.7 — Monthly instructor statement generator (cron, 1st of month)
 // Generates an HTML statement summary per active instructor for the previous month,
 // stores metadata in instructor_statements, and notifies the instructor.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";

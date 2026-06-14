@@ -1,5 +1,5 @@
 ﻿/**
- * Lifetime Overview â€” Refactored Executive Dashboard
+ * Lifetime Overview — Refactored Executive Dashboard
  * Backend Integration: Phase 10i.1 Single-Trip Rollup Optimized
  * Conforms strictly to 2024 Highly Professional SaaS UI patterns.
  */
@@ -154,10 +154,10 @@ export function LifetimeOverviewTab() {
         />
         <StatsCard
           title="Gross Revenue"
-          value={`å¤–éƒ¨ à§³${stats.totalRevenueBDT.toLocaleString("en-BD")}`}
+          value={`外部 ৳${stats.totalRevenueBDT.toLocaleString("en-BD")}`}
           icon={Zap}
           variant="success"
-          trend={`â‰ˆ $${(stats.totalRevenueBDT * BDT_TO_USD).toLocaleString(undefined, { maximumFractionDigits: 0 })} USD`}
+          trend={`≈ $${(stats.totalRevenueBDT * BDT_TO_USD).toLocaleString(undefined, { maximumFractionDigits: 0 })} USD`}
           trendLabel="Converted valuation baseline"
         />
         <StatsCard

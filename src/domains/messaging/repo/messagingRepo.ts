@@ -73,12 +73,12 @@ export async function deleteMessagingConversation(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5e: pause auto-reply on a single conversation â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5e: pause auto-reply on a single conversation ──────────────
 export async function pauseMessagingConversationAutoReply(id: string, paused: boolean): Promise<void> {
   await supabase.from("messaging_conversations").update({ auto_reply_paused: paused }).eq("id", id);
 }
 
-// â”€â”€â”€ Phase 10j.5g: gro10x agent threads â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g: gro10x agent threads ───────────────────────────────────
 export async function listGro10xThreads(userId: string, companyId: string): Promise<unknown[]> {
   const { data } = await supabase
     .from("gro10x_agent_threads")
@@ -123,7 +123,7 @@ export async function markGro10xThreadRead(
     .eq("agent_key", agentKey);
 }
 
-// â”€â”€â”€ Phase 10j.5g3 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g3 ─────────────────────────────────────────────────────────
 export async function getMessageThreadIdByTalentAndAgent(
   talentId: string,
   agentKey: string,
@@ -138,14 +138,14 @@ export async function getMessageThreadIdByTalentAndAgent(
   return (data?.id as string | undefined) ?? null;
 }
 
-// â”€â”€â”€ Phase 10j.5h1: RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h1: RPC wrappers ──────────────────────────────────────────
 export async function ensureSystemThread(talentId: string): Promise<string | null> {
   const { data, error } = await supabase.rpc("ensure_system_thread", { _talent_id: talentId });
   if (error) throw error;
   return data ? String(data) : null;
 }
 
-// â”€â”€â”€ Phase 10j.5h3: direct-thread upsert â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h3: direct-thread upsert ──────────────────────────────────
 export async function upsertDirectThread(args: { companyId: string; talentId: string }): Promise<string | null> {
   const { data, error } = await supabase.rpc("upsert_direct_thread" as unknown, {
     p_company_id: args.companyId,
@@ -155,7 +155,7 @@ export async function upsertDirectThread(args: { companyId: string; talentId: st
   return data ? String(data) : null;
 }
 
-// â”€â”€â”€ Phase 10j.5k7 â€” threads / messages / channels â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k7 — threads / messages / channels ──────────────────────
 export async function listMessageThreadsByTalent(talentId: string): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("message_threads")
@@ -198,7 +198,7 @@ export async function listMessagingChannelsByAgentKey(agentKey: string): Promise
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10i.4: realtime subscription helper â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10i.4: realtime subscription helper ────────────────────────────
 /**
  * Subscribe to messaging_channels postgres changes scoped to a single agent.
  * Returns an unsubscribe function; consumers should call it from useEffect

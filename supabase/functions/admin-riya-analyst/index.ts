@@ -1,4 +1,4 @@
-﻿// Admin Riya Analyst â€” chat with the B2B onboarding agent's data.
+﻿// Admin Riya Analyst — chat with the B2B onboarding agent's data.
 // Super-admin only. Tools resolve against riya_conversations + companies.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -15,7 +15,7 @@ const TOOLS = [
     function: {
       name: "riya_count",
       description:
-        "Count Riya B2B onboarding conversations. status âˆˆ {all, completed, abandoned, in_progress}. since is ISO date (optional).",
+        "Count Riya B2B onboarding conversations. status ∈ {all, completed, abandoned, in_progress}. since is ISO date (optional).",
       parameters: {
         type: "object",
         properties: {

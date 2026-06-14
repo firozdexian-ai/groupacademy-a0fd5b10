@@ -78,9 +78,9 @@ export default function Gro10xProjects() {
               <Input placeholder="Title" value={form.title} onChange={e => setForm({ ...form, title: e.target.value })} />
               <Textarea placeholder="Summary" value={form.summary} onChange={e => setForm({ ...form, summary: e.target.value })} />
               <Input type="number" placeholder="Budget (credits)" value={form.budget_credits} onChange={e => setForm({ ...form, budget_credits: Number(e.target.value) })} />
-              <Textarea placeholder="Detailed brief â€” AI will propose milestones" value={form.brief} onChange={e => setForm({ ...form, brief: e.target.value })} rows={4} />
+              <Textarea placeholder="Detailed brief — AI will propose milestones" value={form.brief} onChange={e => setForm({ ...form, brief: e.target.value })} rows={4} />
               <div className="flex gap-2">
-                <Button size="sm" variant="outline" onClick={proposeMilestones} disabled={proposing || !form.brief}>{proposing ? "Thinkingâ€¦" : "Propose milestones"}</Button>
+                <Button size="sm" variant="outline" onClick={proposeMilestones} disabled={proposing || !form.brief}>{proposing ? "Thinking…" : "Propose milestones"}</Button>
                 <Button size="sm" onClick={createProject} disabled={!form.title || proposed.length === 0}>Create</Button>
               </div>
               {proposed.length > 0 && (
@@ -107,7 +107,7 @@ export default function Gro10xProjects() {
             <Badge variant="outline" className="capitalize">{row.project.status}</Badge>
           </div>
           <div className="text-xs text-muted-foreground">
-            Budget {row.project.budget_credits} Â· Held {row.escrow?.held_credits ?? 0} Â· Released {row.escrow?.released_credits ?? 0}
+            Budget {row.project.budget_credits} · Held {row.escrow?.held_credits ?? 0} · Released {row.escrow?.released_credits ?? 0}
           </div>
           <div className="text-xs">{row.milestones.length} milestones</div>
           {row.project.status === "draft" && <Button size="sm" onClick={() => fundProject(row.project.id)}>Fund</Button>}

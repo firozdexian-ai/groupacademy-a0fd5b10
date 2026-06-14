@@ -76,7 +76,7 @@ interface SessionForm {
 /**
  * GroUp Academy: Technical Classroom Session Controller Hub (InstructorCourseSessions)
  * Hardened operational cockpit tracking relational lists and insulating data mutations with explicit type safety.
- * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
+ * Version: Launch Candidate · Phase Z1 Production Contract Locked
  */
 export default function InstructorCourseSessions() {
  const { contentId: unverifiedContentParamStr } = useParams<{ contentId: string }>();
@@ -214,7 +214,7 @@ function CohortSessions({ cohort, onAddSession, onAttendance }: CohortSessionsPr
           <Calendar className="h-3.5 w-3.5 text-primary stroke-[2.2]" />
           <span>
             {cohort.starts_on ?? "Self-paced"}
-            {cohort.ends_on ? ` â†’ ${cohort.ends_on}` : ""}
+            {cohort.ends_on ? ` → ${cohort.ends_on}` : ""}
           </span>
         </p>
         <Button
@@ -232,7 +232,7 @@ function CohortSessions({ cohort, onAddSession, onAttendance }: CohortSessionsPr
       {isSessionsLoading ? (
         <div className="w-full flex items-center justify-center py-8 font-mono text-xs font-medium tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2">
           <InlineSpinner size="sm" />
-          <span>Loading sessionsâ€¦</span>
+          <span>Loading sessions…</span>
         </div>
       ) : typedSessionsArray.length === 0 ? (
         <Card className="rounded-xl border border-dashed border-border/60 bg-card/20 p-6 text-center select-none block">
@@ -257,7 +257,7 @@ function CohortSessions({ cohort, onAddSession, onAttendance }: CohortSessionsPr
  sessionNodeItem.scheduled_date,
  sessionNodeItem.event_timezone || DEFAULT_EVENT_TZ,
  )}{" "}
- â€¢ {sessionNodeItem.duration_minutes ?? 60} MIN
+ • {sessionNodeItem.duration_minutes ?? 60} MIN
  </p>
  <div className="mt-1.5 flex items-center gap-1.5 select-none pointer-events-none flex-wrap leading-none">
  <Badge
@@ -680,7 +680,7 @@ function AttendanceSheet({ sessionId, onClose }: AttendanceSheetProps) {
         {isAttendanceResolving ? (
           <div className="w-full flex items-center justify-center py-12 font-mono text-xs font-medium tracking-widest text-muted-foreground/40 select-none pointer-events-none gap-2">
             <InlineSpinner size="sm" />
-            <span>Loading attendanceâ€¦</span>
+            <span>Loading attendance…</span>
           </div>
         ) : (
           <div className="mt-4 block w-full divide-y divide-border/5">

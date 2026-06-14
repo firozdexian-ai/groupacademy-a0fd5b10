@@ -1,4 +1,4 @@
-﻿// Admin Company Outreach â€” invite uploaded company contacts who have no Gro10x account.
+﻿// Admin Company Outreach — invite uploaded company contacts who have no Gro10x account.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
 

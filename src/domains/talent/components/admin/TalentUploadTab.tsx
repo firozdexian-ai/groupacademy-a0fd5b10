@@ -1,5 +1,5 @@
 ﻿/**
- * Talent Upload â€” Unified Ingestion Engine
+ * Talent Upload — Unified Ingestion Engine
  * CTO Version: May 2026
  * Fixes:
  * - N1: Added missing Badge import to prevent runtime crash

@@ -148,7 +148,7 @@ export default function Gro10xFeed() {
   const handleComposerSubmit = async () => {
     const text = composer.trim();
     if (text.length < 20) {
-      toast.error("Post is a bit short â€” at least 20 characters please");
+      toast.error("Post is a bit short — at least 20 characters please");
       return;
     }
     if (!companyId) {
@@ -158,7 +158,7 @@ export default function Gro10xFeed() {
     setPosting(true);
     try {
       if (postAsCompany && isOwner) {
-        // Owner posting as the company â€” publish directly via the agent tool path.
+        // Owner posting as the company — publish directly via the agent tool path.
         let draftRes: unknown = null;
         let draftErr: unknown = null;
         try {
@@ -178,7 +178,7 @@ export default function Gro10xFeed() {
         setComposer("");
         toast.success(`Posted as ${companyName ?? "company"}`);
       } else {
-        // Personal post â€” write directly to feed_posts with the chosen audience.
+        // Personal post — write directly to feed_posts with the chosen audience.
         const t = await getTalentMiniProfileByUser(user!.id);
         const { error } = await insertFeedPost({
           text_content: text,
@@ -245,10 +245,10 @@ export default function Gro10xFeed() {
               onChange={(e) => setComposer(e.target.value)}
               placeholder={
                 postAsCompany
-                  ? `Posting as ${companyName ?? "your company"}â€¦`
+                  ? `Posting as ${companyName ?? "your company"}…`
                   : audience === "internal"
-                  ? "Share with your team onlyâ€¦"
-                  : "Share an update with the networkâ€¦"
+                  ? "Share with your team only…"
+                  : "Share an update with the network…"
               }
               className="w-full bg-transparent text-sm placeholder:text-slate-500 focus:outline-none resize-none"
               rows={2}
@@ -278,7 +278,7 @@ export default function Gro10xFeed() {
                 disabled={posting || composer.trim().length < 20}
                 className="rounded-full bg-[#33E1E4] text-[#06121A] px-4 py-1.5 text-xs font-semibold disabled:opacity-40"
               >
-                {posting ? "Savingâ€¦" : "Post"}
+                {posting ? "Saving…" : "Post"}
               </button>
             </div>
           </div>
@@ -329,12 +329,12 @@ export default function Gro10xFeed() {
 
       {/* Feed */}
       <section className="px-4 mt-4 pb-6">
-        {loading && <Gro10xLoading label="Loading feedâ€¦" />}
+        {loading && <Gro10xLoading label="Loading feed…" />}
         {!loading && posts.length === 0 && (
           <div className="text-center text-sm text-slate-400 py-8">
             No posts yet.{" "}
             <Link to="/gro10x/c/growth" className="text-[#33E1E4] hover:underline">
-              Ask Growth Agent to draft one â†’
+              Ask Growth Agent to draft one →
             </Link>
           </div>
         )}
@@ -351,7 +351,7 @@ export default function Gro10xFeed() {
               <div className="min-w-0 flex-1">
                 <p className="text-sm font-medium truncate">{p.author_name}</p>
                 <p className="text-[11px] text-slate-400 truncate">
-                  {p.author_type === "company" ? "Company" : p.author_title ?? "Member"} Â·{" "}
+                  {p.author_type === "company" ? "Company" : p.author_title ?? "Member"} ·{" "}
                   {new Date(p.created_at).toLocaleDateString(undefined, { month: "short", day: "numeric" })}
                 </p>
               </div>

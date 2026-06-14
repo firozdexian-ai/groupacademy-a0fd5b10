@@ -19,7 +19,7 @@ interface ChatMessage {
 /**
  * GroUp Academy: Technical Neural Concierge Interface (AIGeneral)
  * Hardened fixed-viewport chat platform anchoring fluid streaming threads and insulating lifecycle scroll parameters.
- * Version: Launch Candidate Â· Phase Z1 Viewport Containment Locked
+ * Version: Launch Candidate · Phase Z1 Viewport Containment Locked
  */
 export default function AIGeneral() {
  const [urlSearchParamsMap] = useSearchParams();
@@ -120,7 +120,7 @@ export default function AIGeneral() {
  <div className="h-1 w-1 rounded-full bg-current animate-ping" />
  <span>Uplink Active</span>
  </span>
- <span className="opacity-20 select-none">â€¢</span>
+ <span className="opacity-20 select-none">•</span>
  <span className="flex items-center gap-1">
  <Zap className="h-3 w-3 stroke-[2]" />
  <span>Standard Tier</span>

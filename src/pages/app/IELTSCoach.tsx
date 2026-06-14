@@ -86,7 +86,7 @@ const SKELETON_ROWS_ROSTER = [1, 2, 3];
 /**
  * GroUp Academy: AI IELTS Coach & Language Evaluation Core (IELTSCoach)
  * Hardened preparation center isolating user metric deltas and guarding inline aggregations from thread re-paint thrashes.
- * Version: Launch Candidate Â· Phase Z1 Production Type Contract Sealed
+ * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
  */
 export default function IELTSCoach() {
  // =========================================================================
@@ -182,7 +182,7 @@ export default function IELTSCoach() {
  <Card className="rounded-lg border border-primary/20 bg-linear-to-br from-primary/5 via-cyan-500/[0.01] to-transparent shadow-none overflow-hidden block w-full select-none pointer-events-none">
  <CardContent className="p-4 flex items-center gap-4 block w-full leading-none">
  <div className="text-4xl shrink-0 leading-none block select-none pointer-events-none filter drop-shadow-sm rotate-2">
- ðŸ”¥
+ 🔥
  </div>
  <div className="flex-1 leading-none space-y-1 block">
  <span className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-wide block leading-none">
@@ -196,7 +196,7 @@ export default function IELTSCoach() {
  Cumulative Reward: {userStreakRecord?.xp_total ? userStreakRecord.xp_total.toLocaleString() : "0"} Total
  XP
  </span>
- <span className="opacity-30 select-none">â€¢</span>
+ <span className="opacity-30 select-none">•</span>
  <span>
  Best Streak:{" "}
  {userStreakRecord?.longest_streak_days ? userStreakRecord.longest_streak_days.toString() : "0"} Days
@@ -281,7 +281,7 @@ export default function IELTSCoach() {
  {sectionNodeItem.name}
  </div>
  <div className="font-mono text-[9px] font-bold text-muted-foreground/40 uppercase tracking-tight tabular-nums block">
- 1 credit â€¢ ~10 mins
+ 1 credit • ~10 mins
  </div>
  </CardContent>
  </Card>
@@ -350,7 +350,7 @@ export default function IELTSCoach() {
  className="font-mono text-xs font-black uppercase px-2 h-7 rounded border border-border bg-background shadow-3xs text-foreground shrink-0 leading-none pt-0.5 tabular-nums"
  >
  BAND{" "}
- {attemptRowNode.ai_band_score !== null ? Number(attemptRowNode.ai_band_score).toFixed(1) : "â€”"}
+ {attemptRowNode.ai_band_score !== null ? Number(attemptRowNode.ai_band_score).toFixed(1) : "—"}
  </Badge>
  </CardContent>
  </Card>

@@ -8,7 +8,7 @@ import { parseCv } from "@/domains/jobs/api/jobsApi";
 import { signupCompany, checkCompanyAccount } from "@/domains/companies/api/companiesApi";
 
 /**
- * Gro10x â€” Riya conversational auth controller.
+ * Gro10x — Riya conversational auth controller.
  *
  * Mirrors the Aisha (talent) hook contract so the UI shell is symmetrical,
  * but adds B2B-specific gates: work-email check, CV upload (optional),
@@ -124,7 +124,7 @@ export function useGro10xAuthChat() {
     setIsLoading(true);
     addMessage(
       "assistant",
-      "Hi, I'm Riya â€” your Gro10x concierge. I'll set up your professional workspace in under 60 seconds.\n\nWhat's your work email?",
+      "Hi, I'm Riya — your Gro10x concierge. I'll set up your professional workspace in under 60 seconds.\n\nWhat's your work email?",
     );
     setCurrentAction("collect_email");
     setIsLoading(false);
@@ -135,7 +135,7 @@ export function useGro10xAuthChat() {
   const uploadAndParseCV = useCallback(
     async (file: File) => {
       setIsLoading(true);
-      addMessage("user", `ðŸ“Ž ${file.name}`);
+      addMessage("user", `📎 ${file.name}`);
       try {
         const safeKey = data.email.replace(/[^a-z0-9]/gi, "_") || `anon_${Date.now()}`;
         const path = `gro10x-prelaunch/${safeKey}-${Date.now()}-${file.name}`;
@@ -175,13 +175,13 @@ export function useGro10xAuthChat() {
         if (suggestion.role || suggestion.company) {
           addMessage(
             "assistant",
-            `Great â€” I picked up:\nâ€¢ **Role:** ${suggestion.role || "â€”"}\nâ€¢ **Company:** ${suggestion.company || "â€”"}\n\nIs this correct? You can edit before continuing.`,
+            `Great — I picked up:\n• **Role:** ${suggestion.role || "—"}\n• **Company:** ${suggestion.company || "—"}\n\nIs this correct? You can edit before continuing.`,
           );
           setCurrentAction("confirm_role_company");
         } else {
           addMessage(
             "assistant",
-            "Got your CV. I couldn't auto-detect your role â€” what's your current role and company name?",
+            "Got your CV. I couldn't auto-detect your role — what's your current role and company name?",
           );
           setCurrentAction("confirm_role_company");
         }
@@ -198,7 +198,7 @@ export function useGro10xAuthChat() {
 
   const skipCV = useCallback(() => {
     addMessage("user", "Skip CV");
-    addMessage("assistant", "No problem â€” what's your current role and company name?");
+    addMessage("assistant", "No problem — what's your current role and company name?");
     setCurrentAction("confirm_role_company");
   }, [addMessage]);
 
@@ -223,7 +223,7 @@ export function useGro10xAuthChat() {
             if (FREE_PROVIDERS.has(domain)) {
               addMessage(
                 "assistant",
-                "Gro10x is for teams â€” please use your **work email** (not gmail/yahoo/etc).",
+                "Gro10x is for teams — please use your **work email** (not gmail/yahoo/etc).",
               );
               break;
             }
@@ -238,7 +238,7 @@ export function useGro10xAuthChat() {
                 if (lookup.isCompany) {
                   addMessage(
                     "assistant",
-                    "Welcome back â€” you already have a Gro10x workspace with this email. Tap below to sign in.",
+                    "Welcome back — you already have a Gro10x workspace with this email. Tap below to sign in.",
                   );
                 } else {
                   addMessage(
@@ -246,7 +246,7 @@ export function useGro10xAuthChat() {
                     "I found an account with this email, but it isn't linked to a Gro10x company workspace. Sign in to continue, or use a different work email to create a new workspace.",
                   );
                 }
-                // Halt the signup flow â€” UI will render a Sign-in CTA.
+                // Halt the signup flow — UI will render a Sign-in CTA.
                 break;
               }
             } catch (e) {
@@ -267,7 +267,7 @@ export function useGro10xAuthChat() {
             setData((d) => ({ ...d, name: trimmed }));
             addMessage(
               "assistant",
-              `Nice to meet you, ${trimmed.split(" ")[0]}.\n\nWant to upload your CV? It speeds things up â€” I can pre-fill your role and company. Or you can skip.`,
+              `Nice to meet you, ${trimmed.split(" ")[0]}.\n\nWant to upload your CV? It speeds things up — I can pre-fill your role and company. Or you can skip.`,
             );
             setCurrentAction("collect_cv");
             break;
@@ -281,7 +281,7 @@ export function useGro10xAuthChat() {
             if (!role || !company) {
               addMessage(
                 "assistant",
-                "Please share both â€” e.g. *Head of Sales at Acme Corp*",
+                "Please share both — e.g. *Head of Sales at Acme Corp*",
               );
               break;
             }
@@ -320,7 +320,7 @@ export function useGro10xAuthChat() {
               break;
             }
             setData((d) => ({ ...d, phone: digits }));
-            // Server-controlled human check â€” try Riya, fall back deterministically.
+            // Server-controlled human check — try Riya, fall back deterministically.
             const r = await callRiya({ action: "verify_human" });
             const fallbackQ = "Quick human check!\n\nWhat is the opposite of cold?";
             const fallbackA = "hot";
@@ -337,7 +337,7 @@ export function useGro10xAuthChat() {
               addMessage("assistant", "That's not quite right. Try again.");
               break;
             }
-            addMessage("assistant", "Verified âœ… Last step â€” create a password (min 8 characters).");
+            addMessage("assistant", "Verified ✅ Last step — create a password (min 8 characters).");
             setCurrentAction("set_password");
             break;
           }
@@ -353,7 +353,7 @@ export function useGro10xAuthChat() {
   const submitGoals = useCallback(
     (goals: ProGoalKey[]) => {
       if (goals.length === 0) {
-        addMessage("assistant", "Pick at least one â€” it helps me set up the right agents for you.");
+        addMessage("assistant", "Pick at least one — it helps me set up the right agents for you.");
         return;
       }
       const labels = goals
@@ -361,7 +361,7 @@ export function useGro10xAuthChat() {
         .join(", ");
       setData((d) => ({ ...d, goals }));
       addMessage("user", labels);
-      addMessage("assistant", "Perfect â€” I'll pin the right agents. Which country are you based in?");
+      addMessage("assistant", "Perfect — I'll pin the right agents. Which country are you based in?");
       setCurrentAction("collect_country");
     },
     [addMessage],
@@ -376,7 +376,7 @@ export function useGro10xAuthChat() {
         return;
       }
       setIsLoading(true);
-      addMessage("user", "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢");
+      addMessage("user", "••••••••");
       try {
         const finalPhone = `${data.countryCode}${data.phone}`;
         let result: unknown = null;
@@ -421,7 +421,7 @@ export function useGro10xAuthChat() {
 
         addMessage(
           "assistant",
-          `ðŸŽ‰ Welcome to Gro10x, ${data.name.split(" ")[0]}! Your workspace at **${data.companyName}** is ready.`,
+          `🎉 Welcome to Gro10x, ${data.name.split(" ")[0]}! Your workspace at **${data.companyName}** is ready.`,
         );
         setIsComplete(true);
       } catch (err: unknown) {
@@ -429,7 +429,7 @@ export function useGro10xAuthChat() {
         toast.error(err.message || "Sign-up failed");
         addMessage(
           "assistant",
-          `Hmm â€” ${err.message || "something went wrong"}. Want to try a different password?`,
+          `Hmm — ${err.message || "something went wrong"}. Want to try a different password?`,
         );
       } finally {
         setIsLoading(false);

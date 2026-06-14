@@ -15,9 +15,9 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Project Room (talent)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getProjectRoomBundle(projectId: string) {
   const [pRes, mRes, eRes, msgRes] = await Promise.all([
@@ -53,9 +53,9 @@ export async function insertProjectMessage(input: {
   if (error) throw error;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Reviewer Cockpit (talent)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getReviewerCockpit(talentId: string) {
   const [p, a] = await Promise.all([
@@ -69,9 +69,9 @@ export async function getReviewerCockpit(talentId: string) {
   return { profile: p.data, assignments: a.data ?? [] };
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Reviewer Program (admin)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getReviewerProgramBundle() {
   const [r, d, l] = await Promise.all([
@@ -95,9 +95,9 @@ export async function updateReviewerStatus(id: string, status: string): Promise<
   if (error) throw error;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Gig Matchmaker (admin)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getGigMatchFunnel() {
   const { data, error } = await supabase.from("gig_matches").select("status, gig_kind, score");
@@ -112,9 +112,9 @@ export async function countGigMatchDigests(): Promise<number> {
   return count ?? 0;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// Gig Graph (admin) â€” multi-table master fetch + generic mutators
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
+// Gig Graph (admin) — multi-table master fetch + generic mutators
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getGigGraphSlice() {
   const [gigsRes, marketRes, courseRes, subRes, verifRes, walletRes] = await Promise.all([
@@ -191,9 +191,9 @@ export async function deleteGigGraphRow(table: GigGraphTable, id: string): Promi
   if (error) throw error;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Talent submissions surface (MySubmissions + JobSharing flow)
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getMyGigSubmissions(talentId: string) {
   const { data, error } = await supabase
@@ -222,7 +222,7 @@ export async function insertGigSubmission(payload: {
   return data as { id: string };
 }
 
-// â”€â”€â”€ Phase 10j.5k8: recommended bidders for a gig â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k8: recommended bidders for a gig ─────────────────────────
 export async function listRecommendedGigBidders(
   gigId: string,
   gigKind: "marketplace" | "quick" = "marketplace",
@@ -243,7 +243,7 @@ export async function listRecommendedGigBidders(
 }
 
 
-// â”€â”€â”€ Phase 10j.5e: marketplace gigs (talent-facing) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5e: marketplace gigs (talent-facing) ───────────────────────
 export async function getMarketplaceGigById(id: string) {
   const { data, error } = await supabase
     .from("marketplace_gigs")
@@ -294,7 +294,7 @@ export async function insertMarketplaceDeliverable(payload: {
   return { error };
 }
 
-// â”€â”€â”€ Phase 10j.6a: gigs/projects RPC helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.6a: gigs/projects RPC helpers ───────────────────────────────
 export async function getCompanyProjectPipeline(_company_id: string) {
   const { data, error } = await (supabase as unknown).rpc("get_company_project_pipeline", { _company_id });
   if (error) throw error;
@@ -335,7 +335,7 @@ export async function rejectMarketplaceBid(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5h2: gig match RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h2: gig match RPC wrappers ────────────────────────────────
 export async function recordMatchEvent(matchId: string, event: "view" | "dismiss" | "click" | "accept" | "reject"): Promise<void> {
   const { error } = await supabase.rpc("record_match_event", { _match_id: matchId, _event: event });
   if (error) throw error;
@@ -347,7 +347,7 @@ export async function matchGigsForTalent(talentId: string, limit = 20) {
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5h5: ranked/hub RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h5: ranked/hub RPC wrappers ───────────────────────────────
 export async function getRankedGigsForTalent(args: {
   talentId: string | null;
   cursor: number | null;
@@ -368,7 +368,7 @@ export async function getGigsHubDashboard() {
   return data as unknown;
 }
 
-// â”€â”€â”€ Phase 10j.5h8: verification, matches, disputes RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h8: verification, matches, disputes RPC wrappers ──────────
 export async function openVerificationAppeal(args: {
   verificationId: string;
   reason: string;
@@ -426,7 +426,7 @@ export async function resolveDispute(args: { disputeId: string; verdict: string;
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5h9 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h9 ────────────────────────────────────────────────────────
 export async function submitCalibrationAttempt(args: { passed: boolean }) {
   const { error } = await supabase.rpc("submit_calibration_attempt", {
     _score: args.passed ? 85 : 60,
@@ -482,7 +482,7 @@ export async function getTalentProjectWorkload<T = unknown>(talentId: string): P
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers (Phase 10j.5i) â€” gig-submissions (public)
+// Storage helpers (Phase 10j.5i) — gig-submissions (public)
 // -----------------------------------------------------------------------------
 
 export async function uploadGigSubmission(
@@ -507,7 +507,7 @@ export async function removeGigSubmissions(paths: string[]): Promise<void> {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5k10: availability + open marketplace gigs + shareable content â”€â”€â”€â”€
+// ─── Phase 10j.5k10: availability + open marketplace gigs + shareable content ────
 export async function getTalentAvailability(talentId: string) {
   const { data, error } = await supabase
     .from("talent_availability")

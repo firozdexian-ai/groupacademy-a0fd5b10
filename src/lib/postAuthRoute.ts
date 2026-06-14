@@ -25,7 +25,7 @@ export function resolvePostAuthRoute(
   returnTo?: string | null,
 ): string | null {
   if (returnTo && !returnTo.includes("/auth")) return returnTo;
-  // Don't guess while account type is still resolving â€” caller should wait.
+  // Don't guess while account type is still resolving — caller should wait.
   if (type === "unknown") return null;
   return getDefaultRouteFor(type);
 }

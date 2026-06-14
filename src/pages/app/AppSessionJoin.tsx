@@ -28,7 +28,7 @@ interface ClassroomSessionMetadata {
 /**
  * GroUp Academy: Auth-Gated Realtime Session Ingress Router (AppSessionJoin)
  * Hardened access token redirect capturing parallel attendance logging and shielding linkages from browser popup blocker rejections.
- * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate · Phase Z1 Integration Stability Locked
  */
 export default function AppSessionJoin() {
  const { sessionId: unverifiedSessionIdStr } = useParams<{ sessionId: string }>();
@@ -173,7 +173,7 @@ export default function AppSessionJoin() {
  sessionMetadataState.scheduled_date,
  sessionMetadataState.event_timezone || DEFAULT_EVENT_TZ,
  ).toUpperCase()}{" "}
- <span className="opacity-30 mx-1">â€¢</span> DURATION:{" "}
+ <span className="opacity-30 mx-1">•</span> DURATION:{" "}
  {(sessionMetadataState.duration_minutes ?? 60).toString()} MIN
  </p>
 

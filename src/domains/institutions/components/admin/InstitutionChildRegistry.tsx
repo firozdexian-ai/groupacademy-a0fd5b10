@@ -1,5 +1,5 @@
 ﻿/**
- * Institutional Child Registry â€” Phase INST-Z2 Hardened
+ * Institutional Child Registry — Phase INST-Z2 Hardened
  * CTO Version: May 2026
  * Fixes: B4 (Radix Crash), B5 (Null club_id), R3/R4 (Field Restoration), P5 (Empty States)
  */

@@ -1,5 +1,5 @@
 ﻿/**
- * Talent shell â€” Agents entry points. Imports the same domain module as
+ * Talent shell — Agents entry points. Imports the same domain module as
  * admin but through a shell-scoped lazy boundary so the talent bundle only
  * pulls the talent-facing screens.
  */

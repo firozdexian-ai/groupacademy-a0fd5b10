@@ -413,7 +413,7 @@ export function CompaniesTab() {
                       )}
                     </TableCell>
                     <TableCell className="text-left text-xs font-semibold text-muted-foreground">
-                      {company.primary_email || "â€”"}
+                      {company.primary_email || "—"}
                     </TableCell>
                     <TableCell className="text-left">
                       {company.website ? (
@@ -426,7 +426,7 @@ export function CompaniesTab() {
                           Visit <ExternalLink className="h-3 w-3" />
                         </a>
                       ) : (
-                        <span className="text-xs text-muted-foreground/30">â€”</span>
+                        <span className="text-xs text-muted-foreground/30">—</span>
                       )}
                     </TableCell>
                     <TableCell className="text-center">

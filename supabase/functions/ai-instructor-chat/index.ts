@@ -84,7 +84,7 @@ serve(async (req) => {
       }
     }
 
-    // PHASE: Curriculum_KB_Ingress (skip in career coach mode â€” noise for career chat)
+    // PHASE: Curriculum_KB_Ingress (skip in career coach mode — noise for career chat)
     if (instructor?.profession_line_id && !isCareerCoach) {
       const { data: courses } = await supabaseAdmin
         .from("content")

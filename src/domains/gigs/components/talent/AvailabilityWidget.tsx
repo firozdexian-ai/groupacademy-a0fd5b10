@@ -22,7 +22,7 @@ interface AvailabilityData {
 /**
  * GroUp Academy: Community Consensus Node (AvailabilityWidget)
  * CTO Reference: High-fidelity workforce tracking component managing talent match capacities.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function AvailabilityWidget() {
   const { talent } = useTalent();
@@ -205,7 +205,7 @@ export function AvailabilityWidget() {
           {isSaving ? (
             <>
               <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-              <span>Saving Configurationsâ€¦</span>
+              <span>Saving Configurations…</span>
             </>
           ) : (
             <span>Commit Capacity Changes</span>

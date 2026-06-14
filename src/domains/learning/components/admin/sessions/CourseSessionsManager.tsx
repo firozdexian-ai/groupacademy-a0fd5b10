@@ -106,7 +106,7 @@ export default function CourseSessionsManager({
  if (!parentEventDate) return;
  setEditing({
  ...emptyDraft(contentId),
- title: `${contentTitle} â€” Session 1`,
+ title: `${contentTitle} — Session 1`,
  scheduled_date: parentEventDate,
  });
  };
@@ -165,7 +165,7 @@ export default function CourseSessionsManager({
  d.setDate(d.getDate() + i * recurDraft.intervalDays);
  return {
  content_id: contentId,
- title: `${contentTitle} â€” Session ${sessions.length + i + 1}`,
+ title: `${contentTitle} — Session ${sessions.length + i + 1}`,
  scheduled_date: d.toISOString(),
  duration_minutes: recurDraft.duration,
  status: "scheduled" as SessionStatus,
@@ -231,7 +231,7 @@ export default function CourseSessionsManager({
  </div>
  <p className="font-bold text-sm truncate">{s.title}</p>
  <p className="text-xs text-muted-foreground mt-1">
- ðŸ“… {formatEventTime(s.scheduled_date, tz)} Â· {s.duration_minutes ?? 60} min
+ 📅 {formatEventTime(s.scheduled_date, tz)} · {s.duration_minutes ?? 60} min
  </p>
  {s.meeting_link && (
  <div className="flex items-center gap-2 mt-2">
@@ -327,7 +327,7 @@ export default function CourseSessionsManager({
  <Select value={editing.instructor_id || "none"} onValueChange={(v) => setEditing({ ...editing, instructor_id: v === "none" ? null : v })}>
  <SelectTrigger className="rounded-xl"><SelectValue placeholder="Select instructor" /></SelectTrigger>
  <SelectContent>
- <SelectItem value="none">â€” None â€”</SelectItem>
+ <SelectItem value="none">— None —</SelectItem>
  {instructors.map((i) => <SelectItem key={i.id} value={i.id}>{i.full_name}</SelectItem>)}
  </SelectContent>
  </Select>

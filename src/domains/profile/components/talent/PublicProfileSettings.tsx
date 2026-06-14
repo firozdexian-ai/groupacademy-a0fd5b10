@@ -17,7 +17,7 @@ import { cn } from "@/lib/utils";
 /**
  * GroUp Academy: Public Telemetry Profile Settings Terminal (PublicProfileSettings)
  * An authoritative security panel orchestrating public route claiming, bio tagging, and visibility flags.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function PublicProfileSettings() {
   const queryClient = useQueryClient();
@@ -305,7 +305,7 @@ export function PublicProfileSettings() {
                   onClick={onSaveBioProtocol}
                   className="text-[10px] font-bold uppercase tracking-wider text-primary hover:text-primary hover:bg-primary/5 h-7 rounded-xl px-2.5 cursor-pointer disabled:opacity-30 disabled:hover:bg-transparent"
                 >
-                  {update.isPending ? "Savingâ€¦" : "Save bio"}
+                  {update.isPending ? "Saving…" : "Save bio"}
                 </Button>
               </div>
             </div>

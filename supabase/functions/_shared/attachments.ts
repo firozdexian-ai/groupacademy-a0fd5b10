@@ -87,13 +87,13 @@ export async function loadAttachments(
           ? ab.slice(0, MAX_TEXT_BYTES_PER_FILE)
           : ab;
         const text = new TextDecoder("utf-8", { fatal: false }).decode(slice);
-        const trimmed = text.length > 8000 ? text.slice(0, 8000) + "\nâ€¦(truncated)" : text;
+        const trimmed = text.length > 8000 ? text.slice(0, 8000) + "\n…(truncated)" : text;
         textBlocks.push(`[Attached file: ${att.name} (${att.mime})]\n${trimmed}`);
         totalText += trimmed.length;
         continue;
       }
 
-      // Unknown binary (PDF, DOCX, etc.) â€” provide a signed URL the model can
+      // Unknown binary (PDF, DOCX, etc.) — provide a signed URL the model can
       // reference but cannot fetch. Lightweight extraction libraries don't run
       // reliably in Deno edge runtime, so we surface metadata only for now.
       const { data: signed } = await supabase.storage
@@ -102,7 +102,7 @@ export async function loadAttachments(
       textBlocks.push(
         `[Attached file: ${att.name} (${att.mime}, ${(att.size / 1024).toFixed(
           1,
-        )} KB)] â€” binary file; download URL: ${signed?.signedUrl ?? "(unavailable)"}`,
+        )} KB)] — binary file; download URL: ${signed?.signedUrl ?? "(unavailable)"}`,
       );
     } catch (e) {
       console.warn("attachment load failed", att.path, e);

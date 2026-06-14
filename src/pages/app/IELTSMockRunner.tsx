@@ -25,7 +25,7 @@ interface EvaluationResponse {
 /**
  * GroUp Academy: IELTS Mock Examination Runner (IELTSMockRunner)
  * Hardened responsive assessment workspace securing micro-recording hardware stream channels and stabilizing async evaluation transmissions.
- * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
  */
 export default function IELTSMockRunner() {
  const { section: unverifiedSectionStr } = useParams<{ section: string }>();
@@ -126,7 +126,7 @@ export default function IELTSMockRunner() {
  {unverifiedSectionStr?.toUpperCase()} PRACTICE TEST
  </h1>
  <p className="font-mono text-sm font-medium text-muted-foreground/60 uppercase tracking-widest pt-1">
- {isAudioSectionFlag ? "Speak for 1â€“2 minutes" : "Write at least 250 words"}
+ {isAudioSectionFlag ? "Speak for 1–2 minutes" : "Write at least 250 words"}
  </p>
  </header>
 
@@ -167,7 +167,7 @@ export default function IELTSMockRunner() {
  )}
  {activeAudioBlob && (
  <p className="font-mono text-[9px] font-bold text-emerald-600 uppercase tracking-wider mt-4">
- âœ“ Recording complete ({(activeAudioBlob.size / 1024).toFixed(0)} KB)
+ ✓ Recording complete ({(activeAudioBlob.size / 1024).toFixed(0)} KB)
  </p>
  )}
  </Card>

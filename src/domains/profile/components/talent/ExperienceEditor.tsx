@@ -27,7 +27,7 @@ interface ExperienceEditorProps {
 /**
  * GroUp Academy: Professional Career History Ledger Editor (ExperienceEditor)
  * An authoritative operational sandbox enforcing reverse-chronological data modeling rules over profile configurations.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function ExperienceEditor({ experience = [], onChange }: ExperienceEditorProps) {
   const queryClient = useQueryClient();
@@ -320,7 +320,7 @@ export function ExperienceEditor({ experience = [], onChange }: ExperienceEditor
                         id={`exp-description-node-id-${index}`}
                         value={entryItem.description}
                         onChange={(e) => updateExperienceNodeField(index, "description", e.target.value)}
-                        placeholder="â€¢ Describe your responsibilities and achievements...&#10;â€¢ Keep it clear and action-oriented..."
+                        placeholder="• Describe your responsibilities and achievements...&#10;• Keep it clear and action-oriented..."
                         rows={3}
                         className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3.5 leading-relaxed resize-none shadow-inner"
                       />

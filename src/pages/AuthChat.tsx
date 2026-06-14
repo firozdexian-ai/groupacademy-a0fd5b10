@@ -116,14 +116,14 @@ const AuthChat = () => {
       collect_country: "Country (e.g. United States)",
       verify_human: "Type your answer here",
     };
-    return placeholders[action] || "Type a messageâ€¦";
+    return placeholders[action] || "Type a message…";
   };
 
   if (authLoading) {
     return (
       <div className="min-h-screen flex flex-col items-center justify-center bg-slate-50" role="main">
         <Loader2 className="w-10 h-10 animate-spin text-blue-500" />
-        <p className="text-xs font-medium mt-4 text-slate-500">Loadingâ€¦</p>
+        <p className="text-xs font-medium mt-4 text-slate-500">Loading…</p>
       </div>
     );
   }
@@ -327,7 +327,7 @@ const AuthChat = () => {
               onClick={() => navigate("/for-companies")}
               className="block mx-auto text-xs font-medium text-slate-400 hover:text-blue-600 transition-colors"
             >
-              Hiring? Apply for company access â†’
+              Hiring? Apply for company access →
             </button>
           </div>
         </div>

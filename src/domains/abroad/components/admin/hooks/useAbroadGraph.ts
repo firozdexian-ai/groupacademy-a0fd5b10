@@ -1,5 +1,5 @@
 /**
- * Group Academy â€” Career Abroad Domain Graph Orchestration Hook
+ * Group Academy — Career Abroad Domain Graph Orchestration Hook
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Architecture: Centralized TanStack Query cache mutations managing student placement graphs.
  */
@@ -87,7 +87,7 @@ export function useAbroadGraph() {
           id: r.id,
           talent_id: r.talent_id,
           destination:
-            Array.isArray(r.target_countries) && r.target_countries.length > 0 ? String(r.target_countries[0]) : "â€”",
+            Array.isArray(r.target_countries) && r.target_countries.length > 0 ? String(r.target_countries[0]) : "—",
           status: r.status ?? "pending",
           created_at: r.created_at,
         }));

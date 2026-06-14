@@ -12,10 +12,10 @@ import { safeReturnTo } from "@/lib/safeReturnTo";
  * Public pre-auth onboarding entry point.
  *
  * Flow:
- *   1) Visitor picks country â†’ stage â†’ university â†’ field.
+ *   1) Visitor picks country → stage → university → field.
  *   2) OnboardingWizard (in preAuth mode) stashes the selection to
  *      sessionStorage as `pending_onboarding`.
- *   3) We route them to /auth â€” after Google or email sign-up,
+ *   3) We route them to /auth — after Google or email sign-up,
  *      AuthCallback / AccountUpgradeModal will pick the stash up and
  *      apply it to their talents row.
  *
@@ -61,7 +61,7 @@ export default function Start() {
   }
 
   // Already-onboarded signed-in users are mid-redirect (handled by the first
-  // effect above) â€” render nothing briefly to avoid a wizard flash.
+  // effect above) — render nothing briefly to avoid a wizard flash.
   if (user && talent?.onboardingStep === 4) return null;
 
   // Brand-new signed-in users (e.g. fresh Google sign-up) land here from

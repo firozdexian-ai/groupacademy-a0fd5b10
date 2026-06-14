@@ -1,5 +1,5 @@
 ﻿/**
- * Overview Skeleton Layout (Phase 10i â€” Hardened).
+ * Overview Skeleton Layout (Phase 10i — Hardened).
  * Aligns directly with standard shadcn system variables to preserve premium UI tokens.
  * Visually mimics the hydrated state of the Lifetime Overview tab to eliminate component thrashing.
  */

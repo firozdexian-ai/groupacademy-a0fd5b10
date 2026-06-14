@@ -70,7 +70,7 @@ const SERVICES: Record<
     description:
       "Dynamic simulation with realistic AI personas tailored to specific organizational JDs. Get real-time logic feedback and behavioral scoring.",
     metaDescription:
-      "AI Mock Interview Practice â€” role-specific questions and detailed performance analysis by GroUp Academy.",
+      "AI Mock Interview Practice — role-specific questions and detailed performance analysis by GroUp Academy.",
     icon: Mic,
     benefits: [
       "JD-specific AI interviewer personas",
@@ -95,7 +95,7 @@ const SERVICES: Record<
     tagline: "Know your market alpha with data-driven benchmarking.",
     description:
       "Leverage global market data nodes to understand your true compensation potential. Negotiate with structured intelligence.",
-    metaDescription: "AI Salary Analysis â€” know your market value. Data-driven salary insights by GroUp Academy.",
+    metaDescription: "AI Salary Analysis — know your market value. Data-driven salary insights by GroUp Academy.",
     icon: DollarSign,
     benefits: [
       "Real-time market rate benchmarking",
@@ -120,7 +120,7 @@ const SERVICES: Record<
     tagline: "High-conversion digital presence engineered for trust.",
     description:
       "Let AI translate your career logic into a stunning digital portfolio. Optimized for ATS bypassing and executive review.",
-    metaDescription: "AI Portfolio Builder â€” create professional online artifacts. Built by GroUp Academy engineers.",
+    metaDescription: "AI Portfolio Builder — create professional online artifacts. Built by GroUp Academy engineers.",
     icon: Briefcase,
     benefits: [
       "AI-curated logic from CV artifacts",

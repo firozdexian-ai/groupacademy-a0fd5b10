@@ -11,7 +11,7 @@ import { TAB_COMPONENTS, TAB_TITLES } from "@/shells/admin/routes";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 
 /**
- * Phase 7 â€” Dashboard Thin Shell Frame
+ * Phase 7 — Dashboard Thin Shell Frame
  * Refactored for clean 2024 professional SaaS styling.
  * Manages central RBAC, query token routing synchronization, and agent error captures.
  */

@@ -278,7 +278,7 @@ Respond ONLY with valid JSON in this exact format:
 
     // Fire-and-forget: send service completion email
     if (interview.talent_id) {
-      const summary = `Selection: ${analysis.selectionPercentage}% â€” ${analysis.performanceLevel}. ${(analysis.strengths || []).slice(0, 2).join(", ")}`;
+      const summary = `Selection: ${analysis.selectionPercentage}% — ${analysis.performanceLevel}. ${(analysis.strengths || []).slice(0, 2).join(", ")}`;
       fetch(`${supabaseUrl}/functions/v1/send-transactional-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${supabaseServiceKey}` },

@@ -9,12 +9,12 @@ import { toast } from "sonner";
 import { supabase } from "@/integrations/supabase/client";
 
 /**
- * v0.5 ComingSoonGate â€” B4 wired to `join_feature_waitlist` RPC.
+ * v0.5 ComingSoonGate — B4 wired to `join_feature_waitlist` RPC.
  *
  * Wraps a route/section that is not ready for launch. Shows a polished
  * "Coming soon" panel + waitlist form, persisting to `public.feature_waitlist`.
  *
- * Contract: see .lovable/v05/defer-matrix.md Â§5.
+ * Contract: see .lovable/v05/defer-matrix.md §5.
  */
 export interface ComingSoonGateProps {
   /** Stable slug used by `feature_waitlist.feature_key`. */
@@ -23,7 +23,7 @@ export interface ComingSoonGateProps {
   description?: string;
   /** When true (or predicate returns true), render `children` instead of the gate. */
   showWhen?: boolean | (() => boolean);
-  /** Optional secondary CTA, defaults to "Explore Jobs" â†’ `/app/jobs`. */
+  /** Optional secondary CTA, defaults to "Explore Jobs" → `/app/jobs`. */
   secondaryCtaLabel?: string;
   secondaryCtaHref?: string;
   children?: ReactNode;
@@ -163,7 +163,7 @@ function ComingSoonPanel({
       if (status === "already_joined") {
         toast("You're already on the list.");
       } else {
-        toast.success("You're on the list â€” we'll email you when it opens.");
+        toast.success("You're on the list — we'll email you when it opens.");
       }
       markJoined();
     } catch (err) {
@@ -204,7 +204,7 @@ function ComingSoonPanel({
             <div className="flex items-start gap-2 rounded-lg border border-border/60 bg-muted/40 p-3 text-sm">
               <Check className="mt-0.5 h-4 w-4 shrink-0 text-primary" />
               <span>
-                You're on the waitlist. We'll be in touch â€” meanwhile, keep
+                You're on the waitlist. We'll be in touch — meanwhile, keep
                 exploring.
               </span>
             </div>
@@ -236,7 +236,7 @@ function ComingSoonPanel({
                 disabled={submitting || !sessionReady}
                 className="w-full sm:w-auto"
               >
-                {submitting ? "Joiningâ€¦" : "Notify me"}
+                {submitting ? "Joining…" : "Notify me"}
               </Button>
               <p className="text-xs text-muted-foreground">
                 No spam. One email when it opens.

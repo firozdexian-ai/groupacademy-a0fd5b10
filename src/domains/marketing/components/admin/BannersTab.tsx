@@ -202,7 +202,7 @@ export const BannerManager = () => {
                 Add a banner
               </CardTitle>
               <CardDescription className="text-[10px] font-bold text-muted-foreground/60 italic">
-                1536Ã—512px image (3:1 ratio)
+                1536×512px image (3:1 ratio)
               </CardDescription>
             </div>
           </div>
@@ -339,7 +339,7 @@ export const BannerManager = () => {
                       {newBanner.media_type === "video" ? "Video URL (MP4)" : "GIF URL"}
                     </Label>
                     <Input
-                      placeholder="https://â€¦"
+                      placeholder="https://…"
                       value={newBanner.media_url}
                       onChange={(e) => setNewBanner({ ...newBanner, media_url: e.target.value })}
                       className="h-12 rounded-2xl border-2 bg-background/50"
@@ -356,7 +356,7 @@ export const BannerManager = () => {
                       Poster Frame URL (optional)
                     </Label>
                     <Input
-                      placeholder="https://â€¦"
+                      placeholder="https://…"
                       value={newBanner.poster_url}
                       onChange={(e) => setNewBanner({ ...newBanner, poster_url: e.target.value })}
                       className="h-12 rounded-2xl border-2 bg-background/50"
@@ -370,7 +370,7 @@ export const BannerManager = () => {
                       External Link URL (optional)
                     </Label>
                     <Input
-                      placeholder="https://â€¦"
+                      placeholder="https://…"
                       value={newBanner.link_url}
                       onChange={(e) => setNewBanner({ ...newBanner, link_url: e.target.value })}
                       className="h-12 rounded-2xl border-2 bg-background/50"

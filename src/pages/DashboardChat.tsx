@@ -1,5 +1,5 @@
 ﻿/**
- * Dashboard / Chat â€” WhatsApp-style unified conversational agent surface.
+ * Dashboard / Chat — WhatsApp-style unified conversational agent surface.
  * Sibling to the data-heavy `/dashboard`. All admin AI agents live here
  * with persistent per-admin threads.
  */
@@ -66,7 +66,7 @@ export default function DashboardChat() {
         <div className="flex-1">
           <div className="font-bold text-sm">Agentic Dashboard</div>
           <div className="text-[11px] text-muted-foreground">
-            All conversational agents Â· persistent threads
+            All conversational agents · persistent threads
           </div>
         </div>
       </header>

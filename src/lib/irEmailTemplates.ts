@@ -50,21 +50,21 @@ Best,
 
 Here's what happened this week at {{companyName}}:
 
-ðŸ“Š **Metrics**
+📊 **Metrics**
 - MRR: {{mrr}} ({{mrrGrowth}} vs last week)
 - Active Users: {{users}}
 
-ðŸŽ¯ **Progress**
+🎯 **Progress**
 {{#highlights}}
 - {{.}}
 {{/highlights}}
 
-ðŸš§ **Challenges**
+🚧 **Challenges**
 {{#challenges}}
 - {{.}}
 {{/challenges}}
 
-ðŸ“… **Next Week**
+📅 **Next Week**
 {{#plans}}
 - {{.}}
 {{/plans}}
@@ -78,7 +78,7 @@ Cheers,
   },
   
   special_update: {
-    subject: 'ðŸŽ‰ {{milestone}}: {{companyName}}',
+    subject: '🎉 {{milestone}}: {{companyName}}',
     template: `Hi {{investorName}},
 
 Excited to share some big news!

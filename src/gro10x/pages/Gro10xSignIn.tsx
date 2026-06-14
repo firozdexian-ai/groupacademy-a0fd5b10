@@ -9,7 +9,7 @@ import { checkCompanyAccount } from "@/domains/companies/api/companiesApi";
 
 /**
  * Dedicated Gro10x sign-in page. Always lands company members in
- * /gro10x/inbox â€” never bounces them to the talent app.
+ * /gro10x/inbox — never bounces them to the talent app.
  */
 export default function Gro10xSignIn() {
   const navigate = useNavigate();

@@ -752,7 +752,7 @@ export function ScenarioEditor({ draft, setDraft }: { draft: unknown; setDraft: 
                     value={rubricRowItem.weight ?? 0}
                     onChange={(e) => updRub(index, "weight", Number(e.target.value) || 0)}
                     className="text-xs font-mono font-bold h-7 rounded-lg border border-border/40 bg-background/50 focus-visible:ring-1 focus-visible:ring-ring text-primary select-text shadow-sm w-full tabular-nums"
-                    placeholder="Weight fractional 0â€“1"
+                    placeholder="Weight fractional 0–1"
                   />
                 </div>
                 <Textarea

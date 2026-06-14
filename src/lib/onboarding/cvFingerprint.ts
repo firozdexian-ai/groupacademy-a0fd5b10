@@ -1,6 +1,6 @@
 ﻿/**
  * Compute a stable SHA-256 fingerprint of a parsed CV so we can detect
- * the same rÃ©sumÃ© being uploaded under multiple accounts.
+ * the same résumé being uploaded under multiple accounts.
  *
  * The fingerprint deliberately ignores formatting / file metadata and
  * focuses on the *substance* of the CV: skills, work history, schooling.

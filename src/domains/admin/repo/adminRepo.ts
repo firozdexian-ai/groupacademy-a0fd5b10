@@ -1,5 +1,5 @@
 /**
- * Group Academy â€” Administrative Data Access Repository
+ * Group Academy — Administrative Data Access Repository
  * Purpose: Unified generic CRUD wrapper providing a data routing layer over core taxonomy tables.
  * Isolates direct client invokes, enforces role verification gates, and links with telemetry frameworks.
  */

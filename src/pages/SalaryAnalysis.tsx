@@ -71,7 +71,7 @@ const SalaryAnalysis = () => {
                 variant="outline"
                 className="rounded-full px-4 py-1.5 border-primary/20 bg-primary/5 text-primary font-black uppercase text-[10px] tracking-[0.2em]"
               >
-                <Sparkles className="w-3 h-3 mr-2 fill-primary" /> AI Salary Intelligence Â· 50 Credits
+                <Sparkles className="w-3 h-3 mr-2 fill-primary" /> AI Salary Intelligence · 50 Credits
               </Badge>
               <h1 className="text-5xl md:text-7xl font-black tracking-tighter leading-[0.9] text-foreground">
                 Know Your <span className="text-primary">Market Alpha.</span>
@@ -205,7 +205,7 @@ const SalaryAnalysis = () => {
           <div className="space-y-2">
             <h2 className="text-4xl font-black tracking-tighter uppercase">Initialize Valuation.</h2>
             <p className="text-muted-foreground font-medium text-lg leading-relaxed">
-              Secure your professional market position today. Each audit costs 50 credits â€” covered by your welcome balance.
+              Secure your professional market position today. Each audit costs 50 credits — covered by your welcome balance.
             </p>
           </div>
           <Button

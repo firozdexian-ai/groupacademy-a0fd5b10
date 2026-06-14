@@ -531,7 +531,7 @@ export async function deleteLearningGraphRow(table: LearningGraphTable, id: stri
 }
 
 
-// â”€â”€â”€ Phase 10j.2 â€” Discussions / Q&A / Submissions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.2 — Discussions / Q&A / Submissions ─────────────────────────
 export async function listDiscussionThreads(cohortId: string) {
   const { data, error } = await supabase
     .from("discussion_threads")
@@ -1319,7 +1319,7 @@ export async function getCertificateById(id: string) {
   return data as unknown;
 }
 
-// â”€â”€â”€ Phase 10j.5d additions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5d additions ────────────────────────────────────────────────
 export async function listContentByIdsBasic(ids: string[]) {
   if (!ids.length) return [];
   const { data, error } = await supabase
@@ -1330,7 +1330,7 @@ export async function listContentByIdsBasic(ids: string[]) {
   return (data as unknown[]) ?? [];
 }
 
-// â”€â”€â”€ Phase 10j.5e: instructor review queue + IELTS access â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5e: instructor review queue + IELTS access ──────────────────
 export async function listPublishedContentIdsLimit(limit = 50): Promise<string[]> {
   const { data } = await supabase
     .from("content")
@@ -1373,7 +1373,7 @@ export async function insertIeltsResourceAccess(talentId: string, resourceId: st
   return { error };
 }
 
-// â”€â”€â”€ Phase 10j.6a: learning RPC helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.6a: learning RPC helpers ────────────────────────────────────
 export async function getInstructorEarningsSummary() {
   const { data, error } = await (supabase as unknown).rpc("get_instructor_earnings_summary");
   if (error) throw error;
@@ -1385,7 +1385,7 @@ export async function acceptLessonAnswer(_question_id: string, _answer_id: strin
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5g: gro10x B2B catalog + assignments â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g: gro10x B2B catalog + assignments ───────────────────────
 export interface B2BCatalogCourse {
   id: string;
   title: string;
@@ -1443,7 +1443,7 @@ export async function listCompanyCourseAssignmentsByCompany(companyId: string): 
   return data ?? [];
 }
 
-// â”€â”€â”€ Phase 10j.5g2: course project + subtasks (CourseProjectDetail) â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g2: course project + subtasks (CourseProjectDetail) ───────
 export async function getCourseProjectById(id: string): Promise<{ data: unknown; error: unknown }> {
   const { data, error } = await supabase
     .from("course_projects")
@@ -1496,7 +1496,7 @@ export async function claimCourseProject(projectId: string): Promise<unknown> {
   return data;
 }
 
-// â”€â”€â”€ Phase 10j.5g4 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5g4 ─────────────────────────────────────────────────────────
 export async function listRecommendedCoursesForProfession(
   professionLineId: string,
   limit = 3,
@@ -1549,7 +1549,7 @@ export async function getPublicWebinarBySlug(slug: string) {
   return data as unknown | null;
 }
 
-// â”€â”€â”€ Phase 10j.5h3: RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h3: RPC wrappers ──────────────────────────────────────────
 export async function enrollLearningTrack(trackId: string): Promise<string> {
   const { data, error } = await supabase.rpc("talent_enroll_track", { p_track_id: trackId });
   if (error) throw error;
@@ -1565,7 +1565,7 @@ export async function upcomingSessionsForUser(args: { userId: string; limit: num
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5h7: Learning / Org RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h7: Learning / Org RPC wrappers ───────────────────────────
 export async function getTutorMasteryContext(args: {
   talentId: string;
   moduleId?: string | null;
@@ -1669,7 +1669,7 @@ export async function orgAssignTrack(input: {
 }
 
 
-// â”€â”€â”€ Phase 10j.5h8: hub, instructor, enrollment, readiness RPC wrappers â”€â”€â”€
+// ─── Phase 10j.5h8: hub, instructor, enrollment, readiness RPC wrappers ───
 export async function getLearningHubDashboard<T = unknown>(): Promise<T> {
   const { data, error } = await supabase.rpc("get_learning_hub_dashboard");
   if (error) throw error;
@@ -1699,7 +1699,7 @@ export async function recomputeContentReadiness(contentId: string) {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5h9 â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h9 ────────────────────────────────────────────────────────
 export async function getInstructorDashboardV2<T = unknown>(): Promise<T | null> {
   const { data, error } = await supabase.rpc("get_instructor_dashboard_v2");
   if (error) throw error;
@@ -1717,7 +1717,7 @@ export async function incrementAccessCodeUse(rowId: string): Promise<void> {
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers (Phase 10j.5i) â€” module resources (public)
+// Storage helpers (Phase 10j.5i) — module resources (public)
 // -----------------------------------------------------------------------------
 
 export async function uploadModuleResource(
@@ -1735,7 +1735,7 @@ export async function uploadModuleResource(
 }
 
 // -----------------------------------------------------------------------------
-// Storage helpers â€” assessment / IELTS audio (private buckets)
+// Storage helpers — assessment / IELTS audio (private buckets)
 // -----------------------------------------------------------------------------
 
 export async function uploadIeltsAudio(
@@ -1763,7 +1763,7 @@ export async function uploadAssessmentAudio(
 }
 
 // -----------------------------------------------------------------------------
-// Realtime helpers (Phase 10j.5k1) â€” discussion + Q&A CDC subscriptions
+// Realtime helpers (Phase 10j.5k1) — discussion + Q&A CDC subscriptions
 // -----------------------------------------------------------------------------
 
 export function subscribeDiscussionPostsForCohort(cohortId: string, onChange: () => void): () => void {
@@ -1804,7 +1804,7 @@ export function subscribeLessonAnswers(
   };
 }
 
-// â”€â”€â”€ Phase 10j.5k5: enrollment lookup + skill-credentials â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k5: enrollment lookup + skill-credentials ────────────────
 export async function findTalentEnrollment(
   contentId: string,
   talentId: string,
@@ -1830,7 +1830,7 @@ export async function listTalentSkillCredentials(talentId: string): Promise<unkn
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5k7 â€” resource progress / org learning â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k7 — resource progress / org learning ───────────────────
 export async function getEnrollmentResourceState(
   enrollmentId: string,
   moduleId: string,
@@ -1877,7 +1877,7 @@ export async function listCompanyLearningSeats(companyId: string): Promise<unkno
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5k9: learning stats hook â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k9: learning stats hook ───────────────────────────────────
 export async function listActiveTalentEnrollmentsWithModules(talentId: string, limit = 10) {
   const { data, error } = await supabase
     .from("enrollments")
@@ -1917,7 +1917,7 @@ export async function listRecentLearningActivity(talentId: string, limit = 30) {
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.5k10: certificates, cohorts, course progress â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k10: certificates, cohorts, course progress ────────────────
 export async function getCertificateMinimalByEnrollment(enrollmentId: string) {
   const { data, error } = await supabase
     .from("certificates")
@@ -2023,7 +2023,7 @@ export async function markEnrollmentCompleted(enrollmentId: string): Promise<{ e
   return { error };
 }
 
-// â”€â”€â”€ Phase 10j.5k11: ReportCard + verification helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k11: ReportCard + verification helpers ────────────────────
 export async function getEnrollmentWithStudentAndContent(enrollmentId: string) {
   const { data, error } = await supabase
     .from("enrollments")

@@ -50,9 +50,9 @@ function buildResearchProtocol(props: Omit<ResearchPromptDialogProps, "open" | "
         .split("\n")
         .map((l) => l.trim())
         .filter(Boolean)
-        .map((l) => `â€¢ ${l}`)
+        .map((l) => `• ${l}`)
         .join("\n")}\n`
-    : "\n[TALKING_POINTS]: (none yet â€” explore the topic broadly)\n";
+    : "\n[TALKING_POINTS]: (none yet — explore the topic broadly)\n";
 
   return `SYSTEM_ROLE: Curriculum_Research_Specialist
 INSTITUTIONAL_TARGET: ${academyName} // ${schoolName}
@@ -81,7 +81,7 @@ FORMAT: Output must be structured with high-intensity headers. Content must be d
 /**
  * GroUp Academy: Curriculum Intelligence Uplink Bridge (ResearchPromptDialog)
  * An authoritative operational modal structured to construct high-yield research protocols for external research platforms.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export default function ResearchPromptDialog(props: ResearchPromptDialogProps) {
   const { open, onOpenChange, ...promptProps } = props;

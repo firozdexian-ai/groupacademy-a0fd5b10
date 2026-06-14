@@ -299,7 +299,7 @@ export default function ModuleResourcesManager() {
   if (loading)
     return (
       <div className="h-screen flex items-center justify-center text-muted-foreground">
-        <Loader2 className="h-5 w-5 mr-2 animate-spin" /> Loading resourcesâ€¦
+        <Loader2 className="h-5 w-5 mr-2 animate-spin" /> Loading resources…
       </div>
     );
 
@@ -413,7 +413,7 @@ export default function ModuleResourcesManager() {
                       <div className="py-12 text-center border-2 border-dashed border-border/40 rounded-2xl bg-muted/10">
                         <Zap className="h-10 w-10 mx-auto mb-3 text-muted-foreground/30" />
                         <p className="text-xs font-black uppercase tracking-widest text-muted-foreground/60">
-                          No resources yet â€” bulk-upload above or add one type at a time.
+                          No resources yet — bulk-upload above or add one type at a time.
                         </p>
                       </div>
                     ) : (
@@ -568,13 +568,13 @@ export default function ModuleResourcesManager() {
                                     />
                                     <div className="space-y-1.5">
                                       <Label className="text-[10px] font-black uppercase tracking-widest text-muted-foreground">
-                                        â€¦or paste an external URL (YouTube, Drive, etc.)
+                                        …or paste an external URL (YouTube, Drive, etc.)
                                       </Label>
                                       <Input
                                         value={resource.resource_url || ""}
                                         onChange={(e) => patchResource(key, { resource_url: e.target.value })}
                                         className="h-10 rounded-xl font-mono text-xs"
-                                        placeholder="https://â€¦"
+                                        placeholder="https://…"
                                       />
                                     </div>
                                   </div>

@@ -93,14 +93,14 @@ function buildSystemPrompt(rubric: unknown, topicTags: string[]) {
   const rubricText =
     rubric && Array.isArray(rubric) && rubric.length > 0
       ? JSON.stringify(rubric, null, 2)
-      : "(no explicit rubric â€” use general professional communication and the topic tags as criteria)";
+      : "(no explicit rubric — use general professional communication and the topic tags as criteria)";
   return `You are an expert instructional evaluator. You score a learner's performance in a role-play scenario against a fixed rubric.
 
 Rubric:
 ${rubricText}
 
 Topic tags expected in the response (score every one of these, even if 0):
-${topicTags.length ? topicTags.join(", ") : "(none â€” invent up to 3 topic tags from the rubric)"}
+${topicTags.length ? topicTags.join(", ") : "(none — invent up to 3 topic tags from the rubric)"}
 
 Rules:
 - Score each topic strictly between 0 (no evidence / wrong) and 1 (perfect).

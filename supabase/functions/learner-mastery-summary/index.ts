@@ -110,7 +110,7 @@ Deno.serve(async (req) => {
     const scenarioAll = (scenarioRows ?? []).filter((r: unknown) => r.evaluation);
     const signalSplit30d = { quiz: quizAll.length, scenario: scenarioAll.length };
 
-    // 4. Sparkline (last `days` days, oldest â†’ newest)
+    // 4. Sparkline (last `days` days, oldest → newest)
     const buckets = new Map<string, { quiz: number; scenario: number }>();
     for (let i = days - 1; i >= 0; i--) {
       const d = new Date(Date.now() - i * 86_400_000).toISOString().slice(0, 10);

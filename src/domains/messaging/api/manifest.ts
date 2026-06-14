@@ -1,5 +1,5 @@
 ﻿/**
- * Messaging domain â€” barrel re-exporting typed edge wrappers (Phase 9g).
+ * Messaging domain — barrel re-exporting typed edge wrappers (Phase 9g).
  * Legacy `messagingApi` const removed.
  */
 export { unipileConnect } from "./messagingApi";

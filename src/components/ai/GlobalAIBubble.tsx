@@ -287,7 +287,7 @@ export function GlobalAIBubble() {
               <div className="min-w-0">
                 <div className="text-sm font-bold truncate">{agentName}</div>
                 <div className="text-[10px] font-mono opacity-80 tracking-wide uppercase">
-                  AI-powered â€¢ context-aware
+                  AI-powered • context-aware
                 </div>
               </div>
             </div>
@@ -331,7 +331,7 @@ export function GlobalAIBubble() {
                       <div className="whitespace-pre-wrap">{msg.content}</div>
                     ) : (
                       <div className="prose prose-sm dark:prose-invert max-w-none [&>*]:my-1 break-words italic">
-                        <ReactMarkdown>{msg.content || "â€¦"}</ReactMarkdown>
+                        <ReactMarkdown>{msg.content || "…"}</ReactMarkdown>
                       </div>
                     )}
                   </div>
@@ -362,7 +362,7 @@ export function GlobalAIBubble() {
                   }
                 }}
                 rows={1}
-                placeholder="Ask anythingâ€¦"
+                placeholder="Ask anything…"
                 className="resize-none min-h-[40px] max-h-[120px] text-sm rounded-xl focus-visible:ring-1 border-2 disabled:opacity-50"
               />
               <Button

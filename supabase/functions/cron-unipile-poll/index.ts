@@ -1,4 +1,4 @@
-﻿// cron-unipile-poll â€” safety net poller for Unipile-hosted WhatsApp lines.
+﻿// cron-unipile-poll — safety net poller for Unipile-hosted WhatsApp lines.
 // Every ~2 min: for each connected messaging_channel with a unipile_account_id,
 // fetch recent chats, then for each chat fetch messages newer than the last
 // polled cursor and replay them into unipile-webhook. Idempotency is enforced

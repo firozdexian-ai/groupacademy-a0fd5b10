@@ -2,7 +2,7 @@
  * Jobs domain barrel. Surfaces hooks + typed edge-function client for every
  * shell (talent `/app/jobs`, gro10x `/gro10x/work`, admin `dashboard/jobs`).
  *
- * Explicit named exports only â€” no `export *`.
+ * Explicit named exports only — no `export *`.
  */
 
 // Hooks

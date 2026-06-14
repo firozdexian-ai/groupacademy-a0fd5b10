@@ -1,8 +1,8 @@
 ﻿import React from "react";
 
 /**
- * AI Agents Domain Routing Registry â€” Agent OS Command Center
- * Version: Launch Candidate Â· Phase Z0 Hardened (Code Freeze)
+ * AI Agents Domain Routing Registry — Agent OS Command Center
+ * Version: Launch Candidate · Phase Z0 Hardened (Code Freeze)
  * Infrastructure: Digital Workforce Connected Telemetry Shell Map
  * 
  * Rules: This configuration unifies all 15 specialized system subsections,

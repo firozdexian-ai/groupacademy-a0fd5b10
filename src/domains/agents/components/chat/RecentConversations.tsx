@@ -9,7 +9,7 @@ import { AgentAvatar } from "@/domains/agents/components/chat/AgentAvatar";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy â€” Career Guidance System: Recent Conversations Ledger Component
+ * Group Academy — Career Guidance System: Recent Conversations Ledger Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/chat?tab=history (User Conversation Ledger viewport)
  * Operations Mode: High-performance session tracker aggregating historical chat sequences.

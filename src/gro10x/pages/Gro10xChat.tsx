@@ -9,7 +9,7 @@ import { getAgentMeta } from "../lib/agents";
 import { GRO10X_PANEL } from "../lib/tokens";
 
 /**
- * Gro10x Chat â€” wires the Gro10x agent_key to the unified agent-runtime
+ * Gro10x Chat — wires the Gro10x agent_key to the unified agent-runtime
  * with subject={kind:"company", id:companyId}. Bumps gro10x_agent_threads
  * after each exchange so the inbox stays sorted.
  *
@@ -127,7 +127,7 @@ export default function Gro10xChat() {
       <div ref={scrollRef} className="flex-1 px-4 py-4 space-y-3 overflow-y-auto">
         {messages.length === 0 && !isStreaming && (
           <div className={`rounded-2xl rounded-tl-sm ${GRO10X_PANEL} border border-white/5 p-3 max-w-[85%] text-sm`}>
-            Hi â€” I'm <strong>{meta.name}</strong>. {meta.desc}. What would you like to do?
+            Hi — I'm <strong>{meta.name}</strong>. {meta.desc}. What would you like to do?
           </div>
         )}
         {messages.map((m, i) => (
@@ -140,7 +140,7 @@ export default function Gro10xChat() {
             }
           >
             {m.role === "assistant" ? (
-              <ReactMarkdown>{m.content || "â€¦"}</ReactMarkdown>
+              <ReactMarkdown>{m.content || "…"}</ReactMarkdown>
             ) : (
               m.content
             )}
@@ -160,7 +160,7 @@ export default function Gro10xChat() {
               }
             }}
             type="text"
-            placeholder={`Message ${meta.name}â€¦`}
+            placeholder={`Message ${meta.name}…`}
             className="flex-1 bg-transparent text-sm placeholder:text-slate-500 focus:outline-none py-2"
             disabled={isStreaming}
           />

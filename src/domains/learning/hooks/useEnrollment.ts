@@ -97,7 +97,7 @@ export function useEnrollment(contentId: string | undefined) {
       }
 
       if (!data.already_enrolled) {
-        toast.success("You're enrolled! Trajectory activated. ðŸŽ“");
+        toast.success("You're enrolled! Trajectory activated. 🎓");
       }
 
       // Automated Efficiency: clear referral parameters once transaction commits
@@ -152,7 +152,7 @@ function humanizeError(code: string, data?: unknown): string {
     case "sold_out":
       return "All available programmatic tier seats are currently filled.";
     case "insufficient_credits":
-      return `Fiscal deficit detected. This transaction requires ${data?.required ?? "additional"} credits â€” update your wallet to enroll.`;
+      return `Fiscal deficit detected. This transaction requires ${data?.required ?? "additional"} credits — update your wallet to enroll.`;
     default:
       return `Enrollment transaction interface rejected (${code})`;
   }

@@ -43,7 +43,7 @@ export function Gro10xPageGate({
     );
   }
 
-  if (requireCompany && companyLoading) return <Gro10xLoading label="Loading workspaceâ€¦" />;
+  if (requireCompany && companyLoading) return <Gro10xLoading label="Loading workspace…" />;
 
   if (requireCompany && !companyId) {
     return (

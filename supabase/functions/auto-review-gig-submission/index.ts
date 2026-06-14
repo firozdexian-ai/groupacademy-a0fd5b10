@@ -144,7 +144,7 @@ Deno.serve(async (req) => {
     if ((recentCount || 0) >= 5) {
       const finalize: FinalizeArgs = {
         decision: "escalated",
-        feedback: "Rate limit reached for this category â€” flagged for human review.",
+        feedback: "Rate limit reached for this category — flagged for human review.",
       };
       await admin.rpc("auto_finalize_gig_submission", {
         p_submission_id: sub.id,
@@ -162,14 +162,14 @@ Deno.serve(async (req) => {
     let finalize: FinalizeArgs = { decision: "escalated", feedback: "Pending human review." };
 
     if (mode === "manual") {
-      // Leave as pending â€” admin queue handles it.
+      // Leave as pending — admin queue handles it.
       return new Response(JSON.stringify({ ok: true, mode: "manual" }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
     }
 
     if (mode === "link_check") {
-      // job_sharing & course_resell â€” verify share / referral activity
+      // job_sharing & course_resell — verify share / referral activity
       const jobId = data.job_id;
       let clicks = 0;
       if (jobId) {
@@ -183,7 +183,7 @@ Deno.serve(async (req) => {
       if (clicks >= minClicks) {
         finalize = { decision: "approved", score: 10, feedback: `Verified ${clicks} click(s).` };
       } else {
-        // Don't reject yet â€” leave as pending, viral tracking widget will keep counting
+        // Don't reject yet — leave as pending, viral tracking widget will keep counting
         return new Response(JSON.stringify({ ok: true, mode, waiting_for_clicks: true }), {
           headers: { ...corsHeaders, "Content-Type": "application/json" },
         });
@@ -193,7 +193,7 @@ Deno.serve(async (req) => {
       const body = data.body || data.description || data.content || data.notes || JSON.stringify(data).slice(0, 1000);
       const ai = await aiQualityScore({ title, body, category: gig.category });
       if (!ai) {
-        finalize = { decision: "escalated", feedback: "Auto-review unavailable â€” sent for manual review." };
+        finalize = { decision: "escalated", feedback: "Auto-review unavailable — sent for manual review." };
       } else {
         const approveAt = Number(cfg.approve_at ?? 6);
         const rejectUnder = Number(cfg.reject_under ?? 3);
@@ -202,7 +202,7 @@ Deno.serve(async (req) => {
         if (ai.flag === "spam" || ai.score < rejectUnder) {
           finalize = { decision: "rejected", score: ai.score, feedback: ai.feedback };
         } else if (ai.score >= approveAt) {
-          // Map score 6â†’1.0, 10â†’ceil, lower bounded by floor
+          // Map score 6→1.0, 10→ceil, lower bounded by floor
           const t = Math.min(1, Math.max(0, (ai.score - approveAt) / (10 - approveAt)));
           const mult = Math.max(floor, 1 + (ceil - 1) * t);
           const award = Math.round(gig.credit_reward * mult * 10) / 10;

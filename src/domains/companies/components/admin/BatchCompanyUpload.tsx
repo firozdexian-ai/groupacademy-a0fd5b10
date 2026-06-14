@@ -371,7 +371,7 @@ export function BatchCompanyUpload({ open, onOpenChange, onComplete }: BatchComp
                               {row.companyName}
                             </TableCell>
                             <TableCell className="text-[11px] font-medium text-muted-foreground">
-                              {row.contactName || "â€”"}
+                              {row.contactName || "—"}
                             </TableCell>
                             <TableCell>
                               <Badge

@@ -17,7 +17,7 @@ interface State {
 }
 
 /**
- * RouteErrorBoundary â€” production safety net.
+ * RouteErrorBoundary — production safety net.
  *
  * Wrap each top-level route element with this boundary so a single broken
  * component cannot blank the entire shell. Renders a polished fallback card
@@ -58,7 +58,7 @@ export class RouteErrorBoundary extends Component<Props, State> {
               <h1 className="text-lg font-semibold">Something went wrong</h1>
               <p className="text-sm text-muted-foreground">
                 This screen hit an unexpected error. The rest of the app is still
-                fine â€” try reloading, or head back to a known-good page.
+                fine — try reloading, or head back to a known-good page.
               </p>
             </div>
             <div className="flex flex-col gap-2 sm:flex-row sm:justify-center">

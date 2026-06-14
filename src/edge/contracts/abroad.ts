@@ -1,5 +1,5 @@
 ﻿/**
- * Abroad domain â€” edge function contracts (Phase 9e).
+ * Abroad domain — edge function contracts (Phase 9e).
  *
  * Mirrors the talent/agents/jobs convention: per-function Request type
  * (plain interface) + Zod Response schema with `.passthrough()`. Request

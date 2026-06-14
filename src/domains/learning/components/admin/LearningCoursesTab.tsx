@@ -45,7 +45,7 @@ export function LearningCoursesTab() {
  typeSegment: "all",
  });
 
- // Map ContentFilters â†’ existing dataset
+ // Map ContentFilters → existing dataset
  const courses = (() => {
  const list = (data?.content ?? []).filter((c) => {
  const seg = filters.typeSegment ?? "all";

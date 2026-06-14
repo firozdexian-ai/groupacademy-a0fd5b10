@@ -1,5 +1,5 @@
 ﻿/**
- * HR Onboarding Registry â€” Phase HR-Z1 Hardened
+ * HR Onboarding Registry — Phase HR-Z1 Hardened
  * CTO Version: May 2026
  * Fixes: W9 (Overdue/Status Grouping), W4 (Relation Mapping)
  * Features: Multi-tab Operational View, Institutional Analytics

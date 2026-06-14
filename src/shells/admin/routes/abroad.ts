@@ -1,7 +1,7 @@
 ﻿import React from "react";
 
 /**
- * Group Academy â€” Career Abroad Administrative Routing Map
+ * Group Academy — Career Abroad Administrative Routing Map
  * Purpose: Dynamically maps, splits, and lazy-loads the 8 strategic vertical panels
  * managing university programs, destination operations, and language components.
  */

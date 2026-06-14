@@ -11,7 +11,7 @@ import {
 } from "@/gro10x/lib/tokens";
 
 /**
- * /app/pitches â€” full inbox of AI-dispatched employer pitches.
+ * /app/pitches — full inbox of AI-dispatched employer pitches.
  * Standardized to the Gro10x golden UI standard.
  */
 export default function TalentPitches() {

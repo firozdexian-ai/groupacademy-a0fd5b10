@@ -1,5 +1,5 @@
 ﻿/**
- * Institutional Graph & Taxonomy Hook â€” Phase 10i.2 (repo-backed)
+ * Institutional Graph & Taxonomy Hook — Phase 10i.2 (repo-backed)
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { toast } from "sonner";

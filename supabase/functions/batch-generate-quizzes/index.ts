@@ -167,7 +167,7 @@ serve(async (req) => {
     const { school_id, batch_size = 3 } = await req.json();
     if (!school_id) throw new Error("school_id required");
 
-    // Get programs â†’ courses â†’ modules without quizzes
+    // Get programs → courses → modules without quizzes
     const { data: programs } = await supabase
       .from("profession_categories").select("id, name").eq("school_id", school_id);
     if (!programs?.length) return new Response(JSON.stringify({ inserted: 0, skipped: 0, remaining: 0, total: 0 }), { headers: { ...corsHeaders, "Content-Type": "application/json" } });

@@ -95,7 +95,7 @@ Deno.serve(async (req) => {
 
       if (!testRes.ok) {
         return new Response(
-          JSON.stringify({ error: "Invalid Stripe key â€” could not authenticate with Stripe" }),
+          JSON.stringify({ error: "Invalid Stripe key — could not authenticate with Stripe" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }
@@ -149,7 +149,7 @@ Deno.serve(async (req) => {
 
       if (!testRes.ok) {
         return new Response(
-          JSON.stringify({ error: "Invalid Stripe key â€” could not authenticate" }),
+          JSON.stringify({ error: "Invalid Stripe key — could not authenticate" }),
           { status: 400, headers: { ...corsHeaders, "Content-Type": "application/json" } }
         );
       }

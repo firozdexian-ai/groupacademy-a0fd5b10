@@ -267,7 +267,7 @@ export function useFeedRecommendations() {
     },
     markNotInterested: (itemId: string) => {
       setDismissedIds((prev) => new Set([...prev, itemId]));
-      toast({ title: "Got it â€” we'll show less like this" });
+      toast({ title: "Got it — we'll show less like this" });
     },
     hasGeneratedOnce: true,
   };

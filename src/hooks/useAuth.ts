@@ -51,7 +51,7 @@ export interface AuthState {
 function friendlyAuthError(msg: string): string {
   const m = (msg || "").toLowerCase();
   if (m.includes("invalid login")) return "Email or password is incorrect.";
-  if (m.includes("email not confirmed")) return "Please confirm your email â€” check your inbox for the link.";
+  if (m.includes("email not confirmed")) return "Please confirm your email — check your inbox for the link.";
   if (m.includes("user already registered")) return "An account with this email already exists. Try signing in.";
   if (m.includes("password") && m.includes("weak")) return "Choose a stronger password (at least 8 characters).";
   if (m.includes("rate limit")) return "Too many attempts. Please wait a moment and try again.";
@@ -75,7 +75,7 @@ export const useAuth = (): AuthState => {
     } = supabase.auth.onAuthStateChange((event, nextSession) => {
       if (!mounted.current) return;
 
-      // Refresh-token failure / explicit sign-out â†’ wipe local state.
+      // Refresh-token failure / explicit sign-out → wipe local state.
       if (event === "SIGNED_OUT" || (event === "TOKEN_REFRESHED" && !nextSession)) {
         setSession(null);
         setUser(null);
@@ -112,7 +112,7 @@ export const useAuth = (): AuthState => {
     };
   }, []);
 
-  /** Resolve phone â†’ email so users can sign in by phone. */
+  /** Resolve phone → email so users can sign in by phone. */
   const resolveIdentifier = async (phone: string): Promise<string | null> => {
     const cleanPhone = phone.replace(/[^\d+]/g, "");
     const variants = [cleanPhone, cleanPhone.startsWith("+") ? cleanPhone.substring(1) : `+${cleanPhone}`];
@@ -173,7 +173,7 @@ export const useAuth = (): AuthState => {
       if (signUpError) throw signUpError;
       if (!authData.user) throw new Error("Could not create your account. Please try again.");
 
-      toast.success("Welcome â€” let's set up your profile.");
+      toast.success("Welcome — let's set up your profile.");
       return true;
     } catch (err: unknown) {
       toast.error(friendlyAuthError(err.message));
@@ -207,7 +207,7 @@ export const useAuth = (): AuthState => {
         redirectTo: `${window.location.origin}/reset-password`,
       });
     } catch {
-      /* swallow â€” neutral response below */
+      /* swallow — neutral response below */
     }
     toast.success("If that email is registered, we've sent a reset link.");
   };

@@ -1,5 +1,5 @@
 /**
- * Analytics domain â€” typed edge function wrappers (Phase 9g - Hardened).
+ * Analytics domain — typed edge function wrappers (Phase 9g - Hardened).
  * Houses edge contract dispatchers for the Report Builder and Business Analyst (Nia) agents.
  * Automates token propagation, schemas parsing, and React Query cache invalidation mapping.
  */

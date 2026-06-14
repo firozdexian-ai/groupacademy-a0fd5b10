@@ -1,5 +1,5 @@
-﻿// AI item rewrite â€” phase 3.7
-// Loads a flagged quiz/scenario item, asks Lovable AI for 1â€“3 structured rewrites
+﻿// AI item rewrite — phase 3.7
+// Loads a flagged quiz/scenario item, asks Lovable AI for 1–3 structured rewrites
 // targeting the supplied flags, returns suggestions only (no DB write).
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -12,7 +12,7 @@ const json = (b: unknown, s = 200) =>
   new Response(JSON.stringify(b), { status: s, headers: { ...corsHeaders, "Content-Type": "application/json" } });
 
 const FLAG_GUIDANCE: Record<string, string> = {
-  low_p_value: "Item is too hard for the cohort (p<0.25). Simplify wording, remove ambiguity, or weaken distractorsâ€”do NOT change the assessed concept.",
+  low_p_value: "Item is too hard for the cohort (p<0.25). Simplify wording, remove ambiguity, or weaken distractors—do NOT change the assessed concept.",
   trivial: "Item is too easy (p>0.95). Increase difficulty by adding plausible distractors or a more nuanced stem.",
   miscalibrated: "Difficulty label does not match observed performance. Adjust difficulty label and/or distractors accordingly.",
   stale: "Item barely served. Refresh wording so it feels current and motivating; keep concept identical.",
@@ -66,7 +66,7 @@ Deno.serve(async (req) => {
       type: "function",
       function: {
         name: "propose_quiz_rewrites",
-        description: "Return 1â€“3 rewritten quiz items.",
+        description: "Return 1–3 rewritten quiz items.",
         parameters: {
           type: "object",
           properties: {
@@ -149,7 +149,7 @@ Deno.serve(async (req) => {
     type: "function",
     function: {
       name: "propose_scenario_rewrites",
-      description: "Return 1â€“3 rewritten scenarios.",
+      description: "Return 1–3 rewritten scenarios.",
       parameters: {
         type: "object",
         properties: {

@@ -1,5 +1,5 @@
 ﻿/**
- * Contact Unlocks Ledger â€” Profile Unlocks Tracking Hub
+ * Contact Unlocks Ledger — Profile Unlocks Tracking Hub
  * Version: 2024 Highly Professional SAAS UI
  * Fixes: A7 (Server-side KPI Aggregation), R1 (Missing Button Import)
  * Restored: Contact Details (Email/Phone) for Audit Visibility
@@ -52,7 +52,7 @@ export function ContactUnlocksTab() {
         const enriched = ledgerRows.map((r: unknown) => ({
           ...r,
           company_name: compMap[r.company_id] || "Independent Partner",
-          unlocker_email: r.unlocked_by ? userMap[r.unlocked_by] || "Platform Admin" : "â€”",
+          unlocker_email: r.unlocked_by ? userMap[r.unlocked_by] || "Platform Admin" : "—",
         }));
 
         setRows(enriched);
@@ -162,7 +162,7 @@ export function ContactUnlocksTab() {
                 filtered.map((r) => (
                   <tr key={r.id} className="group hover:bg-primary/[0.02] transition-colors border-b last:border-0">
                     <td className="px-8 py-4 font-mono text-[10px] opacity-60 text-left">
-                      {format(new Date(r.created_at), "MMM d Â· HH:mm")}
+                      {format(new Date(r.created_at), "MMM d · HH:mm")}
                     </td>
                     <td className="px-6 py-4 text-left">
                       <p className="font-semibold text-sm uppercase italic group-hover:text-primary transition-colors text-foreground">
@@ -194,7 +194,7 @@ export function ContactUnlocksTab() {
                         variant="outline"
                         className="font-semibold text-[10px] border-2 border-emerald-500/20 text-emerald-500 bg-emerald-500/5"
                       >
-                        âˆ’ {r.credits_spent} CR
+                        − {r.credits_spent} CR
                       </Badge>
                     </td>
                   </tr>

@@ -161,7 +161,7 @@ export function ProfessionalRolesPanel() {
               <Input
                 value={search}
                 onChange={(e) => setSearch(e.target.value)}
-                placeholder="Search categoriesâ€¦"
+                placeholder="Search categories…"
                 className="pl-9 h-12 rounded-xl bg-surface text-primary"
               />
             </div>
@@ -216,7 +216,7 @@ export function ProfessionalRolesPanel() {
               <h3 className="text-[10px] font-semibold uppercase tracking-[0.3em] italic text-muted-foreground/70 flex items-center gap-2">
                 <Tags className="h-3 w-3" /> Mapping Roles For
               </h3>
-              <h2 className="text-2xl font-semibold tracking-tight">{activeCategory?.name ?? "â€”"}</h2>
+              <h2 className="text-2xl font-semibold tracking-tight">{activeCategory?.name ?? "—"}</h2>
             </div>
           </CardHeader>
 
@@ -228,7 +228,7 @@ export function ProfessionalRolesPanel() {
                 onKeyDown={(e) => {
                   if (e.key === "Enter" && !saving && newRole.trim()) addRole();
                 }}
-                placeholder="Add a specific role (e.g. Senior Motion Designer)â€¦"
+                placeholder="Add a specific role (e.g. Senior Motion Designer)…"
                 className="h-12 rounded-xl bg-surface text-primary"
                 disabled={!activeCat || saving}
               />

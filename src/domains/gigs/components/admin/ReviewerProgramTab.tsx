@@ -53,7 +53,7 @@ export function ReviewerProgramTab() {
     }
   };
 
-  if (loading) return <div className="p-4 text-sm text-muted-foreground">Loadingâ€¦</div>;
+  if (loading) return <div className="p-4 text-sm text-muted-foreground">Loading…</div>;
   return (
     <Tabs defaultValue="reviewers">
       <TabsList>
@@ -66,8 +66,8 @@ export function ReviewerProgramTab() {
         {reviewers.map(r => (
           <Card key={r.id} className="p-3 flex items-center justify-between text-sm">
             <div>
-              <div className="font-medium">{r.talent_id.slice(0,8)} Â· {r.tier}</div>
-              <div className="text-xs text-muted-foreground">accuracy {r.accuracy}% Â· {r.items_resolved} items Â· {r.status}</div>
+              <div className="font-medium">{r.talent_id.slice(0,8)} · {r.tier}</div>
+              <div className="text-xs text-muted-foreground">accuracy {r.accuracy}% · {r.items_resolved} items · {r.status}</div>
             </div>
             <div className="flex gap-1">
               {r.status !== "active" && <Button size="sm" variant="outline" onClick={() => setStatus(r.id, "active")}>Activate</Button>}

@@ -38,7 +38,7 @@ interface ContractRecord {
 }
 
 /**
- * My Gigs â€” manage proposals, active contracts, and delivered work.
+ * My Gigs — manage proposals, active contracts, and delivered work.
  */
 export default function MyGigs() {
  const { talent } = useTalent();

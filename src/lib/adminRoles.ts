@@ -1,6 +1,6 @@
 ﻿/**
  * Single source of truth for admin-style roles.
- * Keep this list in sync everywhere â€” useAccountType, ProtectedRoute, edge functions.
+ * Keep this list in sync everywhere — useAccountType, ProtectedRoute, edge functions.
  */
 export const ADMIN_ROLES = [
   "admin",

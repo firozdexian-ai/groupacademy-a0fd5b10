@@ -59,7 +59,7 @@ export function Gro10xCommandPalette() {
   const [loading, setLoading] = useState(false);
   const navigate = useNavigate();
 
-  // âŒ˜K / Ctrl+K
+  // ⌘K / Ctrl+K
   useEffect(() => {
     const handler = (e: KeyboardEvent) => {
       if ((e.metaKey || e.ctrlKey) && e.key.toLowerCase() === "k") {
@@ -116,13 +116,13 @@ export function Gro10xCommandPalette() {
   return (
     <CommandDialog open={open} onOpenChange={setOpen}>
       <CommandInput
-        placeholder="Search companies, talents, jobs, coursesâ€¦"
+        placeholder="Search companies, talents, jobs, courses…"
         value={q}
         onValueChange={setQ}
       />
       <CommandList>
         <CommandEmpty>
-          {loading ? "Searchingâ€¦" : "No results found."}
+          {loading ? "Searching…" : "No results found."}
         </CommandEmpty>
 
         <CommandGroup heading="Navigate">

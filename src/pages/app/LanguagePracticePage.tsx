@@ -39,7 +39,7 @@ interface AIResponsePayload {
 /**
  * GroUp Academy: AI Language Partner Workspace (LanguagePracticePage)
  * Hardened responsive chat interface synchronizing multi-modal language feedback and tracking session history securely.
- * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
+ * Version: Launch Candidate · Phase Z1 Production Contract Locked
  */
 export default function LanguagePracticePage() {
  const { code: languageCode = "en" } = useParams<{ code: string }>();
@@ -187,7 +187,7 @@ export default function LanguagePracticePage() {
  {activeCorrections.slice(-3).map((item, idx) => (
  <div key={`correction-node-${idx}`} className="text-xs mb-3 last:mb-0 border-l-2 border-primary/20 pl-2">
  <span className="line-through text-destructive/80 font-medium">{item.original}</span>
- <span className="mx-2 text-primary font-bold">â†’</span>
+ <span className="mx-2 text-primary font-bold">→</span>
  <span className="text-emerald-700 font-bold">{item.corrected}</span>
  <p className="text-[10px] text-muted-foreground mt-0.5 leading-tight">{item.explanation}</p>
  </div>

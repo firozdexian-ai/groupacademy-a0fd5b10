@@ -1,4 +1,4 @@
-﻿// Agent OS â€” Unified Runtime
+﻿// Agent OS — Unified Runtime
 // Single edge function that powers all agent conversations across talent / company / admin / headless.
 // - Loads agent config + allowed tools + KB
 // - Charges connection fee on first contact, per-message + per-tool fees afterward
@@ -25,7 +25,7 @@ interface RunRequest {
   thread_id?: string;
   message?: string;
   context?: Record<string, unknown>;
-  // WaaS â€” Workforce-as-a-Service flow
+  // WaaS — Workforce-as-a-Service flow
   instance_id?: string;
   source?: string; // e.g. "telegram"
   chat_id?: string | number;
@@ -50,14 +50,14 @@ serve(async (req) => {
 
     const body = (await req.json()) as RunRequest;
 
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-    // WaaS (Workforce-as-a-Service) flow â€” multi-tenant Hired Instances.
+    // ────────────────────────────────────────────────────────────────────
+    // WaaS (Workforce-as-a-Service) flow — multi-tenant Hired Instances.
     // Triggered when the caller (typically the workforce-*-router edge
     // function) provides an `instance_id`. We do NOT touch the legacy
     // `ai_agents` table here. Auth is implicit: only trusted service-role
     // callers (other edge functions) can reach this branch in practice
     // because the router validates channel credentials before dispatch.
-    // â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+    // ────────────────────────────────────────────────────────────────────
     if (body?.instance_id) {
       try {
         return await runWorkforceInstance(body, admin);
@@ -78,7 +78,7 @@ serve(async (req) => {
     let user: unknown = null;
 
     if (isServiceCall) {
-      // Server-to-server (cron / system) â€” trust the payload's subject_id.
+      // Server-to-server (cron / system) — trust the payload's subject_id.
       const sid = (body as unknown).subject_id as string | undefined;
       if (!sid) return json({ error: "subject_id required for service call" }, 400);
       isAdmin = true;
@@ -146,7 +146,7 @@ serve(async (req) => {
 
       if (!existingConn) {
         const fee = Number(agent.connection_fee);
-        // Companies are not billed in MVP â€” talent-only charges
+        // Companies are not billed in MVP — talent-only charges
         if (subjectKind === "talent") {
           const charge = await chargeTalent(admin, subjectId!, fee, "agent_connection", agent.agent_key, `Connection: ${agent.name}`);
           if (!charge.ok) return json({ error: "INSUFFICIENT_CREDITS_CONNECTION", required: fee, available: charge.balance }, 402);
@@ -213,10 +213,10 @@ serve(async (req) => {
     const variantPrompt = (agent.prompt_variants as unknown)?.[variant];
     const baseSystem = variantPrompt || agent.system_prompt || "You are a helpful assistant.";
 
-    // Build subject context â€” admin caller, company workspace, or talent profile.
+    // Build subject context — admin caller, company workspace, or talent profile.
     let subjectCtx = "";
     if (subjectKind === "admin") {
-      subjectCtx = `\n\n## Caller\nAdmin user (id: ${user.id}, email: ${user.email ?? "â€”"})\nYou are speaking inside the internal admin Agentic Dashboard. The caller is platform staff with full read access; do not ask them to authenticate, and prefer concise, operational answers.`;
+      subjectCtx = `\n\n## Caller\nAdmin user (id: ${user.id}, email: ${user.email ?? "—"})\nYou are speaking inside the internal admin Agentic Dashboard. The caller is platform staff with full read access; do not ask them to authenticate, and prefer concise, operational answers.`;
     } else if (subjectKind === "company") {
       subjectCtx = await buildCompanyContext(admin, subjectId!, body.context);
     } else {
@@ -224,7 +224,7 @@ serve(async (req) => {
     }
     const systemPrompt = baseSystem + subjectCtx;
 
-    // Load tools â€” admins use agent_tool_bindings as the source of truth (Step 4 wiring),
+    // Load tools — admins use agent_tool_bindings as the source of truth (Step 4 wiring),
     // every other subject kind keeps the legacy allowed_tools array on ai_agents.
     let tools: unknown[] = [];
     if (subjectKind === "admin") {
@@ -267,7 +267,7 @@ serve(async (req) => {
       toolKeyByFn[String(t.tool_key).replace(/[^a-zA-Z0-9_-]/g, "_")] = t.tool_key;
     }
 
-    // Tool-call execution loop (company subject only â€” talent agents are streamed direct
+    // Tool-call execution loop (company subject only — talent agents are streamed direct
     // for now to preserve their existing behaviour). Mirrors ai-agent-chat T2 pattern.
     const invalidations = new Set<string>();
     const TOOL_INVALIDATIONS_COMPANY: Record<string, string[]> = {
@@ -352,7 +352,7 @@ serve(async (req) => {
       }
     }
 
-    // Final streamed completion (no tools advertised on the final pass for company â€”
+    // Final streamed completion (no tools advertised on the final pass for company —
     // the loop above already executed unknown required tools).
     // ---------- Admin tool-execution loop ----------
     // Dispatches via the central `agent-tool-execute`, which forwards to
@@ -420,7 +420,7 @@ serve(async (req) => {
       }
     }
 
-    // Final streamed completion. Strip tools for company AND admin â€” both ran
+    // Final streamed completion. Strip tools for company AND admin — both ran
     // their tool loops above, so the final pass is plain text synthesis.
     const stripToolsOnFinal = subjectKind === "company" || subjectKind === "admin";
     const aiResp = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
@@ -497,7 +497,7 @@ async function buildCompanyContext(
     .eq("id", companyId)
     .maybeSingle();
   if (company) {
-    lines.push(`Company: ${company.name ?? "â€”"} (id: ${company.id})`);
+    lines.push(`Company: ${company.name ?? "—"} (id: ${company.id})`);
     if (company.industry) lines.push(`Industry: ${company.industry}`);
     if (company.country) lines.push(`Country: ${company.country}`);
   } else {
@@ -518,7 +518,7 @@ async function buildCompanyContext(
       .eq("company_id", companyId)
       .maybeSingle();
     if (job) {
-      lines.push(`Active Job: "${job.title}" (id: ${job.id}, status: ${job.is_active ? "live" : "draft/paused"}, location: ${job.location ?? "â€”"})`);
+      lines.push(`Active Job: "${job.title}" (id: ${job.id}, status: ${job.is_active ? "live" : "draft/paused"}, location: ${job.location ?? "—"})`);
     } else {
       lines.push(`Active Job id: ${jobId} (not found in this company)`);
     }
@@ -533,7 +533,7 @@ async function buildCompanyContext(
       .maybeSingle();
     if (app) {
       const t = (app as unknown).talents;
-      lines.push(`Active Applicant: ${t?.full_name ?? "â€”"} (application id: ${app.id}, talent id: ${app.talent_id}, job id: ${app.job_id}, stage: ${app.application_status})`);
+      lines.push(`Active Applicant: ${t?.full_name ?? "—"} (application id: ${app.id}, talent id: ${app.talent_id}, job id: ${app.job_id}, stage: ${app.application_status})`);
     }
   }
 
@@ -544,7 +544,7 @@ async function buildCompanyContext(
       .select("id, full_name, country, headline, profession")
       .eq("id", talentId)
       .maybeSingle();
-    if (t) lines.push(`Active Talent: ${t.full_name ?? "â€”"} (id: ${t.id}, ${t.profession ?? ""}, ${t.country ?? ""})`);
+    if (t) lines.push(`Active Talent: ${t.full_name ?? "—"} (id: ${t.id}, ${t.profession ?? ""}, ${t.country ?? ""})`);
   }
 
   const gigId = (pageCtx.gig_id as string | undefined) || undefined;
@@ -554,7 +554,7 @@ async function buildCompanyContext(
       .select("id, title, status, budget_min, budget_max, currency")
       .eq("id", gigId)
       .maybeSingle();
-    if (gig) lines.push(`Active Gig: "${gig.title}" (id: ${gig.id}, status: ${gig.status}, budget: ${gig.budget_min ?? "?"}â€“${gig.budget_max ?? "?"} ${gig.currency ?? ""})`);
+    if (gig) lines.push(`Active Gig: "${gig.title}" (id: ${gig.id}, status: ${gig.status}, budget: ${gig.budget_min ?? "?"}–${gig.budget_max ?? "?"} ${gig.currency ?? ""})`);
   }
 
   const bidId = (pageCtx.bid_id as string | undefined) || undefined;
@@ -688,8 +688,8 @@ async function pipeAndPersist(
   }
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
-// WaaS â€” Workforce-as-a-Service execution path.
+// ──────────────────────────────────────────────────────────────────────
+// WaaS — Workforce-as-a-Service execution path.
 // Loads a hired instance + its master template, assembles the hybrid
 // system prompt (template base + per-instance overrides + tenant/geo
 // metadata), resolves a per-(instance, chat) thread, and streams the
@@ -699,7 +699,7 @@ async function pipeAndPersist(
 // for Telegram in particular the router currently fires-and-forgets and
 // returns 200 to Telegram immediately, so we still need to drain the
 // stream here so persistence runs.
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ──────────────────────────────────────────────────────────────────────
 async function runWorkforceInstance(body: RunRequest, admin: unknown): Promise<Response> {
   const instanceId = body.instance_id!;
   const userText = (body.text ?? body.message ?? "").toString().trim();
@@ -737,7 +737,7 @@ async function runWorkforceInstance(body: RunRequest, admin: unknown): Promise<R
     `[Tenant ID]: ${instance.tenant_id}\n` +
     `[Geo-Cluster]: ${instance.cluster_geo_id || "Global"}`;
 
-  // 3. Resolve subject â€” channel chat id (Telegram chat / WhatsApp jid / etc.)
+  // 3. Resolve subject — channel chat id (Telegram chat / WhatsApp jid / etc.)
   const source = body.source || "headless";
   const subjectKind = source === "telegram" ? "telegram_user" : `${source}_user`;
   const subjectId = body.chat_id != null ? String(body.chat_id) : (body.from_user_id != null ? String(body.from_user_id) : "anonymous");

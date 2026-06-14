@@ -204,7 +204,7 @@ export function Gro10xCreditsTab() {
                       <p className="font-semibold text-xs text-foreground truncate">{tx.detail}</p>
                       <div className="flex items-center gap-2 mt-0.5 text-[10px] text-muted-foreground font-medium">
                         <span className="uppercase">{tx.type}</span>
-                        <span>â€¢</span>
+                        <span>•</span>
                         <span>{tx.date}</span>
                       </div>
                     </div>

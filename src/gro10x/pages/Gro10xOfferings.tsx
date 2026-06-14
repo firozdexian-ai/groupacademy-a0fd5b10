@@ -1,5 +1,5 @@
 ﻿/**
- * /gro10x/offerings â€” Company services & products catalog editor.
+ * /gro10x/offerings — Company services & products catalog editor.
  * Owners/admins can CRUD; the same data is read by the public company page.
  */
 import { useState } from "react";
@@ -41,7 +41,7 @@ export default function Gro10xOfferings() {
     );
   }
 
-  if (isLoading) return <div className="p-6 text-center text-sm text-slate-400">Loadingâ€¦</div>;
+  if (isLoading) return <div className="p-6 text-center text-sm text-slate-400">Loading…</div>;
   if (!companyId) {
     return (
       <div className="max-w-md md:max-w-5xl mx-auto p-6 text-center">
@@ -63,7 +63,7 @@ export default function Gro10xOfferings() {
       <header className="sticky top-0 z-10 bg-[#0B1220]/95 backdrop-blur-md border-b border-white/5 px-4 pt-3 pb-2 flex items-center justify-between">
         <div>
           <h1 className="text-xl font-semibold tracking-tight">Offerings</h1>
-          <p className={`text-xs ${GRO10X_MUTED}`}>What your company sells Â· {list.length}</p>
+          <p className={`text-xs ${GRO10X_MUTED}`}>What your company sells · {list.length}</p>
         </div>
         {canEdit && (
           <button
@@ -175,7 +175,7 @@ export default function Gro10xOfferings() {
 function priceRange(o: CompanyOffering) {
   const sym = o.currency === "USD" ? "$" : o.currency + " ";
   if (o.price_min && o.price_max && o.price_min !== o.price_max) {
-    return `${sym}${Number(o.price_min).toLocaleString()}â€“${Number(o.price_max).toLocaleString()}`;
+    return `${sym}${Number(o.price_min).toLocaleString()}–${Number(o.price_max).toLocaleString()}`;
   }
   const v = o.price_min ?? o.price_max!;
   return `${sym}${Number(v).toLocaleString()}`;
@@ -286,7 +286,7 @@ function OfferingEditor({
             onClick={submit}
             className="w-full rounded-full bg-[#33E1E4] text-[#06121A] py-2.5 text-sm font-semibold disabled:opacity-50"
           >
-            {saving ? "Savingâ€¦" : "Save"}
+            {saving ? "Saving…" : "Save"}
           </button>
         </div>
       </div>

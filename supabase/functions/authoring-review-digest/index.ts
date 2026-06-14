@@ -1,8 +1,8 @@
-﻿// Authoring review digest â€” phase 3.6
+﻿// Authoring review digest — phase 3.6
 // Modes:
-//   single  â†’ returns digest for one module_id
-//   course  â†’ returns digest for all modules in one content_id
-//   weekly  â†’ loops every published course, sends emails to primary instructor and admins
+//   single  → returns digest for one module_id
+//   course  → returns digest for all modules in one content_id
+//   weekly  → loops every published course, sends emails to primary instructor and admins
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

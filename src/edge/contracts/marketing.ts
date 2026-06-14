@@ -1,5 +1,5 @@
 ﻿/**
- * Marketing domain â€” edge function contracts (Phase 9g).
+ * Marketing domain — edge function contracts (Phase 9g).
  */
 import { z } from "zod";
 

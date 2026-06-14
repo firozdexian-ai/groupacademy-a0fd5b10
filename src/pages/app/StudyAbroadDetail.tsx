@@ -156,8 +156,8 @@ export default function StudyAbroadDetail() {
  <div className="grid grid-cols-2 gap-3">
  {[
  { icon: GraduationCap, label: "Degree", val: program.degree_type },
- { icon: Clock, label: "Duration", val: program.duration || "â€”" },
- { icon: DollarSign, label: "Tuition", val: program.tuition_range || "â€”" },
+ { icon: Clock, label: "Duration", val: program.duration || "—" },
+ { icon: DollarSign, label: "Tuition", val: program.tuition_range || "—" },
  {
  icon: Calendar,
  label: "Deadline",

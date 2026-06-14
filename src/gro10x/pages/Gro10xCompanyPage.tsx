@@ -70,7 +70,7 @@ export default function Gro10xCompanyPage() {
       if (!companyId && user?.id) {
         const m = await getActiveCompanyMembership(user.id);
         companyId = m?.company_id;
-        // Owner only â€” admins can manage hiring/CRM but not the public face.
+        // Owner only — admins can manage hiring/CRM but not the public face.
         editor = m?.role === "owner";
       } else if (companyId && user?.id) {
         const role = await getCompanyMemberRole(user.id, companyId);
@@ -89,7 +89,7 @@ export default function Gro10xCompanyPage() {
       const c = await getCompanyPublicProfile(companyId);
       setCompany(c as Company | null);
 
-      // Team â€” fetch members then enrich with talents
+      // Team — fetch members then enrich with talents
       const rawMembers = await listActiveCompanyMembers(companyId);
       const userIds = rawMembers.map((m: unknown) => m.user_id).filter(Boolean) as string[];
       const talentRows = await listTalentMiniProfilesByUserIds(userIds);
@@ -141,7 +141,7 @@ export default function Gro10xCompanyPage() {
   if (loading) {
     return (
       <div className="max-w-md md:max-w-5xl mx-auto">
-        <Gro10xLoading label="Loading companyâ€¦" />
+        <Gro10xLoading label="Loading company…" />
       </div>
     );
   }
@@ -158,7 +158,7 @@ export default function Gro10xCompanyPage() {
 
   return (
     <div className="max-w-md md:max-w-5xl mx-auto pb-6">
-      {/* Banner â€” 3:1 aspect */}
+      {/* Banner — 3:1 aspect */}
       <div
         className="aspect-[3/1] w-full bg-gradient-to-br from-[#0F172A] to-[#1E293B]"
         style={
@@ -265,7 +265,7 @@ export default function Gro10xCompanyPage() {
       {/* Team */}
       {members.length > 0 && (
         <section className="px-4 mt-6">
-          <h2 className="text-sm font-semibold mb-2">Team Â· {members.length}</h2>
+          <h2 className="text-sm font-semibold mb-2">Team · {members.length}</h2>
           <div className="grid grid-cols-3 gap-2">
             {members.map((m, i) => (
               <Link
@@ -295,7 +295,7 @@ export default function Gro10xCompanyPage() {
       {jobs.length > 0 && (
         <section className="px-4 mt-6">
           <h2 className="text-sm font-semibold mb-2 flex items-center gap-2">
-            <Briefcase className="h-4 w-4" /> Open roles Â· {jobs.length}
+            <Briefcase className="h-4 w-4" /> Open roles · {jobs.length}
           </h2>
           <div className="space-y-2">
             {jobs.map((j) => (
@@ -306,7 +306,7 @@ export default function Gro10xCompanyPage() {
               >
                 <p className="text-sm font-medium truncate">{j.title}</p>
                 <p className="text-[11px] text-slate-400 truncate">
-                  {j.location ?? "Remote"} Â· {j.job_type.replace(/_/g, " ")}
+                  {j.location ?? "Remote"} · {j.job_type.replace(/_/g, " ")}
                 </p>
               </Link>
             ))}
@@ -337,7 +337,7 @@ function OfferingsSection({ companyId, canEdit }: { companyId: string; canEdit: 
     <section className="px-4 mt-6">
       <div className="flex items-center justify-between mb-2">
         <h2 className="text-sm font-semibold flex items-center gap-2">
-          <Package className="h-4 w-4" /> What we offer Â· {list.length}
+          <Package className="h-4 w-4" /> What we offer · {list.length}
         </h2>
         {canEdit && (
           <Link to="/gro10x/offerings" className="text-[11px] text-[#33E1E4] inline-flex items-center gap-0.5">
@@ -370,7 +370,7 @@ function OfferingsSection({ companyId, canEdit }: { companyId: string; canEdit: 
                 <p className="text-[11px] text-emerald-300 mt-1">
                   {o.currency === "USD" ? "$" : `${o.currency} `}
                   {o.price_min && o.price_max && o.price_min !== o.price_max
-                    ? `${Number(o.price_min).toLocaleString()}â€“${Number(o.price_max).toLocaleString()}`
+                    ? `${Number(o.price_min).toLocaleString()}–${Number(o.price_max).toLocaleString()}`
                     : Number(o.price_min ?? o.price_max).toLocaleString()}
                   {o.unit && <span className="text-slate-500"> /{o.unit}</span>}
                 </p>

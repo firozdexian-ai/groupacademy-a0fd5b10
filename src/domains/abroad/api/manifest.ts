@@ -1,11 +1,11 @@
 ﻿/**
- * Group Academy â€” Abroad Domain Export Engine (Barrel)
+ * Group Academy — Abroad Domain Export Engine (Barrel)
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Purpose: Single source of truth interface for public domain surfaces.
  * Constraints: Blocks implicit leaks, handles strict type barriers, strips internal metrics.
  */
 
-// â”€â”€â”€ STAGE 1: EDGE NETWORK LAYER WRAPPERS (API) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── STAGE 1: EDGE NETWORK LAYER WRAPPERS (API) ───────────────────────────
 export {
   aiDestinationAgent,
   aiIeltsEvaluate,
@@ -14,7 +14,7 @@ export {
   generateStudyRoadmap,
 } from "./abroadApi";
 
-// â”€â”€â”€ STAGE 2: HARDENED POSTGRES INFRASTRUCTURE (REPO) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── STAGE 2: HARDENED POSTGRES INFRASTRUCTURE (REPO) ─────────────────────
 export {
   upsertGraphRow,
   deleteGraphRow,
@@ -40,7 +40,7 @@ export {
   listAbroadApplicationsForCurrentUser,
 } from "../repo/abroadRepo";
 
-// â”€â”€â”€ STAGE 3: BOUND INTEGRATION SCHEMA TYPE DEFINITIONS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── STAGE 3: BOUND INTEGRATION SCHEMA TYPE DEFINITIONS ───────────────────
 export type {
   AiDestinationAgentRequest,
   AiDestinationAgentResponse,

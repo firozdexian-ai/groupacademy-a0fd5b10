@@ -104,7 +104,7 @@ export function SimpleAdminRegistry({
  )
  ))}
  <Button disabled={!requiredOk || create.isPending} onClick={() => create.mutate()} className="w-full">
- {create.isPending ? "Savingâ€¦" : "Save"}
+ {create.isPending ? "Saving…" : "Save"}
  </Button>
  </div>
  </DialogContent>
@@ -112,7 +112,7 @@ export function SimpleAdminRegistry({
  </div>
 
  {listQ.isLoading ? (
- <p className="text-sm text-muted-foreground">Loadingâ€¦</p>
+ <p className="text-sm text-muted-foreground">Loading…</p>
  ) : rows.length === 0 ? (
  <Card className="p-8 text-center text-sm text-muted-foreground">No records yet.</Card>
  ) : (

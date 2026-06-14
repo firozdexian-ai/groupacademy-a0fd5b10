@@ -122,7 +122,7 @@ const Tile = React.memo(function Tile({ label, value, delta, icon, accent = "tex
 /**
  * GroUp Academy: Creator Engagement Telemetry Insights Panel (CreatorAnalytics)
  * Hardened statistics cockpit locking transaction metrics, calculating conversion funnels, and tracking performance indices safely.
- * Version: Launch Candidate Â· Phase Z1 Analytics Matrix Sealed
+ * Version: Launch Candidate · Phase Z1 Analytics Matrix Sealed
  */
 export default function CreatorAnalytics() {
  const { talent: talentProfileRecord } = useTalent();
@@ -352,7 +352,7 @@ export default function CreatorAnalytics() {
  className="block p-3 rounded-lg border border-border/50 bg-background/50 hover:border-border-foreground/10 transition-colors block w-full leading-none"
  >
  <p className="text-xs font-semibold text-foreground/80 leading-normal mb-2 select-text whitespace-normal break-words tracking-normal line-clamp-2 pr-1">
- {postRecordNode.snippet || "â€” No description provided â€”"}
+ {postRecordNode.snippet || "— No description provided —"}
  </p>
 
  {/* Analytical Sub-Metrics Label Rows */}

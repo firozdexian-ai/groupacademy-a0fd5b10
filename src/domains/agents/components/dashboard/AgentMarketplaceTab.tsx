@@ -11,7 +11,7 @@ import { CheckCircle2, XCircle, Store, Loader2, User2, Building2, Terminal, Shie
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Career Guidance System: Marketplace Approval Review Dashboard Component
+ * Group Academy — Career Guidance System: Marketplace Approval Review Dashboard Component
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=marketplace (Moderator Control Area)
  * Operations Mode: Human-in-the-loop validation canvas approving developer or partner assets.

@@ -108,7 +108,7 @@ export function AccessCodesTab() {
                     <SelectContent>
                       {paidContent?.map((c: unknown) => (
                         <SelectItem key={c.id} value={c.id}>
-                          {c.title.toUpperCase()} â€” ${c.price}
+                          {c.title.toUpperCase()} — ${c.price}
                         </SelectItem>
                       ))}
                     </SelectContent>

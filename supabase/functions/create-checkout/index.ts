@@ -118,7 +118,7 @@ Deno.serve(async (req) => {
         "cancel_url": cancelUrl || `${req.headers.get("origin")}/app/feed?checkout=cancelled`,
         "line_items[0][price_data][currency]": "usd",
         "line_items[0][price_data][product_data][name]": `${credits} Credits`,
-        "line_items[0][price_data][product_data][description]": `GroUp Academy credit bundle â€” ${credits} credits`,
+        "line_items[0][price_data][product_data][description]": `GroUp Academy credit bundle — ${credits} credits`,
         "line_items[0][price_data][unit_amount]": String(priceInCents),
         "line_items[0][quantity]": "1",
         "customer_email": talent.email,

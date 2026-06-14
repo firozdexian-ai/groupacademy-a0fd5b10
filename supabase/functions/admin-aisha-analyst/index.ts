@@ -1,4 +1,4 @@
-﻿// Admin Aisha Analyst â€” chat with the onboarding agent's data.
+﻿// Admin Aisha Analyst — chat with the onboarding agent's data.
 // Super-admin only. Tools resolve against aisha_conversations + talents.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -15,7 +15,7 @@ const TOOLS = [
     function: {
       name: "aisha_count",
       description:
-        "Count Aisha onboarding conversations. status âˆˆ {all, completed, abandoned, in_progress}. since is an ISO date (optional).",
+        "Count Aisha onboarding conversations. status ∈ {all, completed, abandoned, in_progress}. since is an ISO date (optional).",
       parameters: {
         type: "object",
         properties: {
@@ -46,7 +46,7 @@ const TOOLS = [
     function: {
       name: "aisha_drop_off",
       description:
-        "Distribution of last_step values for ABANDONED conversations â€” shows where leads drop off.",
+        "Distribution of last_step values for ABANDONED conversations — shows where leads drop off.",
       parameters: { type: "object", properties: {} },
     },
   },
@@ -66,7 +66,7 @@ const TOOLS = [
 
 const SYSTEM = `You are Aisha's operator console for the GroUp Academy super admin.
 Aisha is the onboarding gatekeeper agent that talks to every new visitor.
-You answer the operator's questions about onboarding by CALLING TOOLS â€” never invent numbers.
+You answer the operator's questions about onboarding by CALLING TOOLS — never invent numbers.
 Be concise. Use markdown. Bold the key numbers.
 Today: ${new Date().toISOString().slice(0, 10)}.`;
 

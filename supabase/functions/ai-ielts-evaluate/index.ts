@@ -1,4 +1,4 @@
-﻿// AI IELTS Evaluator â€” grades writing/speaking/reading/listening, returns 0-9 bands per criterion
+﻿// AI IELTS Evaluator — grades writing/speaking/reading/listening, returns 0-9 bands per criterion
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {
@@ -80,7 +80,7 @@ Be specific, cite exact phrases, and recommend a concrete next step.`;
     const userContent = `Section: ${section}
 Prompt: ${promptText || "(generic)"}
 Response:
-${responseText || "(audio submission â€” transcript not available)"}`;
+${responseText || "(audio submission — transcript not available)"}`;
 
     const ai = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
       method: "POST",

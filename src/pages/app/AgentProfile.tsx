@@ -43,7 +43,7 @@ interface TelemetryStats {
 /**
  * GroUp Academy: Specialist Agent Professional Profile Node (AgentProfile)
  * Hardened responsive identity layout tracking dynamic credit costs and insulating parallel asynchronous handshakes.
- * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate · Phase Z1 Integration Stability Locked
  */
 export default function AgentProfile() {
  const { agentKey: unverifiedAgentKeyStr } = useParams<{ agentKey: string }>();
@@ -279,7 +279,7 @@ export default function AgentProfile() {
  <div className="rounded-lg border border-border/60 bg-card/40 p-2.5 text-center leading-none space-y-1 block shadow-2xs">
  <Star className="h-3.5 w-3.5 text-amber-500 fill-amber-500 mx-auto stroke-[1.8]" />
  <p className="text-xs sm:text-sm font-black font-mono text-foreground tabular-nums pt-0.5 leading-none">
- {telemetryStatsState.rating ? telemetryStatsState.rating.toFixed(1) : "â€”"}
+ {telemetryStatsState.rating ? telemetryStatsState.rating.toFixed(1) : "—"}
  </p>
  <p className="font-mono text-[9px] font-bold text-muted-foreground/30 uppercase tracking-tight block leading-none">
  {telemetryStatsState.reviews.toLocaleString()} Reviews

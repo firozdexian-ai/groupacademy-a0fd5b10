@@ -29,7 +29,7 @@ import { format } from "date-fns";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Career Guidance System: Intelligence Audit Terminal (Agent Sessions)
+ * Group Academy — Career Guidance System: Intelligence Audit Terminal (Agent Sessions)
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=sessions (Operator Conversation Audit Workspace)
  * Operations Mode: Automated Efficiency layout rendering tracking historical student assistant interactions.

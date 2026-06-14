@@ -37,7 +37,7 @@ interface MessagingChannelsTabProps {
 
 export function MessagingChannelsTab({
   agentKey,
-  defaultLabel = "Talent Executive â€” Bangladesh",
+  defaultLabel = "Talent Executive — Bangladesh",
   defaultRegion = "Bangladesh",
   title,
   description,
@@ -107,7 +107,7 @@ export function MessagingChannelsTab({
         account_id: accountId.trim(),
       });
       if (data?.ok) {
-        toast.success(`Connected${data.phone ? ` Â· ${data.phone}` : ""}`);
+        toast.success(`Connected${data.phone ? ` · ${data.phone}` : ""}`);
         setAccountId("");
         setHasStarted(false);
       } else {
@@ -141,7 +141,7 @@ export function MessagingChannelsTab({
     setReconciling(true);
     try {
       const data = await unipileConnect({ action: "reconcile", agent_key: agentKey });
-      if (data?.ok) toast.success(`Reconciled${data.phone ? ` Â· ${data.phone}` : ""}`);
+      if (data?.ok) toast.success(`Reconciled${data.phone ? ` · ${data.phone}` : ""}`);
       else toast.error(data?.error || "Reconcile failed");
     } catch (e: unknown) {
       toast.error(e.message);
@@ -235,7 +235,7 @@ export function MessagingChannelsTab({
               {hasStarted && (
                 <div className="p-3 bg-primary/10 border border-primary/20 rounded-xl">
                   <p className="text-xs text-primary font-medium">
-                    QR opened â€” complete the scan, then verify above if status doesn't flip automatically.
+                    QR opened — complete the scan, then verify above if status doesn't flip automatically.
                   </p>
                 </div>
               )}
@@ -283,7 +283,7 @@ export function MessagingChannelsTab({
                       <div className="min-w-0">
                         <div className="font-bold truncate text-sm">{c.label}</div>
                         <div className="text-[10px] font-mono text-muted-foreground truncate mt-0.5">
-                          {c.phone_e164 || c.unipile_account_id || "Awaiting connection"} Â· {c.region}
+                          {c.phone_e164 || c.unipile_account_id || "Awaiting connection"} · {c.region}
                         </div>
                       </div>
                     </div>

@@ -3,7 +3,7 @@ import { getCurrentUser } from "@/lib/auth";
 import { insertToolRun, listToolRunsForUser } from "@/domains/jobs/repo/jobsRepo";
 
 /**
- * Tool runs ledger â€” tracks each AI tool invocation by the current user
+ * Tool runs ledger — tracks each AI tool invocation by the current user
  * so we can show "Recent activity" and "Up next" recommendations.
  */
 

@@ -1,5 +1,5 @@
 ﻿// Auto-generated lightweight admin agent. Self-validates auth + admin role,
-// then forwards to Lovable AI gateway. No tool calls â€” pure drafting/analyst.
+// then forwards to Lovable AI gateway. No tool calls — pure drafting/analyst.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

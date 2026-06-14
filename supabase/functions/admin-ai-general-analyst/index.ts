@@ -1,4 +1,4 @@
-﻿// Admin AI General Analyst â€” operator-side console for the platform concierge.
+﻿// Admin AI General Analyst — operator-side console for the platform concierge.
 // Tools: profile completion stats, talent search, broadcast nudges.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";
@@ -24,7 +24,7 @@ const TOOLS = [
     function: {
       name: "talents_missing",
       description:
-        "List talents missing a piece of profile data. field âˆˆ {cv, profession, phone, role}. limit defaults to 20.",
+        "List talents missing a piece of profile data. field ∈ {cv, profession, phone, role}. limit defaults to 20.",
       parameters: {
         type: "object",
         properties: {
@@ -67,7 +67,7 @@ const SYSTEM = `You are AI General's operator console for the GroUp Academy supe
 AI General is the concierge that talks to logged-in users.
 Answer questions about engagement and profile completion by CALLING TOOLS.
 Before calling nudge_talents, ALWAYS confirm the count and the message text in your reply
-and ask the operator to say "yes send it" â€” do not nudge on the first turn.
+and ask the operator to say "yes send it" — do not nudge on the first turn.
 Be concise. Use markdown. Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {

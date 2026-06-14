@@ -1,5 +1,5 @@
 ﻿/**
- * Corporate Contacts Directory â€” Phase Z0 Hardened
+ * Corporate Contacts Directory — Phase Z0 Hardened
  * Version: 2024 Highly Professional SAAS UI
  * Fixes: S1 (Ownership Move), PII Masking Standardized
  */
@@ -190,7 +190,7 @@ export function ContactsTab() {
                         <Mail className="h-3 w-3 opacity-40 text-primary" /> {isAdmin ? contact.email : "hidden_for_privacy@groupacademy"}
                       </p>
                       <p className="text-sm font-medium text-muted-foreground flex items-center gap-2">
-                        <Phone className="h-3 w-3 opacity-40 text-primary" /> {isAdmin ? contact.phone : "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢"}
+                        <Phone className="h-3 w-3 opacity-40 text-primary" /> {isAdmin ? contact.phone : "••••••••"}
                       </p>
                     </div>
                   </TableCell>

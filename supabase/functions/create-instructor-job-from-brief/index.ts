@@ -1,5 +1,5 @@
 ﻿/**
- * Phase 4.1 â€” Atomic publish: course brief â†’ hidden instructor job.
+ * Phase 4.1 — Atomic publish: course brief → hidden instructor job.
  * Admin / content_lead only.
  */
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.49.4";
@@ -73,7 +73,7 @@ Deno.serve(async (req) => {
     const { data: job, error: jErr } = await admin
       .from("jobs")
       .insert({
-        title: `Instructor â€” ${brief.title}`,
+        title: `Instructor — ${brief.title}`,
         company_name: "GroUp Academy",
         description,
         job_type: "contract",

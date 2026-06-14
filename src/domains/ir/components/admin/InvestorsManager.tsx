@@ -244,7 +244,7 @@ export function InvestorsManager() {
  </SelectTrigger>
  <SelectContent className="rounded-xl border">
  <SelectItem value="all" className="font-bold text-[10px] text-primary">
- ðŸŒ ALL AUTHORITIES
+ 🌍 ALL AUTHORITIES
  </SelectItem>
  {vcFirms?.map((firm) => (
  <SelectItem key={firm.id} value={firm.id} className="font-bold text-[10px]">
@@ -315,7 +315,7 @@ export function InvestorsManager() {
  {investor.full_name}
  </p>
  <p className="text-[9px] font-bold text-muted-foreground/80 mt-1 truncate max-w-[250px]">
- {investor.title || "â€”"}
+ {investor.title || "—"}
  </p>
  </TableCell>
  <TableCell className="text-left min-w-[150px]">

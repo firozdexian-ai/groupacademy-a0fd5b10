@@ -11,9 +11,9 @@
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Generic Graph factories
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
   if (payload?.id) {
@@ -31,9 +31,9 @@ export async function deleteGraphRow(table: string, id: string): Promise<void> {
   if (error) throw error;
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // HR Org Graph master
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getHrGraphMaster() {
   const [verticalsRes, functionsRes, teamsRes, gradesRes, workforceRes] = await Promise.all([
@@ -57,9 +57,9 @@ export async function getHrGraphMaster() {
   };
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // HR Onboarding
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getHrOnboardingMaster() {
   const [tasksRes, workforceRes] = await Promise.all([
@@ -77,9 +77,9 @@ export async function getHrOnboardingMaster() {
   };
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // HR Payroll
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function getHrPayrollMaster() {
   const [payrollRes, workforceRes] = await Promise.all([
@@ -97,9 +97,9 @@ export async function getHrPayrollMaster() {
   };
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 // Workforce member search & creation
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─────────────────────────────────────────────────────────────────────────────
 
 export async function searchTalentsByNameOrEmail(searchPattern: string): Promise<unknown[]> {
   const { data } = await supabase
@@ -155,7 +155,7 @@ export async function insertWorkforceInstanceReturningId(payload: {
   return data.id as string;
 }
 
-// â”€â”€â”€ Phase 10j.5e: command center counters + rule mgmt â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5e: command center counters + rule mgmt ─────────────────────
 export async function countActiveWorkforceChannelConnections(): Promise<number> {
   const { count } = await (supabase as unknown)
     .from("workforce_channel_connections")
@@ -177,7 +177,7 @@ export async function deleteWorkforceRoutingRule(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5f: command center channel + rule CRUD â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5f: command center channel + rule CRUD ──────────────────────
 export async function listWorkforceChannelConnections(): Promise<unknown[]> {
   const { data, error } = await (supabase as unknown)
     .from("workforce_channel_connections")
@@ -219,14 +219,14 @@ export async function upsertWorkforceRoutingRule(
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5h4: RPC wrappers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5h4: RPC wrappers ──────────────────────────────────────────
 export async function getWorkforceDashboard(): Promise<unknown[]> {
   const { data, error } = await supabase.rpc("get_workforce_dashboard");
   if (error) throw error;
   return (data ?? []) as unknown[];
 }
 
-// â”€â”€â”€ HR Targets (Phase 10i.3) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── HR Targets (Phase 10i.3) ──────────────────────────────────────────────
 export async function listHrTargets(): Promise<unknown[]> {
   const { data, error } = await (supabase as unknown)
     .from("hr_targets")
@@ -261,7 +261,7 @@ export async function deleteHrTarget(id: string): Promise<void> {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Workforce Member Edit (W-5) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Workforce Member Edit (W-5) ──────────────────────────────────────────
 export async function updateWorkforceMember(
   id: string,
   patch: Partial<{
@@ -279,7 +279,7 @@ export async function updateWorkforceMember(
   if (error) throw error;
 }
 
-// â”€â”€â”€ Gro10x B2B â€” Company Workforce (W-7) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Gro10x B2B — Company Workforce (W-7) ────────────────────────────────
 /**
  * Fetches active workforce members associated with a specific company.
  * Joins via the talents table which carries company_id.
@@ -296,7 +296,7 @@ export async function getWorkforceMembersForCompany(companyId: string): Promise<
   return (data ?? []).filter((m: unknown) => m.talents !== null) as unknown[];
 }
 
-// â”€â”€â”€ Talent Shell â€” My Workforce Assignment (W-8) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Talent Shell — My Workforce Assignment (W-8) ────────────────────────
 /**
  * Returns the workforce assignment record for the logged-in talent, if unknown.
  */

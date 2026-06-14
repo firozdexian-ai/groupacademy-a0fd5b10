@@ -1,8 +1,8 @@
 // Action-based Unipile WhatsApp connector for messaging_channels.
 // Actions:
-//   start_hosted_auth â†’ upsert pending channel + return Unipile hosted-auth URL
-//   verify_and_save   â†’ fetch account from Unipile, mark channel active, register webhook
-//   delete            â†’ remove account from Unipile + delete row
+//   start_hosted_auth → upsert pending channel + return Unipile hosted-auth URL
+//   verify_and_save   → fetch account from Unipile, mark channel active, register webhook
+//   delete            → remove account from Unipile + delete row
 
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
@@ -96,7 +96,7 @@ Deno.serve(async (req) => {
 
     if (!agent_key) return json({ error: "agent_key required" }, 400);
 
-    // â”€â”€â”€â”€â”€ delete â”€â”€â”€â”€â”€
+    // ───── delete ─────
     if (action === "delete") {
       const { data: existing } = await admin
         .from("messaging_channels")
@@ -114,7 +114,7 @@ Deno.serve(async (req) => {
       return json({ ok: true });
     }
 
-    // â”€â”€â”€â”€â”€ start_hosted_auth â”€â”€â”€â”€â”€
+    // ───── start_hosted_auth ─────
     if (action === "start_hosted_auth") {
       // Find or create the channel row (UNIQUE on agent_key)
       const { data: existing } = await admin
@@ -274,7 +274,7 @@ Deno.serve(async (req) => {
       return { phone };
     };
 
-    // â”€â”€â”€â”€â”€ verify_and_save â”€â”€â”€â”€â”€
+    // ───── verify_and_save ─────
     if (action === "verify_and_save") {
       if (!account_id) return json({ error: "account_id required" }, 400);
 
@@ -298,7 +298,7 @@ Deno.serve(async (req) => {
       return json({ ok: true, phone, account_id, channel_id: channel.id });
     }
 
-    // â”€â”€â”€â”€â”€ reconcile â”€â”€â”€â”€â”€
+    // ───── reconcile ─────
     // Look up the WhatsApp account in Unipile by name = "group-<agent_key>" and activate.
     if (action === "reconcile") {
       const { data: channel } = await admin

@@ -148,7 +148,7 @@ export function MRRTargetManager() {
  <h2 className="text-3xl font-semibold uppercase tracking-tight italic leading-none">Target Command</h2>
  </div>
  <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
- MRR Optimization Â· Service Mix Simulation
+ MRR Optimization · Service Mix Simulation
  </p>
  </div>
  <div className="flex items-center gap-3">
@@ -203,7 +203,7 @@ export function MRRTargetManager() {
  ) : (
  <Zap className={cn("h-4 w-4", hasChanges ? "fill-current" : "")} />
  )}
- {saveMutation.isPending ? "Savingâ€¦" : "Synchronize"}
+ {saveMutation.isPending ? "Saving…" : "Synchronize"}
  </Button>
  </div>
  )}

@@ -6,7 +6,7 @@
  *
  * Mutation flows (signIn, signUp, signInWithOAuth, onAuthStateChange,
  * password reset, password update) stay in `src/hooks/useAuth.ts` and the
- * dedicated auth pages â€” those are the only legitimate places to touch
+ * dedicated auth pages — those are the only legitimate places to touch
  * session state imperatively.
  */
 import { supabase } from "@/integrations/supabase/client";

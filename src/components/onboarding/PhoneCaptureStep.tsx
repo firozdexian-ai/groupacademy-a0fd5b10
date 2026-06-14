@@ -59,7 +59,7 @@ export function PhoneCaptureStep({ onContinue }: Props) {
     const fullPhone = `${countryCode}${phone.replace(/\D/g, "")}`;
     trackEvent("onboarding_phone_save_requested", { countryCode });
 
-    const toastId = toast.loading("Checking your phone numberâ€¦");
+    const toastId = toast.loading("Checking your phone number…");
 
     try {
       const existing = await findTalentByPhoneExceptId(fullPhone, talent.id);
@@ -93,7 +93,7 @@ export function PhoneCaptureStep({ onContinue }: Props) {
         action: "commit_onboarding_phone",
         talentId: talent?.id,
       });
-      toast.error("Couldn't save your phone â€” please try again.", { id: toastId });
+      toast.error("Couldn't save your phone — please try again.", { id: toastId });
     } finally {
       setIsSaving(false);
     }
@@ -138,7 +138,7 @@ export function PhoneCaptureStep({ onContinue }: Props) {
           {isSaving ? (
             <>
               <Loader2 className="h-4 w-4 animate-spin stroke-[2.5] mr-2" />
-              <span>Savingâ€¦</span>
+              <span>Saving…</span>
             </>
           ) : (
             <>

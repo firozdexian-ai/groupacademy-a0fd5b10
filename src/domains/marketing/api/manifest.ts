@@ -1,5 +1,5 @@
 ﻿/**
- * Marketing domain â€” barrel re-exporting typed edge wrappers (Phase 9g).
+ * Marketing domain — barrel re-exporting typed edge wrappers (Phase 9g).
  * Legacy `marketingApi` const removed.
  */
 export { leadHuntMatch } from "./marketingApi";

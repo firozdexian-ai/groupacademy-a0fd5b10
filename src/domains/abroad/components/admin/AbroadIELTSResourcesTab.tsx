@@ -14,7 +14,7 @@ import { cn } from "@/lib/utils";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy â€” Career Abroad: IELTS Resources Management Tab
+ * Group Academy — Career Abroad: IELTS Resources Management Tab
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=ielts-resources (Admin Command Center Surface)[cite: 2, 4]
  * Operations Mode: Automated Efficiency catalog manager backing language prep tracks[cite: 4].

@@ -173,7 +173,7 @@ export function MockInterviewCodeGenerator({ leadEmail, leadName }: MockIntervie
  disabled={generating}
  className="w-full h-10 rounded-xl font-semibold text-lg shadow-sm hover:scale-[1.02] active:scale-95 transition-transform"
  >
- {generating ? "Savingâ€¦" : "Generate"}
+ {generating ? "Saving…" : "Generate"}
  </Button>
  </div>
  )}

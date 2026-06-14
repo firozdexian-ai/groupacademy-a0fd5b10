@@ -653,7 +653,7 @@ export function AgentTriggers() {
                       variant="outline"
                       className="mb-2 text-[10px] rounded border-border/60 text-muted-foreground bg-muted/20 px-1"
                     >
-                      Route: {o.channel} â†’ {o.recipient_kind}
+                      Route: {o.channel} → {o.recipient_kind}
                     </Badge>
 
                     <div className="text-xs text-foreground/80 font-medium leading-relaxed pl-2 border-l border-border/60">

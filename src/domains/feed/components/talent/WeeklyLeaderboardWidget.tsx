@@ -140,7 +140,7 @@ export function WeeklyLeaderboardWidget() {
 
         {/* Incentives Program Explainer Copy */}
         <p className="text-[10px] font-medium text-muted-foreground/80 pt-2 border-t border-border/10 select-text leading-normal text-left">
-          Top members receive <span className="font-bold text-foreground tabular-nums">100â€“500 bonus credits</span> added directly to their account balance every Monday morning.
+          Top members receive <span className="font-bold text-foreground tabular-nums">100–500 bonus credits</span> added directly to their account balance every Monday morning.
         </p>
       </CardContent>
     </Card>

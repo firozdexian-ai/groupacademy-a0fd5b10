@@ -21,7 +21,7 @@ const TEMPLATES: { id: TemplateId; name: string; description: string }[] = [
 ];
 
 /**
- * ATS-Friendly CV Maker â€” generates a clean text-extractable CV PDF
+ * ATS-Friendly CV Maker — generates a clean text-extractable CV PDF
  * using the talent's profile data. Credits are only deducted on download
  * after the user previews the generated PDF and selects a template.
  */
@@ -124,7 +124,7 @@ export default function CVMaker() {
  } else {
  writeLine(talent.fullName || "Your Name", { bold: true, size: tpl === "minimal" ? 16 : 18, color: 20 });
  }
- const contact = [talent.email, talent.phone, talent.country].filter(Boolean).join(" Â· ");
+ const contact = [talent.email, talent.phone, talent.country].filter(Boolean).join(" · ");
  writeLine(contact, { size: 10, color: 100 });
  if (talent.linkedinUrl) writeLine(talent.linkedinUrl, { size: 10, color: 100 });
  y += 8;
@@ -138,8 +138,8 @@ export default function CVMaker() {
  if (talent.experience?.length) {
  writeHeading("Experience");
  talent.experience.forEach((exp: unknown) => {
- writeLine(`${exp.title || ""}${exp.company ? " â€” " + exp.company : ""}`, { bold: true });
- const period = [exp.startDate, exp.endDate || (exp.current ? "Present" : "")].filter(Boolean).join(" â€“ ");
+ writeLine(`${exp.title || ""}${exp.company ? " — " + exp.company : ""}`, { bold: true });
+ const period = [exp.startDate, exp.endDate || (exp.current ? "Present" : "")].filter(Boolean).join(" – ");
  if (period) writeLine(period, { size: 9, color: 110 });
  if (exp.description) writeLine(exp.description);
  y += 6;
@@ -151,14 +151,14 @@ export default function CVMaker() {
  talent.education.forEach((ed: unknown) => {
  writeLine(`${ed.degree || ""}${ed.field ? ", " + ed.field : ""}`, { bold: true });
  if (ed.institution) writeLine(ed.institution);
- if (ed.startDate || ed.endDate) writeLine([ed.startDate, ed.endDate].filter(Boolean).join(" â€“ "), { size: 9, color: 110 });
+ if (ed.startDate || ed.endDate) writeLine([ed.startDate, ed.endDate].filter(Boolean).join(" – "), { size: 9, color: 110 });
  y += 6;
  });
  }
 
  if (talent.skills?.length) {
  writeHeading("Skills");
- const skillNames = talent.skills.map((s: unknown) => s.name || s).filter(Boolean).join(" Â· ");
+ const skillNames = talent.skills.map((s: unknown) => s.name || s).filter(Boolean).join(" · ");
  writeLine(skillNames);
  }
 
@@ -249,11 +249,11 @@ export default function CVMaker() {
  <Card className="rounded-2xl border border-border/40">
  <CardContent className="p-4 space-y-3">
  <p className="text-sm">
- We'll build a single-column ATS-safe CV from your profile data â€” no images, no fancy fonts, no columns.
+ We'll build a single-column ATS-safe CV from your profile data — no images, no fancy fonts, no columns.
  </p>
  <ul className="text-xs text-muted-foreground space-y-1 list-disc pl-5">
  <li>Uses your name, contact, summary, experience, education and skills</li>
- <li>Switch templates anytime â€” preview rebuilds automatically</li>
+ <li>Switch templates anytime — preview rebuilds automatically</li>
  <li>Credits are only spent when you download</li>
  </ul>
 
@@ -276,7 +276,7 @@ export default function CVMaker() {
  <div className="flex items-center justify-between px-3 py-2 border-b border-border/40 bg-muted/20">
  <div className="flex items-center gap-2 text-xs font-medium">
  <Eye className="h-3.5 w-3.5 text-primary" />
- Preview Â· <span className="text-muted-foreground">{TEMPLATES.find(t => t.id === template)?.name}</span>
+ Preview · <span className="text-muted-foreground">{TEMPLATES.find(t => t.id === template)?.name}</span>
  </div>
  <Badge variant="outline" className="gap-1 text-[10px]">
  <Coins className="h-3 w-3 text-amber-500" /> {cost} credits
@@ -325,7 +325,7 @@ export default function CVMaker() {
  <p className="text-xs text-muted-foreground">
  Make sure your profile is up to date for the best result. Update it from{" "}
  <button onClick={() => navigate("/app/profile/edit")} className="text-primary font-medium underline">
- Profile Â· Edit
+ Profile · Edit
  </button>
  .
  </p>

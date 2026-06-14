@@ -39,7 +39,7 @@ const STRATEGIC_GOALS_DIRECTORY: Record<string, string> = {
 /**
  * GroUp Academy: Personalized AI Career Coach Dashboard (CareerCoach)
  * Hardened communications portal executing automated coach-to-talent bindings and isolating inference panels from layout shifting.
- * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
  */
 export default function CareerCoach() {
  const { talent: talentProfileRecord } = useTalent();
@@ -134,7 +134,7 @@ export default function CareerCoach() {
  const coreGoalClauseStr = resolvedGoalLabelStr
  ? ` You indicated your current target landmark objective is to ${resolvedGoalLabelStr}.`
  : "";
- return `Hi ${resolvedGivenNameStr}, I am ${activeCoachInstructor.name} â€” your specialized performance Career Coach.${coreGoalClauseStr} Shall we construct a milestone 30-day advancement sprint, calibrate structural resume formatting errors, or map corporate positions aligned with your capabilities?`;
+ return `Hi ${resolvedGivenNameStr}, I am ${activeCoachInstructor.name} — your specialized performance Career Coach.${coreGoalClauseStr} Shall we construct a milestone 30-day advancement sprint, calibrate structural resume formatting errors, or map corporate positions aligned with your capabilities?`;
  }, [activeCoachInstructor, resolvedGivenNameStr, resolvedGoalLabelStr]);
 
  const contextStarterChips = React.useMemo<StarterChipConfig[]>(() => {
@@ -175,7 +175,7 @@ export default function CareerCoach() {
  </div>
  <p className="font-mono text-sm font-medium text-muted-foreground/50 uppercase tracking-tight block leading-none pt-1.5">
  {activeCoachInstructor
- ? `OPERATIONAL MODERATOR: ${activeCoachInstructor.name.toUpperCase()} â€¢ ASSIGNED TO TARGET LANDMARK: ${resolvedGoalLabelStr ? resolvedGoalLabelStr.toUpperCase() : "GENERAL IMPROVEMENT PROTOCOL"}`
+ ? `OPERATIONAL MODERATOR: ${activeCoachInstructor.name.toUpperCase()} • ASSIGNED TO TARGET LANDMARK: ${resolvedGoalLabelStr ? resolvedGoalLabelStr.toUpperCase() : "GENERAL IMPROVEMENT PROTOCOL"}`
  : "Continuous AI guidance counseling for systemic professional track transitions."}
  </p>
  </header>

@@ -18,7 +18,7 @@ import {
 } from "lucide-react";
 
 /**
- * useAdminAgents â€” Reads database configurations for administrative profiles,
+ * useAdminAgents — Reads database configurations for administrative profiles,
  * and merges matching visual properties (icons, accents, suggest parameters)
  * to support active chat instances across dashboard views.
  */

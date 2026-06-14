@@ -82,7 +82,7 @@ export function UgcFeedTab() {
   <div className="flex items-center gap-2 font-medium max-w-md">
   <MessageSquare className="h-4 w-4 text-primary shrink-0" />
   <span className="truncate">
-  {row.text_content ? row.text_content.substring(0, 60) + (row.text_content.length > 60 ? "â€¦" : "") : "(no text)"}
+  {row.text_content ? row.text_content.substring(0, 60) + (row.text_content.length > 60 ? "…" : "") : "(no text)"}
   </span>
   </div>
   </TableCell>

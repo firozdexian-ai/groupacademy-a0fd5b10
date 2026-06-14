@@ -272,7 +272,7 @@ export function ProfessionsTab() {
  <Input name="name" defaultValue={editingItem?.name} required className="rounded-xl bg-surface text-primary" />
  </div>
  <div className="grid gap-2">
- <Label>Credit Cost (1 cr = à§³2)</Label>
+ <Label>Credit Cost (1 cr = ৳2)</Label>
  <Input type="number" name="credit_cost" defaultValue={editingItem?.credit_cost} required className="rounded-xl bg-surface text-primary" />
  </div>
  <div className="grid gap-2">

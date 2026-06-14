@@ -33,7 +33,7 @@ import { cn } from "@/lib/utils";
 import { ConfirmPurge } from "@/platform/admin/ui/ConfirmPurge";
 import { X } from "lucide-react";
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ Generic Registry Shell â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ───────────────────────── Generic Registry Shell ─────────────────────────
 
 type AccentColor = "primary" | "emerald" | "blue" | "amber";
 
@@ -167,7 +167,7 @@ function RowActions({ onEdit, onDelete, label = "node" }: { onEdit: () => void; 
  );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ COUNTRIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ───────────────────────── COUNTRIES ─────────────────────────
 
 export function GtmCountriesTab() {
  const {
@@ -302,7 +302,7 @@ export function GtmCountriesTab() {
  );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ REGIONS / STATES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ───────────────────────── REGIONS / STATES ─────────────────────────
 
 export function GtmStatesTab() {
  const {
@@ -334,9 +334,9 @@ export function GtmStatesTab() {
  renderRow={(row: unknown) => (
  <TableRow key={row.id}>
  <TableCell className="font-bold">{row.name}</TableCell>
- <TableCell className="font-mono text-xs">{row.code || "â€”"}</TableCell>
+ <TableCell className="font-mono text-xs">{row.code || "—"}</TableCell>
  <TableCell className="text-sm">
- {gtmGraphQuery.data?.countries.find((c) => c.id === row.country_id)?.name || "â€”"}
+ {gtmGraphQuery.data?.countries.find((c) => c.id === row.country_id)?.name || "—"}
  </TableCell>
  <TableCell className="text-right">
  <RowActions
@@ -402,7 +402,7 @@ export function GtmStatesTab() {
  );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CITIES â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ───────────────────────── CITIES ─────────────────────────
 
 export function GtmCitiesTab() {
  const {
@@ -438,7 +438,7 @@ export function GtmCitiesTab() {
  <TableRow key={row.id}>
  <TableCell className="font-bold">{row.name}</TableCell>
  <TableCell className="text-sm">
- {region ? `${region.name} ${country ? `(${country.iso2})` : ""}` : "â€”"}
+ {region ? `${region.name} ${country ? `(${country.iso2})` : ""}` : "—"}
  </TableCell>
  <TableCell>
  <Badge
@@ -526,7 +526,7 @@ export function GtmCitiesTab() {
  );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLUSTERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ───────────────────────── CLUSTERS ─────────────────────────
 
 export function GtmClustersTab() {
  const {
@@ -559,7 +559,7 @@ export function GtmClustersTab() {
  <TableRow key={row.id}>
  <TableCell className="font-bold">{row.name}</TableCell>
  <TableCell className="text-sm text-muted-foreground max-w-md truncate">
- {row.description || "â€”"}
+ {row.description || "—"}
  </TableCell>
  <TableCell>
  <div className="flex items-center gap-1.5 flex-wrap">
@@ -652,7 +652,7 @@ export function GtmClustersTab() {
  );
 }
 
-// â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€ CLUSTER COMPOSITION PICKERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ───────────────────────── CLUSTER COMPOSITION PICKERS ─────────────────────────
 
 function ClusterCountryPicker({
  countries,
@@ -685,7 +685,7 @@ function ClusterCountryPicker({
  variant="outline"
  className="font-mono text-[10px] gap-1 pr-1 border-amber-500/40"
  >
- {c.iso2} Â· {c.name}
+ {c.iso2} · {c.name}
  <button
  onClick={() => toggle(id)}
  className="hover:bg-destructive/20 rounded-sm p-0.5"

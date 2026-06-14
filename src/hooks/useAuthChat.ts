@@ -133,7 +133,7 @@ function getFallbackProtocol(context: Record<string, unknown>): {
 } {
   const step = context.step as string;
   const protocols: Record<string, { reply: string; action: AuthAction; quiz?: QuizData }> = {
-    welcome: { reply: "Hi, I'm Aisha ðŸ‘‹ What email should I use to set you up?", action: "collect_email" },
+    welcome: { reply: "Hi, I'm Aisha 👋 What email should I use to set you up?", action: "collect_email" },
     email_found: { reply: "Welcome back! Enter your password to continue.", action: "collect_password" },
     email_not_found: { reply: "Looks like you're new here. What's your full name?", action: "collect_name" },
     phone_collected: {
@@ -143,7 +143,7 @@ function getFallbackProtocol(context: Record<string, unknown>): {
     },
     quiz_passed: { reply: "Great. Now create a password (at least 8 characters).", action: "set_password" },
     signup_success: {
-      reply: "You're in ðŸŽ‰ Welcome to GroUp Academy. We've added 250 welcome credits to your wallet.",
+      reply: "You're in 🎉 Welcome to GroUp Academy. We've added 250 welcome credits to your wallet.",
       action: "complete",
     },
   };
@@ -271,7 +271,7 @@ export function useAuthChat() {
               dispatch({
                 type: "ADD_MESSAGE",
                 role: "assistant",
-                content: "That doesn't look like a valid email â€” try again?",
+                content: "That doesn't look like a valid email — try again?",
               });
               return;
             }
@@ -314,7 +314,7 @@ export function useAuthChat() {
               dispatch({
                 type: "ADD_MESSAGE",
                 role: "assistant",
-                content: "I didn't recognise that country â€” could you type it again? (e.g. India, Bangladesh)",
+                content: "I didn't recognise that country — could you type it again? (e.g. India, Bangladesh)",
               });
               return;
             }
@@ -325,7 +325,7 @@ export function useAuthChat() {
             dispatch({
               type: "ADD_MESSAGE",
               role: "assistant",
-              content: `Got it. What's your mobile number? (e.g. ${matched.phoneCode}â€¦)`,
+              content: `Got it. What's your mobile number? (e.g. ${matched.phoneCode}…)`,
             });
             dispatch({ type: "SET_ACTION", value: "collect_phone" });
             break;
@@ -337,7 +337,7 @@ export function useAuthChat() {
               dispatch({
                 type: "ADD_MESSAGE",
                 role: "assistant",
-                content: "That phone number looks short â€” please enter the full number.",
+                content: "That phone number looks short — please enter the full number.",
               });
               return;
             }
@@ -382,7 +382,7 @@ export function useAuthChat() {
       const s = stateRef.current;
       if (s.isLoading) return;
       dispatch({ type: "SET_LOADING", value: true });
-      dispatch({ type: "ADD_MESSAGE", role: "user", content: "â€¢â€¢â€¢â€¢â€¢â€¢â€¢â€¢" });
+      dispatch({ type: "ADD_MESSAGE", role: "user", content: "••••••••" });
 
       try {
         if (s.flow === "login") {
@@ -390,7 +390,7 @@ export function useAuthChat() {
           dispatch({
             type: "ADD_MESSAGE",
             role: "assistant",
-            content: "Signed in. Taking you to your dashboardâ€¦",
+            content: "Signed in. Taking you to your dashboard…",
           });
           dispatch({ type: "COMPLETE" });
         } else {
@@ -440,7 +440,7 @@ export function useAuthChat() {
       return;
     }
     await resetPassword(s.collected.email);
-    dispatch({ type: "ADD_MESSAGE", role: "assistant", content: "Reset link sent â€” check your inbox." });
+    dispatch({ type: "ADD_MESSAGE", role: "assistant", content: "Reset link sent — check your inbox." });
   }, [resetPassword]);
 
   const updatePhoneData = useCallback((phone: string, countryCode: string, country: string) => {

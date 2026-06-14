@@ -53,7 +53,7 @@ const SKELETON_ROWS_ROSTER = [1, 2, 3, 4];
 /**
  * GroUp Academy: Professional Connection Request Registry (Connections)
  * Hardened responsive communication control workspace grouping pending requests and isolating async state handlers.
- * Version: Launch Candidate Â· Phase Z1 Production Type Contract Sealed
+ * Version: Launch Candidate · Phase Z1 Production Type Contract Sealed
  */
 export default function Connections() {
  const { talent: currentTalentUserNode } = useTalent();
@@ -294,7 +294,7 @@ export default function Connections() {
  <span>
  {formatDistanceToNow(new Date(connectionRowItem.created_at), { addSuffix: true }).toUpperCase()}
  </span>
- <span className="opacity-30 select-none">â€¢</span>
+ <span className="opacity-30 select-none">•</span>
  <span>Draw Allocation: {connectionRowItem.fee_paid.toLocaleString()} Credits</span>
  </div>
  </div>

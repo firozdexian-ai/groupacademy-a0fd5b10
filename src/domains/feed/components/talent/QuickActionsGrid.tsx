@@ -25,7 +25,7 @@ interface QuickAgent {
 const VISIBLE_LIMIT = 4;
 
 /**
- * Quick Actions Grid â€” Personalized navigation shortcuts to the user's most active AI assistants.
+ * Quick Actions Grid — Personalized navigation shortcuts to the user's most active AI assistants.
  * Pulls recent chat engagement analytics to pin frequent companions, appending popular platform agents as fallbacks.
  */
 export function QuickActionsGrid() {

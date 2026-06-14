@@ -1,4 +1,4 @@
-﻿// Company Agent Tools â€” single dispatcher for all company-side agent tool calls.
+﻿// Company Agent Tools — single dispatcher for all company-side agent tool calls.
 // Verifies caller, resolves their active company (or company_id sent by runtime),
 // runs the requested tool, returns { ok, result, canvas? }.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
@@ -20,7 +20,7 @@ interface ToolReq {
 }
 
 // ---------- Per-tool argument schemas (Phase Z0 hardening, relaxed) ----------
-// We deliberately do NOT enforce uuid() format here â€” LLMs sometimes pass
+// We deliberately do NOT enforce uuid() format here — LLMs sometimes pass
 // short ids or slugs and the underlying tables/RPCs already validate. We
 // only catch obviously bad shapes so the LLM can self-correct on retry.
 const idLike = z.string().min(1);
@@ -302,7 +302,7 @@ async function reveal_talent(ctx: Ctx, a: unknown) {
   return {
     ok: true, result: { talent: t, credits_spent: credits },
     canvas: { type: "talent_card", payload: { talent: t } },
-    user_message: credits ? `Revealed. 5 credits deducted.` : `Already revealed earlier â€” no charge.`,
+    user_message: credits ? `Revealed. 5 credits deducted.` : `Already revealed earlier — no charge.`,
   };
 }
 
@@ -553,7 +553,7 @@ async function move_application_stage(ctx: Ctx, a: unknown) {
   return {
     ok: true,
     result: { application_id: appId, from, to, job_title: (app as unknown).jobs?.title ?? null },
-    user_message: `Moved applicant from "${from}" â†’ "${to}".`,
+    user_message: `Moved applicant from "${from}" → "${to}".`,
   };
 }
 

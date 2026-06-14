@@ -172,7 +172,7 @@ serve(async (req) => {
             content: `You are a career matcher for GroUp Academy. 
             CRITICAL RULES (in order):
             1. The candidate is in ${talentCountry}. Jobs where "is_geographically_relevant" is true MUST rank higher than non-relevant jobs.
-            2. Jobs with "verified_mastery_score" >= 60 OR "verified_credentials" >= 1 are STRONG matches â€” boost them and surface first.
+            2. Jobs with "verified_mastery_score" >= 60 OR "verified_credentials" >= 1 are STRONG matches — boost them and surface first.
             3. Non-relevant jobs (different country, not remote) MUST NOT exceed 55%, even with perfect skill match.
             Rank the top 12 jobs.`,
           },

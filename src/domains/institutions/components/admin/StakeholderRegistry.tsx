@@ -1,5 +1,5 @@
 ﻿/**
- * Stakeholder Registry Hub â€” Phase INST-Z2 Hardened
+ * Stakeholder Registry Hub — Phase INST-Z2 Hardened
  * CTO Version: May 2026
  * Fixes: Static 1000 Node Count Bug, Country Filter Context Tracking
  * Rules: Retains Immutable Dialog fields, metadata layers, and action scopes natively.
@@ -153,7 +153,7 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
 
   // Automated system notification bridge helper to align with Digital Workforce telemetry requirements
   const lightenAgentNotification = (_action: string, _registryTable: string) => {
-    // Reserved for future Digital Workforce signal pipe â€” no-op until wired.
+    // Reserved for future Digital Workforce signal pipe — no-op until wired.
   };
 
   const rows = useMemo(() => {
@@ -176,8 +176,8 @@ export function StakeholderRegistry({ table, title, fallbackTypeOptions }: Props
             <h2 className="text-4xl font-medium tracking-tighter italic leading-none">{title}</h2>
           </div>
           <p className="text-[10px] font-medium tracking-[0.3em] text-muted-foreground/60 italic uppercase">
-            Global Graph Registry Â· Total Nodes: {listQuery.data?.length || 0}{" "}
-            {rows.length !== (listQuery.data?.length || 0) && `Â· Filtered Match: ${rows.length}`}
+            Global Graph Registry · Total Nodes: {listQuery.data?.length || 0}{" "}
+            {rows.length !== (listQuery.data?.length || 0) && `· Filtered Match: ${rows.length}`}
           </p>
         </div>
         <Button

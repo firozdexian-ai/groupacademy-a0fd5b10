@@ -54,7 +54,7 @@ export default function Gro10xShortlist() {
   if (loading) {
     return (
       <div className="py-10 text-center text-sm text-slate-400 inline-flex items-center gap-2 w-full justify-center">
-        <Loader2 className="h-4 w-4 animate-spin" /> Loading shortlistâ€¦
+        <Loader2 className="h-4 w-4 animate-spin" /> Loading shortlist…
       </div>
     );
   }
@@ -68,7 +68,7 @@ export default function Gro10xShortlist() {
           to="/gro10x/c/sourcer"
           className="inline-flex items-center gap-1 text-[11px] text-[#33E1E4] hover:underline"
         >
-          Ask Sourcer to find candidates â†’
+          Ask Sourcer to find candidates →
         </Link>
       </div>
     );
@@ -90,7 +90,7 @@ export default function Gro10xShortlist() {
                 {it.talents?.full_name ?? "Candidate"}
               </p>
               <p className="text-[11px] text-slate-400 truncate">
-                {it.talents?.headline ?? it.talents?.profession ?? "â€”"}
+                {it.talents?.headline ?? it.talents?.profession ?? "—"}
               </p>
               <div className={`mt-0.5 flex items-center gap-2 text-[10px] ${GRO10X_MUTED}`}>
                 {it.talents?.country && (

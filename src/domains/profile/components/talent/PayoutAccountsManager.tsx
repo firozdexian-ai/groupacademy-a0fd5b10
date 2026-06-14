@@ -39,7 +39,7 @@ const METHOD_LABEL = {
 /**
  * GroUp Academy: Authoritative Disbursement Ledger Configuration Terminal (PayoutAccountsManager)
  * An operational sandbox orchestrating multi-channel payout accounts, routing keys, and primary flags.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function PayoutAccountsManager() {
   const queryClient = useQueryClient();
@@ -246,7 +246,7 @@ export function PayoutAccountsManager() {
           <div className="flex items-center gap-2 py-4 text-muted-foreground select-none leading-none w-full">
             <Loader2 className="h-4 w-4 animate-spin text-primary stroke-[2.5]" />
             <span className="text-[10px] font-extrabold uppercase tracking-wider pl-0.5 animate-pulse">
-              Loading payout accountsâ€¦
+              Loading payout accounts…
             </span>
           </div>
         ) : rows.length === 0 ? (

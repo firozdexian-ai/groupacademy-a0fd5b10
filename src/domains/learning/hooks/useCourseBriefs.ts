@@ -104,7 +104,7 @@ export function usePublishBrief() {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["course-briefs"] });
-      toast.success("Brief published â€” instructor job is now open");
+      toast.success("Brief published — instructor job is now open");
     },
     onError: (err: unknown) => {
       // Digital Workforce Sensor: Critical interceptor for background orchestration faults

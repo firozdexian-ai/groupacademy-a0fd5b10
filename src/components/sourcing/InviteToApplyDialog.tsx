@@ -34,7 +34,7 @@ interface ActiveJobNode {
 /**
  * GroUp Academy: Employer Job Invitation Dispatch Gateway Terminal (InviteToApplyDialog)
  * An authoritative operational sandbox managing async invitation routing, telemetry checks, and corporate ledger sync tasks.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }: InviteToApplyDialogProps) {
   const queryClient = useQueryClient();
@@ -107,7 +107,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
     setSaving(true);
     trackEvent("job_invitation_dispatch_initiated", { targetSelectedJobId });
     const dynamicToastTrackerId = toast.loading(
-      "Processing cryptography handshake parameters over secure tracking rowsâ€¦",
+      "Processing cryptography handshake parameters over secure tracking rows…",
     );
 
     try {
@@ -237,7 +237,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
               value={note}
               disabled={saving}
               onChange={(e) => setNote(e.target.value)}
-              placeholder="Inject precise conversion messaging notes detailing platform alignment, salary parities, or custom deliverablesâ€¦"
+              placeholder="Inject precise conversion messaging notes detailing platform alignment, salary parities, or custom deliverables…"
               className="w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3.5 leading-relaxed resize-none shadow-inner"
               maxLength={400}
             />
@@ -265,7 +265,7 @@ export function InviteToApplyDialog({ open, onOpenChange, companyId, talentId }:
             {saving ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Syncing Pipeline Ledgerâ€¦</span>
+                <span>Syncing Pipeline Ledger…</span>
               </>
             ) : (
               <>

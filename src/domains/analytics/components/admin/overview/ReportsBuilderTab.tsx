@@ -90,7 +90,7 @@ export function ReportsBuilderTab() {
 
       if (payload?.error) {
         const detail = payload.detail
-          ? ` â€” ${typeof payload.detail === "string" ? payload.detail : JSON.stringify(payload.detail)}`
+          ? ` — ${typeof payload.detail === "string" ? payload.detail : JSON.stringify(payload.detail)}`
           : "";
         throw new Error(`${payload.error}${detail}`);
       }
@@ -170,7 +170,7 @@ export function ReportsBuilderTab() {
                 <CardTitle className="text-xl font-bold tracking-tight text-foreground">{spec.title}</CardTitle>
                 {spec.period?.from && (
                   <CardDescription className="text-xs text-muted-foreground font-medium">
-                    Reporting window: {new Date(spec.period.from).toLocaleDateString("en-US")} â€”{" "}
+                    Reporting window: {new Date(spec.period.from).toLocaleDateString("en-US")} —{" "}
                     {new Date(spec.period.to ?? "").toLocaleDateString("en-US")}
                   </CardDescription>
                 )}

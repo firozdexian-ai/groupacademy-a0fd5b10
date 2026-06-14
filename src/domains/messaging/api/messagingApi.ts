@@ -1,5 +1,5 @@
 ﻿/**
- * Messaging domain â€” typed edge function wrappers (Phase 9g + 9h).
+ * Messaging domain — typed edge function wrappers (Phase 9g + 9h).
  */
 import { supabase } from "@/integrations/supabase/client";
 import { EdgeFunctionError } from "@/edge/EdgeFunctionError";

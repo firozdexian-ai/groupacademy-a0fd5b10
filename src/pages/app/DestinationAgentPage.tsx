@@ -50,7 +50,7 @@ interface DatabaseMessageRow {
 /**
  * GroUp Academy: AI Study Abroad Destination Advisor Interface (DestinationAgentPage)
  * Hardened conversation workspace orchestrating secure agent queries, tracking timeline histories, and anchoring scroll parameters.
- * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate · Phase Z1 Integration Stability Locked
  */
 export default function DestinationAgentPage() {
  const { country: unverifiedCountryParamStr } = useParams<{ country: string }>();
@@ -208,7 +208,7 @@ export default function DestinationAgentPage() {
  {/* dashboard LEVEL 1: DESTINATION dashboard TOP SUMMARY CAP SPEC MATRIX HEADER */}
  <Card className="m-4 p-3.5 rounded-lg border border-border/60 bg-card/40 flex items-center gap-3.5 select-none shrink-0 shadow-none overflow-hidden">
  <div className="text-3xl pointer-events-none shrink-0" role="img" aria-hidden="true">
- {destinationAgentMetadata.flag_emoji || "ðŸŒ"}
+ {destinationAgentMetadata.flag_emoji || "🌐"}
  </div>
  <div className="flex-1 min-w-0 leading-none space-y-1 block">
  <div className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground truncate block select-text pt-0.5">
@@ -260,9 +260,9 @@ export default function DestinationAgentPage() {
  <ul className="space-y-1 block font-sans select-text tracking-normal">
  {availableProgramsCollection.slice(0, 5).map((programItem) => (
  <li key={`available-program-row-node-${programItem.id}`} className="truncate block">
- <span>â€¢</span>{" "}
+ <span>•</span>{" "}
  <span className="text-foreground/70 font-bold">{programItem.university_name}</span>{" "}
- <span>â€”</span> <span className="italic">{programItem.program_name}</span>
+ <span>—</span> <span className="italic">{programItem.program_name}</span>
  </li>
  ))}
  </ul>

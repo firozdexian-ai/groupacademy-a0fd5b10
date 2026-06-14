@@ -19,7 +19,7 @@ const JobApplicationSentEmail = ({ name, job_title, company_name }: JobApplicati
     <Preview>Your application for {job_title || 'a position'} has been submitted</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Application Submitted âœ…</Heading>
+        <Heading style={h1}>Application Submitted ✅</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
@@ -35,7 +35,7 @@ const JobApplicationSentEmail = ({ name, job_title, company_name }: JobApplicati
           View My Applications
         </Button>
         <Text style={footer}>
-          Good luck â€” The {SITE_NAME} Team
+          Good luck — The {SITE_NAME} Team
         </Text>
       </Container>
     </Body>

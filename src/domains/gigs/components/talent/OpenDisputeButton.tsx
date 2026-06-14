@@ -36,7 +36,7 @@ const REASONS = [
 /**
  * GroUp Academy: Arbitration & Consensus Controller (OpenDisputeButton)
  * CTO Reference: Authoritative interaction element initializing cryptographic dispute loops.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function OpenDisputeButton({ gigId, submissionId, verificationId, role, trigger }: Props) {
   const queryClient = useQueryClient();
@@ -69,7 +69,7 @@ export function OpenDisputeButton({ gigId, submissionId, verificationId, role, t
     const sanitizedNarrative = text.trim();
 
     if (sanitizedNarrative.length < 20) {
-      toast.error("Please supply a rigorous narrative statement describing the event context (â‰¥ 20 characters).");
+      toast.error("Please supply a rigorous narrative statement describing the event context (≥ 20 characters).");
       return;
     }
 
@@ -213,7 +213,7 @@ export function OpenDisputeButton({ gigId, submissionId, verificationId, role, t
             {submitting ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Publishing Case Log Updateâ€¦</span>
+                <span>Publishing Case Log Update…</span>
               </>
             ) : (
               <>

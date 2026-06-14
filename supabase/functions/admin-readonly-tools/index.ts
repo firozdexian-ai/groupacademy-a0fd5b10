@@ -1,4 +1,4 @@
-﻿// admin-readonly-tools â€” Phase D2 read-only telemetry gateway for the
+﻿// admin-readonly-tools — Phase D2 read-only telemetry gateway for the
 // Executive Council (business-analyst, report-builder, talent-aisha,
 // agent-manager). Strict RBAC: admin or super_admin only.
 //
@@ -34,7 +34,7 @@ serve(async (req) => {
     if (authErr || !auth?.user) return j({ ok: false, error: "unauthorized" }, 401);
     const uid = auth.user.id;
 
-    // RBAC â€” admin or super_admin only.
+    // RBAC — admin or super_admin only.
     const { data: roleRows } = await admin
       .from("user_roles").select("role").eq("user_id", uid);
     const roles = (roleRows ?? []).map((r: unknown) => r.role);
@@ -96,7 +96,7 @@ async function queryPlatformMetrics(admin: unknown, args: unknown) {
   const sinceISO = new Date(Date.now() - parseDays(interval) * 86400_000).toISOString();
   const metric = String(args?.metric ?? "summary");
 
-  // High-level KPI bundle â€” one round-trip, all read-only counts.
+  // High-level KPI bundle — one round-trip, all read-only counts.
   const [talents, companies, jobs, gigs, apps, newSignups] = await Promise.all([
     admin.from("talents").select("id", { count: "exact", head: true }),
     admin.from("companies").select("id", { count: "exact", head: true }),
@@ -137,7 +137,7 @@ async function queryPlatformMetrics(admin: unknown, args: unknown) {
     safeSum("credit_transactions", "amount", (q) =>
       q.gt("amount", 0).gte("created_at", sinceISO),
     ),
-    // Negative credit ledger entries (spend) â€” return absolute value
+    // Negative credit ledger entries (spend) — return absolute value
     safeSum("credit_transactions", "amount", (q) =>
       q.lt("amount", 0).gte("created_at", sinceISO),
     ).then((n) => Math.abs(n)),

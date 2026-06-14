@@ -46,7 +46,7 @@ interface SchoolReadiness {
 /**
  * GroUp Academy: Academy Track Specialization Matrix (TracksTab)
  * An authoritative dashboard node separating enterprise tracks, start-up streams, and personal learning pipelines.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function TracksTab() {
   const navigate = useNavigate();
@@ -326,7 +326,7 @@ export function TracksTab() {
         <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-sm mx-auto flex flex-col justify-center items-center animate-in fade-in duration-300">
           <Loader2 className="h-5 w-5 text-primary/30 animate-spin mb-2 stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider leading-none pl-0.5">
-            Specialized Academy Core Hardeningâ€¦
+            Specialized Academy Core Hardening…
           </p>
           <p className="text-[10px] font-semibold text-muted-foreground/50 leading-normal italic mt-1.5">
             Horizon parameter allocation running bounds lock.

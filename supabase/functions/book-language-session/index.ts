@@ -1,4 +1,4 @@
-﻿// Book a language session â€” validates, creates booking, generates Jitsi room
+﻿// Book a language session — validates, creates booking, generates Jitsi room
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

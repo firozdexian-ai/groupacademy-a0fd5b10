@@ -47,7 +47,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
     }
 
     setIsProcessing(true);
-    const toastId = toast.loading("Processing your onboarding welcome bonusâ€¦");
+    const toastId = toast.loading("Processing your onboarding welcome bonus…");
 
     trackEvent("FloatingWhatsAppButton:bonus_claim_initiated", {
       talentId: talent.id,
@@ -84,7 +84,7 @@ export function FloatingWhatsAppButton({ showPrompt = true }: FloatingWhatsAppBu
         attemptedAmount: bonusAmount,
       });
 
-      toast.error("Couldn't apply the bonus right now â€” opening WhatsApp so you can reach support.", { id: toastId });
+      toast.error("Couldn't apply the bonus right now — opening WhatsApp so you can reach support.", { id: toastId });
       window.open(whatsappUrl, "_blank");
     } finally {
       setIsProcessing(false);

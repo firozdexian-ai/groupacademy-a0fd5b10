@@ -1,8 +1,8 @@
 ﻿/**
- * Profile domain â€” edge function contracts (Phase 9g).
+ * Profile domain — edge function contracts (Phase 9g).
  *
  * Only `claim-public-handle` is owned by profile. `parse-cv` is owned by
- * jobs â€” see `src/domains/jobs/api/jobsApi.ts` and import from there.
+ * jobs — see `src/domains/jobs/api/jobsApi.ts` and import from there.
  */
 import { z } from "zod";
 

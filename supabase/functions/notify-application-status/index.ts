@@ -36,9 +36,9 @@ const COPY: Record<string, { title: string; message: string; emailSubject?: stri
     emailSubject: "Update on your {role} application",
   },
   hired: {
-    title: "ðŸŽ‰ You got hired",
+    title: "🎉 You got hired",
     message: "{company} marked you as hired for {role}. Congratulations!",
-    emailSubject: "ðŸŽ‰ You got hired at {company}",
+    emailSubject: "🎉 You got hired at {company}",
   },
   withdrawn: {
     title: "Application withdrawn",

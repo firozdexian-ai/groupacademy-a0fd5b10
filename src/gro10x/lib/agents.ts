@@ -15,12 +15,12 @@ export interface Gro10xAgent {
 }
 
 export const GRO10X_AGENTS: Gro10xAgent[] = [
-  { key: "concierge",            name: "Atlas",            desc: "Your Gro10x concierge â€” routes you to the right agent", emoji: "ðŸ§­", goals: ["explore"] },
-  { key: "company_recruiter",    name: "Recruiter Riya",   desc: "Post jobs, screen applicants, move the Kanban",         emoji: "ðŸ‘¥", goals: ["hire"] },
-  { key: "company_talent_scout", name: "Talent Scout Maya",desc: "Search candidates, reveal contacts, build shortlists",  emoji: "ðŸ”", goals: ["hire"] },
-  { key: "company_ops",          name: "Ops Omar",         desc: "Company profile, teammates, gig bids & contracts",      emoji: "âš™ï¸", goals: ["ops"] },
-  { key: "company_billing",      name: "Billing Bilal",    desc: "Credits, invoices, top-ups",                            emoji: "ðŸ’³", goals: ["ops"] },
-  { key: "company_growth",       name: "Growth Aiden",     desc: "Draft & publish on the company feed, track signal",     emoji: "ðŸ“ˆ", goals: ["sell_b2b"] },
+  { key: "concierge",            name: "Atlas",            desc: "Your Gro10x concierge — routes you to the right agent", emoji: "🧭", goals: ["explore"] },
+  { key: "company_recruiter",    name: "Recruiter Riya",   desc: "Post jobs, screen applicants, move the Kanban",         emoji: "👥", goals: ["hire"] },
+  { key: "company_talent_scout", name: "Talent Scout Maya",desc: "Search candidates, reveal contacts, build shortlists",  emoji: "🔍", goals: ["hire"] },
+  { key: "company_ops",          name: "Ops Omar",         desc: "Company profile, teammates, gig bids & contracts",      emoji: "⚙️", goals: ["ops"] },
+  { key: "company_billing",      name: "Billing Bilal",    desc: "Credits, invoices, top-ups",                            emoji: "💳", goals: ["ops"] },
+  { key: "company_growth",       name: "Growth Aiden",     desc: "Draft & publish on the company feed, track signal",     emoji: "📈", goals: ["sell_b2b"] },
 ];
 
 export const AGENT_BY_KEY: Record<string, Gro10xAgent> = Object.fromEntries(
@@ -34,7 +34,7 @@ export function getAgentMeta(key: string): Gro10xAgent {
       key,
       name: key,
       desc: "AI agent",
-      emoji: "ðŸ¤–",
+      emoji: "🤖",
       goals: [],
     }
   );

@@ -17,7 +17,7 @@ interface ChatThreadProps {
 }
 
 /**
- * Group Academy â€” ChatThread UI Component
+ * Group Academy — ChatThread UI Component
  * Version: Phase 10j.5 Hardened
  * Purpose: Unified messenger interface for AI agent interactions.
  */

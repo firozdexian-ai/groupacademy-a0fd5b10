@@ -1,5 +1,5 @@
 ﻿/**
- * Global CRM Command Center â€” Phase Z0 Hardened
+ * Global CRM Command Center — Phase Z0 Hardened
  * CTO Version: May 2026
  * Fixes: P2 (RPC Adoption)
  * Restored: Aisha Funnel Telemetry & Triple-Bar Breakdowns
@@ -173,7 +173,7 @@ export function TalentOverviewTab() {
                   </div>
                   <div className="text-[10px] font-bold text-muted-foreground truncate flex items-center gap-2 mt-1">
                     <span>{r.country || "Global"}</span>
-                    <span>Â·</span>
+                    <span>·</span>
                     <Badge
                       variant="outline"
                       className="px-2 py-0 h-4 text-[8px] font-semibold bg-success/10 text-success border-none"

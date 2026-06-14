@@ -1,5 +1,5 @@
 ﻿/**
- * Admin Learn â†’ Moderation tab.
+ * Admin Learn → Moderation tab.
  */
 import { useEffect, useState } from "react";
 import { Card } from "@/components/ui/card";

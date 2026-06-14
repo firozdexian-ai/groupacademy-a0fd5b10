@@ -29,7 +29,7 @@ interface InstructorRecord {
 /**
  * GroUp Academy: Language Instructor Directory (LanguageInstructorsPage)
  * Hardened responsive marketplace listing active language instructors with secure booking modals.
- * Version: Launch Candidate Â· Phase Z1 Transaction Matrix Sealed
+ * Version: Launch Candidate · Phase Z1 Transaction Matrix Sealed
  */
 export default function LanguageInstructorsPage() {
  const { code: languageCode = "en" } = useParams<{ code: string }>();
@@ -105,7 +105,7 @@ export default function LanguageInstructorsPage() {
  </Badge>
  )}
  </div>
- <p className="text-[11px] text-muted-foreground">Native: {instructor.native_language ?? "â€”"}</p>
+ <p className="text-[11px] text-muted-foreground">Native: {instructor.native_language ?? "—"}</p>
  </div>
 
  <div className="text-right">

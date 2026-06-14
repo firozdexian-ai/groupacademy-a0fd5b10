@@ -1,4 +1,4 @@
-﻿// Notify a hot gig match (score >= 0.85) â€” in-app + future email.
+﻿// Notify a hot gig match (score >= 0.85) — in-app + future email.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

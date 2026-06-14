@@ -72,7 +72,7 @@ Deno.serve(async (req) => {
       .order("created_at", { ascending: true })
       .limit(20);
 
-    // â”€â”€ ROADMAP TOOL CALL â”€â”€
+    // ── ROADMAP TOOL CALL ──
     if (intent === "roadmap" && roadmapPayload) {
       // Persist roadmap row
       const { data: roadmapRow, error: rmErr } = await admin
@@ -112,7 +112,7 @@ Country knowledge:
 ${(packs ?? []).map((p) => `[${p.kind}] ${p.title}: ${p.body_markdown.slice(0, 300)}`).join("\n")}
 
 Available programs:
-${(programs ?? []).map((p) => `${p.university_name} â€” ${p.program_name} (${p.tuition_range || "n/a"})`).join("\n")}`;
+${(programs ?? []).map((p) => `${p.university_name} — ${p.program_name} (${p.tuition_range || "n/a"})`).join("\n")}`;
 
       const ai = await fetch("https://ai.gateway.lovable.dev/v1/chat/completions", {
         method: "POST",
@@ -151,7 +151,7 @@ ${(programs ?? []).map((p) => `${p.university_name} â€” ${p.program_name} (
       return json({ ok: true, roadmap_id: roadmapRow.id, roadmap: parsed, credits_spent: ROADMAP_COST });
     }
 
-    // â”€â”€ CHAT â”€â”€
+    // ── CHAT ──
     if (!userMessage) return json({ error: "message required" }, 400);
 
     const sysPrompt = `${agent.system_prompt}
@@ -164,7 +164,7 @@ Knowledge packs:
 ${(packs ?? []).map((p) => `[${p.kind}] ${p.title}\n${p.body_markdown.slice(0, 500)}`).join("\n\n")}
 
 Sample programs (${(programs ?? []).length}):
-${(programs ?? []).slice(0, 8).map((p) => `- ${p.university_name} â€” ${p.program_name}`).join("\n")}`;
+${(programs ?? []).slice(0, 8).map((p) => `- ${p.university_name} — ${p.program_name}`).join("\n")}`;
 
     const messages = [
       { role: "system", content: sysPrompt },

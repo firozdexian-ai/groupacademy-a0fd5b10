@@ -1,5 +1,5 @@
 ﻿/**
- * Analytics domain â€” edge function contracts (Phase 9g).
+ * Analytics domain — edge function contracts (Phase 9g).
  */
 import { z } from "zod";
 

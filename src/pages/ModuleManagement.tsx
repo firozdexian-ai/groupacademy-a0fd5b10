@@ -321,7 +321,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
         {loading ? (
           <div className="flex items-center justify-center py-20 text-muted-foreground">
             <Loader2 className="h-5 w-5 animate-spin mr-2" />
-            <span className="text-xs font-black uppercase tracking-widest">Loading modulesâ€¦</span>
+            <span className="text-xs font-black uppercase tracking-widest">Loading modules…</span>
           </div>
         ) : modules.length === 0 ? (
           <Card className="rounded-xl border-dashed border-border/60">
@@ -458,7 +458,7 @@ export default function ModuleManagement(props: ModuleManagementProps = {}) {
                         <Input
                           value={mod.video_url ?? ""}
                           onChange={(e) => updateField(mod.id, "video_url", e.target.value)}
-                          placeholder="https://â€¦"
+                          placeholder="https://…"
                           className="rounded-xl"
                         />
                       </div>

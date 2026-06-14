@@ -33,7 +33,7 @@ import {
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Career Guidance System: Agent Telemetry & Financial Insights Panel
+ * Group Academy — Career Guidance System: Agent Telemetry & Financial Insights Panel
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=insights (Operator Metrics Workspace)
  * Operations Mode: Automated Efficiency analytical canvas managing margins, split testing, and LLM costs.

@@ -48,7 +48,7 @@ interface Props {
 /**
  * GroUp Academy: Talent Readiness Outcome Signal Panel (TalentSignalPanel)
  * An authoritative operational telemetry widget surfacing verified skills, performance tracks, and mastery scores.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function TalentSignalPanel({ talentId, compact = false, className }: Props) {
   const queryClient = useQueryClient();
@@ -137,7 +137,7 @@ export function TalentSignalPanel({ talentId, compact = false, className }: Prop
           <Badge
             variant="outline"
             className="rounded px-2 h-5.5 text-[9px] font-extrabold tracking-wider uppercase border border-transparent bg-emerald-500/10 text-emerald-600 dark:text-emerald-400 gap-1 flex items-center leading-none shadow-xs shrink-0 cursor-help"
-            title="Active learner node verification â€” active platform metrics observed within the past 30 days"
+            title="Active learner node verification — active platform metrics observed within the past 30 days"
           >
             <Activity className="h-3 w-3 stroke-[2.5] shrink-0" />
             <span className="pt-0.5 block">Active Learner</span>

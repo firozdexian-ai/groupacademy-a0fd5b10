@@ -1,5 +1,5 @@
 ﻿/**
- * HR Payroll Ledger â€” Phase HR-Z1 Hardened
+ * HR Payroll Ledger — Phase HR-Z1 Hardened
  * CTO Version: May 2026
  * Fixes: W11 (Temporal Grouping & CSV Export), W4 (Relation Mapping)
  * Features: Financial KPI Tracking, Institutional Ledger Export
@@ -46,7 +46,7 @@ import { toast } from "sonner";
 import { cn } from "@/lib/utils";
 import { format, parseISO } from "date-fns";
 
-const currencySymbol = (c: string) => (c === "USD" ? "$" : c === "EUR" ? "â‚¬" : c === "GBP" ? "Â£" : c);
+const currencySymbol = (c: string) => (c === "USD" ? "$" : c === "EUR" ? "€" : c === "GBP" ? "£" : c);
 
 export function HrPayrollTab() {
  const qc = useQueryClient();
@@ -228,8 +228,8 @@ export function HrPayrollTab() {
  </div>
  </TableCell>
  <TableCell className="font-mono text-[10px] text-muted-foreground uppercase">
- {r.period_start ? format(parseISO(r.period_start), "MMM dd") : "â€”"} to{" "}
- {r.period_end ? format(parseISO(r.period_end), "MMM dd") : "â€”"}
+ {r.period_start ? format(parseISO(r.period_start), "MMM dd") : "—"} to{" "}
+ {r.period_end ? format(parseISO(r.period_end), "MMM dd") : "—"}
  </TableCell>
  <TableCell>
  <div className="flex flex-col">
@@ -397,7 +397,7 @@ function KpiTile({ icon: Icon, label, value, accent }: unknown) {
  <div>
  <p className="text-[10px] font-black text-muted-foreground/60 italic">{label}</p>
  <p className={cn("text-3xl font-black tracking-tighter italic", accentText)}>
- â‚µ{value?.toLocaleString() || "0"}
+ ₵{value?.toLocaleString() || "0"}
  </p>
  </div>
  </Card>

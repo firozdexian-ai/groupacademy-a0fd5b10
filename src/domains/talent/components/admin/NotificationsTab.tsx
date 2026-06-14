@@ -1,5 +1,5 @@
 ﻿/**
- * Global Broadcast Engine â€” Phase Z0 Hardened
+ * Global Broadcast Engine — Phase Z0 Hardened
  * CTO Version: May 2026
  * Fixes: B7 (RPC Broadcast), P4 (Identity List Freshness & Surgical Targeting)
  */

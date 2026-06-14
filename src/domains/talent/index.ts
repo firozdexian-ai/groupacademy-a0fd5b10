@@ -1,5 +1,5 @@
 ﻿/**
- * Talent domain â€” admin surface.
+ * Talent domain — admin surface.
  * Legacy `@/domains/talent/components/admin/*` paths re-export from here.
  */
 export { BatchTalentUpload } from "./components/admin/BatchTalentUpload";

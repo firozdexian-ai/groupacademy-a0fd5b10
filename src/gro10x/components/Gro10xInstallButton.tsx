@@ -62,7 +62,7 @@ export function Gro10xInstallButton() {
         await deferred.prompt();
         const choice = await deferred.userChoice;
         if (choice.outcome === "accepted") {
-          toast.success("Installing Gro10xâ€¦");
+          toast.success("Installing Gro10x…");
         }
         setDeferred(null);
       } catch {
@@ -70,7 +70,7 @@ export function Gro10xInstallButton() {
       }
       return;
     }
-    // No native prompt available â€” show instructions.
+    // No native prompt available — show instructions.
     setShowSheet(true);
   };
 
@@ -127,14 +127,14 @@ export function Gro10xInstallButton() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="rounded-full bg-white/10 h-6 w-6 inline-flex items-center justify-center text-xs">3</span>
-                  <span className="flex-1">Tap <b>Add</b> â€” Gro10x will appear on your Home Screen.</span>
+                  <span className="flex-1">Tap <b>Add</b> — Gro10x will appear on your Home Screen.</span>
                 </li>
               </ol>
             ) : (
               <ol className="space-y-3 text-sm text-slate-300">
                 <li className="flex items-start gap-3">
                   <span className="rounded-full bg-white/10 h-6 w-6 inline-flex items-center justify-center text-xs">1</span>
-                  <span className="flex-1">Open your browser menu (the â‹® or â‹¯ icon).</span>
+                  <span className="flex-1">Open your browser menu (the ⋮ or ⋯ icon).</span>
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="rounded-full bg-white/10 h-6 w-6 inline-flex items-center justify-center text-xs">2</span>
@@ -142,7 +142,7 @@ export function Gro10xInstallButton() {
                 </li>
                 <li className="flex items-start gap-3">
                   <span className="rounded-full bg-white/10 h-6 w-6 inline-flex items-center justify-center text-xs">3</span>
-                  <span className="flex-1">Confirm â€” Gro10x will open like a native app.</span>
+                  <span className="flex-1">Confirm — Gro10x will open like a native app.</span>
                 </li>
               </ol>
             )}

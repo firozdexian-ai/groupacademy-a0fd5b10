@@ -230,7 +230,7 @@ export default function PublicJobDetail() {
                   <Badge variant="secondary" className="text-[10px] gap-1">
                     <DollarSign className="h-3 w-3" />
                     {job.salary_range_min.toLocaleString()}
-                    {job.salary_range_max ? `â€“${job.salary_range_max.toLocaleString()}` : "+"}
+                    {job.salary_range_max ? `–${job.salary_range_max.toLocaleString()}` : "+"}
                   </Badge>
                 )}
               </div>
@@ -239,7 +239,7 @@ export default function PublicJobDetail() {
                 Posted {formatDistanceToNow(new Date(job.created_at), { addSuffix: true })}
                 {deadlineDays != null && (
                   <>
-                    {" Â· "}
+                    {" · "}
                     <span
                       className={cn(
                         deadlineTone === "destructive" && "text-destructive font-medium",
@@ -281,7 +281,7 @@ export default function PublicJobDetail() {
             <p className="text-sm font-semibold">About this role</p>
             <p className="text-xs text-foreground/80 whitespace-pre-wrap leading-relaxed">
               {description}
-              {!showFullDescription && (job.ai_enhanced_description || job.description).length > 280 && "â€¦"}
+              {!showFullDescription && (job.ai_enhanced_description || job.description).length > 280 && "…"}
             </p>
             {(job.ai_enhanced_description || job.description).length > 280 && (
               <Button

@@ -38,7 +38,7 @@ interface JobAssessmentRecord {
 }
 
 /**
- * Job AI assessment runner â€” MCQ + voice + text questions, autosaves each answer.
+ * Job AI assessment runner — MCQ + voice + text questions, autosaves each answer.
  */
 export default function JobAssessment() {
   const { assessmentId } = useParams<{ assessmentId: string }>();
@@ -323,7 +323,7 @@ export default function JobAssessment() {
             <Textarea
               value={answers[current.id] || ""}
               onChange={(e) => setAnswers((prev) => ({ ...prev, [current.id]: e.target.value }))}
-              placeholder="Type your answer hereâ€¦"
+              placeholder="Type your answer here…"
               className="min-h-[160px] rounded-lg text-sm bg-background/50 border-border/60"
             />
           )}

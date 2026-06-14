@@ -21,7 +21,7 @@ const JobApplicationEmployerEmail = ({ job_title, company_name, applicant_name, 
     <Preview>New application for {job_title || 'your position'} via {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>New Application Received ðŸ“©</Heading>
+        <Heading style={h1}>New Application Received 📩</Heading>
         <Text style={text}>
           Hi {company_name || 'Hiring Manager'},
         </Text>
@@ -35,7 +35,7 @@ const JobApplicationEmployerEmail = ({ job_title, company_name, applicant_name, 
         ) : null}
         {match_score ? (
           <Text style={matchBadge}>
-            ðŸŽ¯ AI Match Score: <strong>{match_score}%</strong>
+            🎯 AI Match Score: <strong>{match_score}%</strong>
           </Text>
         ) : null}
         {cover_letter ? (
@@ -50,7 +50,7 @@ const JobApplicationEmployerEmail = ({ job_title, company_name, applicant_name, 
           </Button>
         ) : null}
         <Text style={footer}>
-          Sent via {SITE_NAME} â€” Connecting talent with opportunity
+          Sent via {SITE_NAME} — Connecting talent with opportunity
         </Text>
       </Container>
     </Body>

@@ -16,10 +16,10 @@ interface BidAcceptedProps {
 const BidAcceptedEmail = ({ name, gig_title, credits_awarded }: BidAcceptedProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Your gig submission was approved â€” {credits_awarded || 0} credits earned!</Preview>
+    <Preview>Your gig submission was approved — {credits_awarded || 0} credits earned!</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Submission Approved! ðŸ†</Heading>
+        <Heading style={h1}>Submission Approved! 🏆</Heading>
         <Text style={text}>
           {name ? `Congrats ${name},` : 'Congrats,'}
         </Text>
@@ -27,13 +27,13 @@ const BidAcceptedEmail = ({ name, gig_title, credits_awarded }: BidAcceptedProps
           Your submission for <strong>{gig_title || 'a gig'}</strong> has been reviewed and approved.
         </Text>
         <Text style={rewardBox}>
-          ðŸ’° <strong>{credits_awarded || 0} credits</strong> have been added to your wallet.
+          💰 <strong>{credits_awarded || 0} credits</strong> have been added to your wallet.
         </Text>
         <Button style={button} href={SITE_URL + "/app/gigs"}>
           View Your Gigs
         </Button>
         <Text style={footer}>
-          Keep earning â€” The {SITE_NAME} Team
+          Keep earning — The {SITE_NAME} Team
         </Text>
       </Container>
     </Body>
@@ -42,7 +42,7 @@ const BidAcceptedEmail = ({ name, gig_title, credits_awarded }: BidAcceptedProps
 
 export const template = {
   component: BidAcceptedEmail,
-  subject: 'Your gig submission was approved! ðŸ†',
+  subject: 'Your gig submission was approved! 🏆',
   displayName: 'Gig submission approved',
   previewData: { name: 'Rafi', gig_title: 'Share 3 Job Posts', credits_awarded: 50 },
 } satisfies TemplateEntry

@@ -1,5 +1,5 @@
 ﻿/**
- * Creator Economy Telemetry â€” Refactored for Phase Z0
+ * Creator Economy Telemetry — Refactored for Phase Z0
  * CTO Version: May 2026
  * Fixes: A3 (Full Table Scan Aggregation), P2 (RPC Adoption)
  * Restored: Dual Leaderboard UI & Full Boost Profiles

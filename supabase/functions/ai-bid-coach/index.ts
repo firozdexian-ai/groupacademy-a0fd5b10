@@ -45,7 +45,7 @@ Deno.serve(async (req) => {
         model: "google/gemini-3-flash-preview",
         messages: [
           { role: "system", content: SYSTEM },
-          { role: "user", content: `Gig:\n${JSON.stringify(gig)}\n\nTalent:\n${JSON.stringify({ talent, skills, credentials })}\n\nDraft bid:\n${draft_text || "(empty â€” write from scratch)"}` },
+          { role: "user", content: `Gig:\n${JSON.stringify(gig)}\n\nTalent:\n${JSON.stringify({ talent, skills, credentials })}\n\nDraft bid:\n${draft_text || "(empty — write from scratch)"}` },
         ],
         tools: [{
           type: "function",

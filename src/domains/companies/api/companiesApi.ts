@@ -1,5 +1,5 @@
 ﻿/**
- * Companies domain â€” typed edge function wrappers (Phase 9h / 10f).
+ * Companies domain — typed edge function wrappers (Phase 9h / 10f).
  *
  * Safe-guards and centralizes edge runtime contracts for the B2B shell.
  * Includes plain-English error handling to avoid raw system-jargon leaks.

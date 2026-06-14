@@ -50,7 +50,7 @@ export function MetricEntrySheet({ open, onOpenChange }: { open: boolean; onOpen
  <SheetContent className="sm:max-w-xl overflow-y-auto">
  <SheetHeader>
  <SheetTitle>Log Metrics Snapshot</SheetTitle>
- <SheetDescription>One row per snapshot date Â· upserts existing</SheetDescription>
+ <SheetDescription>One row per snapshot date · upserts existing</SheetDescription>
  </SheetHeader>
 
  <div className="space-y-4 my-6">
@@ -93,7 +93,7 @@ export function MetricEntrySheet({ open, onOpenChange }: { open: boolean; onOpen
  </div>
 
  <Button className="w-full" onClick={submit} disabled={upsertSnapshot.isPending}>
- {upsertSnapshot.isPending ? "Savingâ€¦" : "Save snapshot"}
+ {upsertSnapshot.isPending ? "Saving…" : "Save snapshot"}
  </Button>
  </div>
  </SheetContent>

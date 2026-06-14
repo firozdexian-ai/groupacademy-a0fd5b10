@@ -1,5 +1,5 @@
 ﻿/**
- * Period Overview â€” Hardened Monthly/Quarterly Performance Component
+ * Period Overview — Hardened Monthly/Quarterly Performance Component
  * Interfaces with the high-performance bulk analytics RPC engine.
  * Completely aligned with 2024 SaaS design system typography standards.
  */
@@ -121,7 +121,7 @@ export function PeriodOverviewTab({ mode }: { mode: PeriodMode }) {
 
   const formatValue = (val: number, type: string) => {
     if (type === "currency") {
-      return `à§³${val.toLocaleString("en-BD", { maximumFractionDigits: 0 })}`;
+      return `৳${val.toLocaleString("en-BD", { maximumFractionDigits: 0 })}`;
     }
     return val.toLocaleString("en-US");
   };

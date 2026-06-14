@@ -23,7 +23,7 @@ import { cn } from "@/lib/utils";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
 
 /**
- * Group Academy â€” Career Abroad Study Roadmap Intake Wizard
+ * Group Academy — Career Abroad Study Roadmap Intake Wizard
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Architecture: Optimized multi-step validation engine wired to credit balance gates.
  */
@@ -41,7 +41,7 @@ const DEGREE_LEVELS = [
 
 const BUDGET_NODES = [
   { value: "low", label: "Budget-friendly", sub: "Under $15k/year tuition" },
-  { value: "medium", label: "Balanced", sub: "$15k â€“ $35k/year" },
+  { value: "medium", label: "Balanced", sub: "$15k – $35k/year" },
   { value: "high", label: "Premium", sub: "$35k+/year" },
   { value: "scholarship", label: "Need a scholarship", sub: "Funding required" },
 ];
@@ -138,7 +138,7 @@ export function RoadmapIntakeForm() {
       return roadmap.id;
     },
     onSuccess: async (roadmapId) => {
-      toast.success("Roadmap is being builtâ€¦");
+      toast.success("Roadmap is being built…");
 
       await Promise.all([
         qc.invalidateQueries({ queryKey: ["talent-credits-balance"] }),

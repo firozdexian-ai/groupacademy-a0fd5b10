@@ -1,5 +1,5 @@
 ﻿/**
- * Admin â†’ Learn â†’ B2B Engagements
+ * Admin → Learn → B2B Engagements
  * Cross-company view of sponsored learning assignments.
  */
 import { useQuery } from "@tanstack/react-query";
@@ -59,7 +59,7 @@ export function LearningB2BEngagementsTab() {
             {isLoading ? (
               <tr>
                 <td colSpan={5} className="px-3 py-6 text-center text-muted-foreground">
-                  Loadingâ€¦
+                  Loading…
                 </td>
               </tr>
             ) : (data ?? []).length === 0 ? (
@@ -71,13 +71,13 @@ export function LearningB2BEngagementsTab() {
             ) : (
               data!.map((r: unknown) => (
                 <tr key={r.id} className="border-t">
-                  <td className="px-3 py-2">{r.company?.name ?? "â€”"}</td>
-                  <td className="px-3 py-2">{r.content?.title ?? "â€”"}</td>
+                  <td className="px-3 py-2">{r.company?.name ?? "—"}</td>
+                  <td className="px-3 py-2">{r.content?.title ?? "—"}</td>
                   <td className="px-3 py-2">
                     <span className="text-xs px-2 py-0.5 rounded-full bg-muted">{r.status}</span>
                   </td>
                   <td className="px-3 py-2 text-xs">
-                    {r.due_at ? new Date(r.due_at).toLocaleDateString() : "â€”"}
+                    {r.due_at ? new Date(r.due_at).toLocaleDateString() : "—"}
                   </td>
                   <td className="px-3 py-2 text-xs">{r.budget_credits ?? 0}</td>
                 </tr>

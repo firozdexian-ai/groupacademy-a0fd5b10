@@ -104,14 +104,14 @@ export default function Gro10xSourcing() {
           </button>
         </div>
         <p className={`text-sm ${GRO10X_MUTED}`}>
-          Discover talent. Unlock contact for {unlockCost} credits â€” shared across your team.
+          Discover talent. Unlock contact for {unlockCost} credits — shared across your team.
         </p>
 
         <div className={`${GRO10X_PANEL} rounded-2xl p-3 space-y-2 border border-white/5`}>
           <div className="flex items-center gap-2">
             <Search className="h-4 w-4 text-slate-400" />
             <Input
-              placeholder="Keyword (name, role, skill)â€¦"
+              placeholder="Keyword (name, role, skill)…"
               value={keyword}
               onChange={(e) => setKeyword(e.target.value)}
               onKeyDown={(e) => e.key === "Enter" && apply()}
@@ -139,10 +139,10 @@ export default function Gro10xSourcing() {
 
         <div className="flex items-center justify-between">
           <span className={`text-xs ${GRO10X_MUTED}`}>
-            {isLoading ? "Searchingâ€¦" : `${data?.total ?? 0} talents`}
+            {isLoading ? "Searching…" : `${data?.total ?? 0} talents`}
           </span>
           <Link to="/gro10x/sourcing/lists" className="text-xs text-[#33E1E4]">
-            My lists â†’
+            My lists →
           </Link>
         </div>
 
@@ -194,13 +194,13 @@ export default function Gro10xSourcing() {
                       <div className="flex items-center gap-2 text-slate-300">
                         <Mail className="h-3 w-3 shrink-0 text-slate-500" />
                         <span className="truncate">
-                          {contact?.email ?? (isUnlocked ? "â€”" : "â€¢â€¢â€¢â€¢â€¢â€¢â€¢@â€¢â€¢â€¢â€¢â€¢.com")}
+                          {contact?.email ?? (isUnlocked ? "—" : "•••••••@•••••.com")}
                         </span>
                       </div>
                       <div className="flex items-center gap-2 text-slate-300">
                         <Phone className="h-3 w-3 shrink-0 text-slate-500" />
                         <span className="truncate">
-                          {contact?.phone ?? (isUnlocked ? "â€”" : "+â€¢â€¢ â€¢â€¢â€¢ â€¢â€¢â€¢ â€¢â€¢")}
+                          {contact?.phone ?? (isUnlocked ? "—" : "+•• ••• ••• ••")}
                         </span>
                       </div>
                       {(contact?.linkedin_url || !isUnlocked) && (
@@ -211,7 +211,7 @@ export default function Gro10xSourcing() {
                               {contact.linkedin_url.replace(/^https?:\/\//, "")}
                             </a>
                           ) : (
-                            <span className="truncate">linkedin.com/in/â€¢â€¢â€¢â€¢â€¢â€¢â€¢</span>
+                            <span className="truncate">linkedin.com/in/•••••••</span>
                           )}
                         </div>
                       )}
@@ -258,7 +258,7 @@ export default function Gro10xSourcing() {
                     )}
                     {t.public_handle && (
                       <Link to={`/t/${t.public_handle}`} className="text-[11px] text-[#33E1E4]">
-                        View profile â†’
+                        View profile →
                       </Link>
                     )}
                   </>

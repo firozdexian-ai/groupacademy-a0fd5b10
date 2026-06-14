@@ -95,7 +95,7 @@ export default function Gro10xJobsList() {
 
       {showLoading && (
         <div className="px-4 py-6 text-center text-sm text-slate-400 inline-flex items-center gap-2 w-full justify-center">
-          <Loader2 className="h-4 w-4 animate-spin" /> Loading jobsâ€¦
+          <Loader2 className="h-4 w-4 animate-spin" /> Loading jobs…
         </div>
       )}
 
@@ -133,7 +133,7 @@ export default function Gro10xJobsList() {
                   </span>
                 </div>
                 <p className={`text-[11px] ${GRO10X_MUTED} truncate mt-0.5`}>
-                  {j.location ?? "Remote"} Â·{" "}
+                  {j.location ?? "Remote"} ·{" "}
                   {new Date(j.created_at).toLocaleDateString(undefined, {
                     month: "short",
                     day: "numeric",

@@ -18,7 +18,7 @@ interface ProfilePhotoUploadProps {
 /**
  * GroUp Academy: Identity Avatar Resource Ingress Node (ProfilePhotoUpload)
  * An authoritative operational sandbox layer parsing image formats and updating master account asset states.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }: ProfilePhotoUploadProps) {
   const queryClient = useQueryClient();
@@ -79,7 +79,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
 
     setIsUploading(true);
     trackEvent("profile_photo_upload_initiated");
-    const dynamicToastTrackerId = toast.loading("Uploading photoâ€¦");
+    const dynamicToastTrackerId = toast.loading("Uploading photo…");
 
     try {
       const fileExtensionString = targetedFileItem.name.split(".").pop();
@@ -126,7 +126,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
 
   const handleTermination = async () => {
     trackEvent("profile_photo_purge_requested");
-    const dynamicToastTrackerId = toast.loading("Removing photoâ€¦");
+    const dynamicToastTrackerId = toast.loading("Removing photo…");
 
     try {
       await queryClient.invalidateQueries({ queryKey: ["talent-profile"] });
@@ -181,7 +181,7 @@ export function ProfilePhotoUpload({ currentPhotoUrl, fullName, onPhotoChange }:
           <div className="absolute inset-0 flex flex-col items-center justify-center bg-background/80 backdrop-blur-md rounded-full z-20 animate-in fade-in duration-200 border border-primary/20">
             <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
             <span className="text-[8px] font-mono font-bold uppercase tracking-wider text-primary mt-1.5 animate-pulse leading-none">
-              Syncingâ€¦
+              Syncing…
             </span>
           </div>
         )}

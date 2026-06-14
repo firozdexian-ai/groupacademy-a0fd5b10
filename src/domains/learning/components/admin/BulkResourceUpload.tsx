@@ -64,7 +64,7 @@ export function BulkResourceUpload({
     const items: QueueItem[] = [];
     for (const f of list) {
       if (f.size > MAX_RESOURCE_MB * 1024 * 1024) {
-        toast.error(`${f.name} exceeds ${MAX_RESOURCE_MB}MB â€” skipped.`);
+        toast.error(`${f.name} exceeds ${MAX_RESOURCE_MB}MB — skipped.`);
         continue;
       }
       items.push({
@@ -136,7 +136,7 @@ export function BulkResourceUpload({
   const saveAll = async () => {
     const ready = queue.filter((q) => q.status === "uploaded");
     if (!ready.length) {
-      toast.error("Nothing to save â€” wait for uploads to finish.");
+      toast.error("Nothing to save — wait for uploads to finish.");
       return;
     }
     setSaving(true);
@@ -238,7 +238,7 @@ export function BulkResourceUpload({
           Drop files or click to upload
         </p>
         <p className="text-[10px] text-muted-foreground mt-1">
-          PDF Â· MP4 Â· DOCX Â· PPTX Â· images Â· â‰¤ {MAX_RESOURCE_MB}MB Â· multi-file
+          PDF · MP4 · DOCX · PPTX · images · ≤ {MAX_RESOURCE_MB}MB · multi-file
         </p>
       </div>
 

@@ -162,7 +162,7 @@ export function StandaloneMockInterviewCodeGenerator() {
           {isGenerating ? (
             <>
               <InlineSpinner size="md" />
-              Savingâ€¦
+              Saving…
             </>
           ) : (
             <>

@@ -1,5 +1,5 @@
 ﻿/**
- * Analytics domain â€” barrel re-exporting typed edge wrappers (Phase 9g - Hardened).
+ * Analytics domain — barrel re-exporting typed edge wrappers (Phase 9g - Hardened).
  * Unifies all operational dashboard counters, automated reporting engines, and
  * analyst agent contracts into a clean, re-exported surface layer.
  */

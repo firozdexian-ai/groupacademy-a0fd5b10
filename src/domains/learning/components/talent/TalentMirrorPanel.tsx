@@ -10,7 +10,7 @@ import { trackError, trackEvent } from "@/lib/errorTracking";
 import { ArrowRight, Sparkles, AlertTriangle, RefreshCw, Layers, Brain, CheckCircle2 } from "lucide-react";
 import { cn } from "@/lib/utils";
 
-const pct = (v: number | null | undefined) => (v === null || v === undefined ? "â€”" : `${Math.round(v * 100)}%`);
+const pct = (v: number | null | undefined) => (v === null || v === undefined ? "—" : `${Math.round(v * 100)}%`);
 
 const tone = (v: number | null) => {
   if (v === null) return "text-muted-foreground/60";
@@ -22,7 +22,7 @@ const tone = (v: number | null) => {
 /**
  * GroUp Academy: Core Competency Map & Trajectory Telemetry Panel (TalentMirrorPanel)
  * An authoritative engine calculating macro-level average mastery matrices across multi-tenant course tracks.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function TalentMirrorPanel() {
   const navigate = useNavigate();

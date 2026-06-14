@@ -127,7 +127,7 @@ export default function StudyAbroad() {
 
  <div className="space-y-3">
  <Input
- placeholder="Search universitiesâ€¦"
+ placeholder="Search universities…"
  value={searchTerm}
  onChange={(e) => setSearchTerm(e.target.value)}
  className="h-11 rounded-xl"
@@ -138,7 +138,7 @@ export default function StudyAbroad() {
  <SelectValue placeholder="Country" />
  </SelectTrigger>
  <SelectContent>
- <SelectItem value="all">ðŸŒ All Countries</SelectItem>
+ <SelectItem value="all">🌍 All Countries</SelectItem>
  {STUDY_COUNTRIES.map((c) => (
  <SelectItem key={c.code} value={c.code}>
  {getCountryFlag(c.code)} {c.name}

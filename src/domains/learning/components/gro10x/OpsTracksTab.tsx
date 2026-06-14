@@ -44,7 +44,7 @@ export function OpsTracksTab() {
       </div>
 
       {isLoading ? (
-        <p className="text-xs text-muted-foreground">Loadingâ€¦</p>
+        <p className="text-xs text-muted-foreground">Loading…</p>
       ) : !tracks || tracks.length === 0 ? (
         <div className={`${GRO10X_PANEL} border border-background/10 rounded-2xl p-6 text-center`}>
           <BookOpen className="h-6 w-6 mx-auto text-muted-foreground" />
@@ -117,7 +117,7 @@ function TrackCard({
         <div className="flex-1 min-w-0">
           <p className="text-sm font-medium truncate">{track.title}</p>
           <p className="text-[10px] text-muted-foreground mt-0.5">
-            {track.is_sequential ? "Sequential" : "Open"} Â· {track.is_published ? "Published" : "Draft"}
+            {track.is_sequential ? "Sequential" : "Open"} · {track.is_published ? "Published" : "Draft"}
           </p>
         </div>
         {isAdmin && (

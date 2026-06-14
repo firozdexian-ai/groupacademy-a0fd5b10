@@ -27,7 +27,7 @@ function extractCountry(location: string | null): string | null {
 }
 
 /**
- * Related jobs rail. Tiers: same company â†’ same country â†’ featured fallback.
+ * Related jobs rail. Tiers: same company → same country → featured fallback.
  */
 export function RelatedJobs({ currentJobId, companyName, location, linkPrefix }: RelatedJobsProps) {
   const navigate = useNavigate();

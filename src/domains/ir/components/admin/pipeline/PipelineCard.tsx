@@ -39,7 +39,7 @@ export function PipelineCard({ investor, index, onSelect }: Props) {
 
   const checkRange =
     investor.check_size_min_usd || investor.check_size_max_usd
-      ? `${investor.check_size_min_usd ? formatUSD(investor.check_size_min_usd) : "?"} â€“ ${
+      ? `${investor.check_size_min_usd ? formatUSD(investor.check_size_min_usd) : "?"} – ${
           investor.check_size_max_usd ? formatUSD(investor.check_size_max_usd) : "?"
         }`
       : null;

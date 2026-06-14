@@ -16,10 +16,10 @@ interface CreditReceiptProps {
 const CreditReceiptEmail = ({ name, amount, new_balance, transaction_type }: CreditReceiptProps) => (
   <Html lang="en" dir="ltr">
     <Head />
-    <Preview>Credit transaction receipt â€” {SITE_NAME}</Preview>
+    <Preview>Credit transaction receipt — {SITE_NAME}</Preview>
     <Body style={main}>
       <Container style={container}>
-        <Heading style={h1}>Credit Transaction Receipt ðŸ§¾</Heading>
+        <Heading style={h1}>Credit Transaction Receipt 🧾</Heading>
         <Text style={text}>
           {name ? `Hi ${name},` : 'Hi there,'}
         </Text>
@@ -48,7 +48,7 @@ const CreditReceiptEmail = ({ name, amount, new_balance, transaction_type }: Cre
 
 export const template = {
   component: CreditReceiptEmail,
-  subject: 'Credit transaction receipt ðŸ§¾',
+  subject: 'Credit transaction receipt 🧾',
   displayName: 'Credit receipt',
   previewData: { name: 'Tanvir', amount: -25, new_balance: 225, transaction_type: 'Career Assessment' },
 } satisfies TemplateEntry

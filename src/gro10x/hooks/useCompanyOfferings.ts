@@ -1,6 +1,6 @@
 ﻿/**
  * Reads/writes a company's services & products catalog.
- * Used by the public company page and the Activities â†’ Offerings editor.
+ * Used by the public company page and the Activities → Offerings editor.
  */
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import { useAuth } from "@/hooks/useAuth";

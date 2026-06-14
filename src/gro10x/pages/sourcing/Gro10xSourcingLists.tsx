@@ -32,7 +32,7 @@ export default function Gro10xSourcingLists() {
       <div className="flex items-center justify-between">
         <h1 className="text-xl font-semibold">Talent Lists</h1>
         <Link to="/gro10x/sourcing" className="text-xs text-[#33E1E4]">
-          Search â†’
+          Search →
         </Link>
       </div>
 
@@ -48,7 +48,7 @@ export default function Gro10xSourcingLists() {
         </Button>
       </div>
 
-      {isLoading && <Gro10xLoading label="Loading listsâ€¦" />}
+      {isLoading && <Gro10xLoading label="Loading lists…" />}
 
       <div className="space-y-2">
         {(lists ?? []).map((l) => (

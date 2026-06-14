@@ -1,5 +1,5 @@
 ﻿/**
- * Companies Domain Hooks â€” Followed Companies Subsystem
+ * Companies Domain Hooks — Followed Companies Subsystem
  * Version: 2024 Highly Professional SAAS UI
  * Rules: Enforces Automated Efficiency for Talent operations with silent anomaly routing.
  */

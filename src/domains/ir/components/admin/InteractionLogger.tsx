@@ -251,7 +251,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  }
  >
  {point.toUpperCase()}
- <span className="opacity-40 group-hover:opacity-100 transition-opacity">Ã—</span>
+ <span className="opacity-40 group-hover:opacity-100 transition-opacity">×</span>
  </Badge>
  ))}
  </div>
@@ -305,7 +305,7 @@ export function InteractionLogger({ investorId, open, onOpenChange }: Interactio
  ) : (
  <ShieldCheck className="h-5 w-5 fill-current" />
  )}
- {saveMutation.isPending ? "Savingâ€¦" : "Save interaction"}
+ {saveMutation.isPending ? "Saving…" : "Save interaction"}
  </Button>
  </DialogFooter>
  </DialogContent>

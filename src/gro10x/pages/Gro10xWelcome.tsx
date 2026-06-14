@@ -8,7 +8,7 @@ import { GRO10X_BG, GRO10X_TEXT } from "../lib/tokens";
 import { listPinnedAgentKeys } from "@/domains/agents/repo/agentsRepo";
 
 /**
- * Gro10x Welcome â€” confirms signup and shows the agents Riya pinned for the
+ * Gro10x Welcome — confirms signup and shows the agents Riya pinned for the
  * user's selected goals so the next step feels concrete.
  */
 export default function Gro10xWelcome() {
@@ -38,9 +38,9 @@ export default function Gro10xWelcome() {
         Your Gro10x workspace is ready
         {previewAgents.length > 0 && (
           <>
-            {" "}â€” pinned agents for you:{" "}
+            {" "}— pinned agents for you:{" "}
             <span className="text-slate-200">
-              {previewAgents.map((a) => a.name).join(" Â· ")}
+              {previewAgents.map((a) => a.name).join(" · ")}
             </span>
           </>
         )}

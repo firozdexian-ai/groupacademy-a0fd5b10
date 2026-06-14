@@ -336,8 +336,8 @@ export function InvoicesTab() {
 
               <div className="grid grid-cols-1 md:grid-cols-2 gap-6 py-5 border-y border-border/40">
                 <div className="space-y-3.5">
-                  <DetailRow label="User Account" value={selected.talents?.full_name || "â€”"} />
-                  <DetailRow label="Email Link" value={selected.talents?.email || "â€”"} />
+                  <DetailRow label="User Account" value={selected.talents?.full_name || "—"} />
+                  <DetailRow label="Email Link" value={selected.talents?.email || "—"} />
                   <DetailRow label="Channel Ingress" value={selected.channel || "Manual"} />
                   <DetailRow label="Current Status" value={STATUS_BADGE[selected.status]?.label || selected.status} />
                 </div>

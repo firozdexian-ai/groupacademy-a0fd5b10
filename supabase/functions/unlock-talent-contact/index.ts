@@ -64,7 +64,7 @@ async function notifyAdmin(
   const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
   const chatId = Deno.env.get("TELEGRAM_ADMIN_CHAT_ID");
   if (!botToken || !chatId) {
-    console.log("[telegram alert] skipped â€” TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_ID not configured");
+    console.log("[telegram alert] skipped — TELEGRAM_BOT_TOKEN or TELEGRAM_ADMIN_CHAT_ID not configured");
     return;
   }
 
@@ -75,7 +75,7 @@ async function notifyAdmin(
     if (data?.name) companyName = data.name as string;
   } catch (_) { /* ignore */ }
 
-  const text = `ðŸ’° Unlock Alert! ${ev.userEmail} from ${companyName} just spent ${ev.credits} credits to unlock ${ev.talentName}.`;
+  const text = `💰 Unlock Alert! ${ev.userEmail} from ${companyName} just spent ${ev.credits} credits to unlock ${ev.talentName}.`;
 
   const r = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
     method: "POST",

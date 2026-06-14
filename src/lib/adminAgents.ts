@@ -1,13 +1,13 @@
 /**
  * ============================================================================
- * ⚠️  DEPRECATED — DO NOT ADD NEW AGENTS HERE  ⚠️ 
+ * ⚠️  DEPRECATED � DO NOT ADD NEW AGENTS HERE  ⚠️ 
  * ============================================================================
  *
  * This hardcoded registry is being migrated to the `ai_agents` table
  * (agent_type = 'admin'). New agents MUST be seeded into the database;
  * the Agentic Dashboard sidebar now reads from `useAdminAgents` (DB-backed).
  *
- * Batch 1 (Executive Council â€” already seeded to DB):
+ * Batch 1 (Executive Council — already seeded to DB):
  *   - nia-analyst       (was: business-analyst)
  *   - report-builder
  *   - aisha-analyst     (was: talent-aisha)
@@ -53,7 +53,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
     key: "business-analyst",
     functionName: "admin-analyst",
     name: "Nia",
-    tagline: "Business Analyst Â· platform metrics & revenue",
+    tagline: "Business Analyst · platform metrics & revenue",
     icon: Sparkles,
     accent: "bg-primary/15 text-primary",
     suggestions: [
@@ -67,7 +67,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
     key: "report-builder",
     functionName: "admin-report-builder",
     name: "Report Builder",
-    tagline: "Reports Â· charts Â· weekly digests",
+    tagline: "Reports · charts · weekly digests",
     icon: BarChart3,
     accent: "bg-teal-500/15 text-teal-500",
     suggestions: [
@@ -80,7 +80,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
     key: "talent-aisha",
     functionName: "admin-aisha-analyst",
     name: "Aisha",
-    tagline: "Talent Success Â· pool insights & matching",
+    tagline: "Talent Success · pool insights & matching",
     icon: Users,
     accent: "bg-pink-500/15 text-pink-500",
     suggestions: [
@@ -117,7 +117,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
     key: "companies-riya",
     functionName: "admin-riya-analyst",
     name: "Riya",
-    tagline: "Companies Analyst Â· employer pipeline",
+    tagline: "Companies Analyst · employer pipeline",
     icon: Building2,
     accent: "bg-blue-500/15 text-blue-500",
     suggestions: [
@@ -167,7 +167,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
     key: "ir-fpa",
     functionName: "admin-ir-fpa-analyst",
     name: "FP&A Agent",
-    tagline: "Fundraising Â· MRR/ARR Â· runway",
+    tagline: "Fundraising · MRR/ARR · runway",
     icon: Landmark,
     accent: "bg-amber-500/15 text-amber-500",
     suggestions: [
@@ -215,7 +215,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Upcoming events and competitions this month",
     ],
   },
-  // â”€â”€ Group 7 â€” Team & Workforce â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 7 — Team & Workforce ─────────────────────────────────────
   {
     key: "hr-chro",
     functionName: "admin-hr-chro",
@@ -253,7 +253,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Write a short JD for a country manager role",
     ],
   },
-  // â”€â”€ Group 8 â€” GTM â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 8 — GTM ──────────────────────────────────────────────────
   {
     key: "gtm-country",
     functionName: "admin-gtm-country",
@@ -267,7 +267,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Top 5 cities by talent supply",
     ],
   },
-  // â”€â”€ Group 9 â€” UGC & Content drafting agents â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 9 — UGC & Content drafting agents ────────────────────────
   {
     key: "ugc-video",
     functionName: "admin-ugc-video",
@@ -328,7 +328,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Re-engage dormant content partners",
     ],
   },
-  // â”€â”€ Group 10 â€” Jobs â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 10 — Jobs ────────────────────────────────────────────────
   {
     key: "jobs-outreach",
     functionName: "admin-jobs-outreach",
@@ -341,7 +341,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Re-engage employers who posted jobs 60+ days ago",
     ],
   },
-  // â”€â”€ Group 11 â€” Learn â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 11 — Learn ───────────────────────────────────────────────
   {
     key: "learn-dean",
     functionName: "admin-learn-dean",
@@ -354,7 +354,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Suggest deans to invite for the FinTech academy",
     ],
   },
-  // â”€â”€ Group 12 â€” Gig Economy â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 12 — Gig Economy ─────────────────────────────────────────
   {
     key: "gig-ops",
     functionName: "admin-gig-ops",
@@ -379,7 +379,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Suggest deliverables for a 5-page Figma redesign",
     ],
   },
-  // â”€â”€ Group 13 â€” Career Abroad â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 13 — Career Abroad ───────────────────────────────────────
   {
     key: "abroad-counselor",
     functionName: "admin-abroad-counselor",
@@ -416,7 +416,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Re-engage dormant university partners",
     ],
   },
-  // â”€â”€ Group 14 â€” Marketing & Outreach â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 14 — Marketing & Outreach ────────────────────────────────
   {
     key: "mkt-strategist",
     functionName: "admin-mkt-strategist",
@@ -429,7 +429,7 @@ export const ADMIN_AGENTS: AdminAgent[] = [
       "Suggest a community-group push for the Dhaka cluster",
     ],
   },
-  // â”€â”€ Group 15 â€” Finance & Monetization â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+  // ── Group 15 — Finance & Monetization ──────────────────────────────
   {
     key: "fin-controller",
     functionName: "admin-fin-controller",

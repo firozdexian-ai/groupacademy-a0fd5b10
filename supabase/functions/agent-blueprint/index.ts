@@ -1,4 +1,4 @@
-﻿// Phase 7 â€” Plain-language brief â†’ agent blueprint
+﻿// Phase 7 — Plain-language brief → agent blueprint
 // Input: short brief from admin/company/talent. Output: structured proposal
 // (name, agent_key, system_prompt, suggested tools, pricing tier hints).
 // Uses Lovable AI Gateway with tool calling for guaranteed structured output.
@@ -44,7 +44,7 @@ serve(async (req) => {
       .map((t: unknown) => `- ${t.tool_key} (${t.category}): ${t.description || t.name}`)
       .join("\n");
 
-    const sys = `You are an expert agent designer for the Agent OS platform. Given a plain-language brief, propose a concrete agent configuration. Pick a clear name, write a focused system prompt (under 200 words), choose 3â€“8 relevant tools from the catalog, and recommend a pricing tier. Be opinionated, not vague.
+    const sys = `You are an expert agent designer for the Agent OS platform. Given a plain-language brief, propose a concrete agent configuration. Pick a clear name, write a focused system prompt (under 200 words), choose 3–8 relevant tools from the catalog, and recommend a pricing tier. Be opinionated, not vague.
 
 Audience: ${audience} (talent | company | admin)
 

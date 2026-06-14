@@ -270,7 +270,7 @@ Be specific, actionable, and encouraging. Focus on practical advice for the Bang
     // Fire-and-forget: send service completion email
     const talentId = assessment.talent_id || userTalentId;
     if (talentId) {
-      const summary = `Score: ${assessment.percentage}% â€” ${assessment.readiness_level}. ${(aiAnalysis.strengths || []).slice(0, 2).join(", ")}`;
+      const summary = `Score: ${assessment.percentage}% — ${assessment.readiness_level}. ${(aiAnalysis.strengths || []).slice(0, 2).join(", ")}`;
       fetch(`${SUPABASE_URL}/functions/v1/send-transactional-email`, {
         method: "POST",
         headers: { "Content-Type": "application/json", Authorization: `Bearer ${supabaseServiceKey}` },

@@ -39,7 +39,7 @@ interface SlotConfirmationPayload {
 /**
  * GroUp Academy: Technical Interview Slot Scheduling Engine (AppInterviewSchedule)
  * Hardened responsive tracking wizard capturing parallel database handshakes and insulating lookups from undefined crash points.
- * Version: Launch Candidate Â· Phase Z1 Integration Stability Locked
+ * Version: Launch Candidate · Phase Z1 Integration Stability Locked
  */
 export default function AppInterviewSchedule() {
  const { id: unverifiedApplicationIdStr, interviewId: unverifiedInterviewIdStr } = useParams<{
@@ -232,7 +232,7 @@ export default function AppInterviewSchedule() {
  variant="secondary"
  className="font-mono text-[9px] font-extrabold uppercase px-1.5 h-4.5 rounded pt-0.5 leading-none shrink-0 border border-border/5"
  >
- VARIANT: {interviewRecordData.mode.toUpperCase()} Â· DURATION:{" "}
+ VARIANT: {interviewRecordData.mode.toUpperCase()} · DURATION:{" "}
  {interviewRecordData.duration_min.toString()} MIN
  </Badge>
  </div>
@@ -266,7 +266,7 @@ export default function AppInterviewSchedule() {
  rel="noopener noreferrer"
  className="font-mono text-[10px] font-black uppercase tracking-wide text-primary hover:underline inline-flex items-center gap-1.5 leading-none"
  >
- <span>Launch Encrypted Meeting Link Endpoint</span> <span>â†’</span>
+ <span>Launch Encrypted Meeting Link Endpoint</span> <span>→</span>
  </a>
  </div>
  )}

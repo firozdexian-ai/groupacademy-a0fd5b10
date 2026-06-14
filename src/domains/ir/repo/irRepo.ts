@@ -10,7 +10,7 @@
 import { supabase } from "@/integrations/supabase/client";
 import { getCurrentUser } from "@/lib/auth";
 
-// â”€â”€â”€ Generic helpers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Generic helpers ───────────────────────────────────────────────────────
 export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
   const { created_at, updated_at, ...cleanPayload } = payload;
   if (cleanPayload?.id) {
@@ -28,7 +28,7 @@ export async function deleteGraphRow(table: string, id: string): Promise<void> {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Dashboard telemetry â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Dashboard telemetry ───────────────────────────────────────────────────
 export async function getIRDashboardTelemetry(currentMonth: string, startOfMonthIso: string) {
   const last30d = new Date(Date.now() - 30 * 86400000).toISOString();
   const [targetRes, usageRes, vcRes, invRes, talentRes, outreachRes] = await Promise.all([
@@ -66,7 +66,7 @@ export async function getIRDashboardTelemetry(currentMonth: string, startOfMonth
   };
 }
 
-// â”€â”€â”€ VC firms â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── VC firms ──────────────────────────────────────────────────────────────
 export async function listVCFirms(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("ir_vc_firms")
@@ -82,7 +82,7 @@ export async function listVCFirmsMin(): Promise<Array<{ id: string; name: string
   return (data ?? []) as unknown;
 }
 
-// â”€â”€â”€ Investors â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Investors ─────────────────────────────────────────────────────────────
 export async function listInvestors(filterFirmId?: string | null): Promise<unknown[]> {
   let query = supabase
     .from("ir_investors")
@@ -101,7 +101,7 @@ export async function deleteInvestor(id: string): Promise<void> {
   return deleteGraphRow("ir_investors", id);
 }
 
-// â”€â”€â”€ Investor interactions â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Investor interactions ─────────────────────────────────────────────────
 export async function logInvestorInteraction(input: {
   investorId: string;
   payload: Record<string, unknown>;
@@ -120,7 +120,7 @@ export async function logInvestorInteraction(input: {
   if (updateError) throw updateError;
 }
 
-// â”€â”€â”€ Monthly targets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Monthly targets ───────────────────────────────────────────────────────
 export async function getMonthlyTarget(currentMonth: string): Promise<unknown | null> {
   const { data, error } = await supabase
     .from("ir_monthly_targets")
@@ -135,7 +135,7 @@ export async function upsertMonthlyTarget(payload: unknown & { id?: string }): P
   return upsertGraphRow("ir_monthly_targets", payload);
 }
 
-// â”€â”€â”€ Outreach + email communications â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Outreach + email communications ───────────────────────────────────────
 export async function logOutreachAndEmail(input: {
   outreach: Record<string, unknown>;
   email: Record<string, unknown>;
@@ -146,7 +146,7 @@ export async function logOutreachAndEmail(input: {
   if (commError) throw commError;
 }
 
-// â”€â”€â”€ Influencers â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Influencers ───────────────────────────────────────────────────────────
 export async function listInfluencers(tier?: string): Promise<unknown[]> {
   let query = supabase
     .from("ir_influencers")
@@ -165,7 +165,7 @@ export async function deleteInfluencer(id: string): Promise<void> {
   return deleteGraphRow("ir_influencers", id);
 }
 
-// â”€â”€â”€ Data room â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Data room ─────────────────────────────────────────────────────────────
 export async function listDataRoomDocuments(): Promise<unknown[]> {
   const { data, error } = await supabase
     .from("ir_data_room_documents")
@@ -260,7 +260,7 @@ export async function listDocumentHotSlides(documentId: string): Promise<unknown
   return ((data as unknown) ?? []) as unknown[];
 }
 
-// â”€â”€â”€ Phase 10j.2 â€” IR metrics snapshots â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.2 — IR metrics snapshots ──────────────────────────────────
 export async function listIrMetricsSnapshots(limit = 12) {
   const { data, error } = await supabase
     .from("ir_metrics_snapshots")
@@ -277,7 +277,7 @@ export async function upsertIrMetricsSnapshot(input: Record<string, unknown> & {
   if (error) throw error;
 }
 
-// â”€â”€â”€ Phase 10j.5k7 â€” IR composer / pipeline / detail / cohorts â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Phase 10j.5k7 — IR composer / pipeline / detail / cohorts ──────────
 export async function listIrEmailCommunications(investorId?: string, limit = 10) {
   let query = supabase
     .from("ir_email_communications")

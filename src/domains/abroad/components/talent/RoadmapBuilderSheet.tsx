@@ -38,7 +38,7 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
   const { toast } = useToast();
   const queryClient = useQueryClient();
 
-  // Study Abroad Roadmap standard value peg is 100 credits ($2.00 USD / à§³200 BDT)[cite: 5]
+  // Study Abroad Roadmap standard value peg is 100 credits ($2.00 USD / ৳200 BDT)[cite: 5]
   const ROADMAP_CREDIT_COST = 100;
 
   // Immutable Requirements: Intact data structures matching the database public schema
@@ -264,7 +264,7 @@ export function RoadmapBuilderSheet({ countryCode, children }: RoadmapBuilderShe
               className="w-full h-11 font-semibold tracking-wide transition-all shadow-md active:scale-[0.99] disabled:cursor-not-allowed"
             >
               {isPending && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
-              {isPending ? "Building your roadmapâ€¦" : `Generate roadmap (${ROADMAP_CREDIT_COST} credits)`}
+              {isPending ? "Building your roadmap…" : `Generate roadmap (${ROADMAP_CREDIT_COST} credits)`}
             </Button>
           </div>
         </div>

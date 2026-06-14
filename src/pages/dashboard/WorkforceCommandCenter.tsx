@@ -72,12 +72,12 @@ const ANY_AGENT = "__ANY__";
 const CUSTOM_TOPIC = "__CUSTOM__";
 
 const credSummary = (c: unknown) => {
-  if (!c || typeof c !== "object") return "â€”";
+  if (!c || typeof c !== "object") return "—";
   const keys = Object.keys(c);
   if (!keys.length) return "{}";
   const first = keys[0];
   const v = String(c[first] ?? "");
-  const masked = v.length > 6 ? `â€¢â€¢â€¢â€¢${v.slice(-4)}` : "â€¢â€¢â€¢â€¢";
+  const masked = v.length > 6 ? `••••${v.slice(-4)}` : "••••";
   return `{${first}: ${masked}${keys.length > 1 ? `, +${keys.length - 1}` : ""}}`;
 };
 
@@ -158,10 +158,10 @@ function StatusStrip() {
   });
 
   const tiles = [
-    { label: "Master Templates", value: data?.templates ?? "â€”", color: "text-primary" },
-    { label: "Assigned Profiles", value: data?.instances ?? "â€”", color: "text-emerald-500" },
-    { label: "Connected Streams", value: data?.channels ?? "â€”", color: "text-cyan-400" },
-    { label: "Active Notification Rules", value: data?.routes ?? "â€”", color: "text-amber-400" },
+    { label: "Master Templates", value: data?.templates ?? "—", color: "text-primary" },
+    { label: "Assigned Profiles", value: data?.instances ?? "—", color: "text-emerald-500" },
+    { label: "Connected Streams", value: data?.channels ?? "—", color: "text-cyan-400" },
+    { label: "Active Notification Rules", value: data?.routes ?? "—", color: "text-amber-400" },
   ];
 
   return (
@@ -182,7 +182,7 @@ function StatusStrip() {
 }
 
 // =====================================================
-// TAB 1 â€” AI ASSISTANTS POOL
+// TAB 1 — AI ASSISTANTS POOL
 // =====================================================
 function FleetPanel() {
   const qc = useQueryClient();
@@ -287,7 +287,7 @@ function FleetPanel() {
                       )}
                     </td>
                     {filter === "instances" && (
-                      <td className="py-4 px-4 text-muted-foreground text-left uppercase text-xs">{parent?.name ?? "â€”"}</td>
+                      <td className="py-4 px-4 text-muted-foreground text-left uppercase text-xs">{parent?.name ?? "—"}</td>
                     )}
                     <td className="py-4 px-4 text-right pr-4">
                       <span
@@ -419,7 +419,7 @@ function HireDialog({ templates, companies, onClose, onDone }: unknown) {
 }
 
 // =====================================================
-// TAB 2 â€” INTEGRATION CHANNELS
+// TAB 2 — INTEGRATION CHANNELS
 // =====================================================
 function ChannelsPanel() {
   const qc = useQueryClient();
@@ -703,7 +703,7 @@ function ChannelDialog({ editing, instances, onClose, onDone }: unknown) {
 }
 
 // =====================================================
-// TAB 3 â€” EVENT NOTIFICATION RULES
+// TAB 3 — EVENT NOTIFICATION RULES
 // =====================================================
 function RoutingPanel() {
   const qc = useQueryClient();
@@ -882,7 +882,7 @@ function TelegramScannerDialog({ onClose }: { onClose: () => void }) {
             </p>
           </div>
           <button onClick={onClose} className="text-muted-foreground hover:text-foreground text-xl px-2 border-0 bg-transparent cursor-pointer">
-            Ã—
+            ×
           </button>
         </div>
 

@@ -1,11 +1,11 @@
 /**
- * Group Academy â€” Abroad Domain Repository Layer
+ * Group Academy — Abroad Domain Repository Layer
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Security Profile: Restricts execution boundaries, enforces tenant/user filters, handles transactional state mapping.
  */
 import { supabase } from "@/integrations/supabase/client";
 
-// â”€â”€â”€ GENERIC SYSTEM GRAPH HELPERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── GENERIC SYSTEM GRAPH HELPERS ─────────────────────────────────────────
 export async function upsertGraphRow(table: string, payload: unknown): Promise<void> {
   if (payload?.id) {
     const { id, ...patch } = payload;
@@ -28,7 +28,7 @@ export async function deleteGraphRow(table: string, id: string): Promise<void> {
   if (error) throw error;
 }
 
-// â”€â”€â”€ ABROAD MASTER COCKPIT GRAPH (ADMIN) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── ABROAD MASTER COCKPIT GRAPH (ADMIN) ──────────────────────────────────
 export async function getAbroadGraphMaster() {
   const [appsRes, programsRes, roadmapsRes, agentsRes, ieltsRes, resourcesRes] = await Promise.all([
     supabase
@@ -80,7 +80,7 @@ export async function getAbroadGraphMaster() {
   };
 }
 
-// â”€â”€â”€ ROADMAP INTAKE PIPELINES (TALENT-FACING) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── ROADMAP INTAKE PIPELINES (TALENT-FACING) ─────────────────────────────
 export async function insertRoadmapContactLead(payload: Record<string, unknown>): Promise<{ error: unknown | null }> {
   const { error } = await supabase.from("contacts").insert([payload as unknown]);
   return { error };
@@ -94,7 +94,7 @@ export async function insertStudyAbroadRoadmap(payload: Record<string, unknown>)
   return { id: data.id };
 }
 
-// â”€â”€â”€ MANAGEMENT LAYERS & STATE CONTROLLERS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── MANAGEMENT LAYERS & STATE CONTROLLERS ───────────────────────────────
 export async function getActiveCounsellorByUser(userId: string): Promise<{ user_id: string } | null> {
   const { data, error } = await supabase
     .from("abroad_counsellors")
@@ -139,7 +139,7 @@ export async function advanceAbroadStage(args: { applicationId: string; nextStag
   if (error) throw error;
 }
 
-// â”€â”€â”€ LIVE PROGRAM DISCOVERY ENGINE â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── LIVE PROGRAM DISCOVERY ENGINE ────────────────────────────────────────
 export async function listActiveStudyAbroadPrograms(args: { country?: string; degree?: string; search?: string }) {
   let query = supabase
     .from("study_abroad_programs")
@@ -209,7 +209,7 @@ export async function listDestinationAgentMessages(countryCode: string, limit = 
   return data ?? [];
 }
 
-// â”€â”€â”€ IELTS DRILL LAYERS & LANGUAGE LABS â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── IELTS DRILL LAYERS & LANGUAGE LABS ──────────────────────────────────
 export async function getIeltsStreakByUser(userId: string) {
   const { data, error } = await supabase
     .from("ielts_streaks")
@@ -293,7 +293,7 @@ export async function listAbroadApplicationsForCurrentUser(userId?: string) {
   return data ?? [];
 }
 
-// â”€â”€â”€ SCHOOL DETAIL (TALENT-FACING) â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── SCHOOL DETAIL (TALENT-FACING) ────────────────────────────────────────
 export async function getSchoolBySlugWithAcademy(slug: string) {
   const { data, error } = await supabase
     .from("schools" as unknown)

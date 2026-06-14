@@ -96,7 +96,7 @@ export default function Profile() {
  toast.success("Profile saved.");
  } catch (e) {
  trackError(e, { area: "Profile.handleSectionSave" });
- toast.error("Couldn't save â€” please try again.");
+ toast.error("Couldn't save — please try again.");
  }
  },
  [updateTalent, refreshTalent],
@@ -125,7 +125,7 @@ export default function Profile() {
  }
  } catch (error) {
  trackError(error, { area: "Profile.handleEnhanceWithAI" });
- toast.error("AI rewrite failed â€” please try again.");
+ toast.error("AI rewrite failed — please try again.");
  } finally {
  setIsEnhancing(false);
  setShowEnhanceDialog(false);
@@ -136,7 +136,7 @@ export default function Profile() {
  return (
  <div className="flex flex-col items-center justify-center min-h-[60vh] space-y-3">
  <InlineSpinner size="lg" />
- <p className="text-sm text-muted-foreground">Loading your profileâ€¦</p>
+ <p className="text-sm text-muted-foreground">Loading your profile…</p>
  </div>
  );
  }
@@ -151,7 +151,7 @@ export default function Profile() {
  .join("")
  .toUpperCase()
  .slice(0, 2)
- : "â€”";
+ : "—";
 
  const countryLabel = t.country
  ? `${getCountryFlag(t.country) ?? ""} ${getCountryName(t.country) ?? t.country}`.trim()
@@ -395,7 +395,7 @@ export default function Profile() {
  <p className="text-xs text-muted-foreground">{exp.company}</p>
  {(exp.startDate || exp.endDate) && (
  <p className="text-[11px] text-muted-foreground mt-0.5">
- {exp.startDate} {exp.endDate ? `â€“ ${exp.endDate}` : exp.isCurrent ? "â€“ Present" : ""}
+ {exp.startDate} {exp.endDate ? `– ${exp.endDate}` : exp.isCurrent ? "– Present" : ""}
  </p>
  )}
  {exp.description && (
@@ -431,12 +431,12 @@ export default function Profile() {
  <p className="font-medium text-sm">{ed.institution}</p>
  {(ed.degree || ed.fieldOfStudy) && (
  <p className="text-xs text-muted-foreground">
- {[ed.degree, ed.fieldOfStudy].filter(Boolean).join(" Â· ")}
+ {[ed.degree, ed.fieldOfStudy].filter(Boolean).join(" · ")}
  </p>
  )}
  {(ed.startYear || ed.endYear) && (
  <p className="text-[11px] text-muted-foreground mt-0.5">
- {ed.startYear} {ed.endYear ? `â€“ ${ed.endYear}` : ""}
+ {ed.startYear} {ed.endYear ? `– ${ed.endYear}` : ""}
  </p>
  )}
  </div>
@@ -489,7 +489,7 @@ export default function Profile() {
  <div key={i} className="flex items-center gap-2 text-sm">
  <LanguagesIcon className="h-3.5 w-3.5 text-primary" />
  <span className="font-medium">{l.language}</span>
- <span className="text-muted-foreground text-xs">Â· {l.proficiency}</span>
+ <span className="text-muted-foreground text-xs">· {l.proficiency}</span>
  </div>
  ))
  )}
@@ -521,7 +521,7 @@ export default function Profile() {
  <div className="flex-1 min-w-0">
  <p className="font-medium text-sm">{a.title}</p>
  <p className="text-xs text-muted-foreground">
- {[a.issuer, a.date].filter(Boolean).join(" Â· ")}
+ {[a.issuer, a.date].filter(Boolean).join(" · ")}
  </p>
  </div>
  </div>
@@ -555,7 +555,7 @@ export default function Profile() {
  <Button onClick={handleEnhanceWithAI} disabled={isEnhancing}>
  {isEnhancing ? (
  <>
- <InlineSpinner size="sm" className="mr-2" /> Rewritingâ€¦
+ <InlineSpinner size="sm" className="mr-2" /> Rewriting…
  </>
  ) : (
  <>

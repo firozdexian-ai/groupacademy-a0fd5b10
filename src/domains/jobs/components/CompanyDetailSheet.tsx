@@ -30,7 +30,7 @@ const TYPE_LABEL: Record<string, string> = {
 };
 
 /**
- * Company detail sheet â€” slide-up panel with company info, job-type / location chips, and open roles.
+ * Company detail sheet — slide-up panel with company info, job-type / location chips, and open roles.
  */
 export function CompanyDetailSheet({ companyName, open, onOpenChange }: Props) {
   const navigate = useNavigate();

@@ -113,13 +113,13 @@ export function EventDateTimeField({
       {utcValue && (
         <div className="text-[11px] font-mono text-muted-foreground/80 space-y-1 p-2 rounded-xl bg-muted/20 border border-dashed border-border/60 mt-1">
           <div className="flex justify-between items-center px-0.5">
-            <span className="font-semibold uppercase tracking-wide">ðŸ“… Scheduled Target:</span>
+            <span className="font-semibold uppercase tracking-wide">📅 Scheduled Target:</span>
             <span className="font-bold text-foreground bg-background px-2 py-0.5 rounded border">
               {formatEventTime(utcValue, targetTz)}
             </span>
           </div>
           <div className="flex justify-between items-center px-0.5 border-t pt-1 border-border/10">
-            <span className="font-semibold uppercase tracking-wide">ðŸŒ Stored time (UTC):</span>
+            <span className="font-semibold uppercase tracking-wide">🌐 Stored time (UTC):</span>
             <span className="font-bold text-primary">{formatEventTime(utcValue, "UTC")}</span>
           </div>
         </div>

@@ -2,7 +2,7 @@
 
 /**
  * Onboarding + Career Coach telemetry. Fire-and-forget into platform_events.
- * Admin-readable via existing RLS. No client-side gating â€” never block the UI.
+ * Admin-readable via existing RLS. No client-side gating — never block the UI.
  */
 
 export type OnboardingAction = "view" | "next" | "skip" | "complete" | "error";

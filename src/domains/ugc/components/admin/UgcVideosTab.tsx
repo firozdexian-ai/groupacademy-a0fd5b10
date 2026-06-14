@@ -84,7 +84,7 @@ export function UgcVideosTab() {
  </div>
  </TableCell>
  <TableCell className="text-xs text-muted-foreground truncate max-w-[200px]">
- {row.youtube_url || "â€”"}
+ {row.youtube_url || "—"}
  </TableCell>
  <TableCell>
  <Badge

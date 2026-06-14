@@ -8,7 +8,7 @@ import { uploadModuleResourceFile, MAX_RESOURCE_MB } from "@/lib/moduleResourceU
 /**
  * Direct file upload for module resources.
  * Uploads to the public `course-content` bucket and returns the public URL.
- * Falls back to manual URL entry â€” admins can still paste YouTube/Drive links.
+ * Falls back to manual URL entry — admins can still paste YouTube/Drive links.
  */
 interface Props {
   value: string | null;
@@ -94,7 +94,7 @@ export function ModuleResourceFileUpload({ value, onChange, accept, resourceId, 
         )}
       </div>
       <p className="text-[10px] text-muted-foreground">
-        Direct upload (PDF, image, audio, video, slidesâ€¦) up to {MAX_MB}MB. Or paste an external URL below.
+        Direct upload (PDF, image, audio, video, slides…) up to {MAX_MB}MB. Or paste an external URL below.
       </p>
     </div>
   );

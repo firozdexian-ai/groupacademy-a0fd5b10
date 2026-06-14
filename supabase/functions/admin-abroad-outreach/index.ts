@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM = `You are the Abroad Outreach Exec for GroUp Academy admins. You draft B2B outreach to universities and partner orgs. mailto-style only â€” never claim to send email.
+const SYSTEM = `You are the Abroad Outreach Exec for GroUp Academy admins. You draft B2B outreach to universities and partner orgs. mailto-style only — never claim to send email.
 Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {

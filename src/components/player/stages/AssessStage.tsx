@@ -51,7 +51,7 @@ export interface AssessStageProps {
 /**
  * GroUp Academy: Adaptive Knowledge Validation Engine Node (AssessStage)
  * An authoritative operational gatekeeper testing skill-node mastery and persisting verification scores.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function AssessStage({
   contentId,
@@ -217,7 +217,7 @@ export function AssessStage({
         <CardContent className="p-12 flex flex-col items-center justify-center gap-3 text-center w-full">
           <Loader2 className="h-5 w-5 animate-spin text-primary stroke-[2.5]" />
           <p className="text-xs font-bold text-muted-foreground/80 uppercase tracking-wider pl-0.5 animate-pulse">
-            Assembling Knowledge Verification Matrixâ€¦
+            Assembling Knowledge Verification Matrix…
           </p>
         </CardContent>
       </Card>

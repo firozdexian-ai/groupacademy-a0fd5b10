@@ -158,7 +158,7 @@ export default function AssessmentResults() {
     }
   }, [assessment, isAnalyzing, hasAnalyzed, mutate]);
 
-  const shareText = `I scored ${assessment?.percentage}% on the Career Readiness Scorecard! ðŸŽ¯ Check yours at GroUp Academy.`;
+  const shareText = `I scored ${assessment?.percentage}% on the Career Readiness Scorecard! 🎯 Check yours at GroUp Academy.`;
   const shareUrl = window.location.href;
 
   const handleWhatsAppShare = () =>

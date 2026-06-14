@@ -1,5 +1,5 @@
 ﻿/**
- * Group Academy â€” Agents Domain API Layer
+ * Group Academy — Agents Domain API Layer
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Integration Map: Typed wrappers enforcing contract validation for Deno Edge Runtimes.
  */

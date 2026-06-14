@@ -50,7 +50,7 @@ export function useHype(
 
     if (sent > 0) {
       toast({
-        title: sent === 1 ? "ðŸ”¥ Hype sent Â· -1 credit" : `ðŸ”¥ +${sent} Hype Â· -${sent} credits`,
+        title: sent === 1 ? "🔥 Hype sent · -1 credit" : `🔥 +${sent} Hype · -${sent} credits`,
       });
     }
 

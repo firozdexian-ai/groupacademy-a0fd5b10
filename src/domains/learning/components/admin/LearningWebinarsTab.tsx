@@ -216,7 +216,7 @@ export function LearningWebinarsTab() {
  <DialogContent className="max-w-4xl max-h-[90vh] overflow-y-auto rounded-xl p-6 border border-border/60">
  <DialogHeader>
  <DialogTitle className="text-xl font-medium italic tracking-tight text-destructive flex items-center gap-2">
- <CalendarClock className="h-5 w-5" /> Sessions â€” {sessionsRow?.title}
+ <CalendarClock className="h-5 w-5" /> Sessions — {sessionsRow?.title}
  </DialogTitle>
  </DialogHeader>
  {sessionsRow && (

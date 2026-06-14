@@ -93,7 +93,7 @@ export function UgcOverviewTab() {
                               Reported {report.scope?.replace("_", " ")}
                             </p>
                             <p className="text-xs text-muted-foreground truncate">Reason: {report.reason}</p>
-                            <code className="text-[10px] text-muted-foreground font-mono">ID: {report.scope_id?.substring(0, 8)}â€¦</code>
+                            <code className="text-[10px] text-muted-foreground font-mono">ID: {report.scope_id?.substring(0, 8)}…</code>
                           </div>
                         </div>
                         <div className="flex items-center gap-1 shrink-0">

@@ -48,7 +48,7 @@ const TYPE_DEFS: Record<Exclude<FeedFilterType, "all">, { label: string; icon: L
 };
 
 /**
- * FeedFilters â€” A clean horizontal action row providing community discovery channels 
+ * FeedFilters — A clean horizontal action row providing community discovery channels 
  * and localized scoping segments for the feed.
  */
 export function FeedFilters({ filters, onChange, counts }: FeedFiltersProps) {

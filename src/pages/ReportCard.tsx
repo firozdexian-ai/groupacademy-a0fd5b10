@@ -263,7 +263,7 @@ export default function ReportCard() {
         {/* Engineering Footnote */}
         <footer className="text-center pt-8">
           <p className="text-[9px] font-black uppercase tracking-[0.4em] text-muted-foreground/30">
-            Artifact Timestamp: {new Date(reportData!.quiz_attempt.completed_at).toISOString()} â€¢ Node Integrity: High
+            Artifact Timestamp: {new Date(reportData!.quiz_attempt.completed_at).toISOString()} • Node Integrity: High
           </p>
         </footer>
       </main>

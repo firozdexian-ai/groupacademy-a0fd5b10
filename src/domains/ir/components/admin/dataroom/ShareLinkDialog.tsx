@@ -49,7 +49,7 @@ export function ShareLinkDialog({
  <Dialog open={open} onOpenChange={onOpenChange}>
  <DialogContent className="max-w-2xl">
  <DialogHeader>
- <DialogTitle>Share â€” {document?.title}</DialogTitle>
+ <DialogTitle>Share — {document?.title}</DialogTitle>
  </DialogHeader>
 
  <Card className="p-4 space-y-3 bg-muted/30">

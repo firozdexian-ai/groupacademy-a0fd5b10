@@ -71,7 +71,7 @@ serve(async (req) => {
       }
       return new Response(
         JSON.stringify({
-          reply: "Not quite â€” please try the human-check question again.",
+          reply: "Not quite — please try the human-check question again.",
           action: "verify_human",
           quiz: null,
           quiz_passed: false,
@@ -83,7 +83,7 @@ serve(async (req) => {
 
     // Persona resolution: pulled from the WaaS instance bound to this auth-page
     // visitor (mkt-seo-01 country-specific Marketing & SEO agent). Legacy
-    // `ai_agents` lookup is removed â€” all front-door personas now live in
+    // `ai_agents` lookup is removed — all front-door personas now live in
     // workforce_hired_instances + workforce_master_templates.
     let systemPrompt = FALLBACK_SYSTEM_PROMPT;
     let model = "google/gemini-2.5-flash";
@@ -136,7 +136,7 @@ serve(async (req) => {
       // (rate limits, transient 5xx, model deprecation, etc.).
       const friendly =
         response.status === 429
-          ? "I'm a bit busy right now â€” please try again in a moment."
+          ? "I'm a bit busy right now — please try again in a moment."
           : response.status === 402
             ? "AI credits are temporarily unavailable. Please try again shortly."
             : "Sorry, I had trouble responding. Please try again.";
@@ -151,7 +151,7 @@ serve(async (req) => {
     try {
       parsed = JSON.parse(data.choices?.[0]?.message?.content || "{}");
     } catch (_e) {
-      parsed = { reply: data.choices?.[0]?.message?.content || "â€¦", action: "noop", quiz: null };
+      parsed = { reply: data.choices?.[0]?.message?.content || "…", action: "noop", quiz: null };
     }
 
     // Server-side bot check: generate a question, persist the expected answer
@@ -179,7 +179,7 @@ serve(async (req) => {
     }
 
 
-    // dashboard: Telemetry â€” log conversation to aisha_conversations for the admin console.
+    // dashboard: Telemetry — log conversation to aisha_conversations for the admin console.
     try {
       const sessionId = context?.session_id || context?.sessionId;
       if (sessionId) {

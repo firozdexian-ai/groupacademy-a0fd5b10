@@ -1,4 +1,4 @@
-﻿// cron-session-reminders â€” runs every ~5 minutes via pg_cron.
+﻿// cron-session-reminders — runs every ~5 minutes via pg_cron.
 // Finds course_sessions in T-24h / T-1h / T-5min windows and dispatches
 // session_reminder_t{24,1,5} via notify-learning-event. Idempotent through
 // notification_dispatch (UNIQUE scope,scope_id,kind).

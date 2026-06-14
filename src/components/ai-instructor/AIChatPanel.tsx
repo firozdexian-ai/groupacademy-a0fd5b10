@@ -302,7 +302,7 @@ export function AIChatPanel({
               <div className="mt-6 max-w-[280px] flex items-start gap-2 rounded-2xl border border-emerald-500/20 bg-emerald-500/5 px-3 py-2 text-left">
                 <ShieldCheck className="h-4 w-4 text-emerald-600 mt-0.5 shrink-0" />
                 <p className="text-[11px] text-foreground/80 italic leading-snug">
-                  Tutor knows your progress â€” weak topics, credentials, and items due for review.
+                  Tutor knows your progress — weak topics, credentials, and items due for review.
                 </p>
                 <button
                   type="button"

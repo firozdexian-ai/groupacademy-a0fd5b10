@@ -18,7 +18,7 @@ interface DestinationAgent {
 }
 
 /**
- * Study Abroad hub â€” destination directory + quick links to IELTS & language tools.
+ * Study Abroad hub — destination directory + quick links to IELTS & language tools.
  */
 export default function AbroadHub() {
  const { data: destinations = [], isLoading } = useQuery<DestinationAgent[]>({
@@ -126,7 +126,7 @@ export default function AbroadHub() {
  aria-label={`${agent.display_name} flag`}
  className="text-2xl shrink-0 select-none pointer-events-none block leading-none h-8 w-8 grid place-items-center bg-muted/30 rounded border border-border/5"
  >
- {agent.flag_emoji ?? "ðŸŒ"}
+ {agent.flag_emoji ?? "🌍"}
  </span>
 
  <div className="flex-1 min-w-0 leading-none space-y-1 block">

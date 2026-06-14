@@ -34,11 +34,11 @@ serve(async (req) => {
     const botToken = Deno.env.get("TELEGRAM_BOT_TOKEN");
     const chatId = Deno.env.get("TELEGRAM_ADMIN_CHAT_ID");
     if (!botToken || !chatId) {
-      console.log("[notify-admin] skipped â€” Telegram secrets missing");
+      console.log("[notify-admin] skipped — Telegram secrets missing");
       return json({ ok: true, skipped: true }, 200);
     }
 
-    const text = `ðŸ”” Agent alert\n${message}\n\nâ€” from ${user.email ?? user.id}`;
+    const text = `🔔 Agent alert\n${message}\n\n— from ${user.email ?? user.id}`;
     const r = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",
       headers: { "Content-Type": "application/json" },

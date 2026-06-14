@@ -36,7 +36,7 @@ const CATEGORIES_DIRECTORY = ["all", "career", "productivity", "writing", "resea
 /**
  * GroUp Academy: Authoritative AI Agent Marketplace (AgentMarketplace)
  * Hardened registry matrix managing async telemetry lookup states and shielding filter maps from structural drift.
- * Version: Launch Candidate Â· Phase Z0 Lifecycle Insulation Hardened
+ * Version: Launch Candidate · Phase Z0 Lifecycle Insulation Hardened
  */
 export default function AgentMarketplace() {
  const [agentsRegistryPayload, setAgentsRegistryPayload] = React.useState<MarketAgent[]>([]);
@@ -124,7 +124,7 @@ export default function AgentMarketplace() {
  </h1>
  </div>
  <p className="text-xs sm:text-sm font-semibold text-muted-foreground/60 leading-normal block">
- Deploy specialised computational expert modules instantly. Operates on localized credit draw paths â€” zero
+ Deploy specialised computational expert modules instantly. Operates on localized credit draw paths — zero
  ongoing membership obligations.
  </p>
  </header>

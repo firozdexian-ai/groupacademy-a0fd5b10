@@ -50,7 +50,7 @@ export function AccountUpgradeModal({ open, onComplete }: AccountUpgradeModalPro
               </div>
             </div>
 
-            {/* Escape hatch â€” talents stuck on this gate (e.g. lookup data
+            {/* Escape hatch — talents stuck on this gate (e.g. lookup data
                 missing) can always sign out and contact support. */}
             <button
               type="button"

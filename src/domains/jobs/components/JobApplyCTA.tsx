@@ -48,7 +48,7 @@ export function JobApplyCTA({
   const navigate = useNavigate();
   const [externalOpen, setExternalOpen] = React.useState(false);
 
-  // Deadline closed â†’ disabled
+  // Deadline closed → disabled
   if (deadlinePassed) {
     return (
       <Button size={size} disabled className={cn("font-semibold", className)}>
@@ -57,7 +57,7 @@ export function JobApplyCTA({
     );
   }
 
-  // Public viewer â†’ route through auth with safe return
+  // Public viewer → route through auth with safe return
   if (authMode === "public") {
     const returnTo = safeReturnTo(`/app/jobs/${job.id}/apply`) ?? `/app/jobs/${job.id}`;
     return (
@@ -74,7 +74,7 @@ export function JobApplyCTA({
     );
   }
 
-  // Already applied â†’ view application / resume assessment
+  // Already applied → view application / resume assessment
   if (existingApplication) {
     const needsAssessment =
       job.ai_assessment_enabled && existingApplication.assessment_status !== "completed";

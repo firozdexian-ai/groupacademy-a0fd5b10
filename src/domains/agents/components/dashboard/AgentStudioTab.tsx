@@ -84,9 +84,9 @@ interface KnowledgeSource {
 
 const AUDIENCES = ["talent", "company", "internal", "public"];
 const LEVELS = [
-  { v: 1, label: "Tier 1 â€” Free / Platform Concierge" },
-  { v: 2, label: "Tier 2 â€” Specialist / Premium Advisor" },
-  { v: 3, label: "Tier 3 â€” Expert / Executive Operator" },
+  { v: 1, label: "Tier 1 — Free / Platform Concierge" },
+  { v: 2, label: "Tier 2 — Specialist / Premium Advisor" },
+  { v: 3, label: "Tier 3 — Expert / Executive Operator" },
 ];
 const CANVAS_MODES = ["chat", "split", "fullscreen"];
 
@@ -582,7 +582,7 @@ function AgentDetailPanel({
               <div>
                 <h3 className="text-sm font-semibold text-amber-700">Monetization & Credit Settings</h3>
                 <p className="text-xs text-muted-foreground">
-                  Set connection boundaries and message token deduction values. 1 credit = à§³2 BDT.
+                  Set connection boundaries and message token deduction values. 1 credit = ৳2 BDT.
                 </p>
               </div>
             </div>

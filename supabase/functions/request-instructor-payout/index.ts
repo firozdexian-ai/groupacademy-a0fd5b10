@@ -1,4 +1,4 @@
-﻿// Phase 4.7 â€” Instructor payout request
+﻿// Phase 4.7 — Instructor payout request
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 const corsHeaders = {

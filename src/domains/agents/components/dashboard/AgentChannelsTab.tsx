@@ -8,7 +8,7 @@ import { cn } from "@/lib/utils";
 import { trackError } from "@/lib/errorTracking";
 
 /**
- * Group Academy â€” Career Guidance System: Agent Integration Channels Sub-Panel
+ * Group Academy — Career Guidance System: Agent Integration Channels Sub-Panel
  * Version: Phase 10j.5 Hardened (Production Candidate)
  * Surface: /dashboard/command-center?tab=channels (System Infrastructure Dashboard View)
  * Operations Mode: High-performance channel routing registry mapping webhooks, endpoints, and chat vectors.

@@ -5,7 +5,7 @@
 import { ShieldCheck, ShieldAlert, BadgeCheck } from "lucide-react";
 
 interface Props {
-  completion: number; // 0â€“100
+  completion: number; // 0–100
   tier: "unverified" | "self_completed" | "verified";
 }
 

@@ -13,7 +13,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Abroad Group Tab: Applications Management
+ * Group Academy — Abroad Group Tab: Applications Management
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=applications (Admin Command Center Layout)[cite: 2, 4]
  * Operations Mode: Human-in-the-loop validation console for global student intakes[cite: 3].

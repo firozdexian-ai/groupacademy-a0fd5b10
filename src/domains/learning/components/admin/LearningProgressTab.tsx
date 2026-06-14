@@ -425,7 +425,7 @@ export function LearningProgressTab() {
  <DialogHeader>
  <DialogTitle className="text-xl font-semibold font-medium text-accent flex items-center gap-2">
  <ClipboardCheck className="h-5 w-5" /> Quiz Results
- {selectedEnrollment && <span className="text-xs text-muted-foreground"> â€” {selectedEnrollment.talentName}</span>}
+ {selectedEnrollment && <span className="text-xs text-muted-foreground"> — {selectedEnrollment.talentName}</span>}
  </DialogTitle>
  <DialogDescription className="text-sm text-muted-foreground">
  Per-learner quiz attempts and outcomes.

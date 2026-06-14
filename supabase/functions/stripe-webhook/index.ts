@@ -145,7 +145,7 @@ Deno.serve(async (req) => {
     await supabase.from("notifications").insert({
       talent_id: talentId,
       type: "reward",
-      title: `${credits} credits added! ðŸ’³`,
+      title: `${credits} credits added! 💳`,
       message: `Your purchase of ${credits} credits has been confirmed.`,
       icon: "coins",
       link: "/app/transactions",

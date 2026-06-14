@@ -293,12 +293,12 @@ export default function PortfolioRequestsManager() {
  <div className="flex gap-1">
  {request.cv_url && (
  <Badge variant="secondary" className="text-[10px]">
- ðŸ“„ CV
+ 📄 CV
  </Badge>
  )}
  {hasProfileData && (
  <Badge variant="secondary" className="text-[10px]">
- ðŸ“‹ Profile
+ 📋 Profile
  </Badge>
  )}
  </div>

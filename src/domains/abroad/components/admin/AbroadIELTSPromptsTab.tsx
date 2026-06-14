@@ -12,7 +12,7 @@ import { Badge } from "@/components/ui/badge";
 import { cn } from "@/lib/utils";
 
 /**
- * Group Academy â€” Abroad Group Tab: IELTS Mock Attempts Assessment Console
+ * Group Academy — Abroad Group Tab: IELTS Mock Attempts Assessment Console
  * Version: Phase 10i.2 Hardened (Production Candidate Edition)
  * Surface: /dashboard?tab=ielts (Admin Command Center Layout)
  * Operations Mode: Human-in-the-loop scoring bypass for specialized English proficiency evaluations.

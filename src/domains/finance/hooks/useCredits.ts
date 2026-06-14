@@ -181,7 +181,7 @@ export function useCredits() {
       queryClient.invalidateQueries({ queryKey: ["talent-credit-transactions", talent?.id] });
       if (vars.type === "welcome_bonus") {
         toast({
-          title: "Welcome bonus added ðŸŽ‰",
+          title: "Welcome bonus added 🎉",
           description: "250 credits have been added to your wallet.",
         });
       }

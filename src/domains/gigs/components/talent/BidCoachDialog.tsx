@@ -158,7 +158,7 @@ export function BidCoachDialog({
             {loading ? (
               <>
                 <Loader2 className="w-3.5 h-3.5 animate-spin stroke-[2.5]" />
-                <span>Analyzing Competency Logsâ€¦</span>
+                <span>Analyzing Competency Logs…</span>
               </>
             ) : (
               <>

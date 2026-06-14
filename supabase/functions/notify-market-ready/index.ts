@@ -14,7 +14,7 @@ serve(async (req) => {
     const chatId = Deno.env.get("TELEGRAM_ADMIN_CHAT_ID");
 
     if (!botToken || !chatId) {
-      console.log("[notify-market-ready] skipped â€” Telegram secrets missing");
+      console.log("[notify-market-ready] skipped — Telegram secrets missing");
       return new Response(JSON.stringify({ ok: true, skipped: true }), {
         headers: { ...corsHeaders, "Content-Type": "application/json" },
       });
@@ -22,7 +22,7 @@ serve(async (req) => {
 
     const name = full_name || email || "A new talent";
     const where = country ? ` (${country})` : "";
-    const text = `ðŸš€ Market Ready! ${name}${where} just completed onboarding and is now live on the Gro10x market.`;
+    const text = `🚀 Market Ready! ${name}${where} just completed onboarding and is now live on the Gro10x market.`;
 
     const r = await fetch(`https://api.telegram.org/bot${botToken}/sendMessage`, {
       method: "POST",

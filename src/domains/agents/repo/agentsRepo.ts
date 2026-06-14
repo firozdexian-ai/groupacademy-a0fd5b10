@@ -1,5 +1,5 @@
 ﻿/**
- * Group Academy â€” AI Agents Domain Repository Layer
+ * Group Academy — AI Agents Domain Repository Layer
  * Version: Phase 10j.5 Hardened (Launch Edition)
  * Architecture: Database engine encapsulating row isolation routing gates.
  * Security Posture: Fully hardened against privilege leaks with search_path safety validation[cite: 4].
@@ -15,7 +15,7 @@ export interface TalentMarketplaceSummary {
   available: number;
 }
 
-// â”€â”€â”€ Generic Record Mutations â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Generic Record Mutations ──────────────────────────────────────────────
 
 export async function updateAiAgent(id: string, patch: Record<string, unknown>): Promise<void> {
   try {
@@ -55,7 +55,7 @@ export async function insertNotification(payload: Record<string, unknown>): Prom
   }
 }
 
-// â”€â”€â”€ Core Platform Overview Analytics â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Core Platform Overview Analytics ──────────────────────────────────────
 
 export async function getAgentsOverview() {
   try {
@@ -86,7 +86,7 @@ export async function getAgentsOverview() {
   }
 }
 
-// â”€â”€â”€ Workspace Agent Studio Datasets â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Workspace Agent Studio Datasets ───────────────────────────────────────
 
 export async function getStudioBundle() {
   try {
@@ -115,7 +115,7 @@ export async function deleteAgentKnowledgeSource(id: string): Promise<void> {
   }
 }
 
-// â”€â”€â”€ Operational Insights & Logging Streams â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Operational Insights & Logging Streams ────────────────────────────────
 
 export async function listAgentsForInsights() {
   try {
@@ -163,7 +163,7 @@ export async function listRecentAgentOutreach(limit = 20) {
   }
 }
 
-// â”€â”€â”€ Trigger Allocations & Headless Pools â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Trigger Allocations & Headless Pools ──────────────────────────────────
 
 export async function getTriggersBundle() {
   try {
@@ -238,7 +238,7 @@ export async function updateHeadlessPoolMonthlyCap(cap: number): Promise<void> {
   }
 }
 
-// â”€â”€â”€ Marketplace Payout Requests & Review Ledger â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Marketplace Payout Requests & Review Ledger ───────────────────────────
 
 export async function listPayoutRequestsByStatus(status: string) {
   try {
@@ -315,7 +315,7 @@ export async function upsertAgentReview(input: {
   }
 }
 
-// â”€â”€â”€ Active Chat Sessions & Balances â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Active Chat Sessions & Balances ───────────────────────────────────────
 
 export async function createAgentChatSession(payload: {
   talent_id: string;
@@ -399,7 +399,7 @@ export async function deductCredits(args: Record<string, unknown>) {
   }
 }
 
-// â”€â”€â”€ Workforce Live Fleet & Command Backends â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Workforce Live Fleet & Command Backends ───────────────────────────────
 
 export async function deleteAgentMessage(id: string): Promise<void> {
   try {
@@ -523,7 +523,7 @@ export async function listAiAgentInstancesMinimal() {
   }
 }
 
-// â”€â”€â”€ Affinity, Marketplace & Talent Profiles â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€â”€
+// ─── Affinity, Marketplace & Talent Profiles ───────────────────────────────
 
 export async function getAiAgentByKey(agentKey: string) {
   try {

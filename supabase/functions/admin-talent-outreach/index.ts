@@ -1,4 +1,4 @@
-﻿// Admin Talent Outreach Agent â€” operator console for inviting uploaded talents
+﻿// Admin Talent Outreach Agent — operator console for inviting uploaded talents
 // (CV / batch / gig sources) who haven't yet claimed an account.
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 import { augmentLastUserMessage } from "../_shared/attachments.ts";

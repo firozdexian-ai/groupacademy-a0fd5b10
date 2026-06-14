@@ -1,5 +1,5 @@
 ﻿/**
- * Gro10x design tokens â€” kept minimal and self-contained so the shell
+ * Gro10x design tokens — kept minimal and self-contained so the shell
  * looks distinct from GroUp Academy without forking the entire theme.
  * Uses HSL semantic vars matching the rest of the app where useful.
  */
@@ -13,20 +13,20 @@ export const GRO10X_ACCENT_BG = "bg-[#33E1E4]";
 export const GRO10X_ACCENT_RING = "ring-[#33E1E4]";
 
 export const PRO_GOALS = [
-  { key: "hire",      label: "Hire people",                emoji: "ðŸ‘¥" },
-  { key: "freelance", label: "Find freelancers / gigs",    emoji: "ðŸ› " },
-  { key: "sell_b2b",  label: "Sell to companies",          emoji: "ðŸ“ˆ" },
-  { key: "train",     label: "Train my team",              emoji: "ðŸŽ“" },
-  { key: "ops",       label: "Run ops, billing, admin",    emoji: "âš™ï¸" },
-  { key: "explore",   label: "Just exploring",             emoji: "ðŸ§­" },
+  { key: "hire",      label: "Hire people",                emoji: "👥" },
+  { key: "freelance", label: "Find freelancers / gigs",    emoji: "🛠" },
+  { key: "sell_b2b",  label: "Sell to companies",          emoji: "📈" },
+  { key: "train",     label: "Train my team",              emoji: "🎓" },
+  { key: "ops",       label: "Run ops, billing, admin",    emoji: "⚙️" },
+  { key: "explore",   label: "Just exploring",             emoji: "🧭" },
 ] as const;
 
 export type ProGoalKey = typeof PRO_GOALS[number]["key"];
 
 /**
  * Maps a goal to the agents that should be pre-pinned in the inbox.
- * IMPORTANT: every key here must exist in `GRO10X_AGENTS` (lib/agents.ts) â€”
- * otherwise the inbox seeds rows that render as the generic ðŸ¤– fallback.
+ * IMPORTANT: every key here must exist in `GRO10X_AGENTS` (lib/agents.ts) —
+ * otherwise the inbox seeds rows that render as the generic 🤖 fallback.
  */
 export const GOAL_TO_AGENTS: Record<ProGoalKey, string[]> = {
   hire:      ["recruiter", "sourcer", "outreach"],

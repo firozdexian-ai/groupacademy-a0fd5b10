@@ -13,7 +13,7 @@ export interface ModuleStats {
   module_count: number;
   modules_with_desc: number;
   modules_with_video: number;
-  /** Modules that satisfy the active rule (video_url OR â‰¥1 resource_url) */
+  /** Modules that satisfy the active rule (video_url OR ≥1 resource_url) */
   playable_modules?: number;
 }
 
@@ -43,7 +43,7 @@ function getStatusInfo(stats: ModuleStats | undefined, appliesPlayableRule: bool
       return {
         tone: "amber" as const,
         label: "Inactive",
-        reason: `${missing}/${stats.module_count} module${missing === 1 ? "" : "s"} missing video or resource â€” auto-hidden from talent app.`,
+        reason: `${missing}/${stats.module_count} module${missing === 1 ? "" : "s"} missing video or resource — auto-hidden from talent app.`,
       };
     }
   }

@@ -202,7 +202,7 @@ const SUBTASK_KIND_GUIDES: Record<string, { instructions: string; formatTips: st
 /**
  * GroUp Academy: Authoritative Gig Hub Course Project Panel (CourseProjectDetail)
  * Hardened assignment workbench securing subtask validation hooks and protecting credit rewards from main-thread thrash.
- * Version: Launch Candidate Â· Phase Z1 Production Contract Locked
+ * Version: Launch Candidate · Phase Z1 Production Contract Locked
  */
 export default function CourseProjectDetail() {
  const { projectId: unverifiedProjectIdStr } = useParams<{ projectId: string }>();
@@ -674,7 +674,7 @@ function SubtaskRow({ subtask, isOwner, isLocked, expanded, onToggle, onUpdated 
  <ul className="text-xs font-semibold font-mono text-primary leading-none space-y-1.5 block select-text">
  {uploadedFilesCollection.map((fileItem) => (
  <li key={`subtask-file-node-${fileItem.path}`} className="truncate block flex items-center gap-1.5">
- <span>ðŸ“Ž</span> <span>{fileItem.name}</span>
+ <span>📎</span> <span>{fileItem.name}</span>
  </li>
  ))}
  </ul>

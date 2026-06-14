@@ -45,7 +45,7 @@ export default function JobsUploadApprovalTab() {
         </p>
       </div>
       {list.isLoading ? (
-        <p className="text-sm text-muted-foreground">Loadingâ€¦</p>
+        <p className="text-sm text-muted-foreground">Loading…</p>
       ) : rows.length === 0 ? (
         <Card className="p-8 text-center text-sm text-muted-foreground">No jobs awaiting approval.</Card>
       ) : (
@@ -58,7 +58,7 @@ export default function JobsUploadApprovalTab() {
                   <Badge variant="outline" className="text-[10px]">inactive</Badge>
                 </div>
                 <p className="text-xs text-muted-foreground mt-0.5">
-                  {j.company_name ?? "â€”"} Â· {j.location ?? ""}
+                  {j.company_name ?? "—"} · {j.location ?? ""}
                 </p>
               </div>
               <div className="flex gap-1">

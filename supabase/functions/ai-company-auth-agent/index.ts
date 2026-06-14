@@ -2,13 +2,13 @@
 import { createClient } from "https://esm.sh/@supabase/supabase-js@2.45.0";
 
 /**
- * Gro10x â€” Riya: B2B Auth Concierge
+ * Gro10x — Riya: B2B Auth Concierge
  *
  * Conversational state machine that mirrors Aisha's contract so the same
  * client UI shape can drive it. Strict steps:
  *
- *   collect_email â†’ collect_name â†’ collect_cv (optional) â†’ confirm_role_company
- *   â†’ collect_goals â†’ collect_country â†’ collect_phone â†’ verify_human â†’ set_password
+ *   collect_email → collect_name → collect_cv (optional) → confirm_role_company
+ *   → collect_goals → collect_country → collect_phone → verify_human → set_password
  *
  * Returns: { reply, action, quiz?, suggested? }
  *   - action: name of the next gate the client must satisfy

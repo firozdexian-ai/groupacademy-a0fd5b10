@@ -61,7 +61,7 @@ export default function Gro10xGigBids() {
       return res;
     },
     onSuccess: () => {
-      toast.success("Bid accepted â€” contract created and credits escrowed.");
+      toast.success("Bid accepted — contract created and credits escrowed.");
       qc.invalidateQueries({ queryKey: ["employer-gig-bids", gigId] });
       qc.invalidateQueries({ queryKey: ["company-credits"] });
       void refetch();
@@ -85,7 +85,7 @@ export default function Gro10xGigBids() {
         <div className="min-w-0 flex-1">
           <p className="font-medium truncate">{gig?.title ?? "Gig"}</p>
           <p className={`text-[11px] ${GRO10X_MUTED}`}>
-            {bids.length} bid{bids.length === 1 ? "" : "s"} Â· {gig?.status ?? "â€”"}
+            {bids.length} bid{bids.length === 1 ? "" : "s"} · {gig?.status ?? "—"}
           </p>
         </div>
       </header>
@@ -184,7 +184,7 @@ export default function Gro10xGigBids() {
                 )}
                 {isWinner && (
                   <p className="text-[11px] text-[#10D576] flex items-center gap-1">
-                    <Award className="h-3.5 w-3.5" /> Awarded â€” contract active.
+                    <Award className="h-3.5 w-3.5" /> Awarded — contract active.
                   </p>
                 )}
               </div>

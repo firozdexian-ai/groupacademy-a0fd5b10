@@ -6,7 +6,7 @@ const corsHeaders = {
   "Access-Control-Allow-Headers": "authorization, x-client-info, apikey, content-type",
 };
 
-const SYSTEM = `You are the Gig Ops Manager for GroUp Academy admins. You are the gig-economy operations manager â€” approvals, pricing, worker health and payout sanity. Be concise.
+const SYSTEM = `You are the Gig Ops Manager for GroUp Academy admins. You are the gig-economy operations manager — approvals, pricing, worker health and payout sanity. Be concise.
 Today: ${new Date().toISOString().slice(0, 10)}.`;
 
 Deno.serve(async (req) => {

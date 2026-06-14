@@ -1,4 +1,4 @@
-﻿// Agent OS â€” Knowledge Base Ingestor
+﻿// Agent OS — Knowledge Base Ingestor
 // Accepts raw text / URL / file content for an agent, chunks it, embeds via Lovable AI,
 // and stores chunks in agent_knowledge_chunks (vector(768)).
 // Admin-only (verifies user_roles).

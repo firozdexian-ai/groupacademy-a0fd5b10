@@ -51,7 +51,7 @@ const SECTION_META: Record<string, { title: string; icon: unknown }> = {
 /**
  * GroUp Academy: Unified Profile Section Ingress Orchestrator (ProfileSectionEditor)
  * An authoritative operational sandbox managing targeted sub-section modifications and workspace ledger updates.
- * Version: Launch Candidate Â· Phase Z0 Hardened
+ * Version: Launch Candidate · Phase Z0 Hardened
  */
 export function ProfileSectionEditor({ section, onClose, onSave, talent }: ProfileSectionEditorProps) {
   const queryClient = useQueryClient();
@@ -232,7 +232,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
                 value={about}
                 disabled={saving}
                 onChange={(e) => setAbout(e.target.value)}
-                placeholder="Write a short bio â€” your background, what you do, and what you're looking forâ€¦"
+                placeholder="Write a short bio — your background, what you do, and what you're looking for…"
                 className="min-h-[180px] w-full rounded-xl border border-border/40 bg-background/50 text-xs sm:text-sm font-semibold tracking-tight text-foreground p-3.5 leading-relaxed italic resize-none shadow-inner"
               />
             </div>
@@ -348,7 +348,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
                       onChange={(e) =>
                         setLanguages((p) => p.map((l, idx) => (idx === i ? { ...l, language: e.target.value } : l)))
                       }
-                      placeholder="Language (e.g. English, Spanish)â€¦"
+                      placeholder="Language (e.g. English, Spanish)…"
                     />
                     
                     <Select
@@ -406,7 +406,7 @@ export function ProfileSectionEditor({ section, onClose, onSave, talent }: Profi
             {saving ? (
               <>
                 <Loader2 className="h-3.5 w-3.5 animate-spin stroke-[2.5]" />
-                <span>Savingâ€¦</span>
+                <span>Saving…</span>
               </>
             ) : (
               <>
