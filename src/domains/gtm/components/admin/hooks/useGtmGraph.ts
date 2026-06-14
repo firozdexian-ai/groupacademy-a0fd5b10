@@ -14,11 +14,12 @@ function useUpsert(table: string, entityName: string) {
   const qc = useQueryClient();
   return useMutation({
     mutationFn: async (payload: any) => {
-      if (payload.id) {
-        const { error } = await client.from(table).update(payload).eq("id", payload.id);
+      const { created_at, updated_at, ...cleanPayload } = payload;
+      if (cleanPayload.id) {
+        const { error } = await client.from(table).update(cleanPayload).eq("id", cleanPayload.id);
         if (error) throw error;
       } else {
-        const { error } = await client.from(table).insert(payload);
+        const { error } = await client.from(table).insert(cleanPayload);
         if (error) throw error;
       }
     },
