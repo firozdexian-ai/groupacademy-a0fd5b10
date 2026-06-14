@@ -466,7 +466,7 @@ export function JobsLinkedInBatchUpload({
  <div className="space-y-6 text-center w-full max-w-md">
  <div className="space-y-2">
  <p className="text-[10px] font-semibold uppercase tracking-[0.4em] text-primary italic">
- Injesting Logic Artifacts
+ Ingesting Logic Artifacts
  </p>
  <h3 className="text-2xl font-semibold uppercase tracking-tight italic">
  Phase: {importPhase.toUpperCase()}

@@ -1,5 +1,5 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { listPendingApprovalJobs, updateJob } from "@/domains/jobs/repo/jobsRepo";
+import { listPendingApprovalJobs, updateJob, deleteJob } from "@/domains/jobs/repo/jobsRepo";
 import { Card } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Badge } from "@/components/ui/badge";
@@ -18,7 +18,18 @@ export default function JobsUploadApprovalTab() {
       await updateJob(id, { is_active });
     },
     onSuccess: () => {
-      toast.success("Updated");
+      toast.success("Approved & published");
+      qc.invalidateQueries({ queryKey: ["jobs-pending-approval"] });
+    },
+    onError: (e: any) => toast.error(e.message),
+  });
+
+  const rejectJob = useMutation({
+    mutationFn: async (id: string) => {
+      await deleteJob(id);
+    },
+    onSuccess: () => {
+      toast.success("Job listing deleted");
       qc.invalidateQueries({ queryKey: ["jobs-pending-approval"] });
     },
     onError: (e: any) => toast.error(e.message),
@@ -30,7 +41,7 @@ export default function JobsUploadApprovalTab() {
       <div>
         <h2 className="text-xl font-semibold">Jobs Upload & Approval</h2>
         <p className="text-sm text-muted-foreground">
-          Inactive (pending) jobs awaiting moderation. Approve to publish or keep inactive.
+          Inactive (pending) jobs awaiting moderation. Approve to publish or reject to delete.
         </p>
       </div>
       {list.isLoading ? (
@@ -55,8 +66,12 @@ export default function JobsUploadApprovalTab() {
                   onClick={() => setActive.mutate({ id: j.id, is_active: true })}>
                   <CheckCircle2 className="h-4 w-4 text-success" />
                 </Button>
-                <Button size="sm" variant="ghost" title="Keep inactive"
-                  onClick={() => setActive.mutate({ id: j.id, is_active: false })}>
+                <Button size="sm" variant="ghost" title="Reject & delete"
+                  onClick={() => {
+                    if (confirm(`Delete the pending job "${j.title}"?`)) {
+                      rejectJob.mutate(j.id);
+                    }
+                  }}>
                   <XCircle className="h-4 w-4 text-destructive" />
                 </Button>
               </div>

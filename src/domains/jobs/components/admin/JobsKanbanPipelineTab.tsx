@@ -1,13 +1,17 @@
+import { useState } from "react";
 import { useJobsGraph } from "./hooks/useJobsGraph";
-import { Card, CardContent, CardHeader } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Badge } from "@/components/ui/badge";
 import { Skeleton } from "@/components/ui/skeleton";
 import { KanbanSquare, Users, Briefcase, Clock, CheckCircle2, XCircle } from "lucide-react";
+import { TalentDetailDialog } from "@/domains/talent/components/admin/TalentDetailDialog";
 import { cn } from "@/lib/utils";
 
 export function JobsKanbanPipelineTab() {
   const { jobsGraphQuery } = useJobsGraph();
   const { data, isLoading } = jobsGraphQuery;
+  const [selectedTalentEmail, setSelectedTalentEmail] = useState<string | null>(null);
+  const [selectedTalentName, setSelectedTalentName] = useState<string>("");
 
   const stages = [
     {
@@ -114,10 +118,16 @@ export function JobsKanbanPipelineTab() {
                       </p>
                     </div>
                   ) : (
-                    columnApps.map((app) => (
+                    columnApps.map((app: any) => (
                       <Card
                         key={app.id}
-                        className="rounded-3xl border border-border/60 bg-card hover:bg-card hover:border-primary/30 transition-all shadow-lg hover:shadow-xl cursor-pointer group"
+                        onClick={() => {
+                          if (app.talents?.email) {
+                            setSelectedTalentEmail(app.talents.email);
+                            setSelectedTalentName(app.talents.full_name || "");
+                          }
+                        }}
+                        className="rounded-3xl border border-border/60 bg-card hover:bg-card hover:border-primary/30 transition-all shadow-lg hover:shadow-xl cursor-pointer group text-left"
                       >
                         <CardContent className="p-5 space-y-4">
                           <div className="flex justify-between items-start">
@@ -125,7 +135,7 @@ export function JobsKanbanPipelineTab() {
                               variant="outline"
                               className="font-mono text-[9px] bg-background/50"
                             >
-                              {app.job_id.substring(0, 8)}
+                              Job ID: {app.job_id.substring(0, 8)}
                             </Badge>
                             <span className="text-[9px] font-black text-muted-foreground/50">
                               {new Date(app.created_at).toLocaleDateString()}
@@ -133,9 +143,16 @@ export function JobsKanbanPipelineTab() {
                           </div>
                           <div>
                             <p className="text-xs font-black text-primary italic mb-1">
-                              Talent ID
+                              {app.talents?.full_name ? "Candidate" : "Talent ID"}
                             </p>
-                            <p className="font-mono text-sm text-foreground/80">{app.talent_id.substring(0, 12)}...</p>
+                            <p className="font-semibold text-sm text-foreground/80 truncate">
+                              {app.talents?.full_name || `${app.talent_id.substring(0, 12)}...`}
+                            </p>
+                            {app.talents?.email && (
+                              <p className="text-[10px] text-muted-foreground mt-0.5 truncate font-mono">
+                                {app.talents.email}
+                              </p>
+                            )}
                           </div>
                         </CardContent>
                       </Card>
@@ -147,6 +164,18 @@ export function JobsKanbanPipelineTab() {
           })}
         </div>
       )}
+
+      <TalentDetailDialog
+        open={!!selectedTalentEmail}
+        onOpenChange={(open) => {
+          if (!open) {
+            setSelectedTalentEmail(null);
+            setSelectedTalentName("");
+          }
+        }}
+        talentEmail={selectedTalentEmail || ""}
+        talentName={selectedTalentName}
+      />
     </div>
   );
 }

@@ -189,22 +189,26 @@ export async function getJobById(id: string): Promise<any | null> {
 }
 
 export async function insertJob(payload: any): Promise<void> {
-  const { error } = await supabase.from("jobs").insert(payload);
+  const { created_at, updated_at, ...cleanPayload } = payload;
+  const { error } = await supabase.from("jobs").insert(cleanPayload);
   if (error) throw error;
 }
 
 export async function insertJobsBulk(payloads: any[]): Promise<void> {
-  const { error } = await supabase.from("jobs").insert(payloads as any);
+  const cleanPayloads = payloads.map(({ created_at, updated_at, ...clean }) => clean);
+  const { error } = await supabase.from("jobs").insert(cleanPayloads as any);
   if (error) throw error;
 }
 
 export async function updateJob(id: string, patch: any): Promise<void> {
-  const { error } = await supabase.from("jobs").update(patch).eq("id", id);
+  const { created_at, updated_at, ...cleanPatch } = patch;
+  const { error } = await supabase.from("jobs").update(cleanPatch).eq("id", id);
   if (error) throw error;
 }
 
 export async function updateJobsBulk(ids: string[], patch: any): Promise<void> {
-  const { error } = await supabase.from("jobs").update(patch).in("id", ids);
+  const { created_at, updated_at, ...cleanPatch } = patch;
+  const { error } = await supabase.from("jobs").update(cleanPatch).in("id", ids);
   if (error) throw error;
 }
 
@@ -357,8 +361,9 @@ export async function insertExternalJobApplication(payload: {
   external_notes: string | null;
   added_by: string | null;
 }): Promise<void> {
+  const { created_at, updated_at, ...cleanPayload } = payload as any;
   const { error } = await supabase.from("job_applications").insert({
-    ...payload,
+    ...cleanPayload,
     application_status: "submitted",
     delivery_status: "pending",
     is_paid: true,
@@ -386,7 +391,8 @@ export async function insertJobChannelPost(payload: {
   posted_by: string | null;
   caption: string | null;
 }): Promise<void> {
-  const { error } = await supabase.from("job_channel_posts").insert(payload as any);
+  const { created_at, updated_at, ...cleanPayload } = payload as any;
+  const { error } = await supabase.from("job_channel_posts").insert(cleanPayload as any);
   if (error) throw error;
 }
 
@@ -421,7 +427,10 @@ export async function getJobsGraphMaster() {
       .limit(500),
     supabase
       .from("job_applications")
-      .select("id, job_id, talent_id, status:application_status, created_at")
+      .select(`
+        id, job_id, talent_id, status:application_status, created_at,
+        talents (full_name, email)
+      `)
       .order("created_at", { ascending: false })
       .limit(1000),
     supabase
@@ -455,11 +464,13 @@ export async function getJobsGraphMaster() {
 }
 
 export async function upsertGraphRow(table: string, payload: any): Promise<void> {
-  if (payload?.id) {
-    const { error } = await supabase.from(table as any).update(payload).eq("id", payload.id);
+  const { created_at, updated_at, ...cleanPayload } = payload;
+  if (cleanPayload?.id) {
+    const { id, ...patch } = cleanPayload;
+    const { error } = await supabase.from(table as any).update(patch).eq("id", id);
     if (error) throw error;
   } else {
-    const { error } = await supabase.from(table as any).insert(payload);
+    const { error } = await supabase.from(table as any).insert([cleanPayload]);
     if (error) throw error;
   }
 }
@@ -470,7 +481,8 @@ export async function deleteGraphRow(table: string, id: string): Promise<void> {
 }
 
 export async function updateJobApplication(id: string, patch: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("job_applications").update(patch).eq("id", id);
+  const { created_at, updated_at, ...cleanPatch } = patch;
+  const { error } = await supabase.from("job_applications").update(cleanPatch).eq("id", id);
   if (error) throw error;
 }
 
@@ -504,8 +516,9 @@ export async function insertToolRun(payload: {
 }
 
 export async function insertOffer(payload: Record<string, any>): Promise<string> {
+  const { created_at, updated_at, ...cleanPayload } = payload;
   const { data, error } = await (supabase.from("offers") as any)
-    .insert(payload)
+    .insert(cleanPayload)
     .select("id")
     .single();
   if (error) throw error;
@@ -518,8 +531,9 @@ export async function updateOfferStatus(offerId: string, status: string): Promis
 }
 
 export async function insertInterview(payload: Record<string, any>): Promise<string> {
+  const { created_at, updated_at, ...cleanPayload } = payload;
   const { data, error } = await (supabase.from("interviews") as any)
-    .insert(payload)
+    .insert(cleanPayload)
     .select("id")
     .single();
   if (error) throw error;
@@ -528,7 +542,8 @@ export async function insertInterview(payload: Record<string, any>): Promise<str
 
 export async function insertInterviewSlots(rows: Array<Record<string, any>>): Promise<void> {
   if (!rows.length) return;
-  const { error } = await (supabase.from("interview_slots") as any).insert(rows);
+  const cleanRows = rows.map(({ created_at, updated_at, ...clean }) => clean);
+  const { error } = await (supabase.from("interview_slots") as any).insert(cleanRows);
   if (error) throw error;
 }
 
@@ -565,7 +580,8 @@ export async function listJobsByIdsBasic(ids: string[]) {
 
 // ─── Phase 10j.5e: job assessment answers update ──────────────────────────
 export async function updateJobAssessment(id: string, patch: Record<string, any>): Promise<void> {
-  const { error } = await supabase.from("job_assessments").update(patch).eq("id", id);
+  const { created_at, updated_at, ...cleanPatch } = patch;
+  const { error } = await supabase.from("job_assessments").update(cleanPatch).eq("id", id);
   if (error) throw error;
 }
 
@@ -684,9 +700,10 @@ export async function insertTalentJobApplication(payload: {
   cv_url: string | null;
   delivery_status?: string;
 }): Promise<{ data: any; error: any }> {
+  const { created_at, updated_at, ...cleanPayload } = payload as any;
   const { data, error } = await supabase
     .from("job_applications")
-    .insert({ ...payload, delivery_status: payload.delivery_status ?? "pending" } as any)
+    .insert({ ...cleanPayload, delivery_status: cleanPayload.delivery_status ?? "pending" } as any)
     .select("id")
     .single();
   return { data, error };
@@ -794,9 +811,10 @@ export async function getApplicationOfferContext(applicationId: string) {
 
 // ─── Phase 10j.5g6 ─────────────────────────────────────────────────────────
 export async function insertJobReturningId(payload: any): Promise<string> {
+  const { created_at, updated_at, ...cleanPayload } = payload;
   const { data, error } = await supabase
     .from("jobs")
-    .insert(payload)
+    .insert(cleanPayload)
     .select("id")
     .maybeSingle();
   if (error) throw error;
@@ -985,9 +1003,10 @@ export async function insertJobInvitation(args: {
   note: string | null;
   invited_by: string;
 }): Promise<{ id: string }> {
+  const { created_at, updated_at, ...cleanArgs } = args as any;
   const { data, error } = await supabase
     .from("job_invitations")
-    .insert(args)
+    .insert(cleanArgs)
     .select("id")
     .single();
   if (error) throw error;

@@ -7,7 +7,7 @@ export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
   "jobs-overview": React.lazy(() => import("@/domains/jobs/components/admin/JobsOverviewTab")),
   "jobs-upload": React.lazy(() => import("@/domains/jobs/components/admin/JobsUploadApprovalTab")),
   "jobs-hub": React.lazy(() => import("@/domains/jobs/components/admin/hub/JobsHub").then(m => ({ default: m.JobsHub }))),
-  "jobs-applications": React.lazy(() => import("@/domains/jobs/components/admin/JobsApplicationsTab").then(m => ({ default: m.JobsApplicationsTab }))),
+  "jobs-applications": React.lazy(() => import("@/domains/jobs/components/admin/hub/JobsApplicationsTab").then(m => ({ default: m.JobsApplicationsTab }))),
   "jobs-pipeline": React.lazy(() => import("@/domains/jobs/components/admin/JobsKanbanPipelineTab").then(m => ({ default: m.JobsKanbanPipelineTab }))),
   "jobs-sourcing": React.lazy(() => import("@/domains/jobs/components/admin/JobsSourcingTab").then(m => ({ default: m.JobsSourcingTab }))),
   "jobs-talent-crm": React.lazy(() => import("@/domains/jobs/components/admin/JobsTalentCrmTab").then(m => ({ default: m.JobsTalentCrmTab }))),
