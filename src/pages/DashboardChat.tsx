@@ -12,6 +12,8 @@ import { ChatThread } from "@/domains/agents/components/admin/chat/ChatThread";
 import { useAdminAgentThreads } from "@/domains/agents/components/admin/chat/hooks/useAgentRuntimeThread";
 import { useMediaQuery } from "@/hooks/useMediaQuery";
 import { ADMIN_AGENTS, ADMIN_AGENTS_BY_KEY } from "@/lib/adminAgents";
+import { getCurrentUser, getAccessToken } from "@/lib/auth";
+import { listUserRoles } from "@/domains/profile/repo/profileRepo";
 
 export default function DashboardChat() {
   const [searchParams, setSearchParams] = useSearchParams();
@@ -21,6 +23,25 @@ export default function DashboardChat() {
     initialAgent && ADMIN_AGENTS_BY_KEY[initialAgent] ? initialAgent : ADMIN_AGENTS[0].key,
   );
   const { threads, reload } = useAdminAgentThreads();
+  const [debugInfo, setDebugInfo] = useState<any>(null);
+
+  useEffect(() => {
+    (async () => {
+      try {
+        const u = await getCurrentUser();
+        const t = await getAccessToken();
+        const r = u ? await listUserRoles(u.id) : [];
+        setDebugInfo({
+          id: u?.id || "none",
+          email: u?.email || "none",
+          roles: r.map(x => x.role).join(", ") || "none",
+          tokenExists: !!t,
+        });
+      } catch (err: any) {
+        setDebugInfo({ error: err.message });
+      }
+    })();
+  }, []);
 
   useEffect(() => {
     if (activeKey) setSearchParams({ agent: activeKey }, { replace: true });
@@ -49,6 +70,16 @@ export default function DashboardChat() {
           </div>
         </div>
       </header>
+
+      {debugInfo && (
+        <div className="bg-amber-500/10 border-b border-amber-500/20 px-4 py-1.5 text-2xs font-mono text-amber-500 flex gap-4 overflow-x-auto select-all shrink-0">
+          <span><strong>ID:</strong> {debugInfo.id}</span>
+          <span><strong>Email:</strong> {debugInfo.email}</span>
+          <span><strong>Roles:</strong> {debugInfo.roles}</span>
+          <span><strong>Token:</strong> {debugInfo.tokenExists ? "present" : "missing"}</span>
+          {debugInfo.error && <span className="text-rose-500"><strong>Error:</strong> {debugInfo.error}</span>}
+        </div>
+      )}
 
       {/* body */}
       <div className="flex-1 min-h-0 flex">

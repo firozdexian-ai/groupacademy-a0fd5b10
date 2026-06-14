@@ -1,5 +1,4 @@
 import React from "react";
-import { AgentRedirectStub } from "@/domains/agents/components/admin/chat/AgentRedirectStub";
 
 /**
  * AI Agents Domain Routing Registry — Agent OS Command Center
@@ -17,48 +16,50 @@ export const ROUTES: Record<string, React.LazyExoticComponent<any>> = {
     import("@/pages/dashboard/WorkforceCommandCenter").then((m) => ({ default: m.WorkforceCommandCenter })),
   ),
 
-  // --- CONSOLIDATED REDIRECT MATRIX (Funnel securely to /dashboard/chat) ---
-  "agent-outreach": createRedirect("agent-outreach"),
-  "agents-overview": createRedirect("agents-overview"),
-  "agents-channels": createRedirect("agents-channels"),
-  "agents-multichannel": createRedirect("agents-multichannel"),
-  "agents-tools": createRedirect("agents-tools"),
-  "agents-studio": createRedirect("agents-studio"),
-  "agents-b2c": createRedirect("agents-b2c"),
-  "agents-platform": createRedirect("agents-platform"),
-  "agents-b2b": createRedirect("agents-b2b"),
-  "agents-ugc": createRedirect("agents-ugc"),
-  "agents-marketplace": createRedirect("agents-marketplace"),
-  "agents-payouts": createRedirect("agents-payouts"),
-  "agents-sessions": createRedirect("agents-sessions"),
-  "agents-insights": createRedirect("agents-insights"),
+  // --- WIRING OF REAL DASHBOARD CHROME PANELS ---
+  "agent-outreach": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentOutreachTab").then((m) => ({ default: m.AgentOutreachManager })),
+  ),
+  "agents-overview": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentsOverviewTab").then((m) => ({ default: m.AgentsOverviewTab })),
+  ),
+  "agents-channels": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentTriggers").then((m) => ({ default: m.AgentTriggers })),
+  ),
+  "agents-multichannel": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentMultichannelTab").then((m) => ({ default: m.AgentMultichannelTab })),
+  ),
+  "agents-tools": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentToolsTab").then((m) => ({ default: m.AgentToolsTab })),
+  ),
+  "agents-studio": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentStudioTab").then((m) => ({ default: m.AgentStudio })),
+  ),
+  "agents-b2c": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentTypeTabs").then((m) => ({ default: m.AgentsB2CTab })),
+  ),
+  "agents-platform": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentTypeTabs").then((m) => ({ default: m.AgentsPlatformTab })),
+  ),
+  "agents-b2b": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentTypeTabs").then((m) => ({ default: m.AgentsB2BTab })),
+  ),
+  "agents-ugc": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentTypeTabs").then((m) => ({ default: m.AgentsUGCTab })),
+  ),
+  "agents-marketplace": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentMarketplaceTab").then((m) => ({ default: m.AgentMarketplaceReview })),
+  ),
+  "agents-payouts": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentPayoutsTab").then((m) => ({ default: m.AgentPayoutsManager })),
+  ),
+  "agents-sessions": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentSessionsTab").then((m) => ({ default: m.AgentSessionsManager })),
+  ),
+  "agents-insights": React.lazy(() =>
+    import("@/domains/agents/components/dashboard/AgentInsightsTab").then((m) => ({ default: m.AgentInsights })),
+  ),
 };
-
-/**
- * Helper Matrix Builder: Generates a lazy component wrapper that safely redirects
- * administrative personnel to the unified chat and agent execution hub.
- * Tracks structural layout boundary anomalies natively on execution failure.
- */
-function createRedirect(agentKey: string): React.LazyExoticComponent<React.ComponentType<any>> {
-  return React.lazy(() => {
-    try {
-      if (!agentKey) {
-        throw new Error("Routing token hydration fault: Missing active agent identifier reference key.");
-      }
-      return Promise.resolve({
-        default: (props: any) => React.createElement(AgentRedirectStub, { agentKey, ...props }),
-      });
-    } catch (error: any) {
-      // Digital Workforce Telemetry: Route contract execution drops directly to central diagnostic monitors
-      console.error("AI Agents routing matrix intercepted a structural redirection failure:", {
-        agentKey,
-        message: error?.message,
-        code: error?.code,
-      });
-      throw error;
-    }
-  });
-}
 
 export const TITLES: Record<string, string> = {
   "agent-outreach": "Agent Outreach",

@@ -194,6 +194,7 @@ const SalaryAnalysisResults = lazy(() => import("./pages/SalaryAnalysisResults")
 // Study abroad + blog
 const StudyAbroad = lazy(() => import("./pages/app/StudyAbroad"));
 const StudyAbroadDetail = lazy(() => import("./pages/app/StudyAbroadDetail"));
+const StudyAbroadRoadmap = lazy(() => import("./pages/app/StudyAbroadRoadmap"));
 const StudyAbroadRoadmapResults = lazy(() => import("./pages/app/StudyAbroadRoadmapResults"));
 const IELTSPrep = lazy(() => import("./pages/app/IELTSPrep"));
 const AbroadHub = lazy(() => import("./pages/app/AbroadHub"));
@@ -556,7 +557,7 @@ export default function App() {
                     <Route path="abroad/study" element={<StudyAbroad />} />
                     <Route path="abroad/study/:id" element={<StudyAbroadDetail />} />
                     <Route path="abroad/ielts-legacy" element={<IELTSPrep />} />
-                    <Route path="abroad/roadmap" element={<Navigate to="/app/abroad" replace />} />
+                    <Route path="abroad/roadmap" element={<StudyAbroadRoadmap />} />
                     <Route path="abroad/roadmap/:id" element={<StudyAbroadRoadmapResults />} />
 
                     {/* Content Players */}

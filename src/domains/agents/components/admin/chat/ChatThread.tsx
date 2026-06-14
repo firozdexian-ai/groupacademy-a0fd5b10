@@ -57,7 +57,7 @@ export function ChatThread({ agentKey, onAfterSend }: ChatThreadProps) {
       trackError("chat-thread-submit-failure", { agentKey, error: err.message });
       toast({
         title: "Communication error",
-        description: "Failed to connect to the agent runtime.",
+        description: err.message || "Failed to connect to the agent runtime.",
         variant: "destructive",
       });
     }

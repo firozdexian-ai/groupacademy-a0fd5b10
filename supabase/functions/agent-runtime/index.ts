@@ -6,7 +6,7 @@
 // - Streams assistant deltas back as SSE; logs ledger events; writes artifacts/messages to DB
 
 import { serve } from "https://deno.land/std@0.168.0/http/server.ts";
-import { createClient } from "https://esm.sh/@supabase/supabase-js@2.7.1";
+import { createClient } from "npm:@supabase/supabase-js@2";
 
 const corsHeaders = {
   "Access-Control-Allow-Origin": "*",
@@ -86,10 +86,11 @@ serve(async (req) => {
       subjectId = sid;
       user = { id: sid };
     } else {
+      const token = authHeader.replace(/^Bearer\s+/i, "");
       const userClient = createClient(SUPABASE_URL, SUPABASE_ANON_KEY, {
         global: { headers: { Authorization: authHeader } },
       });
-      const { data: userData, error: authErr } = await userClient.auth.getUser();
+      const { data: userData, error: authErr } = await userClient.auth.getUser(token);
       if (authErr || !userData?.user) return json({ error: "UNAUTHORIZED" }, 401);
       user = userData.user;
 

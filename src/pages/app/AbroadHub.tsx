@@ -4,7 +4,7 @@ import { Link } from "react-router-dom";
 import { listActiveDestinationAgents } from "@/domains/abroad/repo/abroadRepo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Skeleton } from "@/components/ui/skeleton";
-import { Plane, Languages, Mic, Inbox } from "lucide-react";
+import { Plane, Languages, Mic, Inbox, Map } from "lucide-react";
 import { Button } from "@/components/ui/button";
 
 interface DestinationAgent {
@@ -40,7 +40,21 @@ export default function AbroadHub() {
  </p>
  </header>
 
- <div className="grid grid-cols-1 sm:grid-cols-2 gap-3 block w-full select-none">
+ <div className="grid grid-cols-1 sm:grid-cols-3 gap-3 block w-full select-none">
+ <Link
+ to="/app/abroad/roadmap"
+ className="group block rounded-lg outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring"
+ >
+ <Card className="rounded-lg border border-border/60 bg-card shadow-none transition-colors duration-100 hover:border-border-foreground/10">
+ <CardContent className="p-3 flex items-center gap-2.5 leading-none w-full block">
+ <Map className="h-4 w-4 text-primary stroke-[2.2] shrink-0" />
+ <span className="text-xs sm:text-sm font-bold uppercase tracking-wide text-foreground group-hover:text-primary transition-colors block pt-0.5">
+ Build my study roadmap
+ </span>
+ </CardContent>
+ </Card>
+ </Link>
+
  <Link
  to="/app/abroad/ielts"
  className="group block rounded-lg outline-none focus:outline-none focus-visible:ring-1 focus-visible:ring-ring"

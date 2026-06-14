@@ -12,6 +12,7 @@ import { useAdminAgents } from "./useAdminAgents";
 import { trackError } from "@/lib/errorTracking";
 
 const SUPABASE_URL = import.meta.env.VITE_SUPABASE_URL as string;
+const SUPABASE_ANON_KEY = import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY as string;
 
 export type ChatMsg = {
   id?: string;
@@ -189,11 +190,15 @@ export function useAgentRuntimeThread(agentKey: string | null): UseAgentRuntimeT
           headers: {
             "Content-Type": "application/json",
             Authorization: `Bearer ${token}`,
+            apikey: SUPABASE_ANON_KEY,
           },
           body: JSON.stringify({ agent_key: agentKey, thread_id: threadId ?? undefined, message: content }),
         });
 
-        if (!resp.ok) throw new Error(`Status ${resp.status}`);
+        if (!resp.ok) {
+          const errText = await resp.text().catch(() => "");
+          throw new Error(`Status ${resp.status} (Token: ${token ? "present" : "missing"}) - ${errText}`);
+        }
 
         const newThreadId = resp.headers.get("X-Thread-Id");
         if (newThreadId && newThreadId !== threadId) setThreadId(newThreadId);

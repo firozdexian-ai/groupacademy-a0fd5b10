@@ -28,6 +28,7 @@ export async function getCurrentSession(): Promise<Session | null> {
 
 /** Convenience: get the current access token (or null). */
 export async function getAccessToken(): Promise<string | null> {
+  await supabase.auth.getUser();
   const session = await getCurrentSession();
   return session?.access_token ?? null;
 }

@@ -202,9 +202,74 @@ export default function StudyAbroadRoadmapResults() {
  </CardContent>
  </Card>
  ))}
- </TabsContent>
- {/* Additional Tabs for Timeline, Documents, Budget */}
- </Tabs>
+  </TabsContent>
+
+  <TabsContent value="timeline">
+    <RoadmapTimeline timeline={res.timeline || []} />
+  </TabsContent>
+
+  <TabsContent value="documents" className="space-y-4">
+    <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+      {(res.documents || []).map((doc, idx) => (
+        <Card key={idx} className={CARD}>
+          <CardContent className="p-6 space-y-3">
+            <div className="flex justify-between items-start">
+              <h4 className="font-bold text-sm text-foreground uppercase tracking-wide">{doc.name}</h4>
+              <Badge variant={doc.required ? "destructive" : "secondary"} className="text-[9px] font-bold uppercase tracking-wider rounded-full px-2 py-0.5 border-none">
+                {doc.required ? "Required" : "Optional"}
+              </Badge>
+            </div>
+            <p className="text-xs text-muted-foreground/80 leading-relaxed">{doc.tips}</p>
+          </CardContent>
+        </Card>
+      ))}
+    </div>
+  </TabsContent>
+
+  <TabsContent value="budget" className="space-y-6">
+    <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
+      <Card className={cn(CARD, "bg-muted/10")}>
+        <CardContent className="p-6 space-y-1">
+          <span className="font-mono text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Tuition Range</span>
+          <p className="text-xl font-black text-foreground font-mono italic uppercase">{res.budget?.tuitionRange || "—"}</p>
+        </CardContent>
+      </Card>
+      <Card className={cn(CARD, "bg-muted/10")}>
+        <CardContent className="p-6 space-y-1">
+          <span className="font-mono text-[9px] font-bold text-muted-foreground uppercase tracking-widest">Living Expenses</span>
+          <p className="text-xl font-black text-foreground font-mono italic uppercase">{res.budget?.livingExpenses || "—"}</p>
+        </CardContent>
+      </Card>
+      <Card className={cn(CARD, "bg-primary/5 border-primary/20")}>
+        <CardContent className="p-6 space-y-1">
+          <span className="font-mono text-[9px] font-bold text-primary uppercase tracking-widest">Total Estimate</span>
+          <p className="text-xl font-black text-primary font-mono italic uppercase">{res.budget?.totalEstimate || "—"}</p>
+        </CardContent>
+      </Card>
+    </div>
+
+    {Array.isArray(res.scholarships) && res.scholarships.length > 0 && (
+      <div className="space-y-4">
+        <h3 className="text-xs font-black uppercase tracking-[0.2em] text-primary italic">Recommended Scholarships</h3>
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          {res.scholarships.map((sch, idx) => (
+            <Card key={idx} className={CARD}>
+              <CardContent className="p-6 space-y-3">
+                <div className="flex justify-between items-start">
+                  <h4 className="font-bold text-sm text-foreground uppercase tracking-wide">{sch.name}</h4>
+                  <Badge className="bg-emerald-500/10 text-emerald-700 hover:bg-emerald-500/10 border-none font-bold uppercase text-[9px] tracking-wider px-2.5 py-0.5 rounded-full">
+                    {sch.amount}
+                  </Badge>
+                </div>
+                <p className="text-xs text-muted-foreground/80 leading-relaxed"><strong>Eligibility:</strong> {sch.eligibility}</p>
+              </CardContent>
+            </Card>
+          ))}
+        </div>
+      </div>
+    )}
+  </TabsContent>
+  </Tabs>
  </div>
  );
 }
