@@ -1,5 +1,7 @@
-import { useState } from "react";
+import { useState, useMemo } from "react";
+import { useQuery } from "@tanstack/react-query";
 import { useLearningGraph } from "./hooks/useLearningGraph";
+import { listInstructorsLite } from "@/domains/learning/repo/learningRepo";
 import { Card, CardContent } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -20,6 +22,16 @@ export function LearningPayoutsTab() {
  const { data, isLoading } = learningGraphQuery;
  const [open, setOpen] = useState(false);
  const [draft, setDraft] = useState<any>({ status: "pending", amount: 0 });
+
+ const instructorsQ = useQuery({
+   queryKey: ["instructors-lite-lookup"],
+   queryFn: listInstructorsLite,
+ });
+
+ const instructorsById = useMemo(
+   () => Object.fromEntries((instructorsQ.data ?? []).map((ins: any) => [ins.id, ins.full_name])),
+   [instructorsQ.data]
+ );
 
  return (
  <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -92,11 +104,16 @@ export function LearningPayoutsTab() {
  </div>
  </TableCell>
  <TableCell>
- <span className="font-mono text-[10px] text-foreground font-black flex items-center gap-1.5">
- <User className="h-3 w-3 text-success" />{" "}
- {row.instructor_user_id ? row.instructor_user_id.substring(0, 8) : "System"}
- </span>
- </TableCell>
+  <div className="flex flex-col text-left">
+  <span className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+  <User className="h-3.5 w-3.5 text-success" />
+  {instructorsById[row.instructor_user_id] || (row.instructor_user_id ? "Unknown Instructor" : "System")}
+  </span>
+  <span className="font-mono text-[9px] text-muted-foreground/60 pl-5">
+  {row.instructor_user_id ? row.instructor_user_id.substring(0, 8) : "System"}
+  </span>
+  </div>
+  </TableCell>
  <TableCell>
  <span className="font-mono text-sm font-black text-success bg-success/10 px-3 py-1 rounded-lg flex items-center gap-1 w-fit">
  <DollarSign className="h-3 w-3" /> {row.amount_credits || row.amount || 0}
@@ -161,17 +178,30 @@ export function LearningPayoutsTab() {
  </DialogDescription>
  </DialogHeader>
  <div className="space-y-4 py-4">
- <div className="space-y-2">
- <Label className="text-[10px] font-black text-primary ml-1">
- Instructor User ID
- </Label>
- <Input
- placeholder="UUID"
- value={draft.instructor_user_id || ""}
- onChange={(e) => setDraft({ ...draft, instructor_user_id: e.target.value })}
- className="h-14 rounded-xl border font-mono text-xs"
- />
- </div>
+  <div className="space-y-2">
+  <Label className="text-[10px] font-black text-primary ml-1">
+  Instructor
+  </Label>
+  {instructorsQ.isLoading ? (
+  <Skeleton className="h-14 w-full rounded-xl bg-muted/40" />
+  ) : (
+  <Select
+  value={draft.instructor_user_id ?? ""}
+  onValueChange={(v) => setDraft({ ...draft, instructor_user_id: v })}
+  >
+  <SelectTrigger className="h-14 rounded-xl border font-bold text-xs uppercase text-left">
+  <SelectValue placeholder="SELECT AN INSTRUCTOR" />
+  </SelectTrigger>
+  <SelectContent>
+  {instructorsQ.data?.map((ins: any) => (
+  <SelectItem key={ins.id} value={ins.id} className="font-bold text-xs uppercase">
+  {ins.full_name}
+  </SelectItem>
+  ))}
+  </SelectContent>
+  </Select>
+  )}
+  </div>
  <div className="grid grid-cols-2 gap-4">
  <div className="space-y-2">
  <Label className="text-[10px] font-black text-success ml-1">

@@ -8,8 +8,8 @@ import {
 } from "@/domains/learning/repo/learningRepo";
 
 export interface ContentNode { id: string; title: string; content_type: string; status: string; is_published: boolean; created_at: string; }
-export interface Enrollment { id: string; content_id: string; talent_id: string | null; status: string | null; created_at: string | null; }
-export interface Cohort { id: string; content_id: string; name: string; starts_on: string | null; status: string; }
+export interface Enrollment { id: string; content_id: string; talent_id: string | null; status: string | null; created_at: string | null; content?: { title: string } | null; talents?: { full_name: string | null; email: string | null } | null; }
+export interface Cohort { id: string; content_id: string; name: string; starts_on: string | null; status: string; content?: { title: string } | null; }
 export interface CourseBrief { id: string; title: string; status: string; instructor_user_id: string | null; }
 export interface CourseEngagement { id: string; brief_id: string | null; user_id: string; status: string; }
 export interface CourseSession { id: string; cohort_id: string | null; content_id: string; title: string; scheduled_date: string; }

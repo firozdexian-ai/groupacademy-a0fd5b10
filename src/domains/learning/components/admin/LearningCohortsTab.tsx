@@ -94,11 +94,16 @@ export function LearningCohortsTab() {
  </div>
  </TableCell>
  <TableCell>
- <span className="font-mono text-[10px] text-foreground font-black flex items-center gap-1.5">
- <BookOpen className="h-3 w-3 text-accent" />{" "}
- {row.content_id ? row.content_id.substring(0, 8) : "N/A"}
- </span>
- </TableCell>
+  <div className="flex flex-col text-left">
+  <span className="font-semibold text-xs text-foreground flex items-center gap-1.5">
+  <BookOpen className="h-3.5 w-3.5 text-accent" />
+  {row.content?.title || "Unknown Course"}
+  </span>
+  <span className="font-mono text-[9px] text-muted-foreground/60 uppercase pl-5">
+  {row.content_id ? row.content_id.substring(0, 8) : "N/A"}
+  </span>
+  </div>
+  </TableCell>
  <TableCell>
  <Badge
  className={cn(

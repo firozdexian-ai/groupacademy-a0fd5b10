@@ -458,12 +458,12 @@ export async function getLearningGraphSlice() {
         .limit(500),
       supabase
         .from("enrollments")
-        .select("id, content_id, talent_id, status, created_at")
+        .select("id, content_id, talent_id, status, created_at, content:content_id(title), talents:talent_id(full_name, email)")
         .order("created_at", { ascending: false })
         .limit(500),
       supabase
         .from("cohorts")
-        .select("id, content_id, name, starts_on, status")
+        .select("id, content_id, name, starts_on, status, content:content_id(title)")
         .order("created_at", { ascending: false })
         .limit(200),
       supabase

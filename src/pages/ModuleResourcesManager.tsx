@@ -43,6 +43,7 @@ import { ModuleResourceFileUpload } from "@/domains/learning/components/admin/mo
 import { BulkResourceUpload } from "@/domains/learning/components/admin/BulkResourceUpload";
 import { DraggableList } from "@/platform/admin/ui/DraggableList";
 import { GripVertical } from "lucide-react";
+import { FlashcardEditor } from "@/domains/learning/components/admin/modules/FlashcardEditor";
 
 type ResourceType = Database["public"]["Enums"]["resource_type"];
 
@@ -523,15 +524,41 @@ export default function ModuleResourcesManager() {
                                   />
                                 </div>
 
-                                {isJsonType(resource.resource_type) ? (
+                                {resource.resource_type === "flashcards" ? (
+                                  <div className="space-y-3 p-4 bg-muted/20 border border-border/60 rounded-2xl">
+                                    <Label className="text-[10px] font-black uppercase tracking-widest text-primary">
+                                      Interactive Flashcard Ingestion
+                                    </Label>
+                                    <FlashcardEditor
+                                      initialCards={(() => {
+                                        const raw = resource.resource_data;
+                                        if (Array.isArray(raw)) {
+                                          return raw.map((d: any) => ({
+                                            id: d.id || crypto.randomUUID(),
+                                            front: d.front || "",
+                                            back: d.back || "",
+                                          }));
+                                        }
+                                        return [{ id: crypto.randomUUID(), front: "", back: "" }];
+                                      })()}
+                                      onSave={(jsonString) => {
+                                        try {
+                                          const parsed = JSON.parse(jsonString);
+                                          patchResource(key, { resource_data: parsed });
+                                          toast.success("Flashcard changes staged. Click 'Save Resource' below to persist.");
+                                        } catch (e: any) {
+                                          toast.error("Invalid format: " + e.message);
+                                        }
+                                      }}
+                                    />
+                                  </div>
+                                ) : isJsonType(resource.resource_type) ? (
                                   <JsonDataEditor
                                     value={resource.resource_data}
                                     label={
-                                      resource.resource_type === "flashcards"
-                                        ? "Flashcards JSON"
-                                        : resource.resource_type === "ai_scenario"
-                                          ? "Scenario JSON"
-                                          : "Quiz JSON"
+                                      resource.resource_type === "ai_scenario"
+                                        ? "Scenario JSON"
+                                        : "Quiz JSON"
                                     }
                                     onChange={(data: any) => patchResource(key, { resource_data: data })}
                                   />

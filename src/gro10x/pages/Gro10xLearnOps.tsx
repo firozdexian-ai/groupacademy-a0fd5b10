@@ -2,9 +2,10 @@
  * Gro10x Learn Ops — B2B company admin dashboard for the learning system.
  * Tabs: Overview · Assignments · Catalog · Team · Wallet
  */
-import { useState } from "react";
+import { useState, useEffect, useMemo } from "react";
 import { Link } from "react-router-dom";
 import { BarChart3, ListChecks, BookOpen, Users, Wallet, Plus, Building2, Layers } from "lucide-react";
+import { supabase } from "@/integrations/supabase/client";
 import { OpsTracksTab } from "../components/learn/OpsTracksTab";
 import { GRO10X_PANEL, GRO10X_MUTED } from "../lib/tokens";
 import { useActiveCompany } from "../hooks/useActiveCompany";
@@ -201,6 +202,36 @@ function CatalogPane({ companyId, canAssign }: { companyId: string; canAssign: b
 
 function TeamPane({ companyId }: { companyId: string }) {
   const { data, isLoading } = useOrgTeamMastery(companyId);
+  const [talentNames, setTalentNames] = useState<Record<string, string>>({});
+
+  const userIds = useMemo(() => {
+    if (!data) return [];
+    return Array.from(new Set(data.map((r) => r.user_id).filter(Boolean)));
+  }, [data]);
+
+  useEffect(() => {
+    if (userIds.length === 0) return;
+    const fetchTalentNames = async () => {
+      try {
+        const { data: talentsData, error } = await supabase
+          .from("talents")
+          .select("user_id, full_name")
+          .in("user_id", userIds);
+        if (error) throw error;
+        const mapping: Record<string, string> = {};
+        talentsData?.forEach((t: any) => {
+          if (t.user_id && t.full_name) {
+            mapping[t.user_id] = t.full_name;
+          }
+        });
+        setTalentNames(mapping);
+      } catch (err) {
+        console.error("Failed to fetch talent names:", err);
+      }
+    };
+    fetchTalentNames();
+  }, [userIds]);
+
   if (isLoading) return <p className="text-xs text-slate-500">Loading…</p>;
   if (!data || data.length === 0)
     return (
@@ -222,10 +253,11 @@ function TeamPane({ companyId }: { companyId: string }) {
         const avgProgress = Math.round(
           rows.reduce((s, r) => s + (r.progress ?? 0), 0) / rows.length,
         );
+        const displayName = talentNames[uid] || rows[0]?.talent_name || `Talent · ${uid.slice(0, 8)}`;
         return (
           <li key={uid} className={`${GRO10X_PANEL} border border-white/10 rounded-2xl p-3`}>
             <div className="flex items-center justify-between">
-              <p className="text-sm font-medium truncate">Talent · {uid.slice(0, 8)}</p>
+              <p className="text-sm font-medium truncate">{displayName}</p>
               <span className="text-[10px] text-slate-500">{rows.length} courses</span>
             </div>
             <div className="mt-2 h-1.5 rounded-full bg-white/5 overflow-hidden">

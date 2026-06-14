@@ -88,16 +88,26 @@ export function LearningEnrollmentsTab() {
  <div className="h-8 w-8 rounded-lg bg-background border border-border/40 flex items-center justify-center shrink-0">
  <BookOpen className="h-3 w-3 text-primary" />
  </div>
- <span className="font-mono text-xs uppercase tracking-tight text-muted-foreground">
+ <div className="flex flex-col text-left">
+ <span className="font-semibold text-sm text-foreground">
+ {row.content?.title || "Unknown Course"}
+ </span>
+ <span className="font-mono text-[9px] text-muted-foreground/60 uppercase">
  {row.content_id?.substring(0, 8) || "N/A"}
  </span>
  </div>
+ </div>
  </TableCell>
  <TableCell>
- <span className="font-mono text-[10px] text-foreground font-black flex items-center gap-1.5">
- <User className="h-3 w-3 text-primary" />{" "}
- {row.talent_id ? row.talent_id.substring(0, 8) : "Unknown"}
+ <div className="flex flex-col text-left">
+ <span className="font-semibold text-sm text-foreground flex items-center gap-1.5">
+ <User className="h-3.5 w-3.5 text-primary" />
+ {row.talents?.full_name || "Unknown Learner"}
  </span>
+ <span className="font-mono text-[9px] text-muted-foreground/60">
+ {row.talents?.email || row.talent_id?.substring(0, 8) || "N/A"}
+ </span>
+ </div>
  </TableCell>
  <TableCell>
  <Badge

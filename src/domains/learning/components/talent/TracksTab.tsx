@@ -1,5 +1,5 @@
 import { useEffect, useState, useMemo } from "react";
-import { useNavigate } from "react-router-dom";
+import { useNavigate, useSearchParams } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { getCurrentUser } from "@/lib/auth";
 import {
@@ -28,15 +28,12 @@ import { Progress } from "@/components/ui/progress";
 import { getIcon } from "@/lib/iconMap";
 import { cn } from "@/lib/utils";
 
-type Category = "my-program" | "executive" | "freelancing" | "entrepreneurship" | "influencing";
-
-const CATEGORY_CONFIG: { key: Category; icon: any; label: string }[] = [
-  { key: "my-program", icon: Target, label: "Mine" },
-  { key: "executive", icon: Building2, label: "Executive" },
-  { key: "freelancing", icon: Laptop, label: "Freelance" },
-  { key: "entrepreneurship", icon: Rocket, label: "Startup" },
-  { key: "influencing", icon: Megaphone, label: "Influence" },
-];
+const iconMap: Record<string, any> = {
+  executive: Building2,
+  freelancing: Laptop,
+  entrepreneurship: Rocket,
+  influencing: Megaphone,
+};
 
 interface SchoolReadiness {
   school_id: string;
@@ -54,8 +51,50 @@ interface SchoolReadiness {
 export function TracksTab() {
   const navigate = useNavigate();
   const queryClient = useQueryClient();
+  const [searchParams, setSearchParams] = useSearchParams();
 
-  const [selectedCategory, setSelectedCategory] = useState<Category>("my-program");
+  const [selectedCategory, setSelectedCategory] = useState<string>("my-program");
+
+  // Sync selectedCategory with the URL query parameter if present
+  useEffect(() => {
+    const academyParam = searchParams.get("academy");
+    if (academyParam) {
+      setSelectedCategory(academyParam);
+    } else {
+      setSelectedCategory("my-program");
+    }
+  }, [searchParams]);
+
+  const handleCategoryChange = (key: string) => {
+    const newParams = new URLSearchParams(searchParams);
+    if (key === "my-program") {
+      newParams.delete("academy");
+    } else {
+      newParams.set("academy", key);
+    }
+    setSearchParams(newParams);
+  };
+
+  const categoryConfig = useMemo(() => {
+    const base = [{ key: "my-program", icon: Target, label: "Mine" }];
+    const dynamic = academies.map((ac) => {
+      const key = ac.academy_type || ac.slug || ac.id;
+      let label = ac.name || "";
+      if (label.toLowerCase() === "executive academy") label = "Executive";
+      else if (label.toLowerCase() === "freelancing academy") label = "Freelance";
+      else if (label.toLowerCase() === "entrepreneurship academy") label = "Startup";
+      else if (label.toLowerCase() === "influencing academy") label = "Influence";
+      else {
+        label = label.replace(/\bAcademy\b/gi, "").trim();
+      }
+      return {
+        key,
+        icon: iconMap[ac.academy_type] || getIcon(ac.icon) || GraduationCap,
+        label,
+      };
+    });
+    return [...base, ...dynamic];
+  }, [academies]);
   const [academies, setAcademies] = useState<any[]>([]);
   const [schools, setSchools] = useState<any[]>([]);
   const [enrollments, setEnrollments] = useState<any[]>([]);
@@ -267,7 +306,7 @@ export function TracksTab() {
              
               onClick={() => {
                 trackEvent("academy_tracks_cold_start_browse_catalog_clicked");
-                setSelectedCategory("executive");
+                handleCategoryChange("executive");
               }}
               className="h-8 rounded-xl text-[10px] font-extrabold uppercase tracking-wide px-4 shadow-sm active:scale-[0.99] transition-transform cursor-pointer bg-primary text-primary-foreground hover:bg-primary/90 flex items-center gap-1.5"
             >
@@ -280,8 +319,8 @@ export function TracksTab() {
     );
   };
 
-  const renderAcademy = (cat: Category) => {
-    const targetAcademyPayloadNode = academies.find((a) => a.academy_type === cat);
+  const renderAcademy = (cat: string) => {
+    const targetAcademyPayloadNode = academies.find((a) => (a.academy_type || a.slug || a.id) === cat);
     if (!targetAcademyPayloadNode) {
       return (
         <div className="py-12 text-center border border-dashed border-border/40 bg-card/40 backdrop-blur-md rounded-2xl p-4 select-none w-full max-w-sm mx-auto flex flex-col justify-center items-center animate-in fade-in duration-300">
@@ -400,13 +439,13 @@ export function TracksTab() {
     <div className="space-y-4 w-full antialiased text-left select-none sm:select-text">
       {/* Sub-Pills Pill Navigation Ribbon Toggles Row Matrix */}
       <nav className="flex flex-wrap gap-1.5 p-1 bg-muted/30 border border-border/40 rounded-xl select-none w-full transform-gpu">
-        {CATEGORY_CONFIG.map(({ key, icon: Icon, label }) => {
+        {categoryConfig.map(({ key, icon: Icon, label }) => {
           const isPillActive = selectedCategory === key;
           return (
             <button
               key={key}
              
-              onClick={() => setSelectedCategory(key)}
+              onClick={() => handleCategoryChange(key)}
               className={cn(
                 "flex-1 min-w-[60px] flex items-center justify-center gap-1.5 py-2 rounded-lg text-[11px] font-bold uppercase tracking-wider cursor-pointer transition-all duration-200 outline-none focus-visible:ring-1 focus-visible:ring-ring shadow-none",
                 isPillActive
