@@ -58,6 +58,7 @@ import logoIcon from "@/assets/logo-icon.png";
 import { CreditPurchaseSheet } from "@/domains/finance/components/talent/CreditPurchaseSheet";
 import { useCreditPurchase } from "@/domains/finance/hooks/useCreditPurchase";
 import { FloatingWhatsAppButton } from "@/domains/feed/components/talent/FloatingWhatsAppButton";
+import { useMessageThreads } from "@/domains/messaging/hooks/useMessageThreads";
 import { RouteErrorBoundary } from "@/components/RouteErrorBoundary";
 
 /**
@@ -79,7 +80,7 @@ export function TalentAppShell() {
   const { signOut } = useAuth();
   const { balance } = useCredits();
   const { theme, setTheme } = useTheme();
-  const [unreadCount, setUnreadCount] = useState(0);
+  const { totalUnread: unreadCount } = useMessageThreads();
   const [searchQuery, setSearchQuery] = useState("");
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [hasCompanyAccess, setHasCompanyAccess] = useState(false);
@@ -102,42 +103,6 @@ export function TalentAppShell() {
     { label: "Gigs", icon: Gift, path: "/app/gigs" },
     { label: "AI Agents", icon: Bot, path: "/app/agents" },
   ];
-
-  // Notification badge polling
-  useEffect(() => {
-    if (!talent?.id) return;
-    const fetchNotificationCount = async () => {
-      try {
-        const { count } = await supabase
-          .from("notifications")
-          .select("id", {
-            count: "exact",
-            head: true,
-          })
-          .eq("talent_id", talent.id)
-          .eq("is_read", false);
-        setUnreadCount(count || 0);
-      } catch (err) {
-        console.error("ALERT_SYNC_FAULT", err);
-      }
-    };
-    fetchNotificationCount();
-
-    const channel = supabase
-      .channel("notification-count")
-      .on(
-        "postgres_changes",
-        { event: "*", schema: "public", table: "notifications", filter: `talent_id=eq.${talent.id}` },
-        () => {
-          fetchNotificationCount();
-        },
-      )
-      .subscribe();
-
-    return () => {
-      supabase.removeChannel(channel);
-    };
-  }, [talent?.id]);
 
   // PHASE: Company_Portal_Access_Check
   useEffect(() => {

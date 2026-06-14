@@ -66,16 +66,18 @@ export default function Messages() {
  });
  }, [threads, activeFilterKey, textSearchQueryStr]);
 
- const handleNavigateToThread = React.useCallback(
- (thread: MessageThread) => {
- if (thread.thread_type === "system") {
- navigateHook("/app/messages/system");
- } else if (thread.agent_key) {
- navigateHook(`/app/messages/${thread.agent_key}`);
- }
- },
- [navigateHook],
- );
+  const handleNavigateToThread = React.useCallback(
+    (thread: MessageThread) => {
+      if (thread.thread_type === "system") {
+        navigateHook("/app/messages/system");
+      } else if (thread.thread_type === "peer") {
+        navigateHook(`/app/messages/${thread.id}`);
+      } else if (thread.agent_key) {
+        navigateHook(`/app/messages/${thread.agent_key}`);
+      }
+    },
+    [navigateHook],
+  );
 
  return (
  <div className="max-w-2xl mx-auto pb-24 antialiased block transform-gpu w-full">

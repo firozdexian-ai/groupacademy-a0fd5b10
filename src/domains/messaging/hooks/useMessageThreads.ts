@@ -20,8 +20,9 @@ import { useTalent } from "@/hooks/useTalent";
 export interface MessageThread {
   id: string;
   talent_id: string;
-  thread_type: "agent" | "system";
+  thread_type: "agent" | "system" | "peer";
   agent_key: string | null;
+  peer_talent_id?: string | null;
   last_message_at: string;
   last_message_preview: string | null;
   last_message_sender: string | null;
@@ -74,12 +75,51 @@ export function useMessageThreads() {
         });
       }
 
-      return (rows || []).map((r: any) => ({
-        ...r,
-        agentName: r.thread_type === "system" ? "AI General" : agentMeta[r.agent_key]?.name || r.agent_key || "Agent",
-        agentAvatarUrl: r.thread_type === "system" ? null : (agentMeta[r.agent_key]?.avatar_url ?? null),
-        agentColor: r.thread_type === "system" ? "#2A7DDE" : (agentMeta[r.agent_key]?.color ?? null),
-      }));
+      // HUD: PEER_METADATA_ENRICHMENT
+      const peerTalentIds = Array.from(
+        new Set((rows || []).filter((r) => r.thread_type === "peer" && r.peer_talent_id).map((r) => r.peer_talent_id as string)),
+      );
+
+      let peerMeta: Record<string, { name: string; avatar_url: string | null }> = {};
+
+      if (peerTalentIds.length) {
+        const { data: peers, error: peerError } = await supabase
+          .from("talents")
+          .select("id, full_name, profile_photo_url")
+          .in("id", peerTalentIds);
+
+        if (!peerError && peers) {
+          peers.forEach((p) => {
+            peerMeta[p.id] = { name: p.full_name, avatar_url: p.profile_photo_url };
+          });
+        }
+      }
+
+      return (rows || []).map((r: any) => {
+        let agentName = "System Notification";
+        let agentAvatarUrl: string | null = null;
+        let agentColor: string | null = null;
+
+        if (r.thread_type === "system") {
+          agentName = "AI General";
+          agentColor = "#2A7DDE";
+        } else if (r.thread_type === "agent" && r.agent_key) {
+          agentName = agentMeta[r.agent_key]?.name || r.agent_key || "Agent";
+          agentAvatarUrl = agentMeta[r.agent_key]?.avatar_url ?? null;
+          agentColor = agentMeta[r.agent_key]?.color ?? null;
+        } else if (r.thread_type === "peer" && r.peer_talent_id) {
+          agentName = peerMeta[r.peer_talent_id]?.name || "Connection";
+          agentAvatarUrl = peerMeta[r.peer_talent_id]?.avatar_url ?? null;
+          agentColor = "#10B981"; // Emerald green for peer DMs
+        }
+
+        return {
+          ...r,
+          agentName,
+          agentAvatarUrl,
+          agentColor,
+        };
+      });
     },
   });
 

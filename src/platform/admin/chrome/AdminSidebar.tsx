@@ -433,6 +433,7 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
           (() => {
             const isChat = location.pathname.startsWith("/dashboard/chat");
             const isInbox = location.pathname.startsWith("/admin/inbox");
+            const isOutreachInbox = location.pathname.startsWith("/dashboard/messaging");
             return (
               <SidebarGroup className="p-0 mb-2">
                 <SidebarMenu className="space-y-1">
@@ -466,6 +467,22 @@ export function AdminSidebar({ activeTab, onTabChange, userRole = "admin", admin
                     >
                       <Inbox className="w-4 h-4" />
                       <span className="text-sm">Live inbox</span>
+                    </SidebarMenuButton>
+                  </SidebarMenuItem>
+                  <SidebarMenuItem>
+                    <SidebarMenuButton
+                      tooltip="Outreach Inbox"
+                      onClick={() => navigate("/dashboard/messaging")}
+                      isActive={isOutreachInbox}
+                      className={cn(
+                        "h-11 transition-all duration-200 rounded-xl",
+                        isOutreachInbox
+                          ? "bg-primary text-primary-foreground font-semibold shadow-sm"
+                          : "hover:bg-primary/10 text-muted-foreground font-medium text-sm",
+                      )}
+                    >
+                      <Send className="w-4 h-4" />
+                      <span className="text-sm">Outreach inbox</span>
                     </SidebarMenuButton>
                   </SidebarMenuItem>
                 </SidebarMenu>

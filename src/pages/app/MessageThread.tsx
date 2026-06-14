@@ -16,6 +16,8 @@ import { listTalentSystemFeedNotifications } from "@/domains/talent/repo/talentR
 import { getAgentByKey } from "@/domains/agents/repo/agentsRepo";
 import { getMessageThreadIdByTalentAndAgent, ensureSystemThread } from "@/domains/messaging/repo/messagingRepo";
 import { InlineSpinner } from "@/components/common/InlineSpinner";
+import { useDirectMessages } from "@/domains/messaging/hooks/useDirectMessages";
+import { supabase } from "@/integrations/supabase/client";
 
 // =========================================================================
 // DETERMINISTIC COMPONENT DATA TYPE CONTRACTS
@@ -48,6 +50,10 @@ export default function MessageThread() {
  const { markThreadRead } = useMessageThreads();
 
  const isSystemThread = threadKey === "system";
+ const isPeerThread = React.useMemo(() =>
+   threadKey ? /^[0-9a-f]{8}-[0-9a-f]{4}-[1-5][0-9a-f]{3}-[89ab][0-9a-f]{3}-[0-9a-f]{12}$/i.test(threadKey) : false,
+   [threadKey]
+ );
  const scrollContainerRef = React.useRef<HTMLDivElement>(null);
 
  // --- Agent State ---
@@ -59,55 +65,124 @@ export default function MessageThread() {
  // --- System State ---
  const [systemNotifications, setSystemNotifications] = React.useState<NotificationRecord[]>([]);
 
+ // --- Peer State ---
+ const { messages: peerMessages, send: sendPeerMessage, isSending: isSendingPeer } = useDirectMessages(
+   isPeerThread ? threadKey : undefined
+ );
+ const [activePeer, setActivePeer] = React.useState<{ name: string; avatarUrl: string | null } | null>(null);
+
  // =========================================================================
  // LIFECYCLE SECTOR: THREAD INGRESS PROTOCOL
  // =========================================================================
  React.useEffect(() => {
- if (!talent?.id || !threadKey) return;
+  if (!talent?.id || !threadKey) return;
 
- if (isSystemThread) {
- const loadSystemFeed = async () => {
- const tid = await ensureSystemThread(talent.id);
- if (tid) markThreadRead(tid);
+  if (isSystemThread) {
+  const loadSystemFeed = async () => {
+  const tid = await ensureSystemThread(talent.id);
+  if (tid) markThreadRead(tid);
 
- const data = await listTalentSystemFeedNotifications(talent.id, 200);
- setSystemNotifications(data ?? []);
- setIsBootstrapping(false);
- };
- void loadSystemFeed();
- } else {
- const loadAgentSession = async () => {
- setIsBootstrapping(true);
- const data = await getAgentByKey(threadKey);
- if (data) setActiveAgent(data as unknown as AgentRecord);
- await startOrResumeSession(threadKey);
+  const data = await listTalentSystemFeedNotifications(talent.id, 200);
+  setSystemNotifications(data ?? []);
+  setIsBootstrapping(false);
+  };
+  void loadSystemFeed();
+  } else if (isPeerThread) {
+  const loadPeerSession = async () => {
+  setIsBootstrapping(true);
+  try {
+  const { data: threadRow, error: threadError } = await supabase
+    .from("message_threads")
+    .select("peer_talent_id")
+    .eq("id", threadKey)
+    .single();
 
- const threadId = await getMessageThreadIdByTalentAndAgent(talent.id, threadKey);
- if (threadId) markThreadRead(threadId);
- setIsBootstrapping(false);
- };
- void loadAgentSession();
- }
- }, [threadKey, isSystemThread, talent?.id, markThreadRead, startOrResumeSession]);
+  if (!threadError && threadRow?.peer_talent_id) {
+    const { data: talentRow, error: talentError } = await supabase
+      .from("talents")
+      .select("full_name, profile_photo_url")
+      .eq("id", threadRow.peer_talent_id)
+      .single();
+
+    if (!talentError && talentRow) {
+      setActivePeer({
+        name: talentRow.full_name,
+        avatarUrl: talentRow.profile_photo_url,
+      });
+    }
+  }
+  await markThreadRead(threadKey);
+  } catch (error) {
+  console.error("[Digital Workforce] Error loading peer session:", error);
+  } finally {
+  setIsBootstrapping(false);
+  }
+  };
+  void loadPeerSession();
+  } else {
+  const loadAgentSession = async () => {
+  setIsBootstrapping(true);
+  const data = await getAgentByKey(threadKey);
+  if (data) setActiveAgent(data as unknown as AgentRecord);
+  await startOrResumeSession(threadKey);
+
+  const threadId = await getMessageThreadIdByTalentAndAgent(talent.id, threadKey);
+  if (threadId) markThreadRead(threadId);
+  setIsBootstrapping(false);
+  };
+  void loadAgentSession();
+  }
+ }, [threadKey, isSystemThread, isPeerThread, talent?.id, markThreadRead, startOrResumeSession]);
 
  // Sync scroll-to-bottom anchor
  React.useEffect(() => {
- if (scrollContainerRef.current) {
- scrollContainerRef.current.scrollTo({
- top: scrollContainerRef.current.scrollHeight,
- behavior: "smooth",
- });
- }
- }, [messages, systemNotifications]);
+  if (scrollContainerRef.current) {
+  scrollContainerRef.current.scrollTo({
+  top: scrollContainerRef.current.scrollHeight,
+  behavior: "smooth",
+  });
+  }
+ }, [messages, systemNotifications, peerMessages]);
 
  const handleDispatchMessage = async () => {
- const trimmedInput = textComposerInput.trim();
- if (!trimmedInput || isStreaming) return;
- setTextComposerInput("");
- await sendMessage(trimmedInput);
+  const trimmedInput = textComposerInput.trim();
+  if (!trimmedInput) return;
+  if (isPeerThread) {
+  if (isSendingPeer) return;
+  setTextComposerInput("");
+  await sendPeerMessage(trimmedInput, "talent");
+  } else {
+  if (isStreaming) return;
+  setTextComposerInput("");
+  await sendMessage(trimmedInput);
+  }
  };
 
- const headerLabel = isSystemThread ? "System Notifications" : (activeAgent?.name ?? "Assistant");
+ const headerLabel = isSystemThread
+  ? "System Notifications"
+  : isPeerThread
+  ? (activePeer?.name ?? "Connection")
+  : (activeAgent?.name ?? "Assistant");
+
+ const subLabelText = isSystemThread
+  ? "System Feed"
+  : isPeerThread
+  ? "Direct Message"
+  : isStreaming
+  ? "Typing..."
+  : `${perResponseCost} credits per message`;
+
+ const avatarImageSrc = isSystemThread
+  ? undefined
+  : isPeerThread
+  ? (activePeer?.avatarUrl ?? undefined)
+  : (activeAgent?.avatar_url ?? undefined);
+
+ const avatarBgColor = isSystemThread
+  ? "#2A7DDE"
+  : isPeerThread
+  ? "#10B981"
+  : (activeAgent?.bg_color ?? "#2A7DDE");
 
  return (
  <div className={cn(PAGE_SHELL, "flex flex-col h-[100dvh] max-w-2xl mx-auto bg-background")}>
@@ -118,21 +193,17 @@ export default function MessageThread() {
  </Button>
 
  <Avatar className="h-9 w-9 rounded-full shrink-0">
- {activeAgent?.avatar_url && <AvatarImage src={activeAgent.avatar_url} />}
- <AvatarFallback className="text-white" style={{ backgroundColor: activeAgent?.bg_color ?? "#2A7DDE" }}>
- {isSystemThread ? <Sparkles className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
- </AvatarFallback>
+  {avatarImageSrc && <AvatarImage src={avatarImageSrc} />}
+  <AvatarFallback className="text-white" style={{ backgroundColor: avatarBgColor }}>
+  {isSystemThread ? <Sparkles className="h-4 w-4" /> : <Bot className="h-4 w-4" />}
+  </AvatarFallback>
  </Avatar>
 
  <div className="flex-1 min-w-0">
- <p className="font-bold text-sm truncate">{headerLabel}</p>
- <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest truncate">
- {isSystemThread
- ? "System Feed"
- : isStreaming
- ? "Typing..."
- : `${perResponseCost} credits per message`}
- </p>
+  <p className="font-bold text-sm truncate">{headerLabel}</p>
+  <p className="text-[10px] font-mono text-muted-foreground uppercase tracking-widest truncate">
+  {subLabelText}
+  </p>
  </div>
  </header>
 
@@ -155,40 +226,53 @@ export default function MessageThread() {
  />
  ))
  )
- ) : (
- <>
- {messages.map((m, i) => (
- <ChatBubble key={i} role={m.role} content={m.content} />
- ))}
- {isStreaming && (
- <div className="flex items-center gap-2 px-3 py-2 text-[10px] uppercase font-bold text-muted-foreground animate-pulse">
- <InlineSpinner size="sm" /> {headerLabel} is typing...
- </div>
- )}
- </>
+ ) : isPeerThread ? (
+  peerMessages.length === 0 ? (
+  <div className="text-center text-xs text-muted-foreground py-10">No messages yet.</div>
+  ) : (
+  peerMessages.map((m) => (
+  <ChatBubble
+  key={m.id}
+  role={m.sender_id === talent?.id ? "user" : "assistant"}
+  content={m.body}
+  timestamp={format(new Date(m.created_at), "MMM d, h:mm a")}
+  />
+  ))
+  )
+  ) : (
+  <>
+  {messages.map((m, i) => (
+  <ChatBubble key={i} role={m.role} content={m.content} />
+  ))}
+  {isStreaming && (
+  <div className="flex items-center gap-2 px-3 py-2 text-[10px] uppercase font-bold text-muted-foreground animate-pulse">
+  <InlineSpinner size="sm" /> {headerLabel} is typing...
+  </div>
+  )}
+  </>
  )}
  </div>
 
  {/* HUD LEVEL 3: INPUT COMPOSER */}
  {!isSystemThread && (
- <div className="border-t border-border/40 bg-background p-4 flex gap-2">
- <Input
- placeholder={`Message ${headerLabel}...`}
- value={textComposerInput}
- onChange={(e) => setTextComposerInput(e.target.value)}
- onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleDispatchMessage()}
- className="h-11 rounded-xl bg-muted/30 border-transparent focus-visible:bg-background"
- disabled={isStreaming || isBootstrapping}
- />
- <Button
- size="icon" aria-label="Send"
- className="h-11 w-11 rounded-xl shrink-0"
- onClick={handleDispatchMessage}
- disabled={!textComposerInput.trim() || isStreaming}
- >
- <Send className="h-4 w-4" />
- </Button>
- </div>
+  <div className="border-t border-border/40 bg-background p-4 flex gap-2">
+  <Input
+  placeholder={`Message ${headerLabel}...`}
+  value={textComposerInput}
+  onChange={(e) => setTextComposerInput(e.target.value)}
+  onKeyDown={(e) => e.key === "Enter" && !e.shiftKey && handleDispatchMessage()}
+  className="h-11 rounded-xl bg-muted/30 border-transparent focus-visible:bg-background"
+  disabled={isStreaming || isBootstrapping || (isPeerThread ? isSendingPeer : false)}
+  />
+  <Button
+  size="icon" aria-label="Send"
+  className="h-11 w-11 rounded-xl shrink-0"
+  onClick={handleDispatchMessage}
+  disabled={!textComposerInput.trim() || isStreaming || (isPeerThread ? isSendingPeer : false)}
+  >
+  <Send className="h-4 w-4" />
+  </Button>
+  </div>
  )}
  </div>
  );
