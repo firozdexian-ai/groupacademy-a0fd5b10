@@ -40,10 +40,41 @@ export function useGigGraph() {
     },
   });
 
+  const mapPayloadForDb = (table: GigGraphTable, payload: any) => {
+    const cleanPayload: any = {};
+    if (payload.id) cleanPayload.id = payload.id;
+
+    if (table === "gigs") {
+      cleanPayload.title = payload.title;
+      if (payload.reward_amount !== undefined) cleanPayload.credit_reward = Number(payload.reward_amount);
+      if (payload.status !== undefined) cleanPayload.is_active = payload.status === "active";
+    } else if (table === "marketplace_gigs") {
+      cleanPayload.title = payload.title;
+      cleanPayload.status = payload.status;
+      if (payload.budget !== undefined) cleanPayload.budget_amount = Number(payload.budget);
+    } else if (table === "course_projects") {
+      cleanPayload.status = payload.status;
+      if (payload.course_id !== undefined) cleanPayload.course_id = payload.course_id;
+    } else if (table === "gig_submissions") {
+      cleanPayload.gig_id = payload.gig_id;
+      cleanPayload.talent_id = payload.talent_id;
+      cleanPayload.status = payload.status;
+    } else if (table === "gig_verifications") {
+      cleanPayload.talent_id = payload.talent_id;
+      cleanPayload.verdict = payload.status;
+    } else if (table === "withdrawal_requests") {
+      cleanPayload.talent_id = payload.talent_id;
+      if (payload.amount !== undefined) cleanPayload.amount_credits = Number(payload.amount);
+      cleanPayload.status = payload.status;
+    }
+    return cleanPayload;
+  };
+
   const createUpsertMutation = (table: GigGraphTable, entityName: string) =>
     useMutation({
       mutationFn: async (payload: any) => {
-        await upsertGigGraphRow(table, payload);
+        const dbPayload = mapPayloadForDb(table, payload);
+        await upsertGigGraphRow(table, dbPayload);
       },
       onSuccess: () => {
         queryClient.invalidateQueries({ queryKey: ["gig_graph_master"] });

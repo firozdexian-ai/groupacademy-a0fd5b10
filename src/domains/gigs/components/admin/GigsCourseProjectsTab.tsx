@@ -93,9 +93,19 @@ export function GigsCourseProjectsTab() {
  <TableCell>
  <Badge
  className={cn(
- "font-bold text-[9px] border-none px-3",
- row.status === "active"
+ "font-bold text-[9px] border-none px-3 uppercase",
+ row.status === "open" || row.status === "paid"
  ? "bg-emerald-500/10 text-emerald-600"
+ : row.status === "claimed"
+ ? "bg-blue-500/10 text-blue-600"
+ : row.status === "in_progress"
+ ? "bg-amber-500/10 text-amber-600"
+ : row.status === "submitted"
+ ? "bg-indigo-500/10 text-indigo-600"
+ : row.status === "approved"
+ ? "bg-teal-500/10 text-teal-600"
+ : row.status === "abandoned"
+ ? "bg-rose-500/10 text-rose-600"
  : "bg-muted text-muted-foreground",
  )}
  >
@@ -170,14 +180,26 @@ export function GigsCourseProjectsTab() {
  <SelectValue />
  </SelectTrigger>
  <SelectContent>
- <SelectItem value="draft" className="font-bold text-xs">
- Draft
+ <SelectItem value="open" className="font-bold text-xs text-emerald-500">
+ Open
  </SelectItem>
- <SelectItem value="active" className="font-bold text-xs text-emerald-500">
- Active
+ <SelectItem value="claimed" className="font-bold text-xs text-blue-500">
+ Claimed
  </SelectItem>
- <SelectItem value="archived" className="font-bold text-xs text-amber-500">
- Archived
+ <SelectItem value="in_progress" className="font-bold text-xs text-amber-500">
+ In Progress
+ </SelectItem>
+ <SelectItem value="submitted" className="font-bold text-xs text-indigo-500">
+ Submitted
+ </SelectItem>
+ <SelectItem value="approved" className="font-bold text-xs text-teal-500">
+ Approved
+ </SelectItem>
+ <SelectItem value="paid" className="font-bold text-xs text-emerald-500">
+ Paid
+ </SelectItem>
+ <SelectItem value="abandoned" className="font-bold text-xs text-rose-500">
+ Abandoned
  </SelectItem>
  </SelectContent>
  </Select>

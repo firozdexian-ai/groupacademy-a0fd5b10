@@ -88,7 +88,7 @@ interface ContractRecord {
 interface GigsDashboardPayload {
  talent_id: string;
  featured: unknown[];
- submission_counts: Record<string, number>;
+ submission_counts: Record<string, { total: number; pending: number }>;
  course_projects: CourseProjectItem[];
  marketplace_projects: MarketplaceGigItem[];
  my_bids: BidRecord[];
