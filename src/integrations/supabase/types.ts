@@ -19054,16 +19054,6 @@ export type Database = {
         | "exercise"
         | "flashcards"
         | "other"
-        | "module_audio"
-        | "case_study"
-        | "downloadable_template"
-        | "instructor_bio"
-        | "course_description_seo"
-        | "thumbnail_set"
-        | "assessment_final"
-        | "certificate_metadata"
-        | "promo_clip"
-        | "resource_links"
       course_subtask_status: "pending" | "in_review" | "approved" | "rejected"
       crm_activity_type: "note" | "call" | "email" | "meeting" | "task"
       crm_lead_stage:
@@ -19401,16 +19391,6 @@ export const Constants = {
         "exercise",
         "flashcards",
         "other",
-        "module_audio",
-        "case_study",
-        "downloadable_template",
-        "instructor_bio",
-        "course_description_seo",
-        "thumbnail_set",
-        "assessment_final",
-        "certificate_metadata",
-        "promo_clip",
-        "resource_links",
       ],
       course_subtask_status: ["pending", "in_review", "approved", "rejected"],
       crm_activity_type: ["note", "call", "email", "meeting", "task"],
