@@ -64,7 +64,7 @@ export async function getMarketingGraphMaster() {
         .limit(50),
       supabase
         .from("access_codes")
-        .select("id, code, content_id, max_uses, current_uses, expires_at")
+        .select("id, code, content_id, max_uses, current_uses, expires_at, content:content_id(title)")
         .order("created_at", { ascending: false })
         .limit(200),
     ]);

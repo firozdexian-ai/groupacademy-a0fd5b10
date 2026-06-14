@@ -15,6 +15,10 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { withTimeout } from "@/hooks/useQueryWithTimeout";
 import { TIMEOUTS } from "@/lib/timeoutConfig";
 import { cn } from "@/lib/utils";
+import { supabase } from "@/integrations/supabase/client";
+import { parseCv } from "@/domains/jobs/api/jobsApi";
+import { generateOutreachMessage } from "@/domains/talent/api/talentApi";
+import { uploadPortfolioFile } from "@/domains/profile/repo/profileRepo";
 import {
   Upload,
   Link,
@@ -34,6 +38,7 @@ import {
   Globe,
   Send,
   Bot,
+  FileText,
 } from "lucide-react";
 
 /**
@@ -61,7 +66,108 @@ export function TalentOutreachTab() {
   const [analyticsData, setAnalyticsData] = useState<any>(null);
   const [isLoadingAnalytics, setIsLoadingAnalytics] = useState(false);
 
-  // You can paste your existing loadAnalytics and processCV functions here...
+  const loadAnalytics = async () => {
+    setIsLoadingAnalytics(true);
+    try {
+      const { data, error } = await supabase
+        .from("outreach_messages")
+        .select("product");
+      if (error) throw error;
+      
+      const counts: Record<string, number> = {};
+      let total = 0;
+      (data || []).forEach((row: any) => {
+        if (row.product) {
+          counts[row.product] = (counts[row.product] || 0) + 1;
+          total++;
+        }
+      });
+      
+      setAnalyticsData({
+        productCounts: counts,
+        totalMessages: total,
+      });
+    } catch (err: any) {
+      toast.error("Telemetry failed to load");
+    } finally {
+      setIsLoadingAnalytics(false);
+    }
+  };
+
+  const processCV = async () => {
+    setIsProcessing(true);
+    setResult(null);
+    try {
+      let parsedCVData: any = null;
+
+      if (inputMode === "upload") {
+        if (!cvFile) throw new Error("Please select a CV file first.");
+        const fileExt = cvFile.name.split(".").pop() || "pdf";
+        const filePath = `cv-outreach/CV_${Date.now()}.${fileExt}`;
+        
+        toast.loading("Uploading CV...", { id: "cv-processing" });
+        const { publicUrl } = await uploadPortfolioFile(filePath, cvFile, { upsert: true });
+        
+        toast.loading("Analyzing CV structure...", { id: "cv-processing" });
+        const parseRes = await parseCv({ cvUrl: publicUrl, serviceType: "cv_outreach" } as any);
+        if (!parseRes?.success || !parseRes?.parsed) {
+          throw new Error("Could not parse the CV content. Please try again with a different format.");
+        }
+        parsedCVData = parseRes.parsed;
+      } else if (inputMode === "url") {
+        if (!cvUrl.trim()) throw new Error("Please enter a CV URL first.");
+        toast.loading("Analyzing remote CV...", { id: "cv-processing" });
+        const parseRes = await parseCv({ cvUrl: cvUrl.trim(), serviceType: "cv_outreach" } as any);
+        if (!parseRes?.success || !parseRes?.parsed) {
+          throw new Error("Could not parse CV at the specified URL.");
+        }
+        parsedCVData = parseRes.parsed;
+      } else {
+        if (!cvText.trim()) throw new Error("Please paste CV text first.");
+        toast.loading("Parsing CV text...", { id: "cv-processing" });
+        const parseRes = await parseCv({ cvText: cvText.trim(), serviceType: "cv_outreach" } as any);
+        if (!parseRes?.success || !parseRes?.parsed) {
+          throw new Error("Could not parse the pasted CV text.");
+        }
+        parsedCVData = parseRes.parsed;
+      }
+
+      toast.loading("Generating outreach pitch...", { id: "cv-processing" });
+      const finalSender = selectedSender === "custom" ? customSenderName : selectedSender;
+      const msgRes = await generateOutreachMessage({
+        parsedCV: parsedCVData,
+        product: selectedProduct,
+        professionCategory: parsedCVData?.profession_category || "Executive",
+        senderName: finalSender || "Academy_Systems",
+        language: selectedLanguage,
+      } as any);
+
+      if (!msgRes?.success || !msgRes?.message) {
+        throw new Error("Failed to synthesize message pitch.");
+      }
+
+      setResult({
+        message: msgRes.message,
+        name: msgRes.name || parsedCVData?.full_name || "Talent",
+        phone: msgRes.phone || parsedCVData?.phone || "",
+        professionCategory: msgRes.professionCategory || parsedCVData?.profession_category || "",
+        whatsappLink: msgRes.whatsappLink || "",
+      });
+
+      toast.success("Outreach strategy generated successfully!", { id: "cv-processing" });
+    } catch (err: any) {
+      toast.error(err.message || "CV Processing Failed", { id: "cv-processing" });
+      console.error(err);
+    } finally {
+      setIsProcessing(false);
+    }
+  };
+
+  useEffect(() => {
+    if (activeTab === "analytics") {
+      loadAnalytics();
+    }
+  }, [activeTab]);
 
   return (
     <div className="space-y-10 animate-in fade-in duration-1000 p-4 md:p-6">
@@ -195,11 +301,204 @@ export function TalentOutreachTab() {
                 </div>
               </div>
             </CardHeader>
-            <CardContent className="p-10">
-              {/* NOTE: Paste your original Input/Select fields and form logic here */}
-              <div className="py-20 text-center font-black text-xs text-muted-foreground/40 italic border-2 border-dashed border-border/40 rounded-2xl">
-                [ LEGACY FORM LOGIC RESERVED FOR MANUAL PASTE ]
+            <CardContent className="p-10 space-y-6">
+              {/* Input Mode Selector */}
+              <div className="space-y-2">
+                <Label className="text-[10px] font-black text-primary uppercase tracking-widest">CV Source Type</Label>
+                <div className="flex gap-4">
+                  {(["upload", "url", "text"] as const).map((mode) => (
+                    <Button
+                      key={mode}
+                      type="button"
+                      variant={inputMode === mode ? "default" : "outline"}
+                      onClick={() => setInputMode(mode)}
+                      className="rounded-xl font-bold uppercase text-[10px] tracking-widest px-6 h-10"
+                    >
+                      {mode === "upload" && <Upload className="w-3.5 h-3.5 mr-2" />}
+                      {mode === "url" && <Link className="w-3.5 h-3.5 mr-2" />}
+                      {mode === "text" && <FileText className="w-3.5 h-3.5 mr-2" />}
+                      {mode}
+                    </Button>
+                  ))}
+                </div>
               </div>
+
+              {/* Mode-specific Fields */}
+              {inputMode === "upload" && (
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black text-primary uppercase tracking-widest">Upload CV (PDF/Word)</Label>
+                  <div className="flex items-center gap-4">
+                    <Input
+                      type="file"
+                      accept=".pdf,.doc,.docx"
+                      onChange={(e) => {
+                        const file = e.target.files?.[0];
+                        if (file) setCvFile(file);
+                      }}
+                      className="h-12 rounded-xl bg-muted/20 border-2 font-semibold"
+                    />
+                  </div>
+                </div>
+              )}
+
+              {inputMode === "url" && (
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black text-primary uppercase tracking-widest">CV Document URL</Label>
+                  <Input
+                    placeholder="https://..."
+                    value={cvUrl}
+                    onChange={(e) => setCvUrl(e.target.value)}
+                    className="h-12 rounded-xl bg-muted/20 border-2 font-semibold"
+                  />
+                </div>
+              )}
+
+              {inputMode === "text" && (
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black text-primary uppercase tracking-widest">CV Raw Text Content</Label>
+                  <Textarea
+                    placeholder="Paste full text contents of the resume here..."
+                    rows={8}
+                    value={cvText}
+                    onChange={(e) => setCvText(e.target.value)}
+                    className="rounded-xl bg-muted/20 border-2 font-semibold resize-none"
+                  />
+                </div>
+              )}
+
+              {/* Product and Language Options */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black text-primary uppercase tracking-widest">Target Pitch Product</Label>
+                  <Select value={selectedProduct} onValueChange={setSelectedProduct}>
+                    <SelectTrigger className="h-12 rounded-xl border-2 font-semibold bg-background/50">
+                      <SelectValue placeholder="Select pitch product..." />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-2">
+                      <SelectItem value="digital-portfolio">Digital Portfolio</SelectItem>
+                      <SelectItem value="welcome-ai">Welcome AI</SelectItem>
+                      <SelectItem value="career-scorecard">Career Scorecard</SelectItem>
+                      <SelectItem value="mock-interview">Mock Interview</SelectItem>
+                      <SelectItem value="salary-analysis">Salary Analysis</SelectItem>
+                      <SelectItem value="ai-efficiency">AI Efficiency Accelerator</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black text-primary uppercase tracking-widest">Pitch Language</Label>
+                  <Select value={selectedLanguage} onValueChange={setSelectedLanguage}>
+                    <SelectTrigger className="h-12 rounded-xl border-2 font-semibold bg-background/50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-2">
+                      <SelectItem value="auto">Auto-Detect</SelectItem>
+                      <SelectItem value="en">English Only</SelectItem>
+                      <SelectItem value="bn">Bengali / Bangla</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+              </div>
+
+              {/* Sender Configuration */}
+              <div className="grid md:grid-cols-2 gap-6">
+                <div className="space-y-2">
+                  <Label className="text-[10px] font-black text-primary uppercase tracking-widest">Sender Signature</Label>
+                  <Select value={selectedSender} onValueChange={setSelectedSender}>
+                    <SelectTrigger className="h-12 rounded-xl border-2 font-semibold bg-background/50">
+                      <SelectValue />
+                    </SelectTrigger>
+                    <SelectContent className="rounded-xl border-2">
+                      <SelectItem value="firoz">Firoz</SelectItem>
+                      <SelectItem value="Academy_Systems">Academy Systems</SelectItem>
+                      <SelectItem value="custom">Custom Name...</SelectItem>
+                    </SelectContent>
+                  </Select>
+                </div>
+
+                {selectedSender === "custom" && (
+                  <div className="space-y-2">
+                    <Label className="text-[10px] font-black text-primary uppercase tracking-widest">Custom Sender Name</Label>
+                    <Input
+                      placeholder="Enter custom signature..."
+                      value={customSenderName}
+                      onChange={(e) => setCustomSenderName(e.target.value)}
+                      className="h-12 rounded-xl bg-muted/20 border-2 font-semibold"
+                    />
+                  </div>
+                )}
+              </div>
+
+              {/* Trigger Button */}
+              <Button
+                onClick={processCV}
+                disabled={isProcessing}
+                className="w-full h-12 rounded-xl font-black uppercase text-[10px] tracking-widest gap-2 bg-primary hover:bg-primary/90 text-primary-foreground shadow-lg shadow-primary/20"
+              >
+                {isProcessing ? (
+                  <>
+                    <Loader2 className="w-4 h-4 animate-spin" /> Analyzing & Synthesis in Progress...
+                  </>
+                ) : (
+                  <>
+                    <Bot className="w-4 h-4" /> Analyze Resume & Generate Pitch
+                  </>
+                )}
+              </Button>
+
+              {/* Pitch Result Block */}
+              {result && (
+                <div className="mt-8 space-y-4 border-2 border-primary/20 bg-primary/[0.01] p-6 rounded-2xl animate-in fade-in duration-500 text-left">
+                  <div className="flex justify-between items-center pb-4 border-b border-border/60">
+                    <div>
+                      <h4 className="text-xs font-black uppercase tracking-wide text-foreground">
+                        Synthesized Pitch Strategy
+                      </h4>
+                      <div className="flex gap-2 mt-1">
+                        {result.name && (
+                          <Badge variant="outline" className="font-mono text-[9px] uppercase">
+                            Talent: {result.name}
+                          </Badge>
+                        )}
+                        {result.professionCategory && (
+                          <Badge variant="outline" className="font-mono text-[9px] uppercase">
+                            Role: {result.professionCategory}
+                          </Badge>
+                        )}
+                      </div>
+                    </div>
+                    <div className="flex gap-2">
+                      <Button
+                        size="sm"
+                        variant="outline"
+                        className="rounded-lg text-[9px] font-black uppercase tracking-wider h-8"
+                        onClick={() => {
+                          navigator.clipboard.writeText(result.message);
+                          toast.success("Pitch copied to clipboard!");
+                        }}
+                      >
+                        <Copy className="w-3.5 h-3.5 mr-1" /> Copy Message
+                      </Button>
+                      {result.whatsappLink && (
+                        <a
+                          href={result.whatsappLink}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center justify-center bg-success hover:bg-success/90 text-success-foreground text-[9px] font-black uppercase tracking-wider h-8 px-3 rounded-lg"
+                        >
+                          <ExternalLink className="w-3.5 h-3.5 mr-1" /> Send WhatsApp
+                        </a>
+                      )}
+                    </div>
+                  </div>
+
+                  <div className="bg-background/60 p-4 rounded-xl border border-border/40">
+                    <pre className="font-mono text-xs whitespace-pre-wrap leading-relaxed text-foreground select-all">
+                      {result.message}
+                    </pre>
+                  </div>
+                </div>
+              )}
             </CardContent>
           </Card>
         </TabsContent>

@@ -28,7 +28,7 @@ import { cn } from "@/lib/utils";
  * 2026 Standard: Executive Logic geometry with reinforced placement telemetry.
  */
 
-type PlacementType = "carousel" | "hero" | "learning";
+type PlacementType = "carousel" | "hero" | "learning" | "agents_marketplace";
 
 type MediaType = "image" | "gif" | "video";
 type FocalPoint = "center" | "top" | "bottom" | "left" | "right";
@@ -272,6 +272,9 @@ export const BannerManager = () => {
                         </SelectItem>
                         <SelectItem value="learning" className="font-bold">
                           ACADEMY
+                        </SelectItem>
+                        <SelectItem value="agents_marketplace" className="font-bold">
+                          AGENTS MARKETPLACE
                         </SelectItem>
                       </SelectContent>
                     </Select>

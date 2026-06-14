@@ -185,8 +185,8 @@ export function AccessCodesTab() {
                               {row.current_uses} / {row.max_uses} Uses
                             </Badge>
                           </TableCell>
-                          <TableCell className="text-xs font-mono text-muted-foreground">
-                            {row.content_id?.substring(0, 8) || "Global"}
+                          <TableCell className="text-xs font-semibold text-muted-foreground">
+                            {row.content?.title || row.content_id?.substring(0, 8) || "Global"}
                           </TableCell>
                           <TableCell className="text-right">
                             <div className="flex justify-end gap-1">

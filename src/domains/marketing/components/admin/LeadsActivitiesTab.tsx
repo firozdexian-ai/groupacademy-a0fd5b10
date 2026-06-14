@@ -3,6 +3,7 @@ import { ClipboardList, Briefcase, MessageSquare, TrendingUp, Folder } from "luc
 import { LeadHunterManager } from "./leads/LeadHunterManager";
 import { MockInterviewLeadsManager } from "./leads/MockInterviewLeadsManager";
 import { SalaryAnalysisLeadsManager } from "./leads/SalaryAnalysisLeadsManager";
+import PortfolioRequestsManager from "@/domains/talent/components/admin/PortfolioRequestsTab";
 
 /**
  * Platform Logic: Unified Service Funnel
@@ -49,7 +50,7 @@ export function LeadsActivitiesTab() {
           </TabsTrigger>
           <TabsTrigger
             value="portfolio"
-            className="rounded-xl font-black uppercase italic text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg opacity-50 cursor-not-allowed py-3"
+            className="rounded-xl font-black uppercase italic text-[10px] tracking-widest gap-2 data-[state=active]:bg-background data-[state=active]:shadow-lg py-3"
           >
             <Folder className="w-4 h-4" /> <span className="hidden lg:inline">Portfolio</span>
           </TabsTrigger>
@@ -67,13 +68,8 @@ export function LeadsActivitiesTab() {
           <SalaryAnalysisLeadsManager />
         </TabsContent>
 
-        <TabsContent value="portfolio" className="mt-0 flex flex-col items-center justify-center p-20 space-y-4">
-          <div className="h-16 w-16 rounded-2xl bg-muted/10 flex items-center justify-center border border-border/40">
-            <Folder className="h-8 w-8 text-muted-foreground/30" />
-          </div>
-          <p className="text-muted-foreground/50 font-black uppercase text-[10px] tracking-widest italic">
-            Awaiting Portfolio Module Initialization
-          </p>
+        <TabsContent value="portfolio" className="mt-0">
+          <PortfolioRequestsManager />
         </TabsContent>
       </Tabs>
     </div>

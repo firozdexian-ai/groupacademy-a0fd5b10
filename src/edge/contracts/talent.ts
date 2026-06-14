@@ -19,8 +19,13 @@ export type BatchParseCvsResponse = z.infer<typeof BatchParseCvsResponseSchema>;
 
 // generate-outreach-message --------------------------------------------------
 export interface GenerateOutreachMessageRequest {
-  talent_id: string;
+  talent_id?: string;
   product_context?: string;
+  parsedCV?: any;
+  product?: string;
+  professionCategory?: string;
+  senderName?: string;
+  language?: string;
 }
 
 export const GenerateOutreachMessageResponseSchema = z.object({
