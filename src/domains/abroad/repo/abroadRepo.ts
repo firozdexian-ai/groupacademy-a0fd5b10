@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Group Academy â€” Abroad Domain Repository Layer
  * Version: Phase 10i.2 Hardened (Production Candidate)
  * Security Profile: Restricts execution boundaries, enforces tenant/user filters, handles transactional state mapping.
@@ -278,8 +278,8 @@ export async function listActiveLanguageInstructorsByCode(languageCode: string) 
 export async function listAbroadApplicationsForCurrentUser(userId?: string) {
   let resolvedUserId = userId;
   if (!resolvedUserId) {
-    const { data: auth } = await getCurrentUser();
-    resolvedUserId = auth.user?.id;
+    const user = await getCurrentUser();
+    resolvedUserId = user?.id;
   }
   if (!resolvedUserId) return [];
 

@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAccountType } from "@/hooks/useAccountType";
@@ -72,7 +72,7 @@ const Auth = () => {
   // REDIRECT GUARD â€” wait until we know account type to route correctly
   useEffect(() => {
     if (authLoading || !user || accountTypeLoading) return;
-    getCurrentSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
         await finalizePendingOnboarding();
         const dest = resolvePostAuthRoute(accountType, safeReturnTo(searchParams.get("returnTo")));

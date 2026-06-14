@@ -1,4 +1,4 @@
-﻿import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState } from "react";
 import { useSearchParams } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import {
@@ -214,7 +214,7 @@ export function OnboardingWizard({
 
     const tplRow = await getActiveWorkforceTemplateByKey("b2c_campus_ambassador");
 
-    const { data: authData } = await getCurrentUser();
+    const { data: authData } = await supabase.auth.getUser();
     const userId = authData?.user?.id;
     if (!tplRow?.id || !userId) return null;
 
@@ -266,7 +266,7 @@ export function OnboardingWizard({
 
     try {
       setSubmittingPhase("Savingâ€¦");
-      const { data: authData, error: authErr } = await getCurrentUser();
+      const { data: authData, error: authErr } = await supabase.auth.getUser();
       if (authErr || !authData?.user?.id) throw new Error("You're signed out. Please sign in again.");
       const userId = authData.user.id;
 

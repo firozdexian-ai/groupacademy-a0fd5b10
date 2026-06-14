@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef } from "react";
+import { useState, useEffect, useRef } from "react";
 import { useNavigate } from "react-router-dom";
 import { supabase } from "@/integrations/supabase/client";
 import { resolveTalentEmailByPhoneVariants } from "@/domains/talent/repo/talentRepo";
@@ -89,7 +89,7 @@ export const useAuth = (): AuthState => {
     // 2) Then hydrate the existing session.
     (async () => {
       try {
-        const { data, error } = await getCurrentSession();
+        const { data, error } = await supabase.auth.getSession();
         if (error) throw error;
         if (mounted.current) {
           setSession(data.session);

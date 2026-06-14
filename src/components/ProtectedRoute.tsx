@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useCallback, useRef, useMemo } from "react";
+import { useEffect, useState, useCallback, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -112,7 +112,7 @@ export function ProtectedRoute({
         }, temporalThresholdNum);
       });
 
-      const sessionCheckQueryPromise = getCurrentSession();
+      const sessionCheckQueryPromise = supabase.auth.getSession();
 
       const dynamicRaceResolutionResult: unknown = await Promise.race([sessionCheckQueryPromise, diagnosticTimeoutPromise]);
 
@@ -317,7 +317,7 @@ export function useUserRole() {
       const {
         data: { session },
         error: sessionFetchError,
-      } = await getCurrentSession();
+      } = await supabase.auth.getSession();
       if (sessionFetchError) throw sessionFetchError;
       if (!session?.user) return null;
 

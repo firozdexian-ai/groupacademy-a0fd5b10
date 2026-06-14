@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Group Academy â€” Administrative Data Access Repository
  * Purpose: Unified generic CRUD wrapper providing a data routing layer over core taxonomy tables.
  * Isolates direct client invokes, enforces role verification gates, and links with telemetry frameworks.
@@ -53,9 +53,7 @@ export async function listAdminTableRows(table: string): Promise<unknown[]> {
 export async function insertAdminTableRow(table: string, payload: Record<string, unknown>): Promise<void> {
   try {
     // Client-side authentication guard to guarantee session integrity before transport layers fire
-    const {
-      data: { user },
-    } = await getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) throw new Error("Security check failed: You are unauthenticated.");
 
     const { error } = await (supabase.from(table as unknown) as unknown).insert(payload);
@@ -71,9 +69,7 @@ export async function insertAdminTableRow(table: string, payload: Record<string,
  */
 export async function deleteAdminTableRow(table: string, id: string): Promise<void> {
   try {
-    const {
-      data: { user },
-    } = await getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) throw new Error("Security check failed: You are unauthenticated.");
 
     const { error } = await supabase

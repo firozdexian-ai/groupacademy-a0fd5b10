@@ -1,4 +1,4 @@
-﻿/**
+/**
  * Analytics domain â€” typed edge function wrappers (Phase 9g - Hardened).
  * Houses edge contract dispatchers for the Report Builder and Business Analyst (Nia) agents.
  * Automates token propagation, schemas parsing, and React Query cache invalidation mapping.
@@ -31,9 +31,7 @@ export async function adminReportBuilder(
 ): Promise<AnalyticsEdgeExecutionResult<AdminReportBuilderResponse>> {
   try {
     // Acquire active session token to maintain hard architectural token verification checks
-    const {
-      data: { session },
-    } = await getCurrentSession();
+    const session = await getCurrentSession();
 
     const { data, error } = await supabase.functions.invoke("admin-report-builder", {
       body: req,
@@ -61,9 +59,7 @@ export async function adminAnalystQuery(
   req: AdminAnalystRequest,
 ): Promise<AnalyticsEdgeExecutionResult<AdminAnalystResponse>> {
   try {
-    const {
-      data: { session },
-    } = await getCurrentSession();
+    const session = await getCurrentSession();
 
     const { data, error } = await supabase.functions.invoke("admin-analyst", {
       body: req,

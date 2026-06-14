@@ -1,4 +1,4 @@
-﻿import { useEffect, useState, useCallback, useRef } from "react";
+import { useEffect, useState, useCallback, useRef } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -68,7 +68,7 @@ export function AuthGate({ children, redirectTo, message, authType = "ai" }: Aut
       const {
         data: { session },
         error: auditError,
-      } = await getCurrentSession();
+      } = await supabase.auth.getSession();
       if (auditError) throw auditError;
 
       if (!session) {

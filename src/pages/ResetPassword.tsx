@@ -1,4 +1,4 @@
-﻿import { useState, useEffect } from "react";
+import { useState, useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
 import { useAccountType } from "@/hooks/useAccountType";
@@ -56,14 +56,14 @@ const ResetPassword = () => {
     const verify = async () => {
       const hash = window.location.hash || "";
       const isRecoveryLink = hash.includes("type=recovery");
-      const { data } = await getCurrentSession();
+      const { data } = await supabase.auth.getSession();
 
       if (isRecoveryLink && data.session) {
         setSessionValid(true);
       } else if (isRecoveryLink) {
         // Wait briefly for PASSWORD_RECOVERY event before failing
         setTimeout(async () => {
-          const { data: again } = await getCurrentSession();
+          const { data: again } = await supabase.auth.getSession();
           if (again.session) setSessionValid(true);
           setIsVerifying(false);
         }, 800);

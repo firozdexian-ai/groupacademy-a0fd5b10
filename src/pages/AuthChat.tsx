@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, FormEvent } from "react";
+import { useState, useEffect, useRef, FormEvent } from "react";
 import { supabase } from "@/integrations/supabase/client";
 import { useNavigate, useSearchParams } from "react-router-dom";
 import { useAuth } from "@/hooks/useAuth";
@@ -61,7 +61,7 @@ const AuthChat = () => {
   // REDIRECT GUARD: Wait for account type so company users land on /company
   useEffect(() => {
     if (authLoading || !user || accountTypeLoading) return;
-    getCurrentSession().then(async ({ data: { session } }) => {
+    supabase.auth.getSession().then(async ({ data: { session } }) => {
       if (session) {
         await finalizePendingOnboarding();
         const dest = resolvePostAuthRoute(accountType, safeReturnTo(searchParams.get("returnTo")));

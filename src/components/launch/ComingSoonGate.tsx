@@ -1,4 +1,4 @@
-﻿import { useEffect, useRef, useState, type ReactNode } from "react";
+import { useEffect, useRef, useState, type ReactNode } from "react";
 import { Link } from "react-router-dom";
 import { Sparkles, Check, ArrowRight } from "lucide-react";
 import { Card, CardContent } from "@/components/ui/card";
@@ -81,9 +81,9 @@ function ComingSoonPanel({
   useEffect(() => {
     let cancelled = false;
     (async () => {
-      const { data } = await getCurrentSession();
+      const session = await getCurrentSession();
       if (cancelled) return;
-      const authed = !!data.session?.user;
+      const authed = !!session?.user;
       setIsAuthed(authed);
       setSessionReady(true);
 

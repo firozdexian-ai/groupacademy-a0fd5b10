@@ -1,4 +1,4 @@
-﻿import { useState, useEffect, useRef, useMemo } from "react";
+import { useState, useEffect, useRef, useMemo } from "react";
 import { useNavigate, useLocation } from "react-router-dom";
 import { useQueryClient } from "@tanstack/react-query";
 import { supabase } from "@/integrations/supabase/client";
@@ -85,7 +85,7 @@ export function Navbar() {
     trackEvent("navbar_identity_audit_initiated");
 
     try {
-      const liveSessionFetchRequestPromise = getCurrentSession();
+      const liveSessionFetchRequestPromise = supabase.auth.getSession();
       const diagnosticTimeoutBarrierPromise = new Promise<null>((resolveNode) =>
         setTimeout(() => resolveNode(null), AUTH_SYNC_TIMEOUT_MS),
       );
