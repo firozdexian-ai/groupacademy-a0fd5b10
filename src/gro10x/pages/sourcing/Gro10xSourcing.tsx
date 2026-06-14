@@ -10,7 +10,7 @@ import { useTalentSearch, type TalentSearchRow } from "@/domains/profile/hooks/u
 import { useActiveCompany } from "@/gro10x/hooks/useActiveCompany";
 import { useUpsertRelationship } from "@/domains/profile/hooks/useTalentRelationships";
 import { useCompanyCredits } from "@/gro10x/hooks/useCompanyCredits";
-import { useUnlockCost, useCompanyUnlocks, useUnlockTalent, type UnlockedContact } from "@/gro10x/hooks/useTalentUnlocks";
+import { useUnlockCost, useCompanyUnlockedContacts, useUnlockTalent, type UnlockedContact } from "@/gro10x/hooks/useTalentUnlocks";
 import { TelegramTopUpModal } from "@/gro10x/components/TelegramTopUpModal";
 import { SaveToListSheet } from "@/components/sourcing/SaveToListSheet";
 import { GRO10X_BG, GRO10X_PANEL, GRO10X_TEXT, GRO10X_MUTED } from "@/gro10x/lib/tokens";
@@ -21,7 +21,7 @@ export default function Gro10xSourcing() {
   const { companyId } = useActiveCompany();
   const { balance } = useCompanyCredits();
   const { data: unlockCost = 10 } = useUnlockCost();
-  const { data: unlockedSet } = useCompanyUnlocks(companyId);
+  const { data: unlockedContacts } = useCompanyUnlockedContacts(companyId);
   const unlock = useUnlockTalent(companyId);
   const [keyword, setKeyword] = useState("");
   const [country, setCountry] = useState("");
@@ -185,8 +185,8 @@ export default function Gro10xSourcing() {
                 </div>
               </div>
               {(() => {
-                const isUnlocked = revealed[t.id] || unlockedSet?.has(t.id);
-                const contact = revealed[t.id];
+                const isUnlocked = !!revealed[t.id] || !!unlockedContacts?.[t.id];
+                const contact = revealed[t.id] || unlockedContacts?.[t.id];
                 const canAfford = balance >= unlockCost;
                 return (
                   <>

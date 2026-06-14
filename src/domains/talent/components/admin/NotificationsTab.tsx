@@ -5,6 +5,7 @@
  */
 import { useState, useEffect, useCallback } from "react";
 import { getCurrentUser } from "@/lib/auth";
+import { supabase } from "@/integrations/supabase/client";
 import { talentRepo, broadcastNotifications } from "@/domains/talent/repo/talentRepo";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Button } from "@/components/ui/button";
@@ -71,33 +72,63 @@ export function NotificationsTab() {
  loadData();
  }, [loadData]);
 
- const executeBroadcast = async () => {
- if (!payload.title || !payload.message) return toast.error("Empty payload");
- if (targetType !== "all" && !targetId) return toast.error("Target node required");
+  const executeBroadcast = async () => {
+    if (!payload.title || !payload.message) return toast.error("Empty payload");
+    if (targetType !== "all" && !targetId) return toast.error("Target node required");
 
- setIsSending(true);
- try {
- const user = await getCurrentUser();
+    setIsSending(true);
+    try {
+      const user = await getCurrentUser();
 
- // B7 Fix: Server-side fan-out via optimized RPC
- await broadcastNotifications({
- title: payload.title,
- message: payload.message,
- type: payload.type,
- createdBy: user?.id ?? null,
- });
+      if (targetType === "all") {
+        // B7 Fix: Server-side fan-out via optimized RPC
+        await broadcastNotifications({
+          title: payload.title,
+          message: payload.message,
+          type: payload.type,
+          createdBy: user?.id ?? null,
+        });
+        toast.success("Broadcast deployed to global network");
+      } else if (targetType === "single") {
+        const { error } = await supabase.from("notifications").insert({
+          talent_id: targetId,
+          title: payload.title,
+          message: payload.message,
+          type: payload.type,
+        });
+        if (error) throw error;
+        toast.success("Notification sent to selected user");
+      } else if (targetType === "category") {
+        const { data: categoryTalents, error: queryError } = await supabase
+          .from("talents")
+          .select("id")
+          .eq("profession_category_id", targetId);
+        if (queryError) throw queryError;
 
+        if (categoryTalents && categoryTalents.length > 0) {
+          const rows = categoryTalents.map((t: any) => ({
+            talent_id: t.id,
+            title: payload.title,
+            message: payload.message,
+            type: payload.type,
+          }));
+          const { error: insertError } = await supabase.from("notifications").insert(rows);
+          if (insertError) throw insertError;
+          toast.success(`Notification sent to ${categoryTalents.length} category users`);
+        } else {
+          toast.info("No talents in the selected category");
+        }
+      }
 
- toast.success("Broadcast deployed to global network");
- setSendDialog(false);
- setPayload({ title: "", message: "", type: "announcement" });
- loadData();
- } catch (err) {
- toast.error("Broadcast fault. Buffer overflow suspected.");
- } finally {
- setIsSending(false);
- }
- };
+      setSendDialog(false);
+      setPayload({ title: "", message: "", type: "announcement" });
+      loadData();
+    } catch (err) {
+      toast.error("Transmission fault. Broadcast failed.");
+    } finally {
+      setIsSending(false);
+    }
+  };
 
  return (
  <div className="space-y-8 animate-in fade-in duration-700">
@@ -195,16 +226,22 @@ export function NotificationsTab() {
  <Label className="text-[10px] font-semibold text-primary ml-1">
  Audience Type
  </Label>
- <Select value={targetType} onValueChange={(v: any) => setTargetType(v)}>
- <SelectTrigger className="rounded-xl border h-12 bg-muted/20 font-bold uppercase text-[10px]">
- <SelectValue />
- </SelectTrigger>
- <SelectContent className="font-semibold uppercase text-[10px]">
- <SelectItem value="all">Everyone</SelectItem>
- <SelectItem value="category">By profession</SelectItem>
- <SelectItem value="single">Single user</SelectItem>
- </SelectContent>
- </Select>
+            <Select
+              value={targetType}
+              onValueChange={(v: any) => {
+                setTargetType(v);
+                setTargetId("");
+              }}
+            >
+              <SelectTrigger className="rounded-xl border h-12 bg-muted/20 font-bold uppercase text-[10px]">
+                <SelectValue />
+              </SelectTrigger>
+              <SelectContent className="font-semibold uppercase text-[10px]">
+                <SelectItem value="all">Everyone</SelectItem>
+                <SelectItem value="category">By profession</SelectItem>
+                <SelectItem value="single">Single user</SelectItem>
+              </SelectContent>
+            </Select>
  </div>
 
  {targetType === "single" && (
@@ -226,6 +263,26 @@ export function NotificationsTab() {
  </Select>
  </div>
  )}
+
+          {targetType === "category" && (
+            <div className="space-y-2 animate-in slide-in-from-top-2">
+              <Label className="text-[10px] font-semibold text-primary ml-1">
+                Select Category
+              </Label>
+              <Select value={targetId} onValueChange={setTargetId}>
+                <SelectTrigger className="rounded-xl border h-12 bg-muted/20 text-xs">
+                  <SelectValue placeholder="Choose category..." />
+                </SelectTrigger>
+                <SelectContent className="max-h-[200px]">
+                  {categories.map((c) => (
+                    <SelectItem key={c.id} value={c.id} className="text-xs uppercase font-bold">
+                      {c.name}
+                    </SelectItem>
+                  ))}
+                </SelectContent>
+              </Select>
+            </div>
+          )}
 
  <div className="space-y-2">
  <Label className="text-[10px] font-semibold text-primary ml-1">

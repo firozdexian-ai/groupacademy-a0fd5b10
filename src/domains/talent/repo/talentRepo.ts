@@ -1023,3 +1023,23 @@ export function subscribeNotificationsRealtime(
     void supabase.removeChannel(channel);
   };
 }
+
+export async function getCompanyUnlockedContacts(
+  companyId: string,
+): Promise<Record<string, { email: string | null; phone: string | null; linkedin_url: string | null }>> {
+  const { data, error } = await supabase
+    .from("talent_contact_unlocks")
+    .select("talent_id, email, phone, linkedin_url")
+    .eq("company_id", companyId);
+  if (error) throw error;
+
+  const result: Record<string, { email: string | null; phone: string | null; linkedin_url: string | null }> = {};
+  for (const row of data || []) {
+    result[row.talent_id] = {
+      email: row.email,
+      phone: row.phone,
+      linkedin_url: row.linkedin_url,
+    };
+  }
+  return result;
+}

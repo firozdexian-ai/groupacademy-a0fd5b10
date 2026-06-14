@@ -1,5 +1,9 @@
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
-import { getTalentContactUnlockCost, getCompanyUnlockedTalents } from "@/domains/talent/repo/talentRepo";
+import {
+  getTalentContactUnlockCost,
+  getCompanyUnlockedTalents,
+  getCompanyUnlockedContacts,
+} from "@/domains/talent/repo/talentRepo";
 import { unlockTalentContact } from "@/domains/talent/api/talentApi";
 
 export function useUnlockCost() {
@@ -15,6 +19,14 @@ export function useCompanyUnlocks(companyId: string | null) {
     queryKey: ["company-unlocks", companyId],
     enabled: !!companyId,
     queryFn: () => getCompanyUnlockedTalents(companyId!),
+  });
+}
+
+export function useCompanyUnlockedContacts(companyId: string | null) {
+  return useQuery({
+    queryKey: ["company-unlocked-contacts", companyId],
+    enabled: !!companyId,
+    queryFn: () => getCompanyUnlockedContacts(companyId!),
   });
 }
 
@@ -36,6 +48,7 @@ export function useUnlockTalent(companyId: string | null) {
     },
     onSuccess: () => {
       qc.invalidateQueries({ queryKey: ["company-unlocks", companyId] });
+      qc.invalidateQueries({ queryKey: ["company-unlocked-contacts", companyId] });
       qc.invalidateQueries({ queryKey: ["company-credits"] });
     },
   });
