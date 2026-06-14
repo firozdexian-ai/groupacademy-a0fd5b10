@@ -1,26 +1,21 @@
 import { useState, useEffect, useCallback } from "react";
-import { useSearchParams } from "react-router-dom";
 import { useQuery, useMutation, useQueryClient } from "@tanstack/react-query";
 import {
-  listCompaniesForAgentPicker,
-  listCompanyAgentsFull,
-  listCompanyAgentLeads,
-  insertAiAgent,
-  insertCompanyAgent,
-  updateAiAgentActive,
-  updateCompanyAgentActive,
-  deleteAiAgent,
-  deleteCompanyAgentById,
+  listCompaniesPaged,
+  insertCompany,
+  upsertCompany,
+  deleteCompany,
+  getIndustryRollup,
+  countCompaniesWithNullIndustry,
+  getCompaniesOverview,
+  CompanyRow,
 } from "@/domains/companies/repo/companiesRepo";
-import { sanitizeIlike } from "@/lib/supabaseQuery";
 import { Button } from "@/components/ui/button";
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Card, CardContent } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Textarea } from "@/components/ui/textarea";
 import { Badge } from "@/components/ui/badge";
-import { Switch } from "@/components/ui/switch";
-import { Checkbox } from "@/components/ui/checkbox";
 import { Select, SelectContent, SelectItem, SelectTrigger, SelectValue } from "@/components/ui/select";
 import {
   Dialog,
@@ -28,7 +23,6 @@ import {
   DialogHeader,
   DialogTitle,
   DialogDescription,
-  DialogTrigger,
   DialogFooter,
 } from "@/components/ui/dialog";
 import {
@@ -41,865 +35,770 @@ import {
   AlertDialogHeader,
   AlertDialogTitle,
 } from "@/components/ui/alert-dialog";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { Table, TableBody, TableCell, TableHead, TableHeader, TableRow } from "@/components/ui/table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Progress } from "@/components/ui/progress";
 import { toast } from "sonner";
 import {
   Plus,
   Building2,
-  Bot,
-  Coins,
-  BadgeCheck,
   Trash2,
-  Users,
-  MessageSquare,
+  Edit,
+  Search,
+  RefreshCw,
+  ChevronLeft,
+  ChevronRight,
   Download,
-  Filter,
+  AlertCircle,
+  TrendingUp,
   UserCheck,
-  Zap,
-  ShieldCheck,
   Activity,
-  Terminal,
+  Globe,
+  ExternalLink,
   Loader2,
+  FileSpreadsheet,
 } from "lucide-react";
-import { Skeleton } from "@/components/ui/skeleton";
+import { DashboardTableSkeleton } from "@/platform/admin/chrome/DashboardSkeleton";
+import StatsCard from "@/platform/admin/ui/StatsCard";
 import { cn } from "@/lib/utils";
+import { BatchCompanyUpload } from "./BatchCompanyUpload";
 
-/**
- * Platform Logic: Company Assistants Management Hub
- * High-fidelity orchestrator for sponsored AI assistants and partner lead tracking.
- * 2024 Standard: Highly professional SAAS UI with clean business labels.
- */
+const ITEMS_PER_PAGE = 10;
 
-interface Company {
-  id: string;
+interface CompanyFormValues {
   name: string;
-  logo_url: string | null;
-  industry: string | null;
+  slug: string;
+  tagline: string;
+  about: string;
+  logo_url: string;
+  banner_url: string;
+  website: string;
+  industry: string;
+  primary_email: string;
+  country: string;
+  profile_completion: number;
+  verification_tier: string;
 }
 
-interface CompanyAgent {
-  id: string;
-  agent_id: string;
-  company_id: string;
-  sponsorship_type: string | null;
-  monthly_budget: number | null;
-  credits_used: number | null;
-  is_active: boolean | null;
-  lead_config: any;
-  created_at: string | null;
-  ai_agents: {
-    id: string;
-    name: string;
-    description: string;
-    agent_key: string;
-    icon: string | null;
-    color: string | null;
-    bg_color: string | null;
-    credit_cost: number | null;
-    category: string | null;
-    is_active: boolean | null;
-    total_conversations: number | null;
-    expertise_areas: string[] | null;
-  } | null;
-  companies: Company | null;
-}
+const DEFAULT_FORM_VALUES: CompanyFormValues = {
+  name: "",
+  slug: "",
+  tagline: "",
+  about: "",
+  logo_url: "",
+  banner_url: "",
+  website: "",
+  industry: "",
+  primary_email: "",
+  country: "",
+  profile_completion: 50,
+  verification_tier: "none",
+};
 
-interface Lead {
-  id: string;
-  company_agent_id: string;
-  agent_id: string | null;
-  talent_id: string | null;
-  lead_name: string | null;
-  lead_email: string | null;
-  lead_phone: string | null;
-  lead_company: string | null;
-  lead_interest: string | null;
-  status: string | null;
-  created_at: string | null;
-}
-
-const SPONSORSHIP_TYPES = [
-  { value: "full", label: "Full Subsidy", description: "Company pays all usage credits" },
-  { value: "partial", label: "Partial Subsidy", description: "Company subsidizes user credits" },
-  { value: "branded", label: "Branded Only", description: "User pays, company branding visible" },
-];
-
-const AGENT_CATEGORIES = [
-  { value: "career", label: "Career & Matching" },
-  { value: "finance", label: "Finance & Accounts" },
-  { value: "education", label: "Training & Education" },
-  { value: "wellness", label: "Professional Wellness" },
-  { value: "industry", label: "Industry Specific" },
-];
-
-const LEAD_FIELDS = [
-  { value: "name", label: "Full Name" },
-  { value: "email", label: "Email Address" },
-  { value: "phone", label: "Phone Number" },
-  { value: "company", label: "Current Company" },
-  { value: "interest", label: "Area of Interest" },
-];
-
-export function CompanyAgentsManager() {
+export function CompaniesTab() {
   const queryClient = useQueryClient();
-  const [isCreateOpen, setIsCreateOpen] = useState(false);
-  const [selectedCompany, setSelectedCompany] = useState<string>("");
-  const [deleteTarget, setDeleteTarget] = useState<{ agentId: string; companyAgentId: string } | null>(null);
-  const [activeTab, setActiveTab] = useState("agents");
-  const [leadFilter, setLeadFilter] = useState<string>("all");
+  const [page, setPage] = useState(1);
+  const [searchInput, setSearchInput] = useState("");
+  const [search, setSearch] = useState("");
+  const [industryFilter, setIndustryFilter] = useState<string>("all");
 
-  const [formData, setFormData] = useState({
-    name: "",
-    description: "",
-    system_prompt: "",
-    expertise_areas: "",
-    category: "finance",
-    credit_cost: 10,
-    sponsorship_type: "branded",
-    monthly_budget: 1000,
-    lead_enabled: false,
-    lead_fields: ["name", "email"] as string[],
-    lead_notification_email: "",
+  // Dialog & Slideover States
+  const [isFormOpen, setIsFormOpen] = useState(false);
+  const [isImportOpen, setIsImportOpen] = useState(false);
+  const [editingCompany, setEditingCompany] = useState<CompanyRow | null>(null);
+  const [deleteTarget, setDeleteTarget] = useState<CompanyRow | null>(null);
+
+  // Form Fields State
+  const [formValues, setFormValues] = useState<CompanyFormValues>(DEFAULT_FORM_VALUES);
+  const [autoSlug, setAutoSlug] = useState(true);
+
+  // Debounce search input
+  useEffect(() => {
+    const handler = setTimeout(() => {
+      setSearch(searchInput);
+      setPage(1);
+    }, 400);
+    return () => clearTimeout(handler);
+  }, [searchInput]);
+
+  const from = (page - 1) * ITEMS_PER_PAGE;
+  const to = from + ITEMS_PER_PAGE - 1;
+
+  // Query: Paginated Companies List
+  const {
+    data: companyData,
+    isLoading: loadingList,
+    refetch: refetchList,
+    isFetching: fetchingList,
+  } = useQuery({
+    queryKey: ["companies-list", search, industryFilter, page],
+    queryFn: () =>
+      listCompaniesPaged({
+        search,
+        industry: industryFilter,
+        from,
+        to,
+      }),
   });
 
-  const { data: companies = [], isLoading: loadingCompanies } = useQuery({
-    queryKey: ["companies-for-agents"],
-    queryFn: async () => (await listCompaniesForAgentPicker()) as Company[],
+  // Query: Overview Stats
+  const { data: overviewStats, refetch: refetchOverview } = useQuery({
+    queryKey: ["companies-overview-stats-crm"],
+    queryFn: getCompaniesOverview,
   });
 
-  const { data: companyAgents = [], isLoading: loadingAgents } = useQuery({
-    queryKey: ["company-agents"],
-    queryFn: async () => (await listCompanyAgentsFull()) as CompanyAgent[],
+  // Query: Industry Rollup
+  const { data: industryRollup = [], refetch: refetchRollup } = useQuery({
+    queryKey: ["industry-rollup-crm"],
+    queryFn: getIndustryRollup,
   });
 
-  const { data: leads = [], isLoading: loadingLeads } = useQuery({
-    queryKey: ["company-agent-leads"],
-    queryFn: async () => (await listCompanyAgentLeads()) as Lead[],
+  // Query: Unassigned count
+  const { data: unassignedCount = 0, refetch: refetchUnassigned } = useQuery({
+    queryKey: ["unassigned-companies-count-crm"],
+    queryFn: countCompaniesWithNullIndustry,
   });
 
-  const createAgentMutation = useMutation({
-    mutationFn: async (data: typeof formData & { company_id: string }) => {
-      const agentKey = `${data.name.toLowerCase().replace(/\s+/g, "-")}-${selectedCompany.slice(0, 8)}`;
-      const newAgent = await insertAiAgent({
-        agent_key: agentKey,
-        name: data.name,
-        description: data.description,
-        system_prompt: data.system_prompt,
-        expertise_areas: data.expertise_areas
-          .split(",")
-          .map((s) => s.trim())
-          .filter(Boolean),
-        category: data.category,
-        credit_cost: data.credit_cost,
-        company_id: data.company_id,
-        agent_type: "company_sponsored",
-        icon: "Building2",
-        color: "text-blue-600",
-        bg_color: "bg-blue-500/10",
-        capabilities: ["text"],
-        is_active: true,
-        is_featured: false,
-      });
+  const refetchAll = useCallback(() => {
+    refetchList();
+    refetchOverview();
+    refetchRollup();
+    refetchUnassigned();
+  }, [refetchList, refetchOverview, refetchRollup, refetchUnassigned]);
 
-      await insertCompanyAgent({
-        agent_id: newAgent.id,
-        company_id: data.company_id,
-        sponsorship_type: data.sponsorship_type,
-        monthly_budget: data.monthly_budget,
-        credits_used: 0,
-        is_active: true,
-        lead_config: {
-          enabled: data.lead_enabled,
-          fields: data.lead_fields,
-          notification_email: data.lead_notification_email || null,
-        },
-      });
-      return newAgent;
+  // Mutation: Upsert / Save
+  const saveMutation = useMutation({
+    mutationFn: async (values: CompanyFormValues) => {
+      const payload: Record<string, any> = {
+        name: values.name.trim(),
+        slug: values.slug.trim(),
+        tagline: values.tagline.trim() || null,
+        about: values.about.trim() || null,
+        logo_url: values.logo_url.trim() || null,
+        banner_url: values.banner_url.trim() || null,
+        website: values.website.trim() || null,
+        industry: values.industry || null,
+        primary_email: values.primary_email.trim() || null,
+        country: values.country.trim() || null,
+        profile_completion: Number(values.profile_completion),
+        verification_tier: values.verification_tier,
+      };
+
+      if (editingCompany) {
+        payload.id = editingCompany.id;
+        await upsertCompany(payload as any);
+      } else {
+        await insertCompany(payload as any);
+      }
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["company-agents"] });
-      toast.success("AI Assistant successfully deployed for corporate partner.");
-      setIsCreateOpen(false);
-      resetForm();
+      toast.success(editingCompany ? "Company profile updated successfully." : "New company registered successfully.");
+      setIsFormOpen(false);
+      refetchAll();
+    },
+    onError: (error: any) => {
+      toast.error(`Operation failed: ${error.message}`);
     },
   });
 
-  const toggleAgentMutation = useMutation({
-    mutationFn: async ({
-      agentId,
-      companyAgentId,
-      isActive,
-    }: {
-      agentId: string;
-      companyAgentId: string;
-      isActive: boolean;
-    }) => {
-      await updateAiAgentActive(agentId, isActive);
-      await updateCompanyAgentActive(companyAgentId, isActive);
+  // Mutation: Delete
+  const deleteMutation = useMutation({
+    mutationFn: async (id: string) => {
+      await deleteCompany(id);
     },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["company-agents"] });
-      toast.success("Assistant status updated.");
-    },
-  });
-
-  const deleteAgentMutation = useMutation({
-    mutationFn: async ({ agentId, companyAgentId }: { agentId: string; companyAgentId: string }) => {
-      await deleteCompanyAgentById(companyAgentId);
-      await deleteAiAgent(agentId);
-    },
-    onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ["company-agents"] });
-      toast.success("Assistant profile successfully removed.");
+      toast.success("Company profile deleted successfully.");
       setDeleteTarget(null);
+      refetchAll();
+    },
+    onError: (error: any) => {
+      toast.error(`Delete failed: ${error.message}`);
     },
   });
 
-  const resetForm = () => {
-    setFormData({
-      name: "",
-      description: "",
-      system_prompt: "",
-      expertise_areas: "",
-      category: "finance",
-      credit_cost: 10,
-      sponsorship_type: "branded",
-      monthly_budget: 1000,
-      lead_enabled: false,
-      lead_fields: ["name", "email"],
-      lead_notification_email: "",
+  // Slug generator helper
+  const handleNameChange = (name: string) => {
+    setFormValues((prev) => {
+      const updated = { ...prev, name };
+      if (autoSlug) {
+        updated.slug = name
+          .toLowerCase()
+          .replace(/[^a-z0-9\s-]/g, "")
+          .replace(/\s+/g, "-")
+          .replace(/-+/g, "-")
+          .trim();
+      }
+      return updated;
     });
-    setSelectedCompany("");
   };
 
-  const toggleLeadField = (field: string) => {
-    setFormData((prev) => ({
-      ...prev,
-      lead_fields: prev.lead_fields.includes(field)
-        ? prev.lead_fields.filter((f) => f !== field)
-        : [...prev.lead_fields, field],
-    }));
+  const openCreateDialog = () => {
+    setEditingCompany(null);
+    setFormValues(DEFAULT_FORM_VALUES);
+    setAutoSlug(true);
+    setIsFormOpen(true);
   };
 
-  const exportLeadsCSV = () => {
-    const filtered = leadFilter === "all" ? leads : leads.filter((l) => l.company_agent_id === leadFilter);
-    if (filtered.length === 0) {
-      toast.error("No lead data available to export.");
-      return;
-    }
-
-    const headers = ["Name", "Email", "Phone", "Interest", "Status", "Timestamp"];
-    const rows = filtered.map((l) => [
-      l.lead_name || "N/A",
-      l.lead_email || "N/A",
-      l.lead_phone || "N/A",
-      l.lead_interest || "N/A",
-      l.status || "new",
-      l.created_at ? new Date(l.created_at).toISOString() : "N/A",
-    ]);
-
-    const csvContent = [headers.join(","), ...rows.map((r) => r.map((c) => `"${c}"`).join(","))].join("\n");
-    const blob = new Blob([csvContent], { type: "text/csv" });
-    const url = URL.createObjectURL(blob);
-    const link = document.createElement("a");
-    link.href = url;
-    link.setAttribute("download", `Partner_Leads_${new Date().getTime()}.csv`);
-    link.click();
-    toast.success("Leads record successfully exported");
+  const openEditDialog = (company: CompanyRow) => {
+    setEditingCompany(company);
+    setFormValues({
+      name: company.name || "",
+      slug: company.slug || "",
+      tagline: company.tagline || "",
+      about: company.about || "",
+      logo_url: company.logo_url || "",
+      banner_url: company.banner_url || "",
+      website: company.website || "",
+      industry: company.industry || "",
+      primary_email: company.primary_email || "",
+      country: company.country || "",
+      profile_completion: company.profile_completion ?? 50,
+      verification_tier: company.verification_tier || "none",
+    });
+    setAutoSlug(false);
+    setIsFormOpen(true);
   };
 
-  // Telemetry Constants
-  const totalAgents = companyAgents.length;
-  const activeNodes = companyAgents.filter((a) => a.is_active).length;
-  const totalLeads = leads.length;
-  const totalInteractions = companyAgents.reduce((sum, a) => sum + (a.ai_agents?.total_conversations || 0), 0);
-  const totalBudget = companyAgents.reduce((sum, a) => sum + (a.monthly_budget || 0), 0);
+  const getInitials = (name: string) => {
+    return name
+      .split(" ")
+      .map((w) => w[0])
+      .join("")
+      .slice(0, 2)
+      .toUpperCase();
+  };
 
-  if (loadingAgents || loadingCompanies || loadingLeads)
-    return (
-      <div className="space-y-8 animate-pulse">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-6">
-          {[1, 2, 3, 4].map((i) => (
-            <Skeleton key={i} className="h-28 rounded-2xl bg-muted/40" />
-          ))}
-        </div>
-        <Skeleton className="h-[600px] w-full rounded-2xl bg-muted/40" />
-      </div>
-    );
+  const totalPages = Math.ceil((companyData?.count || 0) / ITEMS_PER_PAGE) || 1;
+
+  const topSectorName = industryRollup[0]?.industry || "None";
+  const topSectorCount = industryRollup[0]?.company_count || 0;
 
   return (
-    <div className="space-y-10 animate-in fade-in duration-1000">
-      {/* Executive Header */}
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-6">
-        <div className="space-y-2 text-left">
-          <h2 className="text-4xl font-semibold uppercase tracking-tight italic leading-none text-foreground">Workspace Assistants</h2>
-          <p className="text-[10px] font-semibold uppercase tracking-[0.3em] text-muted-foreground/60 italic">
-            Manage corporate-sponsored AI tools and candidate matching activities
+    <div className="space-y-8 animate-in fade-in duration-700">
+      {/* Header Panel */}
+      <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center bg-muted/10 p-6 rounded-2xl border border-border/60 gap-4">
+        <div className="text-left">
+          <h2 className="text-2xl font-semibold uppercase italic tracking-tight flex items-center gap-2 text-primary">
+            <Building2 className="h-6 w-6" /> Employer CRM
+          </h2>
+          <p className="text-[10px] font-semibold text-muted-foreground/60 italic">
+            Manage corporate partners, upload employer registries, and monitor profile completeness
           </p>
         </div>
-        <Dialog open={isCreateOpen} onOpenChange={setIsCreateOpen}>
-          <DialogTrigger asChild>
-            <Button className="rounded-xl h-12 px-8 font-semibold uppercase text-xs shadow-sm transition-all hover:scale-105 active:scale-95">
-              <Plus className="h-4 w-4 mr-2" /> Assign New Assistant
-            </Button>
-          </DialogTrigger>
-          <DialogContent className="max-w-3xl rounded-2xl border-4 border-border/40 bg-background/95 p-0 overflow-hidden shadow-sm">
-            <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
-            <div className="p-10 max-h-[85vh] overflow-y-auto no-scrollbar text-left">
-              <DialogHeader className="mb-8">
-                <div className="flex items-center gap-4">
-                  <Terminal className="h-8 w-8 text-primary" />
-                  <div className="space-y-1">
-                    <DialogTitle className="text-3xl font-semibold uppercase tracking-tight italic">
-                      Configure Corporate Assistant
-                    </DialogTitle>
-                    <DialogDescription className="text-sm font-medium text-muted-foreground/60">
-                      Setup custom AI behaviors for an employer account
-                    </DialogDescription>
-                  </div>
-                </div>
-              </DialogHeader>
+        <div className="flex flex-wrap items-center gap-3 w-full sm:w-auto">
+          <Button
+            variant="outline"
+            onClick={() => setIsImportOpen(true)}
+            className="rounded-xl border-2 h-10 px-4 font-semibold uppercase text-[10px] gap-2 flex items-center bg-background"
+          >
+            <FileSpreadsheet className="h-4 w-4 text-emerald-500" />
+            Bulk Import
+          </Button>
+          <Button
+            onClick={openCreateDialog}
+            className="rounded-xl h-10 px-4 font-semibold uppercase text-[10px] gap-2 flex items-center bg-primary text-primary-foreground shadow-sm"
+          >
+            <Plus className="h-4 w-4" />
+            Add Company
+          </Button>
+          <Button
+            variant="outline"
+            size="icon"
+            onClick={refetchAll}
+            className="rounded-xl border-2 h-10 w-10 bg-background"
+            aria-label="Refresh data"
+          >
+            <RefreshCw className={cn("h-4 w-4", (fetchingList || saveMutation.isPending) && "animate-spin")} />
+          </Button>
+        </div>
+      </div>
 
-              <div className="space-y-10 py-2">
-                <div className="space-y-4">
-                  <Label className="text-[10px] font-semibold text-primary ml-2">
-                    Associated Employer Account *
-                  </Label>
-                  <Select value={selectedCompany} onValueChange={setSelectedCompany}>
-                    <SelectTrigger className="h-10 rounded-xl border font-bold bg-muted/20">
-                      <SelectValue placeholder="Select target employer..." />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-2xl border">
-                      {companies.map((company) => (
-                        <SelectItem key={company.id} value={company.id} className="font-bold">
-                          {company.name} [{company.industry?.toUpperCase() || "GENERAL"}]
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                </div>
+      {/* KPI Cards Hud */}
+      <div className="grid grid-cols-2 md:grid-cols-4 gap-4">
+        <StatsCard title="Total Employers" value={overviewStats?.totals || 0} icon={Building2} />
+        <StatsCard title="Verified Employers" value={overviewStats?.verified || 0} icon={UserCheck} />
+        <StatsCard title="Unassigned Industries" value={unassignedCount} icon={AlertCircle} />
+        <StatsCard title={`Top Sector: ${topSectorName}`} value={topSectorCount} icon={TrendingUp} />
+      </div>
 
-                <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Spacer label="Assistant Name *" className="text-[10px] font-semibold text-primary ml-1" />
-                      <Input
-                        placeholder="e.g., Technical Interview Advisor"
-                        value={formData.name}
-                        onChange={(e) => setFormData({ ...formData, name: e.target.value })}
-                        className="h-12 rounded-xl border font-bold"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-semibold text-primary ml-1">
-                        Core Focus Area
-                      </Label>
-                      <Select
-                        value={formData.category}
-                        onValueChange={(v) => setFormData({ ...formData, category: v })}
-                      >
-                        <SelectTrigger className="h-12 rounded-xl border font-bold">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border">
-                          {AGENT_CATEGORIES.map((cat) => (
-                            <SelectItem key={cat.value} value={cat.value} className="font-bold uppercase text-[9px]">
-                              {cat.label}
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                  </div>
-                  <div className="space-y-4">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-semibold text-primary ml-1">
-                        Short Description *
-                      </Label>
-                      <Input
-                        placeholder="Brief statement of purpose..."
-                        value={formData.description}
-                        onChange={(e) => setFormData({ ...formData, description: e.target.value })}
-                        className="h-12 rounded-xl border italic font-medium"
-                      />
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-semibold text-primary ml-1">
-                        Expertise & Skills
-                      </Label>
-                      <Input
-                        placeholder="e.g. JavaScript, AWS, System Architecture"
-                        value={formData.expertise_areas}
-                        onChange={(e) => setFormData({ ...formData, expertise_areas: e.target.value })}
-                        className="h-12 rounded-xl border"
-                      />
-                    </div>
-                  </div>
-                </div>
+      {/* Filter and Search controls */}
+      <Card className="rounded-2xl border shadow-sm bg-card">
+        <div className="p-6 border-b border-border/10 flex flex-col md:flex-row gap-4 items-center justify-between">
+          <div className="relative group w-full md:max-w-md">
+            <Search className="absolute left-4 top-1/2 -translate-y-1/2 h-4 w-4 text-muted-foreground/40 group-focus-within:text-primary transition-colors" />
+            <Input
+              placeholder="Search by company name, industry, or email..."
+              value={searchInput}
+              onChange={(e) => setSearchInput(e.target.value)}
+              className="pl-12 h-12 bg-muted/10 border rounded-xl font-medium"
+            />
+          </div>
+          <div className="w-full md:w-64">
+            <Select value={industryFilter} onValueChange={(val) => { setIndustryFilter(val); setPage(1); }}>
+              <SelectTrigger className="h-12 rounded-xl bg-muted/10 border font-semibold text-xs">
+                <SelectValue placeholder="Filter by Industry" />
+              </SelectTrigger>
+              <SelectContent className="rounded-xl border">
+                <SelectItem value="all" className="font-semibold text-xs">All Industries</SelectItem>
+                <SelectItem value="none" className="font-semibold text-xs">Unassigned (None)</SelectItem>
+                {industryRollup.map((ind: any) => (
+                  <SelectItem key={ind.industry} value={ind.industry} className="font-semibold text-xs">
+                    {ind.industry} ({ind.company_count})
+                  </SelectItem>
+                ))}
+              </SelectContent>
+            </Select>
+          </div>
+        </div>
 
-                <div className="space-y-4">
-                  <Label className="text-[10px] font-semibold text-primary ml-2">
-                    Core System Prompt & Instructions *
-                  </Label>
-                  <Textarea
-                    placeholder="Define assistant instructions, persona guidelines, and response guardrails..."
-                    value={formData.system_prompt}
-                    onChange={(e) => setFormData({ ...formData, system_prompt: e.target.value })}
-                    rows={6}
-                    className="rounded-2xl border bg-muted/5 font-mono text-sm p-6 italic"
-                  />
-                </div>
-
-                <div className="p-8 rounded-2xl border bg-muted/10 space-y-8 shadow-inner">
-                  <h4 className="text-[11px] font-semibold uppercase tracking-[0.3em] text-primary italic border-b border-border/10 pb-4 flex items-center gap-3">
-                    <ShieldCheck className="h-4 w-4" /> Credit & Budgetary Settings
-                  </h4>
-                  <div className="grid grid-cols-1 md:grid-cols-2 gap-8">
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-semibold opacity-40 ml-1">
-                        Sponsorship Tier
-                      </Label>
-                      <Select
-                        value={formData.sponsorship_type}
-                        onValueChange={(v) => setFormData({ ...formData, sponsorship_type: v })}
-                      >
-                        <SelectTrigger className="h-12 rounded-xl border font-bold bg-background/50">
-                          <SelectValue />
-                        </SelectTrigger>
-                        <SelectContent className="rounded-xl border">
-                          {SPONSORSHIP_TYPES.map((t) => (
-                            <SelectItem key={t.value} value={t.value} className="font-bold">
-                              <p className="text-[10px] uppercase">{t.label}</p>
-                              <p className="text-[8px] opacity-40 italic">{t.description}</p>
-                            </SelectItem>
-                          ))}
-                        </SelectContent>
-                      </Select>
-                    </div>
-                    <div className="space-y-2">
-                      <Label className="text-[10px] font-semibold opacity-40 ml-1">
-                        Monthly Credit Allocations
-                      </Label>
-                      <Input
-                        type="number"
-                        value={formData.monthly_budget}
-                        onChange={(e) => setFormData({ ...formData, monthly_budget: parseInt(e.target.value) || 0 })}
-                        className="h-12 rounded-xl border font-semibold text-lg"
-                      />
-                    </div>
-                  </div>
-                </div>
-
-                <div className="p-8 rounded-2xl border bg-primary/5 border-primary/10 space-y-6">
-                  <div className="flex items-center justify-between">
-                    <div className="space-y-1">
-                      <h4 className="text-sm font-semibold uppercase tracking-tight italic">Lead Generation Preferences</h4>
-                      <p className="text-[9px] font-bold text-muted-foreground italic">
-                        Gather candidate profile details during user conversation paths
-                      </p>
-                    </div>
-                    <Switch
-                      checked={formData.lead_enabled}
-                      onCheckedChange={(v) => setFormData({ ...formData, lead_enabled: v })}
-                    />
-                  </div>
-
-                  {formData.lead_enabled && (
-                    <div className="space-y-6 animate-in slide-in-from-top-4">
-                      <div className="space-y-3">
-                        <Label className="text-[10px] font-semibold opacity-40">
-                          Required Candidate Info
-                        </Label>
-                        <div className="flex flex-wrap gap-3">
-                          {LEAD_FIELDS.map((f) => (
-                            <div
-                              key={f.value}
-                              className="flex items-center gap-2 bg-background px-4 py-2 rounded-xl border shadow-sm"
-                            >
-                              <Checkbox
-                                id={`lead-${f.value}`}
-                                checked={formData.lead_fields.includes(f.value)}
-                                onCheckedChange={() => toggleLeadField(f.value)}
-                              />
-                              <label
-                                htmlFor={`lead-${f.value}`}
-                                className="text-[10px] font-semibold cursor-pointer"
-                              >
-                                {f.label}
-                              </label>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                      <div className="space-y-2">
-                        <Label className="text-[10px] font-semibold opacity-40 ml-1">
-                          Notification Routing Email
-                        </Label>
-                        <Input
-                          type="email"
-                          placeholder="recruitment@company.com"
-                          value={formData.lead_notification_email}
-                          onChange={(e) => setFormData({ ...formData, lead_notification_email: e.target.value })}
-                          className="h-12 rounded-xl border"
-                        />
-                      </div>
-                    </div>
-                  )}
-                </div>
-              </div>
-
-              <DialogFooter className="mt-10 pt-8 border-t border-border/10">
-                <Button
-                  variant="ghost"
-                  onClick={() => setIsCreateOpen(false)}
-                  className="h-14 px-8 font-semibold uppercase text-xs"
-                >
-                  Cancel
-                </Button>
-                <Button
-                  onClick={() => createAgentMutation.mutate({ ...formData, company_id: selectedCompany })}
-                  disabled={createAgentMutation.isPending || !selectedCompany || !formData.name.trim()}
-                  className="h-10 px-4 rounded-xl font-semibold text-[11px] shadow-sm"
-                >
-                  {createAgentMutation.isPending ? (
-                    <Loader2 className="animate-spin mr-2" />
-                  ) : (
-                    <ShieldCheck className="mr-2 h-4 w-4" />
-                  )}
-                  {createAgentMutation.isPending ? "Deploying..." : "Save and Deploy"}
-                </Button>
-              </DialogFooter>
+        {/* Data Table */}
+        {loadingList ? (
+          <div className="p-8">
+            <DashboardTableSkeleton rows={8} />
+          </div>
+        ) : !companyData || companyData.rows.length === 0 ? (
+          <div className="p-16 text-center space-y-4">
+            <div className="h-16 w-16 bg-muted/50 rounded-2xl flex items-center justify-center mx-auto border">
+              <Building2 className="h-8 w-8 text-muted-foreground/40" />
             </div>
-          </DialogContent>
-        </Dialog>
-      </div>
-
-      {/* Partnership Dashboard HUD */}
-      <div className="grid grid-cols-1 md:grid-cols-4 gap-6">
-        {[
-          {
-            label: "Active Assistants",
-            val: activeNodes,
-            icon: Activity,
-            color: "text-emerald-500",
-            bg: "bg-emerald-500/10",
-          },
-          {
-            label: "Total Conversations",
-            val: totalInteractions,
-            icon: MessageSquare,
-            color: "text-blue-500",
-            bg: "bg-blue-500/10",
-          },
-          {
-            label: "Sourced Candidates",
-            val: totalLeads,
-            icon: UserCheck,
-            color: "text-purple-500",
-            bg: "bg-purple-500/10",
-          },
-          {
-            label: "Total Sponsored Budget",
-            val: totalBudget.toLocaleString(),
-            icon: Coins,
-            color: "text-amber-500",
-            bg: "bg-amber-500/10",
-          },
-        ].map((stat, i) => (
-          <Card
-            key={i}
-            className="rounded-2xl border border-border/60 bg-card backdrop-blur-sm overflow-hidden group hover:border-primary/20 transition-all duration-500 shadow-sm"
-          >
-            <CardContent className="p-6 flex items-center gap-5">
-              <div
-                className={cn(
-                  "h-12 w-12 rounded-2xl flex items-center justify-center border transition-transform duration-500 group-hover:rotate-6 shadow-inner",
-                  stat.bg,
-                  "border-white/5",
-                )}
-              >
-                <stat.icon className={cn("h-6 w-6", stat.color)} />
-              </div>
-              <div className="text-left">
-                <p className="text-[9px] font-semibold text-muted-foreground/40 mb-1 uppercase tracking-wider">
-                  {stat.label}
-                </p>
-                <p className="text-2xl font-semibold tracking-tight italic leading-none text-foreground">{stat.val}</p>
-              </div>
-            </CardContent>
-          </Card>
-        ))}
-      </div>
-
-      {/* Main Operational Viewport */}
-      <Tabs value={activeTab} onValueChange={setActiveTab} className="w-full">
-        <TabsList className="bg-muted/30 rounded-xl border border-border/60 p-1 mb-8 w-full max-w-md">
-          <TabsTrigger
-            value="agents"
-            className="flex-1 rounded-[18px] font-semibold uppercase text-xs py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
-          >
-            Assigned Assistants ({totalAgents})
-          </TabsTrigger>
-          <TabsTrigger
-            value="leads"
-            className="flex-1 rounded-[18px] font-semibold uppercase text-xs py-3 data-[state=active]:bg-background data-[state=active]:shadow-lg"
-          >
-            Candidate Referrals ({totalLeads})
-          </TabsTrigger>
-        </TabsList>
-
-        <TabsContent value="agents" className="animate-in slide-in-from-bottom-4 duration-700">
-          <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-            {companyAgents.map((ca) => {
-              const budgetPct = Math.min(100, ((ca.credits_used || 0) / (ca.monthly_budget || 1)) * 100);
-              const agentLeads = leads.filter((l) => l.company_agent_id === ca.id).length;
-
-              return (
-                <Card
-                  key={ca.id}
-                  className={cn(
-                    "rounded-2xl border border-border/40 bg-card overflow-hidden transition-all duration-500 hover:border-primary/40 group text-left",
-                    !ca.is_active && "opacity-60 grayscale-[0.5]",
-                  )}
-                >
-                  <CardHeader className="p-8 pb-4">
-                    <div className="flex items-start justify-between mb-6">
-                      <div className="flex items-center gap-5">
-                        <div
-                          className={cn(
-                            "h-14 w-14 rounded-2xl flex items-center justify-center border shadow-inner",
-                            ca.ai_agents?.bg_color || "bg-primary/10",
-                            "border-white/5",
-                          )}
-                        >
-                          <Bot className={cn("h-7 w-7", ca.ai_agents?.color || "text-primary")} />
-                        </div>
-                        <div className="space-y-1">
-                          <CardTitle className="text-2xl font-semibold uppercase tracking-tight italic leading-none text-foreground">
-                            {ca.ai_agents?.name}
-                          </CardTitle>
-                          <div className="flex items-center gap-2">
-                            <Avatar className="h-5 w-5 border border-primary/20">
-                              <AvatarImage src={ca.companies?.logo_url || ""} />
-                              <AvatarFallback className="text-[8px] font-semibold">
-                                {ca.companies?.name?.slice(0, 2)}
-                              </AvatarFallback>
-                            </Avatar>
-                            <span className="text-[10px] font-semibold text-muted-foreground/60 italic">
-                              {ca.companies?.name}
-                            </span>
-                            <BadgeCheck className="h-3 w-3 text-blue-500" />
-                          </div>
+            <div className="space-y-1">
+              <p className="text-lg font-semibold uppercase tracking-tight italic">No companies found</p>
+              <p className="text-xs text-muted-foreground font-medium">
+                Try modifying your search queries or register a new company profile.
+              </p>
+            </div>
+          </div>
+        ) : (
+          <div className="overflow-x-auto">
+            <Table>
+              <TableHeader className="bg-muted/20">
+                <TableRow className="border-b text-[10px] font-semibold text-muted-foreground/60 uppercase tracking-wider">
+                  <TableHead className="py-6 px-6 text-left">Company Details</TableHead>
+                  <TableHead className="text-left">Industry Sector</TableHead>
+                  <TableHead className="text-left">Primary Contact</TableHead>
+                  <TableHead className="text-left">Website</TableHead>
+                  <TableHead className="text-center">Verification Tier</TableHead>
+                  <TableHead className="text-center w-36">Profile Health</TableHead>
+                  <TableHead className="text-right pr-6 w-24">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {companyData.rows.map((company) => (
+                  <TableRow
+                    key={company.id}
+                    className="group hover:bg-primary/[0.02] border-b border-border/5 transition-colors"
+                  >
+                    <TableCell className="py-5 px-6 text-left">
+                      <div className="flex items-center gap-3">
+                        <Avatar className="h-10 w-10 border rounded-lg bg-muted flex items-center justify-center">
+                          <AvatarImage src={company.logo_url || undefined} alt={company.name} />
+                          <AvatarFallback className="rounded-lg font-bold text-xs bg-primary/10 text-primary">
+                            {getInitials(company.name)}
+                          </AvatarFallback>
+                        </Avatar>
+                        <div>
+                          <p className="font-semibold text-sm group-hover:text-primary transition-colors text-foreground">
+                            {company.name}
+                          </p>
+                          <p className="text-[10px] font-mono opacity-50 italic mt-0.5">{company.slug}</p>
                         </div>
                       </div>
-                      <div className="flex items-center gap-3">
-                        <Switch
-                          checked={ca.is_active ?? false}
-                          aria-label="Toggle assistant active status"
-                          onCheckedChange={(v) =>
-                            ca.ai_agents &&
-                            toggleAgentMutation.mutate({ agentId: ca.ai_agents.id, companyAgentId: ca.id, isActive: v })
-                          }
-                        />
+                    </TableCell>
+                    <TableCell className="text-left">
+                      {company.industry ? (
+                        <Badge variant="outline" className="text-[10px] font-semibold border-primary/20 bg-primary/5">
+                          {company.industry}
+                        </Badge>
+                      ) : (
+                        <span className="text-[10px] font-semibold text-muted-foreground/40 italic">Unassigned</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-left text-xs font-semibold text-muted-foreground">
+                      {company.primary_email || "—"}
+                    </TableCell>
+                    <TableCell className="text-left">
+                      {company.website ? (
+                        <a
+                          href={company.website.startsWith("http") ? company.website : `https://${company.website}`}
+                          target="_blank"
+                          rel="noopener noreferrer"
+                          className="inline-flex items-center gap-1.5 text-xs font-semibold text-blue-500 hover:underline"
+                        >
+                          Visit <ExternalLink className="h-3 w-3" />
+                        </a>
+                      ) : (
+                        <span className="text-xs text-muted-foreground/30">—</span>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      {company.verification_tier === "gold" && (
+                        <Badge className="bg-yellow-500/10 text-yellow-600 border-yellow-500/20 text-[9px] font-bold">
+                          GOLD
+                        </Badge>
+                      )}
+                      {company.verification_tier === "silver" && (
+                        <Badge className="bg-slate-400/10 text-slate-500 border-slate-400/20 text-[9px] font-bold">
+                          SILVER
+                        </Badge>
+                      )}
+                      {company.verification_tier === "bronze" && (
+                        <Badge className="bg-amber-500/10 text-amber-600 border-amber-500/20 text-[9px] font-bold">
+                          BRONZE
+                        </Badge>
+                      )}
+                      {(!company.verification_tier || company.verification_tier === "none") && (
+                        <Badge variant="secondary" className="text-[9px] font-bold opacity-40">
+                          NONE
+                        </Badge>
+                      )}
+                    </TableCell>
+                    <TableCell className="text-center">
+                      <div className="space-y-1 px-3">
+                        <div className="flex justify-between text-[9px] font-semibold opacity-60">
+                          <span>Progress</span>
+                          <span>{company.profile_completion || 0}%</span>
+                        </div>
+                        <div className="h-1.5 w-full bg-muted rounded-full overflow-hidden border border-border/10">
+                          <div
+                            className={cn(
+                              "h-full rounded-full transition-all bg-gradient-to-r",
+                              (company.profile_completion || 0) >= 80
+                                ? "from-emerald-500 to-emerald-600"
+                                : (company.profile_completion || 0) >= 40
+                                ? "from-blue-500 to-indigo-600"
+                                : "from-orange-400 to-red-500"
+                            )}
+                            style={{ width: `${company.profile_completion || 0}%` }}
+                          />
+                        </div>
+                      </div>
+                    </TableCell>
+                    <TableCell className="text-right pr-6">
+                      <div className="flex items-center justify-end gap-2">
                         <Button
                           variant="ghost"
-                          size="icon" aria-label="Remove assistant assignment"
-                          className="h-10 w-10 rounded-xl hover:bg-destructive/10 text-destructive/20 hover:text-destructive transition-all"
-                          onClick={() =>
-                            ca.ai_agents && setDeleteTarget({ agentId: ca.ai_agents.id, companyAgentId: ca.id })
-                          }
+                          size="icon"
+                          onClick={() => openEditDialog(company)}
+                          className="h-8 w-8 hover:text-primary rounded-lg"
                         >
-                          <Trash2 className="h-5 w-5" />
+                          <Edit className="h-4 w-4" />
+                        </Button>
+                        <Button
+                          variant="ghost"
+                          size="icon"
+                          onClick={() => setDeleteTarget(company)}
+                          className="h-8 w-8 text-destructive hover:bg-destructive/10 rounded-lg"
+                        >
+                          <Trash2 className="h-4 w-4" />
                         </Button>
                       </div>
-                    </div>
-                  </CardHeader>
+                    </TableCell>
+                  </TableRow>
+                ))}
+              </TableBody>
+            </Table>
 
-                  <CardContent className="p-8 pt-0 space-y-8">
-                    <div className="flex flex-wrap gap-3">
-                      <Badge
-                        variant="outline"
-                        className="rounded-lg border font-semibold text-[9px] bg-background px-3 py-1 uppercase"
-                      >
-                        {ca.sponsorship_type || "Branded"} Tier
-                      </Badge>
-                      <div className="flex items-center gap-4 ml-auto text-muted-foreground/60 font-semibold uppercase text-[9px] tracking-widest">
-                        <span className="flex items-center gap-1.5">
-                          <MessageSquare className="h-3 w-3" /> {ca.ai_agents?.total_conversations || 0} Chats
-                        </span>
-                        <span className="flex items-center gap-1.5">
-                          <UserCheck className="h-3 w-3" /> {agentLeads} Candidates
-                        </span>
-                      </div>
-                    </div>
-
-                    <div className="space-y-3">
-                      <div className="flex justify-between items-end">
-                        <div className="space-y-1">
-                          <p className="text-[9px] font-semibold text-muted-foreground/40 italic uppercase">
-                            Budget & Credit Consumption
-                          </p>
-                          <p className="text-lg font-semibold tracking-tight text-foreground">
-                            {ca.credits_used?.toLocaleString()} / {ca.monthly_budget?.toLocaleString()} Credits Used
-                          </p>
-                        </div>
-                        <p
-                          className={cn(
-                            "text-[10px] font-semibold",
-                            budgetPct > 90 ? "text-destructive" : "text-primary",
-                          )}
-                        >
-                          {budgetPct.toFixed(0)}%
-                        </p>
-                      </div>
-                      <Progress value={budgetPct} className="h-2.5 rounded-full bg-primary/5" />
-                    </div>
-                  </CardContent>
-                </Card>
-              );
-            })}
-          </div>
-        </TabsContent>
-
-        <TabsContent value="leads" className="animate-in slide-in-from-bottom-4 duration-700">
-          <Card className="rounded-2xl border border-border/60 bg-card overflow-hidden shadow-sm">
-            <CardHeader className="p-8 border-b border-border/10">
-              <div className="flex flex-col md:flex-row md:items-center justify-between gap-6">
-                <div className="flex items-center gap-4 flex-1 max-w-md">
-                  <Select value={leadFilter} onValueChange={setLeadFilter}>
-                    <SelectTrigger className="h-12 rounded-xl border font-semibold uppercase text-xs bg-muted/20">
-                      <Filter className="h-4 w-4 mr-2 text-primary" />
-                      <SelectValue placeholder="Filter by assistant" />
-                    </SelectTrigger>
-                    <SelectContent className="rounded-xl border">
-                      <SelectItem value="all" className="font-bold">
-                        ALL PARTNER PROFILES
-                      </SelectItem>
-                      {companyAgents.map((ca) => (
-                        <SelectItem key={ca.id} value={ca.id} className="font-bold">
-                          {ca.ai_agents?.name} [{ca.companies?.name}]
-                        </SelectItem>
-                      ))}
-                    </SelectContent>
-                  </Select>
-                  <Button
-                    variant="outline"
-                    className="h-12 rounded-xl border font-semibold uppercase text-xs gap-2"
-                    onClick={exportLeadsCSV}
-                  >
-                    <Download className="h-4 w-4" /> Export Spreadsheet
-                  </Button>
-                </div>
+            {/* Pagination HUD */}
+            <div className="flex flex-col sm:flex-row justify-between items-center px-6 py-5 border-t gap-4">
+              <span className="text-[10px] font-semibold text-muted-foreground uppercase tracking-wider">
+                Showing {from + 1} to {Math.min(from + ITEMS_PER_PAGE, companyData.count)} of {companyData.count} entries
+              </span>
+              <div className="flex items-center gap-2">
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={page === 1 || loadingList}
+                  onClick={() => setPage((p) => Math.max(1, p - 1))}
+                  className="h-10 w-10 rounded-xl"
+                >
+                  <ChevronLeft className="h-4 w-4" />
+                </Button>
+                <span className="text-xs font-bold px-4">
+                  Page {page} of {totalPages}
+                </span>
+                <Button
+                  variant="outline"
+                  size="icon"
+                  disabled={page === totalPages || loadingList}
+                  onClick={() => setPage((p) => p + 1)}
+                  className="h-10 w-10 rounded-xl"
+                >
+                  <ChevronRight className="h-4 w-4" />
+                </Button>
               </div>
-            </CardHeader>
-            <CardContent className="p-0">
-              <div className="grid gap-0 divide-y divide-border/10">
-                {leads
-                  .filter((l) => leadFilter === "all" || l.company_agent_id === leadFilter)
-                  .map((lead) => {
-                    const agent = companyAgents.find((ca) => ca.id === lead.company_agent_id);
-                    return (
-                      <div
-                        key={lead.id}
-                        className="p-8 hover:bg-primary/[0.02] transition-all flex items-center justify-between group"
-                      >
-                        <div className="flex items-center gap-6">
-                          <div className="h-12 w-12 rounded-2xl bg-muted/50 flex items-center justify-center border border-border/40 shadow-inner group-hover:rotate-3 transition-transform">
-                            <UserCheck className="h-6 w-6 text-muted-foreground/40" />
-                          </div>
-                          <div className="space-y-1 text-left">
-                            <p className="text-lg font-semibold uppercase tracking-tight italic leading-none group-hover:text-primary transition-colors text-foreground">
-                              {lead.lead_name || "General User"}
-                            </p>
-                            <div className="flex items-center gap-3 text-sm font-medium text-muted-foreground/60 italic">
-                              <span>{lead.lead_email}</span>
-                              {lead.lead_phone && (
-                                <>
-                                  <span className="h-1 w-1 rounded-full bg-border" />
-                                  <span>{lead.lead_phone}</span>
-                                </>
-                              )}
-                            </div>
-                          </div>
-                        </div>
-                        <div className="flex items-center gap-12">
-                          <div className="hidden md:flex flex-col items-end">
-                            <p className="text-[9px] font-semibold text-muted-foreground/30 italic uppercase">
-                              Acquired Via
-                            </p>
-                            <p className="text-xs font-semibold uppercase tracking-tight italic text-foreground">
-                              {agent?.ai_agents?.name}
-                            </p>
-                          </div>
-                          <Badge
-                            className={cn(
-                              "rounded-lg font-black text-[9px] px-4 py-1.5 border-none",
-                              lead.status === "new" ? "bg-primary text-white" : "bg-muted text-muted-foreground",
-                            )}
-                          >
-                            {lead.status === "new" ? "NEW LEAD" : "PROCESSED"}
-                          </Badge>
-                        </div>
-                      </div>
-                    );
-                  })}
-              </div>
-            </CardContent>
-          </Card>
-        </TabsContent>
-      </Tabs>
-
-      {/* Delete Confirmation Dialog */}
-      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
-        <AlertDialogContent className="rounded-2xl border border-destructive/30 bg-background/95 p-8 shadow-sm text-left">
-          <AlertDialogHeader>
-            <div className="h-12 w-12 rounded-2xl bg-destructive/10 flex items-center justify-center mb-4">
-              <Trash2 className="h-6 w-6 text-destructive" />
             </div>
-            <AlertDialogTitle className="text-2xl font-semibold uppercase tracking-tight italic">
-              Remove Assistant Assignment?
+          </div>
+        )}
+      </Card>
+
+      {/* Create / Edit Dialog */}
+      <Dialog open={isFormOpen} onOpenChange={setIsFormOpen}>
+        <DialogContent className="max-w-3xl max-h-[90vh] rounded-2xl border-4 border-border/40 bg-background/95 p-0 overflow-hidden shadow-lg flex flex-col">
+          <div className="h-2 w-full bg-gradient-to-r from-primary via-blue-600 to-primary" />
+          <DialogHeader className="p-8 pb-4">
+            <DialogTitle className="text-2xl font-semibold uppercase tracking-tight italic flex items-center gap-2">
+              <Building2 className="h-6 w-6 text-primary" />
+              {editingCompany ? "Edit Employer Profile" : "Register New Employer"}
+            </DialogTitle>
+            <DialogDescription className="text-xs font-semibold text-muted-foreground/60 italic mt-1">
+              {editingCompany ? "Update corporate metrics and details." : "Create a clean profile record."}
+            </DialogDescription>
+          </DialogHeader>
+
+          <div className="flex-1 overflow-y-auto px-8 py-4 space-y-6">
+            <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
+              {/* Name */}
+              <div className="space-y-2">
+                <Label htmlFor="name" className="text-xs font-semibold uppercase tracking-wider">
+                  Company Name <span className="text-destructive">*</span>
+                </Label>
+                <Input
+                  id="name"
+                  value={formValues.name}
+                  onChange={(e) => handleNameChange(e.target.value)}
+                  placeholder="e.g. Acme Corp"
+                  className="h-11 rounded-xl bg-muted/10 font-medium"
+                />
+              </div>
+
+              {/* Slug */}
+              <div className="space-y-2">
+                <Label htmlFor="slug" className="text-xs font-semibold uppercase tracking-wider flex justify-between">
+                  <span>Slug Identifier</span>
+                  <button
+                    type="button"
+                    onClick={() => setAutoSlug(!autoSlug)}
+                    className="text-[10px] text-blue-500 font-bold hover:underline lowercase"
+                  >
+                    {autoSlug ? "disable auto" : "enable auto"}
+                  </button>
+                </Label>
+                <Input
+                  id="slug"
+                  value={formValues.slug}
+                  onChange={(e) => {
+                    setAutoSlug(false);
+                    setFormValues((prev) => ({ ...prev, slug: e.target.value }));
+                  }}
+                  placeholder="e.g. acme-corp"
+                  className="h-11 rounded-xl bg-muted/10 font-mono text-xs"
+                />
+              </div>
+
+              {/* Industry */}
+              <div className="space-y-2">
+                <Label htmlFor="industry" className="text-xs font-semibold uppercase tracking-wider">
+                  Industry / Sector
+                </Label>
+                <Input
+                  id="industry"
+                  value={formValues.industry}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, industry: e.target.value }))}
+                  placeholder="e.g. FinTech, Healthcare"
+                  className="h-11 rounded-xl bg-muted/10 font-medium"
+                />
+              </div>
+
+              {/* Primary Email */}
+              <div className="space-y-2">
+                <Label htmlFor="email" className="text-xs font-semibold uppercase tracking-wider">
+                  Primary Contact Email
+                </Label>
+                <Input
+                  id="email"
+                  type="email"
+                  value={formValues.primary_email}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, primary_email: e.target.value }))}
+                  placeholder="e.g. hr@acme.com"
+                  className="h-11 rounded-xl bg-muted/10 font-medium"
+                />
+              </div>
+
+              {/* Website */}
+              <div className="space-y-2">
+                <Label htmlFor="website" className="text-xs font-semibold uppercase tracking-wider">
+                  Website URL
+                </Label>
+                <Input
+                  id="website"
+                  value={formValues.website}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, website: e.target.value }))}
+                  placeholder="e.g. acme.com"
+                  className="h-11 rounded-xl bg-muted/10 font-medium"
+                />
+              </div>
+
+              {/* Country */}
+              <div className="space-y-2">
+                <Label htmlFor="country" className="text-xs font-semibold uppercase tracking-wider">
+                  Country
+                </Label>
+                <Input
+                  id="country"
+                  value={formValues.country}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, country: e.target.value }))}
+                  placeholder="e.g. Bangladesh, United States"
+                  className="h-11 rounded-xl bg-muted/10 font-medium"
+                />
+              </div>
+
+              {/* Verification Tier */}
+              <div className="space-y-2">
+                <Label htmlFor="tier" className="text-xs font-semibold uppercase tracking-wider">
+                  Verification Tier
+                </Label>
+                <Select
+                  value={formValues.verification_tier}
+                  onValueChange={(val) => setFormValues((prev) => ({ ...prev, verification_tier: val }))}
+                >
+                  <SelectTrigger className="h-11 rounded-xl bg-muted/10 font-medium">
+                    <SelectValue placeholder="Select Tier" />
+                  </SelectTrigger>
+                  <SelectContent className="rounded-xl border">
+                    <SelectItem value="none">None</SelectItem>
+                    <SelectItem value="bronze">Bronze</SelectItem>
+                    <SelectItem value="silver">Silver</SelectItem>
+                    <SelectItem value="gold">Gold</SelectItem>
+                  </SelectContent>
+                </Select>
+              </div>
+
+              {/* Profile Completion */}
+              <div className="space-y-2">
+                <Label htmlFor="completion" className="text-xs font-semibold uppercase tracking-wider">
+                  Profile Health ({formValues.profile_completion}%)
+                </Label>
+                <Input
+                  id="completion"
+                  type="number"
+                  min="0"
+                  max="100"
+                  value={formValues.profile_completion}
+                  onChange={(e) =>
+                    setFormValues((prev) => ({
+                      ...prev,
+                      profile_completion: Math.min(100, Math.max(0, Number(e.target.value) || 0)),
+                    }))
+                  }
+                  className="h-11 rounded-xl bg-muted/10 font-semibold"
+                />
+              </div>
+
+              {/* Logo URL */}
+              <div className="col-span-full space-y-2">
+                <Label htmlFor="logo" className="text-xs font-semibold uppercase tracking-wider">
+                  Logo Image URL
+                </Label>
+                <Input
+                  id="logo"
+                  value={formValues.logo_url}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, logo_url: e.target.value }))}
+                  placeholder="e.g. https://images.unsplash.com/photo-..."
+                  className="h-11 rounded-xl bg-muted/10 font-medium"
+                />
+              </div>
+
+              {/* Tagline */}
+              <div className="col-span-full space-y-2">
+                <Label htmlFor="tagline" className="text-xs font-semibold uppercase tracking-wider">
+                  Corporate Tagline
+                </Label>
+                <Input
+                  id="tagline"
+                  value={formValues.tagline}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, tagline: e.target.value }))}
+                  placeholder="e.g. Automating global logistics at scale"
+                  className="h-11 rounded-xl bg-muted/10 font-medium"
+                />
+              </div>
+
+              {/* About Text */}
+              <div className="col-span-full space-y-2">
+                <Label htmlFor="about" className="text-xs font-semibold uppercase tracking-wider">
+                  Detailed Company Bio
+                </Label>
+                <Textarea
+                  id="about"
+                  rows={4}
+                  value={formValues.about}
+                  onChange={(e) => setFormValues((prev) => ({ ...prev, about: e.target.value }))}
+                  placeholder="Describe company operations, goals, services..."
+                  className="rounded-xl bg-muted/10 font-medium p-4"
+                />
+              </div>
+            </div>
+          </div>
+
+          <DialogFooter className="p-8 border-t border-border/10 bg-muted/5">
+            <Button
+              variant="outline"
+              onClick={() => setIsFormOpen(false)}
+              disabled={saveMutation.isPending}
+              className="rounded-xl h-12 px-6 font-semibold uppercase text-xs"
+            >
+              Cancel
+            </Button>
+            <Button
+              onClick={() => {
+                if (!formValues.name.trim()) return toast.error("Company name is required.");
+                if (!formValues.slug.trim()) return toast.error("Slug identifier is required.");
+                saveMutation.mutate(formValues);
+              }}
+              disabled={saveMutation.isPending}
+              className="rounded-xl h-12 px-8 font-semibold uppercase text-xs"
+            >
+              {saveMutation.isPending ? (
+                <>
+                  <Loader2 className="mr-2 h-4 w-4 animate-spin" /> Saving...
+                </>
+              ) : (
+                "Save Profile"
+              )}
+            </Button>
+          </DialogFooter>
+        </DialogContent>
+      </Dialog>
+
+      {/* Delete Confirmation Alert */}
+      <AlertDialog open={!!deleteTarget} onOpenChange={(open) => !open && setDeleteTarget(null)}>
+        <AlertDialogContent className="rounded-2xl border-4 border-destructive/20 bg-background/98 p-8 shadow-lg">
+          <AlertDialogHeader className="space-y-3">
+            <AlertDialogTitle className="text-2xl font-semibold uppercase tracking-tight italic flex items-center gap-2 text-destructive">
+              <AlertCircle className="h-6 w-6" /> Confirm Profile Deletion
             </AlertDialogTitle>
-            <AlertDialogDescription className="text-sm font-medium text-muted-foreground italic leading-relaxed">
-              Are you sure you want to delete this corporate partner assistant configuration? This action will permanently stop all active usage paths and clear recent usage metrics. This action cannot be undone.
+            <AlertDialogDescription className="text-sm font-medium leading-relaxed">
+              You are about to delete <span className="font-bold text-foreground italic">"{deleteTarget?.name}"</span>.
+              This will permanently remove the corporate record and break active associations with company members,
+              lead pipelines, and sponsored AI swarm configurations.
+              <br />
+              <br />
+              This database modification is non-reversible. Are you sure you wish to continue?
             </AlertDialogDescription>
           </AlertDialogHeader>
-          <AlertDialogFooter className="mt-8 gap-4">
-            <AlertDialogCancel className="rounded-xl font-semibold uppercase text-xs border h-12 px-8">
-              Cancel
+          <AlertDialogFooter className="mt-6">
+            <AlertDialogCancel className="rounded-xl h-12 font-semibold uppercase text-xs border bg-background">
+              Abort Action
             </AlertDialogCancel>
             <AlertDialogAction
-              onClick={() => deleteTarget && deleteAgentMutation.mutate(deleteTarget)}
-              className="bg-destructive text-white rounded-xl font-semibold uppercase text-xs h-12 px-10 hover:bg-destructive/90"
+              onClick={() => deleteTarget && deleteMutation.mutate(deleteTarget.id)}
+              disabled={deleteMutation.isPending}
+              className="rounded-xl h-12 font-semibold uppercase text-xs bg-destructive text-destructive-foreground hover:bg-destructive/90 shadow-sm"
             >
-              Confirm Deletion
+              {deleteMutation.isPending ? "Purging Record..." : "Confirm Delete"}
             </AlertDialogAction>
           </AlertDialogFooter>
         </AlertDialogContent>
       </AlertDialog>
 
-      {/* Custom Spacer Label layout utility placeholder */}
-      <footer className="mt-20 pt-10 border-t border-border/40 flex items-center justify-between opacity-30">
-        <div className="space-y-1 text-left">
-          <p className="text-[9px] font-semibold uppercase tracking-[0.4em] italic">
-            Corporate Partner Portal · Admin Console
-          </p>
-          <p className="text-[8px] font-bold text-muted-foreground uppercase">
-            Platform Access Authorized Only
-          </p>
-        </div>
-        <div className="flex gap-2">
-          {[...Array(3)].map((_, i) => (
-            <div key={i} className="h-1 w-8 rounded-full bg-primary/20" />
-          ))}
-        </div>
-      </footer>
+      {/* Bulk Import sheet dialog */}
+      <BatchCompanyUpload
+        open={isImportOpen}
+        onOpenChange={setIsImportOpen}
+        onComplete={() => {
+          refetchAll();
+        }}
+      />
     </div>
   );
 }
 
-// Inline helper for explicit element spacing and typing
-function Spacer({ label, className }: { label: string; className?: string }) {
-  return <Label className={className}>{label}</Label>;
-}
+export default CompaniesTab;
