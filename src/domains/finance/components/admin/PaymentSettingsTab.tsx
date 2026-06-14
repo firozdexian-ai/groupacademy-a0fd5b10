@@ -30,7 +30,7 @@ type GatewayOption = "whatsapp" | "stripe" | "both";
  * GroUp Academy: Payment Infrastructure Configuration Console
  * Administrative panel for managing transaction routing, currency variables, and processor security settings.
  */
-export function PaymentInfraTab() {
+export function PaymentSettingsTab() {
   const queryClient = useQueryClient();
 
   // Queries core billing configuration flags from platform settings
@@ -429,4 +429,4 @@ function StatusTile({ icon: Icon, label, value, active, color, bg }: StatusTileP
   );
 }
 
-export default PaymentInfraTab;
+export default PaymentSettingsTab;
