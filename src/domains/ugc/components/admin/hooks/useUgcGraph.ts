@@ -47,6 +47,9 @@ export interface UgcFeedPost {
   author_name: string | null;
   is_active: boolean | null;
   created_at: string;
+  status?: string;
+  is_pinned?: boolean | null;
+  audience?: string;
 }
 export interface UgcCompetition {
   id: string;

@@ -29,7 +29,7 @@ export async function getUgcGraphMaster() {
       .limit(500),
     supabase
       .from("feed_posts")
-      .select("id, text_content, content_type, author_user_id, author_name, is_active, created_at")
+      .select("id, text_content, content_type, author_user_id, author_name, is_active, created_at, status, is_pinned, audience")
       .order("created_at", { ascending: false })
       .limit(500),
     supabase
@@ -158,6 +158,51 @@ export async function resolveUgcReport(input: {
   notes?: string;
 }): Promise<void> {
   const user = await getCurrentUser();
+
+  // Fetch report details first to find the target scope and scope_id
+  const { data: report, error: getReportError } = await supabase
+    .from("content_reports")
+    .select("scope, scope_id")
+    .eq("id", input.id)
+    .single();
+
+  if (getReportError) throw getReportError;
+
+  if (input.status === "removed" && report) {
+    const { scope, scope_id } = report;
+    if (scope === "feed_post") {
+      const { error: err } = await supabase
+        .from("feed_posts")
+        .update({ is_active: false, status: "removed" } as any)
+        .eq("id", scope_id);
+      if (err) throw err;
+    } else if (scope === "blog_post") {
+      const { error: err } = await supabase
+        .from("blog_posts")
+        .update({ status: "archived" } as any)
+        .eq("id", scope_id);
+      if (err) throw err;
+    } else if (scope === "content" || scope === "video" || scope === "free_video") {
+      const { error: err } = await supabase
+        .from("content")
+        .update({ is_published: false } as any)
+        .eq("id", scope_id);
+      if (err) throw err;
+    } else if (scope === "post") {
+      const { error: err } = await supabase
+        .from("discussion_posts")
+        .update({ is_hidden: true } as any)
+        .eq("id", scope_id);
+      if (err) throw err;
+    } else if (scope === "discussion_thread") {
+      const { error: err } = await supabase
+        .from("discussion_threads")
+        .update({ is_hidden: true } as any)
+        .eq("id", scope_id);
+      if (err) throw err;
+    }
+  }
+
   const { error } = await supabase
     .from("content_reports")
     .update({
